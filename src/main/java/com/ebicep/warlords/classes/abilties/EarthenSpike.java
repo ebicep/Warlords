@@ -134,14 +134,14 @@ public class EarthenSpike extends AbstractAbility {
                             } else {
                                 //impact
                                 Location targetLocation = target.getLocation();
-                                for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                                for (WarlordsPlayer spikeTarget : PlayerFilter
                                         .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                         .aliveEnemiesOf(wp)
                                 ) {
-                                    warlordsPlayer.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    spikeTarget.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     //todo tweak distance to ground where you cant get kbed up (1.81 is max jump blocks, double spike kb might be possible with this)
-                                    if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.81) {
-                                        warlordsPlayer.setVelocity(new Vector(0, .625, 0));
+                                    if (Utils.getDistance(spikeTarget.getEntity(), .1) < 1.81) {
+                                        spikeTarget.setVelocity(new Vector(0, .625, 0));
                                     }
                                 }
 
@@ -174,7 +174,7 @@ public class EarthenSpike extends AbstractAbility {
                                 earthenSpikeBlock.setDuration(-1);
                                 this.cancel();
                             }
-                            if (target.isDeath()) {
+                            if (target.isDead()) {
                                 earthenSpikeBlock.setDuration(-1);
                                 this.cancel();
                             }

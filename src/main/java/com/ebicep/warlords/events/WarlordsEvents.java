@@ -24,7 +24,10 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
@@ -45,15 +48,10 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
@@ -189,7 +187,9 @@ public class WarlordsEvents implements Listener {
                                 .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
-                                                new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder")
+                                                // TODO: Fix team item
+                                                // @see Team.java
+                                                new ItemBuilder(Material.WOOL).name("§aTeam Builder")
                                                         .get()
                                         )
                                 );
@@ -208,6 +208,7 @@ public class WarlordsEvents implements Listener {
 
             player.getActivePotionEffects().clear();
         }
+
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
             player.teleport(p.getLocation());

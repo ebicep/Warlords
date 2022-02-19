@@ -3,7 +3,7 @@ package com.ebicep.warlords.party;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.Classes;
@@ -45,13 +45,13 @@ public class RegularGamesMenu {
 
         //team wool surround
         for (int i = 0; i < 6; i++) {
-            menu.setItem(0, i, new ItemBuilder(team.item).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(0, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
             });
-            menu.setItem(8, i, new ItemBuilder(team.item).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(8, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
             });
         }
         for (int i = 1; i < 8; i++) {
-            menu.setItem(i, 0, new ItemBuilder(team.item).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(i, 0, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
             });
             if (i == 2) {
                 i = 5;

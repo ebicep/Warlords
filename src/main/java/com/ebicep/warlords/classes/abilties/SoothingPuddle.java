@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
 import org.bukkit.*;
@@ -23,8 +22,8 @@ public class SoothingPuddle extends AbstractAbility {
     private static final double GRAVITY = -0.008;
     private static final float HITBOX = 5;
 
-    private final int puddleMinHealing = 183;
-    private final int puddleMaxHealing = 236;
+    private final int puddleMinHealing = 178;
+    private final int puddleMaxHealing = 224;
 
     public SoothingPuddle() {
         super("Soothing Puddle", 559, 665, 8, 60, 25, 175);

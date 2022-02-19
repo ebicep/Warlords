@@ -2,7 +2,6 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -27,7 +26,7 @@ public class SpiritLink extends AbstractChainBase {
         description = "§7Links your spirit with up to §c3 §7enemy\n" +
                 "§7players, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to the first target hit. Each additional hit\n" +
-                "§7deals §c10% §7reduced damage. You gain §e40%\n" +
+                "§7deals §c20% §7reduced damage. You gain §e40%\n" +
                 "§7speed for §61.5 §7seconds, and take §c15%\n" +
                 "§7reduced damage for §64.5 §7seconds.";
     }
@@ -107,7 +106,7 @@ public class SpiritLink extends AbstractChainBase {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float newDamageValue = currentDamageValue * .8f;
+                float newDamageValue = currentDamageValue * .85f;
                 event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }

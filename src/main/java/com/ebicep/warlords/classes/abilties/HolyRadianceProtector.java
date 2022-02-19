@@ -1,8 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractHolyRadianceBase;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
@@ -46,10 +46,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
-
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-
 
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);

@@ -49,7 +49,6 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
-
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
