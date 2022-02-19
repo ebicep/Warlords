@@ -208,10 +208,17 @@ public class Warlords extends JavaPlugin {
         playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
+    public static ItemStack getHead(Player player) {
+        return getHead(player.getUniqueId());
+    }
+
+    public static ItemStack getHead(UUID uuid) {
+        return CraftItemStack.asBukkitCopy(playerHeads.getOrDefault(uuid, CraftItemStack.asNMSCopy(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal()))));
+    }
+
     public void readKeysConfig() {
         try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
-//            DatabaseManager.key = config.getString("database_key");
             ApplicationConfiguration.key = config.getString("database_key");
             BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {

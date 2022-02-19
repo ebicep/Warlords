@@ -21,13 +21,13 @@ public enum Team {
         Collections.reverse(Arrays.asList(inverseMapping));
     }
 
-    private final String name;
-    private final ChatColor teamColor;
-    private final String chatTag;
-    private final String chatTagColored;
-    private final String chatTagBoldColored;
-    private final Color armorColor;
-    private final ItemStack item;
+    public final String name;
+    public final ChatColor teamColor;
+    public final String chatTag;
+    public final String chatTagColored;
+    public final String chatTagBoldColored;
+    public final Color armorColor;
+    public final ItemStack item;
 
     Team(String name, String chatTag, ChatColor teamColor, Color armorColor, ItemStack item) {
         this.name = name;

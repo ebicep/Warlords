@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.ChatChannels;
+import com.ebicep.warlords.util.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
@@ -102,6 +102,9 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().setAllowFlight(true);
             e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
 
+            if (DatabaseManager.playerService == null || !DatabaseManager.enabled) {
+                Warlords.updateHead(e.getPlayer());
+            }
             Warlords.newChain()
                     .async(() -> {
                         DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
