@@ -218,11 +218,6 @@ public class PlayingState implements State, TimerDebugAble {
             giveScoreboard();
         }
 
-        //update every 5 seconds
-        if (timer % 100 == 0) {
-            BotManager.sendStatusMessage(false);
-        }
-
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
         if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {

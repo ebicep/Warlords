@@ -99,7 +99,6 @@ public class Party {
             promote(Bukkit.getOfflinePlayer(uuid).getName());
         }
         Bukkit.getPlayer(uuid).sendMessage(getPartyList());
-        BotManager.sendStatusMessage(false);
     }
 
     public void leave(UUID uuid) {

@@ -131,8 +131,6 @@ public class GameStartTrait extends Trait {
         Warlords.game.addPlayer(player, team);
         Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
-
-        BotManager.sendStatusMessage(false);
     }
 
     private void sendMessageToQueue(String message) {
@@ -146,7 +144,6 @@ public class GameStartTrait extends Trait {
         ctfQueue.remove(player.getUniqueId());
         game.removePlayer(player.getUniqueId());
         sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has quit!");
-        BotManager.sendStatusMessage(false);
     }
 
     @EventHandler

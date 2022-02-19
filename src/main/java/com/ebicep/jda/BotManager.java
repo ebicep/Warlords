@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import javax.security.auth.login.LoginException;
 import java.text.DateFormat;
@@ -29,15 +30,19 @@ public class BotManager {
     public static JDA jda;
     public static String botToken;
 
+    public static Guild compGamesServer;
     public static String compGamesServerID = "776590423501045760";
     public static String compGamesServerStatusChannel = "instant-updates";
     public static HashMap<String, TextChannel> compGamesServerChannelCache = new HashMap<>();
     public static Message compStatusMessage;
 
+    public static Guild wl2Server;
     public static String wl2ServerID = "931564871462572062";
     public static String wl2ServerStatusChannel = "server-status";
     public static HashMap<String, TextChannel> wl2ServerChannelCache = new HashMap<>();
     public static Message wl2StatusMessage;
+
+    public static BukkitTask task;
 
     public static int numberOfMessagesSentLast30Sec = 0;
 
@@ -47,17 +52,25 @@ public class BotManager {
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
                     .addEventListeners(new BotListener())
                     .build();
-        }
 
-        new BukkitRunnable() {
+            task = new BukkitRunnable() {
 
-            @Override
-            public void run() {
-                if (numberOfMessagesSentLast30Sec > 0) {
-                    numberOfMessagesSentLast30Sec--;
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    if (counter % 3 == 0) {
+                        if (numberOfMessagesSentLast30Sec > 0) {
+                            numberOfMessagesSentLast30Sec--;
+                        }
+                    }
+                    if (counter % 30 == 0) {
+                        sendStatusMessage(false);
+                    }
+                    counter++;
                 }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 20, 70);
+            }.runTaskTimer(Warlords.getInstance(), 20, 20);
+        }
     }
 
     public static void sendDebugMessage(String message) {
@@ -75,11 +88,19 @@ public class BotManager {
     }
 
     public static Guild getCompGamesServer() {
-        return jda.getGuildById(compGamesServerID);
+        if (compGamesServer != null) {
+            return compGamesServer;
+        }
+        compGamesServer = jda.getGuildById(compGamesServerID);
+        return compGamesServer;
     }
 
     public static Guild getWL2Server() {
-        return jda.getGuildById(wl2ServerID);
+        if (wl2Server != null) {
+            return wl2Server;
+        }
+        wl2Server = jda.getGuildById(wl2ServerID);
+        return wl2Server;
     }
 
     public static Optional<TextChannel> getTextChannelCompsByName(String name) {

@@ -350,6 +350,10 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (BotManager.task != null) {
+            BotManager.task.cancel();
+        }
+
         try {
             // Pre-caution
             for (Player player : Bukkit.getOnlinePlayers()) {
