@@ -119,7 +119,6 @@ public class Intervene extends AbstractAbility {
             wp.updateBlueItem();
             wp.subtractEnergy(energyCost);
 
-
             new GameRunnable(wp.getGame()) {
                 @Override
                 public void run() {

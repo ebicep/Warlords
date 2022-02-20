@@ -25,7 +25,7 @@ import static com.ebicep.warlords.util.GameRunnable.SECOND;
 // "Debug"
 public enum GameMap {
     RIFT(
-            "Rift",
+            "The Rift",
             32,
             12,
             60 * SECOND,
@@ -318,7 +318,8 @@ public enum GameMap {
             16,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG
+            MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.INTERCEPTION
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -335,7 +336,7 @@ public enum GameMap {
 
             options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(173.5, 67, 426.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(736.5, 67, 450.5, -180, 0), Team.RED));
 
             options.add(new FlagCapturePointOption(loc.addXYZ(162.5, 70.5, 445.5, -90, 0), Team.BLUE));
@@ -459,6 +460,7 @@ public enum GameMap {
         }
 
     };
+
     private final String mapName;
     private final int maxPlayers;
     private final int minPlayers;

@@ -250,8 +250,8 @@ public class EffectUtils {
     }
 
     /**
-     * @param player1    point A
-     * @param player2    point B
+     * @param location1    point A
+     * @param location2    point B
      * @param item       which item should the chain hold
      * @param ticksLived how long should the chain last
      */
@@ -307,7 +307,9 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, ParticleEffect effect) {
-        Location lineLocation = to.add(0, 1, 0);
+        to = to.clone();
+        from = from.clone();
+        Location lineLocation = to.add(0, 1, 0).clone();
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             effect.display(0, 0, 0, 0, 1, lineLocation, 500);
@@ -316,7 +318,9 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount) {
-        Location lineLocation = to.add(0, 1, 0);
+        to = to.clone();
+        from = from.clone();
+        Location lineLocation = to.add(0, 1, 0).clone();
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             for (int i1 = 0; i1 < amount; i1++) {

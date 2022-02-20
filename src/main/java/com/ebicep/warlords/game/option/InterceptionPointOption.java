@@ -5,26 +5,25 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InterceptionPointOption implements Option {
 
@@ -301,11 +300,11 @@ public class InterceptionPointOption implements Option {
 			captureProgress -= hackSpeed;
 			if (captureProgress < 0) {
 				captureProgress = 0;
-                Team previeusOwning = teamOwning;
+                Team previousOwning = teamOwning;
 				teamOwning = null;
 				teamAttacking = teamInCircle;
 				Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
-                if (previeusOwning != null) {
+                if (previousOwning != null) {
                     WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamInCircle).collect(Utils.randomElement());
                     String message = teamAttacking.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §eis capturing the " + ChatColor.GRAY + name + ChatColor.WHITE + "!";
 

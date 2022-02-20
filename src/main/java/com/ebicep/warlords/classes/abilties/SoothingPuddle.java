@@ -34,7 +34,7 @@ public class SoothingPuddle extends AbstractAbility {
         description = "§7Throw a short range projectile, healing\n" +
                 "§7allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health upon impact.\n" +
                 "§7The projectile will form a small puddle that\n" +
-                "§7heals allies for §a" + puddleMinHealing + " §7- §a " + puddleMaxHealing + " §7health per second.\n" +
+                "§7heals allies for §a" + puddleMinHealing + " §7- §a" + puddleMaxHealing + " §7health per second.\n" +
                 "§7Lasts §64 §7seconds.";
     }
 

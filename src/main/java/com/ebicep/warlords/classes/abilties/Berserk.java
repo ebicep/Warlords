@@ -14,7 +14,10 @@ import org.bukkit.entity.Player;
 public class Berserk extends AbstractAbility {
 
     private final int duration = 18;
+    // Percent
     private final int speedBuff = 30;
+    private float damageIncrease = 30;
+    private float damageTakenIncrease = 10;
 
     public Berserk() {
         super("Berserk", 0, 0, 46.98f, 30, 0, 0);
@@ -23,9 +26,9 @@ public class Berserk extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You go into a berserker rage,\n" +
-                "§7increasing your damage by §c30% §7and\n" +
+                "§7increasing your damage by §c" + damageIncrease + "% §7and\n" +
                 "§7movement speed by §e" + speedBuff + "%§7. While active,\n" +
-                "§7you also take §c10% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
+                "§7you also take §c" + damageTakenIncrease + "% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -46,12 +49,12 @@ public class Berserk extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.1f;
+                return currentDamageValue * (1 + damageTakenIncrease / 100);
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.3f;
+                return currentDamageValue * (1 + damageIncrease / 100);
             }
         });
 
@@ -72,5 +75,21 @@ public class Berserk extends AbstractAbility {
         }.runTaskTimer(0, 3);
 
         return true;
+    }
+
+    public float getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(float damageIncrease) {
+        this.damageIncrease = damageIncrease;
+    }
+
+    public float getDamageTakenIncrease() {
+        return damageTakenIncrease;
+    }
+
+    public void setDamageTakenIncrease(float damageTakenIncrease) {
+        this.damageTakenIncrease = damageTakenIncrease;
     }
 }

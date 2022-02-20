@@ -1,6 +1,5 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.util.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
@@ -24,10 +24,7 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
@@ -219,6 +216,8 @@ public class WarlordsEvents implements Listener {
         } else {
             player.setAllowFlight(true);
         }
+
+        Warlords.getInstance().hideAndUnhidePeople(player);
     }
 
     @EventHandler
@@ -239,6 +238,16 @@ public class WarlordsEvents implements Listener {
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });
+
+        for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
+            if (
+                holder.getGame() != null
+                && holder.getGame().hasPlayer(e.getPlayer().getUniqueId())
+                && holder.getGame().getPlayerTeam(e.getPlayer().getUniqueId()) == null
+            ) {
+                holder.getGame().removePlayer(e.getPlayer().getUniqueId());
+            }
+        }
     }
 
     @EventHandler

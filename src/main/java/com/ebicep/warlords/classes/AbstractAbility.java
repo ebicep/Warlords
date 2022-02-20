@@ -120,16 +120,16 @@ public abstract class AbstractAbility {
         return critChance;
     }
 
-    public void setCritChance(int critChance) {
-        this.critChance = critChance;
+    public void setCritChance(int critChanceIncrease) {
+        this.critChance = critChanceIncrease;
     }
 
     public int getCritMultiplier() {
         return critMultiplier;
     }
 
-    public void setCritMultiplier(int critMultiplier) {
-        this.critMultiplier = critMultiplier;
+    public void setCritMultiplier(int critMultiplierIncrease) {
+        this.critMultiplier = critMultiplierIncrease;
     }
 
     public String getDescription() {

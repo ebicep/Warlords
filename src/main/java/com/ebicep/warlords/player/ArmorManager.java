@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.player.Classes.*;
@@ -42,6 +45,11 @@ public class ArmorManager {
         GREATER_SHAMAN_HELMET("Greater Shaman Helmet", new ItemStack(Material.SAPLING, 1, (short) 2), new ItemStack(Material.CACTUS)),
         MASTERWORK_SHAMAN_HELMET("Masterwork Shaman Helmet", new ItemStack(Material.RED_ROSE, 1, (short) 8), new ItemStack(Material.YELLOW_FLOWER)),
         LEGENDARY_SHAMAN_HELMET("Legendary Shaman Helmet", new ItemStack(Material.SAPLING), new ItemStack(Material.SAPLING, 1, (short) 1)),
+
+        SIMPLE_ROGUE_HELMET("Simple Rogue Helmet", new ItemStack(Material.SAPLING, 1, (short) 4), new ItemStack(Material.RED_ROSE, 1, (short) 2)),
+        GREATER_ROGUE_HELMET("Greater Rogue Helmet", new ItemStack(Material.SAPLING, 1, (short) 2), new ItemStack(Material.CACTUS)),
+        MASTERWORK_ROGUE_HELMET("Masterwork Rogue Helmet", new ItemStack(Material.RED_ROSE, 1, (short) 8), new ItemStack(Material.YELLOW_FLOWER)),
+        LEGENDARY_ROGUE_HELMET("Legendary Rogue Helmet", new ItemStack(Material.SAPLING), new ItemStack(Material.SAPLING, 1, (short) 1)),
 
         ;
 

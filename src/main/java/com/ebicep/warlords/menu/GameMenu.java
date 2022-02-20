@@ -361,16 +361,38 @@ public class GameMenu {
                     builder.get(),
                     (n, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
-                        if (helmet == Helmets.SIMPLE_MAGE_HELMET || helmet == Helmets.GREATER_MAGE_HELMET || helmet == Helmets.MASTERWORK_MAGE_HELMET || helmet == Helmets.LEGENDARY_MAGE_HELMET) {
+                        if (
+                                helmet == Helmets.SIMPLE_MAGE_HELMET ||
+                                helmet == Helmets.GREATER_MAGE_HELMET ||
+                                helmet == Helmets.MASTERWORK_MAGE_HELMET ||
+                                helmet == Helmets.LEGENDARY_MAGE_HELMET
+                        ) {
                             Helmets.setSelectedMage(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_WARRIOR_HELMET || helmet == Helmets.GREATER_WARRIOR_HELMET || helmet == Helmets.MASTERWORK_WARRIOR_HELMET || helmet == Helmets.LEGENDARY_WARRIOR_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_WARRIOR_HELMET ||
+                                helmet == Helmets.GREATER_WARRIOR_HELMET ||
+                                helmet == Helmets.MASTERWORK_WARRIOR_HELMET ||
+                                helmet == Helmets.LEGENDARY_WARRIOR_HELMET
+                        ) {
                             Helmets.setSelectedWarrior(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_PALADIN_HELMET || helmet == Helmets.GREATER_PALADIN_HELMET || helmet == Helmets.MASTERWORK_PALADIN_HELMET || helmet == Helmets.LEGENDARY_PALADIN_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_PALADIN_HELMET ||
+                                helmet == Helmets.GREATER_PALADIN_HELMET ||
+                                helmet == Helmets.MASTERWORK_PALADIN_HELMET ||
+                                helmet == Helmets.LEGENDARY_PALADIN_HELMET
+                        ) {
                             Helmets.setSelectedPaladin(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_SHAMAN_HELMET ||
+                                helmet == Helmets.GREATER_SHAMAN_HELMET ||
+                                helmet == Helmets.MASTERWORK_SHAMAN_HELMET ||
+                                helmet == Helmets.LEGENDARY_SHAMAN_HELMET
+                        ) {
                             Helmets.setSelectedShaman(player, helmet);
                         }
+
                         List<Helmets> selectedHelmets = Helmets.getSelected(player);
+
                         Warlords.newChain().async(() -> {
                             if (DatabaseManager.playerService == null) return;
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());

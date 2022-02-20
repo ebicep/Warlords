@@ -27,7 +27,7 @@ public class IncendiaryCurse extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Ignite the targeted area with a cross flame,\n" +
                     "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
-                    "§7hit are blinded for §62 §7seconds.";
+                    "§7hit are blinded for §61.5 §7seconds.";
     }
 
     @Override
@@ -117,9 +117,9 @@ public class IncendiaryCurse extends AbstractAbility {
                                 false
                         );
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.CONFUSION, 2 * 25, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.CONFUSION, 30, 0, true, false), true);
                     }
 
                     this.cancel();

@@ -6,13 +6,12 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
-
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 /**
  * Causes the game to go into an overtime mode when an
@@ -67,7 +66,7 @@ public class GameOvertimeOption implements Option, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsGameTriggerWinEvent event) {
-        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption) {
+        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption && event.getDeclaredWinner() == null) {
             event.setCancelled(true);
             for (Team team : TeamMarker.getTeams(event.getGame())) {
                 event.getGame().setPoints(team, 0);

@@ -84,10 +84,11 @@ public class Boulder extends AbstractAbility {
                 }
 
                 WarlordsPlayer directHit = null;
-                if (!newLoc.getBlock().isEmpty()
-                        && newLoc.getBlock().getType() != Material.GRASS
-                        && newLoc.getBlock().getType() != Material.BARRIER
-                        && newLoc.getBlock().getType() != Material.VINE
+                if (
+                    !newLoc.getBlock().isEmpty()
+                    && newLoc.getBlock().getType() != Material.GRASS
+                    && newLoc.getBlock().getType() != Material.BARRIER
+                    && newLoc.getBlock().getType() != Material.VINE
                 ) {
                     // Explode based on collision
                     shouldExplode = true;

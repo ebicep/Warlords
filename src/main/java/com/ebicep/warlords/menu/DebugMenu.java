@@ -2,7 +2,6 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
-
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
@@ -19,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -114,8 +112,8 @@ public class DebugMenu {
 
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {
         if (target == null) return;
-        String targetName = target != null ? target.getName() : "";
-        Menu menu = new Menu("Player Options: " + (target != null ? targetName : player.getName()), 9 * 5);
+        String targetName = target.getName();
+        Menu menu = new Menu("Player Options: " + targetName, 9 * 5);
         ItemStack[] firstRow = {
                 new ItemBuilder(Material.EXP_BOTTLE)
                         .name(ChatColor.GREEN + "Energy")
@@ -192,7 +190,7 @@ public class DebugMenu {
                                     game.setPlayerTeam(player, otherTeam);
                                     target.setTeam(otherTeam);
                                     
-                                    target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
+                                    target.getGameState().updatePlayerName(target);
                                     Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                                     if (randomLobbyLocation != null) {
@@ -214,36 +212,34 @@ public class DebugMenu {
             int index = i + 1;
             menu.setItem(index, 2, secondRow[i],
                     (n, e) -> {
-                        if (target != null) {
-                            switch (index) {
-                                case 1:
-                                    //TODO
-                                    break;
-                                case 2:
-                                    openAmountMenu(player, target, "heal");
-                                    break;
-                                case 3:
-                                    openAmountMenu(player, target, "takedamage");
-                                    break;
-                                case 4:
-                                    openCooldownsMenu(player, target);
-                                    break;
-                                case 5:
-                                    openTeleportLocations(player, target);
-                                    break;
-                                case 6:
-                                    openFlagOptionMenu(player, target);
-                                    break;
-                                case 7:
-                                    openSpecMenu(player, target);
-                                    break;
-                            }
+                        switch (index) {
+                            case 1:
+                                //TODO
+                                break;
+                            case 2:
+                                openAmountMenu(player, target, "heal");
+                                break;
+                            case 3:
+                                openAmountMenu(player, target, "takedamage");
+                                break;
+                            case 4:
+                                openCooldownsMenu(player, target);
+                                break;
+                            case 5:
+                                openTeleportLocations(player, target);
+                                break;
+                            case 6:
+                                openFlagOptionMenu(player, target);
+                                break;
+                            case 7:
+                                openSpecMenu(player, target);
+                                break;
                         }
                     }
             );
         }
         menu.setItem(3, 4, MENU_BACK, (n, e) -> {
-            if (target != null && player.getUniqueId() == target.getUuid()) {
+            if (player.getUniqueId() == target.getUuid()) {
                 openDebugMenu(player);
             } else {
                 openTeamMenu(player);
@@ -766,7 +762,7 @@ public class DebugMenu {
                     (n, e) -> {
                         setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
                         target.setSpec(selectedClass.create.get(), skillBoost);
-                        target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
+                        target.getGameState().updatePlayerName(target);
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedClass.name);
                         openSpecMenu(player, target);
                     }

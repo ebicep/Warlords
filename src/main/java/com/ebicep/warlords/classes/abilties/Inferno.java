@@ -14,8 +14,8 @@ import org.bukkit.entity.Player;
 public class Inferno extends AbstractAbility {
 
     private final int duration = 18;
-    private final int critChance = 30;
-    private final int critMultiplier = 30;
+    private int critChanceIncrease = 30;
+    private int critMultiplierIncrease = 30;
 
     public Inferno() {
         super("Inferno", 0, 0, 46.98f, 0, 0, 0);
@@ -24,8 +24,8 @@ public class Inferno extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Combust into a molten inferno,\n" +
-                "§7increasing your Crit Chance by §c" + critChance + "%\n" +
-                "§7and your Crit Multiplier by §c" + critMultiplier + "%§7. Lasts\n" +
+                "§7increasing your Crit Chance by §c" + critChanceIncrease + "%\n" +
+                "§7and your Crit Multiplier by §c" + critMultiplierIncrease + "%§7. Lasts\n" +
                 "§6" + duration + " §7seconds.";
     }
 
@@ -52,14 +52,14 @@ public class Inferno extends AbstractAbility {
             public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
                 if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
                     return currentCritChance;
-                return currentCritChance + critChance;
+                return currentCritChance + critChanceIncrease;
             }
 
             @Override
             public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
                 if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
                     return currentCritMultiplier;
-                return currentCritMultiplier + critMultiplier;
+                return currentCritMultiplier + critMultiplierIncrease;
             }
         });
 
@@ -81,5 +81,21 @@ public class Inferno extends AbstractAbility {
         }.runTaskTimer(0, 3);
 
         return true;
+    }
+
+    public int getCritChanceIncrease() {
+        return critChanceIncrease;
+    }
+
+    public int getCritMultiplierIncrease() {
+        return critMultiplierIncrease;
+    }
+
+    public void setCritChanceIncrease(int critChanceIncrease) {
+        this.critChanceIncrease = critChanceIncrease;
+    }
+
+    public void setCritMultiplierIncrease(int critMultiplierIncrease) {
+        this.critMultiplierIncrease = critMultiplierIncrease;
     }
 }
