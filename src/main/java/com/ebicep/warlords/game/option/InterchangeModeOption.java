@@ -4,8 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.PacketUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,15 +23,15 @@ import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public static final int MAX_SWAP_TIME = 11;//80;
-    public static final int MIN_SWAP_TIME = 10;//40;
+    public static final int MAX_SWAP_TIME = 80;
+    public static final int MIN_SWAP_TIME = 40;
     private final HashMap<UUID, Classes> previousSelectedClasses = new HashMap<>();
     private final HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
     private final HashMap<UUID, HashMap<Classes, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
     private final HashMap<UUID, List<ArmorManager.Helmets>> previousSelectedHelmets = new HashMap<>();
     private final HashMap<UUID, List<ArmorManager.ArmorSets>> previousSelectedArmorSets = new HashMap<>();
 
-    private int ticksUntilNextSwap = 0;
+    private int secondsUntilNextSwap = 0;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -54,8 +57,10 @@ public class InterchangeModeOption implements Option {
 
             @Override
             public void run() {
-                System.out.println(secondsPast + " - " + ticksUntilNextSwap);
-                if (secondsPast >= ticksUntilNextSwap) {
+                if (game.getState() instanceof EndState) {
+                    return;
+                }
+                if (secondsPast >= secondsUntilNextSwap) {
                     swap(game);
                     generateNextSwapTime();
                     secondsPast = 0;
@@ -90,45 +95,73 @@ public class InterchangeModeOption implements Option {
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) return;
-        System.out.println(teamPlayers);
+
+        //Storing all player information as swapping jumbles it up
+        HashMap<UUID, Location> playerLocations = new HashMap<>();
+        HashMap<UUID, Classes> playerClasses = new HashMap<>();
+        HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> playerBoosts = new HashMap<>();
+        HashMap<UUID, HashMap<Classes, Weapons>> playerWeaponSkins = new HashMap<>();
+        HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets = new HashMap<>();
+        HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets = new HashMap<>();
+        HashMap<UUID, Boolean> playerOnHorse = new HashMap<>();
+        for (WarlordsPlayer teamPlayer : teamPlayers) {
+            UUID uuid = teamPlayer.getUuid();
+            playerLocations.put(uuid, teamPlayer.getLocation());
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            playerClasses.put(uuid, playerSettings.getSelectedClass());
+            playerBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
+            playerWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
+            playerHelmets.put(uuid, playerSettings.getHelmets());
+            playerArmorSets.put(uuid, playerSettings.getArmorSets());
+            playerOnHorse.put(uuid, teamPlayer.getEntity().getVehicle() != null);
+        }
 
         //take beginning player to swap with end
         WarlordsPlayer secondPlayer = teamPlayers.get(0);
         String secondPlayerName = secondPlayer.getName();
         UUID secondPlayerUuid = secondPlayer.getUuid();
-        Location secondPlayerLocation = secondPlayer.getLocation();
         LivingEntity secondPlayerEntity = secondPlayer.getEntity();
-        boolean onHorse = secondPlayerEntity.getVehicle() != null;
 
-        PlayerSettings oldSettings = Warlords.getPlayerSettings(secondPlayerUuid);
-        Classes oldClasses = oldSettings.getSelectedClass();
-        ClassesSkillBoosts oldBoost = oldSettings.getSkillBoostForClass();
-        List<ArmorManager.Helmets> oldHelmets = ArmorManager.Helmets.getSelected(secondPlayerUuid);
-        List<ArmorManager.ArmorSets> oldArmorSets = ArmorManager.ArmorSets.getSelected(secondPlayerUuid);
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
 
         for (int i = 0; i < teamPlayers.size() - 1; i++) {
-            transferPlayerStats(teamPlayers.get(i), teamPlayers.get(i + 1));
+            transferPlayerStats(teamPlayers.get(i), teamPlayers.get(i + 1),
+                    playerLocations,
+                    playerClasses,
+                    playerBoosts,
+                    playerWeaponSkins,
+                    playerHelmets,
+                    playerArmorSets,
+                    playerOnHorse
+            );
         }
 
         //give last player first players old stats
         WarlordsPlayer firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
-
         System.out.println("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
 
         UUID firstPlayerUuid = firstPlayer.getUuid();
         firstPlayer.setName(secondPlayerName);
         firstPlayer.setUuid(secondPlayerUuid);
-        firstPlayer.getEntity().teleport(secondPlayerLocation);
-        if (onHorse) {
+        secondPlayerEntity.teleport(playerLocations.get(firstPlayerUuid));
+        firstPlayer.setEntity(secondPlayerEntity);
+        if (playerOnHorse.get(firstPlayerUuid)) {
             firstPlayer.getHorse().spawn();
         }
-        firstPlayer.setEntity(secondPlayerEntity);
+        if (firstPlayer.getEntity() instanceof Player) {
+            PacketUtils.sendTitle((Player) firstPlayer.getEntity(),
+                    ChatColor.YELLOW + "Swapped to",
+                    ChatColor.GREEN.toString() + ChatColor.MAGIC + "00" + ChatColor.GREEN + " " + firstPlayer.getSpecClass().name + "! " + ChatColor.MAGIC + "00",
+                    10, 40, 10
+            );
+        }
         //copying over playersettings
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(firstPlayerUuid);
-        playerSettings.setSelectedClass(oldClasses);
-        playerSettings.setSkillBoostForSelectedClass(oldBoost);
-        playerSettings.setHelmets(oldHelmets);
-        playerSettings.setArmorSets(oldArmorSets);
+        playerSettings.setSelectedClass(playerClasses.get(firstPlayerUuid));
+        playerSettings.setWeaponSkins(playerWeaponSkins.get(firstPlayerUuid));
+        playerSettings.setClassesSkillBoosts(playerBoosts.get(firstPlayerUuid));
+        playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
+        playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
+
         if (firstPlayer.getEntity() instanceof Player) {
             firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
         }
@@ -143,24 +176,39 @@ public class InterchangeModeOption implements Option {
     }
 
     //firstplayer gets the stats of the second
-    private void transferPlayerStats(WarlordsPlayer firstPlayer, WarlordsPlayer secondPlayer) {
+    private void transferPlayerStats(WarlordsPlayer firstPlayer, WarlordsPlayer secondPlayer,
+                                     HashMap<UUID, Location> playerLocations,
+                                     HashMap<UUID, Classes> playerClasses,
+                                     HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> playerBoosts,
+                                     HashMap<UUID, HashMap<Classes, Weapons>> playerWeaponSkins,
+                                     HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets,
+                                     HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets,
+                                     HashMap<UUID, Boolean> playerOnHorse
+    ) {
         System.out.println("SWAP - " + firstPlayer.getName() + " <<< " + secondPlayer.getName());
 
-        UUID uuid = firstPlayer.getUuid();
+        UUID firstPlayerUuid = firstPlayer.getUuid();
         firstPlayer.setName(secondPlayer.getName());
         firstPlayer.setUuid(secondPlayer.getUuid());
-        firstPlayer.getEntity().teleport(secondPlayer.getLocation());
-        if (secondPlayer.getEntity().getVehicle() != null) {
+        secondPlayer.teleport(playerLocations.get(firstPlayerUuid));
+        firstPlayer.setEntity(secondPlayer.getEntity());
+        if (playerOnHorse.get(firstPlayerUuid)) {
             firstPlayer.getHorse().spawn();
         }
-        firstPlayer.setEntity(secondPlayer.getEntity());
+        if (firstPlayer.getEntity() instanceof Player) {
+            PacketUtils.sendTitle((Player) firstPlayer.getEntity(),
+                    ChatColor.YELLOW + "Swapped to",
+                    ChatColor.GREEN.toString() + ChatColor.MAGIC + "00" + ChatColor.GREEN + " " + firstPlayer.getSpecClass().name + "! " + ChatColor.MAGIC + "00",
+                    10, 40, 10
+            );
+        }
         //copying over playersettings
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-        PlayerSettings otherPlayerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
-        playerSettings.setSelectedClass(otherPlayerSettings.getSelectedClass());
-        playerSettings.setSkillBoostForSelectedClass(otherPlayerSettings.getSkillBoostForClass());
-        playerSettings.setHelmets(ArmorManager.Helmets.getSelected(secondPlayer.getUuid()));
-        playerSettings.setArmorSets(ArmorManager.ArmorSets.getSelected(secondPlayer.getUuid()));
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
+        playerSettings.setSelectedClass(playerClasses.get(firstPlayerUuid));
+        playerSettings.setWeaponSkins(playerWeaponSkins.get(firstPlayerUuid));
+        playerSettings.setClassesSkillBoosts(playerBoosts.get(firstPlayerUuid));
+        playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
+        playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
         if (firstPlayer.getEntity() instanceof Player) {
             firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
         }
@@ -175,7 +223,8 @@ public class InterchangeModeOption implements Option {
     }
 
     private void generateNextSwapTime() {
-        this.ticksUntilNextSwap = new Random().nextInt(MAX_SWAP_TIME - MIN_SWAP_TIME) + MIN_SWAP_TIME;
+        this.secondsUntilNextSwap = new Random().nextInt(MAX_SWAP_TIME - MIN_SWAP_TIME) + MIN_SWAP_TIME;
+        System.out.println("Swapping in " + secondsUntilNextSwap + " seconds");
     }
 
 }

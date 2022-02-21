@@ -93,15 +93,11 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
 //        });
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println(i);
-            if (i == 5) throw new NullPointerException("HELLO");
-        }
 
         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-//        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));
-//        System.out.println(ArmorManager.Helmets.getSelected(player.getUniqueId()));
-//
+        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));
+        System.out.println(ArmorManager.Helmets.getSelected(player.getUniqueId()));
+
 //        ArmorManager.resetArmor(player, playerSettings.getSelectedClass(), playerSettings.getWantedTeam());
 
 //        SRCalculator.totalValues.clear();

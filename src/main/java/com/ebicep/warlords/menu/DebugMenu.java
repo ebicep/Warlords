@@ -855,6 +855,7 @@ public class DebugMenu {
                     stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                 });
             }
+            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
             Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
         });
         menu.openForPlayer(player);

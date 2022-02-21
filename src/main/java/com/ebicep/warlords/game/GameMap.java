@@ -25,7 +25,7 @@ import static com.ebicep.warlords.util.GameRunnable.SECOND;
 // "Debug"
 public enum GameMap {
     RIFT(
-            "The Rift",
+            "Rift",
             32,
             12,
             60 * SECOND,
