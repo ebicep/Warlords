@@ -147,6 +147,15 @@ public class CustomScoreboard {
             health = null;
         }
 
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            for (Team team : scoreboard.getTeams()) {
+                if (team.getName().equals(onlinePlayer.getName())) {
+                    team.unregister();
+                    break;
+                }
+            }
+        }
+
         if (loaded) {
             LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
             if (leaderboardCategory == null) return;
