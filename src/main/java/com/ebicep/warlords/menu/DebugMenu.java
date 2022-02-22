@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
@@ -783,7 +784,7 @@ public class DebugMenu {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories())
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories().stream().map(MapCategory::getName).collect(Collectors.joining(", ")))
                             .get(),
                     (n, e) -> openMapsCategoryMenu(player, map)
             );
@@ -856,7 +857,7 @@ public class DebugMenu {
                 });
             }
             System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
-            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
+            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedCategory.name() + " " + stringAddons);
         });
         menu.openForPlayer(player);
     }

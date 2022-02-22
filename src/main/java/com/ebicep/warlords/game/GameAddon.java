@@ -1,7 +1,10 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.game.option.ImposterModeOption;
+import com.ebicep.warlords.game.option.InterchangeModeOption;
+import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
@@ -66,7 +69,7 @@ public enum GameAddon {
     MEGA_GAME("Mega Game", "warlords.game.megagame") {
         @Override
         public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
-            return Integer.MAX_VALUE;
+            return 1000;
         }
 
     },

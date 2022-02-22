@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 
 public class SoulSwitch extends AbstractAbility {
 
-    private final int radius = 15;
+    private final int radius = 13;
 
     public SoulSwitch() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);

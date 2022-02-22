@@ -125,7 +125,7 @@ public enum GameMap {
             options.add(new GateOption(loc, -9, 19, 5, -19, 26, -5));
             options.add(new GateOption(loc, 39, 39, 57, 49, 49, 67));
 
-            options.add(new WinByPointsOption(500));
+            options.add(new WinByPointsOption(400));
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new ScoreOnEventOption.FlagReturn());
@@ -188,6 +188,51 @@ public enum GameMap {
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    SIMULATION_CROSSFIRE(
+            "Illusion Crossfire",
+            11,
+            9,
+            60 * SECOND,
+            "",
+            MapCategory.SIMULATION_TRIAL
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(115.5, 6, 23.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(214.5, 36, 116.5), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(217.5, 36.5, 89.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(96.5, 6.5, 108.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(133, 11.5, 130.5, 125, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(90.5, 11.5, 0.5, -45, 0), Team.BLUE));
+
+            options.add(new FlagSpawnPointOption(loc.addXYZ(225.5, 44.5, 93.5), Team.BLUE));
+
+            options.add(new GateOption(loc, 110, 4, 18, 120, 11, 28));
+            options.add(new GateOption(loc, 209, 34, 111, 219, 42, 121));
+
+            options.add(new WinByPointsOption(400));
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.FlagReturn());
+            options.add(new ScoreOnEventOption.FlagHolding(2));
+            options.add(new SimulationTeleportOption());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());

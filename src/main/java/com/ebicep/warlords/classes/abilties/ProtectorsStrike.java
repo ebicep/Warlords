@@ -91,6 +91,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 }
             }
         });
+
         if (standingOnConsecrate(player, nearPlayer)) {
             nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
         } else {

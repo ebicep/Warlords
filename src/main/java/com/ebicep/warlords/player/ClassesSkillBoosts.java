@@ -49,13 +49,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the crit multiplier bonus of\nInferno by 50% but reduce the crit chance bonus\nby 10%",
-            "§aIncrease the crit multiplier bonus of\n§aInferno by §c50% §abut reduce the crit chance bonus\n§aby §c10%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 55% but reduce the Crit\nChance bonus by 15%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c55% §abut reduce the Crit\nChance bonus §aby §c15%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
-                    ((Inferno) abstractAbility).setCritChanceIncrease(20);
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(80);
+                    ((Inferno) abstractAbility).setCritChanceIncrease(15);
+                    ((Inferno) abstractAbility).setCritMultiplierIncrease(85);
                 }
             }
     ),
@@ -498,12 +498,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the duration\n§7by 4 seconds",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the duration\n§aby §c4 §aseconds",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the range\n§7by 1 block",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the range\n§aby §c1 §ablock",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    ((CapacitorTotem) abstractAbility).setDuration(12);
+                    CapacitorTotem.setRadius(7);
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 }

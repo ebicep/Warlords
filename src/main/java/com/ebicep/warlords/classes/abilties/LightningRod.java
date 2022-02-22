@@ -49,8 +49,9 @@ public class LightningRod extends AbstractAbility {
 
         // pulsedamage
         List<ArmorStand> totemDownAndClose = Utils.getCapacitorTotemDownAndClose(wp, wp.getEntity());
+        int radius = CapacitorTotem.getRadius();
         totemDownAndClose.forEach(totem -> {
-            PlayerFilter.entitiesAround(totem.getLocation(), 6, 6, 6)
+            PlayerFilter.entitiesAround(totem.getLocation(), radius, radius, radius)
                     .aliveEnemiesOf(wp)
                     .forEach(enemy -> enemy.addDamageInstance(
                             wp,
@@ -61,7 +62,7 @@ public class LightningRod extends AbstractAbility {
                             wp.getSpec().getOrange().getCritMultiplier(),
                             false)
                     );
-            new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
+            new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
 
             player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

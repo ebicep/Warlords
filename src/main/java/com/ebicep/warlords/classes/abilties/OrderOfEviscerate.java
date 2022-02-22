@@ -16,8 +16,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 
-import java.util.UUID;
-
 import static com.ebicep.warlords.player.WarlordsPlayer.RECEIVE_ARROW;
 
 public class OrderOfEviscerate extends AbstractAbility {
@@ -32,9 +30,9 @@ public class OrderOfEviscerate extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Cloak yourself for §6" + duration + " §7seconds, granting\n" +
                 "§7you §e40% §7movement speed and making you §einvisible\n" +
-                "§7to the enemy for the duration. However, taking fall damage\n" +
-                "§7or taking any type of ability damage will end your\n" +
-                "§7invisibility." +
+                "§7to the enemy for the duration. However, taking fall\n" +
+                "§7damage or taking any type of ability damage will end\n" +
+                "§7your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable,\n" +
                 "§7increasing the damage they take by §c25% §7for §6" + duration + " §7seconds.\n" +
@@ -43,7 +41,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Blinding Assault and Order of Eviscerate's cooldown\n" +
-                "§7and refund the energy cost.";
+                "§7and refund the energy cost. Assisting in killing your\n" +
+                "§7mark will only refund half the cooldown";
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SoulShackle extends AbstractAbility {
     private float shacklePool = 0;
 
     public SoulShackle() {
-        super("Soul Shackle", 344, 468, 10, 40, 20, 175);
+        super("Soul Shackle", 344, 468, 9, 40, 20, 175);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SoulShackle extends AbstractAbility {
                 "§7making them unable to use their main attack for\n" +
                 "§7the duration. The silence duration increases by §61\n" +
                 "§7second for every §c1000 §7damage you took in the last\n" +
-                "§610 §7seconds." +
+                "§66 §7seconds." +
                 "\n\n" +
                 "§7Has an optimal range of §e" + shackleRange + " §7blocks.";
     }
@@ -118,7 +118,7 @@ public class SoulShackle extends AbstractAbility {
     @Override
     public void runEverySecond() {
         if (shacklePool > 0) {
-            float newPool = shacklePool - 100;
+            float newPool = shacklePool - 150;
             shacklePool = Math.max(newPool, 0);
         }
     }
