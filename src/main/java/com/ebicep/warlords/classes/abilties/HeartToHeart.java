@@ -97,6 +97,7 @@ public class HeartToHeart extends AbstractAbility {
                     EffectUtils.playChainAnimation(wp, heartTarget, Material.CLAY, timer);
 
                     wp.teleportLocationOnly(newLocation);
+                    player.setFallDistance(-5);
                     newLocation.add(0, 1, 0);
                     Matrix4d center = new Matrix4d(newLocation);
                     for (float i = 0; i < 6; i++) {

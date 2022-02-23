@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.WordWrap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -607,8 +608,10 @@ public class DebugMenu {
                 player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to " + marker.getName());
         
             });
+
             x++;
-            if(x > 8) {
+
+            if (x > 8) {
                 x = 0;
                 y++;
             }
@@ -826,7 +829,8 @@ public class DebugMenu {
 
             boolean isASelectedAddon = addons.contains(gameAddon);
             ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
-                    .name(ChatColor.GREEN + gameAddon.getName());
+                    .name(ChatColor.GREEN + gameAddon.getName())
+                    .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
             if (isASelectedAddon) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);

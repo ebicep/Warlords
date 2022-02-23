@@ -665,7 +665,6 @@ public enum ClassesSkillBoosts {
             }
     )
 
-
     ;
 
     public final String name;

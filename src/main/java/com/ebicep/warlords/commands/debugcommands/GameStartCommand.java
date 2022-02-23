@@ -2,7 +2,6 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
-
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.util.Pair;
 import com.ebicep.warlords.util.Utils;
@@ -210,10 +209,6 @@ public class GameStartCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!sender.hasPermission("warlords.game.start")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
 
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
         

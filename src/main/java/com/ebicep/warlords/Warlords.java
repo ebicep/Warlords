@@ -906,8 +906,11 @@ public class Warlords extends JavaPlugin {
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }
-                                wps.setHealth(wps.getHealth() + heal);
-                                wps.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7Healed §a" + heal + " §7health.");
+
+                                if (heal != 0) {
+                                    wps.setHealth(wps.getHealth() + heal);
+                                    wps.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7Healed §a" + heal + " §7health.");
+                                }
                             }
 
                             // Combat Timer - Logs combat time after 4 seconds.

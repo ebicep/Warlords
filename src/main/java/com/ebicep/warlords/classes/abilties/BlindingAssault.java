@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 public class BlindingAssault extends AbstractAbility {
 
     public BlindingAssault() {
-        super("Blinding Assault", 456, 598, 16, 20, 15, 175);
+        super("Blinding Assault", 466, 602, 16, 20, 15, 175);
     }
 
     @Override

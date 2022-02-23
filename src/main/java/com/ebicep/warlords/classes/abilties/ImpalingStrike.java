@@ -43,7 +43,16 @@ public class ImpalingStrike extends AbstractStrikeBase {
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                event.getAttacker().addHealingInstance(event.getAttacker(), "Leech", currentDamageValue * 0.3f, currentDamageValue * 0.3f, isCrit ? 100 : -1, 100, false, false);
+                event.getAttacker().addHealingInstance(
+                        event.getAttacker(),
+                        "Leech",
+                        currentDamageValue * 0.3f,
+                        currentDamageValue * 0.3f,
+                        -1,
+                        100,
+                        false,
+                        false
+                );
             }
         });
     }

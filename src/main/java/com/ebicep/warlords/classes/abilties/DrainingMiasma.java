@@ -88,7 +88,7 @@ public class DrainingMiasma extends AbstractAbility {
                         // 4% current health damage.
                         miasmaTarget.addDamageInstance(
                                 wp,
-                                "Draining Miasma",
+                                name,
                                 50 + healthDamage,
                                 50 + healthDamage,
                                 -1,
