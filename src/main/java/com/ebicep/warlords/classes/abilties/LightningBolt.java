@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -62,9 +63,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             projectile.getHit().add(hit);
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            for (Player player1 : hit.getWorld().getPlayers()) {
-                player1.playSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
-            }
+            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);
@@ -78,9 +77,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     protected void onHit(InternalProjectile projectile, WarlordsPlayer hit) {
         final Location currentLocation = projectile.getCurrentLocation();
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
-        for (Player player1 : projectile.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
-        }
+        Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
         WarlordsPlayer wp = projectile.getShooter();
         for (WarlordsPlayer warlordsPlayer : PlayerFilter
@@ -91,9 +88,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             //hitting player
             warlordsPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
-            }
+            Utils.playGlobalSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
 
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);

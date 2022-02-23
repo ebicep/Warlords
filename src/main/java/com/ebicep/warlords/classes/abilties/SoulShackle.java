@@ -3,10 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.EffectUtils;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,10 +15,10 @@ import javax.annotation.Nonnull;
 public class SoulShackle extends AbstractAbility {
 
     private final int shackleRange = 12;
-    private float absorbPool = 0;
+    private float shacklePool = 0;
 
     public SoulShackle() {
-        super("Soul Shackle", 344, 468, 10, 40, 20, 175);
+        super("Soul Shackle", 344, 468, 9, 40, 20, 175);
     }
 
     @Override
@@ -31,7 +28,7 @@ public class SoulShackle extends AbstractAbility {
                 "§7making them unable to use their main attack for\n" +
                 "§7the duration. The silence duration increases by §61\n" +
                 "§7second for every §c1000 §7damage you took in the last\n" +
-                "§610 §7seconds." +
+                "§66 §7seconds." +
                 "\n\n" +
                 "§7Has an optimal range of §e" + shackleRange + " §7blocks.";
     }
@@ -55,13 +52,10 @@ public class SoulShackle extends AbstractAbility {
                 ChatColor.GRAY + "!"
             );
 
-            int silenceDuration = 2 + (int) (absorbPool / 1000);
+            int silenceDuration = 2 + (int) (shacklePool / 1000);
             if (silenceDuration > 4) {
                 silenceDuration = 4;
             }
-
-            System.out.println(silenceDuration);
-            System.out.println(absorbPool);
 
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             shackleTarget.getCooldownManager().addRegularCooldown(
@@ -71,14 +65,15 @@ public class SoulShackle extends AbstractAbility {
                     tempSoulShackle,
                     wp,
                     CooldownTypes.DEBUFF,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
                     silenceDuration * 20
             );
 
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
-                player1.playSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
-            }
+            shacklePool = 0;
+
+            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
+            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
 
             EffectUtils.playChainAnimation(wp, shackleTarget, Material.PUMPKIN, 20);
 
@@ -99,9 +94,7 @@ public class SoulShackle extends AbstractAbility {
                                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
                             }
                         }
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(playerLoc, Sound.DIG_SAND, 2, 2);
-                        }
+                        Utils.playGlobalSound(wp.getLocation(), Sound.DIG_SAND, 2, 2);
                     } else {
                         this.cancel();
                     }
@@ -114,25 +107,19 @@ public class SoulShackle extends AbstractAbility {
         return false;
     }
 
-    public float getAbsorbPool() {
-        return absorbPool;
+    public float getShacklePool() {
+        return shacklePool;
     }
 
-    public void addToAbsorbPool(float amount) {
-        this.absorbPool += amount;
-    }
-
-    public void setAbsorbPool(float pool) {
-        this.absorbPool = pool;
+    public void addToShacklePool(float amount) {
+        this.shacklePool += amount;
     }
 
     @Override
     public void runEverySecond() {
-        if (absorbPool > 0) {
-            float newPool = absorbPool - 100;
-            absorbPool = Math.max(newPool, 0);
+        if (shacklePool > 0) {
+            float newPool = shacklePool - 150;
+            shacklePool = Math.max(newPool, 0);
         }
-
-        System.out.println(absorbPool);
     }
 }

@@ -8,11 +8,11 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -27,6 +27,8 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,13 +38,11 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 
 public class PlayingState implements State, TimerDebugAble {
 
@@ -127,6 +127,8 @@ public class PlayingState implements State, TimerDebugAble {
             counter += delay / GameRunnable.SECOND;
             timer += delay;
         });
+
+        Warlords.getInstance().hideAndUnhidePeople();
     }
 
     @Override
@@ -275,21 +277,18 @@ public class PlayingState implements State, TimerDebugAble {
 
     /**
      * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
-     * @param customScoreboard the scoreboard to update
      * @param warlordsPlayer the player changing
      */
-    public void updatePlayerName(@Nonnull CustomScoreboard customScoreboard, @Nonnull WarlordsPlayer warlordsPlayer) {
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-
+    public void updatePlayerName(@Nonnull WarlordsPlayer warlordsPlayer) {
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer wp = Warlords.getPlayer(player);
-            if (wp != null) {
-                int level = ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass());
-                scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
-                scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
-            }
+            Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
+            int level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
+            //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
+            scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
+            scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
         });
     }
+
     private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         List<String> scoreboard = new ArrayList<>();
 

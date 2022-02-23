@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -55,9 +54,7 @@ public class FallenSouls extends AbstractAbility {
 
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
 
         new GameRunnable(wp.getGame()) {
 

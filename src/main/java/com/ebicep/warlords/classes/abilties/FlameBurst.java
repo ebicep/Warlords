@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -55,9 +56,8 @@ public class FlameBurst extends AbstractProjectileBase {
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1, 3, currentLocation, 500);
 
-        for (Player player1 : currentLocation.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.flameburst.impact", 2, 1);
-        }
+        Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
+
 
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)

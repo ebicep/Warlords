@@ -5,11 +5,11 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.WarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.GameMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
@@ -710,8 +710,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
-            RuntimeException e = new RuntimeException("Problems closing the game");
-            e.initCause(exceptions.get(0));
+            RuntimeException e = new RuntimeException("Problems closing the game", exceptions.get(0));
             for (int i = 1; i < exceptions.size(); i++) {
                 e.addSuppressed(exceptions.get(i));
             }

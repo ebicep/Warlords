@@ -9,7 +9,7 @@ public class GameFreezeWhenOfflineOption implements Option {
 
     private static final String FROZEN_MESSAGE = ChatColor.YELLOW + "Missing player detected!";
     private static final int UNFREEZE_TIME = 5;
-    private static final int FREEZE_TIME = 15;
+    private static final int FREEZE_TIME = 10;
 
     private int timer = 0;
     private boolean isFrozen = false;

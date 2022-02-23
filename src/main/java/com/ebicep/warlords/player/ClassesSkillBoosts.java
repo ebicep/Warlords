@@ -33,8 +33,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(45);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
                 }
             }
     ),
@@ -47,18 +45,18 @@ public enum ClassesSkillBoosts {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(60);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
             }
     ),
     INFERNO("Inferno",
-            "§7Reduce the cooldown of Inferno\n§7by 25%",
-            "§aReduce the cooldown of Inferno\n§aby §c25%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 55% but reduce the Crit\nChance bonus by 15%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c55% §abut reduce the Crit\nChance bonus §aby §c15%",
             Inferno.class,
             abstractAbility -> {
-
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                if (abstractAbility instanceof Inferno) {
+                    ((Inferno) abstractAbility).setCritChanceIncrease(15);
+                    ((Inferno) abstractAbility).setCritMultiplierIncrease(85);
+                }
             }
     ),
     FROST_BOLT("Frostbolt",
@@ -96,8 +94,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(75);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
             }
     ),
@@ -109,8 +105,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof IceBarrier) {
                     ((IceBarrier) abstractAbility).setDamageReductionPercent(60);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT BARRIER");
                 }
             }
     ),
@@ -138,7 +132,6 @@ public enum ClassesSkillBoosts {
             TimeWarp.class,
             abstractAbility -> {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
@@ -150,8 +143,6 @@ public enum ClassesSkillBoosts {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(65);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
             }
     ),
@@ -163,8 +154,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof HealingRain) {
                     ((HealingRain) abstractAbility).setDuration(16);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT HEALING RAIN");
                 }
             }
     ),
@@ -205,17 +194,18 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof BloodLust) {
                     ((BloodLust) abstractAbility).setDamageConvertPercent(70);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT BLOODLUST");
                 }
             }
     ),
     BERSERK("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 25%",
-            "§aReduce the cooldown of Berserk\n§aby §c25%",
+            "§7Increase the damage bonus of Berserk\n§7by 20% but increase the damage you take\n§7by 10%",
+            "§aIncrease the damage bonus of Berserk\n§aby §c20% §abut increase the damage you take\n§aby §c10%",
             Berserk.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                if (abstractAbility instanceof Berserk) {
+                    ((Berserk) abstractAbility).setDamageIncrease(50);
+                    ((Berserk) abstractAbility).setDamageTakenIncrease(20);
+                }
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
@@ -235,8 +225,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof SeismicWave) {
                     ((SeismicWave) abstractAbility).setVelocity(1.8f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
                 }
             }
     ),
@@ -261,16 +249,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 15%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c15%",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§75% §7and reduce the cooldown by 20%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c5% §aand reduce the cooldown by §c20%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
-                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(60);
-                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
+                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(55);
+                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(45);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
@@ -291,8 +277,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof RecklessCharge) {
                     ((RecklessCharge) abstractAbility).setStunTimeInTicks(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
                 }
             }
     ),
@@ -321,8 +305,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof UndyingArmy) {
                     ((UndyingArmy) abstractAbility).setMaxArmyAllies(8);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT UNDYING ARMY");
                 }
             }
     ),
@@ -343,8 +325,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE AVE");
                 }
             }
     ),
@@ -356,8 +336,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof LightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                     ((LightInfusion) abstractAbility).setDuration(5);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION AVE");
                 }
             }
     ),
@@ -377,8 +355,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof AvengersWrath) {
                     ((AvengersWrath) abstractAbility).setDuration(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION AVE");
                 }
             }
     ),
@@ -399,8 +375,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE CRUS");
                 }
             }
     ),
@@ -412,8 +386,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof LightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                     ((LightInfusion) abstractAbility).setDuration(6);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION CRUS");
                 }
             }
     ),
@@ -425,8 +397,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                     ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT HOLY CRUS");
                 }
             }
     ),
@@ -457,8 +427,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(8);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE PROT");
                 }
             }
     ),
@@ -470,8 +438,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof LightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                     ((LightInfusion) abstractAbility).setDuration(5);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION PROT");
                 }
             }
     ),
@@ -520,8 +486,6 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
                     ((Windfury) abstractAbility).setProcChance(55);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT WINDFURY");
                 }
             }
     ),
@@ -534,16 +498,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the duration\n§7by 4 seconds",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the duration\n§aby §c4 §aseconds",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the range\n§7by 1 block",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the range\n§aby §c1 §ablock",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    ((CapacitorTotem) abstractAbility).setDuration(12);
+                    CapacitorTotem.setRadius(7);
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT WINDFURY");
                 }
             }
     ),
@@ -572,8 +534,6 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding) {
                     ((Soulbinding) abstractAbility).setBindDuration(3);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT SOULBINDING");
                 }
             }
     ),
@@ -585,8 +545,6 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof Repentance) {
                     ((Repentance) abstractAbility).setDamageConvertPercent(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT REPENTENCE");
                 }
             }
     ),
@@ -599,8 +557,6 @@ public enum ClassesSkillBoosts {
                     ((DeathsDebt) abstractAbility).setRespiteRadius(14);
                     ((DeathsDebt) abstractAbility).setDebtRadius(12);
                     ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.125f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT DEBT");
                 }
             }
     ),
@@ -662,6 +618,34 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
     ),
+    INCENDIARY_CURSE("Incendiary Curse",
+            "§7PLACEHOLDER",
+            "7PLACEHOLDER",
+            IncendiaryCurse.class,
+            abstractAbility -> {
+            }
+    ),
+    BLINDING_ASSAULT("Blinding Assault",
+            "7PLACEHOLDER",
+            "7PLACEHOLDER",
+            BlindingAssault.class,
+            abstractAbility -> {
+            }
+    ),
+    PLACEHOLDER("Blinding Assault",
+            "7PLACEHOLDER",
+            "7PLACEHOLDER",
+            SoulSwitch.class,
+            abstractAbility -> {
+            }
+    ),
+    ORDER_OF_EVISCERATE("Order Of Eviscerate",
+            "7PLACEHOLDER",
+            "7PLACEHOLDER",
+            OrderOfEviscerate.class,
+            abstractAbility -> {
+            }
+    ),
     RIGHTEOUS_STRIKE("Righteous Strike",
             "§7Increase the amount of damage you\n§7deal with Righteous Strike\n§7by 20%",
             "§aIncrease the amount of damage you\n§adeal with Righteous Strike\n§aby §c20%",
@@ -680,7 +664,6 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
     )
-
 
     ;
 

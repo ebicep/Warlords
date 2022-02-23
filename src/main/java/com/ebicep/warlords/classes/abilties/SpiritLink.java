@@ -1,9 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -25,8 +26,8 @@ public class SpiritLink extends AbstractChainBase {
         description = "§7Links your spirit with up to §c3 §7enemy\n" +
                 "§7players, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to the first target hit. Each additional hit\n" +
-                "§7deals §c10% §7reduced damage. You gain §e40%\n" +
-                "§7speed for §61.5 §7seconds, and take §c20%\n" +
+                "§7deals §c20% §7reduced damage. You gain §e40%\n" +
+                "§7speed for §61.5 §7seconds, and take §c15%\n" +
                 "§7reduced damage for §64.5 §7seconds.";
     }
 
@@ -93,8 +94,23 @@ public class SpiritLink extends AbstractChainBase {
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
         // speed buff
         warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
-        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "LINK", SpiritLink.class, new SpiritLink(), warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
-        }, (int) (4.5 * 20));
+        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<SpiritLink>(
+                name,
+                "LINK",
+                SpiritLink.class,
+                new SpiritLink(),
+                warlordsPlayer,
+                CooldownTypes.BUFF,
+                cooldownManager -> { },
+                (int) (4.5 * 20)
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float newDamageValue = currentDamageValue * .85f;
+                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                return newDamageValue;
+            }
+        });
 
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 

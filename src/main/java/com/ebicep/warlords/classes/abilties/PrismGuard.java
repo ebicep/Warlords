@@ -3,8 +3,10 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -42,21 +44,36 @@ public class PrismGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         PrismGuard tempWideGuard = new PrismGuard();
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",
                 PrismGuard.class,
                 tempWideGuard,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 4 * 20
-        );
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                String ability = event.getAbility();
+                if (
+                        ability.equals("Fireball") ||
+                        ability.equals("Frostbolt") ||
+                        ability.equals("Water Bolt") ||
+                        ability.equals("Lightning Bolt") ||
+                        ability.equals("Flame Burst")
+                ) {
+                    return currentDamageValue * .3f;
+                }
+                return currentDamageValue;
+            }
+        });
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
-            player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
-        }
+        Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
+        Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
+
 
         // First Particle Sphere
         playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 2.5, 68, 176, 176);
@@ -66,10 +83,7 @@ public class PrismGuard extends AbstractAbility {
             @Override
             public void run() {
                 playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 1, 65, 185, 185);
-
-                for (Player player1 : wp.getWorld().getPlayers()) {
-                    player1.playSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
-                }
+                Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
             }
         }.runTaskLater(3);
 
@@ -90,24 +104,39 @@ public class PrismGuard extends AbstractAbility {
                             .aliveTeammatesOfExcludingSelf(wp)
                     ) {
                         bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
-                        bubblePlayer.getCooldownManager().addRegularCooldown(
+                        bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                 "Wide Guard",
                                 "GUARD",
                                 PrismGuard.class,
                                 tempWideGuard,
                                 wp,
                                 CooldownTypes.ABILITY,
-                                cooldownManager -> {},
-                                20);
+                                cooldownManager -> {
+                                },
+                                4 * 20
+                        ) {
+                                    @Override
+                                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        String ability = event.getAbility();
+                                        if (
+                                                ability.equals("Fireball") ||
+                                                        ability.equals("Frostbolt") ||
+                                                        ability.equals("Water Bolt") ||
+                                                        ability.equals("Lightning Bolt") ||
+                                                        ability.equals("Flame Burst")
+                                        ) {
+                                            return currentDamageValue * .3f;
+                                        }
+                                        return currentDamageValue;
+                                    }
+                                });
                         timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
                     }
                 } else {
                     this.cancel();
 
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
-                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
-                    }
+                    Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
 
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // 5% missing health * 4
@@ -131,7 +160,7 @@ public class PrismGuard extends AbstractAbility {
                     circle.playEffects();
                 }
             }
-        }.runTaskTimer( 5, 4);
+        }.runTaskTimer(5, 4);
 
         return true;
     }

@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 public class Party {
 
     private final List<PartyPlayer> partyPlayers = new ArrayList<>();
-    private boolean open = false;
-    private boolean allInvite = false;
     private final List<Poll> polls = new ArrayList<>();
     private final HashMap<UUID, Integer> invites = new HashMap<>();
     private final BukkitTask partyTask;
+    private final RegularGamesMenu regularGamesMenu = new RegularGamesMenu(this);
+    private boolean open = false;
+    private boolean allInvite = false;
 
     public Party(UUID leader, boolean open) {
         partyPlayers.add(new PartyPlayer(leader, PartyPlayerType.LEADER));
@@ -59,6 +60,29 @@ public class Party {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
+    }
+
+    public static void sendMessageToPlayer(Player player, String message, boolean withBorder, boolean centered) {
+        if (centered) {
+            if (withBorder) {
+                ChatUtils.sendCenteredMessage(player, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            String[] messages = message.split("\n");
+            for (String s : messages) {
+                ChatUtils.sendCenteredMessage(player, s);
+            }
+            if (withBorder) {
+                ChatUtils.sendCenteredMessage(player, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        } else {
+            if (withBorder) {
+                player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            player.sendMessage(message);
+            if (withBorder) {
+                player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        }
     }
 
     public void invite(String name) {
@@ -262,29 +286,6 @@ public class Party {
         return partyPlayers.stream().filter(partyPlayer -> partyPlayer.getUuid().equals(uuid)).findFirst().orElse(null);
     }
 
-    public static void sendMessageToPlayer(Player player, String message, boolean withBorder, boolean centered) {
-        if (centered) {
-            if (withBorder) {
-                ChatUtils.sendCenteredMessage(player, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            String[] messages = message.split("\n");
-            for (String s : messages) {
-                ChatUtils.sendCenteredMessage(player, s);
-            }
-            if (withBorder) {
-                ChatUtils.sendCenteredMessage(player, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        } else {
-            if (withBorder) {
-                player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            player.sendMessage(message);
-            if (withBorder) {
-                player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        }
-    }
-
     public void sendMessageToAllPartyPlayers(String message, boolean withBorder, boolean centered) {
         getAllPartyPeoplePlayerOnline().forEach(partyMember -> {
             sendMessageToPlayer(partyMember, message, withBorder, centered);
@@ -320,5 +321,9 @@ public class Party {
 
     public HashMap<UUID, Integer> getInvites() {
         return invites;
+    }
+
+    public RegularGamesMenu getRegularGamesMenu() {
+        return regularGamesMenu;
     }
 }

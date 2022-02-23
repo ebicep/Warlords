@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -55,9 +56,7 @@ public class WaterBolt extends AbstractProjectileBase {
         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
 
-        for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.waterbolt.impact", 2, 1);
-        }
+        Utils.playGlobalSound(currentLocation, "mage.waterbolt.impact", 2, 1);
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 

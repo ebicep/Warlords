@@ -19,24 +19,24 @@ public enum ClassesGroup {
     WARRIOR(
             "Warrior",
             new ItemStack(Material.COAL, 1, (short) 1),
-            "§7The Warrior uses brute force to\n§7overpower his opponents in melee\n§7combat or to defend his allies.",
+            "§7The Warrior uses brute force to\n§7overpower their opponents in melee\n§7combat or to defend their allies.",
             BERSERKER, DEFENDER, REVENANT
     ),
     PALADIN(
             "Paladin",
             new ItemStack(Material.INK_SACK, 1, (short) 11),
-            "§7The Paladin's strongest ally is the\n§7light. He uses it to empower his\n§7weapon in order to vanquish foes and\n§7protect teammates.",
+            "§7The Paladin's strongest ally is the\n§7light. They use it to empower their\n§7weapon in order to vanquish foes and\n§7protect teammates.",
             AVENGER, CRUSADER, PROTECTOR
     ),
     SHAMAN(
             "Shaman",
             new ItemStack(Material.INK_SACK, 1, (short) 2),
-            "§7The Shaman has an unbreakable bond\n§7with nature. This grants him access to\n§7devastating abilities that are\n§7empowered by the elements.",
+            "§7The Shaman has an unbreakable bond\n§7with nature. This grants them access to\n§7devastating abilities that are\n§7empowered by the elements.",
             THUNDERLORD, SPIRITGUARD, EARTHWARDEN
     ),
     ROGUE(
             "Rogue",
-            new ItemStack(Material.INK_SACK, 1, (short) 2),
+            new ItemStack(Material.INK_SACK, 1, (short) 9),
             "§7The Rogue is a master of deception.\n§7Always looking to gain the upper hand\n§7in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
     )

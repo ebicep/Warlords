@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -139,10 +140,7 @@ public class PowerupOption implements Option {
         entity.setVisible(false);
         entity.setCustomNameVisible(true);
 
-        game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-            player.playSound(location, "ctf.powerup.spawn", 2, 1);
-        });
-
+        Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }
 
     public Location getLocation() {
@@ -225,9 +223,7 @@ public class PowerupOption implements Option {
                 );
                 warlordsPlayer.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
                 warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
-                for (Player player1 : option.getLocation().getWorld().getPlayers()) {
-                    player1.playSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
-                }
+                Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 
             @Override
@@ -288,7 +284,7 @@ public class PowerupOption implements Option {
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Damage",
-                        "Damage",
+                        "DMG",
                         DamagePowerup.class,
                         DamagePowerup.DAMAGE_POWERUP,
                         null,

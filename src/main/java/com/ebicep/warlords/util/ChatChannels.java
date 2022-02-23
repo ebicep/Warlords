@@ -1,4 +1,4 @@
-package com.ebicep.warlords;
+package com.ebicep.warlords.util;
 
 public enum ChatChannels {
 

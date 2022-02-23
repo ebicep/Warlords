@@ -90,7 +90,7 @@ public enum Classes {
             EARTHEN_SPIKE, BOULDER, EARTHLIVING_WEAPON, CHAIN_HEAL, HEALING_TOTEM),
     ASSASSIN("Assassin",
             Assassin::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Rogue specialization that serves the art of stealth, rapidly taking out any enemies who cross them.", 200),
+            WordWrap.wrapWithNewline("§7A damage-oriented Rogue specialization that is a master of stealth, rapidly taking out any enemies who cross them.", 200),
             SpecType.DAMAGE,
             EARTHEN_SPIKE),
     VINDICATOR("Vindicator",
@@ -100,7 +100,7 @@ public enum Classes {
             EARTHEN_SPIKE),
     APOTHECARY("Apothecary",
             Apothecary::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes while aiding allies.", 200),
+            WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", 200),
             SpecType.HEALER,
             EARTHEN_SPIKE),
 

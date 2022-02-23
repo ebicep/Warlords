@@ -1,13 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.EffectUtils;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -22,12 +22,13 @@ public class RemedicChains extends AbstractAbility {
     private final float healingMultiplier = 0.125f;
 
     public RemedicChains() {
-        super("Remedic Chains", 643, 770, 16, 40, 20, 200);
+        super("Remedic Chains", 636, 758, 16, 40, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, causing them\n" +
+        description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
+                "§7the damage they deal by §c10% §7and causing them\n" +
                 "§7them to regenerate §a3% §7max health (even when\n" +
                 "§7taking damage) as long as the link is active.\n" +
                 "Lasts §6" + duration + " §7seconds" +
@@ -45,23 +46,29 @@ public class RemedicChains extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         RemedicChains tempRemedicChain = new RemedicChains();
 
-        int targethit = 0;
+        int targetHit = 0;
         for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(alliesAffected)
         ) {
-            chainTarget.getCooldownManager().addRegularCooldown(
-                    "Remedic Chains",
+            chainTarget.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
+                    name,
                     "REMEDIC",
                     RemedicChains.class,
                     tempRemedicChain,
                     wp,
                     CooldownTypes.ABILITY,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
                     duration * 20
-            );
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 1.1f;
+                }
+            });
 
             player.sendMessage(
                     WarlordsPlayer.RECEIVE_ARROW +
@@ -72,7 +79,7 @@ public class RemedicChains extends AbstractAbility {
 
             HashMap<WarlordsPlayer, Integer> timeLinked = new HashMap<>();
 
-            targethit++;
+            targetHit++;
             new GameRunnable(wp.getGame()) {
                 int counter = 0;
                 @Override
@@ -108,8 +115,7 @@ public class RemedicChains extends AbstractAbility {
 
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
-                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250);
-
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
                             // Ally is out of range, break link
                             if (outOfRange) {
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
@@ -127,7 +133,7 @@ public class RemedicChains extends AbstractAbility {
                                 }
 
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
-                                chainTarget.sendMessage(ChatColor.RED + " You left the link range early!");
+                                chainTarget.sendMessage(ChatColor.RED + "You left the link range early!");
                                 this.cancel();
                             }
 
@@ -151,9 +157,8 @@ public class RemedicChains extends AbstractAbility {
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
 
-                            for (Player player1 : wp.getWorld().getPlayers()) {
-                                player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
-                            }
+                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
+
                             this.cancel();
                         }
                     }
@@ -163,26 +168,30 @@ public class RemedicChains extends AbstractAbility {
             }.runTaskTimer(0, 0);
         }
 
-        if (targethit >= 1) {
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
-                player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 2);
-            }
+        if (targetHit >= 1) {
+            Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
+            Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_BREATH, 2, 0.3f);
 
             wp.subtractEnergy(energyCost);
-            wp.getCooldownManager().addRegularCooldown(
-                    "Remedic Chains",
+            wp.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
+                    name,
                     "REMEDIC",
                     RemedicChains.class,
                     tempRemedicChain,
                     wp,
                     CooldownTypes.ABILITY,
-                    cooldownManager -> wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false),
+                    cooldownManager -> {
+                    },
                     duration * 20
-            );
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 1.1f;
+                }
+            });
         }
 
-        return targethit >= 1;
+        return targetHit >= 1;
     }
 
 }

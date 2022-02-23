@@ -16,13 +16,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.OptionalInt;
 
 import static com.ebicep.warlords.util.GameRunnable.SECOND;
-import javax.annotation.Nullable;
 
 /**
  * Causes the game to end in a draw after a timeout
@@ -182,7 +182,28 @@ public class WinAfterTimeoutOption implements Option {
             public void run() {
                 timeRemaining--;
                 if (timeRemaining <= 0) {
-                    WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, WinAfterTimeoutOption.this, winner);
+                    Team leader;
+                    if (winner == null) {
+                        int higest = Integer.MIN_VALUE;
+                        int secondHighest = Integer.MIN_VALUE;
+                        leader = null;
+                        for (Team team : TeamMarker.getTeams(game)) {
+                            int points = game.getPoints(team);
+                            if (points > higest) {
+                                leader = team;
+                                secondHighest = higest;
+                                higest = points;
+                            } else if (points > secondHighest) {
+                                secondHighest = points;
+                            }
+                        }
+                        if (higest <= secondHighest) {
+                            leader = null;
+                        }
+                    } else {
+                        leader = winner;
+                    }
+                    WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, WinAfterTimeoutOption.this, leader);
                     Bukkit.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         cancel();

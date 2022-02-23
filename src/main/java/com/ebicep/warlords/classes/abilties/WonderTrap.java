@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -34,9 +35,7 @@ public class WonderTrap extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         WonderTrap tempTrap = new WonderTrap();
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
 
         Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
         trap.runTaskTimer(Warlords.getInstance(), 0, 0);
@@ -65,7 +64,7 @@ public class WonderTrap extends AbstractAbility {
                         break;
                 }
 
-                if (counter > 2 && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && trap.isCanEndEarly()) {
+                if (counter > 2 && wp.isSneaking() && trap.isCanEndEarly()) {
                     trap.cancel();
                     this.cancel();
                     textCooldown.setRemove(true);
@@ -109,11 +108,9 @@ public class WonderTrap extends AbstractAbility {
                 timeToLive--;
                 trapArmTime--;
 
-                if (trapOwner.getEntity() instanceof Player && ((Player) trapOwner.getEntity()).isSneaking() && canEndEarly) {
+                if (trapOwner.isSneaking() && canEndEarly) {
 
-                    for (Player player1 : trapStand.getWorld().getPlayers()) {
-                        player1.playSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
-                    }
+                    Utils.playGlobalSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
 
                     EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, ParticleEffect.FIREWORKS_SPARK);
 

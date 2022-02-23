@@ -1,10 +1,20 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
+import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
+
+import static com.ebicep.warlords.util.Utils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
 
@@ -29,6 +39,59 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
+        wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<ProtectorsStrike>(
+                "Protectors Strike",
+                "",
+                ProtectorsStrike.class,
+                new ProtectorsStrike(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                }
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                String ability = event.getAbility();
+                // Protector's Strike
+                if (ability.equals("Protector's Strike")) {
+                    float healthFraction = lerp(0, 1, (float) wp.getHealth() / wp.getMaxHealth());
+
+                    if (healthFraction > 1) {
+                        healthFraction = 1; // in the case of overheal
+                    }
+
+                    if (healthFraction < 0) {
+                        healthFraction = 0;
+                    }
+
+                    float allyHealing = 0.5f + healthFraction * 0.5f;
+                    float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
+
+                    // Self Heal
+                    if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing * 1.2f, currentDamageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                    } else {
+                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
+                    }
+
+                    // Ally Heal
+                    for (WarlordsPlayer ally : PlayerFilter
+                            .entitiesAround(wp, 10, 10, 10)
+                            .aliveTeammatesOfExcludingSelf(wp)
+                            .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+                                    .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())))
+                            .limit(2)
+                    ) {
+                        if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                            ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing * 1.2f, currentDamageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                        } else {
+                            ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing, currentDamageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
+                        }
+                    }
+                }
+            }
+        });
+
         if (standingOnConsecrate(player, nearPlayer)) {
             nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
         } else {

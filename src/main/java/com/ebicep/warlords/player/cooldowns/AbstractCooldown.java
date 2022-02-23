@@ -4,7 +4,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> {
+public abstract class AbstractCooldown<T> implements DamageHealingInstance {
 
     protected String name;
     protected String nameAbbreviation;

@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -35,9 +36,8 @@ public class TimeWarp extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "TIME", TimeWarp.class, new TimeWarp(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
+
         new GameRunnable(wp.getGame()) {
 
             int time = duration - 1;
@@ -90,9 +90,8 @@ public class TimeWarp extends AbstractAbility {
                         time -= 1;
                     } else {
                         wp.addHealingInstance(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false, false);
-                        for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
-                            player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                        }
+                        Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
+
                         wp.getEntity().teleport(warpLocation);
 
                         warpTrail.clear();
@@ -104,9 +103,8 @@ public class TimeWarp extends AbstractAbility {
                 counter++;
 
                 if (!wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
-                    for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                    }
+                    Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
+
                     wp.getEntity().teleport(warpLocation);
 
                     warpTrail.clear();

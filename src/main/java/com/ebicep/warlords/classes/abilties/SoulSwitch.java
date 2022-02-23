@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -12,11 +13,11 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 
-public class CrossVital extends AbstractAbility {
+public class SoulSwitch extends AbstractAbility {
 
-    private final int radius = 15;
+    private final int radius = 13;
 
-    public CrossVital() {
+    public SoulSwitch() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);
     }
 
@@ -31,13 +32,15 @@ public class CrossVital extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), radius, 7.5, radius)
+                .entitiesAround(wp.getLocation(), radius, 6, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .closestFirst(wp)
         ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(ChatColor.RED + "You cannot Soul Switch with a player holding the flag!");
+            } else if (wp.getCarriedFlag() != null) {
+                wp.sendMessage(ChatColor.RED + "You cannot Soul Switch while holding the flag!");
             } else {
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();
@@ -63,9 +66,7 @@ public class CrossVital extends AbstractAbility {
                 EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
                 EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
-                }
+                Utils.playGlobalSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
 
                 return true;
             }

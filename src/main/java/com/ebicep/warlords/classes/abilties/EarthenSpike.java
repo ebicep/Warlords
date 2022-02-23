@@ -85,9 +85,7 @@ public class EarthenSpike extends AbstractAbility {
                             WarlordsPlayer user = earthenSpikeBlock.getUser();
 
                             if (earthenSpikeBlock.getDuration() % 5 == 1) {
-                                for (Player player1 : wp.getWorld().getPlayers()) {
-                                    player1.playSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
-                                }
+                                Utils.playGlobalSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
                             }
 
                             if (earthenSpikeBlock.getDuration() > 30) {
@@ -136,20 +134,18 @@ public class EarthenSpike extends AbstractAbility {
                             } else {
                                 //impact
                                 Location targetLocation = target.getLocation();
-                                for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                                for (WarlordsPlayer spikeTarget : PlayerFilter
                                         .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                         .aliveEnemiesOf(wp)
                                 ) {
-                                    warlordsPlayer.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    spikeTarget.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     //todo tweak distance to ground where you cant get kbed up (1.81 is max jump blocks, double spike kb might be possible with this)
-                                    if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.81) {
-                                        warlordsPlayer.setVelocity(new Vector(0, .625, 0));
+                                    if (Utils.getDistance(spikeTarget.getEntity(), .1) < 1.81) {
+                                        spikeTarget.setVelocity(new Vector(0, .625, 0));
                                     }
                                 }
 
-                                for (Player player1 : wp.getWorld().getPlayers()) {
-                                    player1.playSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
-                                }
+                                Utils.playGlobalSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
 
                                 targetLocation.setYaw(0);
                                 for (int i = 0; i < 100; i++) {
@@ -178,7 +174,7 @@ public class EarthenSpike extends AbstractAbility {
                                 earthenSpikeBlock.setDuration(-1);
                                 this.cancel();
                             }
-                            if (target.isDeath()) {
+                            if (target.isDead()) {
                                 earthenSpikeBlock.setDuration(-1);
                                 this.cancel();
                             }

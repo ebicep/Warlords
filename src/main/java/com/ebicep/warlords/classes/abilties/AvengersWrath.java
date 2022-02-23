@@ -1,12 +1,15 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
 
 public class AvengersWrath extends AbstractAbility {
 
@@ -28,14 +31,12 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player p) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         AvengersWrath tempAvengersWrath = new AvengersWrath();
         wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : wp.getWorld().getPlayers()) {
-            player1.playSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
-        }
+        Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         new GameRunnable(wp.getGame()) {
             @Override

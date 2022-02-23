@@ -3,12 +3,14 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -41,10 +43,8 @@ public class Vindicate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
-            player1.playSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
-            player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
+        Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
 
         Vindicate tempVindicate = new Vindicate();
 
@@ -91,7 +91,7 @@ public class Vindicate extends AbstractAbility {
             vindicateSelfDuration = 12;
         }
 
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
                 "Vindicate Resistance",
                 "VIND RES",
                 Vindicate.class,
@@ -99,7 +99,13 @@ public class Vindicate extends AbstractAbility {
                 wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
-                vindicateSelfDuration * 20);
+                vindicateSelfDuration * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * .75f;
+            }
+        });
 
         vindicateSelfDuration = 8;
 

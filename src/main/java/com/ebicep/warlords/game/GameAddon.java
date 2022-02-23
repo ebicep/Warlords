@@ -1,7 +1,10 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.game.option.ImposterModeOption;
+import com.ebicep.warlords.game.option.InterchangeModeOption;
+import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
@@ -16,7 +19,11 @@ import javax.annotation.Nullable;
 
 public enum GameAddon {
 
-    PRIVATE_GAME("Private Game", null) {
+    PRIVATE_GAME(
+            "Private Game",
+            null,
+            "Initiates a private game where no other people can join."
+    ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
@@ -42,7 +49,11 @@ public enum GameAddon {
             }
         }
     },
-    IMPOSTER_MODE("Imposter Mode", "warlords.game.impostertoggle") {
+    IMPOSTER_MODE(
+            "Imposter Mode",
+            "warlords.game.impostertoggle",
+            "The game will assign players to intentionally boycott the game to make their team lose without being caught."
+    ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new ImposterModeOption());
@@ -54,7 +65,11 @@ public enum GameAddon {
             return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
-    COOLDOWN_MODE("Cooldown Mode", "warlords.game.cooldowngame") {
+    COOLDOWN_MODE(
+            "Cooldown Mode",
+            "warlords.game.cooldowngame",
+            "Reduces energy costs and cooldowns by 50% and increases max health by 50%."
+    ) {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
             player.setMaxHealth((int) (player.getMaxHealth() * 1.5));
@@ -63,14 +78,33 @@ public enum GameAddon {
             player.setCooldownModifier(player.getCooldownModifier() * 0.5);
         }
     },
-    MEGA_GAME("Mega Game", "warlords.game.megagame") {
+    TRIPLE_HEALTH(
+            "Triple Health",
+            null,
+            "Triples all players' health."
+    ) {
+        @Override
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+            player.setMaxHealth(player.getMaxHealth() * 3);
+            player.setHealth(player.getHealth() * 3);
+        }
+    },
+    MEGA_GAME(
+            "Mega Game",
+            "warlords.game.megagame",
+            "Allows any map to hold unlimited players."
+    ) {
         @Override
         public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
-            return Integer.MAX_VALUE;
+            return 1000;
         }
 
     },
-    INTERCHANGE_MODE("Interchange Mode", null) {
+    INTERCHANGE_MODE(
+            "Interchange Mode",
+            null,
+            "Players on the same team will swap locations with each other at random intervals."
+    ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new InterchangeModeOption());
@@ -82,10 +116,12 @@ public enum GameAddon {
     private final String name;
     @Nullable
     private final String permission;
+    private final String description;
 
-    GameAddon(String name, @Nullable String permission) {
+    GameAddon(String name, @Nullable String permission, String description) {
         this.name = name;
         this.permission = permission;
+        this.description = description;
     }
 
     public boolean hasPermission(CommandSender sender) {
@@ -94,6 +130,10 @@ public enum GameAddon {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void modifyGame(@Nonnull Game game) {
@@ -126,4 +166,5 @@ public enum GameAddon {
     public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
         return true;
     }
+
 }

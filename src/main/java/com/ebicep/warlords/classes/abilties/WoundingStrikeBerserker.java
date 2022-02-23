@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -33,11 +34,29 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         }
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-        nearPlayer.getCooldownManager().addRegularCooldown(name, "WND", WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), wp, CooldownTypes.DEBUFF,
+        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+                name,
+                "WND",
+                WoundingStrikeBerserker.class,
+                new WoundingStrikeBerserker(),
+                wp,
+                CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").getStream().count() == 1) {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
                         wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                     }
-                }, 3 * 20);
+                },
+                3 * 20
+        ) {
+            @Override
+            public boolean isHealing() {
+                return true;
+            }
+
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * .6f;
+            }
+        });
     }
 }

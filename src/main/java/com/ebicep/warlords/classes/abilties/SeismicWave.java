@@ -44,9 +44,7 @@ public class SeismicWave extends AbstractAbility {
             fallingBlockLocations.add(getWave(location, i));
         }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<WarlordsPlayer> playersHit = new ArrayList<>();
         for (List<Location> fallingBlockLocation : fallingBlockLocations) {

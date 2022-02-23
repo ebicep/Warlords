@@ -9,16 +9,15 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
-import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Map;
@@ -93,15 +92,25 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
 //        });
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println(i);
-            if (i == 5) throw new NullPointerException("HELLO");
+
+        CustomScoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
+        System.out.println(scoreboard.getHealth());
+        for (Team team : scoreboard.getScoreboard().getTeams()) {
+            System.out.println(team.getName());
         }
 
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            for (Team team : scoreboard.getScoreboard().getTeams()) {
+                if (team.getName().equals(onlinePlayer.getName())) {
+                    team.unregister();
+                }
+            }
+        }
+
+//        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
 //        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));
 //        System.out.println(ArmorManager.Helmets.getSelected(player.getUniqueId()));
-//
+
 //        ArmorManager.resetArmor(player, playerSettings.getSelectedClass(), playerSettings.getWantedTeam());
 
 //        SRCalculator.totalValues.clear();

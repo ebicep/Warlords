@@ -5,10 +5,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.ebicep.warlords.player.ArmorManager.Helmets.*;
 
@@ -53,9 +50,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     private transient Team wantedTeam = null;
 
     private ArmorManager.Helmets mageHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets warriorHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets paladinHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets shamanHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets warriorHelmet = SIMPLE_WARRIOR_HELMET;
+    private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
+    private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
     private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
@@ -155,6 +152,24 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public boolean isHotKeyMode() {
         return hotKeyMode;
+    }
+
+    public List<ArmorManager.Helmets> getHelmets() {
+        List<ArmorManager.Helmets> armorSets = new ArrayList<>();
+        armorSets.add(mageHelmet);
+        armorSets.add(warriorHelmet);
+        armorSets.add(paladinHelmet);
+        armorSets.add(shamanHelmet);
+        return armorSets;
+    }
+
+    public List<ArmorManager.ArmorSets> getArmorSets() {
+        List<ArmorManager.ArmorSets> armorSets = new ArrayList<>();
+        armorSets.add(mageArmor);
+        armorSets.add(warriorArmor);
+        armorSets.add(paladinArmor);
+        armorSets.add(shamanArmor);
+        return armorSets;
     }
 
     public void setHelmets(List<ArmorManager.Helmets> helmets) {

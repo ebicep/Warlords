@@ -8,6 +8,9 @@ import org.bukkit.ChatColor;
 
 import java.util.function.Consumer;
 
+/**
+ * This type of cooldown is used for any regular cooldowns that are removed when its timer reaches 0
+ */
 public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     protected int ticksLeft;

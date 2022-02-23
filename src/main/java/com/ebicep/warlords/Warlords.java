@@ -17,6 +17,7 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.internal.EnergyPowerup;
 import com.ebicep.warlords.classes.internal.HealingPowerup;
 import com.ebicep.warlords.classes.internal.Overheal;
+import com.ebicep.warlords.classes.rogue.specs.apothecary.Apothecary;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -50,11 +51,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -209,10 +208,17 @@ public class Warlords extends JavaPlugin {
         playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
+    public static ItemStack getHead(Player player) {
+        return getHead(player.getUniqueId());
+    }
+
+    public static ItemStack getHead(UUID uuid) {
+        return CraftItemStack.asBukkitCopy(playerHeads.getOrDefault(uuid, CraftItemStack.asNMSCopy(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal()))));
+    }
+
     public void readKeysConfig() {
         try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
-//            DatabaseManager.key = config.getString("database_key");
             ApplicationConfiguration.key = config.getString("database_key");
             BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {
@@ -272,13 +278,14 @@ public class Warlords extends JavaPlugin {
 
         gameManager = new GameManager();
         gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift")));
-//        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
+        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
+        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi")));
         gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
-        gameManager.addGameHolder("Gorge-0", GameMap.GORGE, new LocationFactory(Bukkit.getWorld("Gorge")));
+        gameManager.addGameHolder("SimulationCrossfire-0", GameMap.SIMULATION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("SimulationCrossfire")));
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -487,6 +494,11 @@ public class Warlords extends JavaPlugin {
                         // Updating all player speed.
                         wp.getSpeed().updateSpeed();
 
+                        // will add more efficient system later
+                        if (wp.getSpec() instanceof Apothecary) {
+                            wp.getSpeed().addSpeedModifier("Base Speed", 20, 1, "BASE");
+                        }
+
                         CooldownManager cooldownManager = wp.getCooldownManager();
 
                         // Setting the flag tracking compass.
@@ -584,7 +596,7 @@ public class Warlords extends JavaPlugin {
 
                             for (RegularCooldown undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownClass(UndyingArmy.class)
-                                    .getStream()
+                                    .stream()
                                     .collect(Collectors.toList())
                             ) {
                                 UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
@@ -614,14 +626,12 @@ public class Warlords extends JavaPlugin {
                                                         " every second."
                                                 );
                                     }
-                                    Firework firework = wp.getWorld().spawn(wp.getLocation(), Firework.class);
-                                    FireworkMeta meta = firework.getFireworkMeta();
-                                    meta.addEffects(FireworkEffect.builder()
+
+                                    FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                                             .withColor(Color.LIME)
                                             .with(FireworkEffect.Type.BALL)
                                             .build());
-                                    meta.setPower(0);
-                                    firework.setFireworkMeta(meta);
+
                                     wp.heal();
 
                                     if (player != null) {
@@ -732,19 +742,24 @@ public class Warlords extends JavaPlugin {
                                 energyGainPerTick += .5;
                             }
 
+                            // Checks whether the player has been marked by an Avenger.
+                            if (cooldownManager.hasCooldown(HolyRadianceAvenger.class)) {
+                                energyGainPerTick -= .4;
+                            }
+
                             // Checks whether the player has been marked by a Crusader.
                             if (cooldownManager.hasCooldown(HolyRadianceCrusader.class)) {
                                 energyGainPerTick += .25;
                             }
 
-                            // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
-                                energyGainPerTick *= 1.4;
+                            // Checks whether the player has Acupressure active.
+                            if (cooldownManager.hasCooldown(Acupressure.class)) {
+                                energyGainPerTick += 2.5;
                             }
 
                             // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(Acupressure.class)) {
-                                energyGainPerTick *= 2.5;
+                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
+                                energyGainPerTick *= 1.4;
                             }
 
                             // Setting energy gain to the value after all ability instance multipliers have been applied.
@@ -791,7 +806,7 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float orbHeal = 225;
+                                float orbHeal = OrbsOfLife.ORB_HEALING;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }
@@ -806,9 +821,7 @@ public class Warlords extends JavaPlugin {
 
                                 wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
-                                    }
+                                    Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
@@ -818,9 +831,7 @@ public class Warlords extends JavaPlugin {
                                 ) {
                                     nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                     if (player != null) {
-                                        for (Player player1 : player.getWorld().getPlayers()) {
-                                            player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
-                                        }
+                                        Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                     }
                                 }
                             }
@@ -895,8 +906,11 @@ public class Warlords extends JavaPlugin {
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }
-                                wps.setHealth(wps.getHealth() + heal);
-                                wps.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7Healed §a" + heal + " §7health.");
+
+                                if (heal != 0) {
+                                    wps.setHealth(wps.getHealth() + heal);
+                                    wps.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7Healed §a" + heal + " §7health.");
+                                }
                             }
 
                             // Combat Timer - Logs combat time after 4 seconds.
@@ -954,7 +968,7 @@ public class Warlords extends JavaPlugin {
         for (Player p : Bukkit.getOnlinePlayers()) {
             WarlordsPlayer wp1 = getPlayer(p);
             Game game1 = wp1 == null ? null : wp1.getGame();
-            if(p != player) {
+            if (p != player) {
                 if(game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
@@ -976,7 +990,7 @@ public class Warlords extends JavaPlugin {
                 Player p = peeps.get(j);
                 WarlordsPlayer wp1 = getPlayer(p);
                 Game game1 = wp1 == null ? null : wp1.getGame();
-                if(game1 == game) {
+                if (game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
                 } else {

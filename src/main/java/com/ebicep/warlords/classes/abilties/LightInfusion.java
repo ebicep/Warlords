@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -33,9 +34,7 @@ public class LightInfusion extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusion.class, tempLightInfusion, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         for (int i = 0; i < 10; i++) {
             Location particleLoc = player.getLocation().add(0, 1.5, 0);

@@ -3,10 +3,7 @@ package com.ebicep.warlords.effects;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implements Iterable<T> {
@@ -25,6 +22,10 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
 
     public void addEffect(T effect) {
         this.effects.add(effect);
+    }
+
+    public void addEffects(T... effect) {
+        this.effects.addAll(Arrays.asList(effect));
     }
 
     public boolean removeEffect(T o) {

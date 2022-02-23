@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -263,9 +264,7 @@ double lerp(double a, double b, double target) {
         final float soundVolume = getSoundVolume();
         final float soundPitch = getSoundPitch();
         if (activationSound != null) {
-            for (Player player1 : projectile.getStartingLocation().getWorld().getPlayers()) {
-                player1.playSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
-            }
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
         }
     }
 

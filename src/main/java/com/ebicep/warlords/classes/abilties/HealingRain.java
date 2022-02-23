@@ -2,15 +2,21 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.internal.Overheal;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashSet;
+import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
@@ -39,85 +45,96 @@ public class HealingRain extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
+        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
 
-        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return false;
-        DamageHealCircle hr = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        hr.getLocation().add(0, 1, 0);
+        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
+
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addRegularCooldown(name, "RAIN", HealingRain.class, new HealingRain(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(hr.getLocation(), "mage.healingrain.impact", 2, 1);
-        }
+        Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
-        BukkitTask task = wp.getGame().registerGameTask(hr::spawn, 0, 1);
+        CircleEffect circleEffect = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                location,
+                radius,
+                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.025),
+                new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+        );
+
+        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
+
+        location.add(0, 1, 0);
+
         BukkitTask rainSneakAbility = new GameRunnable(wp.getGame()) {
             boolean wasSneaking = false;
 
             @Override
             public void run() {
                 if (!wp.getGame().isFrozen()) {
-                    if (wp.getEntity() instanceof Player) {
-                        Player p = (Player) wp.getEntity();
-                        if (wp.isAlive() && p.isSneaking() && !wasSneaking) {
-                            p.playSound(p.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                            p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
-                            hr.setLocation(p.getLocation());
-                        }
-
-                        wasSneaking = p.isSneaking();
+                    if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
+                        wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
+                        location.setX(wp.getLocation().getX());
+                        location.setY(wp.getLocation().getY());
+                        location.setZ(wp.getLocation().getZ());
                     }
+
+                    wasSneaking = wp.isSneaking();
                 }
             }
         }.runTaskTimer(0, 0);
+
         new GameRunnable(wp.getGame()) {
+            int counter = 0;
+            int timeLeft = duration;
 
             @Override
             public void run() {
                 if (!wp.getGame().isFrozen()) {
-                    PlayerFilter.entitiesAround(hr.getLocation(), hr.getRadius(), hr.getRadius(), hr.getRadius())
-                            .aliveTeammatesOf(wp)
-                            .forEach((teammateInRain) -> {
-                                teammateInRain.addHealingInstance(
-                                        hr.getWarlordsPlayer(),
-                                        hr.getName(),
-                                        hr.getMinDamage(),
-                                        hr.getMaxDamage(),
-                                        hr.getCritChance(),
-                                        hr.getCritMultiplier(),
-                                        false,
-                                        false);
+                    if (counter % 10 == 0) {
+                        for (WarlordsPlayer teammateInRain : PlayerFilter
+                                .entitiesAround(location, radius, radius, radius)
+                                .aliveTeammatesOf(wp)
+                        ) {
+                            teammateInRain.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false);
 
-                                        if (teammateInRain != wp) {
-                                            teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
-                                            teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
-                                                    "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                                    }, Overheal.OVERHEAL_DURATION * 20);
-                                        }
-                                    });
+                            if (teammateInRain != wp) {
+                                teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
+                                teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
+                                        "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                        }, Overheal.OVERHEAL_DURATION * 20);
+                            }
+                        }
 
-                    if (hr.getDuration() < 0) {
-                        this.cancel();
-                        task.cancel();
-                        rainSneakAbility.cancel();
+                        if (timeLeft < 0) {
+                            this.cancel();
+                            task.cancel();
+                            rainSneakAbility.cancel();
+                        }
                     }
+
+                    if (counter % 20 == 0) {
+                        timeLeft--;
+                    }
+
+                    counter--;
                 }
             }
 
-        }.runTaskTimer(0, 10);
-
-        new GameRunnable(wp.getGame()) {
-
-            @Override
-            public void run() {
-                if (!wp.getGame().isFrozen()) {
-                    hr.setDuration(hr.getDuration() - 1);
-                }
-            }
-
-        }.runTaskTimer(0, 20);
+        }.runTaskTimer(0, 0);
 
         return true;
     }

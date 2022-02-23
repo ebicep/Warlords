@@ -1,17 +1,23 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class Berserk extends AbstractAbility {
 
     private final int duration = 18;
+    // Percent
     private final int speedBuff = 30;
+    private float damageIncrease = 30;
+    private float damageTakenIncrease = 10;
 
     public Berserk() {
         super("Berserk", 0, 0, 46.98f, 30, 0, 0);
@@ -20,9 +26,9 @@ public class Berserk extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You go into a berserker rage,\n" +
-                "§7increasing your damage by §c30% §7and\n" +
+                "§7increasing your damage by §c" + damageIncrease + "% §7and\n" +
                 "§7movement speed by §e" + speedBuff + "%§7. While active,\n" +
-                "§7you also take §c10% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
+                "§7you also take §c" + damageTakenIncrease + "% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -30,12 +36,30 @@ public class Berserk extends AbstractAbility {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
-        wp.getCooldownManager().addRegularCooldown(name, "BERS", Berserk.class, tempBerserk, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
+                name,
+                "BERS",
+                Berserk.class,
+                tempBerserk,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 + damageTakenIncrease / 100);
+            }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
-        }
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 + damageIncrease / 100);
+            }
+        });
+
+        Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
+
 
         new GameRunnable(wp.getGame()) {
             @Override
@@ -51,5 +75,21 @@ public class Berserk extends AbstractAbility {
         }.runTaskTimer(0, 3);
 
         return true;
+    }
+
+    public float getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(float damageIncrease) {
+        this.damageIncrease = damageIncrease;
+    }
+
+    public float getDamageTakenIncrease() {
+        return damageTakenIncrease;
+    }
+
+    public void setDamageTakenIncrease(float damageTakenIncrease) {
+        this.damageTakenIncrease = damageTakenIncrease;
     }
 }

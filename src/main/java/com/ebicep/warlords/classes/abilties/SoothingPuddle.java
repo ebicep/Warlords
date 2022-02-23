@@ -2,6 +2,9 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
 import org.bukkit.*;
@@ -19,8 +22,8 @@ public class SoothingPuddle extends AbstractAbility {
     private static final double GRAVITY = -0.008;
     private static final float HITBOX = 5;
 
-    private final int puddleMinHealing = 183;
-    private final int puddleMaxHealing = 236;
+    private final int puddleMinHealing = 178;
+    private final int puddleMaxHealing = 224;
 
     public SoothingPuddle() {
         super("Soothing Puddle", 559, 665, 8, 60, 25, 175);
@@ -31,10 +34,8 @@ public class SoothingPuddle extends AbstractAbility {
         description = "§7Throw a short range projectile, healing\n" +
                 "§7allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health upon impact.\n" +
                 "§7The projectile will form a small puddle that\n" +
-                "§7heals allies for §a" + puddleMinHealing + " §7- §a " + puddleMaxHealing + " §7health per second.\n" +
-                "§7Lasts §64 §7seconds." +
-                "\n\n" +
-                "§7Has an optimal range of §e25 §7blocks.";
+                "§7heals allies for §a" + puddleMinHealing + " §7- §a" + puddleMaxHealing + " §7health per second.\n" +
+                "§7Lasts §64 §7seconds.";
     }
 
     @Override
@@ -105,15 +106,13 @@ public class SoothingPuddle extends AbstractAbility {
                     newLoc.add(0, -1, 0);
                 }
 
-                DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 4, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
+                newLoc.add(0, 1, 0);
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
-                        player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
-                        player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
-                    }
+                    Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
+                    Utils.playGlobalSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
+                    Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.WHITE)
@@ -135,32 +134,43 @@ public class SoothingPuddle extends AbstractAbility {
                                 false);
                     }
 
-                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
+                    CircleEffect circleEffect = new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            newLoc,
+                            HITBOX,
+                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                    );
+
+                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
                     wp.getGame().registerGameTask(task);
                     new GameRunnable(wp.getGame()) {
+                        int timeLeft = 4;
+
                         @Override
                         public void run() {
-                            PlayerFilter.entitiesAround(med.getLocation(), med.getRadius(), med.getRadius(), med.getRadius())
+                            PlayerFilter.entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                                     .aliveTeammatesOf(wp)
                                     .forEach((ally) -> ally.addHealingInstance(
-                                            med.getWarlordsPlayer(),
-                                            med.getName(),
-                                            med.getMinDamage(),
-                                            med.getMaxDamage(),
-                                            med.getCritChance(),
-                                            med.getCritMultiplier(),
+                                            wp,
+                                            name,
+                                            puddleMinHealing,
+                                            puddleMaxHealing,
+                                            critChance,
+                                            critMultiplier,
                                             false,
                                             false));
 
-                            med.setDuration(med.getDuration() - 1);
+                            timeLeft--;
 
-                            if (med.getDuration() < 0) {
+                            if (timeLeft < 0) {
                                 this.cancel();
                                 task.cancel();
                             }
                         }
 
-                    }.runTaskTimer(0, 20);
+                    }.runTaskTimer(20, 20);
 
                     this.cancel();
                 }
@@ -168,9 +178,7 @@ public class SoothingPuddle extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

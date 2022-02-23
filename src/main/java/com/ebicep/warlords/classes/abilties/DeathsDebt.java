@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,10 +65,8 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void playSound(Player player, Location location) {
-        for (Player player1 : player.getWorld().getPlayers()) {
             //TODO find the right sound - this aint right chief
-            player1.playSound(location, "shaman.chainlightning.impact", 2, 2);
-        }
+        Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);
     }
 
     @Override
@@ -76,8 +76,22 @@ public class DeathsDebt extends AbstractTotemBase {
         DeathsDebt tempDeathsDebt = new DeathsDebt();
         tempDeathsDebt.setTimeLeftRespite(ticksLeft);
 
-        wp.getCooldownManager().addRegularCooldown("Spirits Respite", "RESP", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, ticksLeft);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DeathsDebt>(
+                "Spirits Respite",
+                "RESP",
+                DeathsDebt.class,
+                tempDeathsDebt,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                ticksLeft
+        ) {
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                tempDeathsDebt.addDelayedDamage(currentDamageValue);
+            }
+        });
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
@@ -113,9 +127,7 @@ public class DeathsDebt extends AbstractTotemBase {
                             if (counter % 20 == 0) {
                                 if (ticksLeftRespite > 0) {
                                     //respite
-                                    for (Player player1 : wp.getWorld().getPlayers()) {
-                                        player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                                    }
+                                    Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     wp.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + (ticksLeftRespite / 20) + " §7seconds left.");
                                 } else if (ticksLeftRespite == 0) {
                                     //beginning debt
@@ -138,7 +150,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     onDebtTick(wp, totemStand, tempDeathsDebt);
                                     //cancel respite and initiate debt
                                     tempDeathsDebt.setTimeLeftRespite(-1);
-                                    tempDeathsDebt.setTimeLeftDebt(6 * 20);
+                                    tempDeathsDebt.setTimeLeftDebt(5 * 20);
                                 } else {
                                     //during debt
                                     if (ticksLeftDebt > 0) {
@@ -180,12 +192,11 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     public void onDebtTick(WarlordsPlayer wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
-        for (Player player1 : wp.getWorld().getPlayers()) {
-            player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
-        }
+        Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
+
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
-        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).getStream().count()));
+        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()));
         // Player damage
         wp.addDamageInstance(wp, "",
                 debtTrueDamage,

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.option.marker.*;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
@@ -197,7 +199,7 @@ public class FlagSpawnPointOption implements Option {
                     } else {
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, 0));
-                        wp.getCooldownManager().addRegularCooldown(
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<FlagSpawnPointOption>(
                                 "Flag Damage Resistance",
                                 "RES",
                                 FlagSpawnPointOption.class,
@@ -206,7 +208,12 @@ public class FlagSpawnPointOption implements Option {
                                 CooldownTypes.BUFF,
                                 cooldownManager -> {},
                                 15 * 20
-                        );
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * .9f;
+                            }
+                        });
                     }
                 }
             }

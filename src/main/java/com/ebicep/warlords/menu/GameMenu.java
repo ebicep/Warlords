@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -360,16 +361,38 @@ public class GameMenu {
                     builder.get(),
                     (n, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
-                        if (helmet == Helmets.SIMPLE_MAGE_HELMET || helmet == Helmets.GREATER_MAGE_HELMET || helmet == Helmets.MASTERWORK_MAGE_HELMET || helmet == Helmets.LEGENDARY_MAGE_HELMET) {
+                        if (
+                                helmet == Helmets.SIMPLE_MAGE_HELMET ||
+                                helmet == Helmets.GREATER_MAGE_HELMET ||
+                                helmet == Helmets.MASTERWORK_MAGE_HELMET ||
+                                helmet == Helmets.LEGENDARY_MAGE_HELMET
+                        ) {
                             Helmets.setSelectedMage(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_WARRIOR_HELMET || helmet == Helmets.GREATER_WARRIOR_HELMET || helmet == Helmets.MASTERWORK_WARRIOR_HELMET || helmet == Helmets.LEGENDARY_WARRIOR_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_WARRIOR_HELMET ||
+                                helmet == Helmets.GREATER_WARRIOR_HELMET ||
+                                helmet == Helmets.MASTERWORK_WARRIOR_HELMET ||
+                                helmet == Helmets.LEGENDARY_WARRIOR_HELMET
+                        ) {
                             Helmets.setSelectedWarrior(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_PALADIN_HELMET || helmet == Helmets.GREATER_PALADIN_HELMET || helmet == Helmets.MASTERWORK_PALADIN_HELMET || helmet == Helmets.LEGENDARY_PALADIN_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_PALADIN_HELMET ||
+                                helmet == Helmets.GREATER_PALADIN_HELMET ||
+                                helmet == Helmets.MASTERWORK_PALADIN_HELMET ||
+                                helmet == Helmets.LEGENDARY_PALADIN_HELMET
+                        ) {
                             Helmets.setSelectedPaladin(player, helmet);
-                        } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
+                        } else if (
+                                helmet == Helmets.SIMPLE_SHAMAN_HELMET ||
+                                helmet == Helmets.GREATER_SHAMAN_HELMET ||
+                                helmet == Helmets.MASTERWORK_SHAMAN_HELMET ||
+                                helmet == Helmets.LEGENDARY_SHAMAN_HELMET
+                        ) {
                             Helmets.setSelectedShaman(player, helmet);
                         }
+
                         List<Helmets> selectedHelmets = Helmets.getSelected(player);
+
                         Warlords.newChain().async(() -> {
                             if (DatabaseManager.playerService == null) return;
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
@@ -465,20 +488,6 @@ public class GameMenu {
         HotkeyMode selectedHotkeyMode = HotkeyMode.getSelected(player);
 
         Menu menu = new Menu("Settings", 9 * 4);
-//        menu.setItem(
-//                1,
-//                1,
-//                new ItemBuilder(selectedPowerup.item)
-//                        .name(Settings.powerupsName)
-//                        .lore(Settings.powerupsDescription, "", selectedPowerup == Powerup.ENERGY ? ChatColor.GREEN + ">>> ACTIVE <<<" : ChatColor.YELLOW + "> Click to activate! <")
-//                        .flags(ItemFlag.HIDE_ENCHANTS)
-//                        .get(),
-//                (n, e) -> {
-//                    player.sendMessage(selectedPowerup == Powerup.DAMAGE ? ChatColor.GREEN + "You have enabled energy powerups!" : ChatColor.RED + "You have disabled energy powerups!");
-//                    Powerup.setSelected(player, selectedPowerup == Powerup.DAMAGE ? Powerup.ENERGY : Powerup.DAMAGE);
-//                    openSettingsMenu(player);
-//                }
-//        );
         menu.setItem(
                 3,
                 1,
@@ -780,18 +789,16 @@ public class GameMenu {
                         }
 
                         if (rarity == WeaponsRarity.LEGENDARY) {
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "legendaryfind", 1, 1);
-                            }
+                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 1, 1);
+
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
                             player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
                         }
 
                         if (rarity == WeaponsRarity.MYTHIC) {
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "legendaryfind", 500, 0.8f);
-                                player1.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
-                            }
+                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 500, 0.8f);
+                            Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + mythicMessage);
 
                             for (int j = 0; j < 10; j++) {

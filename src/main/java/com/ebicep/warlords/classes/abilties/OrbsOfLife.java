@@ -2,14 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
@@ -34,13 +32,14 @@ import java.util.Random;
 public class OrbsOfLife extends AbstractAbility {
 
     public static final double SPAWN_RADIUS = 1.15;
-    private final List<Orb> spawnedOrbs = new ArrayList<>();
+    public static float ORB_HEALING = 225;
 
+    private final List<Orb> spawnedOrbs = new ArrayList<>();
     private final int duration = 14;
     private final int floatingOrbRadius = 20;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 225, 225, 19.57f, 20, 0, 0);
+        super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20, 0, 0);
     }
 
     @Override
@@ -54,8 +53,8 @@ public class OrbsOfLife extends AbstractAbility {
                 "§7health. After 1.5 seconds the healing will increase\n" +
                 "§7by §a40% §7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7You may SNEAK once per Orbs of Life cast to make\n" +
-                "§7the orbs levitate towards you or the nearest ally in\n" +
+                "§7You may SNEAK to make the orbs levitate\n" +
+                "§7towards you or the nearest ally in\n" +
                 "§7a §e" + floatingOrbRadius + " §7block radius.";
     }
 
@@ -63,24 +62,48 @@ public class OrbsOfLife extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addPersistentCooldown(
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<OrbsOfLife>(
                 name,
                 "ORBS",
                 OrbsOfLife.class,
                 tempOrbsOfLight,
                 wp,
-                CooldownTypes.ABILITY
-                , cooldownManager -> {},
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
                 duration * 20,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
-        );
+        ) {
+            @Override
+            public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+
+            @Override
+            public void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+        });
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
+
         new GameRunnable(wp.getGame()) {
             int counter = 0;
             boolean wasSneaking = false;
@@ -88,7 +111,7 @@ public class OrbsOfLife extends AbstractAbility {
             @Override
             public void run() {
                 counter++;
-                if (wp.isAlive() && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && !wasSneaking) {
+                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
                     //setting target player to move towards (includes self)
                     tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
                             .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
@@ -115,20 +138,19 @@ public class OrbsOfLife extends AbstractAbility {
                                 orbArmorStand.setPassenger(orb);
                                 ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
                             });
-                            /*if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();
-                            }*/
+                            }
                         }
                     }.runTaskTimer(0, 1);
 
-                    wasSneaking = player.isSneaking();
-
                     wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
-                    }
+                    Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                     ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
                 }
+
+                wasSneaking = player.isSneaking();
+
                 if (counter >= 20 * duration || wp.isDead()) {
                     this.cancel();
                 }
@@ -136,6 +158,17 @@ public class OrbsOfLife extends AbstractAbility {
         }.runTaskTimer(0, 0);
 
         return true;
+    }
+
+    public void spawnOrbs(WarlordsPlayer victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+        if (ability.isEmpty() || ability.equals("Intervene")) return;
+        if (cooldown.isHidden()) return;
+        OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
+        Location location = victim.getLocation();
+        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+
+        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom());
+        orbsOfLife.getSpawnedOrbs().add(orb);
     }
 
     public Location generateSpawnLocation(Location location) {
@@ -155,29 +188,6 @@ public class OrbsOfLife extends AbstractAbility {
 
     public boolean orbsInsideBlock(Location location) {
         return location.getBlock().getType() != Material.AIR;
-//        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-//            for (int i = 1; i < 3; i++) {
-//                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
-//                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
-//                ) {
-//                    location.add(0, i, 0);
-//                    return false;
-//                }
-//            }
-//            return true;
-//        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
-//                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
-//                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
-//        ) {
-//            for (int i = 3; i > 0; i--) {
-//                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
-//                    location.add(0, -i, 0);
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
     }
 
     public boolean nearLocation(Location location) {

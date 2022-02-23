@@ -1,6 +1,5 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
@@ -12,6 +11,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
@@ -19,6 +19,7 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
+import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -44,17 +45,13 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import static com.ebicep.warlords.menu.DebugMenu.openMapsMenu;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 
@@ -82,13 +79,6 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-//    @EventHandler
-//    public static void onPlayerLogin(PlayerLoginEvent event) {
-//        if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
-//            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Please wait!");
-//        }
-//    }
-
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
@@ -103,6 +93,9 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().setAllowFlight(true);
             e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
 
+            if (DatabaseManager.playerService == null || !DatabaseManager.enabled) {
+                Warlords.updateHead(e.getPlayer());
+            }
             Warlords.newChain()
                     .async(() -> {
                         DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
@@ -163,9 +156,6 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You may download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3285WkL");
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "DISCLAIMER: " + ChatColor.GRAY + "Non-competitive players should take notice that we are currently in BETA for our public queue. This means that the server will regularly be unavailable when we host our private games during weekends!");
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -174,14 +164,34 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+
+            if (!fromGame) {
+                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                    if (!playerList.isEmpty()) {
+                        playerList.stream()
+                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
+                                .findFirst()
+                                .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
+                                                // TODO: Fix team item
+                                                // @see Team.java
+                                                new ItemBuilder(Material.WOOL).name("§aTeam Builder")
+                                                        .get()
+                                        )
+                                );
+                    }
+                });
+            }
 
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
+            } else {
+                player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
             }
 
             if (fromGame) {
@@ -191,6 +201,7 @@ public class WarlordsEvents implements Listener {
 
             player.getActivePotionEffects().clear();
         }
+
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
             player.teleport(p.getLocation());
@@ -198,6 +209,8 @@ public class WarlordsEvents implements Listener {
         } else {
             player.setAllowFlight(true);
         }
+
+        Warlords.getInstance().hideAndUnhidePeople(player);
     }
 
     @EventHandler
@@ -218,6 +231,16 @@ public class WarlordsEvents implements Listener {
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });
+
+        for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
+            if (
+                holder.getGame() != null
+                && holder.getGame().hasPlayer(e.getPlayer().getUniqueId())
+                && holder.getGame().getPlayerTeam(e.getPlayer().getUniqueId()) == null
+            ) {
+                holder.getGame().removePlayer(e.getPlayer().getUniqueId());
+            }
+        }
     }
 
     @EventHandler
@@ -252,9 +275,7 @@ public class WarlordsEvents implements Listener {
                                     wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
                                     wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
                                     soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
-                                    for (Player player1 : wpVictim.getWorld().getPlayers()) {
-                                        player1.playSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                                    }
+                                    Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                 }
                             });
                     }
@@ -329,6 +350,27 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.EMERALD) {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
+                } else if (itemHeld.getType() == Material.BLAZE_POWDER) {
+                    openMapsMenu(player);
+                } else if (itemHeld.getType() == Material.WOOL) {
+                    if (itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
+                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                            List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                            if (!playerList.isEmpty()) {
+                                party.getRegularGamesMenu().openMenuForPlayer(player);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                            party.getRegularGamesMenu().openMenuForPlayer(player);
+                                        } else {
+                                            this.cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                            }
+                        });
+                    }
                 } else {
                     PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
                     if (state != null) {
@@ -757,7 +799,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerLogout(PlayerQuitEvent event) {
         dropFlag(event.getPlayer());
     }
-    
+
     @EventHandler
     public void onPlayerDeath(WarlordsDeathEvent event) {
         dropFlag(event.getPlayer());

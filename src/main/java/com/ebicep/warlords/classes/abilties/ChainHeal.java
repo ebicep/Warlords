@@ -77,9 +77,8 @@ public class ChainHeal extends AbstractChainBase {
         warlordsPlayer.updateRedItem(player);
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
+
         warlordsPlayer.updateBlueItem(player);
     }
 

@@ -1,16 +1,21 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Windfury extends AbstractAbility {
 
-    private boolean firstProc = false;
     private int procChance = 35;
     private final int duration = 8;
 
@@ -34,14 +39,61 @@ public class Windfury extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Windfury tempWindfury = new Windfury();
-        wp.getCooldownManager().addRegularCooldown(name, "FURY", Windfury.class, tempWindfury, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        final boolean[] firstProc = {true};
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Windfury>(
+                name,
+                "FURY",
+                Windfury.class,
+                tempWindfury,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().isEmpty()) {
+                    WarlordsPlayer victim = event.getPlayer();
+                    WarlordsPlayer attacker = event.getAttacker();
+                    float min = event.getMin();
+                    float max = event.getMax();
 
-        firstProc = true;
+                    int windfuryActivate = (int) (Math.random() * 100);
+                    if (firstProc[0]) {
+                        firstProc[0] = false;
+                        windfuryActivate = 0;
+                    }
+                    if (windfuryActivate < procChance) {
+                        new BukkitRunnable() {
+                            int counter = 0;
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
-        }
+                            @Override
+                            public void run() {
+                                victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((player1, t) -> {
+                                    player1.playSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                                });
+
+                                if (Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.WINDFURY_WEAPON) {
+                                    victim.addDamageInstance(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
+                                } else {
+                                    victim.addDamageInstance(attacker, "Windfury Weapon", min * 1.35f, max * 1.35f, 25, 200, false);
+                                }
+
+                                counter++;
+
+                                if (counter == 2) {
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(Warlords.getInstance(), 3, 3);
+                    }
+                }
+            }
+        });
+
+        Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
+
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -56,14 +108,6 @@ public class Windfury extends AbstractAbility {
         }.runTaskTimer(0, 4);
 
         return true;
-    }
-
-    public boolean isFirstProc() {
-        return firstProc;
-    }
-
-    public void setFirstProc(boolean firstProc) {
-        this.firstProc = firstProc;
     }
 
     public int getProcChance() {

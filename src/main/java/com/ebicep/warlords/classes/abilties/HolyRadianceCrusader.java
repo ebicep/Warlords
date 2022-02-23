@@ -1,7 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -10,17 +8,8 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
@@ -49,40 +38,38 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
     @Override
     public void chain(WarlordsPlayer wp, Player player) {
-        for (WarlordsPlayer p : PlayerFilter
+        for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+            if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 wp.subtractEnergy(energyCost);
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-                }
+                Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 255, 170, 0);
-                EffectUtils.playChainAnimation(wp.getLocation(), p.getLocation(), Material.PUMPKIN, 8);
+                EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0, 1);
+                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.PUMPKIN, 8);
 
                 HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                p.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                p.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                markTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                markTarget.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, markDuration * 20);
-                p.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");
+                markTarget.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
-                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
-                        if (p.getCooldownManager().hasCooldown(tempMark)) {
-                            Location playerLoc = p.getLocation();
+                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
+                            Location playerLoc = markTarget.getLocation();
                             Location particleLoc = playerLoc.clone();
                             for (int i = 0; i < 4; i++) {
                                 for (int j = 0; j < 10; j++) {

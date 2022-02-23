@@ -2,9 +2,13 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.entity.Player;
 
 public class Repentance extends AbstractAbility {
@@ -31,12 +35,35 @@ public class Repentance extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         pool += 2000;
         assert warlordsPlayer != null;
-        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "REPE", Repentance.class, new Repentance(), warlordsPlayer, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
+                name, "REPE",
+                Repentance.class,
+                new Repentance(),
+                warlordsPlayer,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public boolean distinct() {
+                return true;
+            }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
-        }
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                WarlordsPlayer attacker = event.getAttacker();
+                if (attacker.getSpec() instanceof Spiritguard) {
+                    Repentance repentance = (Repentance) attacker.getSpec().getBlue();
+                    int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
+                    attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
+                    repentance.setPool(repentance.getPool() * .5f);
+                    attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
+                }
+            }
+        });
+
+        Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
 
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
 

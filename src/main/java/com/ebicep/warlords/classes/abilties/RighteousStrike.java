@@ -17,12 +17,17 @@ public class RighteousStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Each strike reduces the duration of your striked\n" +
-                "§7target's active ability timers by §60.5 §7seconds.";
+                "§7target's active ability timers by §60.5 §7(§60.75 §7for\n" +
+                "§7silenced targets) seconds.";
     }
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
+        if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 15);
+        } else {
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
+        }
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }
 }

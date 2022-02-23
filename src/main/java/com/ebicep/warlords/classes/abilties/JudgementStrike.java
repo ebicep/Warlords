@@ -1,7 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -19,7 +22,7 @@ public class JudgementStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Every 3rd attack is a §cguaranteed §7critical strike.\n" +
                 "§7Critical strikes temporarily increase your movement\n" +
-                "§7speed by §e20% §7for §e2 §7seconds.";
+                "§7speed by §e25% §7for §e2 §7seconds.";
     }
 
     @Override
@@ -31,6 +34,24 @@ public class JudgementStrike extends AbstractStrikeBase {
             attacksDone = 0;
             critChance = 100;
         }
+
+        wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<JudgementStrike>(
+                "Judgment Strike",
+                "",
+                JudgementStrike.class,
+                new JudgementStrike(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                }
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().equals("Judgement Strike") && isCrit) {
+                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
+                }
+            }
+        });
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }
 }

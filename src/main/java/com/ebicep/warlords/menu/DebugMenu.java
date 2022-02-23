@@ -2,7 +2,6 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
-
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
@@ -15,11 +14,11 @@ import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.WordWrap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -34,6 +33,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
@@ -48,7 +48,7 @@ public class DebugMenu {
         items.put(new ItemBuilder(Material.ENDER_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
                 (n, e) -> openGameMenu(player)
         );
-        items.put(new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId()))).name(ChatColor.GREEN + "Player Options").get(),
+        items.put(new ItemBuilder(Warlords.getHead(player)).name(ChatColor.GREEN + "Player Options").get(),
                 (n, e) -> openPlayerMenu(player, Warlords.getPlayer(player))
         );
         items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
@@ -114,8 +114,8 @@ public class DebugMenu {
 
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {
         if (target == null) return;
-        String targetName = target != null ? target.getName() : "";
-        Menu menu = new Menu("Player Options: " + (target != null ? targetName : player.getName()), 9 * 5);
+        String targetName = target.getName();
+        Menu menu = new Menu("Player Options: " + targetName, 9 * 5);
         ItemStack[] firstRow = {
                 new ItemBuilder(Material.EXP_BOTTLE)
                         .name(ChatColor.GREEN + "Energy")
@@ -192,7 +192,7 @@ public class DebugMenu {
                                     game.setPlayerTeam(player, otherTeam);
                                     target.setTeam(otherTeam);
                                     
-                                    target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
+                                    target.getGameState().updatePlayerName(target);
                                     Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                                     if (randomLobbyLocation != null) {
@@ -214,36 +214,34 @@ public class DebugMenu {
             int index = i + 1;
             menu.setItem(index, 2, secondRow[i],
                     (n, e) -> {
-                        if (target != null) {
-                            switch (index) {
-                                case 1:
-                                    //TODO
-                                    break;
-                                case 2:
-                                    openAmountMenu(player, target, "heal");
-                                    break;
-                                case 3:
-                                    openAmountMenu(player, target, "takedamage");
-                                    break;
-                                case 4:
-                                    openCooldownsMenu(player, target);
-                                    break;
-                                case 5:
-                                    openTeleportLocations(player, target);
-                                    break;
-                                case 6:
-                                    openFlagOptionMenu(player, target);
-                                    break;
-                                case 7:
-                                    openSpecMenu(player, target);
-                                    break;
-                            }
+                        switch (index) {
+                            case 1:
+                                //TODO
+                                break;
+                            case 2:
+                                openAmountMenu(player, target, "heal");
+                                break;
+                            case 3:
+                                openAmountMenu(player, target, "takedamage");
+                                break;
+                            case 4:
+                                openCooldownsMenu(player, target);
+                                break;
+                            case 5:
+                                openTeleportLocations(player, target);
+                                break;
+                            case 6:
+                                openFlagOptionMenu(player, target);
+                                break;
+                            case 7:
+                                openSpecMenu(player, target);
+                                break;
                         }
                     }
             );
         }
         menu.setItem(3, 4, MENU_BACK, (n, e) -> {
-            if (target != null && player.getUniqueId() == target.getUuid()) {
+            if (player.getUniqueId() == target.getUuid()) {
                 openDebugMenu(player);
             } else {
                 openTeamMenu(player);
@@ -327,7 +325,7 @@ public class DebugMenu {
                 lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options");
             }
             menu.setItem(i % 4 + (blueTeam ? 0 : 5), y,
-                    new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(wp.getUuid())))
+                    new ItemBuilder(Warlords.getHead(wp.getUuid()))
                             .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getCarriedFlag() != null ? ChatColor.WHITE + " ⚑" : ""))
                             .lore(lore)
                             .get(),
@@ -467,7 +465,7 @@ public class DebugMenu {
         Menu menu = new Menu("Cooldown Manager: " + target.getName(), 9 * 6);
         //general info
         menu.setItem(4, 0,
-                new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId())))
+                new ItemBuilder(Warlords.getHead(player))
                         .name(ChatColor.GREEN + "Cooldown Stats")
                         .lore(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
                                 ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
@@ -610,8 +608,10 @@ public class DebugMenu {
                 player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to " + marker.getName());
         
             });
+
             x++;
-            if(x > 8) {
+
+            if (x > 8) {
                 x = 0;
                 y++;
             }
@@ -766,7 +766,7 @@ public class DebugMenu {
                     (n, e) -> {
                         setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
                         target.setSpec(selectedClass.create.get(), skillBoost);
-                        target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
+                        target.getGameState().updatePlayerName(target);
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedClass.name);
                         openSpecMenu(player, target);
                     }
@@ -787,7 +787,7 @@ public class DebugMenu {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories())
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories().stream().map(MapCategory::getName).collect(Collectors.joining(", ")))
                             .get(),
                     (n, e) -> openMapsCategoryMenu(player, map)
             );
@@ -829,7 +829,8 @@ public class DebugMenu {
 
             boolean isASelectedAddon = addons.contains(gameAddon);
             ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
-                    .name(ChatColor.GREEN + gameAddon.getName());
+                    .name(ChatColor.GREEN + gameAddon.getName())
+                    .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
             if (isASelectedAddon) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
@@ -859,7 +860,8 @@ public class DebugMenu {
                     stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                 });
             }
-            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
+            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
+            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedCategory.name() + " " + stringAddons);
         });
         menu.openForPlayer(player);
     }

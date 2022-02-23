@@ -2,10 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.FireWorkEffectPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -30,7 +27,7 @@ public class IncendiaryCurse extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Ignite the targeted area with a cross flame,\n" +
                     "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
-                    "§7hit are blinded for §62 §7seconds.";
+                    "§7hit are blinded for §61.5 §7seconds.";
     }
 
     @Override
@@ -95,9 +92,8 @@ public class IncendiaryCurse extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
-                    }
+
+                    Utils.playGlobalSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.ORANGE)
@@ -121,9 +117,9 @@ public class IncendiaryCurse extends AbstractAbility {
                                 false
                         );
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.CONFUSION, 2 * 25, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.CONFUSION, 30, 0, true, false), true);
                     }
 
                     this.cancel();
@@ -132,9 +128,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

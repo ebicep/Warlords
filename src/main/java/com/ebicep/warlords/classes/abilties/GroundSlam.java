@@ -44,9 +44,9 @@ public class GroundSlam extends AbstractAbility {
 
         fallingBlockLocations.get(0).add(player.getLocation());
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
-        }
+
+        Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
+
         new GameRunnable(wp.getGame()) {
 
             @Override
