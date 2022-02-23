@@ -44,7 +44,6 @@ public class BotListener extends ListenerAdapter implements Listener {
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        BotManager.sendStatusMessage(false);
 
         if (BotManager.getCompGamesServer() == null) return;
 //        Warlords.newChain()
@@ -60,7 +59,6 @@ public class BotListener extends ListenerAdapter implements Listener {
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        BotManager.sendStatusMessage(true);
 
         if (BotManager.getCompGamesServer() == null) return;
 //        Warlords.newChain()

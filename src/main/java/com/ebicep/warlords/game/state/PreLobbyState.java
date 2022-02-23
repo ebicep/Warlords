@@ -93,8 +93,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                         player.setAllowFlight(false);
                     });
                 }
-
-                BotManager.sendStatusMessage(false);
             }
 
             if (timer <= 0) {
