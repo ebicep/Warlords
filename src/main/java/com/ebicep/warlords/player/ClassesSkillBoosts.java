@@ -503,7 +503,7 @@ public enum ClassesSkillBoosts {
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    CapacitorTotem.setRadius(7);
+                    ((CapacitorTotem) abstractAbility).setRadius(7);
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 }
@@ -619,31 +619,41 @@ public enum ClassesSkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7PLACEHOLDER",
-            "7PLACEHOLDER",
+            "§7Reduce the cooldown of Incendiary Curse\nby 20% and increase the blind duration\nby 0.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse\nby §c20% §aand increase the blind duration\nby §c0.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
+                if (abstractAbility instanceof IncendiaryCurse) {
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(40);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                }
             }
     ),
     BLINDING_ASSAULT("Blinding Assault",
-            "7PLACEHOLDER",
-            "7PLACEHOLDER",
+            "§7Reduce the cooldown by Blinding Assault by 30%",
+            "§aReduce the cooldown by Blinding Assault by §c30%",
             BlindingAssault.class,
             abstractAbility -> {
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
             }
     ),
-    PLACEHOLDER("Blinding Assault",
-            "7PLACEHOLDER",
-            "7PLACEHOLDER",
+    SOUL_SWITCH("Soul Switch",
+            "§7Reduce the cooldown by Soul Switch by 30%",
+            "§aReduce the cooldown by Soul Switch by §c30%",
             SoulSwitch.class,
             abstractAbility -> {
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "7PLACEHOLDER",
-            "7PLACEHOLDER",
+            "§7Increase the duration of Order Of Eviscerate\nby 2 seconds and reduce the cooldown\nby 20%.",
+            "§aIncrease the duration of Order Of Eviscerate\nby §c2 §aseconds and reduce the cooldown\nby §c20%.",
             OrderOfEviscerate.class,
             abstractAbility -> {
+                if (abstractAbility instanceof OrderOfEviscerate) {
+                    ((OrderOfEviscerate) abstractAbility).setDuration(10);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                }
             }
     ),
     RIGHTEOUS_STRIKE("Righteous Strike",
@@ -655,15 +665,89 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
     ),
+    SOUL_SHACKLE("Soul Shackle",
+            "§7Reduce the cooldown of Soul Shackle\nby 10% and increase the silence\nduration by 1 second.",
+            "§aReduce the cooldown of Soul Shackle\nby §c10% §aand increase the silence\nduration by §c1 §asecond.",
+            SoulShackle.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof SoulShackle) {
+                    ((SoulShackle) abstractAbility).setMinSilenceDuration(3);
+                    ((SoulShackle) abstractAbility).setMaxSilenceDuration(5);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                }
+            }
+    ),
+    HEART_TO_HEART("Heart To Heart",
+            "§7Reduce the cooldown of Heart ot Heart\nby 25% and increase the VIND buff\nduration by 2 seconds.",
+            "§aReduce the cooldown of Heart ot Heart\nby §c25% §aand increase the VIND buff\nduration by §c2 §aseconds.",
+            HeartToHeart.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof HeartToHeart) {
+                    ((HeartToHeart) abstractAbility).setVindDuration(8);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                }
+            }
+    ),
+    PRISM_GUARD("Prism Guard",
+            "§7Increase the range of Prism Guard\nby 1 block and increase the\nduration by 1 second.",
+            "§aIncrease the range of Prism Guard\nby §c1 §ablock and increase the\nduration by §c1 §asecond.",
+            PrismGuard.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof PrismGuard) {
+                    ((PrismGuard) abstractAbility).setDuration(5);
+                    ((PrismGuard) abstractAbility).setBubbleRadius(5);
+                }
+            }
+    ),
+    VINDICATE("Vindicate",
+            "§7Increase the damage reduction of\nVindicate by 10% and reduce the\ncooldown by 15%",
+            "§aIncrease the damage reduction of\nVindicate by §c10% §aand reduce the\ncooldown by §c15%",
+            Vindicate.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof Vindicate) {
+                    ((Vindicate) abstractAbility).setVindicateDamageReduction(35);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                }
+            }
+    ),
     IMPALING_STRIKE("Impaling Strike",
-            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 20%",
-            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c20%",
+            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 10% and increase the leech\nduration by 3 seconds.",
+            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c10% §aand increase the leech\nduration by §c3 §aseconds.",
             ImpalingStrike.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof ImpalingStrike) {
+                    ((ImpalingStrike) abstractAbility).setLeechDuration(8);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                }
+            }
+    ),
+    SOOTHING_PUDDLE("Soothing Puddle",
+            "§7Increase the amount of health you\n§7restore with Soothing Puddle\n§7by 20%",
+            "§aIncrease the amount of health you\n§arestore with Soothing Puddle\n§aby §c20%",
+            SoothingPuddle.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
-    )
+    ),
+    ACUPRESSURE("Acupressure",
+            "§7Increase the amount of health you\n§7restore with Soothing Puddle\n§7by 10% and reduce the cooldown\nby 15%",
+            "§aIncrease the amount of health you\n§arestore with Soothing Puddle\n§aby §c10% and reduce the cooldown\nby §c15%",
+            Acupressure.class,
+            abstractAbility -> {
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+            }
+    ),
+    REMEDIC_CHAINS("Remedic Chains",
+            "PLACEHOLDER",
+            "PLACEHOLDER",
+            RemedicChains.class,
+            abstractAbility -> {
+            }
+    ),
 
     ;
 

@@ -11,10 +11,10 @@ import javax.annotation.Nonnull;
 
 public class ImpalingStrike extends AbstractStrikeBase {
 
-    private final int leechDuration = 5;
+    private int leechDuration = 5;
 
     public ImpalingStrike() {
-        super("Impaling Strike", 387.6f, 494.4f, 0, 90, 20, 175);
+        super("Impaling Strike", 323, 412, 0, 90, 20, 175);
     }
 
     @Override
@@ -55,5 +55,13 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 );
             }
         });
+    }
+
+    public int getLeechDuration() {
+        return leechDuration;
+    }
+
+    public void setLeechDuration(int leechDuration) {
+        this.leechDuration = leechDuration;
     }
 }

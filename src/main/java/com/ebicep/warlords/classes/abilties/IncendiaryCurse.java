@@ -19,15 +19,18 @@ public class IncendiaryCurse extends AbstractAbility {
     private static final double GRAVITY = -0.008;
     private static final float HITBOX = 5;
 
+    private int blindDurationInTicks = 30;
+
     public IncendiaryCurse() {
-        super("Incendiary Curse", 408, 575, 8, 60, 25, 175);
+        super("Incendiary Curse", 408, 552, 8, 60, 25, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
+        double blindDuration = blindDurationInTicks == 30 ? 1.5 : 2;
         description = "§7Ignite the targeted area with a cross flame,\n" +
                     "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
-                    "§7hit are blinded for §61.5 §7seconds.";
+                    "§7hit are blinded for §6" + format(blindDuration) + " §7seconds.";
     }
 
     @Override
@@ -117,9 +120,9 @@ public class IncendiaryCurse extends AbstractAbility {
                                 false
                         );
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false), true);
                         nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.CONFUSION, 30, 0, true, false), true);
+                                new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false), true);
                     }
 
                     this.cancel();
@@ -131,5 +134,13 @@ public class IncendiaryCurse extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
+    }
+
+    public int getBlindDurationInTicks() {
+        return blindDurationInTicks;
+    }
+
+    public void setBlindDurationInTicks(int blindDurationInTicks) {
+        this.blindDurationInTicks = blindDurationInTicks;
     }
 }

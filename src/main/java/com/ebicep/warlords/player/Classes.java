@@ -92,17 +92,17 @@ public enum Classes {
             Assassin::new,
             WordWrap.wrapWithNewline("§7A damage-oriented Rogue specialization that is a master of stealth, rapidly taking out any enemies who cross them.", 200),
             SpecType.DAMAGE,
-            EARTHEN_SPIKE),
+            JUDGEMENT_STRIKE, INCENDIARY_CURSE, BLINDING_ASSAULT, SOUL_SWITCH, ORDER_OF_EVISCERATE),
     VINDICATOR("Vindicator",
             Vindicator::new,
             WordWrap.wrapWithNewline("§7A defense-oriented Rogue specialization that deceives enemies by disabling their powers and use bulk power to protect allies.", 200),
             SpecType.TANK,
-            EARTHEN_SPIKE),
+            RIGHTEOUS_STRIKE, SOUL_SHACKLE, HEART_TO_HEART, PRISM_GUARD, VINDICATE),
     APOTHECARY("Apothecary",
             Apothecary::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", 200),
             SpecType.HEALER,
-            EARTHEN_SPIKE),
+            IMPALING_STRIKE, SOOTHING_PUDDLE, ACUPRESSURE, REMEDIC_CHAINS),
 
     ;
 

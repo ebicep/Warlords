@@ -17,18 +17,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class CapacitorTotem extends AbstractTotemBase {
 
     private int duration = 8;
-    private static int RADIUS = 6;
+    private int radius = 6;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
-    }
-
-    public static int getRadius() {
-        return RADIUS;
-    }
-
-    public static void setRadius(int radius) {
-        CapacitorTotem.RADIUS = radius;
     }
 
     @Override
@@ -77,12 +69,19 @@ public class CapacitorTotem extends AbstractTotemBase {
         }.runTaskTimer(0, 20);
     }
 
-
     public int getDuration() {
         return duration;
     }
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

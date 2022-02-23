@@ -85,6 +85,7 @@ public class TimeWarp extends AbstractAbility {
                 }
 
                 //TIME WARPS
+                // TODO: fix timewarp double heal
                 if (counter % 20 == 0) {
                     if (time != 0) {
                         time -= 1;
@@ -100,9 +101,8 @@ public class TimeWarp extends AbstractAbility {
                     }
                 }
 
-                counter++;
-
                 if (!wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
+                    wp.addHealingInstance(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false, false);
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
                     wp.getEntity().teleport(warpLocation);
@@ -110,6 +110,8 @@ public class TimeWarp extends AbstractAbility {
                     warpTrail.clear();
                     counter = 0;
                     this.cancel();
+
+                    counter++;
                 }
             }
 

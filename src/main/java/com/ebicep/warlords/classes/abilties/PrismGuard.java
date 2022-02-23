@@ -22,7 +22,8 @@ import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
 
-    public static final int BUBBLE_RADIUS = 4;
+    private int bubbleRadius = 4;
+    private int duration = 4;
 
     public PrismGuard() {
         super("Prism Guard", 0, 0, 22, 40, -1, 100);
@@ -30,13 +31,14 @@ public class PrismGuard extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
+        String healingString = duration == 5 ? "§a750 §7+ §a25%" : "§a600 §7+ §a20%";
         description = "§7Create a bubble shield around you that\n" +
-                "§7lasts §64 §7seconds. All projectiles that pass through\n" +
+                "§7lasts §6" + duration + " §7seconds. All projectiles that pass through\n" +
                 "§7the barrier have their damage reduced by §c75%§7.\n" +
                 "§7(§c25% §7for all other attacks.)" +
                 "\n\n" +
-                "§7After §64 §7seconds the bubble will burst, healing\n" +
-                "§7all allies for up to §a600 §7+ §a20% §7missing health\n" +
+                "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
+                "§7all allies for up to " + healingString + " §7missing health\n" +
                 "§7based on how long they've been in the bubble.\n";
     }
 
@@ -53,21 +55,23 @@ public class PrismGuard extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                4 * 20
+                duration * 20
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 String ability = event.getAbility();
                 if (
-                        ability.equals("Fireball") ||
-                        ability.equals("Frostbolt") ||
-                        ability.equals("Water Bolt") ||
-                        ability.equals("Lightning Bolt") ||
-                        ability.equals("Flame Burst")
+                    ability.equals("Fireball") ||
+                    ability.equals("Frostbolt") ||
+                    ability.equals("Water Bolt") ||
+                    ability.equals("Lightning Bolt") ||
+                    ability.equals("Flame Burst") ||
+                    ability.equals("Fallen Souls")
                 ) {
-                    return currentDamageValue * .3f;
+                    return currentDamageValue * .25f;
+                } else {
+                    return currentDamageValue * .75f;
                 }
-                return currentDamageValue;
             }
         });
 
@@ -76,13 +80,13 @@ public class PrismGuard extends AbstractAbility {
 
 
         // First Particle Sphere
-        playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 2.5, 68, 176, 176);
+        playSphereAnimation(wp.getLocation(), bubbleRadius + 2.5, 68, 176, 176);
 
         // Second Particle Sphere
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 1, 65, 185, 185);
+                playSphereAnimation(wp.getLocation(), bubbleRadius + 1, 65, 185, 185);
                 Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
             }
         }.runTaskLater(3);
@@ -95,12 +99,12 @@ public class PrismGuard extends AbstractAbility {
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempWideGuard)) {
 
-                    playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS, 190, 190, 190);
+                    playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
                     Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                     timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
 
                     for (WarlordsPlayer bubblePlayer : PlayerFilter
-                            .entitiesAround(wp, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
+                            .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
                             .aliveTeammatesOfExcludingSelf(wp)
                     ) {
                         bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
@@ -113,21 +117,23 @@ public class PrismGuard extends AbstractAbility {
                                 CooldownTypes.ABILITY,
                                 cooldownManager -> {
                                 },
-                                4 * 20
+                                20
                         ) {
                                     @Override
                                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                         String ability = event.getAbility();
                                         if (
-                                                ability.equals("Fireball") ||
-                                                        ability.equals("Frostbolt") ||
-                                                        ability.equals("Water Bolt") ||
-                                                        ability.equals("Lightning Bolt") ||
-                                                        ability.equals("Flame Burst")
+                                            ability.equals("Fireball") ||
+                                            ability.equals("Frostbolt") ||
+                                            ability.equals("Water Bolt") ||
+                                            ability.equals("Lightning Bolt") ||
+                                            ability.equals("Flame Burst") ||
+                                            ability.equals("Fallen Souls")
                                         ) {
-                                            return currentDamageValue * .3f;
+                                            return currentDamageValue * .25f;
+                                        } else {
+                                            return currentDamageValue * .75f;
                                         }
-                                        return currentDamageValue;
                                     }
                                 });
                         timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
@@ -155,7 +161,7 @@ public class PrismGuard extends AbstractAbility {
                         );
                     }
 
-                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), BUBBLE_RADIUS);
+                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), bubbleRadius);
                     circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2));
                     circle.playEffects();
                 }
@@ -163,5 +169,21 @@ public class PrismGuard extends AbstractAbility {
         }.runTaskTimer(5, 4);
 
         return true;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getBubbleRadius() {
+        return bubbleRadius;
+    }
+
+    public void setBubbleRadius(int bubbleRadius) {
+        this.bubbleRadius = bubbleRadius;
     }
 }

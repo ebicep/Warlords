@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 public class HeartToHeart extends AbstractAbility {
 
     private final int radius = 15;
-    private final int vindDuration = 6;
+    private int vindDuration = 6;
 
     public HeartToHeart() {
         super("Heart To Heart", 0, 0, 13, 20, -1, 100);
@@ -117,5 +117,9 @@ public class HeartToHeart extends AbstractAbility {
         }
 
         return false;
+    }
+
+    public void setVindDuration(int vindDuration) {
+        this.vindDuration = vindDuration;
     }
 }

@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -22,14 +21,14 @@ public class RemedicChains extends AbstractAbility {
     private final float healingMultiplier = 0.125f;
 
     public RemedicChains() {
-        super("Remedic Chains", 636, 758, 16, 40, 20, 200);
+        super("Remedic Chains", 636, 758, 16, 60, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
                 "§7the damage they deal by §c10% §7and causing them\n" +
-                "§7them to regenerate §a3% §7max health (even when\n" +
+                "§7them to regenerate §a2% §7max health (even when\n" +
                 "§7taking damage) as long as the link is active.\n" +
                 "Lasts §6" + duration + " §7seconds" +
                 "\n\n" +
@@ -89,7 +88,7 @@ public class RemedicChains extends AbstractAbility {
                     if (counter % 20 == 0 && !outOfRange) {
                         timeLinked.compute(chainTarget, (k, v) -> v == null ? 1 : v + 1);
 
-                        float maxHealing = chainTarget.getMaxHealth() * 0.03f;
+                        float maxHealing = chainTarget.getMaxHealth() * 0.02f;
                         chainTarget.addHealingInstance(
                                 wp,
                                 name,
@@ -101,11 +100,12 @@ public class RemedicChains extends AbstractAbility {
                                 false
                         );
 
+                        float selfMaxHealing = wp.getMaxHealth() * 0.02f;
                         wp.addHealingInstance(
                                 wp,
                                 name,
-                                maxHealing,
-                                maxHealing,
+                                selfMaxHealing,
+                                selfMaxHealing,
                                 -1,
                                 100,
                                 false,
@@ -156,9 +156,7 @@ public class RemedicChains extends AbstractAbility {
                             }
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
-
                             Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
-
                             this.cancel();
                         }
                     }
@@ -169,8 +167,7 @@ public class RemedicChains extends AbstractAbility {
         }
 
         if (targetHit >= 1) {
-            Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
-            Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_BREATH, 2, 0.3f);
+            Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
             wp.subtractEnergy(energyCost);
             wp.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(

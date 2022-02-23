@@ -21,6 +21,7 @@ public class Vindicate extends AbstractAbility {
     private final int radius = 8;
     private final int vindicateDuration = 8;
     private int vindicateSelfDuration = 8;
+    private float vindicateDamageReduction = 25;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
@@ -34,7 +35,7 @@ public class Vindicate extends AbstractAbility {
                 "§7affected by de-buffs and grants §625% §7knockback\n" +
                 "§7resistance for §6" + vindicateDuration + " §7seconds." +
                 "\n\n" +
-                "§7You gain §e25% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n" +
+                "§7You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n" +
                 "§7Each ally within your Vindicate radius increases\n" +
                 "§7the duration by §61 §7second. (up to §612 §7seconds.)";
     }
@@ -103,7 +104,7 @@ public class Vindicate extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .75f;
+                return currentDamageValue * getVindicateDamageReduction();
             }
         });
 
@@ -116,5 +117,13 @@ public class Vindicate extends AbstractAbility {
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
 
         return true;
+    }
+
+    public float getVindicateDamageReduction() {
+        return (100 - vindicateDamageReduction) / 100f;
+    }
+
+    public void setVindicateDamageReduction(int vindicateDamageReduction) {
+        this.vindicateDamageReduction = vindicateDamageReduction;
     }
 }

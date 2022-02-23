@@ -8,7 +8,6 @@ commands:
   start:
     description: Starts a new game.
     usage: /start [...map:MapName | category:CategoryName | addon:AddonName | players:* | player:PlayerName]
-    permission: warlords.game.start
   terminategame:
     description: Terminates the game.
     permissions: warlords.game.end

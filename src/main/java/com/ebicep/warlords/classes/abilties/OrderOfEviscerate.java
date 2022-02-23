@@ -20,7 +20,7 @@ import static com.ebicep.warlords.player.WarlordsPlayer.RECEIVE_ARROW;
 
 public class OrderOfEviscerate extends AbstractAbility {
 
-    private final int duration = 8;
+    private int duration = 8;
 
     public OrderOfEviscerate() {
         super("Order of Eviscerate", 0, 0, 60, 60, -1, 100);
@@ -126,5 +126,13 @@ public class OrderOfEviscerate extends AbstractAbility {
         }.runTaskTimer(0, 1);
 
         return true;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

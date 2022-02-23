@@ -16,6 +16,9 @@ public class SoulShackle extends AbstractAbility {
 
     private final int shackleRange = 12;
     private float shacklePool = 0;
+    private final int maxShackleTargets = 1;
+    private int minSilenceDuration = 2;
+    private int maxSilenceDuration = 4;
 
     public SoulShackle() {
         super("Soul Shackle", 344, 468, 9, 40, 20, 175);
@@ -23,8 +26,8 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Shackle up to §e1 §7enemy and deal §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Shackled enemies are silenced for §62§7-§64 §7seconds,\n" +
+        description = "§7Shackle up to §e" + maxShackleTargets + " §7enemy and deal §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
+                "§7Shackled enemies are silenced for §6" + minSilenceDuration + "§7-§6" + maxSilenceDuration + " §7seconds,\n" +
                 "§7making them unable to use their main attack for\n" +
                 "§7the duration. The silence duration increases by §61\n" +
                 "§7second for every §c1000 §7damage you took in the last\n" +
@@ -40,9 +43,8 @@ public class SoulShackle extends AbstractAbility {
         for (WarlordsPlayer shackleTarget : PlayerFilter
                 .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
-                .lookingAtFirst(wp)
                 .requireLineOfSight(wp)
-                .limit(1)
+                .limit(maxShackleTargets)
         ) {
             wp.subtractEnergy(energyCost);
             wp.sendMessage(
@@ -52,9 +54,9 @@ public class SoulShackle extends AbstractAbility {
                 ChatColor.GRAY + "!"
             );
 
-            int silenceDuration = 2 + (int) (shacklePool / 1000);
-            if (silenceDuration > 4) {
-                silenceDuration = 4;
+            int silenceDuration = minSilenceDuration + (int) (shacklePool / 1000);
+            if (silenceDuration > maxSilenceDuration) {
+                silenceDuration = maxSilenceDuration;
             }
 
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -121,5 +123,13 @@ public class SoulShackle extends AbstractAbility {
             float newPool = shacklePool - 150;
             shacklePool = Math.max(newPool, 0);
         }
+    }
+
+    public void setMaxSilenceDuration(int maxSilenceDuration) {
+        this.maxSilenceDuration = maxSilenceDuration;
+    }
+
+    public void setMinSilenceDuration(int minSilenceDuration) {
+        this.minSilenceDuration = minSilenceDuration;
     }
 }

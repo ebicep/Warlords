@@ -15,7 +15,7 @@ public class SniperShot extends AbstractProjectileBase {
     // dont ask
 
     public SniperShot() {
-        super("Sniper Shot", 2209, 3654, 10, 100, 100, 300, 20, 500, false);
+        super("Sniper Shot", 2209, 3654, 10, 100, 100, 300, 30, 500, false);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SniperShot extends AbstractProjectileBase {
 
     @Override
     protected float getSoundVolume() {
-        return 10;
+        return 100;
     }
 
     @Override
