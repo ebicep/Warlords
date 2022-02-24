@@ -1,15 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
-import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseMageCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabasePaladinCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseShamanCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseWarriorCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.*;
+import com.ebicep.warlords.game.MapCategory;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
+import org.bukkit.GameMode;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -32,13 +30,14 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     private DatabaseWarriorCTF warrior = new DatabaseWarriorCTF();
     private DatabasePaladinCTF paladin = new DatabasePaladinCTF();
     private DatabaseShamanCTF shaman = new DatabaseShamanCTF();
+    private DatabaseRogueCTF rogue = new DatabaseRogueCTF();
 
     public DatabasePlayerCTF() {
 
     }
 
     @Override
-    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
 
@@ -51,8 +50,8 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
         this.totalTimeInRespawn += gamePlayer.getSecondsInRespawn();
         this.totalTimePlayed += 900 - databaseGame.getTimeLeft();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
     }
 
     @Override
@@ -82,6 +81,12 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
                 return shaman.getSpiritguard();
             case EARTHWARDEN:
                 return shaman.getEarthwarden();
+            case ASSASSIN:
+                return rogue.getAssassin();
+            case VINDICATOR:
+                return rogue.getVindicator();
+            case APOTHECARY:
+                return rogue.getApothecary();
         }
         return null;
     }
@@ -97,13 +102,15 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
                 return paladin;
             case SHAMAN:
                 return shaman;
+            case ROGUE:
+                return rogue;
         }
         return null;
     }
 
     @Override
     public DatabaseBaseCTF[] getClasses() {
-        return new DatabaseBaseCTF[]{mage, warrior, paladin, shaman};
+        return new DatabaseBaseCTF[]{mage, warrior, paladin, shaman, rogue};
     }
 
     //    public DatabaseWarlordsClassCTF getClass(DatabaseWarlordsClassCTF databaseWarlordsClassCTF) {
@@ -179,4 +186,7 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
         return shaman;
     }
 
+    public DatabaseRogueCTF getRogue() {
+        return rogue;
+    }
 }

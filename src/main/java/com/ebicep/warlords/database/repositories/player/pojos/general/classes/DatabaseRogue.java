@@ -10,15 +10,15 @@ import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import org.bukkit.GameMode;
 
-public class DatabasePaladin extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
+public class DatabaseRogue extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    private DatabaseSpecialization avenger = new DatabaseSpecialization(ClassesSkillBoosts.AVENGER_STRIKE);
-    private DatabaseSpecialization crusader = new DatabaseSpecialization(ClassesSkillBoosts.CRUSADER_STRIKE);
-    private DatabaseSpecialization protector = new DatabaseSpecialization(ClassesSkillBoosts.PROTECTOR_STRIKE);
-    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_PALADIN_HELMET;
-    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
+    protected DatabaseSpecialization assassin = new DatabaseSpecialization(ClassesSkillBoosts.FIREBALL);
+    protected DatabaseSpecialization vindicator = new DatabaseSpecialization(ClassesSkillBoosts.FROST_BOLT);
+    protected DatabaseSpecialization apothecary = new DatabaseSpecialization(ClassesSkillBoosts.WATER_BOLT);
+    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_ROGUE_HELMET;
+    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE; //TODO change to rogue
 
-    public DatabasePaladin() {
+    public DatabaseRogue() {
         super();
     }
 
@@ -30,19 +30,19 @@ public class DatabasePaladin extends AbstractDatabaseStatInformation implements 
 
     @Override
     public DatabaseSpecialization[] getSpecs() {
-        return new DatabaseSpecialization[]{avenger, crusader, protector};
+        return new DatabaseSpecialization[]{assassin, vindicator, apothecary};
     }
 
-    public DatabaseSpecialization getAvenger() {
-        return avenger;
+    public DatabaseSpecialization getAssassin() {
+        return assassin;
     }
 
-    public DatabaseSpecialization getCrusader() {
-        return crusader;
+    public DatabaseSpecialization getVindicator() {
+        return vindicator;
     }
 
-    public DatabaseSpecialization getProtector() {
-        return protector;
+    public DatabaseSpecialization getApothecary() {
+        return apothecary;
     }
 
     public ArmorManager.Helmets getHelmet() {

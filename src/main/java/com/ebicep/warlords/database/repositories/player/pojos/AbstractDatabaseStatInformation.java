@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
-import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.game.MapCategory;
 
 public abstract class AbstractDatabaseStatInformation {
 
@@ -20,7 +20,7 @@ public abstract class AbstractDatabaseStatInformation {
     public AbstractDatabaseStatInformation() {
     }
 
-    public void updateStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         int operation = add ? 1 : -1;
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
@@ -34,10 +34,10 @@ public abstract class AbstractDatabaseStatInformation {
         this.damage += gamePlayer.getTotalDamage() * operation;
         this.healing += gamePlayer.getTotalHealing() * operation;
         this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-        this.updateCustomStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+        this.updateCustomStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
     }
 
-    public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
+    public abstract void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
 
     public double getKDA() {
         if (deaths == 0) {

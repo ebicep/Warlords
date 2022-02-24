@@ -6,13 +6,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.game.MapCategory;
 import org.bukkit.GameMode;
 
-public class DatabaseWarrior extends AbstractDatabaseStatInformation {
+public class DatabaseRogue extends AbstractDatabaseStatInformation {
 
-    protected DatabaseBaseSpec berserker = new DatabaseBaseSpec();
-    protected DatabaseBaseSpec defender = new DatabaseBaseSpec();
-    protected DatabaseBaseSpec revenant = new DatabaseBaseSpec();
+    protected DatabaseBaseSpec assassin = new DatabaseBaseSpec();
+    protected DatabaseBaseSpec vindicator = new DatabaseBaseSpec();
+    protected DatabaseBaseSpec apothecary = new DatabaseBaseSpec();
 
-    public DatabaseWarrior() {
+    public DatabaseRogue() {
     }
 
     @Override
@@ -21,27 +21,27 @@ public class DatabaseWarrior extends AbstractDatabaseStatInformation {
         this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
     }
 
-    public DatabaseBaseSpec getBerserker() {
-        return berserker;
+    public DatabaseBaseSpec getAssassin() {
+        return assassin;
     }
 
-    public void setBerserker(DatabaseBaseSpec berserker) {
-        this.berserker = berserker;
+    public void setAssassin(DatabaseBaseSpec assassin) {
+        this.assassin = assassin;
     }
 
-    public DatabaseBaseSpec getDefender() {
-        return defender;
+    public DatabaseBaseSpec getVindicator() {
+        return vindicator;
     }
 
-    public void setDefender(DatabaseBaseSpec defender) {
-        this.defender = defender;
+    public void setVindicator(DatabaseBaseSpec vindicator) {
+        this.vindicator = vindicator;
     }
 
-    public DatabaseBaseSpec getRevenant() {
-        return revenant;
+    public DatabaseBaseSpec getApothecary() {
+        return apothecary;
     }
 
-    public void setRevenant(DatabaseBaseSpec revenant) {
-        this.revenant = revenant;
+    public void setApothecary(DatabaseBaseSpec apothecary) {
+        this.apothecary = apothecary;
     }
 }

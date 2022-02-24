@@ -1,17 +1,15 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseMage;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabasePaladin;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseShaman;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseWarrior;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
+import com.ebicep.warlords.game.MapCategory;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;
+import org.bukkit.GameMode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -34,6 +32,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();
     private DatabaseShaman shaman = new DatabaseShaman();
+    private DatabaseRogue rogue = new DatabaseRogue();
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("comp_stats")
@@ -61,19 +60,19 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
         //UPDATE GAMEMODES
-        this.ctfStats.updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+        this.ctfStats.updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         if (isCompGame) {
-            this.compStats.updateStats(gameMode, true, databaseGame, gamePlayer, won, add);
+            this.compStats.updateStats(mapCategory, true, databaseGame, gamePlayer, won, add);
         } else {
-            this.pubStats.updateStats(gameMode, false, databaseGame, gamePlayer, won, add);
+            this.pubStats.updateStats(mapCategory, false, databaseGame, gamePlayer, won, add);
         }
     }
 
@@ -103,10 +102,13 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             case SPIRITGUARD:
                 return shaman.getSpiritguard();
             case EARTHWARDEN:
-            case VINDICATOR:
-            case ASSASSIN:
-            case APOTHECARY:
                 return shaman.getEarthwarden();
+            case ASSASSIN:
+                return rogue.getAssassin();
+            case VINDICATOR:
+                return rogue.getVindicator();
+            case APOTHECARY:
+                return rogue.getApothecary();
         }
         return null;
     }
@@ -121,15 +123,16 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             case PALADIN:
                 return paladin;
             case SHAMAN:
-            case ROGUE:
                 return shaman;
+            case ROGUE:
+                return rogue;
         }
         return null;
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getClasses() {
-        return new AbstractDatabaseStatInformation[]{mage, warrior, paladin, shaman};
+        return new AbstractDatabaseStatInformation[]{mage, warrior, paladin, shaman, rogue};
     }
 
     //    public AbstractDatabaseWarlordsClass getClass(AbstractDatabaseWarlordsClass databaseWarlordsClass) {
@@ -199,6 +202,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setShaman(DatabaseShaman shaman) {
         this.shaman = shaman;
+    }
+
+    public DatabaseRogue getRogue() {
+        return rogue;
+    }
+
+    public void setRogue(DatabaseRogue rogue) {
+        this.rogue = rogue;
     }
 
     public DatabasePlayerCTF getCtfStats() {
