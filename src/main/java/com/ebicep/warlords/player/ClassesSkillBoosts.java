@@ -732,8 +732,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     ACUPRESSURE("Acupressure",
-            "§7Increase the amount of health you\n§7restore with Soothing Puddle\n§7by 10% and reduce the cooldown\nby 15%",
-            "§aIncrease the amount of health you\n§arestore with Soothing Puddle\n§aby §c10% and reduce the cooldown\nby §c15%",
+            "§7Increase the amount of health you\n§7restore with Acupressure\n§7by 10% and reduce the cooldown\nby 15%",
+            "§aIncrease the amount of health you\n§arestore with Acupressure\n§aby §c10% and reduce the cooldown\nby §c15%",
             Acupressure.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
@@ -742,10 +742,26 @@ public enum ClassesSkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "PLACEHOLDER",
-            "PLACEHOLDER",
+            "§7Increase the amount of max health\nyou restore per second with Remedic\nChains by 1% and increase the link break\nradius by 5 blocks.",
+            "§aIncrease the amount of max health\nyou restore per second with Remedic\nChains by §c1% §aand increase the link break\nradius by §c5 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
+                if (abstractAbility instanceof RemedicChains) {
+                    ((RemedicChains) abstractAbility).setMaxHealthHealing(3);
+                    ((RemedicChains) abstractAbility).setLinkBreakRadius(20);
+                }
+            }
+    ),
+    DRAINING_MIASMA("Draining Miasma",
+            "§7Increase the range of Draining Miasma\nby 2 blocks and increase the healing\nbased on damage dealt by 10%",
+            "§aIncrease the range of Draining Miasma\nby §c2 §ablocks and increase the healing\nbased on damage dealt by §c10%",
+            DrainingMiasma.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof DrainingMiasma) {
+                    ((DrainingMiasma) abstractAbility).setAllyHitRadius(8);
+                    ((DrainingMiasma) abstractAbility).setEnemyHitRadius(8);
+                    ((DrainingMiasma) abstractAbility).setDamageDealtHealing(50);
+                }
             }
     ),
 

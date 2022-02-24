@@ -15,9 +15,12 @@ import javax.annotation.Nonnull;
 
 public class DrainingMiasma extends AbstractAbility {
 
-    private final int duration = 5;
-    private final int enemyHitRadius = 6;
-    private final int allyHitRadius = 6;
+    private int duration = 5;
+    private int enemyHitRadius = 6;
+    private int allyHitRadius = 6;
+    // Percentage
+    private final int maxHealthDamage = 4;
+    private int damageDealtHealing = 40;
 
     public DrainingMiasma() {
         super("Draining Miasma", 0, 0, 55, 40, -1, 100);
@@ -33,7 +36,7 @@ public class DrainingMiasma extends AbstractAbility {
                 "§7for §63 §7seconds on cast." +
                 "\n\n" +
                 "§7The caster emits healing particles that heal all\n" +
-                "§7allies within the range for §a40% §7of the damage\n" +
+                "§7allies within the range for §a" + damageDealtHealing + "% §7of the damage\n" +
                 "§7dealt and increase their movement speed by §e30%\n" +
                 "§7for §62 §7seconds.\n";
     }
@@ -54,7 +57,7 @@ public class DrainingMiasma extends AbstractAbility {
 
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         for (WarlordsPlayer miasmaTarget : PlayerFilter
-                .entitiesAround(wp, enemyHitRadius, enemyHitRadius, enemyHitRadius)
+                .entitiesAround(wp, getEnemyHitRadius(), getEnemyHitRadius(), getEnemyHitRadius())
                 .aliveEnemiesOf(wp)
         ) {
             miasmaTarget.getCooldownManager().addRegularCooldown(
@@ -83,7 +86,7 @@ public class DrainingMiasma extends AbstractAbility {
 
                 @Override
                 public void run() {
-                    float healthDamage = miasmaTarget.getMaxHealth() * 0.04f;
+                    float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
                         // 4% current health damage.
                         miasmaTarget.addDamageInstance(
@@ -111,14 +114,14 @@ public class DrainingMiasma extends AbstractAbility {
                         }
 
                         for (WarlordsPlayer ally : PlayerFilter
-                                .entitiesAround(wp, allyHitRadius, allyHitRadius, allyHitRadius)
+                                .entitiesAround(wp, getAllyHitRadius(), getAllyHitRadius(), getAllyHitRadius())
                                 .aliveTeammatesOf(wp)
                         ) {
                             ally.addHealingInstance(
                                     wp,
                                     name,
-                                    totalDamage * 0.4f,
-                                    totalDamage * 0.4f,
+                                    totalDamage * damageDealtHealing / 10f,
+                                    totalDamage * damageDealtHealing / 10f,
                                     -1,
                                     100,
                                     false,
@@ -140,5 +143,29 @@ public class DrainingMiasma extends AbstractAbility {
         }
 
         return true;
+    }
+
+    public int getDamageDealtHealing() {
+        return damageDealtHealing;
+    }
+
+    public void setDamageDealtHealing(int damageDealtHealing) {
+        this.damageDealtHealing = damageDealtHealing;
+    }
+
+    public int getEnemyHitRadius() {
+        return enemyHitRadius;
+    }
+
+    public void setEnemyHitRadius(int enemyHitRadius) {
+        this.enemyHitRadius = enemyHitRadius;
+    }
+
+    public int getAllyHitRadius() {
+        return allyHitRadius;
+    }
+
+    public void setAllyHitRadius(int allyHitRadius) {
+        this.allyHitRadius = allyHitRadius;
     }
 }

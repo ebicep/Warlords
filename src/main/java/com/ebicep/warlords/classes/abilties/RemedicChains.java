@@ -15,20 +15,22 @@ import java.util.Map;
 
 public class RemedicChains extends AbstractAbility {
 
-    private final int linkBreakRadius = 15;
+    private int linkBreakRadius = 15;
     private final int duration = 8;
     private final int alliesAffected = 3;
+    // Percentage
     private final float healingMultiplier = 0.125f;
+    private int maxHealthHealing = 2;
 
     public RemedicChains() {
-        super("Remedic Chains", 636, 758, 16, 60, 20, 200);
+        super("Remedic Chains", 636, 758, 16, 50, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
                 "§7the damage they deal by §c10% §7and causing them\n" +
-                "§7them to regenerate §a2% §7max health (even when\n" +
+                "§7them to regenerate §a" + maxHealthHealing + "% §7max health (even when\n" +
                 "§7taking damage) as long as the link is active.\n" +
                 "Lasts §6" + duration + " §7seconds" +
                 "\n\n" +
@@ -88,7 +90,7 @@ public class RemedicChains extends AbstractAbility {
                     if (counter % 20 == 0 && !outOfRange) {
                         timeLinked.compute(chainTarget, (k, v) -> v == null ? 1 : v + 1);
 
-                        float maxHealing = chainTarget.getMaxHealth() * 0.02f;
+                        float maxHealing = chainTarget.getMaxHealth() * maxHealthHealing / 100f;
                         chainTarget.addHealingInstance(
                                 wp,
                                 name,
@@ -100,7 +102,7 @@ public class RemedicChains extends AbstractAbility {
                                 false
                         );
 
-                        float selfMaxHealing = wp.getMaxHealth() * 0.02f;
+                        float selfMaxHealing = wp.getMaxHealth() * maxHealthHealing / 100f;
                         wp.addHealingInstance(
                                 wp,
                                 name,
@@ -191,4 +193,19 @@ public class RemedicChains extends AbstractAbility {
         return targetHit >= 1;
     }
 
+    public int getMaxHealthHealing() {
+        return maxHealthHealing;
+    }
+
+    public void setMaxHealthHealing(int maxHealthHealing) {
+        this.maxHealthHealing = maxHealthHealing;
+    }
+
+    public int getLinkBreakRadius() {
+        return linkBreakRadius;
+    }
+
+    public void setLinkBreakRadius(int linkBreakRadius) {
+        this.linkBreakRadius = linkBreakRadius;
+    }
 }
