@@ -168,7 +168,7 @@ public class PlayingState implements State, TimerDebugAble {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(game, winEvent, true);
+                DatabaseGame.addGame(game, winEvent, !game.getAddons().contains(GameAddon.CUSTOM_GAME));
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database and player information was changed");
             } else {
                 DatabaseGame.addGame(game, winEvent, false);
@@ -194,7 +194,7 @@ public class PlayingState implements State, TimerDebugAble {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(game, winEvent, true);
+                DatabaseGame.addGame(game, winEvent, !game.getAddons().contains(GameAddon.CUSTOM_GAME));
                 System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database and player information was changed");
             } else {
                 DatabaseGame.addGame(game, winEvent, false);

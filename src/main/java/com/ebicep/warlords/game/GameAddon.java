@@ -49,6 +49,13 @@ public enum GameAddon {
             }
         }
     },
+    CUSTOM_GAME(
+            "Custom Game",
+            null,
+            "Makes the game custom, preventing stats from counting"
+    ) {
+
+    },
     IMPOSTER_MODE(
             "Imposter Mode",
             "warlords.game.impostertoggle",
