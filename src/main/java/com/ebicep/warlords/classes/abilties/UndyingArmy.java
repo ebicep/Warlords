@@ -28,7 +28,7 @@ public class UndyingArmy extends AbstractAbility {
             .get();
 
     private final int radius = 15;
-    private final int duration = 10;
+    private int duration = 10;
     private int maxArmyAllies = 6;
 
     private final HashMap<UUID, Boolean> playersPopped = new HashMap<>();
@@ -100,11 +100,11 @@ public class UndyingArmy extends AbstractAbility {
                 public void run() {
                     if (!wp.getGame().isFrozen()) {
                         Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
-                                if (optionalUndyingArmy.isPresent()) {
+                        if (optionalUndyingArmy.isPresent()) {
                             if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
                                 float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
-                                teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
+                                teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
 
                                 // particles
                                 Location playerLoc = teammate.getLocation();
@@ -174,5 +174,13 @@ public class UndyingArmy extends AbstractAbility {
 
     public void setMaxArmyAllies(int maxArmyAllies) {
         this.maxArmyAllies = maxArmyAllies;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

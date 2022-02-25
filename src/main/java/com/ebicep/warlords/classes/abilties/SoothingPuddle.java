@@ -52,13 +52,13 @@ public class SoothingPuddle extends AbstractAbility {
             int timer = 0;
             @Override
             public void run() {
-                    quarterStep(false);
-                    quarterStep(false);
-                    quarterStep(false);
-                    quarterStep(false);
-                    quarterStep(false);
-                    quarterStep(false);
-                    quarterStep(true);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(true);
             }
 
             private void quarterStep(boolean last) {

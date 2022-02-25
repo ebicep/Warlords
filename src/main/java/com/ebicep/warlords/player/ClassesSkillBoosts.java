@@ -49,13 +49,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 55% but reduce the Crit\nChance bonus by 15%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c55% §abut reduce the Crit\nChance bonus §aby §c15%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 60% but reduce the Crit\nChance bonus by 15%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60% §abut reduce the Crit\nChance bonus §aby §c15%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
                     ((Inferno) abstractAbility).setCritChanceIncrease(15);
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(85);
+                    ((Inferno) abstractAbility).setCritMultiplierIncrease(90);
                 }
             }
     ),
@@ -298,12 +298,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the amount of allies\naffected by 2 §7and reduce the\n§7cooldown by 25%",
-            "§aIncrease the amount of allies\n§aaffected by §c2 §aand reduce the\n§acooldown by §c25%",
+            "§7Increase the duration of Undying\nArmy by 2 seconds and reduce the\n§7cooldown by 25%",
+            "§aIncrease the duration of Undying\nArmy by §c2 §aseconds and reduce the\ncooldown by §c25%",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
-                    ((UndyingArmy) abstractAbility).setMaxArmyAllies(8);
+                    ((UndyingArmy) abstractAbility).setDuration(12);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
@@ -585,8 +585,6 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
                     ((Earthliving) abstractAbility).setProcChance(60);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT EARTHLIVING");
                 }
             }
     ),
@@ -666,14 +664,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle\nby 10% and increase the silence\nduration by 1 second.",
-            "§aReduce the cooldown of Soul Shackle\nby §c10% §aand increase the silence\nduration by §c1 §asecond.",
+            "§7Reduce the cooldown of Soul Shackle\nby 8% and increase the silence\nduration by 1 second.",
+            "§aReduce the cooldown of Soul Shackle\nby §c8% §aand increase the silence\nduration by §c1 §asecond.",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
                     ((SoulShackle) abstractAbility).setMinSilenceDuration(3);
                     ((SoulShackle) abstractAbility).setMaxSilenceDuration(5);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .92f);
                 }
             }
     ),
@@ -742,12 +740,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of max health\nyou restore per second with Remedic\nChains by 1% and increase the link break\nradius by 5 blocks.",
-            "§aIncrease the amount of max health\nyou restore per second with Remedic\nChains by §c1% §aand increase the link break\nradius by §c5 §ablocks.",
+            "§7Increase the amount of max health\nyou restore per second with Remedic\nChains by 2% and increase the link break\nradius by 5 blocks.",
+            "§aIncrease the amount of max health\nyou restore per second with Remedic\nChains by §c2% §aand increase the link break\nradius by §c5 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
-                    ((RemedicChains) abstractAbility).setMaxHealthHealing(3);
+                    ((RemedicChains) abstractAbility).setMaxHealthHealing(4);
                     ((RemedicChains) abstractAbility).setLinkBreakRadius(20);
                 }
             }
