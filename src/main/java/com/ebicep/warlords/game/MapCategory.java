@@ -89,8 +89,8 @@ public enum MapCategory {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
                     "",
-                    color + "First player to kill their opponent",
-                    color + "5 times wins the duel!",
+                    color + "First team to reach 1000 points wins",
+                    color + "the game!",
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(

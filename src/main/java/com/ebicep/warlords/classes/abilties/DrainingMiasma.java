@@ -30,7 +30,7 @@ public class DrainingMiasma extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
-                "§7enemies take §c50 §7+ §c4% §7of their max health as\n" +
+                "§7enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
                 "§7poisoned by your Draining Miasma are blinded\n" +
                 "§7for §63 §7seconds on cast." +
@@ -120,8 +120,8 @@ public class DrainingMiasma extends AbstractAbility {
                             ally.addHealingInstance(
                                     wp,
                                     name,
-                                    totalDamage * damageDealtHealing / 10f,
-                                    totalDamage * damageDealtHealing / 10f,
+                                    totalDamage * damageDealtHealing / 100f,
+                                    totalDamage * damageDealtHealing / 100f,
                                     -1,
                                     100,
                                     false,
