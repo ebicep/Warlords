@@ -302,7 +302,7 @@ public enum GameMap {
 
     },
     VALLEY(
-            "Valley",//"Atherrough Valley",
+            "Atherrough Valley",
             32,
             12,
             60 * SECOND,
