@@ -48,7 +48,7 @@ public class DatabaseManager {
 
     public static String lastWarlordsPlusString = "";
 
-    public static boolean enabled = false;
+    public static boolean enabled = false; //DO NOT ENABLE
 
     public static void init() {
         if (!enabled) {
