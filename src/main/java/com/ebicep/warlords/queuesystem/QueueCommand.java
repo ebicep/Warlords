@@ -10,8 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
-
 public class QueueCommand implements CommandExecutor {
 
     @Override

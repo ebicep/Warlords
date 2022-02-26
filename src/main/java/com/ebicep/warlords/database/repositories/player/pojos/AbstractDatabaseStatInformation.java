@@ -1,8 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
-import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMode;
 
 public abstract class AbstractDatabaseStatInformation {
 
@@ -20,24 +22,48 @@ public abstract class AbstractDatabaseStatInformation {
     public AbstractDatabaseStatInformation() {
     }
 
-    public void updateStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateStats(DatabaseGameBase databaseGame,
+                            DatabaseGamePlayerBase gamePlayer,
+                            boolean add
+    ) {
+        DatabaseGamePlayerResult result = databaseGame.getPlayerGameResult(gamePlayer);
         int operation = add ? 1 : -1;
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
         this.deaths += gamePlayer.getTotalDeaths() * operation;
-        if (won) {
-            this.wins += operation;
-        } else {
-            this.losses += operation;
+        switch (result) {
+            case WON:
+                this.wins += operation;
+                break;
+            case LOST:
+            case DRAW:
+                this.losses += operation;
+                break;
+            case NONE:
+                break;
         }
         this.plays += operation;
         this.damage += gamePlayer.getTotalDamage() * operation;
         this.healing += gamePlayer.getTotalHealing() * operation;
         this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-        this.updateCustomStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        this.updateCustomStats(
+                databaseGame,
+                databaseGame.getGameMode(),
+                gamePlayer,
+                result,
+                databaseGame.getGameAddons().contains(GameAddon.PRIVATE_GAME),
+                add
+        );
     }
 
-    public abstract void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
+    public abstract void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            boolean isCompGame,
+            boolean add
+    );
 
     public double getKDA() {
         if (deaths == 0) {

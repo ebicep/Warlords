@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.sections.subsections.LeaderboardCTF;
 import com.ebicep.warlords.database.leaderboards.sections.subsections.LeaderboardGeneral;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.sr.SRCalculator;
@@ -79,13 +79,13 @@ public class LeaderboardManager {
 
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
             Location hologramLocation = hologram.getPosition().toLocation();
-            if (!DatabaseGame.lastGameStatsLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topDamageLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topHealingLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topAbsorbedLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topDHPPerMinuteLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topDamageOnCarrierLocation.equals(hologramLocation) &&
-                    !DatabaseGame.topHealingOnCarrierLocation.equals(hologramLocation)
+            if (!DatabaseGameBase.lastGameStatsLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topDamageLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topHealingLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topAbsorbedLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topDHPPerMinuteLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topDamageOnCarrierLocation.equals(hologramLocation) &&
+                    !DatabaseGameBase.topHealingOnCarrierLocation.equals(hologramLocation)
             ) {
                 hologram.delete();
             }
@@ -134,7 +134,7 @@ public class LeaderboardManager {
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
-                            DatabaseGame.setGameHologramVisibility(player);
+                            DatabaseGameBase.setGameHologramVisibility(player);
                             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         System.out.println("Set Hologram Visibility");
@@ -374,7 +374,7 @@ public class LeaderboardManager {
         removeLeaderboardPlayerSpecificHolograms(player);
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
                 .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
-                        (h.getPosition().toLocation().equals(DatabaseGame.gameSwitchLocation) ||
+                        (h.getPosition().toLocation().equals(DatabaseGameBase.gameSwitchLocation) ||
                                 h.getPosition().toLocation().equals(leaderboardGameTypeSwitchLocation) ||
                                 h.getPosition().toLocation().equals(leaderboardCategorySwitchLocation) ||
                                 h.getPosition().toLocation().equals(leaderboardTimeSwitchLocation)))

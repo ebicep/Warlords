@@ -4,19 +4,28 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
+import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 import org.springframework.cache.caffeine.CaffeineCache;
 
@@ -81,7 +90,22 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
 
+
+/*
         Player player = (Player) sender;
+        Document document = DatabaseManager.warlordsDatabase.getCollection("Temp").find().first();
+        document.put("map", document.getString("map").toUpperCase());
+        DatabaseGameCTF databaseGameCTF = DatabaseManager.gameService.convertDocumentToClass(document, DatabaseGameCTF.class);
+        databaseGameCTF.setExactDate(DatabaseGameBase.convertToDateFrom(document.getObjectId("_id").toString()));
+        databaseGameCTF.setGameMode(GameMode.CAPTURE_THE_FLAG);
+        if(document.getBoolean("private")) {
+            databaseGameCTF.getGameAddons().add(GameAddon.PRIVATE_GAME);
+        }
+        databaseGameCTF.setStatInfo(document.getString("statInfo"));
+        DatabaseManager.gameService.create(databaseGameCTF);
+
+ */
+
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
 //            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
@@ -93,19 +117,11 @@ public class TestCommand implements CommandExecutor {
 //        });
 
 
-        CustomScoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
-        System.out.println(scoreboard.getHealth());
-        for (Team team : scoreboard.getScoreboard().getTeams()) {
-            System.out.println(team.getName());
-        }
-
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            for (Team team : scoreboard.getScoreboard().getTeams()) {
-                if (team.getName().equals(onlinePlayer.getName())) {
-                    team.unregister();
-                }
-            }
-        }
+//        DatabaseManager.gameService.create(new DatabaseGameCTF(), GamesCollections.ALL);
+//        DatabaseManager.gameService.create(new DatabaseGameTDM(), GamesCollections.ALL);
+//        for (DatabaseGameBase databaseGameBase : DatabaseManager.gameService.findAll(GamesCollections.ALL)) {
+//            System.out.println(databaseGameBase);
+//        }
 
 //        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
 //        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));
@@ -306,34 +322,34 @@ public class TestCommand implements CommandExecutor {
     }
 
     private void updateStats(DatabasePlayer databasePlayer, long damageExp, long tankEXP, long healerExp, long totalExp, PlayersCollections playersCollections) {
-        DatabasePlayerCTF databasePlayerCTF = databasePlayer.getCtfStats();
-        DatabasePlayerPubStats pubStats = databasePlayer.getPubStats();
-        DatabasePlayerCTF ctfStats = pubStats.getCtfStats();
-
-        //general
-        databasePlayer.setExperience(databasePlayer.getExperience() + totalExp);
-        databasePlayer.getShaman().setExperience(databasePlayer.getShaman().getExperience() + totalExp);
-        databasePlayer.getShaman().getThunderlord().setExperience(databasePlayer.getShaman().getThunderlord().getExperience() + damageExp);
-        databasePlayer.getShaman().getSpiritguard().setExperience(databasePlayer.getShaman().getSpiritguard().getExperience() + tankEXP);
-        databasePlayer.getShaman().getEarthwarden().setExperience(databasePlayer.getShaman().getEarthwarden().getExperience() + healerExp);
-        //ctf
-        databasePlayerCTF.setExperience(databasePlayerCTF.getExperience() + totalExp);
-        databasePlayerCTF.getShaman().setExperience(databasePlayerCTF.getShaman().getExperience() + totalExp);
-        databasePlayerCTF.getShaman().getThunderlord().setExperience(databasePlayerCTF.getShaman().getThunderlord().getExperience() + damageExp);
-        databasePlayerCTF.getShaman().getSpiritguard().setExperience(databasePlayerCTF.getShaman().getSpiritguard().getExperience() + tankEXP);
-        databasePlayerCTF.getShaman().getEarthwarden().setExperience(databasePlayerCTF.getShaman().getEarthwarden().getExperience() + healerExp);
-        //pub
-        pubStats.setExperience(pubStats.getExperience() + totalExp);
-        pubStats.getShaman().setExperience(pubStats.getShaman().getExperience() + totalExp);
-        pubStats.getShaman().getThunderlord().setExperience(pubStats.getShaman().getThunderlord().getExperience() + damageExp);
-        pubStats.getShaman().getSpiritguard().setExperience(pubStats.getShaman().getSpiritguard().getExperience() + tankEXP);
-        pubStats.getShaman().getEarthwarden().setExperience(pubStats.getShaman().getEarthwarden().getExperience() + healerExp);
-        //pub ctf
-        ctfStats.setExperience(ctfStats.getExperience() + totalExp);
-        ctfStats.getShaman().setExperience(ctfStats.getShaman().getExperience() + totalExp);
-        ctfStats.getShaman().getThunderlord().setExperience(ctfStats.getShaman().getThunderlord().getExperience() + damageExp);
-        ctfStats.getShaman().getSpiritguard().setExperience(ctfStats.getShaman().getSpiritguard().getExperience() + tankEXP);
-        ctfStats.getShaman().getEarthwarden().setExperience(ctfStats.getShaman().getEarthwarden().getExperience() + healerExp);
+//        DatabasePlayerCTF databasePlayerCTF = databasePlayer.getCtfStats();
+//        DatabasePlayerPubStats pubStats = databasePlayer.getPubStats();
+//        DatabasePlayerCTF ctfStats = pubStats.getCtfStats();
+//
+//        //general
+//        databasePlayer.setExperience(databasePlayer.getExperience() + totalExp);
+//        databasePlayer.getShaman().setExperience(databasePlayer.getShaman().getExperience() + totalExp);
+//        databasePlayer.getShaman().getThunderlord().setExperience(databasePlayer.getShaman().getThunderlord().getExperience() + damageExp);
+//        databasePlayer.getShaman().getSpiritguard().setExperience(databasePlayer.getShaman().getSpiritguard().getExperience() + tankEXP);
+//        databasePlayer.getShaman().getEarthwarden().setExperience(databasePlayer.getShaman().getEarthwarden().getExperience() + healerExp);
+//        //ctf
+//        databasePlayerCTF.setExperience(databasePlayerCTF.getExperience() + totalExp);
+//        databasePlayerCTF.getShaman().setExperience(databasePlayerCTF.getShaman().getExperience() + totalExp);
+//        databasePlayerCTF.getShaman().getThunderlord().setExperience(databasePlayerCTF.getShaman().getThunderlord().getExperience() + damageExp);
+//        databasePlayerCTF.getShaman().getSpiritguard().setExperience(databasePlayerCTF.getShaman().getSpiritguard().getExperience() + tankEXP);
+//        databasePlayerCTF.getShaman().getEarthwarden().setExperience(databasePlayerCTF.getShaman().getEarthwarden().getExperience() + healerExp);
+//        //pub
+//        pubStats.setExperience(pubStats.getExperience() + totalExp);
+//        pubStats.getShaman().setExperience(pubStats.getShaman().getExperience() + totalExp);
+//        pubStats.getShaman().getThunderlord().setExperience(pubStats.getShaman().getThunderlord().getExperience() + damageExp);
+//        pubStats.getShaman().getSpiritguard().setExperience(pubStats.getShaman().getSpiritguard().getExperience() + tankEXP);
+//        pubStats.getShaman().getEarthwarden().setExperience(pubStats.getShaman().getEarthwarden().getExperience() + healerExp);
+//        //pub ctf
+//        ctfStats.setExperience(ctfStats.getExperience() + totalExp);
+//        ctfStats.getShaman().setExperience(ctfStats.getShaman().getExperience() + totalExp);
+//        ctfStats.getShaman().getThunderlord().setExperience(ctfStats.getShaman().getThunderlord().getExperience() + damageExp);
+//        ctfStats.getShaman().getSpiritguard().setExperience(ctfStats.getShaman().getSpiritguard().getExperience() + tankEXP);
+//        ctfStats.getShaman().getEarthwarden().setExperience(ctfStats.getShaman().getEarthwarden().getExperience() + healerExp);
 
         DatabaseManager.updatePlayerAsync(databasePlayer, playersCollections);
     }

@@ -1,15 +1,15 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
-import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;
-import org.bukkit.GameMode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -60,19 +60,23 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
         //UPDATE GAMEMODES
-        this.ctfStats.updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        switch (gameMode) {
+            case CAPTURE_THE_FLAG:
+                this.ctfStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+        }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         if (isCompGame) {
-            this.compStats.updateStats(mapCategory, true, databaseGame, gamePlayer, won, add);
+            this.compStats.updateStats(databaseGame, gamePlayer, add);
         } else {
-            this.pubStats.updateStats(mapCategory, false, databaseGame, gamePlayer, won, add);
+            this.pubStats.updateStats(databaseGame, gamePlayer, add);
         }
     }
 

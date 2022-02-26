@@ -1,15 +1,15 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.*;
-import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
-import org.bukkit.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
@@ -26,14 +26,16 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
     }
 
     @Override
-    public void updateCustomStats(MapCategory mapCategory, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
-        if (mapCategory == MapCategory.CAPTURE_THE_FLAG) {
-            this.ctfStats.updateStats(mapCategory, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
+        switch (gameMode) {
+            case CAPTURE_THE_FLAG:
+                this.ctfStats.updateStats(databaseGame, gamePlayer, add);
+                break;
         }
     }
 

@@ -787,7 +787,7 @@ public class DebugMenu {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories().stream().map(MapCategory::getName).collect(Collectors.joining(", ")))
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
                             .get(),
                     (n, e) -> openMapsCategoryMenu(player, map)
             );
@@ -802,15 +802,15 @@ public class DebugMenu {
         Menu menu = new Menu(selectedGameMap.getMapName(), 9 * menuHeight);
 
         for (int i = 0; i < selectedGameMap.getCategories().size(); i++) {
-            MapCategory mapCategory = selectedGameMap.getCategories().get(i);
+            GameMode gameMode = selectedGameMap.getCategories().get(i);
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
-                            .name(ChatColor.GREEN + mapCategory.getName())
+                            .name(ChatColor.GREEN + gameMode.getName())
                             .get(),
                     (n, e) -> {
                         List<GameAddon> addons = new ArrayList<>();
                         addons.add(GameAddon.PRIVATE_GAME);
-                        openMapsAddonsMenu(player, selectedGameMap, mapCategory, addons);
+                        openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
                     }
             );
         }
@@ -820,7 +820,7 @@ public class DebugMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, MapCategory selectedCategory, List<GameAddon> addons) {
+    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedCategory, List<GameAddon> addons) {
         int menuHeight = (4 + GameAddon.values().length / 7);
         Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedCategory.getName(), 9 * menuHeight);
 

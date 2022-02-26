@@ -25,40 +25,40 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public void create(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.insert(player);
-        System.out.println("Created: - " + p);
+        System.out.println("[PlayerService] Created: - " + p);
     }
 
     @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void create(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.create(player, collection);
-        System.out.println("Created: - " + player + " in " + collection);
+        System.out.println("[PlayerService] Created: - " + player + " in " + collection);
     }
 
     @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
-        System.out.println("Updated: - " + p);
+        System.out.println("[PlayerService] Updated: - " + p);
     }
 
     @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void update(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.save(player, collection);
-        System.out.println("Updated: - " + player + " in " + collection);
+        System.out.println("[PlayerService] Updated: - " + player + " in " + collection);
     }
 
     @Override
     public void delete(DatabasePlayer player) {
         playerRepository.delete(player);
-        System.out.println("Deleted: - " + player);
+        System.out.println("[PlayerService] Deleted: - " + player);
     }
 
     @Override
     public void delete(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.delete(player, collection);
-        System.out.println("Deleted: - " + player + " in " + collection);
+        System.out.println("[PlayerService] Deleted: - " + player + " in " + collection);
     }
 
     @Override

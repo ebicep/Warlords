@@ -30,11 +30,11 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG,
-            MapCategory.INTERCEPTION
+            GameMode.CAPTURE_THE_FLAG,
+            GameMode.INTERCEPTION
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE).asOption());
@@ -102,10 +102,10 @@ public enum GameMap {
             9,
             60 * SECOND,
             "",
-            MapCategory.SIMULATION_TRIAL
+            GameMode.SIMULATION_TRIAL
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(-14.5, 22.5, -0.5, -90, 0), Team.BLUE).asOption());
@@ -148,10 +148,10 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG
+            GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -205,10 +205,10 @@ public enum GameMap {
             9,
             60 * SECOND,
             "",
-            MapCategory.SIMULATION_TRIAL
+            GameMode.SIMULATION_TRIAL
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -250,10 +250,10 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG
+            GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -302,15 +302,15 @@ public enum GameMap {
 
     },
     VALLEY(
-            "Atherrough Valley",
+            "Valley",//"Atherrough Valley",
             32,
             12,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG
+            GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -363,11 +363,11 @@ public enum GameMap {
             16,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG,
-            MapCategory.INTERCEPTION
+            GameMode.CAPTURE_THE_FLAG,
+            GameMode.INTERCEPTION
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -416,10 +416,10 @@ public enum GameMap {
             1,
             60 * SECOND,
             "WLDebug",
-            MapCategory.DEBUG
+            GameMode.DEBUG
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -469,16 +469,16 @@ public enum GameMap {
             2,
             60 * SECOND,
             "",
-            MapCategory.DUEL
+            GameMode.DUEL
             ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED).asOption());
-            
+
             options.add(new GateOption(loc, 723, 5, 173, 729, 11, 179));
             options.add(new GateOption(loc, 753, 4, 140, 759, 10, 146));
 
@@ -511,27 +511,27 @@ public enum GameMap {
     private final int minPlayers;
     private final int lobbyCountdown;
     private final String mapDirPath;
-    private final List<MapCategory> mapCategory;
+    private final List<GameMode> gameMode;
 
-    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int lobbyCountdown, @Nonnull String mapDirPath, @Nonnull MapCategory... mapCategory) {
+    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int lobbyCountdown, @Nonnull String mapDirPath, @Nonnull GameMode... gameMode) {
         this.mapName = mapName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
         this.lobbyCountdown = lobbyCountdown;
         this.mapDirPath = mapDirPath;
-        this.mapCategory = Collections.unmodifiableList(Arrays.asList(mapCategory));
+        this.gameMode = Collections.unmodifiableList(Arrays.asList(gameMode));
     }
 
     /**
      * Constructs the game instance
      *
      * @param category The map category to construct (for maps with multiple
-     * configurations)
-     * @param loc The base location to construct the map
-     * @param addons The used addons
+     *                 configurations)
+     * @param loc      The base location to construct the map
+     * @param addons   The used addons
      * @return The initial list of options
      */
-    public abstract List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons);
+    public abstract List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons);
 
     public State initialState(Game game) {
         return new PreLobbyState(game);
@@ -557,7 +557,16 @@ public enum GameMap {
         return mapDirPath;
     }
 
-    public List<MapCategory> getCategories() {
-        return mapCategory;
+    public List<GameMode> getCategories() {
+        return gameMode;
+    }
+
+    public static GameMap getGameMap(String mapName) {
+        for (GameMap value : GameMap.values()) {
+            if (value.mapName.equalsIgnoreCase(mapName)) {
+                return value;
+            }
+        }
+        return null;
     }
 }

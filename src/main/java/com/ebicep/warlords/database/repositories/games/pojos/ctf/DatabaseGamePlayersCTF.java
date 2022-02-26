@@ -1,0 +1,172 @@
+package com.ebicep.warlords.database.repositories.games.pojos.ctf;
+
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.PlayerStatistics.Entry;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Location;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class DatabaseGamePlayersCTF {
+
+    protected List<DatabaseGamePlayerCTF> blue = new ArrayList<>();
+    protected List<DatabaseGamePlayerCTF> red = new ArrayList<>();
+
+    public DatabaseGamePlayersCTF() {
+    }
+
+    public DatabaseGamePlayersCTF(@Nonnull Game game) {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            if (warlordsPlayer.getTeam() == Team.BLUE) {
+                blue.add(new DatabaseGamePlayerCTF(warlordsPlayer));
+            } else if (warlordsPlayer.getTeam() == Team.RED) {
+                red.add(new DatabaseGamePlayerCTF(warlordsPlayer));
+            }
+        });
+    }
+
+    public DatabaseGamePlayersCTF(List<DatabaseGamePlayerCTF> blue, List<DatabaseGamePlayerCTF> red) {
+        this.blue = blue;
+        this.red = red;
+    }
+
+    public List<DatabaseGamePlayerCTF> getBlue() {
+        return blue;
+    }
+
+    public List<DatabaseGamePlayerCTF> getRed() {
+        return red;
+    }
+
+    public static class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
+
+        @Field("seconds_in_combat")
+        private int secondsInCombat;
+        @Field("seconds_in_respawn")
+        private int secondsInRespawn;
+
+        @Field("flag_captures")
+        private int flagCaptures;
+        @Field("flag_returns")
+        private int flagReturns;
+        @Field("total_damage_on_carrier")
+        private long totalDamageOnCarrier;
+        @Field("total_healing_on_carrier")
+        private long totalHealingOnCarrier;
+        @Field("damage_on_carrier")
+        private List<Long> damageOnCarrier;
+        @Field("healing_on_carrier")
+        private List<Long> healingOnCarrier;
+
+
+        public DatabaseGamePlayerCTF() {
+        }
+
+        public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer) {
+            LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
+            long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+            long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
+            this.uuid = warlordsPlayer.getUuid().toString();
+            this.name = warlordsPlayer.getName();
+            this.spec = warlordsPlayer.getSpecClass();
+            this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
+            this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();
+            this.secondsInRespawn = Math.round(warlordsPlayer.getStats().total().getRespawnTimeSpent());
+            this.xLocations = warlordsPlayer.getLocations().stream().map(Location::getX).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
+            this.zLocations = warlordsPlayer.getLocations().stream().map(Location::getZ).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
+            this.totalKills = warlordsPlayer.getStats().total().getKills();
+            this.totalAssists = warlordsPlayer.getStats().total().getAssists();
+            this.totalDeaths = warlordsPlayer.getStats().total().getDeaths();
+            this.totalDamage = warlordsPlayer.getStats().total().getDamage();
+            this.totalHealing = warlordsPlayer.getStats().total().getHealing();
+            this.totalAbsorbed = warlordsPlayer.getStats().total().getAbsorbed();
+            this.kills = warlordsPlayer.getStats().stream().map(Entry::getKills).collect(Collectors.toList());
+            this.assists = warlordsPlayer.getStats().stream().map(Entry::getAssists).collect(Collectors.toList());
+            this.deaths = warlordsPlayer.getStats().stream().map(Entry::getDeaths).collect(Collectors.toList());
+            this.damage = warlordsPlayer.getStats().stream().map(Entry::getDamage).collect(Collectors.toList());
+            this.healing = warlordsPlayer.getStats().stream().map(Entry::getHealing).collect(Collectors.toList());
+            this.absorbed = warlordsPlayer.getStats().stream().map(Entry::getAbsorbed).collect(Collectors.toList());
+            this.flagCaptures = warlordsPlayer.getFlagsCaptured();
+            this.flagReturns = warlordsPlayer.getFlagsReturned();
+            this.totalDamageOnCarrier = warlordsPlayer.getStats().total().getDamageOnCarrier();
+            this.totalHealingOnCarrier = warlordsPlayer.getStats().total().getHealingOnCarrier();
+            this.damageOnCarrier = warlordsPlayer.getStats().stream().map(Entry::getDamageOnCarrier).collect(Collectors.toList());
+            this.healingOnCarrier = warlordsPlayer.getStats().stream().map(Entry::getHealingOnCarrier).collect(Collectors.toList());
+            this.experienceEarnedSpec = experienceEarnedSpec;
+            this.experienceEarnedUniversal = experienceEarnedUniversal;
+        }
+
+
+        public int getSecondsInCombat() {
+            return secondsInCombat;
+        }
+
+        public void setSecondsInCombat(int secondsInCombat) {
+            this.secondsInCombat = secondsInCombat;
+        }
+
+        public int getSecondsInRespawn() {
+            return secondsInRespawn;
+        }
+
+        public void setSecondsInRespawn(int secondsInRespawn) {
+            this.secondsInRespawn = secondsInRespawn;
+        }
+
+        public int getFlagCaptures() {
+            return flagCaptures;
+        }
+
+        public void setFlagCaptures(int flagCaptures) {
+            this.flagCaptures = flagCaptures;
+        }
+
+        public int getFlagReturns() {
+            return flagReturns;
+        }
+
+        public void setFlagReturns(int flagReturns) {
+            this.flagReturns = flagReturns;
+        }
+
+        public long getTotalDamageOnCarrier() {
+            return totalDamageOnCarrier;
+        }
+
+        public void setTotalDamageOnCarrier(long totalDamageOnCarrier) {
+            this.totalDamageOnCarrier = totalDamageOnCarrier;
+        }
+
+        public long getTotalHealingOnCarrier() {
+            return totalHealingOnCarrier;
+        }
+
+        public void setTotalHealingOnCarrier(long totalHealingOnCarrier) {
+            this.totalHealingOnCarrier = totalHealingOnCarrier;
+        }
+
+        public List<Long> getDamageOnCarrier() {
+            return damageOnCarrier;
+        }
+
+        public void setDamageOnCarrier(List<Long> damageOnCarrier) {
+            this.damageOnCarrier = damageOnCarrier;
+        }
+
+        public List<Long> getHealingOnCarrier() {
+            return healingOnCarrier;
+        }
+
+        public void setHealingOnCarrier(List<Long> healingOnCarrier) {
+            this.healingOnCarrier = healingOnCarrier;
+        }
+    }
+}
