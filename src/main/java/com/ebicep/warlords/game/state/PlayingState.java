@@ -4,7 +4,7 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
@@ -142,20 +142,19 @@ public class PlayingState implements State, TimerDebugAble {
 
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
-        System.out.println("Imposter = " + game.getAddons().contains(GameAddon.IMPOSTER_MODE));
-        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         System.out.println("Force End = " + (winEvent == null));
         System.out.println("Player Count = " + game.playersCount());
         System.out.println("Players = " + game.getPlayers().keySet());
         System.out.println("Timer = " + timer);
+        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
+        System.out.println("GameMode = " + game.getGameMode());
+        System.out.println("Game Addons = " + game.getAddons());
         System.out.println(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = PlayerFilter.playingGame(game).toList();
         if (players.isEmpty()) {
             return;
         }
-        float highestDamage = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage())).get().getStats().total().getDamage();
-        float highestHealing = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing())).get().getStats().total().getHealing();
         //PUBS
         if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
@@ -167,13 +166,8 @@ public class PlayingState implements State, TimerDebugAble {
             } else {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
-            if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(game, winEvent, !game.getAddons().contains(GameAddon.CUSTOM_GAME));
-                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database and player information was changed");
-            } else {
-                DatabaseGame.addGame(game, winEvent, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
-            }
+
+            DatabaseGameBase.addGame(game, winEvent, true);
 
             if (DatabaseManager.playerService == null) return;
             Warlords.newChain()
@@ -184,7 +178,7 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } //COMPS
-        else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer <= 12000) {
+        else if (true || RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer <= 12000) {
             String gameEnd = "[GAME] A game ended with ";
             if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
@@ -193,18 +187,12 @@ public class PlayingState implements State, TimerDebugAble {
             } else {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }
-            if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(game, winEvent, !game.getAddons().contains(GameAddon.CUSTOM_GAME));
-                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database and player information was changed");
-            } else {
-                DatabaseGame.addGame(game, winEvent, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
-            }
+
+            DatabaseGameBase.addGame(game, winEvent, true);
         } //END GAME
         else {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer <= 12000) {
-                DatabaseGame.addGame(game, winEvent, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database but player information remained the same");
+                DatabaseGameBase.addGame(game, winEvent, false);
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB/COMP game was not added to the database and player information remained the same");
             }

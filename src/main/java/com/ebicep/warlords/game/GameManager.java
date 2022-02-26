@@ -76,7 +76,7 @@ public class GameManager implements AutoCloseable {
                 if (game.getMaxPlayers() - game.playersCount() < entry.getPlayers().size()) {
                     continue; // The party would not fit into this map
                 }
-                if (entry.getCategory() != null && game.getCategory() != entry.getCategory()) {
+                if (entry.getCategory() != null && game.getGameMode() != entry.getCategory()) {
                     continue; // Skip if the user wants to join a game with a different category
                 }
                 if (selected == null) {
@@ -339,9 +339,9 @@ public class GameManager implements AutoCloseable {
         }
 
         @Nonnull
-        private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable MapCategory category) {
+        private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable GameMode category) {
             if (game == null) {
-                MapCategory newCategory = category != null ? category
+                GameMode newCategory = category != null ? category
                         : map.getCategories().get((int) (Math.random() * map.getCategories().size()));
                 game = new Game(requestedGameAddons, map, newCategory, locations);
                 game.start();
@@ -351,9 +351,9 @@ public class GameManager implements AutoCloseable {
                         '[' + name + "] The requested game addons do not match the actual game addons: " + requestedGameAddons + " vs " + game.getAddons()
                 );
             }
-            if (category != null && !game.getCategory().equals(category)) {
+            if (category != null && !game.getGameMode().equals(category)) {
                 throw new IllegalArgumentException(
-                        '[' + name + "] The requested game category do not match the actual game category: " + category + " vs " + game.getCategory()
+                        '[' + name + "] The requested game category do not match the actual game category: " + category + " vs " + game.getGameMode()
                 );
             }
             return game;
@@ -375,7 +375,7 @@ public class GameManager implements AutoCloseable {
         @Nonnull
         private final EnumSet<GameAddon> requestedGameAddons;
         @Nullable
-        private final MapCategory category;
+        private final GameMode category;
         @Nullable
         private final GameMap map;
         @Nullable
@@ -387,7 +387,7 @@ public class GameManager implements AutoCloseable {
                 @Nonnull List<OfflinePlayer> players,
                 long expiresTime,
                 @Nonnull EnumSet<GameAddon> requestedGameAddons,
-                @Nullable MapCategory category,
+                @Nullable GameMode category,
                 @Nullable GameMap map,
                 @Nullable BiConsumer<QueueResult, Game> onResult,
                 int priority
@@ -416,7 +416,7 @@ public class GameManager implements AutoCloseable {
             return requestedGameAddons;
         }
 
-        public MapCategory getCategory() {
+        public GameMode getCategory() {
             return category;
         }
 
@@ -482,7 +482,7 @@ public class GameManager implements AutoCloseable {
         @Nonnull
         protected EnumSet<GameAddon> requestedGameAddons = EnumSet.noneOf(GameAddon.class);
         @Nullable
-        protected MapCategory category = null;
+        protected GameMode category = null;
         @Nullable
         protected GameMap map = null;
         protected int priority = 0;
@@ -509,7 +509,7 @@ public class GameManager implements AutoCloseable {
             return setRequestedGameAddons(rga.length == 0 ? EnumSet.noneOf(GameAddon.class) : EnumSet.copyOf(Arrays.asList(rga)));
         }
 
-        public QueueEntryBuilder setCategory(@Nullable MapCategory category) {
+        public QueueEntryBuilder setCategory(@Nullable GameMode category) {
             this.category = category;
             return this;
         }
@@ -535,7 +535,7 @@ public class GameManager implements AutoCloseable {
         }
 
         @Nullable
-        public MapCategory getCategory() {
+        public GameMode getCategory() {
             return category;
         }
 

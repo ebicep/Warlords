@@ -6,7 +6,8 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -32,9 +33,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
+import static com.mongodb.client.model.Filters.*;
+
 
 public class DatabaseManager {
 
@@ -53,6 +54,9 @@ public class DatabaseManager {
         if (!enabled) {
             NPCManager.createGameNPC();
             return;
+        }
+        if (!LeaderboardManager.enabled) {
+            NPCManager.createGameNPC();
         }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -146,6 +150,8 @@ public class DatabaseManager {
                         .execute();
             }
         }
+
+
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
@@ -270,9 +276,9 @@ public class DatabaseManager {
         Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
-    public static void updateGameAsync(DatabaseGame databaseGame) {
+    public static void updateGameAsync(DatabaseGameBase databaseGame, GamesCollections collection) {
         if (playerService == null || !enabled) return;
-        Warlords.newChain().async(() -> gameService.update(databaseGame)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, collection)).execute();
     }
 
 }

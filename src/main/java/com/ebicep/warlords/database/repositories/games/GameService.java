@@ -1,28 +1,34 @@
 package com.ebicep.warlords.database.repositories.games;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface GameService {
 
-    boolean exists(DatabaseGame game);
+    boolean exists(DatabaseGameBase game, GamesCollections collections);
 
-    void create(DatabaseGame game);
+    void create(DatabaseGameBase game);
 
-    void update(DatabaseGame game);
+    void create(DatabaseGameBase game, GamesCollections collection);
 
-    void delete(DatabaseGame game);
+    void save(DatabaseGameBase game, GamesCollections collection);
 
-    void deleteAll();
+    void delete(DatabaseGameBase game, GamesCollections collection);
 
-    List<DatabaseGame> findAll();
+    DatabaseGameBase findOne(Query query, GamesCollections collection);
 
-    DatabaseGame findByDate(String date);
-
-    List<DatabaseGame> getLastGames(int amount);
+    List<DatabaseGameBase> findAll(GamesCollections collection);
 
     BulkOperations bulkOps();
+
+    <T> T convertDocumentToClass(Document document, Class<T> clazz);
+
+    List<? extends DatabaseGameBase> getLastGames(int amount);
 
 }

@@ -53,10 +53,10 @@ public abstract class GameTargetCommand implements TabExecutor {
                     Game game = h.getGame();
                     if (
                             "*".equals(arg)
-                            || h.getName().equalsIgnoreCase(arg)
-                            || h.getMap().name().equalsIgnoreCase(arg)
-                            || (game != null && game.getCategory().name().equalsIgnoreCase(arg))
-                            || (game != null && game.getGameId().toString().equalsIgnoreCase(arg))
+                                    || h.getName().equalsIgnoreCase(arg)
+                                    || h.getMap().name().equalsIgnoreCase(arg)
+                                    || (game != null && game.getGameMode().name().equalsIgnoreCase(arg))
+                                    || (game != null && game.getGameId().toString().equalsIgnoreCase(arg))
                     ) {
                         matched.add(h);
                     }
@@ -85,7 +85,7 @@ public abstract class GameTargetCommand implements TabExecutor {
                         ),
                         h.getGame() != null ? Stream.of(
                                 h.getGame().getGameId().toString(),
-                                Utils.toTitleCase(h.getGame().getCategory().name())
+                                Utils.toTitleCase(h.getGame().getGameMode().name())
                         ) : Stream.empty()
                 )).distinct()
         )

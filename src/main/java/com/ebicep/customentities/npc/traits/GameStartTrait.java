@@ -1,7 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -67,10 +67,10 @@ public class GameStartTrait extends Trait {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
             }
         }
-        
+
         Warlords.getGameManager()
                 .newEntry(people)
-                .setCategory(MapCategory.CAPTURE_THE_FLAG)
+                .setCategory(GameMode.CAPTURE_THE_FLAG)
                 .setMap(null)
                 .setPriority(0)
                 .setExpiresTime(System.currentTimeMillis() + 60 * 1000)

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,7 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
+
 
 public class GamesCommand implements CommandExecutor {
 
@@ -31,11 +32,11 @@ public class GamesCommand implements CommandExecutor {
         } else {
             if (args[0].equals("reload")) {
                 sender.sendMessage(ChatColor.GREEN + "Deleting Holograms");
-                previousGames.forEach(DatabaseGame::deleteHolograms);
+                previousGames.forEach(DatabaseGameBase::deleteHolograms);
                 sender.sendMessage(ChatColor.GREEN + "Creating Holograms");
-                previousGames.forEach(DatabaseGame::createHolograms);
+                previousGames.forEach(DatabaseGameBase::createHolograms);
                 sender.sendMessage(ChatColor.GREEN + "Setting Visibility");
-                Bukkit.getOnlinePlayers().forEach(DatabaseGame::setGameHologramVisibility);
+                Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
                 return true;
             }
             if (args.length < 2) {
@@ -57,11 +58,11 @@ public class GamesCommand implements CommandExecutor {
             String input = args[0];
             switch (input.toLowerCase()) {
                 case "add":
-                    DatabaseGame.addGameToDatabase(previousGames.get(gameNumber));
+                    DatabaseGameBase.addGameToDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.GREEN + "Adding game!");
                     return true;
                 case "remove":
-                    DatabaseGame.removeGameFromDatabase(previousGames.get(gameNumber));
+                    DatabaseGameBase.removeGameFromDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.RED + "Removing game!");
                     return true;
             }

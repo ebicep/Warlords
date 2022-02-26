@@ -7,7 +7,6 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,8 +20,9 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
+
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
 
 public class EndState implements State, TimerDebugAble {
@@ -143,6 +143,7 @@ public class EndState implements State, TimerDebugAble {
                 }
             }
         }
+
         if (game.playersCount() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
             sendMessageToAllGamePlayer(game, "", false);
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);

@@ -3,7 +3,7 @@ package com.ebicep.warlords.maps;
 import com.avaje.ebean.config.ServerConfig;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
-import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.util.LocationFactory;
 
@@ -47,9 +47,9 @@ import org.junit.runners.Parameterized;
 public class GameMapTest {
 
     private final GameMap map;
-    private final MapCategory category;
+    private final GameMode category;
 
-    public GameMapTest(GameMap map, MapCategory category) {
+    public GameMapTest(GameMap map, GameMode category) {
         this.map = map;
         this.category = category;
     }
@@ -1037,12 +1037,12 @@ public class GameMapTest {
         }
 
         @Override
-        public GameMode getDefaultGameMode() {
+        public org.bukkit.GameMode getDefaultGameMode() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public void setDefaultGameMode(GameMode gm) {
+        public void setDefaultGameMode(org.bukkit.GameMode gm) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

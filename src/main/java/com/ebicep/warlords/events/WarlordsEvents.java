@@ -9,7 +9,7 @@ import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
@@ -104,7 +104,7 @@ public class WarlordsEvents implements Listener {
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
                             if (LeaderboardManager.loaded && Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
                                 LeaderboardManager.setLeaderboardHologramVisibility(player);
-                                DatabaseGame.setGameHologramVisibility(player);
+                                DatabaseGameBase.setGameHologramVisibility(player);
                                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                                 ExperienceManager.giveExperienceBar(player);
                             }

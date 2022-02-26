@@ -2,12 +2,17 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.games.GamesCollections;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
+import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.LocationFactory;
+import com.ebicep.warlords.util.TriFunction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -15,8 +20,12 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public enum MapCategory {
-    CAPTURE_THE_FLAG("Capture The Flag") {
+public enum GameMode {
+    CAPTURE_THE_FLAG(
+            "Capture The Flag",
+            DatabaseGameCTF::new,
+            GamesCollections.CTF
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
@@ -39,7 +48,11 @@ public enum MapCategory {
             return options;
         }
     },
-    INTERCEPTION("Interception") {
+    INTERCEPTION(
+            "Interception",
+            null,
+            null
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
@@ -62,7 +75,11 @@ public enum MapCategory {
             return options;
         }
     },
-    DUEL("Duel") {
+    DUEL(
+            "Duel",
+            null,
+            null
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
@@ -81,7 +98,11 @@ public enum MapCategory {
             return options;
         }
     },
-    TEAM_DEATHMATCH("Team Deathmatch") {
+    TEAM_DEATHMATCH(
+            "Team Deathmatch",
+            null,
+            null
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
@@ -99,7 +120,11 @@ public enum MapCategory {
             return options;
         }
     },
-    SIMULATION_TRIAL("Simulation Trial") {
+    SIMULATION_TRIAL(
+            "Simulation Trial",
+            null,
+            null
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
@@ -121,7 +146,11 @@ public enum MapCategory {
             return options;
         }
     },
-    DEBUG("Debug Map") {
+    DEBUG(
+            "Debug Map",
+            null,
+            null
+    ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
@@ -138,13 +167,25 @@ public enum MapCategory {
     ;
 
     private final String name;
+    private final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
+    private final GamesCollections gamesCollections;
 
-    MapCategory(String name) {
+    GameMode(String name, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame, GamesCollections gamesCollections) {
         this.name = name;
+        this.createDatabaseGame = createDatabaseGame;
+        this.gamesCollections = gamesCollections;
     }
 
     public String getName() {
         return name;
+    }
+
+    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame() {
+        return createDatabaseGame;
+    }
+
+    public GamesCollections getGamesCollections() {
+        return gamesCollections;
     }
 
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -158,10 +199,10 @@ public enum MapCategory {
                 .name(ChatColor.RED + "Leave")
                 .lore(ChatColor.GRAY + "Right-Click to leave the game.")
                 .get(), (g, p) -> {
-                        if (g.acceptsPeople()) {
-                            g.removePlayer(p.getUniqueId());
-                        }
-                }));
+            if (g.acceptsPeople()) {
+                g.removePlayer(p.getUniqueId());
+            }
+        }));
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(p.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();

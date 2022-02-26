@@ -27,12 +27,12 @@ public class GameStartCommand implements TabExecutor {
     @Nullable
     private GameManager.QueueEntryBuilder buildQueue(@Nonnull List<? extends OfflinePlayer> people, @Nonnull CommandSender sender, @Nonnull String[] args) {
         GameMap map = null;
-        MapCategory category = null;
+        GameMode category = null;
         EnumSet<GameAddon> addon = EnumSet.of(GameAddon.PRIVATE_GAME);
         ArrayList<OfflinePlayer> selectedPeople = null;
 
         GameMap[] maps = GameMap.values();
-        MapCategory[] categories = MapCategory.values();
+        GameMode[] categories = GameMode.values();
         GameAddon[] addons = GameAddon.values();
 
         boolean isValid = true;
@@ -42,7 +42,7 @@ public class GameStartCommand implements TabExecutor {
             int indexOf = arg.indexOf(':');
             if (indexOf < 0) {
                 GameMap foundMap = arrayGetItem(maps, e -> e.name().equalsIgnoreCase(arg));
-                MapCategory foundCategory = arrayGetItem(categories, e -> e.name().equalsIgnoreCase(arg));
+                GameMode foundCategory = arrayGetItem(categories, e -> e.name().equalsIgnoreCase(arg));
                 GameAddon foundAddon = arrayGetItem(addons, e -> e.name().equalsIgnoreCase(arg));
                 if ((foundMap == null ? 0 : 1) + (foundCategory == null ? 0 : 1) + (foundAddon == null ? 0 : 1) > 1) {
                     sender.sendMessage(ChatColor.RED + "Vague option: " + arg);
@@ -80,7 +80,7 @@ public class GameStartCommand implements TabExecutor {
                         GameMap foundMap = arrayGetItem(maps, e -> e.name().equalsIgnoreCase(argData));
                         if (foundMap != null) {
                             map = foundMap;
-                        } else if (argData.equals("null")) {
+                        } else if (argData.equalsIgnoreCase("null")) {
                             map = null;
                         } else {
                             sender.sendMessage(ChatColor.RED + "Map not found: " + argData);
@@ -89,10 +89,10 @@ public class GameStartCommand implements TabExecutor {
                         seenMapOrCategory = true;
                         break;
                     case "category":
-                        MapCategory foundCategory = arrayGetItem(categories, e -> e.name().equalsIgnoreCase(argData));
+                        GameMode foundCategory = arrayGetItem(categories, e -> e.name().equalsIgnoreCase(argData));
                         if (foundCategory != null) {
                             category = foundCategory;
-                        } else if (argData.equals("null")) {
+                        } else if (argData.equalsIgnoreCase("null")) {
                             category = null;
                         } else {
                             sender.sendMessage(ChatColor.RED + "Category not found: " + argData);
@@ -108,7 +108,7 @@ public class GameStartCommand implements TabExecutor {
                             } else {
                                 addon.add(foundAddon);
                             }
-                        } else if (argData.equals("null")) {
+                        } else if (argData.equalsIgnoreCase("null")) {
                             addon = EnumSet.noneOf(GameAddon.class);
                         } else {
                             sender.sendMessage(ChatColor.RED + "Addon not found: " + argData);
@@ -239,10 +239,10 @@ public class GameStartCommand implements TabExecutor {
         } else {
             sender.sendMessage(
                     ChatColor.RED + "DEV:" +
-                    ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-                    " a game with the following parameters:"
+                            ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
+                            " a game with the following parameters:"
             );
-            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + Utils.toTitleHumanCase(game.getCategory()));
+            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
             sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap()));
             sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
             sender.sendMessage(ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
@@ -266,14 +266,14 @@ public class GameStartCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         return Stream.of(
-                prefixedEnum(GameMap.values(), "map"),
-                prefixedEnum(GameAddon.values(), "addon"),
-                prefixedEnum(MapCategory.values(), "category"),
-                Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getName()),
-                Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
-                Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId()),
-                Stream.of("players:*")
-        ).flatMap(Function.identity())
+                        prefixedEnum(GameMap.values(), "map"),
+                        prefixedEnum(GameAddon.values(), "addon"),
+                        prefixedEnum(GameMode.values(), "category"),
+                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getName()),
+                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
+                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId()),
+                        Stream.of("players:*")
+                ).flatMap(Function.identity())
                 .filter(e -> startsWithIgnoreCase(e, args[args.length - 1]))
                 .collect(Collectors.toList());
     }

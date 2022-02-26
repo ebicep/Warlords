@@ -59,7 +59,7 @@ public final class Game implements Runnable, AutoCloseable {
     @Nonnull
     private final GameMap map;
     @Nonnull
-    private final MapCategory category;
+    private final GameMode gameMode;
     @Nonnull
     private final EnumSet<GameAddon> addons;
     @Nonnull
@@ -77,14 +77,15 @@ public final class Game implements Runnable, AutoCloseable {
     private boolean acceptsSpectators;
     private final LocationFactory locations;
 
-    public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
-        this(gameAddons, map, category, locations, map.initMap(category, locations, gameAddons));
+    public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
+        this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
-    Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations, List<Option> options) {
+
+    Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations, List<Option> options) {
         this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
-        this.category = category;
+        this.gameMode = gameMode;
         this.options = new ArrayList<>(options);
         this.minPlayers = map.getMinPlayers();
         this.maxPlayers = map.getMaxPlayers();
@@ -165,8 +166,8 @@ public final class Game implements Runnable, AutoCloseable {
      * @return the map category
      */
     @Nonnull
-    public MapCategory getCategory() {
-        return category;
+    public GameMode getGameMode() {
+        return gameMode;
     }
 
     public LocationFactory getLocations() {
@@ -726,7 +727,7 @@ public final class Game implements Runnable, AutoCloseable {
                 + ",\ngameTasks=" + gameTasks
                 + ",\neventHandlers=" + eventHandlers
                 + ",\nmap=" + map
-                + ",\ncategory=" + category
+                + ",\ncategory=" + gameMode
                 + ",\naddons=" + addons
                 + ",\noptions=" + options
                 + ",\nstate=" + state
