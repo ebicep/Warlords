@@ -4,8 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.Bukkit;
@@ -14,24 +14,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImposterCommand implements CommandExecutor {
-    // TODO Move these to a ImposterOption option on the game. At the moment, 2 imposter games cannot be played at the same time
-    @Deprecated
-    public static String blueImposterName = null;
-    @Deprecated
-    public static String redImposterName = null;
-    @Deprecated
-    public static int blueVoters = 0;
-    @Deprecated
-    public static int redVoters = 0;
-    @Deprecated
-    public static List<WarlordsPlayer> voters = new ArrayList<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -58,68 +45,6 @@ public class ImposterCommand implements CommandExecutor {
                     return true;
                 }
 
-                List<Player> bluePlayers = warlordsPlayer.getGame().players()
-                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
-                        .map(Map.Entry::getKey)
-                        .map(Bukkit::getPlayer)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                List<Player> redPlayers = warlordsPlayer.getGame().players()
-                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
-                        .map(Map.Entry::getKey)
-                        .map(Bukkit::getPlayer)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                blueVoters = 0;
-                redVoters = 0;
-                voters.clear();
-                List<Player> players = new ArrayList<>();
-                players.addAll(bluePlayers);
-                players.addAll(redPlayers);
-                new BukkitRunnable() {
-                    int counter = 0;
-
-                    @Override
-                    public void run() {
-                        if (counter == 4) {
-                            blueImposterName = bluePlayers.get(new Random().nextInt(bluePlayers.size())).getName();
-                            redImposterName = redPlayers.get(new Random().nextInt(redPlayers.size())).getName();
-                            System.out.println("BLUE IMPOSTER - " + blueImposterName);
-                            System.out.println("RED IMPOSTER - " + redImposterName);
-                        }
-                        players.forEach(player -> {
-                            String title = "";
-                            switch (counter) {
-                                case 0:
-                                    title = ChatColor.GREEN + "3";
-                                    break;
-                                case 1:
-                                    title = ChatColor.YELLOW + "2";
-                                    break;
-                                case 2:
-                                    title = ChatColor.RED + "1";
-                                    break;
-                                case 3:
-                                    title = ChatColor.YELLOW + "You are...";
-                                    break;
-                                case 4:
-                                    if (player.getName().equalsIgnoreCase(blueImposterName) || player.getName().equalsIgnoreCase(redImposterName)) {
-                                        title = ChatColor.RED + "The IMPOSTER";
-                                        Party.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", true, true);
-                                    } else {
-                                        title = ChatColor.GREEN + "INNOCENT";
-                                        Party.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", true, true);
-                                    }
-                                    break;
-                            }
-                            PacketUtils.sendTitle(player, title, "", 0, 100, 40);
-                        });
-                        counter++;
-                        if (counter == 5) {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 10, 20);
                 break;
             }
             case "vote": {
@@ -129,254 +54,46 @@ public class ImposterCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
                     return true;
                 }
-                if (!Warlords.partyManager.inAParty(warlordsPlayer.getUuid())) return true;
 
-                if (warlordsPlayer.getGameState().getTicksElapsed() > 900 - 60 * 5) {
+                if (warlordsPlayer.getGameState().getTicksElapsed() < 60 * 20 * 5) {
                     sender.sendMessage(ChatColor.RED + "You cannot request to vote before 5 minutes have past!");
                     return true;
                 }
-                if (blueImposterName == null || redImposterName == null) {
-                    sender.sendMessage(ChatColor.RED + "The imposters have not been assigned yet! Or have they...");
+
+                ImposterModeOption imposterModeOption = (ImposterModeOption) warlordsPlayer.getGame().getOptions().stream()
+                        .filter(option -> option instanceof ImposterModeOption)
+                        .findFirst()
+                        .get();
+
+                if (imposterModeOption.getPoll() != null) {
+                    sender.sendMessage(ChatColor.GREEN + "There is an ongoing poll!");
                     return true;
                 }
-                if (voters.contains(warlordsPlayer)) {
+
+                if (imposterModeOption.getVoters().values().stream().anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer))) {
                     sender.sendMessage(ChatColor.RED + "You already voted to vote!");
                     return true;
                 }
 
-                Party party = Warlords.partyManager.getPartyFromAny(warlordsPlayer.getUuid()).get();
-                if (!party.getPolls().isEmpty()) {
-                    sender.sendMessage(ChatColor.GREEN + "There is an ongoing poll!");
-                    return true;
+                imposterModeOption.getVoters().computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>()).add(warlordsPlayer);
+
+                int votesNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == warlordsPlayer.getTeam()).count() * .75 + 1);
+                if (votesNeeded >= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
+                    Team team = warlordsPlayer.getTeam();
+                    imposterModeOption.sendPoll(team);
+                    warlordsPlayer.getGame().addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
+                } else {
+                    warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
+                        if (team == warlordsPlayer.getTeam()) {
+                            player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size() + "/" + votesNeeded + ")");
+                        }
+                    });
                 }
-                voters.add(warlordsPlayer);
-
-                Team t = warlordsPlayer.getTeam();
-                if (t == Team.BLUE) {
-                    int playersNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE).count() * .75 + 1);
-                    blueVoters++;
-                    if (blueVoters >= playersNeeded) {
-                        party.addPoll(new PollBuilder()
-                                .setQuestion("Who is the most SUS on your team?")
-                                .setTimeLeft(60)
-                                .setOptions(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
-                                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
-                                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
-                                        .collect(Collectors.toList()))
-                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
-                                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
-                                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
-                                        .collect(Collectors.toList()))
-                                .setRunnableAfterPollEnded(p -> {
-                                    String mostVoted = Collections.max(p.getOptionsWithVotes().entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-                                    boolean votedCorrectly = mostVoted.equalsIgnoreCase(blueImposterName);
-                                    new BukkitRunnable() {
-                                        int counter = 0;
-
-                                        @Override
-                                        public void run() {
-                                            String title = "";
-                                            String subtitle = "";
-                                            switch (counter) {
-                                                case 0:
-                                                case 1:
-                                                    title = ChatColor.BLUE + "BLUE VOTED...";
-                                                    break;
-                                                case 2:
-                                                case 3:
-                                                    if (votedCorrectly) {
-                                                        title = ChatColor.GREEN + "Correctly!";
-                                                    } else {
-                                                        title = ChatColor.RED + "Incorrectly!";
-                                                    }
-                                                    subtitle = ChatColor.BLUE + blueImposterName + ChatColor.YELLOW + " was the imposter";
-                                                    break;
-                                            }
-                                            counter++;
-                                            if (counter < 7) {
-                                                sendTitle(title, subtitle, warlordsPlayer);
-                                            } else if (counter == 7) {
-                                                warlordsPlayer.getGame().getPlayers()
-                                                        .forEach((uuid, team) -> {
-                                                            Player player = Bukkit.getPlayer(uuid);
-                                                            if (player != null) {
-                                                                player.removePotionEffect(PotionEffectType.BLINDNESS);
-                                                                if (team == Team.BLUE) {
-                                                                    showWinLossMessage(player, votedCorrectly, true);
-                                                                } else if (team == Team.RED) {
-                                                                    showWinLossMessage(player, votedCorrectly, false);
-                                                                }
-                                                            }
-                                                        });
-                                            } else if (counter == 10) {
-                                                warlordsPlayer.getGame().removeFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
-                                                if (votedCorrectly) {
-                                                    warlordsPlayer.getGame().setPoints(Team.BLUE, 1000);
-                                                } else {
-                                                    warlordsPlayer.getGame().setPoints(Team.RED, 1000);
-                                                }
-                                                this.cancel();
-                                                warlordsPlayer.getGame().getPlayers()
-                                                        .forEach((uuid, team) -> {
-                                                            Player player = Bukkit.getPlayer(uuid);
-                                                            if (player != null) {
-                                                                sendImpostorResult(player);
-                                                            }
-                                                        });
-                                                blueImposterName = null;
-                                                redImposterName = null;
-                                            }
-                                        }
-                                    }.runTaskTimer(Warlords.getInstance(), 5, 20);
-                                })
-                        );
-                        warlordsPlayer.getGame().addFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
-                    } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                            if (team == Team.BLUE) {
-                                Party.sendMessageToPlayer(player, ChatColor.GREEN + "A player wants to vote out someone! (" + blueVoters + "/" + playersNeeded + ")", true, true);
-                            }
-                        });
-                    }
-                } else if (t == Team.RED) {
-                    int playersNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED).count() * .75 + 1);
-                    redVoters++;
-                    if (redVoters >= playersNeeded) {
-                        party.addPoll(new PollBuilder()
-                                .setQuestion("Who is the most SUS on your team?")
-                                .setTimeLeft(60)
-                                .setOptions(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
-                                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
-                                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
-                                        .collect(Collectors.toList()))
-                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
-                                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
-                                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
-                                        .collect(Collectors.toList()))
-                                .setRunnableAfterPollEnded(p -> {
-                                    String mostVoted = Collections.max(p.getOptionsWithVotes().entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-                                    boolean votedCorrectly = mostVoted.equalsIgnoreCase(redImposterName);
-                                    new BukkitRunnable() {
-                                        int counter = 0;
-
-                                        @Override
-                                        public void run() {
-                                            String title = "";
-                                            String subtitle = "";
-                                            switch (counter) {
-                                                case 0:
-                                                case 1:
-                                                    title = ChatColor.RED + "RED VOTED...";
-                                                    break;
-                                                case 2:
-                                                case 3:
-                                                    if (votedCorrectly) {
-                                                        title = ChatColor.GREEN + "Correctly!";
-                                                    } else {
-                                                        title = ChatColor.RED + "Incorrectly!";
-                                                    }
-                                                    subtitle = ChatColor.RED + redImposterName + ChatColor.YELLOW + " was the imposter";
-                                                    break;
-                                            }
-                                            counter++;
-                                            if (counter < 7) {
-                                                sendTitle(title, subtitle, warlordsPlayer);
-                                            } else if (counter == 7) {
-                                                warlordsPlayer.getGame().getPlayers()
-                                                        .forEach((uuid, team) -> {
-                                                            Player player = Bukkit.getPlayer(uuid);
-                                                            if (player != null) {
-                                                                player.removePotionEffect(PotionEffectType.BLINDNESS);
-                                                                if (team == Team.RED) {
-                                                                    showWinLossMessage(player, votedCorrectly, true);
-                                                                } else if (team == Team.BLUE) {
-                                                                    showWinLossMessage(player, votedCorrectly, false);
-                                                                }
-                                                            }
-                                                        });
-                                            } else if (counter == 10) {
-                                                warlordsPlayer.getGame().removeFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
-                                                if (votedCorrectly) {
-                                                    warlordsPlayer.getGame().setPoints(Team.RED, 1000);
-                                                } else {
-                                                    warlordsPlayer.getGame().setPoints(Team.BLUE, 1000);
-                                                }
-                                                this.cancel();
-                                                warlordsPlayer.getGame().getPlayers()
-                                                        .forEach((uuid, team) -> {
-                                                            Player player = Bukkit.getPlayer(uuid);
-                                                            if (player != null) {
-                                                                sendImpostorResult(player);
-                                                            }
-                                                        });
-                                                blueImposterName = null;
-                                                redImposterName = null;
-                                            }
-                                        }
-                                    }.runTaskTimer(Warlords.getInstance(), 5, 20);
-                                })
-                        );
-                        warlordsPlayer.getGame().addFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
-                    } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                            if (team == Team.RED) {
-                                player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + redVoters + "/" + playersNeeded + ")");
-                            }
-                        });
-                    }
-                }
-                // TODO Loop over the teams accepted by the team marker inside the game, instead of hardcoded blue/red
                 break;
             }
         }
 
         return true;
-    }
-
-    private void showWinLossMessage(Player player, boolean votedCorrectly, boolean sameTeam) {
-        if (sameTeam) {
-            //win if
-            //voted imposter out and player isnt the imposter
-            //or didnt vote imposter and player is the imposter
-            if ((votedCorrectly && !player.getName().equalsIgnoreCase(blueImposterName)) || (!votedCorrectly && player.getName().equalsIgnoreCase(blueImposterName))) {
-                PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", true, true);
-            } else {
-                PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.RED + "You lost!", true, true);
-            }
-        } else {
-            //win if other team votes wrong imposter
-            //or other team votes the right imposter then the imposter wins
-            if (votedCorrectly && (!player.getName().equalsIgnoreCase(blueImposterName)) && !player.getName().equalsIgnoreCase(redImposterName)) {
-                PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.RED + "You lost!", true, true);
-            } else {
-                PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", true, true);
-            }
-        }
-
-    }
-
-    private void sendImpostorResult(Player player) {
-        Party.sendMessageToPlayer(
-                player,
-                ChatColor.GREEN + "The " + ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " imposter was " + ChatColor.AQUA + blueImposterName + "\n" +
-                        ChatColor.GREEN + "The " + ChatColor.RED + "RED" + ChatColor.GREEN + " imposter was " + ChatColor.AQUA + redImposterName,
-                true,
-                true
-        );
-    }
-
-    private void sendTitle(String title, String subtitle, WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.getGame().getPlayers()
-                .forEach((uuid, team) -> {
-                    Player player = Bukkit.getPlayer(uuid);
-                    if (player != null) {
-                        PacketUtils.sendTitle(player, title, subtitle, 0, 150, 40);
-                    }
-                });
     }
 
     public void register(Warlords instance) {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -258,6 +259,7 @@ public class PartyCommand implements TabExecutor {
                         try {
                             int answer = Integer.parseInt(args[1]);
                             Poll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
+                            //Poll poll = ((ImposterModeOption) Warlords.getPlayer(player).getGame().getOptions().stream().filter(option -> option instanceof ImposterModeOption).findFirst().get()).getPoll();
                             HashMap<UUID, Integer> playerAnsweredWithOption = poll.getPlayerAnsweredWithOption();
                             if (playerAnsweredWithOption.containsKey(player.getUniqueId())) {
                                 if (playerAnsweredWithOption.get(player.getUniqueId()) == answer) {

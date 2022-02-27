@@ -39,7 +39,9 @@ public class Poll {
                 counter++;
                 if (timeLeft <= 0 || getNumberOfPlayersThatCanVote() == playerAnsweredWithOption.size()) {
                     sendPollResults();
-                    party.getPolls().remove(Poll.this);
+                    if (party != null) {
+                        party.getPolls().remove(Poll.this);
+                    }
                     this.cancel();
                 } else {
                     if (!infiniteVotingTime) {
@@ -58,7 +60,11 @@ public class Poll {
     }
 
     private int getNumberOfPlayersThatCanVote() {
-        return party.getPartyPlayers().size() - excludedPlayers.size();
+        if (party == null) {
+            return Bukkit.getOnlinePlayers().size() - excludedPlayers.size();
+        } else {
+            return party.getPartyPlayers().size() - excludedPlayers.size();
+        }
     }
 
     private List<Player> getPlayersAllowedToVote() {
@@ -130,7 +136,7 @@ public class Poll {
                         .append(ChatColor.GRAY).append(", ");
             }
             playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
-            if (getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
+            if (party == null || getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
                 player.sendMessage(playersThatDidntVote.toString());
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
