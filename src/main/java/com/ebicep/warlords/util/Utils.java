@@ -25,7 +25,23 @@ import java.util.stream.Stream;
 
 public class Utils {
 
-    public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
+    public static final String[] specsOrdered = {
+            "Pyromancer",
+            "Cryomancer",
+            "Aquamancer",
+            "Berserker",
+            "Defender",
+            "Revenant",
+            "Avenger",
+            "Crusader",
+            "Protector",
+            "Thunderlord",
+            "Spiritguard",
+            "Earthwarden",
+            "Assassin",
+            "Vindicator",
+            "Apothecary"
+    };
 
     public static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),

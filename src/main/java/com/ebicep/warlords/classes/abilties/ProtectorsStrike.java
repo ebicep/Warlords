@@ -32,7 +32,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 "§7causing §c261 §7- §c352 §7damage\n" +
                 "§7and healing two nearby allies for\n" +
                 "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
-                "§7heals yourself by §a" + minConvert + "-" + maxConvert + "% §7of the\n" +
+                "§7heals yourself by §a50-100% §7of the\n" +
                 "§7damage done. Based on your current\n" +
                 "health.";
     }
@@ -69,7 +69,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
                     // Self Heal
                     if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing * 1.2f, currentDamageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
                     } else {
                         wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
                     }
