@@ -109,7 +109,7 @@ public class PrismGuard extends AbstractAbility {
                     ) {
                         bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
                         bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
-                                "Wide Guard",
+                                "Prism Guard",
                                 "GUARD",
                                 PrismGuard.class,
                                 tempWideGuard,

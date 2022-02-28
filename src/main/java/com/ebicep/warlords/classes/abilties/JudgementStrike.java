@@ -48,7 +48,7 @@ public class JudgementStrike extends AbstractStrikeBase {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().equals("Judgement Strike") && isCrit) {
-                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
+                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", 25, 2 * 20, "BASE");
                 }
             }
         });

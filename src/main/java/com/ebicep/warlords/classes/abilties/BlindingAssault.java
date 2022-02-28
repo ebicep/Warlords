@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 public class BlindingAssault extends AbstractAbility {
 
     public BlindingAssault() {
-        super("Blinding Assault", 466, 602, 16, 20, 15, 175);
+        super("Blinding Assault", 466, 598, 12, 20, 15, 175);
     }
 
     @Override
@@ -30,8 +30,8 @@ public class BlindingAssault extends AbstractAbility {
                 "§7for §61 §7second. You take reduced fall damage\n" +
                 "while leaping." +
                 "\n\n" +
-                "§7Blinding Assault has reduced range\n" +
-                "§7when holding a Flag.";
+                "§7Blinding Assault has reduced range when\n" +
+                "§7holding a Flag.";
     }
 
     @Override
@@ -92,6 +92,7 @@ public class BlindingAssault extends AbstractAbility {
                             .withColor(Color.BLACK)
                             .with(FireworkEffect.Type.BALL)
                             .build());
+
                     this.cancel();
                 }
             }

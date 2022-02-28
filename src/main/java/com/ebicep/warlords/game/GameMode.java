@@ -147,7 +147,7 @@ public enum GameMode {
         }
     },
     DEBUG(
-            "Debug Map",
+            "Sandbox",
             null,
             null
     ) {
@@ -157,8 +157,7 @@ public enum GameMode {
 
             options.add(TextOption.Type.TITLE.create(
                     10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Debug some issued!"
+                    ChatColor.GREEN + "GO!"
             ));
             return options;
         }

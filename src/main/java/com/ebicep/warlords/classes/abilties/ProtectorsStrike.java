@@ -79,7 +79,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             .entitiesAround(wp, 10, 10, 10)
                             .aliveTeammatesOfExcludingSelf(wp)
                             .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                    .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())))
+                            .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())))
                             .limit(2)
                     ) {
                         if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {

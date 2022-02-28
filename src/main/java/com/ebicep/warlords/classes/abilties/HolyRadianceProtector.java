@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player;
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     private final int markRadius = 15;
-    private int markDuration = 8;
+    private int markDuration = 6;
 
     public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
@@ -28,9 +29,10 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks. However,\n" +
-                "§7marking players from far away\n" +
-                "§7will not give them healing.";
+                "§7optimal range of §e" + markRadius + " §7blocks. Your marked\n" +
+                "§7ally will emit a second Holy Radiance\n" +
+                "§7for §a70% §7of the original healing amount\n" +
+                "§7after the mark ends.";
     }
 
     @Override
@@ -54,11 +56,48 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.RED_ROSE, 8);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                markTarget.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, markDuration * 20);
+                markTarget.getCooldownManager().addRegularCooldown(
+                        name,
+                        "PROT MARK",
+                        HolyRadianceProtector.class,
+                        tempMark,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                            ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, markTarget.getLocation(), 500);
+                            Utils.playGlobalSound(markTarget.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
+                            for (WarlordsPlayer waveTarget : PlayerFilter
+                                    .entitiesAround(markTarget, 6, 6, 6)
+                                    .aliveTeammatesOf(markTarget)
+                            ) {
+                                wp.getGame().registerGameTask(
+                                        new FlyingArmorStand(
+                                                markTarget.getLocation(),
+                                                waveTarget,
+                                                wp,
+                                                1.1,
+                                                minDamageHeal * 0.7f,
+                                                maxDamageHeal * 0.7f
+                                        ).runTaskTimer(Warlords.getInstance(), 1, 1)
+                                );
+                            }
+                        },
+                        markDuration * 20
+                );
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW +
+                    ChatColor.GRAY + " You have marked " +
+                    ChatColor.GREEN + markTarget.getName() +
+                    ChatColor.GRAY + "!"
+                );
+
+                markTarget.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW +
+                    ChatColor.GRAY + " You have been granted " +
+                    ChatColor.GREEN + "Protector's Mark" +
+                    ChatColor.GRAY + " by " + wp.getName() + "!"
+                );
 
                 new GameRunnable(wp.getGame()) {
                     @Override

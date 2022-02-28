@@ -46,8 +46,8 @@ public class ChainHeal extends AbstractChainBase {
                 //self heal
                 p.playSound(p.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                chain(p.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                chain(p.getLocation(), nearPlayer.getLocation());
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter

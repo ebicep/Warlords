@@ -48,7 +48,7 @@ public class TimeWarp extends AbstractAbility {
             @Override
             public void run() {
 
-                if (wp.isDeath() || wp.getGame().getState() instanceof EndState) {
+                if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                     counter = 0;
                     this.cancel();
                 }
@@ -81,7 +81,6 @@ public class TimeWarp extends AbstractAbility {
                         Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                         ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                     }
-
                 }
 
                 //TIME WARPS

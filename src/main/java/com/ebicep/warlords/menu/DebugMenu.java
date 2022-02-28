@@ -168,44 +168,42 @@ public class DebugMenu {
             int index = i + 1;
             menu.setItem(index, 1, firstRow[i],
                     (n, e) -> {
-                        if (target != null) {
-                            switch (index) {
-                                case 1:
-                                    Bukkit.getServer().dispatchCommand(player, "wl energy " + (target.isInfiniteEnergy() ? "enable" : "disable") + " " + targetName);
-                                    break;
-                                case 2:
-                                    Bukkit.getServer().dispatchCommand(player, "wl cooldown " + (target.isDisableCooldowns() ? "enable" : "disable") + " " + targetName);
-                                    break;
-                                case 3:
-                                    Bukkit.getServer().dispatchCommand(player, "wl damage " + (target.isTakeDamage() ? "disable" : "enable") + " " + targetName);
-                                    break;
-                                case 4:
-                                    Bukkit.getServer().dispatchCommand(player, "wl crits " + (target.isCanCrit() ? "disable" : "enable") + " " + targetName);
-                                    break;
-                                case 6:
-                                    Bukkit.getServer().dispatchCommand(player, "kill " + targetName);
-                                    break;
-                                case 7:
-                                    Game game = target.getGame();
-                                    Team currentTeam = target.getTeam();
-                                    Team otherTeam = target.getTeam().enemy();
-                                    game.setPlayerTeam(player, otherTeam);
-                                    target.setTeam(otherTeam);
-                                    
-                                    target.getGameState().updatePlayerName(target);
-                                    Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
-                                    LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
-                                    if (randomLobbyLocation != null) {
-                                        Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                                .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
-                                        target.teleport(teleportDestination);
-                                    }
-                                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
-                                    player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
-                                    openPlayerMenu(player, target);
-                                    break;
+                        switch (index) {
+                            case 1:
+                                Bukkit.getServer().dispatchCommand(player, "wl energy " + (target.isInfiniteEnergy() ? "enable" : "disable") + " " + targetName);
+                                break;
+                            case 2:
+                                Bukkit.getServer().dispatchCommand(player, "wl cooldown " + (target.isDisableCooldowns() ? "enable" : "disable") + " " + targetName);
+                                break;
+                            case 3:
+                                Bukkit.getServer().dispatchCommand(player, "wl damage " + (target.isTakeDamage() ? "disable" : "enable") + " " + targetName);
+                                break;
+                            case 4:
+                                Bukkit.getServer().dispatchCommand(player, "wl crits " + (target.isCanCrit() ? "disable" : "enable") + " " + targetName);
+                                break;
+                            case 6:
+                                Bukkit.getServer().dispatchCommand(player, "kill " + targetName);
+                                break;
+                            case 7:
+                                Game game = target.getGame();
+                                Team currentTeam = target.getTeam();
+                                Team otherTeam = target.getTeam().enemy();
+                                game.setPlayerTeam(player, otherTeam);
+                                target.setTeam(otherTeam);
 
-                            }
+                                target.getGameState().updatePlayerName(target);
+                                Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
+                                LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
+                                if (randomLobbyLocation != null) {
+                                    Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
+                                            .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
+                                    target.teleport(teleportDestination);
+                                }
+                                ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
+                                player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
+                                openPlayerMenu(player, target);
+                                break;
+
                         }
                     }
             );
@@ -787,7 +785,7 @@ public class DebugMenu {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
+                            .lore(ChatColor.GRAY + "Gamemode: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
                             .get(),
                     (n, e) -> openMapsCategoryMenu(player, map)
             );
@@ -820,9 +818,9 @@ public class DebugMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedCategory, List<GameAddon> addons) {
+    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, List<GameAddon> addons) {
         int menuHeight = (4 + GameAddon.values().length / 7);
-        Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedCategory.getName(), 9 * menuHeight);
+        Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.getName(), 9 * menuHeight);
 
         for (int i = 0; i < GameAddon.values().length; i++) {
             GameAddon gameAddon = GameAddon.values()[i];
@@ -844,7 +842,7 @@ public class DebugMenu {
                         } else {
                             addons.add(gameAddon);
                         }
-                        openMapsAddonsMenu(player, selectedGameMap, selectedCategory, addons);
+                        openMapsAddonsMenu(player, selectedGameMap, selectedGameMode, addons);
                     }
             );
         }
@@ -860,8 +858,8 @@ public class DebugMenu {
                     stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                 });
             }
-            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
-            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedCategory.name() + " " + stringAddons);
+            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
+            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
         });
         menu.openForPlayer(player);
     }

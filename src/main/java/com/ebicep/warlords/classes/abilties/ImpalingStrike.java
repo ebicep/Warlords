@@ -14,7 +14,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
     private int leechDuration = 5;
 
     public ImpalingStrike() {
-        super("Impaling Strike", 323, 412, 0, 90, 20, 175);
+        super("Impaling Strike", 313, 398, 0, 90, 20, 175);
     }
 
     @Override

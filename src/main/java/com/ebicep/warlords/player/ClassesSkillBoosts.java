@@ -26,13 +26,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §715% §7and\n§7reduce the cooldown by 30%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c15% §aand\n§areduce the cooldown by §c30%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §710% §7and\n§7reduce the cooldown by 50%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c10% §aand\n§areduce the cooldown by §c50%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
-                    ((TimeWarp) abstractAbility).setWarpHealPercentage(45);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    ((TimeWarp) abstractAbility).setWarpHealPercentage(40);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
     ),
@@ -87,13 +87,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 25%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c25%",
+            "§7Increase the amount of health\n§7converted to shield by 20%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c20%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(75);
+                    arcaneShield.setShieldPercentage(70);
                 }
             }
     ),

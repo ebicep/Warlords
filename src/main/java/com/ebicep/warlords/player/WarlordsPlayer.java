@@ -494,6 +494,17 @@ public final class WarlordsPlayer {
                                     }
                                 }.runTaskLater(2);
                             } else {
+                                new GameRunnable(gameState.getGame()) {
+
+                                    @Override
+                                    public void run() {
+                                        p.getSpec().getPurple().setCurrentCooldown(p.getSpec().getPurple().getCurrentCooldown() / 2);
+                                        p.getSpec().getOrange().setCurrentCooldown(p.getSpec().getOrange().getCurrentCooldown() / 2);
+                                        p.updatePurpleItem();
+                                        p.updateOrangeItem();
+                                        p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost() / 2);
+                                    }
+                                }.runTaskLater(2);
                                 p.sendMessage(GIVE_ARROW + ChatColor.RED + " Your marked target has died!");
                                 p.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
                                 p.getCooldownManager().removeCooldownByName("Cloaked");

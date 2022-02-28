@@ -289,6 +289,7 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -758,7 +759,7 @@ public class Warlords extends JavaPlugin {
 
                             // Checks whether the player has been marked by a Crusader.
                             if (cooldownManager.hasCooldown(HolyRadianceCrusader.class)) {
-                                energyGainPerTick += .25;
+                                energyGainPerTick += .3;
                             }
 
                             // Checks whether the player has Acupressure active.

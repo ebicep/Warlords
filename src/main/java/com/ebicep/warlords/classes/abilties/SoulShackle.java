@@ -96,7 +96,7 @@ public class SoulShackle extends AbstractAbility {
                                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
                             }
                         }
-                        Utils.playGlobalSound(wp.getLocation(), Sound.DIG_SAND, 2, 2);
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
                     } else {
                         this.cancel();
                     }

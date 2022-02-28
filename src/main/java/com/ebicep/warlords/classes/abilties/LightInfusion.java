@@ -1,8 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
@@ -30,9 +30,19 @@ public class LightInfusion extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+
         LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
-        wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusion.class, tempLightInfusion, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "INF",
+                LightInfusion.class,
+                tempLightInfusion,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                duration * 20
+        );
 
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
@@ -40,6 +50,7 @@ public class LightInfusion extends AbstractAbility {
             Location particleLoc = player.getLocation().add(0, 1.5, 0);
             ParticleEffect.SPELL.display(1, 0F, 1, 0.3F, 3, particleLoc, 500);
         }
+
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {

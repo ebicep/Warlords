@@ -28,7 +28,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
-                "§7their EPS by §e5 §7and speed by §e20%\n" +
+                "§7their EPS by §e6 §7and speed by §e20%\n" +
                 "§7§7for the duration. Mark has an optimal\n" +
                 "§7range of §e" + markRadius + " §7blocks. However,\n" +
                 "§7marking players from far away\n" +

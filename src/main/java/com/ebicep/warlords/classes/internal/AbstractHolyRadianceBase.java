@@ -37,7 +37,14 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             wp.getGame().registerGameTask(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
+                    new FlyingArmorStand(
+                            wp.getLocation(),
+                            p,
+                            wp,
+                            1.1,
+                            minDamageHeal,
+                            maxDamageHeal
+                    ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
 
@@ -51,20 +58,24 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         return true;
     }
 
-    private class FlyingArmorStand extends BukkitRunnable {
+    public class FlyingArmorStand extends BukkitRunnable {
 
         private final WarlordsPlayer target;
         private final WarlordsPlayer owner;
         private final double speed;
         private final ArmorStand armorStand;
+        private final float minHeal;
+        private final float maxHeal;
 
-        public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed) {
+        public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed, float minHeal, float maxHeal) {
             this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
             armorStand.setGravity(false);
             armorStand.setVisible(false);
             this.target = target;
             this.speed = speed;
             this.owner = owner;
+            this.minHeal = minHeal;
+            this.maxHeal = maxHeal;
         }
 
         @Override
@@ -92,7 +103,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 double distance = targetLocation.distanceSquared(armorStandLocation);
 
                 if (distance < speed * speed) {
-                    target.addHealingInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                    target.addHealingInstance(owner, name, minHeal, maxHeal, critChance, critMultiplier, false, false);
                     this.cancel();
                     return;
                 }
