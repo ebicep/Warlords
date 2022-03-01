@@ -1,6 +1,7 @@
-package com.ebicep.warlords.party;
+package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
+import javafx.util.Builder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,21 +16,36 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Poll {
+public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
-    private Party party;
-    private String question;
-    private List<String> options;
-    private int timeLeft = 30;
-    private boolean infiniteVotingTime = false;
-    private List<UUID> excludedPlayers = new ArrayList<>();
-    private Consumer<Poll> onPollEnd;
-    private final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
+    public static List<AbstractPoll<?>> polls = new ArrayList<>();
 
-    public Poll() {
+    public static Optional<AbstractPoll<?>> getPoll(String pollID) {
+        return AbstractPoll.polls.stream().filter(p -> AbstractPoll.getPollID(p).equals(pollID)).findAny();
+    }
+
+    public static String getPollID(AbstractPoll<?> poll) {
+        String toString = poll.toString();
+        return toString.substring(toString.indexOf("@") + 1);
+    }
+
+    protected String id;
+    protected String question;
+    protected List<String> options;
+    protected int timeLeft = 30;
+    protected boolean infiniteVotingTime = false;
+    protected List<UUID> excludedPlayers = new ArrayList<>();
+    protected Consumer<T> onPollEnd;
+    protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
+
+    public AbstractPoll() {
+
     }
 
     public void init() {
+        AbstractPoll.polls.add(this);
+        id = AbstractPoll.getPollID(this);
+
         sendPollAnnouncement(true);
         new BukkitRunnable() {
             int counter = 0;
@@ -39,9 +55,9 @@ public class Poll {
                 counter++;
                 if (timeLeft <= 0 || getNumberOfPlayersThatCanVote() == playerAnsweredWithOption.size()) {
                     sendPollResults();
-                    if (party != null) {
-                        party.getPolls().remove(Poll.this);
-                    }
+                    onPollEnd();
+
+                    AbstractPoll.polls.remove(AbstractPoll.this);
                     this.cancel();
                 } else {
                     if (!infiniteVotingTime) {
@@ -59,25 +75,13 @@ public class Poll {
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
 
-    private int getNumberOfPlayersThatCanVote() {
-        if (party == null) {
-            return Bukkit.getOnlinePlayers().size() - excludedPlayers.size();
-        } else {
-            return party.getPartyPlayers().size() - excludedPlayers.size();
-        }
-    }
+    public abstract int getNumberOfPlayersThatCanVote();
 
-    private List<Player> getPlayersAllowedToVote() {
-        if (this.party == null) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
-                    .collect(Collectors.toList());
-        } else {
-            return party.getAllPartyPeoplePlayerOnline().stream()
-                    .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
-                    .collect(Collectors.toList());
-        }
-    }
+    public abstract List<Player> getPlayersAllowedToVote();
+
+    public abstract boolean sendNonVoterMessage(Player player);
+
+    public abstract void onPollEnd();
 
     private void sendPollAnnouncement(boolean first) {
         getPlayersAllowedToVote().forEach(player -> {
@@ -89,11 +93,11 @@ public class Poll {
             for (int i = 0; i < options.size(); i++) {
                 TextComponent message = new TextComponent(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i));
                 message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()));
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party pollanswer " + (i + 1)));
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/poll answer " + id + " " + (i + 1)));
                 player.spigot().sendMessage(message);
             }
             if (!infiniteVotingTime) {
-                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds!");
+                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - " + id);
             } else {
                 player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
             }
@@ -136,13 +140,13 @@ public class Poll {
                         .append(ChatColor.GRAY).append(", ");
             }
             playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
-            if (party == null || getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
+            if (sendNonVoterMessage(player)) {
                 player.sendMessage(playersThatDidntVote.toString());
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
         if (onPollEnd != null) {
-            onPollEnd.accept(this);
+            onPollEnd.accept((T) this);
         }
     }
 
@@ -158,16 +162,12 @@ public class Poll {
         return votes;
     }
 
-    public void setParty(Party party) {
-        this.party = party;
+    public String getQuestion() {
+        return question;
     }
 
     public void setQuestion(String question) {
         this.question = question;
-    }
-
-    public void setInfiniteVotingTime(boolean infiniteVotingTime) {
-        this.infiniteVotingTime = infiniteVotingTime;
     }
 
     public List<String> getOptions() {
@@ -178,8 +178,20 @@ public class Poll {
         this.options = options;
     }
 
+    public int getTimeLeft() {
+        return timeLeft;
+    }
+
     public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
+    }
+
+    public boolean isInfiniteVotingTime() {
+        return infiniteVotingTime;
+    }
+
+    public void setInfiniteVotingTime(boolean infiniteVotingTime) {
+        this.infiniteVotingTime = infiniteVotingTime;
     }
 
     public List<UUID> getExcludedPlayers() {
@@ -190,7 +202,11 @@ public class Poll {
         this.excludedPlayers = excludedPlayers;
     }
 
-    public void setOnPollEnd(Consumer<Poll> onPollEnd) {
+    public Consumer<T> getOnPollEnd() {
+        return onPollEnd;
+    }
+
+    public void setOnPollEnd(Consumer<T> onPollEnd) {
         this.onPollEnd = onPollEnd;
     }
 
@@ -198,4 +214,53 @@ public class Poll {
         return playerAnsweredWithOption;
     }
 
+    protected static abstract class Builder<T extends AbstractPoll<T>, B extends Builder<T, B>> {
+
+        protected T poll;
+        protected B builder;
+
+        public Builder() {
+            poll = createPoll();
+            builder = thisBuilder();
+        }
+
+        public T get() {
+            poll.init();
+            return poll;
+        }
+
+        public abstract T createPoll();
+
+        public abstract B thisBuilder();
+
+        public B setQuestion(String question) {
+            poll.setQuestion(question);
+            return builder;
+        }
+
+        public B setInfiniteVotingTime(boolean infiniteVotingTime) {
+            poll.setInfiniteVotingTime(infiniteVotingTime);
+            return builder;
+        }
+
+        public B setOptions(List<String> options) {
+            poll.setOptions(options);
+            return builder;
+        }
+
+        public B setTimeLeft(int timeLeft) {
+            poll.setTimeLeft(timeLeft);
+            return builder;
+        }
+
+        public B setExcludedPlayers(List<UUID> excludedPlayers) {
+            poll.setExcludedPlayers(excludedPlayers);
+            return builder;
+        }
+
+        public B setRunnableAfterPollEnded(Consumer<T> runnableAfterPollEnded) {
+            poll.setOnPollEnd(runnableAfterPollEnded);
+            return builder;
+        }
+    }
 }

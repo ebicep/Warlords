@@ -40,6 +40,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
@@ -331,6 +332,7 @@ public class Warlords extends JavaPlugin {
         new ImposterCommand().register(this);
         new LobbyCommand().register(this);
         new DiscordCommand().register(this);
+        new PollCommand().register(this);
 
         updateHeads();
 

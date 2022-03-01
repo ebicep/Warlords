@@ -101,6 +101,9 @@ commands:
   discord:
     description: Link and unlink discord account with minecraft account
     aliases: [ discord ]
+  poll:
+    description: Poll stuff
+    aliases: [ poll ]
 
 permissions:
   group.default:
