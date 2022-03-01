@@ -1,7 +1,8 @@
 package com.ebicep.warlords.party;
 
-import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.poll.PartyPoll;
+import com.ebicep.warlords.poll.PollBuilder;
 import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class Party {
 
     private final List<PartyPlayer> partyPlayers = new ArrayList<>();
-    private final List<Poll> polls = new ArrayList<>();
+    private final List<PartyPoll> polls = new ArrayList<>();
     private final HashMap<UUID, Integer> invites = new HashMap<>();
     private final BukkitTask partyTask;
     private final RegularGamesMenu regularGamesMenu = new RegularGamesMenu(this);
@@ -309,12 +310,11 @@ public class Party {
         return partyPlayers.stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid));
     }
 
-    public void addPoll(PollBuilder pollBuilder) {
-        pollBuilder.setParty(this);
-        polls.add(pollBuilder.get());
+    public void addPoll(PartyPoll poll) {
+        polls.add(poll);
     }
 
-    public List<Poll> getPolls() {
+    public List<PartyPoll> getPolls() {
         return polls;
     }
 

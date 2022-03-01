@@ -1,7 +1,9 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.ImposterModeOption;
+import com.ebicep.warlords.poll.AbstractPoll;
+import com.ebicep.warlords.poll.PartyPoll;
+import com.ebicep.warlords.poll.PollBuilder;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -238,9 +240,8 @@ public class PartyCommand implements TabExecutor {
                             List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                             String question = pollOptions.get(0);
                             pollOptions.remove(question);
-                            currentParty.get().addPoll(
-                                    new PollBuilder()
-                                            .setQuestion(question)
+                            PartyPoll partyPoll = new PartyPoll(currentParty.get());
+                            currentParty.get().addPoll(partyPoll.setQuestion(question)
                                             .setOptions(pollOptions)
                             );
                         }
@@ -258,7 +259,7 @@ public class PartyCommand implements TabExecutor {
                         }
                         try {
                             int answer = Integer.parseInt(args[1]);
-                            Poll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
+                            AbstractPoll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
                             //Poll poll = ((ImposterModeOption) Warlords.getPlayer(player).getGame().getOptions().stream().filter(option -> option instanceof ImposterModeOption).findFirst().get()).getPoll();
                             HashMap<UUID, Integer> playerAnsweredWithOption = poll.getPlayerAnsweredWithOption();
                             if (playerAnsweredWithOption.containsKey(player.getUniqueId())) {
@@ -287,7 +288,7 @@ public class PartyCommand implements TabExecutor {
                             Party.sendMessageToPlayer(player, ChatColor.RED + "There is no ongoing poll!", true, true);
                             return true;
                         }
-                        Poll poll = currentParty.get().getPolls().get(0);
+                        AbstractPoll poll = currentParty.get().getPolls().get(0);
                         poll.setTimeLeft(0);
                         return true;
                     }

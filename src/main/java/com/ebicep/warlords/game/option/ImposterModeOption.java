@@ -7,8 +7,8 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.Poll;
-import com.ebicep.warlords.party.PollBuilder;
+import com.ebicep.warlords.poll.AbstractPoll;
+import com.ebicep.warlords.poll.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
@@ -27,7 +27,7 @@ public class ImposterModeOption implements Option {
     private final HashMap<Team, List<WarlordsPlayer>> imposters = new HashMap<>();
     private final HashMap<Team, List<WarlordsPlayer>> voters = new HashMap<>();
     private Game game;
-    private Poll poll;
+    private AbstractPoll poll;
 
 
     @Override
@@ -290,11 +290,11 @@ public class ImposterModeOption implements Option {
         return voters;
     }
 
-    public Poll getPoll() {
+    public AbstractPoll getPoll() {
         return poll;
     }
 
-    public void setPoll(Poll poll) {
+    public void setPoll(AbstractPoll poll) {
         this.poll = poll;
     }
 }
