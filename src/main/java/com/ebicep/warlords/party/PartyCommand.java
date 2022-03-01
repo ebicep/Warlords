@@ -1,9 +1,7 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.poll.AbstractPoll;
-import com.ebicep.warlords.poll.PartyPoll;
-import com.ebicep.warlords.poll.PollBuilder;
+import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -240,56 +238,12 @@ public class PartyCommand implements TabExecutor {
                             List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                             String question = pollOptions.get(0);
                             pollOptions.remove(question);
-                            PartyPoll partyPoll = new PartyPoll(currentParty.get());
-                            currentParty.get().addPoll(partyPoll.setQuestion(question)
-                                            .setOptions(pollOptions)
+                            currentParty.get().addPoll(new PartyPoll.Builder(currentParty.get())
+                                    .setQuestion(question)
+                                    .setOptions(pollOptions)
+                                    .get()
                             );
                         }
-                        return true;
-                    }
-                    case "pollanswer": {
-                        if (args.length <= 1) {
-                            Party.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", true, true);
-                            return true;
-                        }
-                        Party party = currentParty.get();
-                        if (party.getPolls().isEmpty() || party.getPolls().stream().allMatch(poll -> poll.getExcludedPlayers().contains(player.getUniqueId()))) {
-                            Party.sendMessageToPlayer(player, ChatColor.RED + "There is no ongoing poll!", true, true);
-                            return true;
-                        }
-                        try {
-                            int answer = Integer.parseInt(args[1]);
-                            AbstractPoll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
-                            //Poll poll = ((ImposterModeOption) Warlords.getPlayer(player).getGame().getOptions().stream().filter(option -> option instanceof ImposterModeOption).findFirst().get()).getPoll();
-                            HashMap<UUID, Integer> playerAnsweredWithOption = poll.getPlayerAnsweredWithOption();
-                            if (playerAnsweredWithOption.containsKey(player.getUniqueId())) {
-                                if (playerAnsweredWithOption.get(player.getUniqueId()) == answer) {
-                                    Party.sendMessageToPlayer(player, ChatColor.RED + "You already voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.RED + "!", true, true);
-                                } else {
-                                    playerAnsweredWithOption.put(player.getUniqueId(), answer);
-                                    Party.sendMessageToPlayer(player, ChatColor.GREEN + "You changed your vote to " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", true, true);
-                                }
-                            } else if (answer > 0 && answer <= poll.getOptions().size()) {
-                                playerAnsweredWithOption.put(player.getUniqueId(), answer);
-                                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", true, true);
-                            } else {
-                                Party.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", true, true);
-                            }
-                            return true;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Party.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", true, true);
-                        }
-                        return true;
-                    }
-                    case "pollend": {
-                        Party party = currentParty.get();
-                        if (party.getPolls().isEmpty()) {
-                            Party.sendMessageToPlayer(player, ChatColor.RED + "There is no ongoing poll!", true, true);
-                            return true;
-                        }
-                        AbstractPoll poll = currentParty.get().getPolls().get(0);
-                        poll.setTimeLeft(0);
                         return true;
                     }
                     case "afk":

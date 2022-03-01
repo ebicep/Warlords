@@ -1,6 +1,7 @@
 package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
+import javafx.util.Builder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,14 +16,26 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class AbstractPoll {
+public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
+    public static List<AbstractPoll<?>> polls = new ArrayList<>();
+
+    public static Optional<AbstractPoll<?>> getPoll(String pollID) {
+        return AbstractPoll.polls.stream().filter(p -> AbstractPoll.getPollID(p).equals(pollID)).findAny();
+    }
+
+    public static String getPollID(AbstractPoll<?> poll) {
+        String toString = poll.toString();
+        return toString.substring(toString.indexOf("@") + 1);
+    }
+
+    protected String id;
     protected String question;
     protected List<String> options;
     protected int timeLeft = 30;
     protected boolean infiniteVotingTime = false;
     protected List<UUID> excludedPlayers = new ArrayList<>();
-    protected Consumer<? extends AbstractPoll> onPollEnd;
+    protected Consumer<T> onPollEnd;
     protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
 
     public AbstractPoll() {
@@ -30,6 +43,9 @@ public abstract class AbstractPoll {
     }
 
     public void init() {
+        AbstractPoll.polls.add(this);
+        id = AbstractPoll.getPollID(this);
+
         sendPollAnnouncement(true);
         new BukkitRunnable() {
             int counter = 0;
@@ -40,6 +56,8 @@ public abstract class AbstractPoll {
                 if (timeLeft <= 0 || getNumberOfPlayersThatCanVote() == playerAnsweredWithOption.size()) {
                     sendPollResults();
                     onPollEnd();
+
+                    AbstractPoll.polls.remove(AbstractPoll.this);
                     this.cancel();
                 } else {
                     if (!infiniteVotingTime) {
@@ -75,11 +93,11 @@ public abstract class AbstractPoll {
             for (int i = 0; i < options.size(); i++) {
                 TextComponent message = new TextComponent(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i));
                 message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()));
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party pollanswer " + (i + 1)));
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/poll answer " + id + " " + (i + 1)));
                 player.spigot().sendMessage(message);
             }
             if (!infiniteVotingTime) {
-                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds!");
+                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - " + id);
             } else {
                 player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
             }
@@ -128,7 +146,7 @@ public abstract class AbstractPoll {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
         if (onPollEnd != null) {
-           // onPollEnd.accept(this);
+            onPollEnd.accept((T) this);
         }
     }
 
@@ -148,111 +166,101 @@ public abstract class AbstractPoll {
         return question;
     }
 
-    public AbstractPoll setQuestion(String question) {
+    public void setQuestion(String question) {
         this.question = question;
-        return this;
     }
 
     public List<String> getOptions() {
         return options;
     }
 
-    public AbstractPoll setOptions(List<String> options) {
+    public void setOptions(List<String> options) {
         this.options = options;
-        return this;
     }
 
     public int getTimeLeft() {
         return timeLeft;
     }
 
-    public AbstractPoll setTimeLeft(int timeLeft) {
+    public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
-        return this;
     }
 
     public boolean isInfiniteVotingTime() {
         return infiniteVotingTime;
     }
 
-    public AbstractPoll setInfiniteVotingTime(boolean infiniteVotingTime) {
+    public void setInfiniteVotingTime(boolean infiniteVotingTime) {
         this.infiniteVotingTime = infiniteVotingTime;
-        return this;
     }
 
     public List<UUID> getExcludedPlayers() {
         return excludedPlayers;
     }
 
-    public AbstractPoll setExcludedPlayers(List<UUID> excludedPlayers) {
+    public void setExcludedPlayers(List<UUID> excludedPlayers) {
         this.excludedPlayers = excludedPlayers;
-        return this;
     }
 
-    public Consumer<? extends AbstractPoll> getOnPollEnd() {
+    public Consumer<T> getOnPollEnd() {
         return onPollEnd;
     }
 
-    public AbstractPoll setOnPollEnd(Consumer<? extends AbstractPoll> onPollEnd) {
+    public void setOnPollEnd(Consumer<T> onPollEnd) {
         this.onPollEnd = onPollEnd;
-        return this;
     }
 
     public HashMap<UUID, Integer> getPlayerAnsweredWithOption() {
         return playerAnsweredWithOption;
     }
 
+    protected static abstract class Builder<T extends AbstractPoll<T>, B extends Builder<T, B>> {
 
-    public static class PollBuilder<T extends AbstractPoll> {
+        protected T poll;
+        protected B builder;
 
-        private T poll;
-
-        public PollBuilder() {
-
+        public Builder() {
+            poll = createPoll();
+            builder = thisBuilder();
         }
 
-        public PollBuilder(T poll) {
-            this.poll = poll;
+        public T get() {
+            poll.init();
+            return poll;
         }
 
-        public PollBuilder setPoll(T poll) {
-            this.poll = poll;
-            return this;
-        }
+        public abstract T createPoll();
 
-        public PollBuilder setQuestion(String question) {
+        public abstract B thisBuilder();
+
+        public B setQuestion(String question) {
             poll.setQuestion(question);
-            return this;
+            return builder;
         }
 
-        public PollBuilder setInfiniteVotingTime(boolean infiniteVotingTime) {
+        public B setInfiniteVotingTime(boolean infiniteVotingTime) {
             poll.setInfiniteVotingTime(infiniteVotingTime);
-            return this;
+            return builder;
         }
 
-        public PollBuilder setOptions(List<String> options) {
+        public B setOptions(List<String> options) {
             poll.setOptions(options);
-            return this;
+            return builder;
         }
 
-        public PollBuilder setTimeLeft(int timeLeft) {
+        public B setTimeLeft(int timeLeft) {
             poll.setTimeLeft(timeLeft);
-            return this;
+            return builder;
         }
 
-        public PollBuilder setExcludedPlayers(List<UUID> excludedPlayers) {
+        public B setExcludedPlayers(List<UUID> excludedPlayers) {
             poll.setExcludedPlayers(excludedPlayers);
-            return this;
+            return builder;
         }
 
-        public PollBuilder setRunnableAfterPollEnded(Consumer<T> runnableAfterPollEnded) {
+        public B setRunnableAfterPollEnded(Consumer<T> runnableAfterPollEnded) {
             poll.setOnPollEnd(runnableAfterPollEnded);
-            return this;
-        }
-
-        public AbstractPoll get() {
-            this.poll.init();
-            return this.poll;
+            return builder;
         }
     }
 }

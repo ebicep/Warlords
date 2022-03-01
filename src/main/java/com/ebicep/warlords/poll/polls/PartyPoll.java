@@ -1,21 +1,17 @@
-package com.ebicep.warlords.poll;
+package com.ebicep.warlords.poll.polls;
 
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.poll.AbstractPoll;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PartyPoll extends AbstractPoll {
+public class PartyPoll extends AbstractPoll<PartyPoll> {
 
     private Party party;
 
-    public PartyPoll(Party party) {
-        this.party = party;
-    }
-
     public PartyPoll() {
-
     }
 
     @Override
@@ -44,8 +40,33 @@ public class PartyPoll extends AbstractPoll {
         return party;
     }
 
-    public AbstractPoll setParty(Party party) {
+    public void setParty(Party party) {
         this.party = party;
-        return this;
+    }
+
+    public static class Builder extends AbstractPoll.Builder<PartyPoll, Builder> {
+
+        public Builder() {
+        }
+
+        public Builder(Party party) {
+            setParty(party);
+        }
+
+        @Override
+        public PartyPoll createPoll() {
+            return new PartyPoll();
+        }
+
+        @Override
+        public Builder thisBuilder() {
+            return this;
+        }
+
+        public Builder setParty(Party party) {
+            poll.setParty(party);
+            return builder;
+        }
+
     }
 }

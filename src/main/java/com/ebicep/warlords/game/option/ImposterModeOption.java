@@ -4,17 +4,17 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.poll.AbstractPoll;
-import com.ebicep.warlords.poll.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.poll.polls.GamePoll;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public class ImposterModeOption implements Option {
     private final HashMap<Team, List<WarlordsPlayer>> imposters = new HashMap<>();
     private final HashMap<Team, List<WarlordsPlayer>> voters = new HashMap<>();
     private Game game;
-    private AbstractPoll poll;
+    private GamePoll poll;
 
 
     @Override
@@ -38,30 +38,29 @@ public class ImposterModeOption implements Option {
             imposters.put(team, new ArrayList<>());
         }
 
-        game.registerScoreboardHandler(new SimpleScoreboardHandler(30, "imposter") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
-//                if (warlordsPlayer == null) {
-//                    return Collections.emptyList();
-//                } else if ((blueImposterName != null && blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
-//                        (redImposterName != null && redImposterName.equals(warlordsPlayer.getName()))
-//                ) {
-//                    return Arrays.asList(ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER");
-//                } else {
-//                    if (blueImposterName != null && redImposterName != null) {
-//                        return Arrays.asList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT");
-//                    } else {
-//                        return Collections.emptyList();
-//                    }
-//                }
-                return Collections.emptyList();
-            }
-        });
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(30, "imposter") {
+                    @Override
+                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
+                        if (warlordsPlayer == null) {
+                            return Collections.emptyList();
+                        }
+                        if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
+                            return Collections.emptyList();
+                        }
+                        if (imposters.entrySet().stream().anyMatch(teamListEntry -> teamListEntry.getValue().contains(warlordsPlayer))) {
+                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
+                        }
+
+                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
+                    }
+                }
+        );
     }
+
 
     @Override
     public void start(@Nonnull Game game) {
-        new BukkitRunnable() {
+        new GameRunnable(game) {
 
             int counter = 0;
 
@@ -104,7 +103,7 @@ public class ImposterModeOption implements Option {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 20 * 12, 20);
+        }.runTaskTimer(20 * 12, 20);
     }
 
     private void assignImposters(Game game) {
@@ -124,7 +123,7 @@ public class ImposterModeOption implements Option {
     }
 
     public void sendPoll(Team team) {
-        poll = new PollBuilder()
+        poll = new GamePoll.Builder(game)
                 .setQuestion("Who is the most SUS on your team?")
                 .setTimeLeft(60)
                 .setOptions(game.offlinePlayersWithoutSpectators()
@@ -148,7 +147,7 @@ public class ImposterModeOption implements Option {
                     //If multiple top votes and one is imposter then voted wrong
                     boolean votedCorrectly = votedOut.size() == 1 && imposters.get(team).stream().anyMatch(warlordsPlayer -> warlordsPlayer == votedOut.get(0));
 
-                    new BukkitRunnable() {
+                    new GameRunnable(game, true) {
                         int counter = 0;
 
                         @Override
@@ -182,28 +181,33 @@ public class ImposterModeOption implements Option {
                                         });
                             } else if (counter == 9) {
                                 game.removeFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
+                                int scoreNeededToEndGame = game.getOptions()
+                                        .stream()
+                                        .filter(e -> e instanceof WinByPointsOption)
+                                        .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
+                                        .sorted()
+                                        .findFirst()
+                                        .orElse(Integer.MAX_VALUE);
                                 if (votedCorrectly) {
-                                    int scoreNeededToEndGame = game.getOptions()
-                                            .stream()
-                                            .filter(e -> e instanceof WinByPointsOption)
-                                            .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
-                                            .sorted()
-                                            .findFirst()
-                                            .orElse(Integer.MAX_VALUE);
                                     game.setPoints(team, scoreNeededToEndGame);
                                 } else {
-                                    game.setPoints(team, 0);
+                                    //team with most points win, excluding voting team
+                                    game.setPoints(TeamMarker.getTeams(game).stream()
+                                                    .filter(t -> t != team)
+                                                    .min(Comparator.comparingInt(o -> game.getPoints(o)))
+                                                    .get(),
+                                            scoreNeededToEndGame);
                                 }
                                 ((PlayingState) game.getState()).skipTimer();
-                                this.cancel();
                                 game.onlinePlayers()
                                         .forEach(playerTeamEntry -> {
                                             Player player = playerTeamEntry.getKey();
                                             sendImpostorResult(player);
                                         });
+                                this.cancel();
                             }
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 10, 20);
+                    }.runTaskTimer(10, 20);
                 }).get();
     }
 
@@ -252,13 +256,13 @@ public class ImposterModeOption implements Option {
         StringBuilder message = new StringBuilder();
         imposters.forEach((team, warlordsPlayers) -> {
             if (warlordsPlayers.size() == 1) {
-                message.append(ChatColor.GREEN + "The ")
+                message.append(ChatColor.GREEN).append("The ")
                         .append(team.teamColor).append(team.name)
                         .append(ChatColor.GREEN).append(" imposter was ")
                         .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
                         .append("\n");
             } else if (warlordsPlayers.size() > 1) {
-                message.append(ChatColor.GREEN + "The ")
+                message.append(ChatColor.GREEN).append("The ")
                         .append(team.teamColor).append(team.name)
                         .append(ChatColor.GREEN).append(" imposters were ")
                         .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
@@ -290,11 +294,11 @@ public class ImposterModeOption implements Option {
         return voters;
     }
 
-    public AbstractPoll getPoll() {
+    public GamePoll getPoll() {
         return poll;
     }
 
-    public void setPoll(AbstractPoll poll) {
+    public void setPoll(GamePoll poll) {
         this.poll = poll;
     }
 }
