@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
@@ -17,7 +18,11 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.sun.org.apache.regexp.internal.RE;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -105,6 +110,11 @@ public class TestCommand implements CommandExecutor {
         DatabaseManager.gameService.create(databaseGameCTF);
 
  */
+        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+                .forEach(undyingArmy -> {
+                    System.out.println(undyingArmy.getPlayersPopped());
+                });
 
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {

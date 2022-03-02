@@ -811,25 +811,6 @@ public final class WarlordsPlayer {
         }
     }
 
-    /**
-     * @param ability  which ability should drop Orbs of Life.
-     * @param attacker is the caster of the ability.
-     */
-    public void spawnOrbs(String ability, WarlordsPlayer attacker) {
-        if (attacker.getCooldownManager().hasCooldown(OrbsOfLife.class) && !ability.isEmpty() && !ability.equals("Intervene")) {
-            new CooldownFilter<>(attacker, PersistentCooldown.class)
-                    .filter(PersistentCooldown::isShown)
-                    .filterCooldownClassAndMapToObjectsOfClass(OrbsOfLife.class)
-                    .forEach(orbsOfLife -> {
-                        Location location = getLocation();
-                        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
-
-                        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
-                        orbsOfLife.getSpawnedOrbs().add(orb);
-                    });
-        }
-    }
-
     public void cancelHealingPowerUp() {
         if (powerUpHeal) {
             powerUpHeal = false;
@@ -1626,9 +1607,10 @@ public final class WarlordsPlayer {
         this.spec.getOrange().updateDescription(player);
         applySkillBoost(player);
         player.closeInventory();
-        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
         this.assignItemLore(player);
         ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+
+        resetPlayerAddons();
 
         if (isDeath()) {
             player.setGameMode(GameMode.SPECTATOR);
@@ -1636,6 +1618,39 @@ public final class WarlordsPlayer {
             player.setGameMode(GameMode.ADVENTURE);
         }
         // TODO Update the inventory based on the status of isUndyingArmyDead here
+    }
+
+    private void resetPlayerAddons() {
+        if (getEntity() instanceof Player) {
+            Player player = (Player) getEntity();
+
+            //Soulbinding weapon enchant
+            if (getCooldownManager().hasCooldown(Soulbinding.class)) {
+                ItemMeta itemMeta = player.getInventory().getItem(0).getItemMeta();
+                itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                player.getInventory().getItem(0).setItemMeta(itemMeta);
+            } else {
+                player.getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+            }
+
+            //Undying army bone
+            if (getCooldownManager().checkUndyingArmy(true)) {
+                player.getInventory().setItem(5, UndyingArmy.BONE);
+            } else {
+                player.getInventory().remove(UndyingArmy.BONE);
+            }
+
+            //Arcane shield absorption hearts
+            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
+                    .collect(Collectors.toList());
+            if (!arcaneShields.isEmpty()) {
+                ArcaneShield arcaneShield = arcaneShields.get(0);
+                ((CraftPlayer) player).getHandle().setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
+            } else {
+                ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
+            }
+        }
     }
 
     public Classes getSpecClass() {
@@ -1913,23 +1928,23 @@ public final class WarlordsPlayer {
         this.decrementRespawnTimer();
     }
 
-    @Override
-    public int hashCode() {
-        return this.uuid.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final WarlordsPlayer other = (WarlordsPlayer) obj;
-        return Objects.equals(this.uuid, other.uuid);
-    }
+//    @Override
+//    public int hashCode() {
+//        return this.uuid.hashCode();
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        final WarlordsPlayer other = (WarlordsPlayer) obj;
+//        return Objects.equals(this.uuid, other.uuid);
+//    }
 }

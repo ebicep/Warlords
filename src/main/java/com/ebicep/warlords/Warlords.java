@@ -612,8 +612,8 @@ public class Warlords extends JavaPlugin {
                                     .collect(Collectors.toList())
                             ) {
                                 UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-                                if (!undyingArmy.isArmyDead(wp.getUuid())) {
-                                    undyingArmy.pop(wp.getUuid());
+                                if (!undyingArmy.isArmyDead(wp)) {
+                                    undyingArmy.pop(wp);
 
                                     // Drops the flag when popped.
                                     FlagHolder.dropFlagForPlayer(wp);

@@ -220,12 +220,12 @@ public class CooldownManager {
         ) {
             if (popped) {
                 //returns true if any undying is popped
-                if (undyingArmy.isArmyDead(warlordsPlayer.getUuid())) {
+                if (undyingArmy.isArmyDead(warlordsPlayer)) {
                     return true;
                 }
             } else {
                 //return true if theres any unpopped armies
-                if (!undyingArmy.isArmyDead(warlordsPlayer.getUuid())) {
+                if (!undyingArmy.isArmyDead(warlordsPlayer)) {
                     return true;
                 }
             }

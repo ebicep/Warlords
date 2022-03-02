@@ -31,18 +31,18 @@ public class UndyingArmy extends AbstractAbility {
     private int duration = 10;
     private int maxArmyAllies = 6;
 
-    private final HashMap<UUID, Boolean> playersPopped = new HashMap<>();
+    private final HashMap<WarlordsPlayer, Boolean> playersPopped = new HashMap<>();
 
-    public HashMap<UUID, Boolean> getPlayersPopped() {
+    public HashMap<WarlordsPlayer, Boolean> getPlayersPopped() {
         return playersPopped;
     }
 
-    public boolean isArmyDead(UUID uuid) {
-        return playersPopped.get(uuid);
+    public boolean isArmyDead(WarlordsPlayer warlordsPlayer) {
+        return playersPopped.get(warlordsPlayer);
     }
 
-    public void pop(UUID uuid) {
-        playersPopped.put(uuid, true);
+    public void pop(WarlordsPlayer warlordsPlayer) {
+        playersPopped.put(warlordsPlayer, true);
     }
 
     public UndyingArmy() {
@@ -72,7 +72,7 @@ public class UndyingArmy extends AbstractAbility {
                 .aliveTeammatesOf(wp)
                 .closestFirst(wp)
         ) {
-            tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
+            tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
                 wp.sendMessage(
                     WarlordsPlayer.RECEIVE_ARROW +
@@ -101,7 +101,7 @@ public class UndyingArmy extends AbstractAbility {
                     if (!wp.getGame().isFrozen()) {
                         Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
                         if (optionalUndyingArmy.isPresent()) {
-                            if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
+                            if (!(optionalUndyingArmy.get()).isArmyDead(teammate)) {
                                 float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
                                 teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
