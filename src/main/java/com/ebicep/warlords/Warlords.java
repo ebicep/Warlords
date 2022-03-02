@@ -508,7 +508,7 @@ public class Warlords extends JavaPlugin {
 
                         // will add more efficient system later
                         if (wp.getSpec() instanceof Apothecary) {
-                            wp.getSpeed().addSpeedModifier("Base Speed", 20, 1, "BASE");
+                            wp.getSpeed().addSpeedModifier("Base Speed", 23, 1, "BASE");
                         }
 
                         CooldownManager cooldownManager = wp.getCooldownManager();
@@ -592,6 +592,7 @@ public class Warlords extends JavaPlugin {
                         if (wp.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
                             wp.getSpeed().removeSlownessModifiers();
                             wp.getCooldownManager().removeDebuffCooldowns();
+                            wp.getEntity().removePotionEffect(PotionEffectType.BLINDNESS);
                         }
 
                         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)

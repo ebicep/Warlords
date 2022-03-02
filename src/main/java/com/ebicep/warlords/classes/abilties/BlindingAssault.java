@@ -15,6 +15,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlindingAssault extends AbstractAbility {
 
@@ -54,6 +56,7 @@ public class BlindingAssault extends AbstractAbility {
                 .with(FireworkEffect.Type.BALL)
                 .build());
 
+        List<WarlordsPlayer> playersHit = new ArrayList<>();
         for (WarlordsPlayer assaultTarget : PlayerFilter
                 .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
@@ -61,6 +64,7 @@ public class BlindingAssault extends AbstractAbility {
             assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
             assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
+            playersHit.add(assaultTarget);
         }
 
         new GameRunnable(wp.getGame()) {
@@ -79,12 +83,13 @@ public class BlindingAssault extends AbstractAbility {
                 if (!wasOnGround && hitGround) {
                     wasOnGround = true;
 
-                    for (WarlordsPlayer assaultTarget : PlayerFilter
+                    for (WarlordsPlayer landingTarget : PlayerFilter
                             .entitiesAround(player, 5, 5, 5)
                             .aliveEnemiesOf(wp)
+                            .excluding(playersHit)
                     ) {
-                        assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
-                        assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                        landingTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
+                        landingTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
 

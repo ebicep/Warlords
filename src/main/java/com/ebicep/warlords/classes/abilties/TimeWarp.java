@@ -40,7 +40,7 @@ public class TimeWarp extends AbstractAbility {
 
             @Override
             public void run() {
-                if (counter == 0) {
+                if (counter == 1) {
                     wp.subtractEnergy(energyCost);
                     wp.getCooldownManager().addRegularCooldown(
                             name,
@@ -75,9 +75,7 @@ public class TimeWarp extends AbstractAbility {
                     }
 
                     warpTrail.add(wp.getLocation());
-
                     ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
-
 
                     int points = 6;
                     double radius = 0.5d;
