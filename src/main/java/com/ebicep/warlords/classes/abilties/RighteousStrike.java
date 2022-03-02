@@ -16,17 +16,21 @@ public class RighteousStrike extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Each strike reduces the duration of your striked\n" +
+                "§7Each strike reduces the duration of your struck\n" +
                 "§7target's active ability timers by §60.5 §7(§60.75 §7for\n" +
-                "§7silenced targets) seconds.";
+                "§7silenced targets) seconds. Each strike will reduce\n" +
+                "§7the cooldown of Prism Guard by the amount you\n" +
+                "§7reduced their timers by.";
     }
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 15);
+            wp.getSpec().getBlue().subtractCooldown(0.75f);
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
+            wp.getSpec().getBlue().subtractCooldown(0.5f);
         }
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }

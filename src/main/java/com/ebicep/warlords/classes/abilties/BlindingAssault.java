@@ -25,10 +25,10 @@ public class BlindingAssault extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Leap forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
-                "§7all enemies close to you or near you when\n" +
-                "§7landing on the ground. Enemies hit are blinded\n" +
+                "§7all enemies close to on cast and landing\n" +
+                "§7on the ground. Enemies hit are blinded\n" +
                 "§7for §61 §7second. You take reduced fall damage\n" +
-                "while leaping." +
+                "§7while leaping." +
                 "\n\n" +
                 "§7Blinding Assault has reduced range when\n" +
                 "§7holding a Flag.";

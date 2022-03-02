@@ -303,10 +303,9 @@ public final class WarlordsPlayer {
                 }
 
                 if (attacker.getMarkedTarget() == uuid) {
-                    damageValue *= 1.25;
+                    damageValue *= 1.1;
                 }
             }
-
         }
 
         // Intervene

@@ -78,7 +78,6 @@ public class PrismGuard extends AbstractAbility {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
         Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
 
-
         // First Particle Sphere
         playSphereAnimation(wp.getLocation(), bubbleRadius + 2.5, 68, 176, 176);
 
@@ -141,7 +140,7 @@ public class PrismGuard extends AbstractAbility {
                 } else {
                     this.cancel();
 
-                    Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
+                    Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
 
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {

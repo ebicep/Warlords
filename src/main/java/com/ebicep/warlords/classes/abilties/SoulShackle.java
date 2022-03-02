@@ -21,7 +21,7 @@ public class SoulShackle extends AbstractAbility {
     private int maxSilenceDuration = 4;
 
     public SoulShackle() {
-        super("Soul Shackle", 344, 468, 9, 40, 20, 175);
+        super("Soul Shackle", 348, 474, 9, 40, 20, 175);
     }
 
     @Override
@@ -60,6 +60,7 @@ public class SoulShackle extends AbstractAbility {
             }
 
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
             shackleTarget.getCooldownManager().addRegularCooldown(
                     "Shackle Silence",
                     "SILENCE",
