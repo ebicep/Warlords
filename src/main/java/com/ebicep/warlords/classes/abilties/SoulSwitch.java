@@ -25,7 +25,7 @@ public class SoulSwitch extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Switch locations with an enemy, has an\n" +
                 "§7optimal range of §e" + radius + " §7blocks. Soul Switch\n" +
-                "§7has low verticality.";
+                "§7has low vertical range.";
     }
 
     @Override

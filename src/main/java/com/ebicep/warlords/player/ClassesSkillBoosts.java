@@ -732,7 +732,7 @@ public enum ClassesSkillBoosts {
     ACUPRESSURE("Acupressure",
             "§7Increase the amount of health you\n§7restore with Acupressure\n§7by 10% and reduce the cooldown\nby 15%",
             "§aIncrease the amount of health you\n§arestore with Acupressure\n§aby §c10% and reduce the cooldown\nby §c15%",
-            Acupressure.class,
+            VitalityLiquor.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);

@@ -18,7 +18,7 @@ public class RemedicChains extends AbstractAbility {
     private int linkBreakRadius = 15;
     private final int duration = 8;
     private final int alliesAffected = 3;
-    // Percentage
+    // Percent
     private final float healingMultiplier = 0.125f;
     private int maxHealthHealing = 2;
 
@@ -76,6 +76,15 @@ public class RemedicChains extends AbstractAbility {
                     ChatColor.GRAY + " Your Remedic Chains is now protecting " +
                     ChatColor.YELLOW + chainTarget.getName() +
                     ChatColor.GRAY + "!"
+            );
+
+            chainTarget.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW +
+                    ChatColor.GRAY + wp.getName() + "'s" +
+                    ChatColor.YELLOW + " Remedic Chains" +
+                    ChatColor.GRAY + " is now healing you for " +
+                    ChatColor.GOLD + duration +
+                    ChatColor.GRAY + " seconds!"
             );
 
             HashMap<WarlordsPlayer, Integer> timeLinked = new HashMap<>();

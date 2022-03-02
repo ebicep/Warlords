@@ -765,8 +765,8 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the player has Acupressure active.
-                            if (cooldownManager.hasCooldown(Acupressure.class)) {
-                                energyGainPerTick += 2.5;
+                            if (cooldownManager.hasCooldown(VitalityLiquor.class)) {
+                                energyGainPerTick += 1.5;
                             }
 
                             // Checks whether the player has the Energy Powerup active.

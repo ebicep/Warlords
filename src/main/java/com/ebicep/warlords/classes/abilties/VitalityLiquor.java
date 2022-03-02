@@ -13,15 +13,15 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 
-public class Acupressure extends AbstractAbility {
+public class VitalityLiquor extends AbstractAbility {
 
     private final int acuRange = 8;
     private final int duration = 3;
     private final float minWaveHealing = 268;
     private final float maxWaveHealing = 324;
 
-    public Acupressure() {
-        super("Acupressure", 359, 485, 12, 30, 25, 175);
+    public VitalityLiquor() {
+        super("Vitality Liquor", 359, 485, 12, 30, 25, 175);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Acupressure extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        Acupressure tempAcupressure = new Acupressure();
+        VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
         wp.addHealingInstance(
                 wp,
                 name,
@@ -98,12 +98,12 @@ public class Acupressure extends AbstractAbility {
                                     false,
                                     false
                             );
-                            allyTarget.getCooldownManager().removeCooldown(Acupressure.class);
+                            allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class);
                             allyTarget.getCooldownManager().addRegularCooldown(
-                                    "Acupressure",
-                                    "ACU",
-                                    Acupressure.class,
-                                    tempAcupressure,
+                                    "Vitality Liquor",
+                                    "VITAL",
+                                    VitalityLiquor.class,
+                                    tempVitalityLiquor,
                                     wp,
                                     CooldownTypes.BUFF,
                                     cooldownManager -> {},
@@ -121,7 +121,7 @@ public class Acupressure extends AbstractAbility {
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
-                        if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
+                        if (wp.getCooldownManager().hasCooldown(tempVitalityLiquor)) {
                             EffectUtils.playParticleLinkAnimation(wp.getLocation(), enemyTarget.getLocation(), 255, 170, 0, 1);
                         } else {
                             this.cancel();

@@ -71,8 +71,7 @@ public class PollCommand implements CommandExecutor {
                 break;
             }
             case "end": {
-                //TODO set the permission
-                if (!player.isOp()) {
+                if (!player.hasPermission("warlords.poll.end")) {
                     Party.sendMessageToPlayer(player, ChatColor.RED + "Invalid permissions!", true, true);
                     return true;
                 }

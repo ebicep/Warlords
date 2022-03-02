@@ -23,7 +23,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     private int duration = 8;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 60, 60, -1, 100);
+        super("Order of Eviscerate", 0, 0, 50, 60, -1, 100);
     }
 
     @Override
@@ -34,10 +34,10 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7damage or taking any type of ability damage will end\n" +
                 "§7your invisibility." +
                 "\n\n" +
-                "§7All your attacks against an enemy will mark them vulnerable,\n" +
-                "§7increasing the damage they take by §c25% §7for §6" + duration + " §7seconds.\n" +
-                "§7All attacks that hit your marked target from behind\n" +
-                "§7gain a §c100% §7crit chance." +
+                "§7All your attacks against an enemy will mark them vulnerable.\n" +
+                "§7Vulnerable enemies take 10% more damage from your\n" +
+                "§7attacks. All attacks that hit your marked target from\n" +
+                "§7behind gain a §c100% §7crit chance." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Blinding Assault and Order of Eviscerate's cooldown\n" +

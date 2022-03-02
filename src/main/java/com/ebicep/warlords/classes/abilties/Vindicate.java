@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 public class Vindicate extends AbstractAbility {
 
     private final int radius = 8;
-    private final int vindicateDuration = 8;
-    private int vindicateSelfDuration = 8;
+    private final int vindicateDuration = 12;
+    private final int vindicateSelfDuration = 8;
     private float vindicateDamageReduction = 25;
 
     public Vindicate() {
@@ -35,9 +35,7 @@ public class Vindicate extends AbstractAbility {
                 "§7affected by de-buffs and grants §625% §7knockback\n" +
                 "§7resistance for §6" + vindicateDuration + " §7seconds." +
                 "\n\n" +
-                "§7You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n" +
-                "§7Each ally within your Vindicate radius increases\n" +
-                "§7the duration by §61 §7second. (up to §612 §7seconds.)";
+                "§7You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n";
     }
 
     @Override
@@ -84,12 +82,6 @@ public class Vindicate extends AbstractAbility {
                     cooldownManager -> {},
                     vindicateDuration * 20
             );
-
-            vindicateSelfDuration++;
-        }
-
-        if (vindicateSelfDuration > 12) {
-            vindicateSelfDuration = 12;
         }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
@@ -107,8 +99,6 @@ public class Vindicate extends AbstractAbility {
                 return currentDamageValue * getVindicateDamageReduction();
             }
         });
-
-        vindicateSelfDuration = 8;
 
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL, ParticleEffect.REDSTONE).particlesPerCircumference(2));
