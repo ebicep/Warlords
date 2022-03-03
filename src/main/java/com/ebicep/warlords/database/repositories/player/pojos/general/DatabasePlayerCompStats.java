@@ -7,6 +7,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.*;
+import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
@@ -22,6 +24,10 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
     private DatabaseRogue rogue = new DatabaseRogue();
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
+    @Field("tdm_stats")
+    private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
+    @Field("interception_stats")
+    private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
 
     public DatabasePlayerCompStats() {
     }
@@ -36,6 +42,12 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
                 this.ctfStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+            case TEAM_DEATHMATCH:
+                this.tdmStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+            case INTERCEPTION:
+                this.interceptionStats.updateStats(databaseGame, gamePlayer, add);
                 break;
         }
     }
@@ -145,6 +157,22 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
 
     public void setCtfStats(DatabasePlayerCTF ctfStats) {
         this.ctfStats = ctfStats;
+    }
+
+    public DatabasePlayerTDM getTdmStats() {
+        return tdmStats;
+    }
+
+    public void setTdmStats(DatabasePlayerTDM tdmStats) {
+        this.tdmStats = tdmStats;
+    }
+
+    public DatabasePlayerInterception getInterceptionStats() {
+        return interceptionStats;
+    }
+
+    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
+        this.interceptionStats = interceptionStats;
     }
 }
 
