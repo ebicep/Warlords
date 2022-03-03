@@ -32,13 +32,10 @@ public class DatabaseGamePlayersDuel {
 
         @Field("seconds_in_combat")
         private int secondsInCombat;
-        @Field("seconds_in_respawn")
-        private int secondsInRespawn;
 
         public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();
-            this.secondsInRespawn = Math.round(warlordsPlayer.getStats().total().getRespawnTimeSpent());
             //TODO abstract warlordsplayer per gamemode
         }
 
