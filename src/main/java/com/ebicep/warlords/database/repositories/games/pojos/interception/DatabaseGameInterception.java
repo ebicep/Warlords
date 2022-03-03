@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.games.pojos.tdm;
+package com.ebicep.warlords.database.repositories.games.pojos.interception;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -10,7 +10,6 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -18,9 +17,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 
-@Document(collection = "Games_Information_TDM")
-public class DatabaseGameTDM extends DatabaseGameBase {
+@Document(collection = "Games_Information_Interception")
+public class DatabaseGameInterception extends DatabaseGameBase {
 
     @Field("time_left")
     protected int timeLeft;
@@ -29,18 +29,17 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     protected int bluePoints;
     @Field("red_points")
     protected int redPoints;
-    protected DatabaseGamePlayersTDM players;
+    protected DatabaseGamePlayersInterception players;
 
-    public DatabaseGameTDM() {
-
+    public DatabaseGameInterception() {
     }
 
-    public DatabaseGameTDM(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+    public DatabaseGameInterception(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
-        this.players = new DatabaseGamePlayersTDM(game);
+        this.players = new DatabaseGamePlayersInterception(game);
 
         this.exactDate = new Date();
         this.date = DATE_FORMAT.format(new Date());
@@ -51,34 +50,19 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     }
 
     @Override
-    public String toString() {
-        return "DatabaseGameTDM{" +
-                "id='" + id + '\'' +
-                ", exactDate=" + exactDate +
-                ", date='" + date + '\'' +
-                ", map=" + map +
-                ", gameMode=" + gameMode +
-                ", gameAddons=" + gameAddons +
-                ", counted=" + counted +
-                ", bluePoints=" + bluePoints +
-                ", redPoints=" + redPoints +
-                '}';
-    }
-
-    @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.blue.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, add));
-        players.red.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, add));
+        players.blue.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception, add));
+        players.red.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception, add));
     }
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayersTDM.DatabaseGamePlayerTDM;
+        assert player instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
 
         if (bluePoints > redPoints) {
-            return players.blue.contains((DatabaseGamePlayersTDM.DatabaseGamePlayerTDM) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            return players.blue.contains((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
         } else if (redPoints > bluePoints) {
-            return players.red.contains((DatabaseGamePlayersTDM.DatabaseGamePlayerTDM) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            return players.red.contains((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
         } else {
             return DatabaseGamePlayerResult.DRAW;
         }
@@ -91,10 +75,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
 
     @Override
     public String getGameLabel() {
-        return ChatColor.GRAY + date + ChatColor.DARK_GRAY + " - " +
-                ChatColor.GREEN + map + ChatColor.DARK_GRAY + " - " +
-                ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
-
+        return "";
     }
 
     public int getTimeLeft() {
@@ -127,13 +108,5 @@ public class DatabaseGameTDM extends DatabaseGameBase {
 
     public void setRedPoints(int redPoints) {
         this.redPoints = redPoints;
-    }
-
-    public DatabaseGamePlayersTDM getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(DatabaseGamePlayersTDM players) {
-        this.players = players;
     }
 }

@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Document(collection = "Games_Information")
+@Document(collection = "Games_Information_CTF")
 public class DatabaseGameCTF extends DatabaseGameBase {
 
     @Field("time_left")

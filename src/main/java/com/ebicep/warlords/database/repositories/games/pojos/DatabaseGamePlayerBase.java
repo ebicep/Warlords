@@ -1,10 +1,16 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.PlayerStatistics;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
@@ -41,6 +47,32 @@ public class DatabaseGamePlayerBase {
     protected long experienceEarnedUniversal;
 
     public DatabaseGamePlayerBase() {
+    }
+
+    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer) {
+        LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
+        long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+        long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
+        this.uuid = warlordsPlayer.getUuid().toString();
+        this.name = warlordsPlayer.getName();
+        this.spec = warlordsPlayer.getSpecClass();
+        this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
+        this.xLocations = warlordsPlayer.getLocations().stream().map(Location::getX).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
+        this.zLocations = warlordsPlayer.getLocations().stream().map(Location::getZ).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
+        this.totalKills = warlordsPlayer.getStats().total().getKills();
+        this.totalAssists = warlordsPlayer.getStats().total().getAssists();
+        this.totalDeaths = warlordsPlayer.getStats().total().getDeaths();
+        this.totalDamage = warlordsPlayer.getStats().total().getDamage();
+        this.totalHealing = warlordsPlayer.getStats().total().getHealing();
+        this.totalAbsorbed = warlordsPlayer.getStats().total().getAbsorbed();
+        this.kills = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getKills).collect(Collectors.toList());
+        this.assists = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getAssists).collect(Collectors.toList());
+        this.deaths = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getDeaths).collect(Collectors.toList());
+        this.damage = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getDamage).collect(Collectors.toList());
+        this.healing = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getHealing).collect(Collectors.toList());
+        this.absorbed = warlordsPlayer.getStats().stream().map(PlayerStatistics.Entry::getAbsorbed).collect(Collectors.toList());
+        this.experienceEarnedSpec = experienceEarnedSpec;
+        this.experienceEarnedUniversal = experienceEarnedUniversal;
     }
 
     public String getUuid() {

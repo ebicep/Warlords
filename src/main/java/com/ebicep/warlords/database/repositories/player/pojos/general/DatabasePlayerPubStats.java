@@ -6,7 +6,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.*;
+import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
@@ -21,6 +24,12 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
     private DatabaseRogue rogue = new DatabaseRogue();
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
+    @Field("tdm_stats")
+    private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
+    @Field("interception_stats")
+    private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
+    @Field("duel_stats")
+    private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
 
     public DatabasePlayerPubStats() {
     }
@@ -35,6 +44,15 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
                 this.ctfStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+            case TEAM_DEATHMATCH:
+                this.tdmStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+            case INTERCEPTION:
+                this.interceptionStats.updateStats(databaseGame, gamePlayer, add);
+                break;
+            case DUEL:
+                this.duelStats.updateStats(databaseGame, gamePlayer, add);
                 break;
         }
     }
@@ -144,5 +162,29 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
 
     public void setCtfStats(DatabasePlayerCTF ctfStats) {
         this.ctfStats = ctfStats;
+    }
+
+    public DatabasePlayerTDM getTdmStats() {
+        return tdmStats;
+    }
+
+    public void setTdmStats(DatabasePlayerTDM tdmStats) {
+        this.tdmStats = tdmStats;
+    }
+
+    public DatabasePlayerInterception getInterceptionStats() {
+        return interceptionStats;
+    }
+
+    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
+        this.interceptionStats = interceptionStats;
+    }
+
+    public DatabasePlayerDuel getDuelStats() {
+        return duelStats;
+    }
+
+    public void setDuelStats(DatabasePlayerDuel duelStats) {
+        this.duelStats = duelStats;
     }
 }

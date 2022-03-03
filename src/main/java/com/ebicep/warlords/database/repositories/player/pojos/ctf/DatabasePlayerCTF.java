@@ -10,10 +10,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "Players_Information")
 public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
 
     @Field("flags_captured")
