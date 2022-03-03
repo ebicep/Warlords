@@ -25,7 +25,6 @@ import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -256,7 +255,6 @@ public final class WarlordsPlayer {
                     playHurtAnimation(this.entity, attacker);
                 }
 
-
             } else {
 
                 // Fall Damage
@@ -273,7 +271,6 @@ public final class WarlordsPlayer {
                     health -= damageValue;
                     playHurtAnimation(entity, attacker);
                 }
-
 
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
@@ -934,7 +931,6 @@ public final class WarlordsPlayer {
             PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());
         }
     }
-
 
     public void displayFlagActionBar(@Nonnull Player player) {
         if (this.compassTarget != null) {
@@ -1774,7 +1770,7 @@ public final class WarlordsPlayer {
             v.multiply(0.75);
         }
         if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-            v.multiply(0.75);
+            v.multiply(0.6);
         }
         if (cooldownManager.hasCooldownFromName("KB Increase")) {
             v.multiply(1.5);
@@ -1789,7 +1785,7 @@ public final class WarlordsPlayer {
                 v.multiply(0.75);
             }
             if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-                v.multiply(0.75);
+                v.multiply(0.6);
             }
             if (cooldownManager.hasCooldownFromName("KB Increase")) {
                 v.multiply(1.5);
