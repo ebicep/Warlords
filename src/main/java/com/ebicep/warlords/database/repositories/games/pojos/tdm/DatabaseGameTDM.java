@@ -36,18 +36,12 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     }
 
     public DatabaseGameTDM(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, counted);
         this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
         this.players = new DatabaseGamePlayersTDM(game);
-
-        this.exactDate = new Date();
-        this.date = DATE_FORMAT.format(new Date());
-        this.map = game.getMap();
-        this.gameMode = GameMode.CAPTURE_THE_FLAG;
-        this.gameAddons = Arrays.asList(game.getAddons().toArray(new GameAddon[0]));
-        this.counted = counted;
     }
 
     @Override

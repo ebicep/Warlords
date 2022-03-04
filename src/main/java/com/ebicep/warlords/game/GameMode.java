@@ -5,6 +5,9 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
+import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
+import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
+import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.player.Classes;
@@ -50,8 +53,8 @@ public enum GameMode {
     },
     INTERCEPTION(
             "Interception",
-            null,
-            null
+            DatabaseGameInterception::new,
+            GamesCollections.INTERCEPTION
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -77,8 +80,8 @@ public enum GameMode {
     },
     DUEL(
             "Duel",
-            null,
-            null
+            DatabaseGameDuel::new,
+            GamesCollections.DUEL
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -100,8 +103,8 @@ public enum GameMode {
     },
     TEAM_DEATHMATCH(
             "Team Deathmatch",
-            null,
-            null
+            DatabaseGameTDM::new,
+            GamesCollections.TDM
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
