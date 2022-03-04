@@ -35,7 +35,8 @@ public class PrismGuard extends AbstractAbility {
         description = "§7Create a bubble shield around you that\n" +
                 "§7lasts §6" + duration + " §7seconds. All projectiles that pass through\n" +
                 "§7the barrier have their damage reduced by §c75%§7.\n" +
-                "§7(§c25% §7for all other attacks.)" +
+                "§7Additionally, other damage taken by all allies is\n" +
+                "§7reduced by §c25%§7." +
                 "\n\n" +
                 "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
                 "§7all allies for up to " + healingString + " §7missing health\n" +

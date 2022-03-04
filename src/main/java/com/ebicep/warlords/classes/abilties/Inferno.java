@@ -38,7 +38,7 @@ public class Inferno extends AbstractAbility {
                 Inferno.class,
                 tempInferno,
                 wp,
-                CooldownTypes.BUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 duration * 20

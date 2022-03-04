@@ -54,7 +54,7 @@ public class LastStand extends AbstractAbility {
                 LastStand.class,
                 tempLastStand,
                 wp,
-                CooldownTypes.BUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 selfDuration * 20
@@ -76,7 +76,7 @@ public class LastStand extends AbstractAbility {
                     LastStand.class,
                     tempLastStand,
                     wp,
-                    CooldownTypes.BUFF,
+                    CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
                     allyDuration * 20

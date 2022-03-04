@@ -33,8 +33,17 @@ public class AvengersWrath extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         AvengersWrath tempAvengersWrath = new AvengersWrath();
-        wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "WRATH",
+                AvengersWrath.class,
+                tempAvengersWrath,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        );
 
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 

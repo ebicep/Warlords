@@ -35,14 +35,14 @@ public class Berserk extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
-        wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
+        wp.getSpeed().addSpeedModifier(name, speedBuff, duration * 20, "BASE");
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
                 name,
                 "BERS",
                 Berserk.class,
                 tempBerserk,
                 wp,
-                CooldownTypes.BUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 duration * 20
@@ -59,7 +59,6 @@ public class Berserk extends AbstractAbility {
         });
 
         Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
-
 
         new GameRunnable(wp.getGame()) {
             @Override

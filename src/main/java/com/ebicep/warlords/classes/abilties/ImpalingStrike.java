@@ -21,9 +21,10 @@ public class ImpalingStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Impale an enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and afflict them with the §aLEECH §7effect for §6" + leechDuration + " §7seconds.\n" +
-                "When an ally or you deals damage to an enemy\n" +
-                "§7afflicted with the leeching effect, heal for\n" +
-                "§a30% §7(§a15% §7for allies) of all damage dealt.";
+                "§7Whenever an ally (including yourself) deals\n" +
+                "§7damage to a leeched enemy, they heal for §a15%\n" +
+                "§7of the damage dealt. You heal for §a30% §7of the\n" +
+                "§7damage you deal to a leeched enemy instead.";
     }
 
     @Override

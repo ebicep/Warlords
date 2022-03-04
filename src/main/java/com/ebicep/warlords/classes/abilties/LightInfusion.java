@@ -39,7 +39,7 @@ public class LightInfusion extends AbstractAbility {
                 LightInfusion.class,
                 tempLightInfusion,
                 wp,
-                CooldownTypes.BUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {},
                 duration * 20
         );

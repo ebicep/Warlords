@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
 
-    private final double duration = 4.8;
+    private final double duration = 5;
     private int warpHealPercentage = 30;
 
     public TimeWarp() {

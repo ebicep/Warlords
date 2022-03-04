@@ -3,15 +3,12 @@ package com.ebicep.warlords.database.repositories.games.pojos.duel;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayersCTF;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayersInterception;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -19,7 +16,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
 
 @Document(collection = "Games_Information_Duel")
 public class DatabaseGameDuel extends DatabaseGameBase {

@@ -33,9 +33,8 @@ public class Vindicate extends AbstractAbility {
                 "§7status §6VIND §7which clears all de-buffs. In\n" +
                 "§7addition, the status §6VIND §7prevents allies from being\n" +
                 "§7affected by de-buffs and grants §640% §7knockback\n" +
-                "§7resistance for §6" + vindicateDuration + " §7seconds." +
-                "\n\n" +
-                "§7You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n";
+                "§7resistance for §6" + vindicateDuration + " §7seconds. You gain §e" + format(vindicateDamageReduction) + "%\n" +
+                "§7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
     }
 
     @Override

@@ -25,8 +25,8 @@ public class HeartToHeart extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
-                "§7The grappled ally and you are granted §6" + vindDuration + " §7seconds of\n" +
-                "§7the §6VIND §7status, making you and them immune to de-buffs.";
+                "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
+                "§7granting immunity to de-buffs.";
     }
 
     @Override

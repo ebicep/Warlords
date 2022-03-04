@@ -167,7 +167,7 @@ public class RemedicChains extends AbstractAbility {
                             }
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
-                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
+                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.06f, 1.4f);
                             this.cancel();
                         }
                     }
