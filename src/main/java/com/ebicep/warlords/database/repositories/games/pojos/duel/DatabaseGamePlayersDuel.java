@@ -33,6 +33,9 @@ public class DatabaseGamePlayersDuel {
         @Field("seconds_in_combat")
         private int secondsInCombat;
 
+        public DatabaseGamePlayerDuel() {
+        }
+
         public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();

@@ -6,6 +6,7 @@ public enum GamesCollections {
     CTF("Capture the Flag", "Games_Information_CTF"),
     TDM("Team Deathmatch", "Games_Information_TDM"),
     INTERCEPTION("Interception", "Games_Information_Interception"),
+    DUEL("Duel", "Games_Information_Duel"),
 
 
     ;

@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
@@ -106,7 +107,18 @@ public class ExperienceManager {
         if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
+
         boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
+        float multiplier = 1;
+        //pubs
+        if (!isCompGame) {
+            multiplier *= .1;
+        }
+        //duels
+        if (warlordsPlayer.getGame().getGameMode() == GameMode.DUEL) {
+            multiplier *= .1;
+        }
+
         // TODO add check here for game ending in a draw
         boolean won = warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam()) > warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam().enemy());
         long winLossExp = won ? 500 : 250;
@@ -135,18 +147,18 @@ public class ExperienceManager {
         long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
 
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
-        expGain.put(won ? "Win" : "Loss", (long) (winLossExp * (isCompGame ? 1 : .1)));
+        expGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
         if (kaExp != 0) {
-            expGain.put("Kills/Assists", (long) (kaExp * (isCompGame ? 1 : .1)));
+            expGain.put("Kills/Assists", (long) (kaExp * multiplier));
         }
         if (dhpExp != 0) {
-            expGain.put("DHP", (long) (dhpExp * (isCompGame ? 1 : .1)));
+            expGain.put("DHP", (long) (dhpExp * multiplier));
         }
         if (flagCapExp != 0) {
-            expGain.put("Flags Captured", (long) (flagCapExp * (isCompGame ? 1 : .1)));
+            expGain.put("Flags Captured", (long) (flagCapExp * multiplier));
         }
         if (flagRetExp != 0) {
-            expGain.put("Flags Returned", (long) (flagRetExp * (isCompGame ? 1 : .1)));
+            expGain.put("Flags Returned", (long) (flagRetExp * multiplier));
         }
 
         try {

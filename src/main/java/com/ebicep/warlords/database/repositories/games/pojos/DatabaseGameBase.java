@@ -70,6 +70,15 @@ public abstract class DatabaseGameBase {
     public DatabaseGameBase() {
     }
 
+    public DatabaseGameBase(@Nonnull Game game, boolean counted) {
+        this.exactDate = new Date();
+        this.date = DATE_FORMAT.format(new Date());
+        this.map = game.getMap();
+        this.gameMode = game.getGameMode();
+        this.gameAddons = Arrays.asList(game.getAddons().toArray(new GameAddon[0]));
+        this.counted = counted;
+    }
+
     public static void addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
             float highestDamage = game.warlordsPlayers().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage())).get().getStats().total().getDamage();
@@ -79,6 +88,17 @@ public abstract class DatabaseGameBase {
                 updatePlayerStats = false;
                 System.out.println(ChatColor.GREEN + "[Warlords] NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
             }
+            //check for private + untracked gamemodes
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                switch (game.getGameMode()) {
+                    case DUEL:
+                    case DEBUG:
+                    case SIMULATION_TRIAL:
+                        updatePlayerStats = false;
+                        break;
+                }
+            }
+
             //Any game with these game addons will not record player stats
             for (GameAddon addon : game.getAddons()) {
                 if (!updatePlayerStats) {
@@ -258,6 +278,10 @@ public abstract class DatabaseGameBase {
         int gameBefore = getGameBefore(selectedGame);
         int gameAfter = getGameAfter(selectedGame);
 
+        if (previousGames.isEmpty()) {
+            return;
+        }
+
         ClickableHologramLine beforeLine;
         ClickableHologramLine afterLine;
         if (gameBefore == previousGames.size() - 1) {
@@ -265,6 +289,7 @@ public abstract class DatabaseGameBase {
         } else {
             beforeLine = gameSwitcher.getLines().appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
         }
+
         if (selectedGame == previousGames.size() - 1) {
             gameSwitcher.getLines().appendText(ChatColor.GREEN + "Latest Game");
         } else {
