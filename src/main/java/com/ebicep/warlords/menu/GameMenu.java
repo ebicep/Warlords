@@ -389,6 +389,13 @@ public class GameMenu {
                                 helmet == Helmets.LEGENDARY_SHAMAN_HELMET
                         ) {
                             Helmets.setSelectedShaman(player, helmet);
+                        } else if (
+                                helmet == Helmets.SIMPLE_ROGUE_HELMET ||
+                                helmet == Helmets.GREATER_ROGUE_HELMET ||
+                                helmet == Helmets.MASTERWORK_ROGUE_HELMET ||
+                                helmet == Helmets.LEGENDARY_ROGUE_HELMET
+                        ) {
+                            Helmets.setSelectedRogue(player, helmet);
                         }
 
                         List<Helmets> selectedHelmets = Helmets.getSelected(player);
@@ -400,6 +407,7 @@ public class GameMenu {
                             databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
                             databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
                             databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+                            databasePlayer.getRogue().setHelmet(selectedHelmets.get(4));
                             DatabaseManager.updatePlayerAsync(databasePlayer);
                         }).execute();
                         openArmorMenu(player, pageNumber);
@@ -438,6 +446,8 @@ public class GameMenu {
                             ArmorSets.setSelectedPaladin(player, armorSet);
                         } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
                             ArmorSets.setSelectedShaman(player, armorSet);
+                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_ROGUE || armorSet == ArmorSets.GREATER_CHESTPLATE_ROGUE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_ROGUE) {
+                            ArmorSets.setSelectedRogue(player, armorSet);
                         }
                         List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
                         Warlords.newChain().async(() -> {
@@ -447,6 +457,7 @@ public class GameMenu {
                             databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
                             databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
                             databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+                            databasePlayer.getRogue().setArmor(armorSetsList.get(4));
                             DatabaseManager.updatePlayerAsync(databasePlayer);
                         }).execute();
                         openArmorMenu(player, pageNumber);
@@ -469,6 +480,23 @@ public class GameMenu {
                             .get(),
                     (n, e) -> openArmorMenu(player, pageNumber + 1));
         } else if (pageNumber == 2) {
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (n, e) -> openArmorMenu(player, pageNumber + 1));
+            menu.setItem(
+                    0,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .get(),
+                    (n, e) -> openArmorMenu(player, pageNumber - 1));
+        } else if (pageNumber == 3) {
             menu.setItem(
                     0,
                     5,

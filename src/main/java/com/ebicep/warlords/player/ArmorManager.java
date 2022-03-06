@@ -46,10 +46,10 @@ public class ArmorManager {
         MASTERWORK_SHAMAN_HELMET("Masterwork Shaman Helmet", new ItemStack(Material.RED_ROSE, 1, (short) 8), new ItemStack(Material.YELLOW_FLOWER)),
         LEGENDARY_SHAMAN_HELMET("Legendary Shaman Helmet", new ItemStack(Material.SAPLING), new ItemStack(Material.SAPLING, 1, (short) 1)),
 
-        SIMPLE_ROGUE_HELMET("Simple Rogue Helmet", new ItemStack(Material.SAPLING, 1, (short) 4), new ItemStack(Material.RED_ROSE, 1, (short) 2)),
-        GREATER_ROGUE_HELMET("Greater Rogue Helmet", new ItemStack(Material.SAPLING, 1, (short) 2), new ItemStack(Material.CACTUS)),
-        MASTERWORK_ROGUE_HELMET("Masterwork Rogue Helmet", new ItemStack(Material.RED_ROSE, 1, (short) 8), new ItemStack(Material.YELLOW_FLOWER)),
-        LEGENDARY_ROGUE_HELMET("Legendary Rogue Helmet", new ItemStack(Material.SAPLING), new ItemStack(Material.SAPLING, 1, (short) 1)),
+        SIMPLE_ROGUE_HELMET("Simple Rogue Helmet", new ItemStack(Material.LOG, 1, (short) 0), new ItemStack(Material.WOOD, 1, (short) 0)),
+        GREATER_ROGUE_HELMET("Greater Rogue Helmet", new ItemStack(Material.LOG, 1, (short) 1), new ItemStack(Material.WOOD, 1, (short) 1)),
+        MASTERWORK_ROGUE_HELMET("Masterwork Rogue Helmet", new ItemStack(Material.LOG, 1, (short) 2), new ItemStack(Material.WOOD, 1, (short) 2)),
+        LEGENDARY_ROGUE_HELMET("Legendary Rogue Helmet", new ItemStack(Material.LOG, 1, (short) 3), new ItemStack(Material.WOOD, 1, (short) 3)),
 
         ;
 
@@ -122,6 +122,7 @@ public class ArmorManager {
             armorSets.add(playerSettings.getWarriorHelmet());
             armorSets.add(playerSettings.getPaladinHelmet());
             armorSets.add(playerSettings.getShamanHelmet());
+            armorSets.add(playerSettings.getRogueHelmet());
             return armorSets;
         }
 
@@ -140,6 +141,10 @@ public class ArmorManager {
         public static void setSelectedShaman(Player player, Helmets selectedHelmet) {
             Warlords.getPlayerSettings(player.getUniqueId()).setShamanHelmet(selectedHelmet);
         }
+
+        public static void setSelectedRogue(Player player, Helmets selectedHelmet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setRogueHelmet(selectedHelmet);
+        }
     }
 
     public enum ArmorSets {
@@ -156,6 +161,9 @@ public class ArmorManager {
         SIMPLE_CHESTPLATE_SHAMAN("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
         GREATER_CHESTPLATE_SHAMAN("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
         MASTERWORK_CHESTPLATE_SHAMAN("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
+        SIMPLE_CHESTPLATE_ROGUE("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
+        GREATER_CHESTPLATE_ROGUE("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
+        MASTERWORK_CHESTPLATE_ROGUE("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
 
 
         SIMPLE_CHESTPLATE("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
@@ -232,6 +240,10 @@ public class ArmorManager {
             Warlords.getPlayerSettings(player.getUniqueId()).setShamanArmor(selectedArmorSet);
         }
 
+        public static void setSelectedRogue(Player player, ArmorSets selectedArmorSet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setRogueArmor(selectedArmorSet);
+        }
+
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
             if (blueColor) {
@@ -254,6 +266,7 @@ public class ArmorManager {
             armorSets.add(playerSettings.getWarriorArmor());
             armorSets.add(playerSettings.getPaladinArmor());
             armorSets.add(playerSettings.getShamanArmor());
+            armorSets.add(playerSettings.getRogueArmor());
             return armorSets;
         }
     }
@@ -279,7 +292,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(1).name : ChatColor.RED + Helmets.getSelected(player).get(1).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR || selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(2).itemBlue : ArmorSets.getSelected(player).get(2).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(2).name : ChatColor.RED + ArmorSets.getSelected(player).get(2).name)
                     .lore(armorDescription)
@@ -295,6 +308,15 @@ public class ArmorManager {
                     .get();
             armor[3] = new ItemBuilder(onBlueTeam ? Helmets.getSelected(player).get(3).itemBlue : Helmets.getSelected(player).get(3).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(3).name : ChatColor.RED + Helmets.getSelected(player).get(3).name)
+                    .lore(helmetDescription)
+                    .get();
+        } else if (selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+            armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(4).itemBlue : ArmorSets.getSelected(player).get(4).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(4).name : ChatColor.RED + ArmorSets.getSelected(player).get(4).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? Helmets.getSelected(player).get(4).itemBlue : Helmets.getSelected(player).get(4).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(4).name : ChatColor.RED + Helmets.getSelected(player).get(4).name)
                     .lore(helmetDescription)
                     .get();
         }
@@ -358,7 +380,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(1).name : ChatColor.RED + helmets.get(1).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR || selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(2).itemBlue : armorSets.get(2).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(2).name : ChatColor.RED + armorSets.get(2).name)
                     .lore(armorDescription)
@@ -376,7 +398,17 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(3).name : ChatColor.RED + helmets.get(3).name)
                     .lore(helmetDescription)
                     .get();
+        } else if (selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+            armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(4).itemBlue : armorSets.get(4).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(4).name : ChatColor.RED + armorSets.get(4).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? helmets.get(4).itemBlue : helmets.get(4).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmets.get(4).name : ChatColor.RED + helmets.get(4).name)
+                    .lore(helmetDescription)
+                    .get();
         }
+
         String name = Arrays.stream(ArmorSets.values()).filter(o -> o.name.equals(ChatColor.stripColor(armor[2].getItemMeta().getDisplayName()))).collect(Collectors.toList()).get(0).name;
         if (name.contains("Simple")) {
             armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))

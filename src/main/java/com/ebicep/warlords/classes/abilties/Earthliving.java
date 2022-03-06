@@ -1,16 +1,14 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -25,11 +23,10 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        int healthRestore = procChance == 40 ? 240 : 250;
         description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
-                "§7nearby allies for §a" + healthRestore + "% §7weapon damage.\n" +
+                "§7nearby allies for §a240% §7weapon damage.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";
@@ -63,10 +60,8 @@ public class Earthliving extends AbstractAbility {
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < procChance) {
-                        boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
-                        float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
 
-                        attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
+                        attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
 
                         victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
                             p.playSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
@@ -77,7 +72,7 @@ public class Earthliving extends AbstractAbility {
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                         ) {
-                            nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
+                            nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
                         }
                     }
                 }

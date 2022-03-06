@@ -79,7 +79,7 @@ public class RemedicChains extends AbstractAbility {
             );
 
             chainTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
+                    WarlordsPlayer.RECEIVE_ARROW + " " +
                     ChatColor.GRAY + wp.getName() + "'s" +
                     ChatColor.YELLOW + " Remedic Chains" +
                     ChatColor.GRAY + " is now healing you for " +

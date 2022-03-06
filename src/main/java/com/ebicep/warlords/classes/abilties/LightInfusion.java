@@ -29,7 +29,7 @@ public class LightInfusion extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
 
@@ -59,6 +59,7 @@ public class LightInfusion extends AbstractAbility {
                     location.add(0, 1.2, 0);
                     ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
                 } else {
+                    cancelSpeed.run();
                     this.cancel();
                 }
             }

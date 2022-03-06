@@ -53,10 +53,12 @@ public class PlayerSettings implements ConfigurationSerializable {
     private ArmorManager.Helmets warriorHelmet = SIMPLE_WARRIOR_HELMET;
     private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
     private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
+    private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
     private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
     private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
+    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
 
     @Nonnull
     public Classes getSelectedClass() {
@@ -160,6 +162,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         armorSets.add(warriorHelmet);
         armorSets.add(paladinHelmet);
         armorSets.add(shamanHelmet);
+        armorSets.add(rogueHelmet);
         return armorSets;
     }
 
@@ -169,6 +172,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         armorSets.add(warriorArmor);
         armorSets.add(paladinArmor);
         armorSets.add(shamanArmor);
+        armorSets.add(rogueArmor);
         return armorSets;
     }
 
@@ -177,6 +181,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.warriorHelmet = helmets.get(1);
         this.paladinHelmet = helmets.get(2);
         this.shamanHelmet = helmets.get(3);
+        this.rogueHelmet = helmets.get(4);
     }
 
     public void setArmorSets(List<ArmorManager.ArmorSets> armorSets) {
@@ -184,6 +189,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.warriorArmor = armorSets.get(1);
         this.paladinArmor = armorSets.get(2);
         this.shamanArmor = armorSets.get(3);
+        this.rogueArmor = armorSets.get(4);
     }
 
     public ArmorManager.Helmets getMageHelmet() {
@@ -218,6 +224,14 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.shamanHelmet = shamanHelmet;
     }
 
+    public ArmorManager.Helmets getRogueHelmet() {
+        return rogueHelmet;
+    }
+
+    public void setRogueHelmet(ArmorManager.Helmets rogueHelmet) {
+        this.rogueHelmet = rogueHelmet;
+    }
+
     public ArmorManager.ArmorSets getMageArmor() {
         return mageArmor;
     }
@@ -248,5 +262,13 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void setShamanArmor(ArmorManager.ArmorSets shamanArmor) {
         this.shamanArmor = shamanArmor;
+    }
+
+    public ArmorManager.ArmorSets getRogueArmor() {
+        return rogueArmor;
+    }
+
+    public void setRogueArmor(ArmorManager.ArmorSets rogueArmor) {
+        this.rogueArmor = rogueArmor;
     }
 }

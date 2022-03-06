@@ -18,7 +18,7 @@ public class DrainingMiasma extends AbstractAbility {
     private int duration = 5;
     private int enemyHitRadius = 6;
     private int allyHitRadius = 6;
-    // Percentage
+    // Percent
     private final int maxHealthDamage = 4;
     private int damageDealtHealing = 40;
 

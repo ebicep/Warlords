@@ -35,7 +35,7 @@ public class Berserk extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
-        wp.getSpeed().addSpeedModifier(name, speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier(name, speedBuff, duration * 20, "BASE");
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
                 name,
                 "BERS",
@@ -68,6 +68,7 @@ public class Berserk extends AbstractAbility {
                     location.add(0, 2.1, 0);
                     ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
                 } else {
+                    cancelSpeed.run();
                     this.cancel();
                 }
             }

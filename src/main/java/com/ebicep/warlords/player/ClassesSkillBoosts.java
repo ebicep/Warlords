@@ -177,8 +177,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§720% §7and reduce the cooldown\nby §740%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20% §aand reduce the cooldown\nby §c40%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§725% §7and reduce the cooldown\nby §725%",
+            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c25% §aand reduce the cooldown\nby §c25%",
             GroundSlam.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
@@ -187,8 +187,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 20%",
-            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c20%",
+            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 25%",
+            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c25%",
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
@@ -237,26 +237,26 @@ public enum ClassesSkillBoosts {
             }
     ),
     INTERVENE("Intervene",
-            "§7Increase the cast and break radius\n§7of Intervene by 2 blocks and increase\n§7the max amount of damage you can\n§7absorb by 400",
-            "§aIncrease the cast and break radius\n§aof Intervene by §c2 §ablocks and increase\n§athe max amount of damage you can\n§aabsorb by §c400",
+            "§7Increase the cast and break radius\n§7of Intervene by 5 blocks and increase\n§7the max amount of damage you can\n§7absorb by 400",
+            "§aIncrease the cast and break radius\n§aof Intervene by §c5 §ablocks and increase\n§athe max amount of damage you can\n§aabsorb by §c400",
             Intervene.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Intervene) {
                     ((Intervene) abstractAbility).setMaxDamagePrevented(4000);
-                    ((Intervene) abstractAbility).setRadius(12);
-                    ((Intervene) abstractAbility).setBreakRadius(17);
+                    ((Intervene) abstractAbility).setRadius(15);
+                    ((Intervene) abstractAbility).setBreakRadius(20);
                 }
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§75% §7and reduce the cooldown by 20%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c5% §aand reduce the cooldown by §c20%",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§75% §7and reduce the cooldown by 15%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c5% §aand reduce the cooldown by §c15%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
                     ((LastStand) abstractAbility).setSelfDamageReductionPercent(55);
                     ((LastStand) abstractAbility).setTeammateDamageReductionPercent(45);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
                 }
             }
     ),
@@ -298,12 +298,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the duration of Undying\nArmy by 2 seconds and reduce the\n§7cooldown by 25%",
-            "§aIncrease the duration of Undying\nArmy by §c2 §aseconds and reduce the\ncooldown by §c25%",
+            "§7Increase the duration of Undying\nArmy by 3 seconds and reduce the\n§7cooldown by 25%",
+            "§aIncrease the duration of Undying\nArmy by §c3 §aseconds and reduce the\ncooldown by §c25%",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
-                    ((UndyingArmy) abstractAbility).setDuration(12);
+                    ((UndyingArmy) abstractAbility).setDuration(13);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
@@ -498,12 +498,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the range\n§7by 1 block",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the range\n§aby §c1 §ablock",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the range\n§7by 2 blocks",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the range\n§aby §c2 §ablocks",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    ((CapacitorTotem) abstractAbility).setRadius(7);
+                    ((CapacitorTotem) abstractAbility).setRadius(8);
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 }
@@ -579,8 +579,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the amount of health you\n§7restore with Earthliving Weapon\n§7by 10% and increase the proc\n§7chance by 20%",
-            "§aIncrease the amount of health you\n§arestore with Earthliving Weapon\n§aby §c10% §aand increase the proc\n§achance by §c20%",
+            "§7Increase the proc chance by\nof Earthliving Weapon§7by 20%",
+            "§7Increase the proc chance by\nof Earthliving Weapon§7by 20%",
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
@@ -617,22 +617,22 @@ public enum ClassesSkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse\nby 20% and increase the blind duration\nby 0.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse\nby §c20% §aand increase the blind duration\nby §c0.5 §aseconds.",
+            "§7Reduce the cooldown of Incendiary Curse\nby 25% and increase the blind duration\nby 0.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse\nby §c25% §aand increase the blind duration\nby §c0.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
                     ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     BLINDING_ASSAULT("Blinding Assault",
-            "§7Reduce the cooldown by Blinding Assault by 30%",
-            "§aReduce the cooldown by Blinding Assault by §c30%",
+            "§7Reduce the cooldown by Blinding Assault by 40%",
+            "§aReduce the cooldown by Blinding Assault by §c40%",
             BlindingAssault.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }
     ),
     SOUL_SWITCH("Soul Switch",
@@ -664,14 +664,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle\nby 8% and increase the silence\nduration by 1 second.",
-            "§aReduce the cooldown of Soul Shackle\nby §c8% §aand increase the silence\nduration by §c1 §asecond.",
+            "§7Reduce the cooldown of Soul Shackle\nby 5% and increase the silence\nduration by 1 second.",
+            "§aReduce the cooldown of Soul Shackle\nby §c5% §aand increase the silence\nduration by §c1 §asecond.",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
                     ((SoulShackle) abstractAbility).setMinSilenceDuration(3);
                     ((SoulShackle) abstractAbility).setMaxSilenceDuration(5);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .92f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .95f);
                 }
             }
     ),
@@ -687,24 +687,24 @@ public enum ClassesSkillBoosts {
             }
     ),
     PRISM_GUARD("Prism Guard",
-            "§7Increase the range of Prism Guard\nby 1 block and increase the\nduration by 1 second.",
-            "§aIncrease the range of Prism Guard\nby §c1 §ablock and increase the\nduration by §c1 §asecond.",
+            "§7Increase the range of Prism Guard\nby 2 blocks and increase the\nduration by 1 second.",
+            "§aIncrease the range of Prism Guard\nby §c2 §ablocks and increase the\nduration by §c1 §asecond.",
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard) {
                     ((PrismGuard) abstractAbility).setDuration(5);
-                    ((PrismGuard) abstractAbility).setBubbleRadius(5);
+                    ((PrismGuard) abstractAbility).setBubbleRadius(6);
                 }
             }
     ),
     VINDICATE("Vindicate",
-            "§7Increase the damage reduction of\nVindicate by 10% and reduce the\ncooldown by 15%",
-            "§aIncrease the damage reduction of\nVindicate by §c10% §aand reduce the\ncooldown by §c15%",
+            "§7Increase the damage reduction of\nVindicate by 10% and reduce the\ncooldown by 25%",
+            "§aIncrease the damage reduction of\nVindicate by §c10% §aand reduce the\ncooldown by §c25%",
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate) {
                     ((Vindicate) abstractAbility).setVindicateDamageReduction(35);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
@@ -751,14 +751,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the range of Draining Miasma\nby 2 blocks and increase the healing\nbased on damage dealt by 10%",
-            "§aIncrease the range of Draining Miasma\nby §c2 §ablocks and increase the healing\nbased on damage dealt by §c10%",
+            "§7Increase the range of Draining Miasma\nby 2 blocks and increase the healing\nbased on damage dealt by 20%",
+            "§aIncrease the range of Draining Miasma\nby §c2 §ablocks and increase the healing\nbased on damage dealt by §c20%",
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
                     ((DrainingMiasma) abstractAbility).setAllyHitRadius(8);
                     ((DrainingMiasma) abstractAbility).setEnemyHitRadius(8);
-                    ((DrainingMiasma) abstractAbility).setDamageDealtHealing(50);
+                    ((DrainingMiasma) abstractAbility).setDamageDealtHealing(60);
                 }
             }
     ),
