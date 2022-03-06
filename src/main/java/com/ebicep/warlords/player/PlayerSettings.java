@@ -58,7 +58,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
     private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
-    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
+    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_ROGUE;
 
     @Nonnull
     public Classes getSelectedClass() {
