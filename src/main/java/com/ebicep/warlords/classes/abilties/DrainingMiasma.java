@@ -28,7 +28,7 @@ public class DrainingMiasma extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Summon a toxic-filled cloud around you,\n" +
+        description = "§7Summon a toxin-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
                 "§7enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +

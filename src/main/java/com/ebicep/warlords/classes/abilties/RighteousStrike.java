@@ -26,11 +26,10 @@ public class RighteousStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 15);
-            wp.getSpec().getBlue().subtractCooldown(0.75f);
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 16);
+            wp.getSpec().getBlue().subtractCooldown(0.8f);
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
-            wp.getSpec().getBlue().subtractCooldown(0.5f);
         }
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }

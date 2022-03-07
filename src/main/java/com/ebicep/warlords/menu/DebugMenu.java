@@ -785,7 +785,7 @@ public class DebugMenu {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Gamemode: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
+                            .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
                             .get(),
                     (n, e) -> openMapsCategoryMenu(player, map)
             );

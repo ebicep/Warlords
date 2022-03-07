@@ -628,6 +628,7 @@ public class GameMenu {
                 "§7Health: §a" + apc.getMaxHealth(),
                 "§7Energy: §a" + apc.getMaxEnergy() + " §7/ §a+" + apc.getEnergyPerSec() + " §7per sec §7/ §a+" + apc.getEnergyOnHit() + " §7per hit",
                 "",
+                selectedClass == APOTHECARY ? "§7Passive Speed: §e10%" : "",
                 apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
         );
 

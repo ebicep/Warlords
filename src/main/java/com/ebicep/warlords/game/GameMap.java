@@ -30,8 +30,7 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            GameMode.CAPTURE_THE_FLAG,
-            GameMode.INTERCEPTION
+            GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -62,7 +61,7 @@ public enum GameMap {
 
                     options.add(new ScoreOnEventOption.FlagCapture(250));
                     break;
-                case INTERCEPTION:
+                /*case INTERCEPTION:
                     options.add(new InterceptionPointOption("Middle #1", loc.addXYZ(13.5, 23, -26.5)));
                     options.add(new InterceptionPointOption("Middle #2", loc.addXYZ(-13.5, 23, 26.5)));
                     options.add(new InterceptionPointOption("Stairs #1", loc.addXYZ(-44.5, 34, 22.5)));
@@ -70,9 +69,9 @@ public enum GameMap {
 
                     options.add(new ScoreOnEventOption.OnInterceptionCapture(25));
                     options.add(new ScoreOnEventOption.OnInterceptionTimer(1));
-                    break;
+                    break;*/
                 default:
-                    throw new IllegalStateException("Not prepared to handle category " + category);
+                    throw new IllegalStateException("Not prepared to handle gamemode " + category);
             }
 
             options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
@@ -96,7 +95,7 @@ public enum GameMap {
         }
 
     },
-    SIMULATION_RIFT(
+    /*SIMULATION_RIFT(
             "Illusion Rift",
             11,
             9,
@@ -141,7 +140,7 @@ public enum GameMap {
             return options;
         }
 
-    },
+    },*/
     CROSSFIRE(
             "Crossfire",
             32,
@@ -199,7 +198,7 @@ public enum GameMap {
         }
 
     },
-    SIMULATION_CROSSFIRE(
+    /*SIMULATION_CROSSFIRE(
             "Illusion Crossfire",
             11,
             9,
@@ -243,7 +242,7 @@ public enum GameMap {
             return options;
         }
 
-    },
+    },*/
     WARSONG(
             "Warsong Remastered",
             32,
@@ -379,8 +378,8 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(551.5, 31.5, 217.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(649.5, 31.5, 257.5), PowerupType.SPEED));
 
-            options.add(new PowerupOption(loc.addXYZ(577.5, 21.5, 286.5), PowerupType.HEALING));
-            options.add(new PowerupOption(loc.addXYZ(623.5, 21.5, 188.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(577.5, 22.5, 286.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(623.5, 22.5, 188.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(560.5, 32.5, 294.5, -140, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(640.5, 32.5, 180.5, 50, 0), Team.RED));
@@ -420,8 +419,7 @@ public enum GameMap {
             16,
             60 * SECOND,
             "",
-            GameMode.CAPTURE_THE_FLAG,
-            GameMode.INTERCEPTION
+            GameMode.DEBUG
     ) {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -520,7 +518,7 @@ public enum GameMap {
         }
 
     },
-    HEAVEN_WILL(
+    /*HEAVEN_WILL(
             "Heaven's Will",
             2,
             2,
@@ -561,7 +559,10 @@ public enum GameMap {
             return options;
         }
 
-    };
+    }*/
+
+    ;
+
 
     private final String mapName;
     private final int maxPlayers;
