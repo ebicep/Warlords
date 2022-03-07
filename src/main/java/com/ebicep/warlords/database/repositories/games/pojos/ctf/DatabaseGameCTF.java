@@ -7,8 +7,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -240,29 +238,29 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         int redPoints = game.getPoints(Team.RED);
         if (bluePoints > redPoints) {
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         } else if (redPoints > bluePoints) {
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         } else {
             output.setLength(0);
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         }
         output.setLength(output.length() - 1);

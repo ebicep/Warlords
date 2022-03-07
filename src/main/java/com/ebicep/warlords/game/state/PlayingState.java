@@ -119,7 +119,7 @@ public class PlayingState implements State, TimerDebugAble {
                 timer += GameRunnable.SECOND;
                 if (counter >= 60) {
                     counter -= 60;
-                    PlayerFilter.playingGame(game).forEach(wp -> wp.getStats().advanceMinute());
+                    PlayerFilter.playingGame(game).forEach(wp -> wp.getMinuteStats().advanceMinute());
                 }
             }
         }.runTaskTimer(0, GameRunnable.SECOND);

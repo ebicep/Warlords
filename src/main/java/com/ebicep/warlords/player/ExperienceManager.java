@@ -122,7 +122,7 @@ public class ExperienceManager {
         // TODO add check here for game ending in a draw
         boolean won = warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam()) > warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam().enemy());
         long winLossExp = won ? 500 : 250;
-        long kaExp = 5L * (warlordsPlayer.getStats().total().getKills() + warlordsPlayer.getStats().total().getAssists());
+        long kaExp = 5L * (warlordsPlayer.getMinuteStats().total().getKills() + warlordsPlayer.getMinuteStats().total().getAssists());
 
         double damageMultiplier;
         double healingMultiplier;
@@ -141,7 +141,7 @@ public class ExperienceManager {
             healingMultiplier = .1;
             absorbedMultiplier = .325;
         }
-        double calculatedDHP = warlordsPlayer.getStats().total().getDamage() * damageMultiplier + warlordsPlayer.getStats().total().getHealing() * healingMultiplier + warlordsPlayer.getStats().total().getAbsorbed() * absorbedMultiplier;
+        double calculatedDHP = warlordsPlayer.getMinuteStats().total().getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats().total().getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats().total().getAbsorbed() * absorbedMultiplier;
         long dhpExp = (long) (calculatedDHP / 500L);
         long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
         long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;

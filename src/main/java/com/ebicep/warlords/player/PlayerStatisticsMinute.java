@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * Stores player statistics grouped by every minute
  */
-public class PlayerStatistics implements Iterable<PlayerStatistics.Entry> {
+public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.Entry> {
 
     /**
      * A list of every entry we have
@@ -31,11 +31,11 @@ public class PlayerStatistics implements Iterable<PlayerStatistics.Entry> {
     @CheckForNull
     private transient Entry total = null;
 
-    public PlayerStatistics() {
+    public PlayerStatisticsMinute() {
         this(16);
     }
 
-    public PlayerStatistics(int expectedGameDurationInMinutes) {
+    public PlayerStatisticsMinute(int expectedGameDurationInMinutes) {
         entries = new ArrayList<>(expectedGameDurationInMinutes);
         entries.add(current);
     }

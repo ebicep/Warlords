@@ -81,8 +81,8 @@ public abstract class DatabaseGameBase {
 
     public static void addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            float highestDamage = game.warlordsPlayers().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage())).get().getStats().total().getDamage();
-            float highestHealing = game.warlordsPlayers().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing())).get().getStats().total().getHealing();
+            float highestDamage = game.warlordsPlayers().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage())).get().getMinuteStats().total().getDamage();
+            float highestHealing = game.warlordsPlayers().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing())).get().getMinuteStats().total().getHealing();
             //checking for inflated stats
             if (highestDamage > 750000 || highestHealing > 750000) {
                 updatePlayerStats = false;

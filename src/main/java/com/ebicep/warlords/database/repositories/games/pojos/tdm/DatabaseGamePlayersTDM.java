@@ -1,20 +1,14 @@
 package com.ebicep.warlords.database.repositories.games.pojos.tdm;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayersCTF;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ExperienceManager;
-import com.ebicep.warlords.player.PlayerStatistics;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import org.bukkit.Location;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DatabaseGamePlayersTDM {
 
@@ -54,8 +48,8 @@ public class DatabaseGamePlayersTDM {
 
         public DatabaseGamePlayerTDM(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
-            this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();
-            this.secondsInRespawn = Math.round(warlordsPlayer.getStats().total().getRespawnTimeSpent());
+            this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
+            this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
         }
 
 

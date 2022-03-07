@@ -1,22 +1,12 @@
 package com.ebicep.warlords.database.repositories.games.pojos.interception;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayersTDM;
-import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
-import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class DatabaseGamePlayersInterception {
@@ -62,8 +52,8 @@ public class DatabaseGamePlayersInterception {
 
         public DatabaseGamePlayerInterception(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
-            this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();
-            this.secondsInRespawn = Math.round(warlordsPlayer.getStats().total().getRespawnTimeSpent());
+            this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
+            this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
             //TODO abstract warlordsplayer per gamemode
         }
 

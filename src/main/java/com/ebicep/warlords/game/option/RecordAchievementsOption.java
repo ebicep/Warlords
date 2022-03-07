@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.achievements.WarlordsPlayerAchievements;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.GameRunnable;
 

@@ -65,8 +65,8 @@ public class BasicScoreboardOption implements Option{
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return player == null ? Collections.singletonList("")
                         : Collections.singletonList(ChatColor.GREEN.toString()
-                        + player.getStats().total().getKills() + ChatColor.RESET + " Kills "
-                        + ChatColor.GREEN + player.getStats().total().getAssists() + ChatColor.RESET + " Assists");
+                        + player.getMinuteStats().total().getKills() + ChatColor.RESET + " Kills "
+                        + ChatColor.GREEN + player.getMinuteStats().total().getAssists() + ChatColor.RESET + " Assists");
             }
         };
     }

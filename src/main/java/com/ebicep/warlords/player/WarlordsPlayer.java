@@ -62,7 +62,9 @@ public final class WarlordsPlayer {
     private final PlayingState gameState;
     private final Game game;
     private final List<Float> recordDamage = new ArrayList<>();
-    private final PlayerStatistics stats;
+    private final PlayerStatisticsMinute minuteStats;
+    private final PlayerStatisticsSecond secondStats;
+    private final List<WarlordsDamageHealingEvent> events = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
@@ -123,7 +125,8 @@ public final class WarlordsPlayer {
         this.uuid = player.getUniqueId();
         this.gameState = gameState;
         this.game = gameState.getGame();
-        this.stats = new PlayerStatistics();
+        this.minuteStats = new PlayerStatisticsMinute();
+        this.secondStats = new PlayerStatisticsSecond();
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
@@ -1247,7 +1250,7 @@ public final class WarlordsPlayer {
         if (respawnTimer == 0) {
             respawn();
         } else if (respawnTimer > 0) {
-            stats.addTotalRespawnTime();
+            minuteStats.addTotalRespawnTime();
             respawnTimer--;
             if (respawnTimer <= 11) {
                 if (entity instanceof Player) {
@@ -1421,11 +1424,11 @@ public final class WarlordsPlayer {
     }
 
     public void addKill() {
-        this.stats.addKill();
+        this.minuteStats.addKill();
     }
 
     public void addAssist() {
-        this.stats.addAssist();
+        this.minuteStats.addAssist();
     }
 
     public LinkedHashMap<WarlordsPlayer, Integer> getHitBy() {
@@ -1437,27 +1440,27 @@ public final class WarlordsPlayer {
     }
 
     public void addDeath() {
-        this.stats.addDeath();
+        this.minuteStats.addDeath();
     }
 
     public void addDamage(float amount) {
         boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
-        this.stats.addDamage((long) amount);
+        this.minuteStats.addDamage((long) amount);
         if (onCarrier) {
-            this.stats.addDamageOnCarrier((long) amount);
+            this.minuteStats.addDamageOnCarrier((long) amount);
         }
     }
 
     public void addHealing(float amount) {
         boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
-        this.stats.addHealing((long) amount);
+        this.minuteStats.addHealing((long) amount);
         if (onCarrier) {
-            this.stats.addDamageOnCarrier((long) amount);
+            this.minuteStats.addDamageOnCarrier((long) amount);
         }
     }
 
     public void addAbsorbed(float amount) {
-        this.stats.addAbsorbed((long) amount);
+        this.minuteStats.addAbsorbed((long) amount);
     }
 
     public ItemStack getStatItemStack(String name) {
@@ -1465,10 +1468,10 @@ public final class WarlordsPlayer {
         ItemMeta meta = itemStack.getItemMeta();
         List<String> lore = new ArrayList<>();
         meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
-        List<PlayerStatistics.Entry> entries = this.stats.getEntries();
+        List<PlayerStatisticsMinute.Entry> entries = this.minuteStats.getEntries();
         int length = entries.size();
         for (int i = 0; i < length; i++) {
-            PlayerStatistics.Entry entry = entries.get(length - i - 1);
+            PlayerStatisticsMinute.Entry entry = entries.get(length - i - 1);
             switch (name) {
                 case "Kills":
                     lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getKills()));
@@ -1530,23 +1533,23 @@ public final class WarlordsPlayer {
     }
 
     public int getFlagsCaptured() {
-        return this.stats.total().getFlagsCaptured();
+        return this.minuteStats.total().getFlagsCaptured();
     }
 
     public void addFlagCap() {
-        this.stats.addFlagCapture();
+        this.minuteStats.addFlagCapture();
     }
 
     public int getFlagsReturned() {
-        return this.stats.total().getFlagsReturned();
+        return this.minuteStats.total().getFlagsReturned();
     }
 
     public void addFlagReturn() {
-        this.stats.addFlagReturned();
+        this.minuteStats.addFlagReturned();
     }
 
     public int getTotalCapsAndReturnsWeighted() {
-        PlayerStatistics.Entry total = this.stats.total();
+        PlayerStatisticsMinute.Entry total = this.minuteStats.total();
         return (total.getFlagsCaptured() * 5) + total.getFlagsReturned();
     }
 
@@ -1903,8 +1906,16 @@ public final class WarlordsPlayer {
     }
 
     @Nonnull
-    public PlayerStatistics getStats() {
-        return this.stats;
+    public PlayerStatisticsMinute getMinuteStats() {
+        return this.minuteStats;
+    }
+
+    public PlayerStatisticsSecond getSecondStats() {
+        return secondStats;
+    }
+
+    public List<WarlordsDamageHealingEvent> getEvents() {
+        return events;
     }
 
     public boolean isOnline() {

@@ -3,15 +3,12 @@ package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ExperienceManager;
-import com.ebicep.warlords.player.PlayerStatistics.Entry;
+import com.ebicep.warlords.player.PlayerStatisticsMinute.Entry;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import org.bukkit.Location;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,14 +69,14 @@ public class DatabaseGamePlayersCTF {
 
         public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
-            this.secondsInCombat = warlordsPlayer.getStats().total().getTimeInCombat();
-            this.secondsInRespawn = Math.round(warlordsPlayer.getStats().total().getRespawnTimeSpent());
+            this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
+            this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());
             this.flagCaptures = warlordsPlayer.getFlagsCaptured();
             this.flagReturns = warlordsPlayer.getFlagsReturned();
-            this.totalDamageOnCarrier = warlordsPlayer.getStats().total().getDamageOnCarrier();
-            this.totalHealingOnCarrier = warlordsPlayer.getStats().total().getHealingOnCarrier();
-            this.damageOnCarrier = warlordsPlayer.getStats().stream().map(Entry::getDamageOnCarrier).collect(Collectors.toList());
-            this.healingOnCarrier = warlordsPlayer.getStats().stream().map(Entry::getHealingOnCarrier).collect(Collectors.toList());
+            this.totalDamageOnCarrier = warlordsPlayer.getMinuteStats().total().getDamageOnCarrier();
+            this.totalHealingOnCarrier = warlordsPlayer.getMinuteStats().total().getHealingOnCarrier();
+            this.damageOnCarrier = warlordsPlayer.getMinuteStats().stream().map(Entry::getDamageOnCarrier).collect(Collectors.toList());
+            this.healingOnCarrier = warlordsPlayer.getMinuteStats().stream().map(Entry::getHealingOnCarrier).collect(Collectors.toList());
         }
 
         public int getSecondsInCombat() {

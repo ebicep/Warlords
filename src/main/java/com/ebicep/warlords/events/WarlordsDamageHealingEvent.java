@@ -1,6 +1,7 @@
 
 package com.ebicep.warlords.events;
 
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -20,6 +21,9 @@ public class WarlordsDamageHealingEvent extends WarlordsPlayerEvent implements C
     private boolean ignoreReduction;
     private boolean isLastStandFromShield;
     private boolean isDamageInstance;
+
+    private int inGameSecond;
+
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
@@ -44,6 +48,10 @@ public class WarlordsDamageHealingEvent extends WarlordsPlayerEvent implements C
         this.ignoreReduction = ignoreReduction;
         this.isLastStandFromShield = isLastStandFromShield;
         this.isDamageInstance = isDamageInstance;
+
+        if(player.getGame().getState() instanceof PlayingState) {
+            this.inGameSecond = ((PlayingState) player.getGame().getState()).getTicksElapsed() / 20;
+        }
     }
 
     public WarlordsPlayer getAttacker() {
