@@ -31,7 +31,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
                 "§7optimal range of §e" + markRadius + " §7blocks. Your marked\n" +
                 "§7ally will emit a second Holy Radiance\n" +
-                "§7for §a70% §7of the original healing amount\n" +
+                "§7for §a50% §7of the original healing amount\n" +
                 "§7after the mark ends.";
     }
 
@@ -76,8 +76,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                                                 waveTarget,
                                                 wp,
                                                 1.1,
-                                                minDamageHeal * 0.7f,
-                                                maxDamageHeal * 0.7f
+                                                minDamageHeal * 0.5f,
+                                                maxDamageHeal * 0.5f
                                         ).runTaskTimer(Warlords.getInstance(), 1, 1)
                                 );
                             }

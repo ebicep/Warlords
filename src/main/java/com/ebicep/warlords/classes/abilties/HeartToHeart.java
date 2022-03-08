@@ -14,11 +14,12 @@ import javax.annotation.Nonnull;
 
 public class HeartToHeart extends AbstractAbility {
 
-    private final int radius = 15;
+    private int radius = 15;
+    private int verticalRadius = 15;
     private int vindDuration = 6;
 
     public HeartToHeart() {
-        super("Heart To Heart", 0, 0, 13, 20, -1, 100);
+        super("Heart To Heart", 0, 0, 12, 20, -1, 100);
     }
 
     @Override
@@ -26,14 +27,28 @@ public class HeartToHeart extends AbstractAbility {
         description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
                 "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
-                "§7granting immunity to de-buffs.";
+                "§7granting immunity to de-buffs." +
+                "\n\n" +
+                "§7Heart To Heart's range is greatly reduced when\n" +
+                "§7holding a flag.";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
+        if (wp.getCarriedFlag() != null) {
+            radius = 7;
+            verticalRadius = 5;
+        } else {
+            radius = 15;
+            verticalRadius = 15;
+        }
+
+        System.out.println(radius);
+        System.out.println(verticalRadius);
+
         for (WarlordsPlayer heartTarget : PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, radius, verticalRadius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)

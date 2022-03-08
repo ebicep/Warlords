@@ -2,6 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.AchievementRecord;
 import com.ebicep.warlords.achievements.Achievements;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -9,7 +10,6 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.rogue.specs.vindicator.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.achievements.AchievementRecord;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
@@ -720,11 +720,11 @@ public final class WarlordsPlayer {
             ownFeed.append("§l");
         }
         ownFeed.append(Math.round(healValue));
+        ownFeed.append(isCrit ? "!" : "");
         if (isLastStandFromShield) {
             ownFeed.append(" Absorbed!");
         }
-        ownFeed.append(ChatColor.GRAY).append(" health");
-        ownFeed.append(isCrit ? "!" : ".");
+        ownFeed.append(ChatColor.GRAY).append(" health.");
 
         sender.sendMessage(ownFeed.toString());
 

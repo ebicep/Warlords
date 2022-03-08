@@ -32,14 +32,14 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
         chain(wp, player);
 
-        for (WarlordsPlayer p : PlayerFilter
+        for (WarlordsPlayer radianceTarget : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             wp.getGame().registerGameTask(
                     new FlyingArmorStand(
                             wp.getLocation(),
-                            p,
+                            radianceTarget,
                             wp,
                             1.1,
                             minDamageHeal,

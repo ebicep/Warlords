@@ -17,10 +17,12 @@ public class RighteousStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Each strike reduces the duration of your struck\n" +
-                "§7target's active ability timers by §60.5 §7(§60.75 §7for\n" +
-                "§7silenced targets) seconds. Each strike will reduce\n" +
-                "§7the cooldown of Prism Guard by the amount you\n" +
-                "§7reduced their timers by.";
+                "§7target's active ability timers by §60.5 §7seconds." +
+                "\n\n" +
+                "§7Additionally, if your striked target is silenced,\n" +
+                "§7reduce the cooldown of your Prism Guard by §60.8\n" +
+                "§7seconds and reduce their active ability timers\n" +
+                "§7by §60.8 §7seconds instead.";
     }
 
     @Override

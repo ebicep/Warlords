@@ -181,9 +181,9 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Ground Slam by\n§c25% §aand reduce the cooldown\nby §c25%",
             GroundSlam.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     BLOOD_LUST("Blood Lust",
@@ -298,13 +298,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the duration of Undying\nArmy by 3 seconds and reduce the\n§7cooldown by 25%",
-            "§aIncrease the duration of Undying\nArmy by §c3 §aseconds and reduce the\ncooldown by §c25%",
+            "§7Increase the duration of Undying\nArmy by 3 seconds and reduce the\n§7cooldown by 20%",
+            "§aIncrease the duration of Undying\nArmy by §c3 §aseconds and reduce the\ncooldown by §c20%",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
                     ((UndyingArmy) abstractAbility).setDuration(13);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
@@ -390,12 +390,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance\n§7by 20% and increase the duration\n§7of Crusader's Mark by 4 seconds",
-            "§aReduce the cooldown of Holy Radiance\n§aby §c20% §aand increase the duration\n§aof Crusader's Mark by §c4 §aseconds",
+            "§7Reduce the cooldown of Holy Radiance\n§7by 25% and increase the duration\n§7of Crusader's Mark by 4 seconds",
+            "§aReduce the cooldown of Holy Radiance\n§aby §c25% §aand increase the duration\n§aof Crusader's Mark by §c4 §aseconds",
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                     ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
                 }
             }
@@ -414,7 +414,7 @@ public enum ClassesSkillBoosts {
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
-                    ((ProtectorsStrike) abstractAbility).setMinConvert(60);
+                    ((ProtectorsStrike) abstractAbility).setMinConvert(90);
                     ((ProtectorsStrike) abstractAbility).setMaxConvert(120);
                 }
             }

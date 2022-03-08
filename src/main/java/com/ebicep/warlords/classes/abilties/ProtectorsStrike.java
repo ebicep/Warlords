@@ -19,7 +19,7 @@ import static com.ebicep.warlords.util.Utils.lerp;
 public class ProtectorsStrike extends AbstractStrikeBase {
 
     // Percentage
-    private int minConvert = 50;
+    private int minConvert = 75;
     private int maxConvert = 100;
 
     public ProtectorsStrike() {
@@ -32,7 +32,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 "§7causing §c261 §7- §c352 §7damage\n" +
                 "§7and healing two nearby allies for\n" +
                 "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
-                "§7heals yourself by §a50-100% §7of the\n" +
+                "§7heals yourself by §a50-75% §7of the\n" +
                 "§7damage done. Based on your current\n" +
                 "health.";
     }
@@ -64,15 +64,11 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                         healthFraction = 0;
                     }
 
-                    float allyHealing = 0.5f + healthFraction * 0.5f;
-                    float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
+                    float allyHealing = 0.75f + healthFraction * 0.25f;
+                    float ownHealing = 0.5f + (1 - healthFraction) * 0.25f;
 
                     // Self Heal
-                    if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
-                    } else {
-                        wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
-                    }
+                    wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
 
                     // Ally Heal
                     for (WarlordsPlayer ally : PlayerFilter
