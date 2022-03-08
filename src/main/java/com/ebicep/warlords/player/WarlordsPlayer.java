@@ -654,9 +654,7 @@ public final class WarlordsPlayer {
 
         secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, healValue, critChance, critMultiplier, false));
 
-        System.out.println("1");
         if (Achievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
-            System.out.println("2");
             game.warlordsPlayers()
                     .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                     .filter(warlordsPlayer -> warlordsPlayer.getAchievementsUnlocked().stream().noneMatch(achievementRecord -> achievementRecord.getAchievement() == Achievements.REJUVENATION))
