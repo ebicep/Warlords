@@ -838,7 +838,13 @@ public class DebugMenu {
                     itemBuilder.get(),
                     (n, e) -> {
                         if (isASelectedAddon) {
-                            addons.remove(gameAddon);
+                            if (gameAddon == GameAddon.CUSTOM_GAME) {
+                                if (player.hasPermission("")) {//TODO
+                                    addons.remove(gameAddon);
+                                }
+                            } else {
+                                addons.remove(gameAddon);
+                            }
                         } else {
                             addons.add(gameAddon);
                         }
