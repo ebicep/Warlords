@@ -112,7 +112,7 @@ public class LeaderboardManager {
                             System.out.println("Loaded " + value.name + " leaderboards");
                             loadedBoards.getAndIncrement();
 
-                            if (value == PlayersCollections.SEASON_5) {
+                            if (value == PlayersCollections.SEASON_5 && init) {
                                 SRCalculator.databasePlayerCache = collection;
                                 SRCalculator.recalculateSR();
                             }

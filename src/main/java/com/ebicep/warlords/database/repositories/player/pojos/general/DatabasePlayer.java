@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.achievements.AchievementRecord;
+import com.ebicep.warlords.achievements.Achievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -18,6 +20,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Document(collection = "Players_Information")
@@ -54,6 +58,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+
+    private List<AchievementRecord> achievements = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -301,6 +307,18 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setParticleQuality(Settings.ParticleQuality particleQuality) {
         this.particleQuality = particleQuality;
+    }
+
+    public void addAchievement(Achievements achievements) {
+        this.achievements.add(new AchievementRecord(achievements));
+    }
+
+    public void addAchievement(AchievementRecord achievementRecord) {
+        this.achievements.add(achievementRecord);
+    }
+
+    public void addAchievements(List<AchievementRecord> achievements) {
+        this.achievements.addAll(achievements);
     }
 
 }

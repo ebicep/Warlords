@@ -1,12 +1,13 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.Entry> {
 
@@ -22,11 +23,8 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         entries.add(current);
     }
 
-    public void setHealth(int health) {
-        current.health = health;
-    }
 
-    public void addDamageHealingEvent(WarlordsDamageHealingEvent event) {
+    public void addDamageHealingEvent(WarlordsDamageHealingFinalEvent event) {
         current.events.add(event);
     }
 
@@ -41,17 +39,12 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
     }
 
     public static class Entry {
-        @NonNegative
-        private int health;
 
-        List<WarlordsDamageHealingEvent> events;
+        List<WarlordsDamageHealingFinalEvent> events = new ArrayList<>();
 
-        public int getHealth() {
-            return health;
-        }
-
-        public List<WarlordsDamageHealingEvent> getEvents() {
+        public List<WarlordsDamageHealingFinalEvent> getEvents() {
             return events;
         }
+
     }
 }

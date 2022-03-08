@@ -24,6 +24,49 @@ public class ChatUtils {
         }
     }
 
+    public static void sendMessageToPlayer(Player player, String message, ChatColor borderColor, boolean centered) {
+        if (centered) {
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            String[] messages = message.split("\n");
+            for (String s : messages) {
+                sendCenteredMessage(player, s);
+            }
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        } else {
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            player.sendMessage(message);
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        }
+    }
+
+    public static void sendMessageToPlayer(Player player, List<TextComponent> textComponents, ChatColor borderColor, boolean centered) {
+        if (centered) {
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            sendCenteredMessageWithEvents(player, textComponents);
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        } else {
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            sendCenteredMessageWithEvents(player, textComponents);
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        }
+    }
+
     public static void sendCenteredMessage(Player player, String message) {
         if (message == null || message.isEmpty()) {
             player.sendMessage("");
@@ -115,4 +158,5 @@ public class ChatUtils {
         nmsItemStack.save(compound);
         return compound.toString();
     }
+
 }

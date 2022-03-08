@@ -932,7 +932,7 @@ public class Warlords extends JavaPlugin {
 
                             // Combat Timer - Logs combat time after 4 seconds.
                             if (wps.getRegenTimer() > 6) {
-                                wps.getStats().addTimeInCombat();
+                                wps.getMinuteStats().addTimeInCombat();
                             }
 
                             // Assists - 10 seconds timer.

@@ -25,7 +25,7 @@ public class StreamCommand implements CommandExecutor {
         }
 
         if (Warlords.partyManager.inAParty(((Player) sender).getUniqueId())) {
-            Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You are already in a party", true, true);
+            ChatUtils.sendMessageToPlayer((Player) sender, ChatColor.RED + "You are already in a party", ChatColor.BLUE, true);
             return true;
         }
 
@@ -35,8 +35,7 @@ public class StreamCommand implements CommandExecutor {
             Warlords.partyManager.getParties().add(party);
             party.sendMessageToAllPartyPlayers(ChatColor.GREEN + "You created a public party! Players can join with\n" +
                             ChatColor.GOLD + ChatColor.BOLD + "/party join " + sender.getName(),
-                    true,
-                    true);
+                    ChatColor.BLUE, true);
             Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.getUniqueId() != player.getUniqueId())
                     .forEach(onlinePlayer -> {

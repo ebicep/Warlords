@@ -22,8 +22,6 @@ public class WarlordsDamageHealingEvent extends WarlordsPlayerEvent implements C
     private boolean isLastStandFromShield;
     private boolean isDamageInstance;
 
-    private int inGameSecond;
-
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
@@ -48,10 +46,6 @@ public class WarlordsDamageHealingEvent extends WarlordsPlayerEvent implements C
         this.ignoreReduction = ignoreReduction;
         this.isLastStandFromShield = isLastStandFromShield;
         this.isDamageInstance = isDamageInstance;
-
-        if(player.getGame().getState() instanceof PlayingState) {
-            this.inGameSecond = ((PlayingState) player.getGame().getState()).getTicksElapsed() / 20;
-        }
     }
 
     public WarlordsPlayer getAttacker() {

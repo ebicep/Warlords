@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.Achievements;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -92,11 +93,9 @@ public class TestCommand implements CommandExecutor {
         DatabaseManager.gameService.create(databaseGameCTF);
 
  */
-        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
-                .forEach(undyingArmy -> {
-                    System.out.println(undyingArmy.getPlayersPopped());
-                });
+        for (Achievements value : Achievements.values()) {
+            System.out.println(value.name + " - " + value.warlordsPlayerPredicate);
+        }
 
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {

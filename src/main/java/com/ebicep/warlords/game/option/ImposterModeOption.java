@@ -7,9 +7,9 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.poll.polls.GamePoll;
+import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
@@ -89,10 +89,10 @@ public class ImposterModeOption implements Option {
                         case 4:
                             if (imposters.get(team).contains(Warlords.getPlayer(player))) {
                                 title = ChatColor.RED + "The IMPOSTER";
-                                Party.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", true, true);
+                                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", ChatColor.BLUE, true);
                             } else {
                                 title = ChatColor.GREEN + "INNOCENT";
-                                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", true, true);
+                                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", ChatColor.BLUE, true);
                             }
                             break;
                     }
@@ -221,10 +221,10 @@ public class ImposterModeOption implements Option {
                             (!votedCorrectly && imposters.get(team).stream().anyMatch(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(player.getName())))
             ) {
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", true, true);
+                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", ChatColor.BLUE, true);
             } else {
                 PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.RED + "You lost!", true, true);
+                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You lost!", ChatColor.BLUE, true);
             }
         } else {
             //win if
@@ -244,10 +244,10 @@ public class ImposterModeOption implements Option {
             }
             if (votedCorrectly && !isAnImposterOnOtherTeam) {
                 PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.RED + "You lost!", true, true);
+                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You lost!", ChatColor.BLUE, true);
             } else {
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                Party.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", true, true);
+                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", ChatColor.BLUE, true);
             }
         }
     }
@@ -270,11 +270,10 @@ public class ImposterModeOption implements Option {
             }
         });
         message.setLength(message.length() - 1);
-        Party.sendMessageToPlayer(
+        ChatUtils.sendMessageToPlayer(
                 player,
                 message.toString(),
-                true,
-                true
+                ChatColor.BLUE, true
         );
     }
 

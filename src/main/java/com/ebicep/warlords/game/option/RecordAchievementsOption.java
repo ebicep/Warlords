@@ -15,11 +15,11 @@ public class RecordAchievementsOption implements Option {
             public void run() {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
                     //TODO filter out achievements already got
-                    for (WarlordsPlayerAchievements value : WarlordsPlayerAchievements.values()) {
-                        if(value.predicate.test(warlordsPlayer)) {
-                            //give acheivement
-                        }
-                    }
+//                    for (WarlordsPlayerAchievements value : WarlordsPlayerAchievements.values()) {
+//                        if(value.predicate.test(warlordsPlayer)) {
+//                            //give acheivement
+//                        }
+//                    }
                 });
             }
         }.runTaskTimer(0, 20);

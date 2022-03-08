@@ -118,6 +118,14 @@ public abstract class DatabaseGameBase {
 
             if (updatePlayerStats) {
                 System.out.println(ChatColor.GREEN + "[Warlords] UPDATING PLAYER STATS " + game.getGameId());
+
+                //if(!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                //ACHIEVEMENTS
+                game.warlordsPlayers().forEachOrdered(warlordsPlayer -> {
+                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid());
+                    databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked());
+                });
+                //}
             }
 
             DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame().apply(game, gameWinEvent, updatePlayerStats);
@@ -320,6 +328,14 @@ public abstract class DatabaseGameBase {
         return previousGames;
     }
 
+    public static Date convertToDateFrom(String objectId) {
+        return new Date(convertToTimestampFrom(objectId));
+    }
+
+    public static long convertToTimestampFrom(String objectId) {
+        return Long.parseLong(objectId.substring(0, 8), 16) * 1000;
+    }
+
     public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add);
 
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
@@ -393,13 +409,5 @@ public abstract class DatabaseGameBase {
 
     public void setCounted(boolean counted) {
         this.counted = counted;
-    }
-
-    public static Date convertToDateFrom(String objectId) {
-        return new Date(convertToTimestampFrom(objectId));
-    }
-
-    public static long convertToTimestampFrom(String objectId) {
-        return Long.parseLong(objectId.substring(0, 8), 16) * 1000;
     }
 }

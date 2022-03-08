@@ -2,14 +2,17 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.Achievements;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.rogue.specs.vindicator.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.achievements.AchievementRecord;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
@@ -64,7 +67,7 @@ public final class WarlordsPlayer {
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats;
     private final PlayerStatisticsSecond secondStats;
-    private final List<WarlordsDamageHealingEvent> events = new ArrayList<>();
+    private final List<AchievementRecord> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
@@ -450,6 +453,8 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
+                secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, damageValue, critChance, critMultiplier, true));
+
                 attacker.addDamage(damageValue);
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
@@ -645,6 +650,21 @@ public final class WarlordsPlayer {
                     playHitSound(attacker);
                 }
             }
+        }
+
+        secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, healValue, critChance, critMultiplier, false));
+
+        System.out.println("1");
+        if (Achievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
+            System.out.println("2");
+            game.warlordsPlayers()
+                    .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
+                    .filter(warlordsPlayer -> warlordsPlayer.getAchievementsUnlocked().stream().noneMatch(achievementRecord -> achievementRecord.getAchievement() == Achievements.REJUVENATION))
+                    .forEachOrdered(warlordsPlayer -> {
+                        if (Achievements.REJUVENATION.warlordsPlayerPredicate.test(warlordsPlayer)) {
+                            warlordsPlayer.unlockAchievement(Achievements.REJUVENATION);
+                        }
+                    });
         }
     }
 
@@ -1914,8 +1934,16 @@ public final class WarlordsPlayer {
         return secondStats;
     }
 
-    public List<WarlordsDamageHealingEvent> getEvents() {
-        return events;
+    public List<AchievementRecord> getAchievementsUnlocked() {
+        return achievementsUnlocked;
+    }
+
+    public void unlockAchievement(Achievements achievement) {
+        achievementsUnlocked.add(new AchievementRecord(achievement));
+        if (entity instanceof Player) {
+            Achievements.sendAchievementUnlockMessage(achievement, (Player) entity);
+        }
+        System.out.println(name + " unlocked achievement: " + achievement.name);
     }
 
     public boolean isOnline() {
