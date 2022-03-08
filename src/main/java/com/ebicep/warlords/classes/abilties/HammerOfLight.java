@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
 
-    private final static int radius = 6;
+    private static final int radius = 6;
     private final int duration = 10;
     private boolean isCrownOfLight = false;
 

@@ -14,7 +14,7 @@ public class ChatUtils {
 
     public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
 
-    private final static int CENTER_PX = 164;
+    private static final int CENTER_PX = 164;
 
     public static void sendMessage(Player player, boolean centered, String message) {
         if (centered) {

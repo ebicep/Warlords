@@ -73,17 +73,36 @@ import java.util.stream.Collectors;
 
 public class Warlords extends JavaPlugin {
 
+    public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
+    public static final PartyManager partyManager = new PartyManager();
+    private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
+    private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
+    private static final HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
     public static String VERSION = "";
-
+    public static String serverIP;
+    public static boolean holographicDisplaysEnabled;
+    public static boolean citizensEnabled;
+    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
+    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
     private static Warlords instance;
+    private static TaskChainFactory taskChainFactory;
+
+    static {
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
+    }
+
+    public Location npcCTFLocation;
+    private GameManager gameManager;
 
     public static Warlords getInstance() {
         return instance;
     }
 
-    public static String serverIP;
-
-    private static TaskChainFactory taskChainFactory;
+//    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+//        return players;
+//    }
 
     public static <T> TaskChain<T> newChain() {
         return taskChainFactory.newChain();
@@ -92,8 +111,6 @@ public class Warlords extends JavaPlugin {
     public static <T> TaskChain<T> newSharedChain(String name) {
         return taskChainFactory.newSharedChain(name);
     }
-
-    private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
 
     public static HashMap<UUID, WarlordsPlayer> getPlayers() {
         return players;
@@ -132,7 +149,6 @@ public class Warlords extends JavaPlugin {
         return players.get(player);
     }
 
-
     public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
         return hasPlayer(player.getUniqueId());
     }
@@ -160,12 +176,6 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-//    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
-//        return players;
-//    }
-
-    public final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
-
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
         return spawnPoints.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
@@ -179,16 +189,12 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-    private final static HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
-
     @Nonnull
     public static PlayerSettings getPlayerSettings(@Nonnull UUID key) {
         PlayerSettings settings = playerSettings.computeIfAbsent(key, (k) -> new PlayerSettings());
         // TODO update last accessed field on settings
         return settings;
     }
-
-    private final static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
 
     public static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> getPlayerHeads() {
         return playerHeads;
@@ -217,6 +223,10 @@ public class Warlords extends JavaPlugin {
         return CraftItemStack.asBukkitCopy(playerHeads.getOrDefault(uuid, CraftItemStack.asNMSCopy(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal()))));
     }
 
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
+    }
+
     public void readKeysConfig() {
         try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
@@ -226,7 +236,6 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
     }
-
 
     public void readWeaponConfig() {
         try {
@@ -249,25 +258,6 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    private GameManager gameManager;
-    public static boolean holographicDisplaysEnabled;
-
-    public static boolean citizensEnabled;
-    public Location npcCTFLocation;
-
-    public static final PartyManager partyManager = new PartyManager();
-
-    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
-
-    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
-
-    static {
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
     }
 
     @Override
@@ -420,7 +410,6 @@ public class Warlords extends JavaPlugin {
             }
         }
     }
-
 
     @Override
     public void onDisable() {
@@ -635,13 +624,13 @@ public class Warlords extends JavaPlugin {
                                         );
                                     } else {
                                         wp.sendMessage("§a\u00BB§7 " +
-                                                        ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
-                                                        "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
-                                                        ChatColor.RED +
-                                                        (wp.getMaxHealth() / 10) +
-                                                        ChatColor.LIGHT_PURPLE +
-                                                        " every second."
-                                                );
+                                                ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
+                                                "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
+                                                ChatColor.RED +
+                                                (wp.getMaxHealth() / 10) +
+                                                ChatColor.LIGHT_PURPLE +
+                                                " every second."
+                                        );
                                     }
 
                                     FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
@@ -750,27 +739,42 @@ public class Warlords extends JavaPlugin {
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
 
                             // Checks whether the player has Avenger's Wrath active.
-                            if (cooldownManager.hasCooldown(AvengersWrath.class)) {
+                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                                    .filterCooldownClass(AvengersWrath.class)
+                                    .stream().collect(Collectors.toList())
+                            ) {
                                 energyGainPerTick += 1;
                             }
 
                             // Checks whether the player has Inspiring Presence active.
-                            if (cooldownManager.hasCooldown(InspiringPresence.class)) {
+                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                                    .filterCooldownClass(InspiringPresence.class)
+                                    .stream().collect(Collectors.toList())
+                            ) {
                                 energyGainPerTick += .5;
                             }
 
                             // Checks whether the player has been marked by an Avenger.
-                            if (cooldownManager.hasCooldown(HolyRadianceAvenger.class)) {
+                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                                    .filterCooldownClass(HolyRadianceAvenger.class)
+                                    .stream().collect(Collectors.toList())
+                            ) {
                                 energyGainPerTick -= .4;
                             }
 
                             // Checks whether the player has been marked by a Crusader.
-                            if (cooldownManager.hasCooldown(HolyRadianceCrusader.class)) {
+                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                                    .filterCooldownClass(HolyRadianceCrusader.class)
+                                    .stream().collect(Collectors.toList())
+                            ) {
                                 energyGainPerTick += .3;
                             }
 
                             // Checks whether the player has Acupressure active.
-                            if (cooldownManager.hasCooldown(VitalityLiquor.class)) {
+                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                                    .filterCooldownClass(VitalityLiquor.class)
+                                    .stream().collect(Collectors.toList())
+                            ) {
                                 energyGainPerTick += 1.5;
                             }
 
@@ -905,9 +909,9 @@ public class Warlords extends JavaPlugin {
                             } else {
                                 int healthToAdd = (int) (wps.getMaxHealth() / 55.3);
                                 wps.setHealth(Math.max(wps.getHealth(),
-                                                         Math.min(wps.getHealth() + healthToAdd,
-                                                         wps.getMaxHealth()
-                                                         )));
+                                        Math.min(wps.getHealth() + healthToAdd,
+                                                wps.getMaxHealth()
+                                        )));
                             }
 
                             // Cooldowns
@@ -975,10 +979,6 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 0, 0);
     }
 
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
-    }
-
     public void hideAndUnhidePeople(@Nonnull Player player) {
         WarlordsPlayer wp = getPlayer(player);
         Game game = wp == null ? null : wp.getGame();
@@ -986,7 +986,7 @@ public class Warlords extends JavaPlugin {
             WarlordsPlayer wp1 = getPlayer(p);
             Game game1 = wp1 == null ? null : wp1.getGame();
             if (p != player) {
-                if(game1 == game) {
+                if (game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
                 } else {
@@ -996,6 +996,7 @@ public class Warlords extends JavaPlugin {
             }
         }
     }
+
     public void hideAndUnhidePeople() {
         List<Player> peeps = new ArrayList<>(Bukkit.getOnlinePlayers());
         int length = peeps.size();
