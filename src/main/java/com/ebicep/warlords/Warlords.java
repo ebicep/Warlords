@@ -268,23 +268,45 @@ public class Warlords extends JavaPlugin {
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
         gameManager = new GameManager();
-        gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift")));
-        //gameManager.addGameHolder("Rift-1", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-1")));
-        //gameManager.addGameHolder("Rift-2", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-2")));
 
-        gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
-        //gameManager.addGameHolder("Crossfire-1", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-1")));
-        //gameManager.addGameHolder("Crossfire-2", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-2")));
+        /*
+         * Each map instance presents a game server, every map can hold up to 3 games at once.
+         *
+         * Adding a new map must start with -0 at the end and increment from there on out.
+         *
+         * Adding additional game servers will require a config update in @see MultiWorld Plugin
+         */
+
+        gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-0")));
+        gameManager.addGameHolder("Rift-1", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-1")));
+        gameManager.addGameHolder("Rift-2", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-2")));
+
+        gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-0")));
+        gameManager.addGameHolder("Crossfire-1", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-1")));
+        gameManager.addGameHolder("Crossfire-2", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-2")));
+
+        gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-0")));
+        gameManager.addGameHolder("Valley-1", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-1")));
+        gameManager.addGameHolder("Valley-2", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-2")));
+
+        gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-0")));
+        gameManager.addGameHolder("Warsong-1", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-1")));
+        gameManager.addGameHolder("Warsong-2", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-2")));
+
+        gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-0")));
+        gameManager.addGameHolder("Aperture-1", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-1")));
+        gameManager.addGameHolder("Aperture-2", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-2")));
+
+        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-0")));
+        gameManager.addGameHolder("Arathi-1", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-1")));
+        gameManager.addGameHolder("Arathi-2", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-2")));
+
+        // CURRENTLY DISABLED
 
         //gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
-        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi")));
-        gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
         //gameManager.addGameHolder("SimulationCrossfire-0", GameMap.SIMULATION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("SimulationCrossfire")));
-        gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
-        gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         //gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
-        gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture")));
+        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
