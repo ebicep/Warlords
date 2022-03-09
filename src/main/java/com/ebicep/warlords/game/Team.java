@@ -14,7 +14,7 @@ public enum Team {
     RED("Red", "RED", ChatColor.RED, Color.fromRGB(153, 51, 51), new ItemStack(Material.WOOL, 1, (short) 14)),
 
     ;
-    private final static Team[] inverseMapping;
+    private static final Team[] inverseMapping;
 
     static {
         inverseMapping = values();
