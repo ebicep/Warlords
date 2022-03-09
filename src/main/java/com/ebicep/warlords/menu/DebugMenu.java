@@ -808,6 +808,7 @@ public class DebugMenu {
                     (n, e) -> {
                         List<GameAddon> addons = new ArrayList<>();
                         addons.add(GameAddon.PRIVATE_GAME);
+                        addons.add(GameAddon.CUSTOM_GAME);
                         openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
                     }
             );
@@ -838,9 +839,19 @@ public class DebugMenu {
                     itemBuilder.get(),
                     (n, e) -> {
                         if (isASelectedAddon) {
-                            addons.remove(gameAddon);
+                            if (!player.hasPermission("warlords.game.customtoggle") && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
+                                player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                            } else if (gameAddon.equals(GameAddon.PRIVATE_GAME)) {
+                                player.sendMessage(ChatColor.RED + "Games started from the start menu are automatically private!");
+                            } else {
+                                addons.remove(gameAddon);
+                            }
                         } else {
-                            addons.add(gameAddon);
+                            if (!player.hasPermission("warlords.game.freezetoggle") && gameAddon.equals(GameAddon.FREEZE_GAME)) {
+                                player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
+                            } else {
+                                addons.add(gameAddon);
+                            }
                         }
                         openMapsAddonsMenu(player, selectedGameMap, selectedGameMode, addons);
                     }

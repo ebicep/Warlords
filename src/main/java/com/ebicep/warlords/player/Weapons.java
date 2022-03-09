@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-
 import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 public enum Weapons {
@@ -76,16 +75,17 @@ public enum Weapons {
     SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), LEGENDARY),
     SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), LEGENDARY),
     SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), LEGENDARY),
+    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), LEGENDARY),
     SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), LEGENDARY),
+    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
+    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), LEGENDARY),
+    SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY),
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
-    // mythic
-    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), MYTHIC),
-    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
-    SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), MYTHIC),
-    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), MYTHIC),
+    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.WHEAT), MYTHIC),
+    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.SPIDER_EYE), MYTHIC),
 
     ;
 

@@ -15,6 +15,21 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
                 .isAlive()
         ) {
             wp.respawn();
+            wp.getCooldownManager().removeAbilityCooldowns();
+            wp.getCooldownManager().removeBuffCooldowns();
+            wp.getCooldownManager().removeDebuffCooldowns();
+
+            wp.setEnergy(wp.getSpec().getMaxEnergy());
+            wp.getSpec().getRed().setCurrentCooldown(0);
+            wp.getSpec().getPurple().setCurrentCooldown(0);
+            wp.getSpec().getBlue().setCurrentCooldown(0);
+            wp.getSpec().getOrange().setCurrentCooldown(0);
+            wp.setHorseCooldown(0);
+            wp.updateRedItem();
+            wp.updatePurpleItem();
+            wp.updateBlueItem();
+            wp.updateOrangeItem();
+            wp.updateHorseItem();
         }
         preventPlayerMovement = true;
     }

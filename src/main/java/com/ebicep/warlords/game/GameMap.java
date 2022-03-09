@@ -156,7 +156,6 @@ public enum GameMap {
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(215.5, 37, 109.5), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED).asOption());
-            options.add(MapSymmetry.SPIN.asOption());
 
             options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.ENERGY));
@@ -258,7 +257,6 @@ public enum GameMap {
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED).asOption());
-            options.add(MapSymmetry.SPIN.asOption());
 
             options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.ENERGY));
@@ -467,7 +465,7 @@ public enum GameMap {
         }
 
     },
-    DEBUG(
+    /*DEBUG(
             "Debug",
             96,
             1,
@@ -519,7 +517,7 @@ public enum GameMap {
             return options;
         }
 
-    },
+    },*/
     /*HEAVEN_WILL(
             "Heaven's Will",
             2,
@@ -533,23 +531,20 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(726.5, 9, 176.5).yaw(-140), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(756.5, 8, 143.5).yaw(40), Team.RED).asOption());
 
-            options.add(new GateOption(loc, 723, 5, 173, 729, 11, 179));
-            options.add(new GateOption(loc, 753, 4, 140, 759, 10, 146));
+            options.add(new GateOption(loc, 723, 6, 173, 729, 12, 179));
+            options.add(new GateOption(loc, 753, 6, 140, 759, 12, 146));
 
-            options.add(new PowerupOption(loc.addXYZ(758.5, 12.5, 169.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(717.5, 10.5, 147.5), PowerupType.ENERGY));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 9, 176.5).yaw(-140), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 8, 143.5).yaw(40), Team.RED));
 
             //options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
             //options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
 
             options.add(new WinByPointsOption(5));
-            options.add(new WinAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption(300));
             options.add(new ScoreOnEventOption.OnKill(1));
             options.add(new RespawnWaveOption(0, 1, 0));
             options.add(new GraveOption());

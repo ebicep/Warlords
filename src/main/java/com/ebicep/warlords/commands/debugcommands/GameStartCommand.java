@@ -178,7 +178,7 @@ public class GameStartCommand implements TabExecutor {
 
         for (GameAddon a : addon) {
             if (!a.hasPermission(sender)) {
-                sender.sendMessage("You do not have the permission to use addon: " + Utils.toTitleCase(a.name()));
+                sender.sendMessage(ChatColor.RED + "You do not have the permission to use addon: " + Utils.toTitleCase(a.name()));
                 isValid = false;
             }
         }

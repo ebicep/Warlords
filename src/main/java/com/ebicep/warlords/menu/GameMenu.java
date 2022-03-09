@@ -328,6 +328,23 @@ public class GameMenu {
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
                     (n, e) -> openWeaponMenu(player, pageNumber - 1));
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+        } else if (pageNumber == 4) {
+            menu.setItem(
+                    0,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
         }
 
         menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
@@ -628,7 +645,7 @@ public class GameMenu {
                 "§7Health: §a" + apc.getMaxHealth(),
                 "§7Energy: §a" + apc.getMaxEnergy() + " §7/ §a+" + apc.getEnergyPerSec() + " §7per sec §7/ §a+" + apc.getEnergyOnHit() + " §7per hit",
                 "",
-                selectedClass == APOTHECARY ? "§7Passive Speed: §e10%" : "",
+                selectedClass == APOTHECARY ? "§7Speed: §e10%" : null,
                 apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
         );
 

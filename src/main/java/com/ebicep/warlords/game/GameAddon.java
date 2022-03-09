@@ -26,7 +26,6 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            game.getOptions().add(new GameFreezeWhenOfflineOption());
             //game.getOptions().add(new CountGameOption());
             game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
@@ -55,9 +54,19 @@ public enum GameAddon {
             "Makes the game custom, preventing stats from counting."
     ) {
     },
+    FREEZE_GAME(
+            "Freeze Failsafe",
+            null,
+            "Pauses the game when a player is missing for longer than 10 seconds. The game will automatically resume when they join back."
+    ) {
+        @Override
+        public void modifyGame(@Nonnull Game game) {
+            game.getOptions().add(new GameFreezeWhenOfflineOption());
+        }
+    },
     IMPOSTER_MODE(
             "Imposter Mode",
-            "warlords.game.impostertoggle",
+            null,
             "The game will assign players to intentionally boycott the game to make their team lose without being caught."
     ) {
         @Override
@@ -73,7 +82,7 @@ public enum GameAddon {
     },
     COOLDOWN_MODE(
             "Cooldown Mode",
-            "warlords.game.cooldowngame",
+            null,
             "Reduces energy costs and cooldowns by 50% and increases max health by 50%."
     ) {
         @Override
@@ -97,7 +106,7 @@ public enum GameAddon {
     },
     MEGA_GAME(
             "Mega Game",
-            "warlords.game.megagame",
+            null,
             "Allows any map to hold unlimited players."
     ) {
         @Override

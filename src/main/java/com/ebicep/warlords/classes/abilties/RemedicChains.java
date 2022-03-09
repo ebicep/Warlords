@@ -197,6 +197,8 @@ public class RemedicChains extends AbstractAbility {
                     return currentDamageValue * 1.1f;
                 }
             });
+        } else {
+            wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
         }
 
         return targetHit >= 1;

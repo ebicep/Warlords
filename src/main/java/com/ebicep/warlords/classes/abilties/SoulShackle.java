@@ -31,7 +31,8 @@ public class SoulShackle extends AbstractAbility {
                 "§7making them unable to use their main attack for\n" +
                 "§7the duration. The silence duration increases by §61\n" +
                 "§7second for every §c1000 §7damage you took in the last\n" +
-                "§66 §7seconds." +
+                "§66 §7seconds. Gain a short burst of §e40% §7movement speed\n" +
+                "for §61.5 §7seconds after shackling an enemy." +
                 "\n\n" +
                 "§7Has an optimal range of §e" + shackleRange + " §7blocks.";
     }
@@ -46,6 +47,7 @@ public class SoulShackle extends AbstractAbility {
                 .requireLineOfSight(wp)
                 .limit(maxShackleTargets)
         ) {
+            wp.getSpeed().addSpeedModifier("Shacke Speed", 40, 30, "BASE");
             wp.subtractEnergy(energyCost);
             wp.sendMessage(
                 WarlordsPlayer.RECEIVE_ARROW +

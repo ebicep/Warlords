@@ -113,7 +113,7 @@ public class BaseCommand {
             return null;
         }
         if(!g.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be used in an private game!");
+            sender.sendMessage(ChatColor.RED + "This command can only be used in a private game!");
             return null;
         }
         return g;

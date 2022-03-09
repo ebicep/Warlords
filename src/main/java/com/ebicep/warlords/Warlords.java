@@ -64,7 +64,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -292,8 +291,8 @@ public class Warlords extends JavaPlugin {
         //gameManager.addGameHolder("SimulationCrossfire-0", GameMap.SIMULATION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("SimulationCrossfire")));
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
-        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        //gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
         gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
@@ -359,11 +358,11 @@ public class Warlords extends JavaPlugin {
                 .async(DatabaseManager::init)
                 .execute();
 
-        try {
+        /*try {
             BotManager.connect();
         } catch (LoginException e) {
             e.printStackTrace();
-        }
+        }*/
 
         ProtocolManager protocolManager;
 

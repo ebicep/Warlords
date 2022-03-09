@@ -193,7 +193,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
                     ((BloodLust) abstractAbility).setDamageConvertPercent(70);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
