@@ -3,6 +3,7 @@ package com.ebicep.warlords.achievements.types;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ChatUtils;
@@ -23,7 +24,9 @@ public enum ChallengeAchievements implements Achievement {
     REJUVENATION("Rejuvenation",
             "Heal your flag carrier from below 1k health to their maximum health capacity or above in 3 seconds.",
             GameMode.CAPTURE_THE_FLAG,
+            null,
             warlordsPlayer -> {
+
                 for (WarlordsPlayer player : warlordsPlayer.getGame().warlordsPlayers()
                         .filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
                         .filter(wp -> wp != warlordsPlayer)
@@ -32,16 +35,16 @@ public enum ChallengeAchievements implements Achievement {
                     List<PlayerStatisticsSecond.Entry> entries = player.getSecondStats().getEntries();
                     List<WarlordsDamageHealingFinalEvent> events = new ArrayList<>();
                     if (entries.size() > 3) {
-                        events.addAll(entries.get(entries.size() - 4).getEvents());
+                        events.addAll(entries.get(entries.size() - 4).getEventsAsSelf());
                     }
                     if (entries.size() > 2) {
-                        events.addAll(entries.get(entries.size() - 3).getEvents());
+                        events.addAll(entries.get(entries.size() - 3).getEventsAsSelf());
                     }
                     if (entries.size() > 1) {
-                        events.addAll(entries.get(entries.size() - 2).getEvents());
+                        events.addAll(entries.get(entries.size() - 2).getEventsAsSelf());
                     }
                     if (!entries.isEmpty()) {
-                        events.addAll(entries.get(entries.size() - 1).getEvents());
+                        events.addAll(entries.get(entries.size() - 1).getEventsAsSelf());
                     }
                     int below1000Index = -1;
                     int fullHealthIndex = -1;
@@ -82,17 +85,47 @@ public enum ChallengeAchievements implements Achievement {
                 return false;
             }),
 
+    BLITZKRIEG("Blitzkrieg",
+            "Kill the enemy flag carrier within 2 seconds.",
+            GameMode.CAPTURE_THE_FLAG,
+            null,
+            warlordsPlayer -> {
+                List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(2);
+                int indexCarrierFull = -1;
+                for (int i = 0; i < events.size(); i++) {
+                    WarlordsDamageHealingFinalEvent event = events.get(i);
+                    if(event.isHasFlag()) {
+                        if(event.getInitialHealth() == event.getPlayer().getMaxHealth()) {
+                            indexCarrierFull = i;
+                            break;
+                        }
+                    }
+                }
+                if(indexCarrierFull != -1) {
+                    for (int i = indexCarrierFull; i < events.size(); i++) {
+                        WarlordsDamageHealingFinalEvent event = events.get(i);
+                        if(event.getPlayer().isDead()) { // or check negative health?
+                            return true;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+                return false;
+            }),
     ;
 
     public String name;
     public String description;
     public GameMode gameMode;
+    public Classes spec;
     public Predicate<WarlordsPlayer> warlordsPlayerPredicate;
 
-    ChallengeAchievements(String name, String description, GameMode gameMode, Predicate<WarlordsPlayer> warlordsPlayerPredicate) {
+    ChallengeAchievements(String name, String description, GameMode gameMode, Classes spec, Predicate<WarlordsPlayer> warlordsPlayerPredicate) {
         this.name = name;
         this.description = description;
         this.gameMode = gameMode;
+        this.spec = spec;
         this.warlordsPlayerPredicate = warlordsPlayerPredicate;
     }
 

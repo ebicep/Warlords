@@ -10,6 +10,7 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
 
     private WarlordsPlayer attacker;
     private String ability;
+    private int initialHealth;
     private int finalHealth;
     private float value;
     private int critChance;
@@ -26,6 +27,7 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
             WarlordsPlayer player,
             WarlordsPlayer attacker,
             String ability,
+            int initialHealth,
             float value,
             int critChance,
             int critMultiplier,
@@ -34,6 +36,7 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
         super(player);
         this.attacker = attacker;
         this.ability = ability;
+        this.initialHealth = initialHealth;
         this.finalHealth = player.getHealth();
         this.value = value;
         this.critChance = critChance;
@@ -53,6 +56,10 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
 
     public String getAbility() {
         return ability;
+    }
+
+    public int getInitialHealth() {
+        return initialHealth;
     }
 
     public int getFinalHealth() {

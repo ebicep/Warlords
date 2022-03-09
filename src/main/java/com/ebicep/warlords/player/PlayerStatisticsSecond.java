@@ -1,13 +1,12 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.Entry> {
 
@@ -24,12 +23,36 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
     }
 
 
-    public void addDamageHealingEvent(WarlordsDamageHealingFinalEvent event) {
-        current.events.add(event);
+    public void addDamageHealingEventAsSelf(WarlordsDamageHealingFinalEvent event) {
+        current.eventsAsSelf.add(event);
+    }
+
+    public void addDamageHealingEventAsAttacker(WarlordsDamageHealingFinalEvent event) {
+        current.eventsAsAttacker.add(event);
     }
 
     public List<Entry> getEntries() {
         return entries;
+    }
+
+    public List<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecond(int seconds) {
+        List<WarlordsDamageHealingFinalEvent> events = new ArrayList<>();
+        for (int i = 0; i < seconds; i++) {
+            if(entries.size() > i) {
+                events.addAll(entries.get(entries.size() - (i + 1)).getEventsAsSelf());
+            }
+        }
+        return events;
+    }
+
+    public List<WarlordsDamageHealingFinalEvent> getEventsAsAttackerFromLastSecond(int seconds) {
+        List<WarlordsDamageHealingFinalEvent> events = new ArrayList<>();
+        for (int i = 0; i < seconds; i++) {
+            if(entries.size() > i) {
+                events.addAll(entries.get(entries.size() - (i + 1)).getEventsAsSelf());
+            }
+        }
+        return events;
     }
 
     @NotNull
@@ -40,11 +63,16 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
 
     public static class Entry {
 
-        List<WarlordsDamageHealingFinalEvent> events = new ArrayList<>();
+        List<WarlordsDamageHealingFinalEvent> eventsAsSelf = new ArrayList<>();
 
-        public List<WarlordsDamageHealingFinalEvent> getEvents() {
-            return events;
+        List<WarlordsDamageHealingFinalEvent> eventsAsAttacker = new ArrayList<>();
+
+        public List<WarlordsDamageHealingFinalEvent> getEventsAsSelf() {
+            return eventsAsSelf;
         }
 
+        public List<WarlordsDamageHealingFinalEvent> getEventsAsAttacker() {
+            return eventsAsAttacker;
+        }
     }
 }
