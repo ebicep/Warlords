@@ -283,7 +283,7 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         //gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
         gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());

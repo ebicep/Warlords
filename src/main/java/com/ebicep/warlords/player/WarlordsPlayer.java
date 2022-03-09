@@ -221,6 +221,8 @@ public final class WarlordsPlayer {
             return;
         }
 
+        int initialHealth = health;
+
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
             critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
@@ -453,7 +455,9 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
-                secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, damageValue, critChance, critMultiplier, true));
+                WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(this, attacker, ability, initialHealth, damageValue, critChance, critMultiplier, true);
+                secondStats.addDamageHealingEventAsSelf(finalEvent);
+                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 
                 attacker.addDamage(damageValue);
                 playHurtAnimation(this.entity, attacker);
@@ -585,6 +589,8 @@ public final class WarlordsPlayer {
             return;
         }
 
+        int initialHealth = health;
+
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
@@ -652,7 +658,9 @@ public final class WarlordsPlayer {
             }
         }
 
-        secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, healValue, critChance, critMultiplier, false));
+        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(this, attacker, ability, initialHealth, healValue, critChance, critMultiplier, true);
+        secondStats.addDamageHealingEventAsSelf(finalEvent);
+        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 
         if (ChallengeAchievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
             game.warlordsPlayers()
