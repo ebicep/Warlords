@@ -2,8 +2,8 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.achievements.AchievementRecord;
-import com.ebicep.warlords.achievements.Achievements;
+import com.ebicep.warlords.achievements.Achievement;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
@@ -67,7 +67,7 @@ public final class WarlordsPlayer {
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats;
     private final PlayerStatisticsSecond secondStats;
-    private final List<AchievementRecord> achievementsUnlocked = new ArrayList<>();
+    private final List<Achievement.AbstractAchievementRecord> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
@@ -654,13 +654,13 @@ public final class WarlordsPlayer {
 
         secondStats.addDamageHealingEvent(new WarlordsDamageHealingFinalEvent(this, attacker, ability, healValue, critChance, critMultiplier, false));
 
-        if (Achievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
+        if (ChallengeAchievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
             game.warlordsPlayers()
                     .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
-                    .filter(warlordsPlayer -> warlordsPlayer.getAchievementsUnlocked().stream().noneMatch(achievementRecord -> achievementRecord.getAchievement() == Achievements.REJUVENATION))
+                    .filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(ChallengeAchievements.REJUVENATION))
                     .forEachOrdered(warlordsPlayer -> {
-                        if (Achievements.REJUVENATION.warlordsPlayerPredicate.test(warlordsPlayer)) {
-                            warlordsPlayer.unlockAchievement(Achievements.REJUVENATION);
+                        if (ChallengeAchievements.REJUVENATION.warlordsPlayerPredicate.test(warlordsPlayer)) {
+                            warlordsPlayer.unlockAchievement(ChallengeAchievements.REJUVENATION);
                         }
                     });
         }
@@ -1932,14 +1932,26 @@ public final class WarlordsPlayer {
         return secondStats;
     }
 
-    public List<AchievementRecord> getAchievementsUnlocked() {
+    public List<Achievement.AbstractAchievementRecord> getAchievementsUnlocked() {
         return achievementsUnlocked;
     }
 
-    public void unlockAchievement(Achievements achievement) {
-        achievementsUnlocked.add(new AchievementRecord(achievement));
+    public boolean hasAchievement(ChallengeAchievements achievements) {
+        return achievementsUnlocked.stream()
+                .filter(ChallengeAchievements.ChallengeAchievementRecord.class::isInstance)
+                .map(ChallengeAchievements.ChallengeAchievementRecord.class::cast)
+                .map(ChallengeAchievements.ChallengeAchievementRecord::getAchievement)
+                .anyMatch(achievement -> achievement == achievements);
+    }
+
+    public void unlockAchievement(ChallengeAchievements achievement) {
+        achievementsUnlocked.add(new ChallengeAchievements.ChallengeAchievementRecord(achievement));
         if (entity instanceof Player) {
-            Achievements.sendAchievementUnlockMessage(achievement, (Player) entity);
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+            //only display achievement if they have never got it before
+            if (!databasePlayer.hasAchievement(achievement)) {
+                achievement.sendAchievementUnlockMessage((Player) entity);
+            }
         }
         System.out.println(name + " unlocked achievement: " + achievement.name);
     }

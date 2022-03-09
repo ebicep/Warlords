@@ -1,7 +1,8 @@
-package com.ebicep.warlords.achievements;
+package com.ebicep.warlords.achievements.types;
 
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ChatUtils;
@@ -17,32 +18,11 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public enum Achievements {
-
-    GAMES_PLAYED_50("Play 50 Games", "", databasePlayer -> databasePlayer.getPubStats().getPlays() > 50, null),
-    GAMES_PLAYED_100("Play 100 Games", "", databasePlayer -> databasePlayer.getPubStats().getPlays() > 100, null),
-    GAMES_PLAYED_250("Play 250 Games", "", databasePlayer -> databasePlayer.getPubStats().getPlays() > 250, null),
-    GAMES_PLAYED_500("Play 500 Games", "", databasePlayer -> databasePlayer.getPubStats().getPlays() > 500, null),
-    GAMES_PLAYED_1000("Play 1000 Games", "", databasePlayer -> databasePlayer.getPubStats().getPlays() > 1000, null),
-    GAMES_WON_25("Win 25 Games", "", databasePlayer -> databasePlayer.getPubStats().getWins() > 25, null),
-    GAMES_WON_50("Win 50 Games", "", databasePlayer -> databasePlayer.getPubStats().getWins() > 50, null),
-    GAMES_WON_125("Win 125 Games", "", databasePlayer -> databasePlayer.getPubStats().getWins() > 125, null),
-    GAMES_WON_250("Win 250 Games", "", databasePlayer -> databasePlayer.getPubStats().getWins() > 250, null),
-    GAMES_WON_500("Win 500 Games", "", databasePlayer -> databasePlayer.getPubStats().getWins() > 500, null),
-    GAMES_WON_CTF_10("Win 10 CTF Games", "", databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() > 10, null),
-    GAMES_WON_CTF_25("Win 25 CTF Games", "", databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() > 25, null),
-    GAMES_WON_CTF_50("Win 50 CTF Games", "", databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() > 50, null),
-    GAMES_WON_CTF_75("Win 75 CTF Games", "", databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() > 75, null),
-    GAMES_WON_CTF_100("Win 100 CTF Games", "", databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() > 100, null),
-    GAMES_WON_TDM_10("Win 10 TDM Games", "", databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() > 10, null),
-    GAMES_WON_TDM_25("Win 25 TDM Games", "", databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() > 25, null),
-    GAMES_WON_TDM_50("Win 50 TDM Games", "", databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() > 50, null),
-    GAMES_WON_TDM_75("Win 75 TDM Games", "", databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() > 75, null),
-    GAMES_WON_TDM_100("Win 100 TDM Games", "", databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() > 100, null),
+public enum ChallengeAchievements implements Achievement {
 
     REJUVENATION("Rejuvenation",
             "Heal your flag carrier from below 1k health to their maximum health capacity or above in 3 seconds.",
-            null,
+            GameMode.CAPTURE_THE_FLAG,
             warlordsPlayer -> {
                 for (WarlordsPlayer player : warlordsPlayer.getGame().warlordsPlayers()
                         .filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
@@ -102,31 +82,45 @@ public enum Achievements {
                 return false;
             }),
 
-
     ;
-
 
     public String name;
     public String description;
-    public Predicate<DatabasePlayer> databasePlayerPredicate;
+    public GameMode gameMode;
     public Predicate<WarlordsPlayer> warlordsPlayerPredicate;
 
-    Achievements(String name, String description, Predicate<DatabasePlayer> databasePlayerPredicate, Predicate<WarlordsPlayer> warlordsPlayerPredicate) {
+    ChallengeAchievements(String name, String description, GameMode gameMode, Predicate<WarlordsPlayer> warlordsPlayerPredicate) {
         this.name = name;
         this.description = description;
-        this.databasePlayerPredicate = databasePlayerPredicate;
+        this.gameMode = gameMode;
         this.warlordsPlayerPredicate = warlordsPlayerPredicate;
     }
 
-    public static void sendAchievementUnlockMessage(Achievements achievements, Player player) {
-        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + achievements.name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + achievements.description).create()));
+
+    @Override
+    public void sendAchievementUnlockMessage(Player player) {
+        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + description).create()));
         ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true);
     }
 
-    public void giveAchievements(DatabasePlayer databasePlayer) {
-        if (databasePlayerPredicate.test(databasePlayer)) {
+    @Override
+    public void sendAchievementUnlockMessageToOthers(WarlordsPlayer warlordsPlayer) {
 
+    }
+
+    public static class ChallengeAchievementRecord extends AbstractAchievementRecord {
+
+        private ChallengeAchievements achievement;
+
+        public ChallengeAchievementRecord(ChallengeAchievements achievement) {
+            super();
+            this.achievement = achievement;
         }
+
+        public ChallengeAchievements getAchievement() {
+            return achievement;
+        }
+
     }
 }

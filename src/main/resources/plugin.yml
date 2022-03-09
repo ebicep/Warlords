@@ -104,6 +104,9 @@ commands:
   poll:
     description: Poll stuff
     aliases: [ poll ]
+  achievements:
+    description: Achievements
+    aliases: [ achievement, achievements ]
 
 permissions:
   group.default:

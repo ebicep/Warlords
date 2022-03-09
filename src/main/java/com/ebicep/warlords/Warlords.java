@@ -64,6 +64,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -326,6 +327,7 @@ public class Warlords extends JavaPlugin {
         new LobbyCommand().register(this);
         new DiscordCommand().register(this);
         new PollCommand().register(this);
+        new AchievementsCommand().register(this);
 
         updateHeads();
 
@@ -348,11 +350,11 @@ public class Warlords extends JavaPlugin {
                 .async(DatabaseManager::init)
                 .execute();
 
-        /*try {
+        try {
             BotManager.connect();
         } catch (LoginException e) {
             e.printStackTrace();
-        }*/
+        }
 
         ProtocolManager protocolManager;
 

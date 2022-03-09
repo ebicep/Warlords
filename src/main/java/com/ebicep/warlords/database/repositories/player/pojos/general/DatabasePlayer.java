@@ -1,7 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.achievements.AchievementRecord;
-import com.ebicep.warlords.achievements.Achievements;
+import com.ebicep.warlords.achievements.Achievement;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -59,7 +60,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Field("particle_quality")
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
 
-    private List<AchievementRecord> achievements = new ArrayList<>();
+    private List<Achievement.AbstractAchievementRecord> achievements = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -309,16 +310,28 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         this.particleQuality = particleQuality;
     }
 
-    public void addAchievement(Achievements achievements) {
-        this.achievements.add(new AchievementRecord(achievements));
-    }
-
-    public void addAchievement(AchievementRecord achievementRecord) {
+    public void addAchievement(Achievement.AbstractAchievementRecord achievementRecord) {
         this.achievements.add(achievementRecord);
     }
 
-    public void addAchievements(List<AchievementRecord> achievements) {
+    public void addAchievements(List<Achievement.AbstractAchievementRecord> achievements) {
         this.achievements.addAll(achievements);
+    }
+
+    public List<Achievement.AbstractAchievementRecord> getAchievements() {
+        return achievements;
+    }
+
+    public boolean hasAchievement(TieredAchievements achievement) {
+        return this.achievements.stream()
+                .anyMatch(achievementRecord -> achievementRecord instanceof TieredAchievements.TieredAchievementRecord &&
+                        ((TieredAchievements.TieredAchievementRecord) achievementRecord).getAchievement() == achievement);
+    }
+
+    public boolean hasAchievement(ChallengeAchievements achievement) {
+        return this.achievements.stream()
+                .anyMatch(achievementRecord -> achievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord &&
+                        ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
     }
 
 }

@@ -75,6 +75,7 @@ public class BotManager {
     }
 
     public static void sendDebugMessage(String message) {
+        if (jda == null) return;
         getWL2Server().getTextChannels().stream()
                 .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
                 .findFirst()
@@ -82,6 +83,7 @@ public class BotManager {
     }
 
     public static void sendDebugMessage(MessageEmbed embed) {
+        if (jda == null) return;
         getWL2Server().getTextChannels().stream()
                 .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
                 .findFirst()
@@ -120,6 +122,7 @@ public class BotManager {
     }
 
     public static void sendMessageToNotificationChannel(String message, boolean sendToCompServer, boolean sendToWL2Server) {
+        if (jda == null) return;
         if (numberOfMessagesSentLast30Sec > 15) {
             return;
         }

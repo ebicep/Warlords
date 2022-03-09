@@ -1,8 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.achievements.Achievements;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
@@ -11,13 +9,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 
@@ -79,23 +76,25 @@ public class TestCommand implements CommandExecutor {
         }
 
 
-/*
         Player player = (Player) sender;
-        Document document = DatabaseManager.warlordsDatabase.getCollection("Temp").find().first();
-        document.put("map", document.getString("map").toUpperCase());
-        DatabaseGameCTF databaseGameCTF = DatabaseManager.gameService.convertDocumentToClass(document, DatabaseGameCTF.class);
-        databaseGameCTF.setExactDate(DatabaseGameBase.convertToDateFrom(document.getObjectId("_id").toString()));
-        databaseGameCTF.setGameMode(GameMode.CAPTURE_THE_FLAG);
-        if(document.getBoolean("private")) {
-            databaseGameCTF.getGameAddons().add(GameAddon.PRIVATE_GAME);
-        }
-        databaseGameCTF.setStatInfo(document.getString("statInfo"));
-        DatabaseManager.gameService.create(databaseGameCTF);
-
- */
-        for (Achievements value : Achievements.values()) {
-            System.out.println(value.name + " - " + value.warlordsPlayerPredicate);
-        }
+//        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
+//            document.put("map", document.getString("map").toUpperCase());
+//            if(document.get("map").equals("WARSONG REMASTERED")) {
+//                document.put("map", "WARSONG");
+//            }
+//            if(document.getString("winner").equals("DRAW")) {
+//                document.put("winner", null);
+//            }
+//            DatabaseGameCTF databaseGameCTF = DatabaseManager.gameService.convertDocumentToClass(document, DatabaseGameCTF.class);
+//            databaseGameCTF.setExactDate(DatabaseGameBase.convertToDateFrom(document.getObjectId("_id").toString()));
+//            databaseGameCTF.setGameMode(GameMode.CAPTURE_THE_FLAG);
+//            if((boolean) document.getOrDefault("private", true)) {
+//                databaseGameCTF.getGameAddons().add(GameAddon.PRIVATE_GAME);
+//            }
+//            databaseGameCTF.setStatInfo((String) document.getOrDefault("statInfo", ""));
+//            DatabaseManager.gameService.create(databaseGameCTF);
+//        });
+//
 
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
