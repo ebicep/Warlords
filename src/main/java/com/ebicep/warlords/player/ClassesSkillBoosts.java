@@ -135,14 +135,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 15% and reduce\n§7the cooldown by 40%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c15% §aand reduce\n§athe cooldown by §c40%",
+            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 50%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c50%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(65);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    arcaneShield.setShieldPercentage(60);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
     ),

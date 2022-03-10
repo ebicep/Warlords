@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -80,7 +81,7 @@ public class SoulShackle extends AbstractAbility {
             Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
             Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
 
-            EffectUtils.playChainAnimation(wp, shackleTarget, Material.PUMPKIN, 20);
+            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 20);
 
             new GameRunnable(wp.getGame()) {
                 @Override
