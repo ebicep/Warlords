@@ -751,13 +751,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the range of Draining Miasma\nby 2 blocks and increase the healing\nbased on damage dealt by 20%",
-            "§aIncrease the range of Draining Miasma\nby §c2 §ablocks and increase the healing\nbased on damage dealt by §c20%",
+            "§7Increase the range of Draining Miasma\nby 4 blocks and increase the healing\nbased on damage dealt by 20%",
+            "§aIncrease the range of Draining Miasma\nby §c4 §ablocks and increase the healing\nbased on damage dealt by §c20%",
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
-                    ((DrainingMiasma) abstractAbility).setAllyHitRadius(8);
-                    ((DrainingMiasma) abstractAbility).setEnemyHitRadius(8);
+                    ((DrainingMiasma) abstractAbility).setAllyHitRadius(10);
+                    ((DrainingMiasma) abstractAbility).setEnemyHitRadius(10);
                     ((DrainingMiasma) abstractAbility).setDamageDealtHealing(60);
                 }
             }

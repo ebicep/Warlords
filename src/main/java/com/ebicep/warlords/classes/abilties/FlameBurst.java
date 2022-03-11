@@ -58,7 +58,6 @@ public class FlameBurst extends AbstractProjectileBase {
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
 
-
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)

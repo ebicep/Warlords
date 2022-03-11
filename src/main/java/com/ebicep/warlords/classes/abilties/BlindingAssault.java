@@ -42,7 +42,7 @@ public class BlindingAssault extends AbstractAbility {
 
         if (wp.getCarriedFlag() != null) {
             player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
-            player.setFallDistance(-10);
+            player.setFallDistance(-5);
         } else {
             player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
             player.setFallDistance(-10);
@@ -98,6 +98,10 @@ public class BlindingAssault extends AbstractAbility {
                             .with(FireworkEffect.Type.BALL)
                             .build());
 
+                    this.cancel();
+                }
+
+                if (wp.isDead()) {
                     this.cancel();
                 }
             }
