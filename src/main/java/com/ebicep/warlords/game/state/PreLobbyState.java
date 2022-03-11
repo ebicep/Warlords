@@ -337,6 +337,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     for (Map.Entry<UUID, Team> uuidTeamEntry : game.getPlayers().entrySet()) {
                         Player value = Bukkit.getPlayer(uuidTeamEntry.getKey());
+                        if (value == null) continue;
                         if (value.hasPermission(WARLORDS_DATABASE_MESSAGEFEED)) {
                             value.sendMessage(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
                             value.sendMessage(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
