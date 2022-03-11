@@ -132,6 +132,9 @@ public class LeaderboardManager {
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
+                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                            LeaderboardManager.playerGameHolograms.put(uuid, DatabaseGameBase.previousGames.size() - 1);
+                        });
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGameBase.setGameHologramVisibility(player);

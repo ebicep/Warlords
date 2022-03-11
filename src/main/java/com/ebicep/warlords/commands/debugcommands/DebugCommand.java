@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.TimerDebugAble;
-import com.ebicep.warlords.menu.DebugMenu;
+import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;

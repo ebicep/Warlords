@@ -18,6 +18,7 @@ import com.ebicep.warlords.util.LocationFactory;
 import com.ebicep.warlords.util.TriFunction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -26,6 +27,7 @@ import java.util.List;
 public enum GameMode {
     CAPTURE_THE_FLAG(
             "Capture The Flag",
+            new ItemStack(Material.BANNER),
             DatabaseGameCTF::new,
             GamesCollections.CTF
     ) {
@@ -53,6 +55,7 @@ public enum GameMode {
     },
     INTERCEPTION(
             "Interception",
+            null,//new ItemStack(Material.WOOL),
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION
     ) {
@@ -80,6 +83,7 @@ public enum GameMode {
     },
     DUEL(
             "Duel",
+            new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
             GamesCollections.DUEL
     ) {
@@ -103,6 +107,7 @@ public enum GameMode {
     },
     TEAM_DEATHMATCH(
             "Team Deathmatch",
+            new ItemStack(Material.DIAMOND_BARDING),
             DatabaseGameTDM::new,
             GamesCollections.TDM
     ) {
@@ -125,6 +130,7 @@ public enum GameMode {
     },
     SIMULATION_TRIAL(
             "Simulation Trial",
+            null,
             null,
             null
     ) {
@@ -152,6 +158,7 @@ public enum GameMode {
     DEBUG(
             "Sandbox",
             null,
+            null,
             null
     ) {
         @Override
@@ -168,26 +175,16 @@ public enum GameMode {
 
     ;
 
-    private final String name;
-    private final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
-    private final GamesCollections gamesCollections;
+    public final String name;
+    public final ItemStack itemStack;
+    public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
+    public final GamesCollections gamesCollections;
 
-    GameMode(String name, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame, GamesCollections gamesCollections) {
+    GameMode(String name, ItemStack itemStack, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame, GamesCollections gamesCollections) {
         this.name = name;
+        this.itemStack = itemStack;
         this.createDatabaseGame = createDatabaseGame;
         this.gamesCollections = gamesCollections;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame() {
-        return createDatabaseGame;
-    }
-
-    public GamesCollections getGamesCollections() {
-        return gamesCollections;
     }
 
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

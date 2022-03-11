@@ -129,7 +129,7 @@ public final class WarlordsPlayer {
         this.gameState = gameState;
         this.game = gameState.getGame();
         this.minuteStats = new PlayerStatisticsMinute();
-        this.secondStats = new PlayerStatisticsSecond();
+        this.secondStats = new PlayerStatisticsSecond(gameState);
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
@@ -455,10 +455,6 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
-                WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(this, attacker, ability, initialHealth, damageValue, critChance, critMultiplier, true);
-                secondStats.addDamageHealingEventAsSelf(finalEvent);
-                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-
                 attacker.addDamage(damageValue);
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
@@ -546,6 +542,21 @@ public final class WarlordsPlayer {
 
         getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
         attacker.getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
+
+//        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(
+//                this,
+//                attacker,
+//                ability,
+//                initialHealth,
+//                damageValue,
+//                critChance,
+//                critMultiplier,
+//                isCrit,
+//                true);
+//        secondStats.addDamageHealingEventAsSelf(finalEvent);
+//        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+//
+//        checkForAchievementsDamage(attacker);
     }
 
     /**
@@ -658,20 +669,20 @@ public final class WarlordsPlayer {
             }
         }
 
-        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(this, attacker, ability, initialHealth, healValue, critChance, critMultiplier, true);
-        secondStats.addDamageHealingEventAsSelf(finalEvent);
-        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-
-        if (ChallengeAchievements.REJUVENATION.warlordsPlayerPredicate.test(this)) {
-            game.warlordsPlayers()
-                    .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
-                    .filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(ChallengeAchievements.REJUVENATION))
-                    .forEachOrdered(warlordsPlayer -> {
-                        if (ChallengeAchievements.REJUVENATION.warlordsPlayerPredicate.test(warlordsPlayer)) {
-                            warlordsPlayer.unlockAchievement(ChallengeAchievements.REJUVENATION);
-                        }
-                    });
-        }
+//        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(
+//                this,
+//                attacker,
+//                ability,
+//                initialHealth,
+//                healValue,
+//                critChance,
+//                critMultiplier,
+//                isCrit,
+//                false);
+//        secondStats.addDamageHealingEventAsSelf(finalEvent);
+//        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+//
+//        checkForAchievementsHealing(attacker);
     }
 
     /**
@@ -884,6 +895,22 @@ public final class WarlordsPlayer {
             }
         }
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
+    }
+
+    private void checkForAchievementsDamage(WarlordsPlayer attacker) {
+        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.BLITZKRIEG);
+        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SNIPE_SHOT);
+        ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.DUCK_TANK);
+        if (hasFlag()) {
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ASSASSINATE);
+        }
+    }
+
+    private void checkForAchievementsHealing(WarlordsPlayer attacker) {
+        if (hasFlag()) {
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.REJUVENATION);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.CLERICAL_PRODIGY);
+        }
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
@@ -1524,6 +1551,38 @@ public final class WarlordsPlayer {
         return itemStack;
     }
 
+    public String getStatString(String name) {
+        StringBuilder stringBuilder = new StringBuilder(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
+        List<PlayerStatisticsMinute.Entry> entries = this.minuteStats.getEntries();
+        int length = entries.size();
+        for (int i = 0; i < length; i++) {
+            PlayerStatisticsMinute.Entry entry = entries.get(length - i - 1);
+            stringBuilder.append("\n");
+            stringBuilder.append(ChatColor.WHITE + "Minute ").append(i + 1).append(": ").append(ChatColor.GOLD);
+            switch (name) {
+                case "Kills":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getKills()));
+                    break;
+                case "Assists":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getAssists()));
+                    break;
+                case "Deaths":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getDeaths()));
+                    break;
+                case "Damage":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getDamage()));
+                    break;
+                case "Healing":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getHealing()));
+                    break;
+                case "Absorbed":
+                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getAbsorbed()));
+                    break;
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     public void toggleTeamFlagCompass() {
         List<CompassTargetMarker> targets = getGame().getMarkers(CompassTargetMarker.class);
         boolean shouldPick = false;
@@ -1786,6 +1845,12 @@ public final class WarlordsPlayer {
                 : 1;
     }
 
+    public boolean hasFlag() {
+        return this.carriedFlag != null
+                && this.carriedFlag.getFlag() instanceof PlayerFlagLocation
+                && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this;
+    }
+
     public String getColoredName() {
         return getTeam().teamColor() + getName();
     }
@@ -1959,6 +2024,7 @@ public final class WarlordsPlayer {
             //only display achievement if they have never got it before
             if (!databasePlayer.hasAchievement(achievement)) {
                 achievement.sendAchievementUnlockMessage((Player) entity);
+                achievement.sendAchievementUnlockMessageToOthers(this);
             }
         }
         System.out.println(name + " unlocked achievement: " + achievement.name);

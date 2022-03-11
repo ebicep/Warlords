@@ -1,7 +1,8 @@
-package com.ebicep.warlords.menu;
+package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.*;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
@@ -9,19 +10,19 @@ import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.StatusEffectCooldowns;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.WordWrap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
@@ -30,88 +31,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
 import static com.ebicep.warlords.util.Utils.woolSortedByColor;
 
-public class DebugMenu {
-
-    public static void openDebugMenu(Player player) {
-        Menu menu = new Menu("Debug Options", 9 * 4);
-
-        LinkedHashMap<ItemStack, BiConsumer<Menu, InventoryClickEvent>> items = new LinkedHashMap<>();
-        items.put(new ItemBuilder(Material.ENDER_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
-                (n, e) -> openGameMenu(player)
-        );
-        items.put(new ItemBuilder(Warlords.getHead(player)).name(ChatColor.GREEN + "Player Options").get(),
-                (n, e) -> openPlayerMenu(player, Warlords.getPlayer(player))
-        );
-        items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
-                (n, e) -> {
-                    openTeamMenu(player);
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
-                                openTeamMenu(player);
-                            } else {
-                                this.cancel();
-                            }
-                        }
-                    }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                }
-        );
-
-        List<ItemStack> itemsArray = new ArrayList<>(items.keySet());
-        for (int i = 0; i < items.size(); i++) {
-            menu.setItem(i + 1, 1, itemsArray.get(i), items.get(itemsArray.get(i)));
-        }
-
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openGameMenu(Player player) {
-        Menu menu = new Menu("Game Options", 9 * 4);
-        ItemStack[] itemStack = {
-                new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-                        .name(ChatColor.GREEN + "Start")
-                        .get(),
-                new ItemBuilder(Material.DIODE)
-                        .name(ChatColor.GREEN + "Timer")
-                        .get(),
-                new ItemBuilder(Material.ICE)
-                        .name(ChatColor.GREEN + "Freeze Game")
-                        .get(),
-        };
-        for (int i = 0; i < itemStack.length; i++) {
-            int index = i + 1;
-            menu.setItem(index, 1, itemStack[i],
-                    (n, e) -> {
-                        switch (index) {
-                            case 1:
-                                openMapsMenu(player);
-                                break;
-                            case 2:
-                                openTimerMenu(player);
-                                break;
-                            case 3:
-                                Bukkit.getServer().dispatchCommand(player, "wl freeze");
-                                break;
-                        }
-                    }
-            );
-        }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openDebugMenu(player));
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
+public class DebugMenuPlayerOptions {
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {
         if (target == null) return;
         String targetName = target.getName();
@@ -240,7 +166,7 @@ public class DebugMenu {
         }
         menu.setItem(3, 4, MENU_BACK, (n, e) -> {
             if (player.getUniqueId() == target.getUuid()) {
-                openDebugMenu(player);
+                DebugMenu.openDebugMenu(player);
             } else {
                 openTeamMenu(player);
             }
@@ -296,7 +222,7 @@ public class DebugMenu {
         //players
         addPlayersToMenu(menu, player, bluePlayers, true);
         addPlayersToMenu(menu, player, redPlayers, false);
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openDebugMenu(player));
+        menu.setItem(3, 5, MENU_BACK, (n, e) -> DebugMenu.openDebugMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -596,7 +522,7 @@ public class DebugMenu {
 
     public static void openTeleportLocations(Player player, WarlordsPlayer target) {
         Menu menu = new Menu("Teleport To: " + target.getName(), 9 * 5);
-        
+
         Game game = target.getGame();
         int x = 0;
         int y = 0;
@@ -604,7 +530,7 @@ public class DebugMenu {
             menu.setItem(x, y, marker.getAsItem(), (n, e) -> {
                 target.teleport(marker.getLocation());
                 player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to " + marker.getName());
-        
+
             });
 
             x++;
@@ -636,7 +562,7 @@ public class DebugMenu {
                         .get(),
         };
         int row = 0;
-        for(FlagHolder holder : target.getGame().getMarkers(FlagHolder.class)) {
+        for (FlagHolder holder : target.getGame().getMarkers(FlagHolder.class)) {
             if (holder.getTeam() == target.getTeam()) {
                 continue;
             }
@@ -653,10 +579,10 @@ public class DebugMenu {
                                         FlagHolder.update(
                                                 target.getGame(),
                                                 info -> info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer() == target ?
-                                                    GroundFlagLocation.of(info.getFlag()) :
-                                                info == holder.getInfo() ?
-                                                    PlayerFlagLocation.of(info.getFlag(), target) :
-                                                null
+                                                        GroundFlagLocation.of(info.getFlag()) :
+                                                        info == holder.getInfo() ?
+                                                                PlayerFlagLocation.of(info.getFlag(), target) :
+                                                                null
                                         );
                                     }
                                     break;
@@ -775,123 +701,4 @@ public class DebugMenu {
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
-
-    public static void openMapsMenu(Player player) {
-        Menu menu = new Menu("Map Picker", 9 * 5);
-        GameMap[] values = GameMap.values();
-        for (int i = 0; i < values.length; i++) {
-            GameMap map = values[i];
-            String mapName = map.getMapName();
-            menu.setItem(i % 7 + 1, 1 + i / 7,
-                    new ItemBuilder(woolSortedByColor[i + 5])
-                            .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getCategories().stream().map(GameMode::getName).collect(Collectors.joining(", ")))
-                            .get(),
-                    (n, e) -> openMapsCategoryMenu(player, map)
-            );
-        }
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> openGameMenu(player));
-        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openMapsCategoryMenu(Player player, GameMap selectedGameMap) {
-        int menuHeight = (4 + selectedGameMap.getCategories().size() / 7);
-        Menu menu = new Menu(selectedGameMap.getMapName(), 9 * menuHeight);
-
-        for (int i = 0; i < selectedGameMap.getCategories().size(); i++) {
-            GameMode gameMode = selectedGameMap.getCategories().get(i);
-            menu.setItem(i % 7 + 1, 1 + i / 7,
-                    new ItemBuilder(woolSortedByColor[i + 5])
-                            .name(ChatColor.GREEN + gameMode.getName())
-                            .get(),
-                    (n, e) -> {
-                        List<GameAddon> addons = new ArrayList<>();
-                        addons.add(GameAddon.PRIVATE_GAME);
-                        addons.add(GameAddon.CUSTOM_GAME);
-                        openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
-                    }
-            );
-        }
-
-        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsMenu(player));
-        menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, List<GameAddon> addons) {
-        int menuHeight = (4 + GameAddon.values().length / 7);
-        Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.getName(), 9 * menuHeight);
-
-        for (int i = 0; i < GameAddon.values().length; i++) {
-            GameAddon gameAddon = GameAddon.values()[i];
-
-            boolean isASelectedAddon = addons.contains(gameAddon);
-            ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
-                    .name(ChatColor.GREEN + gameAddon.getName())
-                    .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
-            if (isASelectedAddon) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
-            }
-
-            menu.setItem(i % 7 + 1, 1 + i / 7,
-                    itemBuilder.get(),
-                    (n, e) -> {
-                        if (isASelectedAddon) {
-                            if (!player.hasPermission("warlords.game.customtoggle") && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
-                                player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
-                            } else if (gameAddon.equals(GameAddon.PRIVATE_GAME)) {
-                                player.sendMessage(ChatColor.RED + "Games started from the start menu are automatically private!");
-                            } else {
-                                addons.remove(gameAddon);
-                            }
-                        } else {
-                            if (!player.hasPermission("warlords.game.freezetoggle") && gameAddon.equals(GameAddon.FREEZE_GAME)) {
-                                player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
-                            } else {
-                                addons.add(gameAddon);
-                            }
-                        }
-                        openMapsAddonsMenu(player, selectedGameMap, selectedGameMode, addons);
-                    }
-            );
-        }
-
-        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsCategoryMenu(player, selectedGameMap));
-        menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (n, e) -> {
-            StringBuilder stringAddons = new StringBuilder();
-            if (addons.isEmpty()) {
-                stringAddons.append("addon:NULL");
-            } else {
-                addons.forEach(gameAddon -> {
-                    stringAddons.append("addon:").append(gameAddon.name()).append(" ");
-                });
-            }
-            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
-        });
-        menu.openForPlayer(player);
-    }
-
-    public static void openTimerMenu(Player player) {
-        Menu menu = new Menu("Timer", 9 * 4);
-        menu.setItem(3, 1,
-                new ItemBuilder(Material.WOOD_BUTTON)
-                        .name(ChatColor.GREEN + "Reset")
-                        .get(),
-                (n, e) -> Bukkit.getServer().dispatchCommand(player, "wl timer reset")
-        );
-        menu.setItem(5, 1,
-                new ItemBuilder(Material.STONE_BUTTON)
-                        .name(ChatColor.GREEN + "Skip")
-                        .get(),
-                (n, e) -> Bukkit.getServer().dispatchCommand(player, "wl timer skip")
-        );
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameMenu(player));
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
 }

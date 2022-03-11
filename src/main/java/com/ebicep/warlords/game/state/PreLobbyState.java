@@ -366,6 +366,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             !isPrivate
                     );
                 }
+
                 return new PlayingState(game);
             }
             timer--;
@@ -378,8 +379,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void end() {
-        //updateTeamPreferences();
-        //distributePeopleOverTeams();
+//        updateTeamPreferences();
+//        distributePeopleOverTeams();
     }
 
     public String getTimeLeftString() {

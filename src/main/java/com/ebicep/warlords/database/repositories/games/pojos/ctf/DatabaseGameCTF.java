@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -269,7 +270,9 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
         } else {
-            BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+            }
         }
         lastWarlordsPlusString = output.toString();
         return output.toString();

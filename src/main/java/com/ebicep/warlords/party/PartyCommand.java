@@ -108,6 +108,7 @@ public class PartyCommand implements TabExecutor {
                         }
                         if (currentParty.get().getInvites().containsKey(invitedPlayer.getUniqueId())) {
                             ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player has already been invited! (" + currentParty.get().getInvites().get(invitedPlayer.getUniqueId()) + ")", ChatColor.BLUE, true);
+                            return true;
                         }
                         currentParty.get().invite(playerToInvite);
                         currentParty.get().sendMessageToAllPartyPlayers(

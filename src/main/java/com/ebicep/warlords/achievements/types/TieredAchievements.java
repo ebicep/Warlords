@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.WordWrap;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.function.Predicate;
 
 public enum TieredAchievements implements Achievement {
@@ -126,20 +128,48 @@ public enum TieredAchievements implements Achievement {
 
     @Override
     public void sendAchievementUnlockMessageToOthers(WarlordsPlayer warlordsPlayer) {
-
+        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
+        warlordsPlayer.getGame().warlordsPlayers()
+                //.filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
+                .filter(wp -> wp != warlordsPlayer)
+                .filter(wp -> wp.getEntity() instanceof Player)
+                .map(wp -> (Player) wp.getEntity())
+                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true));
     }
 
-    public static class TieredAchievementRecord extends AbstractAchievementRecord {
+    public static class TieredAchievementRecord extends AbstractAchievementRecord<TieredAchievements> {
 
-        private TieredAchievements achievement;
+        public TieredAchievementRecord() {
+        }
 
         public TieredAchievementRecord(TieredAchievements achievement) {
-            super();
-            this.achievement = achievement;
+            super(achievement);
         }
 
-        public TieredAchievements getAchievement() {
-            return achievement;
+        public TieredAchievementRecord(TieredAchievements achievement, Date date) {
+            super(achievement, date);
         }
+
+        @Override
+        public String getName() {
+            return getAchievement().name;
+        }
+
+        @Override
+        public String getDescription() {
+            return getAchievement().description;
+        }
+
+        @Override
+        public GameMode getGameMode() {
+            return getAchievement().gameMode;
+        }
+
+        @Override
+        public TieredAchievements[] getAchievements() {
+            return TieredAchievements.values();
+        }
+
     }
 }

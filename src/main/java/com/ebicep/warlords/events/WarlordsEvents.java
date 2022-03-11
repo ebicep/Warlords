@@ -51,7 +51,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.DebugMenu.openMapsMenu;
+import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 

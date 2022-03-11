@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
@@ -30,6 +31,8 @@ import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public abstract class DatabaseGameBase {
 
@@ -120,15 +123,15 @@ public abstract class DatabaseGameBase {
                 System.out.println(ChatColor.GREEN + "[Warlords] UPDATING PLAYER STATS " + game.getGameId());
 
                 //if(!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                //ACHIEVEMENTS
-                game.warlordsPlayers().forEachOrdered(warlordsPlayer -> {
-                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid());
-                    databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked());
-                });
+                //CHALLENGE ACHIEVEMENTS
+//                game.warlordsPlayers().forEachOrdered(warlordsPlayer -> {
+//                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid());
+//                    databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked());
+//                });
                 //}
             }
 
-            DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame().apply(game, gameWinEvent, updatePlayerStats);
+            DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
             if (databaseGame == null) {
                 System.out.println(ChatColor.GREEN + "[Warlords] Cannot add game to database - the collection has not been configured");
                 return;
@@ -142,8 +145,6 @@ public abstract class DatabaseGameBase {
             databaseGame.createHolograms();
 
             addGameToDatabase(databaseGame);
-
-            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {
@@ -164,7 +165,7 @@ public abstract class DatabaseGameBase {
 
     public static void addGameToDatabase(DatabaseGameBase databaseGame) {
         if (DatabaseManager.gameService == null) return;
-        GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
+        GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             //if not counted then update player stats then set counted to true, else do nothing
@@ -181,15 +182,9 @@ public abstract class DatabaseGameBase {
             //only add game if comps
             //if (databaseGame.isPrivate) {
             Warlords.newChain()
+                    .delay(4, TimeUnit.SECONDS)
                     .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
-                    .sync(() -> {
-                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
-                            LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
-                            if (Bukkit.getPlayer(uuid) != null) {
-                                setGameHologramVisibility(Bukkit.getPlayer(uuid));
-                            }
-                        });
-                    })
+                    .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false))
                     .execute();
             //}
         }
@@ -197,7 +192,7 @@ public abstract class DatabaseGameBase {
 
     public static void removeGameFromDatabase(DatabaseGameBase databaseGame) {
         if (DatabaseManager.gameService == null) return;
-        GamesCollections collection = databaseGame.getGameMode().getGamesCollections();
+        GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             //if counted then remove player stats then set counted to false, else do nothing
@@ -223,6 +218,13 @@ public abstract class DatabaseGameBase {
 
         if (databasePlayerAllTime != null) {
             databasePlayerAllTime.updateStats(databaseGame, gamePlayer, add);
+//            databasePlayerAllTime.addAchievements(
+//                    Arrays.stream(TieredAchievements.values())
+//                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
+//                            .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayerAllTime))
+//                            .map(TieredAchievements.TieredAchievementRecord::new)
+//                            .collect(Collectors.toList())
+//            );
             DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
         } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
         if (databasePlayerSeason != null) {

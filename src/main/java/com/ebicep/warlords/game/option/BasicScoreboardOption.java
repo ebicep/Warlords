@@ -33,9 +33,7 @@ public class BasicScoreboardOption implements Option{
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(
-                        format.format(new Date())
-                );
+                return Collections.singletonList(ChatColor.GRAY + format.format(new Date()));
             }
         };
         new GameRunnable(game) {

@@ -107,6 +107,9 @@ commands:
   achievements:
     description: Achievements
     aliases: [ achievement, achievements ]
+  findplayer:
+    description: Finds player in game
+    aliases: [ findplayer ]
 
 permissions:
   group.default:

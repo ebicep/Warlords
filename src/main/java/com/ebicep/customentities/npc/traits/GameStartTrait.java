@@ -59,12 +59,14 @@ public class GameStartTrait extends Trait {
         
         //check if player is in a party, they must be leader to join
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        List<Player> people = party.map(value -> value.getAllPartyPeoplePlayerOnline()).orElseGet(() -> Collections.singletonList(player));
+        List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> Collections.singletonList(player));
         if (party.isPresent()) {
             if (!party.get().getPartyLeader().getUuid().equals(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
+                return;
             } else if (!party.get().allOnlineAndNoAFKs()) {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
+                return;
             }
         }
 
