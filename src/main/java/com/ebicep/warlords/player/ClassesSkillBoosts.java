@@ -409,8 +409,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            "§7Increase the amount of damage\n§7you convert into healing with\n§7Protector's Strike by 20%",
-            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aProtector's Strike by §c20%",
+            "§7Increase the amount of damage\n§7you convert into healing for allies with\n§7Protector's Strike by 20%",
+            "§aIncrease the amount of damage\n§ayou convert into healing for allies with\n§aProtector's Strike by §c20%",
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
@@ -617,39 +617,39 @@ public enum ClassesSkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse\nby 25% and increase the blind duration\nby 0.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse\nby §c25% §aand increase the blind duration\nby §c0.5 §aseconds.",
+            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 0.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c0.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
                     ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
     ),
     BLINDING_ASSAULT("Blinding Assault",
-            "§7Reduce the cooldown by Blinding Assault by 40%",
-            "§aReduce the cooldown by Blinding Assault by §c40%",
+            "§7Reduce the cooldown by Blinding Assault\nby 40%",
+            "§aReduce the cooldown by Blinding Assault\nby §c40%",
             BlindingAssault.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch by 30%",
-            "§aReduce the cooldown by Soul Switch by §c30%",
+            "§7Reduce the cooldown by Soul Switch\nby 40%",
+            "§aReduce the cooldown by Soul Switch\nby §c40%",
             SoulSwitch.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "§7Increase the duration of Order Of Eviscerate\nby 2 seconds and reduce the cooldown\nby 20%.",
-            "§aIncrease the duration of Order Of Eviscerate\nby §c2 §aseconds and reduce the cooldown\nby §c20%.",
+            "§7Increase the duration of Order Of Eviscerate\nby 4 seconds and reduce the cooldown\nby 20%.",
+            "§aIncrease the duration of Order Of Eviscerate\nby §c4 §aseconds and reduce the cooldown\nby §c20%.",
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
-                    ((OrderOfEviscerate) abstractAbility).setDuration(10);
+                    ((OrderOfEviscerate) abstractAbility).setDuration(12);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
@@ -729,14 +729,14 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
     ),
-    ACUPRESSURE("Acupressure",
-            "§7Increase the amount of health you\n§7restore with Acupressure\n§7by 10% and reduce the cooldown\nby 15%",
-            "§aIncrease the amount of health you\n§arestore with Acupressure\n§aby §c10% and reduce the cooldown\nby §c15%",
+    VITALITY_LIQUOR("Vitality Liquor",
+            "§7Increase the amount of health you\n§7restore with Vitality Liquor\n§7by 10% and reduce the cooldown\nby 25%",
+            "§aIncrease the amount of health you\n§arestore with Vitality Liquor\n§aby §c10% §aand reduce the cooldown\nby §c25%",
             VitalityLiquor.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",

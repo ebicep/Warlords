@@ -11,11 +11,8 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -114,7 +111,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         Team team = e.getValue();
                         //check if player already is recorded
                         // TODO Test this logic if player are not online if this happens (we do not have player objects in this case)
-                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) { 
+                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
                             return;
                         }
                         Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
@@ -329,6 +326,10 @@ public class PreLobbyState implements State, TimerDebugAble {
                     bestTeam.forEach((player, team) -> {
                         game.setPlayerTeam(player, team);
                         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+                        LobbyLocationMarker location = LobbyLocationMarker.getFirstLobbyLocation(game, team);
+                        if (location != null) {
+                            player.teleport(location.getLocation());
+                        }
                     });
 
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
@@ -377,8 +378,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void end() {
-        updateTeamPreferences();
-        distributePeopleOverTeams();
+        //updateTeamPreferences();
+        //distributePeopleOverTeams();
     }
 
     public String getTimeLeftString() {

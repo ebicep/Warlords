@@ -102,7 +102,7 @@ public enum Classes {
             Apothecary::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", 200),
             SpecType.HEALER,
-            IMPALING_STRIKE, SOOTHING_PUDDLE, ACUPRESSURE, REMEDIC_CHAINS, DRAINING_MIASMA),
+            IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_LIQUOR, REMEDIC_CHAINS, DRAINING_MIASMA),
 
     ;
 

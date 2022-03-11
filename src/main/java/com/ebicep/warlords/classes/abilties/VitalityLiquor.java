@@ -41,6 +41,7 @@ public class VitalityLiquor extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
+        wp.subtractEnergy(energyCost);
         wp.addHealingInstance(
                 wp,
                 name,

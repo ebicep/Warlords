@@ -311,8 +311,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5).yaw(180), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));

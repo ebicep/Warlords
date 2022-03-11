@@ -4,11 +4,6 @@ import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +13,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Spawns a cute memorial grave an a player death event
@@ -141,7 +142,7 @@ public class GraveOption implements Option, Listener {
                     for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
                         Block underTest = toTest.getBlock();
                         if (underTest.getType() != Material.AIR) {
-                            if (underTest.getType().isTransparent()) {
+                            if (underTest.getType().isTransparent() || underTest.getType() == Material.BANNER) {
                                 // We have hit a sappling, fence, torch or other non-solid
                                 break;
                             }
