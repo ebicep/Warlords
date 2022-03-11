@@ -36,11 +36,11 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public CooldownFilter<T> filterName(String name) {
-        return new CooldownFilter<T>(stream.filter(abstractCooldown -> abstractCooldown.getName().equalsIgnoreCase(name)));
+        return new CooldownFilter<>(stream.filter(abstractCooldown -> abstractCooldown.getName() != null && abstractCooldown.getName().equalsIgnoreCase(name)));
     }
 
     public CooldownFilter<T> filterNameActionBar(String name) {
-        return new CooldownFilter<T>(stream.filter(abstractCooldown -> abstractCooldown.getActionBarName().equalsIgnoreCase(name)));
+        return new CooldownFilter<>(stream.filter(abstractCooldown -> abstractCooldown.getActionBarName() != null && abstractCooldown.getActionBarName().equalsIgnoreCase(name)));
     }
 
     public <R> CooldownFilter<T> filterCooldownClass(Class<R> clazz) {
@@ -56,16 +56,25 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public <R> Stream<R> filterCooldownClassAndMapToObjectsOfClass(Class<R> clazz) {
-        return stream.filter(cd -> clazz.equals(cd.getCooldownClass())).map(t -> t.getCooldownObject()).map(clazz::cast);
+        return stream.filter(cd -> Objects.equals(clazz, cd.getCooldownClass()))
+                .map(t -> t.getCooldownObject())
+                .filter(Objects::nonNull)
+                .map(clazz::cast);
     }
 
     public <R> Stream<R> mapToObjectsOfClass(Class<R> clazz) {
-        return stream.map(t -> t.getCooldownObject()).map(clazz::cast);
+        return stream.map(t -> t.getCooldownObject())
+                .filter(Objects::nonNull)
+                .map(clazz::cast);
     }
 
     public <R> Optional<R> findFirstObject(Object object, Class<R> clazz) {
         assert object.getClass() == clazz;
-        return stream.filter(cd -> cd.getCooldownObject().equals(object)).map(cd -> cd.getCooldownObject()).findFirst().map(clazz::cast);
+        return stream.filter(cd -> cd.getCooldownObject() != null && cd.getCooldownObject().equals(object))
+                .map(cd -> cd.getCooldownObject())
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(clazz::cast);
     }
 
     public Optional<T> findFirst() {
