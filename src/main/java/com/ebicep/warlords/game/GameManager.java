@@ -452,16 +452,16 @@ public class GameManager implements AutoCloseable {
     }
 
     public enum QueueResult {
-        READY_JOIN("You have joined an existing game"),
-        READY_NEW("A new game has been made for you"),
-        ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error"),
-        ERROR_NEW_GAME("We were unable to find a new for you because of an internal error"),
+        READY_JOIN("You have joined an existing game."),
+        READY_NEW("A new game has been made for you."),
+        ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error. Please report this."),
+        ERROR_NEW_GAME("We were unable to find a new for you because of an internal error. Please report this."),
         EXPIRED("No game found in time"),
         CANCELLED("Cancelled queueing"),
         REPLACED("Replaced with another queue entry"),
-        INVALID_GENERIC("Your request to queue was invalid because of an unknown reason"),
-        INVALID_OVERSIZE("Your request to queue was invalid because your party was too big for the specified map/game"),
-        INVALID_MAP_CATEGORY("Your request to queue was invalid because the combination of map/category was not found"),
+        INVALID_GENERIC("Your request to queue was invalid because of an unknown reason. Please report this."),
+        INVALID_OVERSIZE("Your request to queue was invalid because your party was too big for the specified map/game."),
+        INVALID_MAP_CATEGORY("Your request to queue was invalid because the combination of map/category was not found."),
         CLOSE("The queue has been closed"),;
         private final String message;
 

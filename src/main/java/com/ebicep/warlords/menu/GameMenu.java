@@ -816,11 +816,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.35) {
+                        if (chance < 96.38) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.35 + 3) {
+                        } else if (chance < 96.38 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.35 + 3 + 0.6) {
+                        } else if (chance < 96.38 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
@@ -858,14 +858,14 @@ public class GameMenu {
                         if (!weapon.isUnlocked) {
                             weapon.isUnlocked = true;
                             Warlords.getInstance().saveWeaponConfig();
-                            //Bukkit.broadcastMessage("");
-                            //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
-                            //Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
+                            Bukkit.broadcastMessage("");
                         } else {
                             if (rarity == WeaponsRarity.MYTHIC) {
-                                //Bukkit.broadcastMessage("");
-                                //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
-                                //Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
+                                Bukkit.broadcastMessage("");
                             }
                         }
                     }

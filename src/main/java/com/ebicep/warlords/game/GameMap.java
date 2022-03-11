@@ -465,7 +465,7 @@ public enum GameMap {
         }
 
     },
-    /*DEBUG(
+    DEBUG(
             "Debug",
             96,
             1,
@@ -517,7 +517,7 @@ public enum GameMap {
             return options;
         }
 
-    },*/
+    },
     /*HEAVEN_WILL(
             "Heaven's Will",
             2,
