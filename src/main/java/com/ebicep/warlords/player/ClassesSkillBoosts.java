@@ -622,7 +622,7 @@ public enum ClassesSkillBoosts {
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(40);
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
@@ -636,11 +636,11 @@ public enum ClassesSkillBoosts {
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch\nby 40%",
-            "§aReduce the cooldown by Soul Switch\nby §c40%",
+            "§7Reduce the cooldown by Soul Switch\nby 25%",
+            "§aReduce the cooldown by Soul Switch\nby §c25%",
             SoulSwitch.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
@@ -664,14 +664,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle\nby 5% and increase the silence\nduration by 1 second.",
-            "§aReduce the cooldown of Soul Shackle\nby §c5% §aand increase the silence\nduration by §c1 §asecond.",
+            "§7Reduce the cooldown of Soul Shackle\nby 10% and increase the silence\nduration by 1 second.",
+            "§aReduce the cooldown of Soul Shackle\nby §c10% §aand increase the silence\nduration by §c1 §asecond.",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
                     ((SoulShackle) abstractAbility).setMinSilenceDuration(3);
                     ((SoulShackle) abstractAbility).setMaxSilenceDuration(5);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .95f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
     ),

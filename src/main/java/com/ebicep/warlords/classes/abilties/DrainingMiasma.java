@@ -73,7 +73,7 @@ public class DrainingMiasma extends AbstractAbility {
 
             miasmaTarget.getEntity().addPotionEffect(
                     new PotionEffect(PotionEffectType.BLINDNESS,
-                    3 * 20,
+                    3 * 25,
                     0,
                     true,
                     false),

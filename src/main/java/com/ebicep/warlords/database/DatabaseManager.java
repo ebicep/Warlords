@@ -197,8 +197,8 @@ public class DatabaseManager {
         ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
         ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
         ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
-        ArmorManager.Helmets.setSelectedRogue(player, databasePlayer.getShaman().getHelmet());
-        ArmorManager.ArmorSets.setSelectedRogue(player, databasePlayer.getShaman().getArmor());
+        ArmorManager.Helmets.setSelectedRogue(player, databasePlayer.getRogue().getHelmet());
+        ArmorManager.ArmorSets.setSelectedRogue(player, databasePlayer.getRogue().getArmor());
 
         HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
         weaponSkins.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());

@@ -82,7 +82,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 DeathsDebt.class,
                 tempDeathsDebt,
                 wp,
-                CooldownTypes.ABILITY,
+                CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
                 ticksLeft

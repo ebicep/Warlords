@@ -19,7 +19,7 @@ public class RighteousStrike extends AbstractStrikeBase {
                 "§7Each strike reduces the duration of your struck\n" +
                 "§7target's active ability timers by §60.5 §7seconds." +
                 "\n\n" +
-                "§7Additionally, if your striked target is silenced,\n" +
+                "§7Additionally, if your struck target is silenced,\n" +
                 "§7reduce the cooldown of your Prism Guard by §60.8\n" +
                 "§7seconds and reduce their active ability timers\n" +
                 "§7by §60.8 §7seconds instead.";

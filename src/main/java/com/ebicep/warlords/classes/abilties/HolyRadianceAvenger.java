@@ -29,9 +29,9 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 "\n\n" +
                 "§7You may look at an enemy to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks. However,\n" +
-                "§7marking players from far away\n" +
-                "§7will not give them healing.";
+                "§7optimal range of §e" + markRadius + " §7blocks. Reducing\n" +
+                "§7their energy per second by\n" +
+                "§e8 §7for the duration.";
     }
 
     @Override
