@@ -3,7 +3,6 @@ package com.ebicep.warlords.util;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -255,7 +254,7 @@ public class EffectUtils {
      * @param item       which item should the chain hold
      * @param ticksLived how long should the chain last
      */
-    public static void playChainAnimation(Location location1, Location location2, Material item, int ticksLived) {
+    public static void playChainAnimation(Location location1, Location location2, ItemStack item, int ticksLived) {
         Location from = location1.clone().add(0, -0.6, 0);
         Location to = location2.clone().add(0, -0.6, 0);
         from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
@@ -268,7 +267,7 @@ public class EffectUtils {
             chain.setVisible(false);
             chain.setBasePlate(false);
             chain.setMarker(true);
-            chain.setHelmet(new ItemStack(item));
+            chain.setHelmet(item);
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
             if(to.distanceSquared(from) < .3) {
@@ -298,11 +297,11 @@ public class EffectUtils {
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
-    public static void playChainAnimation(Player player1, Player player2, Material item, int ticksLived) {
+    public static void playChainAnimation(Player player1, Player player2, ItemStack item, int ticksLived) {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
 
-    public static void playChainAnimation(WarlordsPlayer player1, WarlordsPlayer player2, Material item, int ticksLived) {
+    public static void playChainAnimation(WarlordsPlayer player1, WarlordsPlayer player2, ItemStack item, int ticksLived) {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
 

@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
@@ -45,8 +46,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
-                EffectUtils.playChainAnimation(wp, markTarget, Material.PUMPKIN, 8);
+                EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
+                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.LEAVES, 1, (short) 2), 8);
 
                 HolyRadianceAvenger tempMark = new HolyRadianceAvenger(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 markTarget.getCooldownManager().addRegularCooldown(

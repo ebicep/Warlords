@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -28,7 +27,6 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -83,7 +81,7 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
+                "§7the ground, dealing §c178 §7- §c244 §7damage\n" +
                 "§7damage every second to nearby enemies and\n" +
                 "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
                 "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
@@ -153,8 +151,8 @@ public class HammerOfLight extends AbstractAbility {
                                 warlordsPlayer.addDamageInstance(
                                         wp,
                                         name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
+                                        178,
+                                        244,
                                         critChance,
                                         critMultiplier,
                                         false);

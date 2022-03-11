@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
@@ -54,7 +55,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0, 1);
-                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.PUMPKIN, 8);
+                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.PUMPKIN), 20);
 
                 HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 markTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);

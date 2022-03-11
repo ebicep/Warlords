@@ -52,10 +52,10 @@ public class VitalityLiquor extends AbstractAbility {
                 false
         );
 
-        Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
-        Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
+        Utils.playGlobalSound(player.getLocation(), Sound.GLASS, 2, 0.1f);
+        Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.7f);
 
-        new FallingBlockWaveEffect(player.getLocation(), acuRange, 1, Material.DEAD_BUSH, (byte) 0).play();
+        new FallingBlockWaveEffect(player.getLocation(), 7, 1, Material.SAPLING, (byte) 2).play();
 
         for (WarlordsPlayer acuTarget : PlayerFilter
                 .entitiesAround(player, acuRange, acuRange, acuRange)

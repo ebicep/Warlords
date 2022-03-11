@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -43,9 +44,6 @@ public class HeartToHeart extends AbstractAbility {
             radius = 15;
             verticalRadius = 15;
         }
-
-        System.out.println(radius);
-        System.out.println(verticalRadius);
 
         for (WarlordsPlayer heartTarget : PlayerFilter
                 .entitiesAround(wp, radius, verticalRadius, radius)
@@ -109,7 +107,7 @@ public class HeartToHeart extends AbstractAbility {
                             targetLoc.getPitch()
                     );
 
-                    EffectUtils.playChainAnimation(wp, heartTarget, Material.CLAY, timer);
+                    EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.LEAVES, 1, (short) 1), timer);
 
                     wp.teleportLocationOnly(newLocation);
                     player.setFallDistance(-5);

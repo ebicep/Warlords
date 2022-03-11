@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
@@ -61,7 +62,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
-                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.RED_ROSE, 8);
+                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.RED_ROSE), 8);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 markTarget.getCooldownManager().addRegularCooldown(

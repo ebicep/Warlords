@@ -84,8 +84,10 @@ public enum Weapons {
     SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY),
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
-    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.WHEAT), MYTHIC),
-    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.SPIDER_EYE), MYTHIC),
+    // mythic
+    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), MYTHIC),
+    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), MYTHIC),
+    FABLED_HEROICS_SWORD_2("Bumbleblade", new ItemStack(Material.NETHER_BRICK_ITEM), MYTHIC),
 
     ;
 
