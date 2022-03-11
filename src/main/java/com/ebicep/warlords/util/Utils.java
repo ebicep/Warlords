@@ -392,7 +392,7 @@ public class Utils {
         if (second < 10) {
             message.append('0');
         }
-        message.append(second);
+        message.append(second == -1 ? 0 : second);
     }
 
     public static String formatTimeLeft(long seconds) {

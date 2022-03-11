@@ -60,6 +60,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         Team team = getTeam();
         Team playerTeam = player.getTeam();
         StringBuilder builder = new StringBuilder();
+        if (flag.getLocation().getWorld() != player.getLocation().getWorld()) return "";
         double flagDistance = Math.round(flag.getLocation().distance(player.getLocation()) * 10) / 10.0;
         builder.append(team.teamColor()).append(ChatColor.BOLD);
         if (playerTeam != team) {

@@ -435,6 +435,9 @@ public class GameMenu {
         List<ArmorSets> armorSets = Arrays.asList(ArmorSets.values());
         int xPosition = 1;
         for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
+            if (pageNumber == 3 && i == 15) {
+                break;
+            }
             ArmorSets armorSet = armorSets.get(i);
             ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)

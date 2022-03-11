@@ -220,7 +220,15 @@ public class Warlords extends JavaPlugin {
     }
 
     public static ItemStack getHead(UUID uuid) {
-        return CraftItemStack.asBukkitCopy(playerHeads.getOrDefault(uuid, CraftItemStack.asNMSCopy(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal()))));
+        if (playerHeads.containsKey(uuid)) {
+            return CraftItemStack.asBukkitCopy(playerHeads.get(uuid));
+        }
+        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+        skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName());
+        playerSkull.setItemMeta(skullMeta);
+        playerHeads.put(uuid, CraftItemStack.asNMSCopy(playerSkull));
+        return playerSkull;
     }
 
     public static GameManager getGameManager() {
@@ -350,6 +358,7 @@ public class Warlords extends JavaPlugin {
         new DiscordCommand().register(this);
         new PollCommand().register(this);
         new AchievementsCommand().register(this);
+        new FindPlayer().register(this);
 
         updateHeads();
 

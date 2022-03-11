@@ -15,11 +15,13 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
     private float value;
     private int critChance;
     private int critMultiplier;
-
+    private boolean isCrit;
     private boolean hasFlag;
+    private boolean isDead;
+
     private boolean isDamageInstance;
 
-    private int inGameSecond;
+    private int inGameTick;
 
     private boolean cancelled;
 
@@ -31,6 +33,7 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
             float value,
             int critChance,
             int critMultiplier,
+            boolean isCrit,
             boolean isDamageInstance
     ) {
         super(player);
@@ -41,13 +44,12 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
         this.value = value;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        this.hasFlag = player.getFlagDamageMultiplier() != 1;
-
+        this.hasFlag = player.hasFlag();
+        this.isDead = player.isDead();
+        this.isCrit = isCrit;
         this.isDamageInstance = isDamageInstance;
 
-        if (getGame().getState() instanceof PlayingState) {
-            this.inGameSecond = ((PlayingState) getGame().getState()).getTicksElapsed() / 20;
-        }
+        this.inGameTick = player.getGameState().getTicksElapsed();
     }
 
     public WarlordsPlayer getAttacker() {
@@ -78,8 +80,16 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
         return critMultiplier;
     }
 
+    public boolean isCrit() {
+        return isCrit;
+    }
+
     public boolean isHasFlag() {
         return hasFlag;
+    }
+
+    public boolean isDead() {
+        return isDead;
     }
 
     public boolean isDamageInstance() {
@@ -90,8 +100,8 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
         return !isDamageInstance;
     }
 
-    public int getInGameSecond() {
-        return inGameSecond;
+    public int getInGameTick() {
+        return inGameTick;
     }
 
     @Override
@@ -111,5 +121,24 @@ public class WarlordsDamageHealingFinalEvent extends WarlordsPlayerEvent impleme
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @Override
+    public String toString() {
+        return "WarlordsDamageHealingFinalEvent{" +
+                "attacker=" + attacker +
+                ", ability='" + ability + '\'' +
+                ", initialHealth=" + initialHealth +
+                ", finalHealth=" + finalHealth +
+                ", value=" + value +
+                ", critChance=" + critChance +
+                ", critMultiplier=" + critMultiplier +
+                ", hasFlag=" + hasFlag +
+                ", isDead=" + isDead +
+                ", isDamageInstance=" + isDamageInstance +
+                ", inGameSecond=" + inGameTick +
+                ", cancelled=" + cancelled +
+                ", player=" + player +
+                '}';
     }
 }

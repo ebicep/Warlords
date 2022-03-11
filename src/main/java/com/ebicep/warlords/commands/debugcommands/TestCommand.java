@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -73,8 +74,14 @@ public class TestCommand implements CommandExecutor {
         if (warlordsPlayer != null) {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
+
+            warlordsPlayer.getGame().warlordsPlayers().forEach(warlordsPlayer1 -> {
+                System.out.println(warlordsPlayer1.getName() + " - " + warlordsPlayer1.isDead());
+            });
+
         }
 
+        System.out.println(BotManager.getTextChannelWL2ByName("server-status"));
 
         Player player = (Player) sender;
 //        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
