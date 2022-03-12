@@ -120,6 +120,7 @@ public class FallenSouls extends AbstractAbility {
             fallenSoul.getShooter().updateRedItem();
             new CooldownFilter<>(fallenSoul.getShooter(), PersistentCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                    .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(warlordsPlayer))
                     .forEachOrdered(soulbinding -> {
                         fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
