@@ -43,7 +43,7 @@ public class SRCalculator {
     }
 
     private static double averageAdjusted(double playerAverage, double total) {
-        double average = playerAverage / ((total / 48d));
+        double average = playerAverage / ((total / playersSR.size()));
         if (average >= 5) return 1;
         if (average <= 0) return 0;
         return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
