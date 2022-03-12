@@ -1531,7 +1531,7 @@ public final class WarlordsPlayer {
         boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
         this.minuteStats.addHealing((long) amount);
         if (onCarrier) {
-            this.minuteStats.addDamageOnCarrier((long) amount);
+            this.minuteStats.addHealingOnCarrier((long) amount);
         }
     }
 
