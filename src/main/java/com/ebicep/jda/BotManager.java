@@ -60,6 +60,10 @@ public class BotManager {
 
                 @Override
                 public void run() {
+                    if (getCompGamesServer() == null || getWL2Server() == null) {
+                        System.out.println("[BotManager]: Comp/WL2Server guild is null, ending task");
+                        this.cancel();
+                    }
                     if (counter % 3 == 0) {
                         if (numberOfMessagesSentLast30Sec > 0) {
                             numberOfMessagesSentLast30Sec--;
@@ -70,7 +74,7 @@ public class BotManager {
                     }
                     counter++;
                 }
-            }.runTaskTimer(Warlords.getInstance(), 20, 20);
+            }.runTaskTimer(Warlords.getInstance(), 200, 20);
         }
     }
 
