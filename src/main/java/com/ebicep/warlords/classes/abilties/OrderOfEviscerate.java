@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -7,9 +8,11 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -100,9 +103,14 @@ public class OrderOfEviscerate extends AbstractAbility {
 
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.hidePlayer(player);
-        }
+        PlayerFilter.playingGame(wp.getGame())
+                .enemiesOf(wp)
+                .forEach(warlordsPlayer -> {
+                    LivingEntity livingEntity = warlordsPlayer.getEntity();
+                    if (livingEntity instanceof Player) {
+                        ((Player) livingEntity).hidePlayer(player);
+                    }
+                });
 
         new GameRunnable(wp.getGame()) {
             @Override
