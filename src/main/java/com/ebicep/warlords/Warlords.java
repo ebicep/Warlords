@@ -700,59 +700,10 @@ public class Warlords extends JavaPlugin {
                             }
                         }
 
-                        if (newHealth <= 0 && wp.getRespawnTimer() == -1) {
-                            //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
-                            if (!wp.getCooldownManager().checkUndyingArmy(false)) {
-                                if (player != null) {
-                                    player.getInventory().remove(UndyingArmy.BONE);
-                                }
-                            }
-
-                            //removing cooldowns here so undying army doesnt get removed
-                            cooldownManager.clearCooldowns();
-
-                            // warlordsPlayer.respawn();
-                            if (player != null) {
-                                player.setGameMode(GameMode.SPECTATOR);
-                                //precaution
-                            }
-                            FlagHolder.dropFlagForPlayer(wp);
-
-                            //giving out assists
-                            int lastElementIndex = wp.getHitBy().size() - 1;
-                            WarlordsPlayer killedBy = wp.getHitBy().entrySet().stream().skip(lastElementIndex).iterator().next().getKey();
-                            final int[] counter = {0};
-                            wp.getHitBy().forEach((assisted, value) -> {
-                                if (counter[0] != lastElementIndex) {
-                                    if (killedBy == assisted || killedBy == wp) {
-                                        assisted.sendMessage(
-                                                ChatColor.GRAY +
-                                                        "You assisted in killing " +
-                                                        wp.getColoredName()
-                                        );
-                                    } else {
-                                        assisted.sendMessage(
-                                                ChatColor.GRAY +
-                                                        "You assisted " +
-                                                        killedBy.getColoredName() +
-                                                        ChatColor.GRAY + " in killing " +
-                                                        wp.getColoredName()
-                                        );
-                                    }
-
-                                    assisted.addAssist();
-                                }
-                                counter[0]++;
-                            });
-                            wp.getHitBy().clear();
-                            wp.setRegenTimer(0);
-                            wp.heal();
-                        } else {
-                            if (player != null) {
-                                //precaution
-                                if (newHealth > 0 && newHealth <= 40) {
-                                    player.setHealth(newHealth);
-                                }
+                        if (player != null) {
+                            //precaution
+                            if (newHealth > 0 && newHealth <= 40) {
+                                player.setHealth(newHealth);
                             }
                         }
 

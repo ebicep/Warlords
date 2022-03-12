@@ -12,7 +12,6 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
@@ -875,9 +874,6 @@ public final class WarlordsPlayer {
             if (attacker != this) {
                 hitBy.putAll(attacker.getHealedBy());
             }
-
-            hitBy.remove(attacker);
-            hitBy.put(attacker, 10);
         }
 
         this.addDeath();
@@ -893,8 +889,35 @@ public final class WarlordsPlayer {
             if (item != null) {
                 item.removeEnchantment(Enchantment.OXYGEN);
             }
+            //removing boner
+            player.getInventory().remove(UndyingArmy.BONE);
         }
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
+
+        //giving out assists
+        hitBy.forEach((assisted, value) -> {
+            if (attacker == assisted || attacker == this) {
+                assisted.sendMessage(
+                        ChatColor.GRAY +
+                                "You assisted in killing " +
+                                getColoredName()
+                );
+            } else {
+                if (attacker != null) {
+                    assisted.sendMessage(
+                            ChatColor.GRAY +
+                                    "You assisted " +
+                                    attacker.getColoredName() +
+                                    ChatColor.GRAY + " in killing " +
+                                    getColoredName()
+                    );
+                }
+            }
+            assisted.addAssist();
+        });
+        hitBy.clear();
+        regenTimer = 0;
+        heal();
     }
 
     private void checkForAchievementsDamage(WarlordsPlayer attacker) {
