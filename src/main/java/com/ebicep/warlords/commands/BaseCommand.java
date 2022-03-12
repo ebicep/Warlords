@@ -77,6 +77,7 @@ public class BaseCommand {
         if(player == null) {
             return null;
         }
+
         if(!player.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
             sender.sendMessage(ChatColor.RED + "This command can only be used in a private game!");
             return null;

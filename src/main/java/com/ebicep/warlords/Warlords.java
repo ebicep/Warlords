@@ -758,7 +758,7 @@ public class Warlords extends JavaPlugin {
                                     .filterCooldownClass(VitalityLiquor.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += 1.5;
+                                energyGainPerTick += 1;
                             }
 
                             // Checks whether the player has the Energy Powerup active.

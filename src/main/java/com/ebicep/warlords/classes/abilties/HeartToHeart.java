@@ -28,7 +28,8 @@ public class HeartToHeart extends AbstractAbility {
         description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
                 "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
-                "§7granting immunity to de-buffs." +
+                "§7granting immunity to de-buffs. You are healed" +
+                "§7for §a400 §7health after reaching your ally." +
                 "\n\n" +
                 "§7Heart To Heart's range is greatly reduced when\n" +
                 "§7holding a flag.";
@@ -116,12 +117,13 @@ public class HeartToHeart extends AbstractAbility {
                     for (float i = 0; i < 6; i++) {
                         double angle = Math.toRadians(i * 90) + timer * 0.6;
                         double width = 1.5D;
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 2,
+                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1,
                                 center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
 
                     if (timer >= 8) {
                         wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
+                        wp.addHealingInstance(wp, name, 400, 400, -1, 100, false, false);
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 0, 1);
