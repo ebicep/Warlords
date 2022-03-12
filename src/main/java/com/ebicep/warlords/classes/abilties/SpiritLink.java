@@ -128,9 +128,7 @@ public class SpiritLink extends AbstractChainBase {
                 .filterName("Spirits Respite")
                 .findFirst()
                 .ifPresent(regularCooldown -> {
-                    DeathsDebt deathsDebt = ((DeathsDebt) regularCooldown.getCooldownObject());
-                    deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + 10);
-                    regularCooldown.setTicksLeft(deathsDebt.getTimeLeftRespite());
+                    regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
                 });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter

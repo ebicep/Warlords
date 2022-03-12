@@ -98,35 +98,33 @@ public class UndyingArmy extends AbstractAbility {
             new GameRunnable(wp.getGame()) {
                 @Override
                 public void run() {
-                    if (!wp.getGame().isFrozen()) {
-                        Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
-                        if (optionalUndyingArmy.isPresent()) {
-                            if (!(optionalUndyingArmy.get()).isArmyDead(teammate)) {
-                                float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
-                                teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
-                                teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
+                    Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
+                    if (optionalUndyingArmy.isPresent()) {
+                        if (!(optionalUndyingArmy.get()).isArmyDead(teammate)) {
+                            float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
+                            teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
+                            teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
 
-                                // particles
-                                Location playerLoc = teammate.getLocation();
-                                playerLoc.add(0, 2.1, 0);
-                                Location particleLoc = playerLoc.clone();
-                                for (int i = 0; i < 1; i++) {
-                                    for (int j = 0; j < 10; j++) {
-                                        double angle = j / 10D * Math.PI * 2;
-                                        double width = 0.5;
-                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                        particleLoc.setY(playerLoc.getY() + i / 5D);
-                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                            // particles
+                            Location playerLoc = teammate.getLocation();
+                            playerLoc.add(0, 2.1, 0);
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 1; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 10D * Math.PI * 2;
+                                    double width = 0.5;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 5D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
-                                    }
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
                                 }
-                            } else {
-                                this.cancel();
                             }
                         } else {
                             this.cancel();
                         }
+                    } else {
+                        this.cancel();
                     }
                 }
             }.runTaskTimer(0, 20);
