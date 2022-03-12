@@ -49,7 +49,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
 
             switch (category) {
                 case CAPTURE_THE_FLAG:
@@ -167,7 +167,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(127.5, 6.5, 19.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(133, 11.5, 130.5, 125, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(90.5, 11.5, 0.5, -45, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(91, 11.5, -2.5, -55, 0), Team.RED));
 
             options.add(new FlagCapturePointOption(loc.addXYZ(217.5, 36.5, 126.5, 150, 0), Team.BLUE));
             options.add(new FlagSpawnPointOption(loc.addXYZ(217.5, 36.5, 126.5, 150, 0), Team.BLUE));
@@ -268,7 +268,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(100.5, 20.5, 101.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(45.5, 29.5, 15.5, -30, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 29.5, 128.5, 145, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 29.5, 128.5, 150, 0), Team.RED));
 
             options.add(new FlagCapturePointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
             options.add(new FlagSpawnPointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
@@ -311,8 +311,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5).yaw(180), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5, -180, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
@@ -324,7 +324,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5, -180, 0), Team.RED));
 
             options.add(new FlagCapturePointOption(loc.addXYZ(-29.5, 38.5, -88.5, -90, 0), Team.BLUE));
             options.add(new FlagSpawnPointOption(loc.addXYZ(-29.5, 38.5, -88.5, -90, 0), Team.BLUE));
@@ -380,7 +380,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(623.5, 22.5, 188.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(560.5, 32.5, 294.5, -140, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(640.5, 32.5, 180.5, 50, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(640.5, 32.5, 180.5, 40, 0), Team.RED));
 
             options.add(new FlagCapturePointOption(loc.addXYZ(522.5, 37.5, 233.5, 90, 0), Team.BLUE));
             options.add(new FlagSpawnPointOption(loc.addXYZ(522.5, 37.5, 233.5, 90, 0), Team.BLUE));
