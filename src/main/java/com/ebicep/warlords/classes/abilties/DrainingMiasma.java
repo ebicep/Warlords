@@ -73,7 +73,7 @@ public class DrainingMiasma extends AbstractAbility {
 
             miasmaTarget.getEntity().addPotionEffect(
                     new PotionEffect(PotionEffectType.BLINDNESS,
-                    3 * 25,
+                    3 * 20,
                     0,
                     true,
                     false),
@@ -132,9 +132,6 @@ public class DrainingMiasma extends AbstractAbility {
 
                             ally.getSpeed().addSpeedModifier("Draining Miasma Speed", 30, 2 * 20, "BASE");
                         }
-
-                        EffectUtils.playHelixAnimation(wp.getLocation(), 6, ParticleEffect.VILLAGER_HAPPY, 1);
-
                     } else {
                         this.cancel();
                     }

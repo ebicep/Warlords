@@ -147,7 +147,7 @@ public class PrismGuard extends AbstractAbility {
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // 5% missing health * 4
                         float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
-                        int timeInSeconds = entry.getValue() * 4 / 20;
+                        int timeInSeconds = entry.getValue() * 5 / 20;
                         float totalHealing = (timeInSeconds * healingValue);
                         entry.getKey().addHealingInstance(
                                 wp,
@@ -166,7 +166,7 @@ public class PrismGuard extends AbstractAbility {
                     circle.playEffects();
                 }
             }
-        }.runTaskTimer(5, 4);
+        }.runTaskTimer(5, 5);
 
         return true;
     }

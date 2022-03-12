@@ -55,11 +55,11 @@ public class Settings {
 
     public enum HotkeyMode {
 
-        NEW_MODE(new ItemBuilder(Material.SUGAR_CANE)
+        NEW_MODE(new ItemBuilder(Material.REDSTONE)
                 .name(hotkeyModeName)
                 .lore(ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "NEW", "", ChatColor.YELLOW + "Click here to enable Classic mode.")
                 .get()),
-        CLASSIC_MODE(new ItemBuilder(Material.SUGAR)
+        CLASSIC_MODE(new ItemBuilder(Material.SNOW_BALL)
                 .name(hotkeyModeName)
                 .lore(ChatColor.YELLOW + "Currently selected " + ChatColor.AQUA + "Classic", "", ChatColor.YELLOW + "Click here to enable NEW mode.")
                 .get()),

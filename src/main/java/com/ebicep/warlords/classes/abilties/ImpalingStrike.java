@@ -23,7 +23,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 "§7and afflict them with the §aLEECH §7effect for §6" + leechDuration + " §7seconds.\n" +
                 "§7Whenever an ally (including yourself) deals\n" +
                 "§7damage to a leeched enemy, they heal for §a15%\n" +
-                "§7of the damage dealt. You heal for §a30% §7of the\n" +
+                "§7of the damage dealt. You heal for §a25% §7of the\n" +
                 "§7damage you deal to a leeched enemy instead.";
     }
 
@@ -44,12 +44,19 @@ public class ImpalingStrike extends AbstractStrikeBase {
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                float healingMultiplier;
+                if (event.getAttacker() == wp) {
+                    healingMultiplier = 0.25f;
+                } else {
+                    healingMultiplier = 0.15f;
+                }
+
                 if (!event.getAbility().equals("Draining Miasma")) {
                     event.getAttacker().addHealingInstance(
                             event.getAttacker(),
                             "Leech",
-                            currentDamageValue * 0.3f,
-                            currentDamageValue * 0.3f,
+                            currentDamageValue * healingMultiplier,
+                            currentDamageValue * healingMultiplier,
                             -1,
                             100,
                             false,

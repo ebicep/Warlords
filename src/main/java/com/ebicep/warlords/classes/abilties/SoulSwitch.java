@@ -45,6 +45,7 @@ public class SoulSwitch extends AbstractAbility {
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();
 
+                swapTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.GRAY + "You've been Soul Switched by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
                         ownLocation.getX(),
@@ -53,6 +54,7 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getYaw(),
                         swapLocation.getPitch()));
 
+                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + "You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
                 wp.teleport(new Location(
                         swapLocation.getWorld(),
                         swapLocation.getX(),

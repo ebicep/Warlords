@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -127,7 +126,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     }
                 } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.25f, 0, 0.05f, 5, wp.getLocation(), 500);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
                 }
             }

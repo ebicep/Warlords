@@ -22,7 +22,7 @@ public class SoulShackle extends AbstractAbility {
     private int maxSilenceDuration = 4;
 
     public SoulShackle() {
-        super("Soul Shackle", 348, 474, 9, 40, 20, 175);
+        super("Soul Shackle", 370, 494, 9, 40, 20, 175);
     }
 
     @Override

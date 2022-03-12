@@ -78,7 +78,7 @@ public class VitalityLiquor extends AbstractAbility {
                 .entitiesAround(player, acuRange, acuRange, acuRange)
                 .aliveEnemiesOf(wp)
         ) {
-            if (enemyTarget.getCooldownManager().hasCooldown(ImpalingStrike.class)) {
+            if (enemyTarget.getHitBy().containsKey(wp) && enemyTarget.getCooldownManager().hasCooldown(ImpalingStrike.class)) {
 
                 Utils.playGlobalSound(enemyTarget.getLocation(), Sound.GLASS, 2, 0.6f);
 
