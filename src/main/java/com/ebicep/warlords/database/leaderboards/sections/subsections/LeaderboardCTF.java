@@ -36,17 +36,20 @@ public class LeaderboardCTF extends LeaderboardGameType<DatabasePlayerCTF> {
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned())));
 
-        leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5),
+        leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2523.5, 58, 734.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience())));
-        leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
+        leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2520.5, 58, 739.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience())));
-        leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
+        leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2516.5, 58, 744.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience())));
-        leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
+        leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 749.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience())));
+        leaderboards.add(new Leaderboard("Rogue Experience", new Location(world, -2523.5, 58, 754.5),
+                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getRogue().getExperience(),
+                databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getRogue().getExperience())));
     }
 }
