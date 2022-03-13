@@ -186,7 +186,7 @@ public class BotManager {
             if (compStatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             } else if (textChannel.getLatestMessageId().equals(compStatusMessage.getId())) {
-                compStatusMessage.editMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
+                compStatusMessage.editMessageEmbeds(messageEmbed).queue();
             } else {
                 compStatusMessage.delete().queue();
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
@@ -196,7 +196,7 @@ public class BotManager {
             if (wl2StatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
             } else if (textChannel.getLatestMessageId().equals(wl2StatusMessage.getId())) {
-                wl2StatusMessage.editMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
+                wl2StatusMessage.editMessageEmbeds(messageEmbed).queue();
             } else {
                 wl2StatusMessage.delete().queue();
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
