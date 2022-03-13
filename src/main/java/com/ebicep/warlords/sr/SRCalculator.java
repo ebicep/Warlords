@@ -26,11 +26,7 @@ public class SRCalculator {
         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculating player SR PUBS");
         Warlords.newChain()
                 .async(() -> {
-                    for (DatabasePlayer databasePlayer : databasePlayerCache) {
-                        if (databasePlayer.getPubStats().getPlays() > 5) {
-                            numberOfActualPlayers++;
-                        }
-                    }
+                    numberOfActualPlayers = (int) databasePlayerCache.stream().filter(databasePlayer -> databasePlayer.getPubStats().getPlays() > 5).count();
                     for (DatabasePlayer databasePlayer : databasePlayerCache) {
                         if (databasePlayer.getPubStats().getPlays() > 5) {
                             playersSR.put(databasePlayer, SRCalculator.getSR(databasePlayer, DatabasePlayer::getPubStats));
@@ -38,6 +34,9 @@ public class SRCalculator {
                             playersSR.put(databasePlayer, 500);
                         }
                     }
+//                    SRCalculator.playersSR.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(databasePlayerIntegerEntry -> {
+//                        System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
+//                    });
                     System.out.println("Number of actual players = " + numberOfActualPlayers);
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculated player SR PUBS");
                 })
