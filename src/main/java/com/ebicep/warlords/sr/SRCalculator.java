@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class SRCalculator {
@@ -16,13 +17,20 @@ public class SRCalculator {
     public static final HashMap<Function<DatabasePlayer, Double>, Double> totalValues = new HashMap<>();
     public static final HashMap<DatabasePlayer, Integer> playersSR = new HashMap<>();
     public static List<DatabasePlayer> databasePlayerCache = new ArrayList<>();
+    public static int numberOfActualPlayers = 40;
 
     public static void recalculateSR() {
         totalValues.clear();
         playersSR.clear();
+        numberOfActualPlayers = 40;
         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculating player SR PUBS");
         Warlords.newChain()
                 .async(() -> {
+                    for (DatabasePlayer databasePlayer : databasePlayerCache) {
+                        if (databasePlayer.getPubStats().getPlays() > 5) {
+                            numberOfActualPlayers++;
+                        }
+                    }
                     for (DatabasePlayer databasePlayer : databasePlayerCache) {
                         if (databasePlayer.getPubStats().getPlays() > 5) {
                             playersSR.put(databasePlayer, SRCalculator.getSR(databasePlayer, DatabasePlayer::getPubStats));
@@ -30,6 +38,7 @@ public class SRCalculator {
                             playersSR.put(databasePlayer, 500);
                         }
                     }
+                    System.out.println("Number of actual players = " + numberOfActualPlayers);
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculated player SR PUBS");
                 })
                 .execute();
@@ -43,7 +52,7 @@ public class SRCalculator {
     }
 
     private static double averageAdjusted(double playerAverage, double total) {
-        double average = playerAverage / ((total / playersSR.size()));
+        double average = playerAverage / ((total / numberOfActualPlayers));
         if (average >= 5) return 1;
         if (average <= 0) return 0;
         return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));

@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,6 +18,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.Comparator;
+import java.util.Map;
 
 
 public class TestCommand implements CommandExecutor {
@@ -81,7 +85,8 @@ public class TestCommand implements CommandExecutor {
 
         }
 
-        System.out.println(BotManager.getTextChannelWL2ByName("server-status"));
+
+        SRCalculator.recalculateSR();
 
         Player player = (Player) sender;
 //        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
