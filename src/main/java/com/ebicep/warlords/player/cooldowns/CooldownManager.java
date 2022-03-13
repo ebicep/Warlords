@@ -1,9 +1,9 @@
 package com.ebicep.warlords.player.cooldowns;
 
-import com.ebicep.warlords.classes.abilties.Intervene;
-import com.ebicep.warlords.classes.abilties.OrbsOfLife;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.abilties.Intervene;
+import com.ebicep.warlords.abilties.OrbsOfLife;
+import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;

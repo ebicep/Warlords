@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsDeathEvent extends WarlordsPlayerEvent {
+public class WarlordsDeathEvent extends AbstractWarlordsPlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     @Nullable
     private final WarlordsPlayer killer;

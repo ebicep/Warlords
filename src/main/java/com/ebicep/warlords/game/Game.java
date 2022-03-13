@@ -2,7 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.events.WarlordsGameEvent;
+import com.ebicep.warlords.events.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.option.Option;
@@ -657,10 +657,10 @@ public final class Game implements Runnable, AutoCloseable {
             throw new IllegalPluginAccessException("Plugin attempted to register " + listener + " while not enabled");
         }
         for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : Warlords.getInstance().getPluginLoader().createRegisteredListeners(listener, Warlords.getInstance()).entrySet()) {
-            if (WarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
+            if (AbstractWarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
                 entry.setValue(entry.getValue().stream().map(rl -> {
                     return new RegisteredListener(rl.getListener(), (l, e) -> {
-                        WarlordsGameEvent wge = (WarlordsGameEvent) e;
+                        AbstractWarlordsGameEvent wge = (AbstractWarlordsGameEvent) e;
                         if (wge.getGame() == Game.this) {
                             rl.callEvent(e);
                         }

@@ -3,7 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsGameUpdatedEvent extends WarlordsGameEvent {
+public class WarlordsGameUpdatedEvent extends AbstractWarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final String key;

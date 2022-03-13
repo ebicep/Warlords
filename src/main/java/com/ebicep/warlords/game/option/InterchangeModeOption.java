@@ -1,23 +1,15 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.abilties.ArcaneShield;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 

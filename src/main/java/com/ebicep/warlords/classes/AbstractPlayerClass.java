@@ -1,10 +1,10 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.abilties.ArcaneShield;
-import com.ebicep.warlords.classes.abilties.EarthenSpike;
-import com.ebicep.warlords.classes.abilties.SoulShackle;
-import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.abilties.ArcaneShield;
+import com.ebicep.warlords.abilties.EarthenSpike;
+import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;

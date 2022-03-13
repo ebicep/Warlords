@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.classes.abilties.ArcaneShield;
+import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.abilties.*;
 
 import java.util.function.Consumer;
 

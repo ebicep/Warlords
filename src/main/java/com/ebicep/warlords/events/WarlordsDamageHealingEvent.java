@@ -1,7 +1,6 @@
 
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -9,9 +8,9 @@ import org.bukkit.event.HandlerList;
 /**
  *
  */
-public class WarlordsDamageHealingEvent extends WarlordsPlayerEvent implements Cancellable {
+public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    
+
     private WarlordsPlayer attacker;
     private String ability;
     private float min;

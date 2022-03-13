@@ -1,9 +1,9 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.classes.internal.DamagePowerup;
-import com.ebicep.warlords.classes.internal.EnergyPowerup;
-import com.ebicep.warlords.classes.internal.HealingPowerup;
-import com.ebicep.warlords.classes.internal.SpeedPowerup;
+import com.ebicep.warlords.abilties.internal.DamagePowerup;
+import com.ebicep.warlords.abilties.internal.EnergyPowerup;
+import com.ebicep.warlords.abilties.internal.HealingPowerup;
+import com.ebicep.warlords.abilties.internal.SpeedPowerup;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -16,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnegative;

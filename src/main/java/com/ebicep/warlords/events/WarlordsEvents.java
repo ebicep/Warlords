@@ -2,10 +2,10 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.abilties.IceBarrier;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.TimeWarp;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.abilties.IceBarrier;
+import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilties.TimeWarp;
+import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;

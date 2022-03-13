@@ -59,7 +59,7 @@ public enum GameMap {
                     options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
                     options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
 
-                    options.add(new ScoreOnEventOption.FlagCapture(250));
+                    options.add(new AbstractScoreOnEventOption.FlagCapture(250));
                     break;
                 /*case INTERCEPTION:
                     options.add(new InterceptionPointOption("Middle #1", loc.addXYZ(13.5, 23, -26.5)));
@@ -83,7 +83,7 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.OnKill(5));
+            options.add(new AbstractScoreOnEventOption.OnKill(5));
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -184,8 +184,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -285,8 +285,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -341,8 +341,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -400,8 +400,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -452,8 +452,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
@@ -505,8 +505,8 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new AbstractScoreOnEventOption.FlagCapture());
+            options.add(new AbstractScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());

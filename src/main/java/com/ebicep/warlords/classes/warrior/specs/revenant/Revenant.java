@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.warrior.specs.revenant;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 
 public class Revenant extends AbstractWarrior {

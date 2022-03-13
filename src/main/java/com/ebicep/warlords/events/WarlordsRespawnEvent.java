@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsRespawnEvent extends WarlordsPlayerEvent implements Cancellable {
+public class WarlordsRespawnEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     protected Location respawnLocation;

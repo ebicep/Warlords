@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.flags.FlagInfo;
 import com.ebicep.warlords.game.flags.FlagLocation;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsFlagUpdatedEvent extends WarlordsGameEvent {
+public class WarlordsFlagUpdatedEvent extends AbstractWarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final FlagInfo info;

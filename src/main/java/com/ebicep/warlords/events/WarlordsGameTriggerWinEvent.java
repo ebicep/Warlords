@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsGameTriggerWinEvent extends WarlordsGameEvent implements Cancellable {
+public class WarlordsGameTriggerWinEvent extends AbstractWarlordsGameEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     @Nonnull
     private final Option cause;

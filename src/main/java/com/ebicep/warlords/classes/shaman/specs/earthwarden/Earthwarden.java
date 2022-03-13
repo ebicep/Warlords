@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.shaman.specs.earthwarden;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 
 public class Earthwarden extends AbstractShaman {

@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 /**
  * Thrown when the points of the game changes
  */
-public class WarlordsPointsChangedEvent extends WarlordsGameEvent {
+public class WarlordsPointsChangedEvent extends AbstractWarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final Team team;

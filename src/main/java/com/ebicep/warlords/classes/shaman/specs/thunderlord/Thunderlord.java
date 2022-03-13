@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.shaman.specs.thunderlord;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 
 public class Thunderlord extends AbstractShaman {

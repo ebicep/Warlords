@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.warrior.specs.defender;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 
 public class Defender extends AbstractWarrior {
