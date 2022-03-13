@@ -2,11 +2,12 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.rogue.specs.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -306,8 +307,8 @@ public final class WarlordsPlayer {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 }
 
-                if (attacker.getMarkedTarget() == uuid) {
-                    damageValue *= 1.1;
+                if (attacker.getMarkedTarget() == uuid && !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
+                    damageValue *= 1.25;
                 }
             }
         }
@@ -850,6 +851,7 @@ public final class WarlordsPlayer {
         if (powerUpHeal) {
             powerUpHeal = false;
             sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
+            this.getCooldownManager().removeCooldown(HealingPowerup.class);
         }
     }
 

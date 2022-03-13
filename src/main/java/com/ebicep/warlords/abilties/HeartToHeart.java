@@ -28,7 +28,7 @@ public class HeartToHeart extends AbstractAbility {
         description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
                 "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
-                "§7granting immunity to de-buffs. You are healed" +
+                "§7granting immunity to de-buffs. You are healed\n" +
                 "§7for §a400 §7health after reaching your ally." +
                 "\n\n" +
                 "§7Heart To Heart's range is greatly reduced when\n" +
@@ -40,7 +40,7 @@ public class HeartToHeart extends AbstractAbility {
 
         if (wp.getCarriedFlag() != null) {
             radius = 7;
-            verticalRadius = 5;
+            verticalRadius = 3;
         } else {
             radius = 15;
             verticalRadius = 15;

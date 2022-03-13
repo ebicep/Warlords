@@ -10,12 +10,12 @@ commands:
     usage: /start [...map:MapName | category:CategoryName | addon:AddonName | players:* | player:PlayerName]
   terminategame:
     description: Terminates the game.
-    permissions: warlords.game.end
+    permission: warlords.game.end
     aliases: [endgame]
     usage: /<command> [...game holder name/map name/category name/game uuid]
   killgame:
     description: Kills the game
-    permissions: warlords.game.end
+    permission: warlords.game.kill
     usage: /<command> [...game holder name/map name/category name/game uuid]
   menu:
     description: Opens the game menu.

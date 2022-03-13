@@ -6,17 +6,16 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
-
-import static com.ebicep.warlords.util.Utils.startsWithIgnoreCase;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import static com.ebicep.warlords.util.Utils.startsWithIgnoreCase;
 
 public abstract class GameTargetCommand implements TabExecutor {
 
@@ -28,7 +27,7 @@ public abstract class GameTargetCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!sender.hasPermission("warlords.game.end")) {
+        if (!command.testPermissionSilent(sender)) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }

@@ -23,7 +23,7 @@ public class VitalityLiquor extends AbstractAbility {
     private final float maxWaveHealing = 324;
 
     public VitalityLiquor() {
-        super("Vitality Liquor", 359, 485, 12, 30, 25, 175);
+        super("Vitality Liquor", 359, 485, 14, 30, 25, 175);
     }
 
     @Override
@@ -35,9 +35,9 @@ public class VitalityLiquor extends AbstractAbility {
                 "§7Each enemy afflicted with your §aLEECH §7effect\n" +
                 "§7within the range will cause the enemy to\n" +
                 "§7discharge an additional shockwave of vitality\n" +
-                "§7that heals nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
+                "§7that heals 2 nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
                 "§7and increase their energy regeneration by\n" +
-                "§e30 §7for §6" + duration + " §7seconds.";
+                "§e15 §7for §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -93,6 +93,7 @@ public class VitalityLiquor extends AbstractAbility {
                                 for (WarlordsPlayer allyTarget : PlayerFilter
                                         .entitiesAround(player, 6, 6, 6)
                                         .aliveTeammatesOf(wp)
+                                        .limit(2)
                                 ) {
                                     allyTarget.addHealingInstance(
                                             wp,

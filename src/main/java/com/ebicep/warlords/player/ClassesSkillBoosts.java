@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.classes.AbstractAbility;
 
 import java.util.function.Consumer;
 
@@ -630,7 +630,7 @@ public enum ClassesSkillBoosts {
     BLINDING_ASSAULT("Blinding Assault",
             "§7Reduce the cooldown by Blinding Assault\nby 40%",
             "§aReduce the cooldown by Blinding Assault\nby §c40%",
-            BlindingAssault.class,
+            ShadowStep.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }
@@ -664,14 +664,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle\nby 10% and increase the silence\nduration by 1 second.",
-            "§aReduce the cooldown of Soul Shackle\nby §c10% §aand increase the silence\nduration by §c1 §asecond.",
+            "§7Reduce the cooldown of Soul Shackle\nby 15% and increase the silence\nduration by 0.5 seconds",
+            "§aReduce the cooldown of Soul Shackle\nby §c15% §aand increase the silence\nduration by §c0.5 §aseconds",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
-                    ((SoulShackle) abstractAbility).setMinSilenceDuration(3);
-                    ((SoulShackle) abstractAbility).setMaxSilenceDuration(5);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    ((SoulShackle) abstractAbility).setMinSilenceDurationInTicks(50);
+                    ((SoulShackle) abstractAbility).setMaxSilenceDurationInTicks(80);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
                 }
             }
     ),

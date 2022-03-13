@@ -37,14 +37,12 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
-                "§7Vulnerable enemies take 10% more damage from your\n" +
-                "§7attacks. All attacks that hit your marked target from\n" +
-                "§7behind gain a §c100% §7crit chance." +
+                "§7Vulnerable enemies take §c25% §7more damage from behind." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
-                "§7Blinding Assault and Order of Eviscerate's cooldown\n" +
+                "§7Shadow Step and Order of Eviscerate's cooldown\n" +
                 "§7and refund the energy cost. Assisting in killing your\n" +
-                "§7mark will only refund half the cooldown";
+                "§7mark will only refund half the cooldown,";
     }
 
     @Override
@@ -63,14 +61,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                 },
                 duration * 20
         ) {
-            @Override
-            public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
-                if (!Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
-                    return 100;
-                }
-                return currentCritChance;
-            }
-
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsPlayer attacker = event.getAttacker();
@@ -126,7 +116,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     }
                 } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.25f, 0, 0.05f, 5, wp.getLocation(), 500);
+                    ParticleEffect.SMOKE_NORMAL.display(0.01f, 0.28f, 0.01f, 0.05f, 6, wp.getLocation(), 500);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
                 }
             }

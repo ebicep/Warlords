@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 
@@ -23,9 +25,10 @@ public class SoulSwitch extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Switch locations with an enemy, has an\n" +
-                "§7optimal range of §e" + radius + " §7blocks. Soul Switch\n" +
-                "§7has low vertical range.";
+        description = "§7Switch locations with an enemy, blinding" +
+                "them for 1.5 seconds. Has an optimal range of\n" +
+                "§e" + radius + " §7blocks. Soul Switch has\n" +
+                "§7low vertical range.";
     }
 
     @Override
@@ -45,7 +48,9 @@ public class SoulSwitch extends AbstractAbility {
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();
 
-                swapTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.GRAY + "You've been Soul Switched by " + ChatColor.YELLOW + wp.getName() + "!");
+                swapTarget.getEntity().addPotionEffect(
+                        new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
+                swapTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.GRAY + "You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
                         ownLocation.getX(),

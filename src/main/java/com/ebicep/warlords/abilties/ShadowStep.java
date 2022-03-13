@@ -11,28 +11,25 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlindingAssault extends AbstractAbility {
+public class ShadowStep extends AbstractAbility {
 
-    public BlindingAssault() {
-        super("Blinding Assault", 466, 598, 12, 20, 15, 175);
+    public ShadowStep() {
+        super("Shadow Step", 466, 598, 12, 20, 15, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Leap forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
                 "§7all enemies close on cast or when landing\n" +
-                "§7on the ground. Enemies hit are blinded\n" +
-                "§7for §61 §7second. You take reduced fall damage\n" +
+                "§7on the ground. You take reduced fall damage\n" +
                 "§7while leaping." +
                 "\n\n" +
-                "§7Blinding Assault has reduced range when\n" +
+                "§7Shadow Step has reduced range when\n" +
                 "§7holding a Flag.";
     }
 
@@ -61,7 +58,6 @@ public class BlindingAssault extends AbstractAbility {
                 .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
-            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
             assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
             playersHit.add(assaultTarget);
@@ -70,8 +66,15 @@ public class BlindingAssault extends AbstractAbility {
         new GameRunnable(wp.getGame()) {
             double y = playerLoc.getY();
             boolean wasOnGround = true;
+            int counter = 0;
             @Override
             public void run() {
+                counter++;
+
+                if (counter == 300) {
+                    this.cancel();
+                }
+
                 wp.getLocation(playerLoc);
                 boolean hitGround = player.isOnGround();
                 y = playerLoc.getY();
@@ -88,7 +91,6 @@ public class BlindingAssault extends AbstractAbility {
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
                     ) {
-                        landingTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
                         landingTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }

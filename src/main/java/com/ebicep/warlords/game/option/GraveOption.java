@@ -142,7 +142,7 @@ public class GraveOption implements Option, Listener {
                     for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
                         Block underTest = toTest.getBlock();
                         if (underTest.getType() != Material.AIR) {
-                            if (underTest.getType().isTransparent() || underTest.getType() == Material.BANNER) {
+                            if (underTest.getType().isTransparent() || underTest.getType() == Material.STANDING_BANNER || underTest.getType() == Material.BANNER) {
                                 // We have hit a sappling, fence, torch or other non-solid
                                 break;
                             }

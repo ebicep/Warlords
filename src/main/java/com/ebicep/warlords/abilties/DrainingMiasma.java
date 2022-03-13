@@ -8,8 +8,6 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 
@@ -32,8 +30,8 @@ public class DrainingMiasma extends AbstractAbility {
                 "§7poisoning all enemies inside the area. Poisoned\n" +
                 "§7enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
-                "§7poisoned by your Draining Miasma are blinded\n" +
-                "§7for §63 §7seconds on cast." +
+                "§7poisoned by your Draining Miasma are slowed by\n" +
+                "§e25% §7for §63 §7seconds on cast." +
                 "\n\n" +
                 "§7The caster emits healing particles that heal all\n" +
                 "§7allies within the range for §a" + damageDealtHealing + "% §7of the damage\n" +
@@ -71,14 +69,7 @@ public class DrainingMiasma extends AbstractAbility {
                     duration * 20
             );
 
-            miasmaTarget.getEntity().addPotionEffect(
-                    new PotionEffect(PotionEffectType.BLINDNESS,
-                    3 * 20,
-                    0,
-                    true,
-                    false),
-                    true
-            );
+            miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
 
             new GameRunnable(wp.getGame()) {
 

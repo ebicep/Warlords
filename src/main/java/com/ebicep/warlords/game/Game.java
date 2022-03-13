@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.AbstractWarlordsGameEvent;
+import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.option.Option;
@@ -160,7 +160,7 @@ public final class Game implements Runnable, AutoCloseable {
     /**
      * Gets the used map category for construction. This is any of the
      * categories returned by
-     * {@link GameMap#getCategory() getCategory} method
+     * {@link GameMap#getCategories()} () getCategory} method
      * on the {@link #getMap() getMap method}
      *
      * @return the map category
@@ -368,6 +368,7 @@ public final class Game implements Runnable, AutoCloseable {
         Player p = player.getPlayer();
         if (p != null) {
             this.state.onPlayerReJoinGame(p);
+            Warlords.getInstance().hideAndUnhidePeople(p);
         }
     }
 

@@ -25,10 +25,7 @@ import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameManager;
-import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.party.PartyCommand;
@@ -46,6 +43,7 @@ import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
+import org.bukkit.GameMode;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -69,6 +67,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.util.Utils.iterable;
 
 
 public class Warlords extends JavaPlugin {
@@ -163,7 +163,7 @@ public class Warlords extends JavaPlugin {
             if (!(wp.getEntity() instanceof Player)) {
                 wp.getEntity().remove();
             }
-
+            FlagHolder.dropFlagForPlayer(wp);
             wp.getCooldownManager().clearAllCooldowns();
         }
         Location loc = spawnPoints.remove(player);
@@ -758,7 +758,7 @@ public class Warlords extends JavaPlugin {
                                     .filterCooldownClass(VitalityLiquor.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += 1;
+                                energyGainPerTick += .75;
                             }
 
                             // Checks whether the player has the Energy Powerup active.
@@ -962,12 +962,25 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 0, 0);
     }
 
+    private Map<UUID, Game> getPlayersToGame() {
+        Map<UUID, Game> players = new HashMap<>();
+        for (GameManager.GameHolder holder : gameManager.getGames()) {
+            Game game = holder.getGame();
+            if (game != null) {
+                //Stream<Map.Entry<UUID, Team>> players()
+                for (Map.Entry<UUID, Team> e : iterable(game.players())) {
+                    players.put(e.getKey(), game);
+                }
+            }
+        }
+        return players;
+    }
+
     public void hideAndUnhidePeople(@Nonnull Player player) {
-        WarlordsPlayer wp = getPlayer(player);
-        Game game = wp == null ? null : wp.getGame();
+        Map<UUID, Game> players = getPlayersToGame();
+        Game game = players.get(player.getUniqueId());
         for (Player p : Bukkit.getOnlinePlayers()) {
-            WarlordsPlayer wp1 = getPlayer(p);
-            Game game1 = wp1 == null ? null : wp1.getGame();
+            Game game1 = players.get(p.getUniqueId());
             if (p != player) {
                 if (game1 == game) {
                     p.showPlayer(player);
@@ -981,17 +994,16 @@ public class Warlords extends JavaPlugin {
     }
 
     public void hideAndUnhidePeople() {
+        Map<UUID, Game> players = getPlayersToGame();
         List<Player> peeps = new ArrayList<>(Bukkit.getOnlinePlayers());
         int length = peeps.size();
         for (int i = 0; i < length - 1; i++) {
             Player player = peeps.get(i);
-            WarlordsPlayer wp = getPlayer(player);
-            Game game = wp == null ? null : wp.getGame();
+            Game game = players.get(player.getUniqueId());
             for (int j = i + 1; j < length; j++) {
                 Player p = peeps.get(j);
-                WarlordsPlayer wp1 = getPlayer(p);
-                Game game1 = wp1 == null ? null : wp1.getGame();
-                if (game1 == game) {
+                Game game1 = players.get(p.getUniqueId());
+                if(game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
                 } else {

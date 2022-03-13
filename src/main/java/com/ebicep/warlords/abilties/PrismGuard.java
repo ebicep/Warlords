@@ -16,7 +16,9 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
 
@@ -26,7 +28,7 @@ public class PrismGuard extends AbstractAbility {
     private int duration = 4;
 
     public PrismGuard() {
-        super("Prism Guard", 0, 0, 22, 40, -1, 100);
+        super("Prism Guard", 0, 0, 24, 40, -1, 100);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class PrismGuard extends AbstractAbility {
         String healingString = duration == 5 ? "§a750 §7+ §a25%" : "§a600 §7+ §a20%";
         description = "§7Create a bubble shield around you that\n" +
                 "§7lasts §6" + duration + " §7seconds. All projectiles that pass through\n" +
-                "§7the barrier have their damage reduced by §c75%§7.\n" +
+                "§7the barrier have their damage reduced by §c60%§7.\n" +
                 "§7Additionally, other damage taken by all allies inside\n" +
                 "§7the bubble is reduced by §c25%§7." +
                 "\n\n" +
@@ -47,6 +49,8 @@ public class PrismGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         PrismGuard tempWideGuard = new PrismGuard();
+        Set<WarlordsPlayer> isInsideBubble = new HashSet<>();
+
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",
@@ -69,7 +73,11 @@ public class PrismGuard extends AbstractAbility {
                     ability.equals("Flame Burst") ||
                     ability.equals("Fallen Souls")
                 ) {
-                    return currentDamageValue * .25f;
+                    if (isInsideBubble.contains(event.getAttacker())) {
+                        return currentDamageValue;
+                    } else {
+                        return currentDamageValue * .4f;
+                    }
                 } else {
                     return currentDamageValue * .75f;
                 }
@@ -103,6 +111,14 @@ public class PrismGuard extends AbstractAbility {
                     Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                     timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
 
+                    isInsideBubble.clear();
+                    for (WarlordsPlayer enemyInsideBubble : PlayerFilter
+                            .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
+                            .aliveEnemiesOf(wp)
+                    ) {
+                        isInsideBubble.add(enemyInsideBubble);
+                    }
+
                     for (WarlordsPlayer bubblePlayer : PlayerFilter
                             .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
                             .aliveTeammatesOfExcludingSelf(wp)
@@ -119,23 +135,27 @@ public class PrismGuard extends AbstractAbility {
                                 },
                                 20
                         ) {
-                                    @Override
-                                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                        String ability = event.getAbility();
-                                        if (
-                                            ability.equals("Fireball") ||
-                                            ability.equals("Frostbolt") ||
-                                            ability.equals("Water Bolt") ||
-                                            ability.equals("Lightning Bolt") ||
-                                            ability.equals("Flame Burst") ||
-                                            ability.equals("Fallen Souls")
-                                        ) {
-                                            return currentDamageValue * .25f;
-                                        } else {
-                                            return currentDamageValue * .75f;
-                                        }
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                String ability = event.getAbility();
+                                if (
+                                    ability.equals("Fireball") ||
+                                    ability.equals("Frostbolt") ||
+                                    ability.equals("Water Bolt") ||
+                                    ability.equals("Lightning Bolt") ||
+                                    ability.equals("Flame Burst") ||
+                                    ability.equals("Fallen Souls")
+                                ) {
+                                    if (isInsideBubble.contains(event.getAttacker())) {
+                                        return currentDamageValue;
+                                    } else {
+                                        return currentDamageValue * .4f;
                                     }
-                                });
+                                } else {
+                                    return currentDamageValue * .75f;
+                                }
+                            }
+                        });
                         timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
                     }
                 } else {
@@ -147,7 +167,7 @@ public class PrismGuard extends AbstractAbility {
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // 5% missing health * 4
                         float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
-                        int timeInSeconds = entry.getValue() * 5 / 20;
+                        int timeInSeconds = entry.getValue() * 4 / 20;
                         float totalHealing = (timeInSeconds * healingValue);
                         entry.getKey().addHealingInstance(
                                 wp,
@@ -166,7 +186,7 @@ public class PrismGuard extends AbstractAbility {
                     circle.playEffects();
                 }
             }
-        }.runTaskTimer(5, 5);
+        }.runTaskTimer(5, 4);
 
         return true;
     }
