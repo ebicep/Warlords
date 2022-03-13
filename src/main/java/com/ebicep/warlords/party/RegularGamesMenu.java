@@ -44,13 +44,13 @@ public class RegularGamesMenu {
 
         //team wool surround
         for (int i = 0; i < 6; i++) {
-            menu.setItem(0, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(0, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
-            menu.setItem(8, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(8, i, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
         }
         for (int i = 1; i < 8; i++) {
-            menu.setItem(i, 0, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (n, e) -> {
+            menu.setItem(i, 0, new ItemBuilder(team.getItem()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
             if (i == 2) {
                 i = 5;
@@ -60,16 +60,16 @@ public class RegularGamesMenu {
         //two columns of class icons
         for (int i = 0; i < ClassesGroup.values().length; i++) {
             ClassesGroup classesGroup = ClassesGroup.values()[i];
-            menu.setItem(2, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (n, e) -> {
+            menu.setItem(2, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (m, e) -> {
             });
-            menu.setItem(6, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (n, e) -> {
+            menu.setItem(6, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (m, e) -> {
             });
         }
 
         //row of spec icons
         for (int i = 0; i < SpecType.values().length; i++) {
             SpecType specType = SpecType.values()[i];
-            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(specType.chatColor + specType.name).get(), (n, e) -> {
+            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(specType.chatColor + specType.name).get(), (m, e) -> {
             });
         }
 
@@ -100,7 +100,7 @@ public class RegularGamesMenu {
                         .name(ChatColor.GREEN + "Editors")
                         .lore(editors)
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
         menu.setItem(
@@ -109,7 +109,7 @@ public class RegularGamesMenu {
                 new ItemBuilder(Material.WOOL, 1, (short) 5)
                         .name(ChatColor.GREEN + "Confirm Team")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                     if (!uuidsWithPerms.contains(player.getUniqueId())) return;
                     for (RegularGamePlayer teamPlayer : teamPlayers) {
                         UUID uuid = teamPlayer.getUuid();
@@ -152,7 +152,7 @@ public class RegularGamesMenu {
                         .name(ChatColor.GREEN + "General Information")
                         .lore(playerOnSpecs)
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
 
@@ -219,7 +219,7 @@ public class RegularGamesMenu {
                     x,
                     y,
                     itemBuilder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (!uuidsWithPerms.contains(player.getUniqueId())) return;
 
                         List<UUID> uuids = selectedPlayersToSwap.get(team);
@@ -256,7 +256,7 @@ public class RegularGamesMenu {
                             x,
                             y,
                             new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7).name(ChatColor.GRAY + "Available Spec").get(),
-                            (n, e) -> {
+                            (m, e) -> {
                                 if (!uuidsWithPerms.contains(player.getUniqueId())) return;
 
                                 //give new spec

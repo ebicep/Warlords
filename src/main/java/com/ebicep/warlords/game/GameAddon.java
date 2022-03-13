@@ -17,6 +17,8 @@ import org.bukkit.command.CommandSender;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
+
 public enum GameAddon {
 
     PRIVATE_GAME(
@@ -30,7 +32,7 @@ public enum GameAddon {
             game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")
-                    .get()));
+                    .get(), (g, p) -> openTeamMenu(p)));
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
         }

@@ -41,7 +41,7 @@ public class AchievementsMenu {
                 new ItemBuilder(Material.STONE_AXE)
                         .name(ChatColor.GREEN + "General")
                         .get(),
-                (n, e) -> openAchievementTypeMenu(player, null)
+                (m, e) -> openAchievementTypeMenu(player, null)
         );
         for (int i = 0; i < GameMode.values().length; i++) {
             GameMode gameMode = GameMode.values()[i];
@@ -52,7 +52,7 @@ public class AchievementsMenu {
                     new ItemBuilder(gameMode.itemStack)
                             .name(ChatColor.GREEN + gameMode.name)
                             .get(),
-                    (n, e) -> openAchievementTypeMenu(player, gameMode)
+                    (m, e) -> openAchievementTypeMenu(player, gameMode)
             );
         }
 
@@ -69,7 +69,7 @@ public class AchievementsMenu {
                 new ItemBuilder(Material.DIAMOND)
                         .name(ChatColor.GREEN + "Challenge Achievements")
                         .get(),
-                (n, e) -> openChallengeAchievementsMenu(player, gameMode)
+                (m, e) -> openChallengeAchievementsMenu(player, gameMode)
         );
         menu.setItem(
                 6,
@@ -77,12 +77,12 @@ public class AchievementsMenu {
                 new ItemBuilder(Material.DIAMOND_BLOCK)
                         .name(ChatColor.GREEN + "Tiered Achievements")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                     openTieredAchievementsMenu(player, gameMode);
                 }
         );
 
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openAchievementsMenu(player));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openAchievementsMenu(player));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -117,7 +117,7 @@ public class AchievementsMenu {
                     x,
                     y,
                     itemBuilder.get(),
-                    (n, e) -> openChallengeAchievementHistoryMenu(player, gameMode, achievement)
+                    (m, e) -> openChallengeAchievementHistoryMenu(player, gameMode, achievement)
             );
             x++;
             if (x == 9) {
@@ -127,7 +127,7 @@ public class AchievementsMenu {
         }
 
 
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openAchievementsMenu(player));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -153,7 +153,7 @@ public class AchievementsMenu {
                             .name(ChatColor.GREEN + achievement.name)
                             .lore(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                     }
             );
 
@@ -164,7 +164,7 @@ public class AchievementsMenu {
             }
         }
 
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openChallengeAchievementsMenu(player, gameMode));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openChallengeAchievementsMenu(player, gameMode));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -199,7 +199,7 @@ public class AchievementsMenu {
                     x,
                     y,
                     itemBuilder.get(),
-                    (n, e) -> openTieredAchievementHistoryMenu(player, gameMode, achievement)
+                    (m, e) -> openTieredAchievementHistoryMenu(player, gameMode, achievement)
             );
             x++;
             if (x == 9) {
@@ -209,7 +209,7 @@ public class AchievementsMenu {
         }
 
 
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openAchievementsMenu(player));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -236,7 +236,7 @@ public class AchievementsMenu {
                             .name(ChatColor.GREEN + achievement.name)
                             .lore(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                     }
             );
 
@@ -247,7 +247,7 @@ public class AchievementsMenu {
             }
         }
 
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openTieredAchievementsMenu(player, gameMode));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openTieredAchievementsMenu(player, gameMode));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -285,7 +285,7 @@ public class AchievementsMenu {
 //                    x,
 //                    y,
 //                    itemBuilder.get(),
-//                    (n, e) -> {
+//                    (m, e) -> {
 //                        openAchievementHistoryMenu(player, gameMode, recordClass, achievement);
 //                    }
 //            );
@@ -297,7 +297,7 @@ public class AchievementsMenu {
 //        }
 //
 //
-//        menu.setItem(3, 5, MENU_BACK, (n, e) -> openAchievementTypeMenu(player, gameMode));
+//        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementTypeMenu(player, gameMode));
 //        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
 //        menu.openForPlayer(player);
 //    }
@@ -329,7 +329,7 @@ public class AchievementsMenu {
 //                            .name(ChatColor.GREEN + achievement.getName())
 //                            .lore(ChatColor.GRAY + DATE_FORMAT.format(achievementRecord.getDate()))
 //                            .get(),
-//                    (n, e) -> {}
+//                    (m, e) -> {}
 //            );
 //
 //            x++;
@@ -339,7 +339,7 @@ public class AchievementsMenu {
 //            }
 //        }
 //
-//        menu.setItem(3, 5, MENU_BACK, (n, e) -> openChallengeAchievementsMenu(player, gameMode, recordClass));
+//        menu.setItem(3, 5, MENU_BACK, (m, e) -> openChallengeAchievementsMenu(player, gameMode, recordClass));
 //        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
 //        menu.openForPlayer(player);
 //    }

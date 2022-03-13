@@ -56,7 +56,7 @@ public class GameStartTrait extends Trait {
     }
 
     private void tryToJoinQueue(Player player) {
-        
+
         //check if player is in a party, they must be leader to join
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
         List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> Collections.singletonList(player));
@@ -77,10 +77,10 @@ public class GameStartTrait extends Trait {
                 .setPriority(0)
                 .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
                 .setOnResult((result, game) -> {
-            if (game == null) {
-                player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-            }
-        }).queue();
+                    if (game == null) {
+                        player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                    }
+                }).queue();
     }
     //sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has quit!");
 }

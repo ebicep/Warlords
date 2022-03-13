@@ -93,7 +93,7 @@ public class DebugMenuPlayerOptions {
         for (int i = 0; i < firstRow.length; i++) {
             int index = i + 1;
             menu.setItem(index, 1, firstRow[i],
-                    (n, e) -> {
+                    (m, e) -> {
                         switch (index) {
                             case 1:
                                 Bukkit.getServer().dispatchCommand(player, "wl energy " + (target.isInfiniteEnergy() ? "enable" : "disable") + " " + targetName);
@@ -137,7 +137,7 @@ public class DebugMenuPlayerOptions {
         for (int i = 0; i < secondRow.length; i++) {
             int index = i + 1;
             menu.setItem(index, 2, secondRow[i],
-                    (n, e) -> {
+                    (m, e) -> {
                         switch (index) {
                             case 1:
                                 //TODO
@@ -164,7 +164,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
         }
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> {
+        menu.setItem(3, 4, MENU_BACK, (m, e) -> {
             if (player.getUniqueId() == target.getUuid()) {
                 DebugMenu.openDebugMenu(player);
             } else {
@@ -182,7 +182,7 @@ public class DebugMenuPlayerOptions {
         Menu menu = new Menu("Team Options", 9 * 6);
         //divider
         for (int i = 0; i < 5; i++) {
-            menu.setItem(4, i, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 7).name(" ").get(), (n, e) -> {
+            menu.setItem(4, i, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 7).name(" ").get(), (m, e) -> {
             });
         }
         //team info = color - other shit
@@ -208,21 +208,21 @@ public class DebugMenuPlayerOptions {
                 .lore(ChatColor.GRAY + "Kills all the players on the team")
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .get();
-        menu.setItem(0, 0, blueInfo, (n, e) -> {
+        menu.setItem(0, 0, blueInfo, (m, e) -> {
         });
-        menu.setItem(3, 0, killTeam, (n, e) -> {
+        menu.setItem(3, 0, killTeam, (m, e) -> {
             bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
         });
-        menu.setItem(5, 0, redInfo, (n, e) -> {
+        menu.setItem(5, 0, redInfo, (m, e) -> {
         });
-        menu.setItem(8, 0, killTeam, (n, e) -> {
+        menu.setItem(8, 0, killTeam, (m, e) -> {
             redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
         });
 
         //players
         addPlayersToMenu(menu, player, bluePlayers, true);
         addPlayersToMenu(menu, player, redPlayers, false);
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> DebugMenu.openDebugMenu(player));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> DebugMenu.openDebugMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -253,7 +253,7 @@ public class DebugMenuPlayerOptions {
                             .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getCarriedFlag() != null ? ChatColor.WHITE + " ⚑" : ""))
                             .lore(lore)
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (e.isRightClick() && player.getUniqueId() != wp.getUuid()) {
                             player.teleport(wp.getLocation());
                         } else {
@@ -299,10 +299,10 @@ public class DebugMenuPlayerOptions {
                     new ItemBuilder(woolSortedByColor[i - 1])
                             .name((commandType.equals("takedamage") ? ChatColor.RED.toString() : ChatColor.GREEN.toString()) + amount)
                             .get(),
-                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "wl " + commandType + " " + amount + " " + targetName)
+                    (m, e) -> Bukkit.getServer().dispatchCommand(player, "wl " + commandType + " " + amount + " " + targetName)
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -330,7 +330,7 @@ public class DebugMenuPlayerOptions {
         };
         for (int i = 0; i < generalOptionItems.length; i++) {
             int finalI = i;
-            menu.setItem(i + 1, 1, generalOptionItems[i], (n, e) -> {
+            menu.setItem(i + 1, 1, generalOptionItems[i], (m, e) -> {
                 switch (finalI) {
                     case 0:
                         openCooldownManagerMenu(player, target);
@@ -377,9 +377,9 @@ public class DebugMenuPlayerOptions {
                             .name(cooldown.color + cooldown.name)
                             .flags(ItemFlag.HIDE_ATTRIBUTES)
                             .get(),
-                    (n, e) -> openStatusEffectTimeMenu(player, target, cooldown));
+                    (m, e) -> openStatusEffectTimeMenu(player, target, cooldown));
         }
-        menu.setItem(3, menuY - 1, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(3, menuY - 1, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
         menu.setItem(4, menuY - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -395,7 +395,7 @@ public class DebugMenuPlayerOptions {
                                 ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
                         )
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
 
                 }
         );
@@ -416,10 +416,10 @@ public class DebugMenuPlayerOptions {
 //                                    ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
 //                            )
 //                            .get(),
-//                    (n, e) -> openCooldownMenu(player, target, abstractCooldown)
+//                    (m, e) -> openCooldownMenu(player, target, abstractCooldown)
 //            );
 //        }
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openCooldownsMenu(player, target));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openCooldownsMenu(player, target));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -437,7 +437,7 @@ public class DebugMenuPlayerOptions {
         for (int i = 0; i < cooldownOptions.length; i++) {
             int finalI = i;
             menu.setItem(i + 1, 1, cooldownOptions[i],
-                    (n, e) -> {
+                    (m, e) -> {
                         if (target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
                             switch (finalI + 1) {
                                 case 1:
@@ -466,7 +466,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownsMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openCooldownsMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -480,7 +480,7 @@ public class DebugMenuPlayerOptions {
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN.toString() + durations[i] + "s")
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
 //                            abstractCooldown.subtractTime(-durations[finalI]);
                             player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + abstractCooldown.getName() + "'s duration was increased by " + durations[finalI] + " seconds");
@@ -491,7 +491,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownMenu(player, target, abstractCooldown));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openCooldownMenu(player, target, abstractCooldown));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -505,7 +505,7 @@ public class DebugMenuPlayerOptions {
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN.toString() + durations[i] + "s")
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         target.getCooldownManager().addRegularCooldown(cooldown.name, cooldown.actionBarName, cooldown.cooldownClass, cooldown.cooldownObject, target, cooldown.cooldownType, cooldownManager -> {
                         }, durations[finalI] * 20);
                         if (cooldown == StatusEffectCooldowns.SPEED) {
@@ -515,7 +515,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownsMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openCooldownsMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -527,7 +527,7 @@ public class DebugMenuPlayerOptions {
         int x = 0;
         int y = 0;
         for (DebugLocationMarker marker : game.getMarkers(DebugLocationMarker.class)) {
-            menu.setItem(x, y, marker.getAsItem(), (n, e) -> {
+            menu.setItem(x, y, marker.getAsItem(), (m, e) -> {
                 target.teleport(marker.getLocation());
                 player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to " + marker.getName());
 
@@ -540,7 +540,7 @@ public class DebugMenuPlayerOptions {
                 y++;
             }
         }
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(3, 4, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -570,7 +570,7 @@ public class DebugMenuPlayerOptions {
             for (int i = 0; i < flagOptions.length; i++) {
                 int finalI = i;
                 menu.setItem(i + 1, row, flagOptions[i],
-                        (n, e) -> {
+                        (m, e) -> {
                             switch (finalI) {
                                 case 0:
                                     if (target.getCarriedFlag() == holder.getInfo()) {
@@ -612,7 +612,7 @@ public class DebugMenuPlayerOptions {
                 );
             }
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -626,7 +626,7 @@ public class DebugMenuPlayerOptions {
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN.toString() + multipliers[i])
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         int amount = e.isLeftClick() ? multipliers[finalI] : -multipliers[finalI];
                         if (target.getCarriedFlag() != null) {
                             PlayerFlagLocation redFlag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
@@ -639,7 +639,7 @@ public class DebugMenuPlayerOptions {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openFlagOptionMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openFlagOptionMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -653,7 +653,7 @@ public class DebugMenuPlayerOptions {
                     new ItemBuilder(group.item)
                             .name(ChatColor.GREEN + group.name)
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                     });
             List<Classes> classes = group.subclasses;
             for (int j = 0; j < classes.size(); j++) {
@@ -664,11 +664,11 @@ public class DebugMenuPlayerOptions {
                     spec.flags(ItemFlag.HIDE_ENCHANTS);
                 }
                 menu.setItem(4 + j, i, spec.get(),
-                        (n, e) -> openSkillBoostMenu(player, target, classes.get(finalJ))
+                        (m, e) -> openSkillBoostMenu(player, target, classes.get(finalJ))
                 );
             }
         }
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -687,7 +687,7 @@ public class DebugMenuPlayerOptions {
                                     "",
                                     ChatColor.YELLOW + "Click to select!"
                             ).get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
                         target.setSpec(selectedClass.create.get(), skillBoost);
                         target.getGameState().updatePlayerName(target);
@@ -697,7 +697,7 @@ public class DebugMenuPlayerOptions {
             );
 
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openSpecMenu(player, target));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openSpecMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }

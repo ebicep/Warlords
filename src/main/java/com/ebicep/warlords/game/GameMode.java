@@ -10,19 +10,28 @@ import com.ebicep.warlords.database.repositories.games.pojos.interception.Databa
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.LocationFactory;
 import com.ebicep.warlords.util.TriFunction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 public enum GameMode {
     CAPTURE_THE_FLAG(
@@ -190,18 +199,6 @@ public enum GameMode {
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = new ArrayList<>(64);
 
-        options.add(new PreGameItemOption(6, new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.AQUA + "Pre-game Menu ")
-                .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
-                .get()));
-        options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
-                .name(ChatColor.RED + "Leave")
-                .lore(ChatColor.GRAY + "Right-Click to leave the game.")
-                .get(), (g, p) -> {
-            if (g.acceptsPeople()) {
-                g.removePlayer(p.getUniqueId());
-            }
-        }));
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(p.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -214,8 +211,78 @@ public enum GameMode {
                     .lore("")
                     .get();
         }));
+        options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
+                .name(ChatColor.AQUA + "Pre-game Menu ")
+                .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                .get(), (g, p) -> openMainMenu(p)));
+        options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
+                .name(ChatColor.AQUA + "Player Spec Information")
+                .lore(ChatColor.GRAY + "Displays the amount of people on each specialization.")
+                .get(),
+                (g, p) -> {
+                    openPlayerSpecInfoMenu(g, p);
+                    new BukkitRunnable() {
+
+                        @Override
+                        public void run() {
+                            if (p.getOpenInventory().getTopInventory().getName().equals("Player Specs")) {
+                                openPlayerSpecInfoMenu(g, p);
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 20, 20);
+                })
+        );
+        options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
+                .name(ChatColor.RED + "Leave")
+                .lore(ChatColor.GRAY + "Right-Click to leave the game.")
+                .get(),
+                (g, p) -> {
+                    if (g.acceptsPeople()) {
+                        g.removePlayer(p.getUniqueId());
+                    }
+                })
+        );
+
         options.add(new GameFreezeOption());
 
         return options;
+    }
+
+    public static void openPlayerSpecInfoMenu(Game game, Player player) {
+        Menu menu = new Menu("Player Specs", 9 * 4);
+        int x = 3;
+        for (SpecType value : SpecType.values()) {
+            ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
+                    .name(value.chatColor + value.name);
+            StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
+                    (int) game.getPlayers().keySet().stream()
+                            .map(Warlords::getPlayerSettings)
+                            .map(PlayerSettings::getSelectedClass)
+                            .filter(c -> c.specType == value)
+                            .count() + "\n\n");
+            Arrays.stream(Classes.values())
+                    .filter(classes -> classes.specType == value)
+                    .forEach(classes -> {
+                        int playersOnSpec = (int) game.getPlayers().keySet().stream()
+                                .map(Warlords::getPlayerSettings)
+                                .map(PlayerSettings::getSelectedClass)
+                                .filter(c -> c == classes)
+                                .count();
+                        lore.append(ChatColor.GREEN).append(classes.name).append(": ").append(ChatColor.YELLOW).append(playersOnSpec).append("\n");
+                    });
+            itemBuilder.lore(lore.toString());
+            menu.setItem(
+                    x,
+                    1,
+                    itemBuilder.get(),
+                    (m, e) -> {
+                    }
+            );
+            x++;
+        }
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 }

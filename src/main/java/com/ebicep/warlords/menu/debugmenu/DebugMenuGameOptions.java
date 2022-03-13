@@ -43,7 +43,7 @@ public class DebugMenuGameOptions {
         for (int i = 0; i < itemStack.length; i++) {
             int index = i + 1;
             menu.setItem(index, 1, itemStack[i],
-                    (n, e) -> {
+                    (m, e) -> {
                         switch (index) {
                             case 1:
                                 openMapsMenu(player);
@@ -58,7 +58,7 @@ public class DebugMenuGameOptions {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> DebugMenu.openDebugMenu(player));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> DebugMenu.openDebugMenu(player));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -74,10 +74,10 @@ public class DebugMenuGameOptions {
                             .name(ChatColor.GREEN + mapName)
                             .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getCategories().stream().map(gameMode -> gameMode.name).collect(Collectors.joining(", ")))
                             .get(),
-                    (n, e) -> openMapsCategoryMenu(player, map)
+                    (m, e) -> openMapsCategoryMenu(player, map)
             );
         }
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> openGameMenu(player));
+        menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -105,7 +105,7 @@ public class DebugMenuGameOptions {
                     x,
                     y,
                     itemBuilder.get(),
-                    (n, e) -> openGameEditorMenu(player, game));
+                    (m, e) -> openGameEditorMenu(player, game));
             x++;
             if (x == 7) {
                 x = 1;
@@ -113,7 +113,7 @@ public class DebugMenuGameOptions {
             }
         }
 
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> openGameMenu(player));
+        menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -126,21 +126,21 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.DIODE)
                         .name(ChatColor.GREEN + "Timer")
                         .get(),
-                (n, e) -> openTimerMenu(player, game));
+                (m, e) -> openTimerMenu(player, game));
         menu.setItem(
                 2,
                 1,
                 new ItemBuilder(Material.SIGN)
                         .name(ChatColor.GREEN + "Edit Team Scores")
                         .get(),
-                (n, e) -> openTeamScoreEditorMenu(player, game));
+                (m, e) -> openTeamScoreEditorMenu(player, game));
         menu.setItem(
                 3,
                 1,
                 new ItemBuilder(Material.ICE)
                         .name(ChatColor.GREEN + "Freeze Game")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                     if (game.isFrozen()) {
                         game.removeFrozenCause("Debug");
                     } else {
@@ -148,7 +148,7 @@ public class DebugMenuGameOptions {
                     }
                 });
 
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameSelectMenu(player));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameSelectMenu(player));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -161,19 +161,19 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.WOOD_BUTTON)
                         .name(ChatColor.GREEN + "Reset")
                         .get(),
-                (n, e) -> timerDebugAble.resetTimer()
+                (m, e) -> timerDebugAble.resetTimer()
         );
         menu.setItem(4, 1,
                 new ItemBuilder(Material.STONE_BUTTON)
                         .name(ChatColor.GREEN + "Skip")
                         .get(),
-                (n, e) -> timerDebugAble.skipTimer()
+                (m, e) -> timerDebugAble.skipTimer()
         );
         menu.setItem(6, 1,
                 new ItemBuilder(Material.WATCH)
                         .name(ChatColor.GREEN + "Set")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                     for (Option option : game.getOptions()) {
                         if (option instanceof WinAfterTimeoutOption) {
                             int timeLeft = ((WinAfterTimeoutOption) option).getTimeRemaining();
@@ -183,7 +183,7 @@ public class DebugMenuGameOptions {
                     }
                 }
         );
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameEditorMenu(player, game));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -203,7 +203,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.SIGN)
                         .name(ChatColor.GREEN.toString() + minutes + ":" + seconds)
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
 
@@ -216,20 +216,20 @@ public class DebugMenuGameOptions {
                         .name(ChatColor.GREEN + "Minutes - " + minutes)
                         .lore(ChatColor.YELLOW + "Left-Click to ADD" + "\n" + "Right-Click to SUBTRACT")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
         menu.setItem(2, 2,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "1")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes + (e.isLeftClick() ? 1 : -1), finalSeconds)
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes + (e.isLeftClick() ? 1 : -1), finalSeconds)
         );
         menu.setItem(3, 2,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "5")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes + (e.isLeftClick() ? 5 : -5), finalSeconds)
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes + (e.isLeftClick() ? 5 : -5), finalSeconds)
         );
 
         //SECONDS
@@ -238,43 +238,43 @@ public class DebugMenuGameOptions {
                         .name(ChatColor.GREEN + "Seconds - " + seconds)
                         .lore(ChatColor.YELLOW + "Left-Click to ADD" + "\n" + "Right-Click to SUBTRACT")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
         menu.setItem(2, 3,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "1")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 1 : -1))
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 1 : -1))
         );
         menu.setItem(3, 3,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "5")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 5 : -5))
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 5 : -5))
         );
         menu.setItem(4, 3,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "10")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 10 : -10))
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 10 : -10))
         );
         menu.setItem(5, 3,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "15")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 15 : -15))
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 15 : -15))
         );
 
         menu.setItem(6, 3,
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "30")
                         .get(),
-                (n, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 30 : -30))
+                (m, e) -> openTimerSetMenu(player, game, finalMinutes, finalSeconds + (e.isLeftClick() ? 30 : -30))
         );
 
 
-        menu.setItem(3, 5, MENU_BACK, (n, e) -> openTimerMenu(player, game));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openTimerMenu(player, game));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(
                 5,
@@ -282,7 +282,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.WOOL, 1, (byte) 5)
                         .name(ChatColor.GREEN + "Set Time - " + minutes + ":" + seconds)
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                     for (Option option : game.getOptions()) {
                         if (option instanceof WinAfterTimeoutOption) {
                             ((WinAfterTimeoutOption) option).setTimeRemaining(finalMinutes * 60 + finalSeconds);
@@ -304,12 +304,12 @@ public class DebugMenuGameOptions {
                     new ItemBuilder(team.item)
                             .name(team.teamColor + team.name)
                             .get(),
-                    (n, e) -> openScoreEditorMenu(player, game, team, game.getPoints(team))
+                    (m, e) -> openScoreEditorMenu(player, game, team, game.getPoints(team))
             );
             x++;
         }
 
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameEditorMenu(player, game));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -323,7 +323,7 @@ public class DebugMenuGameOptions {
                         .name(team.teamColor + team.name + " - " + points)
                         .lore(ChatColor.YELLOW + "Left-Click to ADD" + "\n" + "Right-Click to SUBTRACT")
                         .get(),
-                (n, e) -> {
+                (m, e) -> {
                 }
         );
         menu.setItem(
@@ -332,7 +332,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "1")
                         .get(),
-                (n, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 1 : -1))
+                (m, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 1 : -1))
         );
         menu.setItem(
                 3,
@@ -340,7 +340,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "5")
                         .get(),
-                (n, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 5 : -5))
+                (m, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 5 : -5))
         );
         menu.setItem(
                 4,
@@ -348,7 +348,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "10")
                         .get(),
-                (n, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 10 : -10))
+                (m, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 10 : -10))
         );
         menu.setItem(
                 5,
@@ -356,7 +356,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "25")
                         .get(),
-                (n, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 25 : -25))
+                (m, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 25 : -25))
         );
         menu.setItem(
                 6,
@@ -364,10 +364,10 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.LEVER)
                         .name(ChatColor.GREEN + "250")
                         .get(),
-                (n, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 250 : -250))
+                (m, e) -> openScoreEditorMenu(player, game, team, points + (e.isLeftClick() ? 250 : -250))
         );
 
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openTeamScoreEditorMenu(player, game));
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openTeamScoreEditorMenu(player, game));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(
                 5,
@@ -375,7 +375,7 @@ public class DebugMenuGameOptions {
                 new ItemBuilder(Material.WOOL, 1, (byte) 5)
                         .name(ChatColor.GREEN + "Set Score - " + points)
                         .get(),
-                (n, e) -> game.setPoints(team, points));
+                (m, e) -> game.setPoints(team, points));
         menu.openForPlayer(player);
     }
 
@@ -389,7 +389,7 @@ public class DebugMenuGameOptions {
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + gameMode.name)
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         List<GameAddon> addons = new ArrayList<>();
                         addons.add(GameAddon.PRIVATE_GAME);
                         addons.add(GameAddon.CUSTOM_GAME);
@@ -398,7 +398,7 @@ public class DebugMenuGameOptions {
             );
         }
 
-        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsMenu(player));
+        menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapsMenu(player));
         menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -421,7 +421,7 @@ public class DebugMenuGameOptions {
 
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     itemBuilder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (isASelectedAddon) {
                             if (!player.hasPermission("warlords.game.customtoggle") && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
                                 player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
@@ -442,9 +442,9 @@ public class DebugMenuGameOptions {
             );
         }
 
-        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsCategoryMenu(player, selectedGameMap));
+        menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapsCategoryMenu(player, selectedGameMap));
         menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (n, e) -> {
+        menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
             StringBuilder stringAddons = new StringBuilder();
             if (addons.isEmpty()) {
                 stringAddons.append("addon:NULL");

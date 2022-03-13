@@ -30,13 +30,13 @@ public class DebugMenu {
 
         LinkedHashMap<ItemStack, BiConsumer<Menu, InventoryClickEvent>> items = new LinkedHashMap<>();
         items.put(new ItemBuilder(Material.ENDER_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
-                (n, e) -> DebugMenuGameOptions.openGameMenu(player)
+                (m, e) -> DebugMenuGameOptions.openGameMenu(player)
         );
         items.put(new ItemBuilder(Warlords.getHead(player)).name(ChatColor.GREEN + "Player Options").get(),
-                (n, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
+                (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
         );
         items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
-                (n, e) -> {
+                (m, e) -> {
                     DebugMenuPlayerOptions.openTeamMenu(player);
                     new BukkitRunnable() {
                         @Override

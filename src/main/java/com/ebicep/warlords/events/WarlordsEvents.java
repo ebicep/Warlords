@@ -343,12 +343,12 @@ public class WarlordsEvents implements Listener {
                     wp.getSpec().onRightClick(wp, player);
                 }
             } else {
-                if (itemHeld.getType() == Material.NETHER_STAR) {
+                PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
+                if (state != null) {
+                    state.interactEvent(player, player.getInventory().getHeldItemSlot());
+                } else if (itemHeld.getType() == Material.NETHER_STAR) {
                     //menu
                     openMainMenu(player);
-                } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
-                    //team selector
-                    openTeamMenu(player);
                 } else if (itemHeld.getType() == Material.EMERALD) {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
@@ -372,11 +372,6 @@ public class WarlordsEvents implements Listener {
                                 }.runTaskTimer(Warlords.getInstance(), 20, 10);
                             }
                         });
-                    }
-                } else {
-                    PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
-                    if (state != null) {
-                        state.interactEvent(player, player.getInventory().getHeldItemSlot());
                     }
                 }
             }

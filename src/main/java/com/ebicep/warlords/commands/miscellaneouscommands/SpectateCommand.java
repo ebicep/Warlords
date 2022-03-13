@@ -65,7 +65,7 @@ public class SpectateCommand implements CommandExecutor {
                                         ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
                                 )
                                 .get(),
-                        (n, e) -> {
+                        (m, e) -> {
                             if (game.isClosed()) {
                                 player.sendMessage(ChatColor.RED + "This game is no longer running");
                                 openSpectateMenu(player);
@@ -107,7 +107,7 @@ public class SpectateCommand implements CommandExecutor {
                     new ItemBuilder(Material.BARRIER)
                             .name(ChatColor.GREEN + "Return to the lobby")
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         Optional<Game> currentGame1 = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                         if (currentGame1.isPresent() && currentGame1.get().getPlayerTeam(player.getUniqueId()) != null) {
                             player.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");

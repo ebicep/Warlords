@@ -98,18 +98,18 @@ public class GameMenu {
                     9 / 2 - values.length / 2 + i * 2 - 2,
                     1,
                     item,
-                    (n, e) -> {
+                    (m, e) -> {
                         openClassMenu(player, group);
                     }
             );
         }
-        menu.setItem(1, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
-        menu.setItem(3, 3, MENU_ARMOR_SETS, (n, e) -> openArmorMenu(player, 1));
-        menu.setItem(5, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
-        menu.setItem(7, 3, MENU_SETTINGS, (n, e) -> openSettingsMenu(player));
+        menu.setItem(1, 3, MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
+        menu.setItem(3, 3, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
+        menu.setItem(5, 3, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedClass));
+        menu.setItem(7, 3, MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (n, e) -> openLobbyAbilityMenu(player));
-        menu.setItem(4, 4, MENU_ARCADE, (n, e) -> openArcadeMenu(player));
+        menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
+        menu.setItem(4, 4, MENU_ARCADE, (m, e) -> openArcadeMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -140,7 +140,7 @@ public class GameMenu {
                     9 / 2 - values.size() / 2 + i * 2 - 1,
                     1,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Spec: §6" + subClass);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         setSelected(player, subClass);
@@ -156,7 +156,7 @@ public class GameMenu {
                     }
             );
         }
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);
     }
@@ -185,7 +185,7 @@ public class GameMenu {
                     i + 2,
                     3,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
                         setSelectedBoost(player, skillBoost);
                         openSkillBoostMenu(player, selectedGroup);
@@ -234,7 +234,7 @@ public class GameMenu {
             menu.setItem(3, 1, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
             menu.setItem(5, 1, apc2.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
         }
-        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -270,7 +270,7 @@ public class GameMenu {
                     (i - (pageNumber - 1) * 21) % 7 + 1,
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (weapon.isUnlocked) {
                             player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
                             Weapons.setSelected(player, selectedClass, weapon);
@@ -301,7 +301,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
         } else if (pageNumber == 2) {
             menu.setItem(
                     0,
@@ -310,7 +310,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber - 1));
             menu.setItem(
                     8,
                     5,
@@ -318,7 +318,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
         } else if (pageNumber == 3) {
             menu.setItem(
                     0,
@@ -327,7 +327,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber - 1));
             menu.setItem(
                     8,
                     5,
@@ -335,7 +335,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
         } else if (pageNumber == 4) {
             menu.setItem(
                     0,
@@ -344,10 +344,10 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
+                    (m, e) -> openWeaponMenu(player, pageNumber - 1));
         }
 
-        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -376,13 +376,13 @@ public class GameMenu {
                     (i - (pageNumber - 1) * 8) + 1,
                     2,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
                         if (
                                 helmet == Helmets.SIMPLE_MAGE_HELMET ||
-                                helmet == Helmets.GREATER_MAGE_HELMET ||
-                                helmet == Helmets.MASTERWORK_MAGE_HELMET ||
-                                helmet == Helmets.LEGENDARY_MAGE_HELMET
+                                        helmet == Helmets.GREATER_MAGE_HELMET ||
+                                        helmet == Helmets.MASTERWORK_MAGE_HELMET ||
+                                        helmet == Helmets.LEGENDARY_MAGE_HELMET
                         ) {
                             Helmets.setSelectedMage(player, helmet);
                         } else if (
@@ -456,7 +456,7 @@ public class GameMenu {
                     xPosition,
                     3,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + armorSet.name);
                         if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_MAGE || armorSet == ArmorSets.GREATER_CHESTPLATE_MAGE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_MAGE) {
                             ArmorSets.setSelectedMage(player, armorSet);
@@ -498,7 +498,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (n, e) -> openArmorMenu(player, pageNumber + 1));
+                    (m, e) -> openArmorMenu(player, pageNumber + 1));
         } else if (pageNumber == 2) {
             menu.setItem(
                     8,
@@ -507,7 +507,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (n, e) -> openArmorMenu(player, pageNumber + 1));
+                    (m, e) -> openArmorMenu(player, pageNumber + 1));
             menu.setItem(
                     0,
                     5,
@@ -515,7 +515,7 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (n, e) -> openArmorMenu(player, pageNumber - 1));
+                    (m, e) -> openArmorMenu(player, pageNumber - 1));
         } else if (pageNumber == 3) {
             menu.setItem(
                     0,
@@ -524,10 +524,10 @@ public class GameMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (n, e) -> openArmorMenu(player, pageNumber - 1));
+                    (m, e) -> openArmorMenu(player, pageNumber - 1));
         }
 
-        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -540,7 +540,7 @@ public class GameMenu {
                 3,
                 1,
                 selectedHotkeyMode.item,
-                (n, e) -> {
+                (m, e) -> {
                     player.sendMessage(selectedHotkeyMode == HotkeyMode.NEW_MODE ? ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled." : ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
                     HotkeyMode.setSelected(player, selectedHotkeyMode == HotkeyMode.NEW_MODE ? HotkeyMode.CLASSIC_MODE : HotkeyMode.NEW_MODE);
                     openSettingsMenu(player);
@@ -550,10 +550,10 @@ public class GameMenu {
                 1,
                 1,
                 MENU_SETTINGS_PARTICLE_QUALITY,
-                (n, e) -> openParticleQualityMenu(player)
+                (m, e) -> openParticleQualityMenu(player)
         );
 
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -573,13 +573,13 @@ public class GameMenu {
                             .lore(particleQuality.description, "", selectedParticleQuality == particleQuality ? ChatColor.GREEN + "SELECTED" : ChatColor.YELLOW + "Click to select!")
                             .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
                         openParticleQualityMenu(player);
                     }
             );
         }
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -604,7 +604,7 @@ public class GameMenu {
                     9 / 2 - values.size() % 2 + i * 2 - 1,
                     1,
                     builder.get(),
-                    (n, e) -> {
+                    (m, e) -> {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.getName() + ChatColor.GREEN + " team!");
                             Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
@@ -679,7 +679,7 @@ public class GameMenu {
         menu.setItem(4, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
         menu.setItem(5, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
         menu.setItem(6, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
-        menu.setItem(8, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(8, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);
     }
@@ -886,7 +886,7 @@ public class GameMenu {
             }
         });
 
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 }
