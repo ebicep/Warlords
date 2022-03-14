@@ -124,21 +124,19 @@ public class OrderOfEviscerate extends AbstractAbility {
             }
         });
 
-        wp.getCooldownManager().removeCooldownByName("Cloaked");
-        wp.getCooldownManager().addRegularCooldown(
-                "Cloaked",
-                "INVIS",
-                OrderOfEviscerate.class,
-                new OrderOfEviscerate(),
-                wp,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                duration * 20
-        );
-
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
         if (!FlagHolder.isPlayerHolderFlag(wp)) {
+            wp.getCooldownManager().removeCooldownByName("Cloaked");
+            wp.getCooldownManager().addRegularCooldown(
+                    "Cloaked",
+                    "INVIS",
+                    OrderOfEviscerate.class,
+                    new OrderOfEviscerate(),
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    duration * 20
+            );
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
             wp.updateArmor();
             PlayerFilter.playingGame(wp.getGame())
@@ -150,6 +148,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     });
         }
+
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
 
         new GameRunnable(wp.getGame()) {
