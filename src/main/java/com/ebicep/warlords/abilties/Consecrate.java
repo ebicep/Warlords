@@ -67,25 +67,23 @@ public class Consecrate extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-                    timeLeft--;
-                    PlayerFilter.entitiesAround(location, radius, 6, radius)
-                            .aliveEnemiesOf(wp)
-                            .forEach(warlordsPlayer -> {
-                                warlordsPlayer.addDamageInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false);
-                            });
-                    if (timeLeft == 0) {
-                        consecrate.remove();
-                        this.cancel();
-                        task.cancel();
-                    }
+                timeLeft--;
+                PlayerFilter.entitiesAround(location, radius, 6, radius)
+                        .aliveEnemiesOf(wp)
+                        .forEach(warlordsPlayer -> {
+                            warlordsPlayer.addDamageInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false);
+                        });
+                if (timeLeft == 0) {
+                    consecrate.remove();
+                    this.cancel();
+                    task.cancel();
                 }
             }
 

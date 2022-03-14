@@ -130,42 +130,39 @@ public class HammerOfLight extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-
-                    if (counter % 20 == 0) {
-                        timeLeftHammer[0]--;
-                        for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                .entitiesAround(location, radius, radius, radius)
-                                .isAlive()
-                        ) {
-                            if (wp.isTeammateAlive(warlordsPlayer)) {
-                                warlordsPlayer.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false, false);
-                            } else {
-                                warlordsPlayer.addDamageInstance(
-                                        wp,
-                                        name,
-                                        178,
-                                        244,
-                                        critChance,
-                                        critMultiplier,
-                                        false);
-                            }
+                if (counter % 20 == 0) {
+                    timeLeftHammer[0]--;
+                    for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                            .entitiesAround(location, radius, radius, radius)
+                            .isAlive()
+                    ) {
+                        if (wp.isTeammateAlive(warlordsPlayer)) {
+                            warlordsPlayer.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false, false);
+                        } else {
+                            warlordsPlayer.addDamageInstance(
+                                    wp,
+                                    name,
+                                    178,
+                                    244,
+                                    critChance,
+                                    critMultiplier,
+                                    false);
                         }
                     }
-                    if (timeLeftHammer[0] <= 0) {
-                        hammer.remove();
-                        this.cancel();
-                        task.cancel();
-                    }
-                    counter++;
                 }
+                if (timeLeftHammer[0] <= 0) {
+                    hammer.remove();
+                    this.cancel();
+                    task.cancel();
+                }
+                counter++;
             }
 
         }.runTaskTimer(0, 0);
@@ -174,70 +171,67 @@ public class HammerOfLight extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
+                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
+                    tempHammerOfLight.setCrownOfLight(true);
+                    new CooldownFilter<>(wp, RegularCooldown.class)
+                            .filterCooldownObject(tempHammerOfLight)
+                            .findAny()
+                            .ifPresent(regularCooldown -> {
+                                regularCooldown.setNameAbbreviation("CROWN");
+                            });
 
-                    if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
-                        tempHammerOfLight.setCrownOfLight(true);
-                        new CooldownFilter<>(wp, RegularCooldown.class)
-                                .filterCooldownObject(tempHammerOfLight)
-                                .findAny()
-                                .ifPresent(regularCooldown -> {
-                                    regularCooldown.setNameAbbreviation("CROWN");
-                                });
+                    Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
+                    Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
 
-                        Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
-                        Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
-
-                        BukkitTask particles = new GameRunnable(wp.getGame()) {
-                            @Override
-                            public void run() {
-                                double angle = 0;
-                                for (int i = 0; i < 9; i++) {
-                                    double x = .4 * Math.cos(angle);
-                                    double z = .4 * Math.sin(angle);
-                                    angle += 40;
-                                    Vector v = new Vector(x, 2, z);
-                                    Location loc = wp.getLocation().clone().add(v);
-                                    ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
-                                }
-
-                                CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation().add(0, 0.75f, 0), radius / 2f);
-                                circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
-                                circle.playEffects();
+                    BukkitTask particles = new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            double angle = 0;
+                            for (int i = 0; i < 9; i++) {
+                                double x = .4 * Math.cos(angle);
+                                double z = .4 * Math.sin(angle);
+                                angle += 40;
+                                Vector v = new Vector(x, 2, z);
+                                Location loc = wp.getLocation().clone().add(v);
+                                ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
                             }
-                        }.runTaskTimer(0, 6);
-                        new GameRunnable(wp.getGame()) {
-                            int timeLeft = timeLeftHammer[0];
 
-                            @Override
-                            public void run() {
-                                PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
-                                        .aliveTeammatesOf(wp)
-                                        .forEach(teammate -> teammate.addHealingInstance(
-                                                wp,
-                                                "Crown of Light",
-                                                minDamageHeal * 1.5f,
-                                                maxDamageHeal * 1.5f,
-                                                critChance,
-                                                critMultiplier,
-                                                false, false));
-                                timeLeft--;
+                            CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation().add(0, 0.75f, 0), radius / 2f);
+                            circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
+                            circle.playEffects();
+                        }
+                    }.runTaskTimer(0, 6);
+                    new GameRunnable(wp.getGame()) {
+                        int timeLeft = timeLeftHammer[0];
 
-                                if (timeLeft <= 0 || wp.isDead()) {
-                                    this.cancel();
-                                    particles.cancel();
-                                }
+                        @Override
+                        public void run() {
+                            PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
+                                    .aliveTeammatesOf(wp)
+                                    .forEach(teammate -> teammate.addHealingInstance(
+                                            wp,
+                                            "Crown of Light",
+                                            minDamageHeal * 1.5f,
+                                            maxDamageHeal * 1.5f,
+                                            critChance,
+                                            critMultiplier,
+                                            false, false));
+                            timeLeft--;
+
+                            if (timeLeft <= 0 || wp.isDead()) {
+                                this.cancel();
+                                particles.cancel();
                             }
-                        }.runTaskTimer(2, 20);
-                        this.cancel();
-                        timeLeftHammer[0] = 0;
-                    }
+                        }
+                    }.runTaskTimer(2, 20);
+                    this.cancel();
+                    timeLeftHammer[0] = 0;
+                }
 
-                    wasSneaking = wp.isSneaking();
+                wasSneaking = wp.isSneaking();
 
-                    if (wp.isDead() || timeLeftHammer[0] <= 0) {
-                        this.cancel();
-                    }
+                if (wp.isDead() || timeLeftHammer[0] <= 0) {
+                    this.cancel();
                 }
             }
         }.runTaskTimer(0, 0);

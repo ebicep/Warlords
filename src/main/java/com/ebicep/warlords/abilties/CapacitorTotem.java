@@ -56,14 +56,11 @@ public class CapacitorTotem extends AbstractTotemBase {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-
-                    if (timeLeft == 0) {
-                        totemStand.remove();
-                        this.cancel();
-                    }
-                    timeLeft--;
+                if (timeLeft == 0) {
+                    totemStand.remove();
+                    this.cancel();
                 }
+                timeLeft--;
             }
 
         }.runTaskTimer(0, 20);

@@ -66,33 +66,30 @@ public class SeismicWave extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-
-                    for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                        for (Location location : fallingBlockLocation) {
-                            if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                FallingBlock fallingBlock = addFallingBlock(location);
-                                customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
-                                WarlordsEvents.addEntityUUID(fallingBlock);
-                            }
+                for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                    for (Location location : fallingBlockLocation) {
+                        if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                            FallingBlock fallingBlock = addFallingBlock(location);
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
+                            WarlordsEvents.addEntityUUID(fallingBlock);
                         }
-                        fallingBlockLocations.remove(fallingBlockLocation);
-                        break;
                     }
+                    fallingBlockLocations.remove(fallingBlockLocation);
+                    break;
+                }
 
-                            for (int i = 0; i < customFallingBlocks.size(); i++) {
-                                CustomFallingBlock cfb = customFallingBlocks.get(i);
-                                cfb.setTicksLived(cfb.getTicksLived() + 1);
-                                if (Utils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
-                                    cfb.getFallingBlock().remove();
-                                    customFallingBlocks.remove(i);
-                                    i--;
-                                }
-                            }
-
-                    if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                        this.cancel();
+                for (int i = 0; i < customFallingBlocks.size(); i++) {
+                    CustomFallingBlock cfb = customFallingBlocks.get(i);
+                    cfb.setTicksLived(cfb.getTicksLived() + 1);
+                    if (Utils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
+                        cfb.getFallingBlock().remove();
+                        customFallingBlocks.remove(i);
+                        i--;
                     }
+                }
+
+                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                    this.cancel();
                 }
             }
 

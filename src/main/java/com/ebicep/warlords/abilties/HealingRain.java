@@ -75,17 +75,15 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-                    if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
-                        wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
-                        location.setX(wp.getLocation().getX());
-                        location.setY(wp.getLocation().getY());
-                        location.setZ(wp.getLocation().getZ());
-                    }
-
-                    wasSneaking = wp.isSneaking();
+                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
+                    wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
+                    location.setX(wp.getLocation().getX());
+                    location.setY(wp.getLocation().getY());
+                    location.setZ(wp.getLocation().getZ());
                 }
+
+                wasSneaking = wp.isSneaking();
             }
         }.runTaskTimer(0, 0);
 
@@ -95,43 +93,41 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
-                    if (counter % 10 == 0) {
-                        for (WarlordsPlayer teammateInRain : PlayerFilter
-                                .entitiesAround(location, radius, radius, radius)
-                                .aliveTeammatesOf(wp)
-                        ) {
-                            teammateInRain.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false,
-                                    false);
+                if (counter % 10 == 0) {
+                    for (WarlordsPlayer teammateInRain : PlayerFilter
+                            .entitiesAround(location, radius, radius, radius)
+                            .aliveTeammatesOf(wp)
+                    ) {
+                        teammateInRain.addHealingInstance(
+                                wp,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                false,
+                                false);
 
-                            if (teammateInRain != wp) {
-                                teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
-                                teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
-                                        "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                        }, Overheal.OVERHEAL_DURATION * 20);
-                            }
-                        }
-
-                        if (timeLeft < 0) {
-                            this.cancel();
-                            task.cancel();
-                            rainSneakAbility.cancel();
+                        if (teammateInRain != wp) {
+                            teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
+                            teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
+                                    "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                    }, Overheal.OVERHEAL_DURATION * 20);
                         }
                     }
 
-                    if (counter % 20 == 0) {
-                        timeLeft--;
+                    if (timeLeft < 0) {
+                        this.cancel();
+                        task.cancel();
+                        rainSneakAbility.cancel();
                     }
-
-                    counter--;
                 }
+
+                if (counter % 20 == 0) {
+                    timeLeft--;
+                }
+
+                counter--;
             }
 
         }.runTaskTimer(0, 0);

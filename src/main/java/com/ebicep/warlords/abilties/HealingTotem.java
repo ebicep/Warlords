@@ -72,77 +72,74 @@ public class HealingTotem extends AbstractTotemBase {
 
             @Override
             public void run() {
-                if (!wp.getGame().isFrozen()) {
+                if (timeLeft != 0) {
+                    Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
+                    ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, initParticleLoc, 500);
 
-                    if (timeLeft != 0) {
-                        Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
-                        ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, initParticleLoc, 500);
-
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
-                        }
-
-                        Location totemLoc = totemStand.getLocation();
-                        totemLoc.add(0, 2, 0);
-                        Location particleLoc = totemLoc.clone();
-                        for (int i = 0; i < 1; i++) {
-                            for (int j = 0; j < 12; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = radius;
-                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(totemLoc.getY() + i / 2D);
-                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
-
-                                ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
-                            }
-                        }
-
-                        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
-                        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5));
-                        circle.playEffects();
-
-                        //1
-                        //1.35
-                        //1.7
-                        //2.05
-                        //2.4
-                        //2.85
-                        float healMultiplier = 1 + (.35f * (5 - timeLeft));
-                        PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                                .aliveTeammatesOf(wp)
-                                .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal * healMultiplier,
-                                            maxDamageHeal * healMultiplier,
-                                            critChance,
-                                            critMultiplier,
-                                            false, false);
-                                });
-                    } else {
-                        PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                                .aliveTeammatesOf(wp)
-                                .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal * 3.1f,
-                                            maxDamageHeal * 3.1f,
-                                            critChance,
-                                            critMultiplier,
-                                            false, false);
-                                });
-                        Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
-                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
-
-                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
-
-                        totemStand.remove();
-                        this.cancel();
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
                     }
-                    timeLeft--;
+
+                    Location totemLoc = totemStand.getLocation();
+                    totemLoc.add(0, 2, 0);
+                    Location particleLoc = totemLoc.clone();
+                    for (int i = 0; i < 1; i++) {
+                        for (int j = 0; j < 12; j++) {
+                            double angle = j / 10D * Math.PI * 2;
+                            double width = radius;
+                            particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
+                            particleLoc.setY(totemLoc.getY() + i / 2D);
+                            particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
+
+                            ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
+                        }
+                    }
+
+                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
+                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5));
+                    circle.playEffects();
+
+                    //1
+                    //1.35
+                    //1.7
+                    //2.05
+                    //2.4
+                    //2.85
+                    float healMultiplier = 1 + (.35f * (5 - timeLeft));
+                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
+                            .aliveTeammatesOf(wp)
+                            .forEach((nearPlayer) -> {
+                                nearPlayer.addHealingInstance(
+                                        wp,
+                                        name,
+                                        minDamageHeal * healMultiplier,
+                                        maxDamageHeal * healMultiplier,
+                                        critChance,
+                                        critMultiplier,
+                                        false, false);
+                            });
+                } else {
+                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
+                            .aliveTeammatesOf(wp)
+                            .forEach((nearPlayer) -> {
+                                nearPlayer.addHealingInstance(
+                                        wp,
+                                        name,
+                                        minDamageHeal * 3.1f,
+                                        maxDamageHeal * 3.1f,
+                                        critChance,
+                                        critMultiplier,
+                                        false, false);
+                            });
+                    Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
+                    Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
+
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
+
+                    totemStand.remove();
+                    this.cancel();
                 }
+                timeLeft--;
             }
 
         }.runTaskTimer(0, 20);
