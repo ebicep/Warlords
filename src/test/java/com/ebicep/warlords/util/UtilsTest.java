@@ -1,8 +1,9 @@
 package com.ebicep.warlords.util;
 
-import static com.ebicep.warlords.util.Utils.*;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static com.ebicep.warlords.util.warlords.Utils.formatTimeLeft;
+import static org.junit.Assert.assertEquals;
 
 public class UtilsTest {
     

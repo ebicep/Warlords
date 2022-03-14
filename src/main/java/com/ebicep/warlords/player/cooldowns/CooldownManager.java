@@ -7,8 +7,8 @@ import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.Pair;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 
 import javax.annotation.Nonnull;
 

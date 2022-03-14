@@ -17,7 +17,7 @@ import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
-import com.ebicep.warlords.util.WordWrap;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Arrays;

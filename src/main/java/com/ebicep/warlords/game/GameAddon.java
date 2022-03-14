@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

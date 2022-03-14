@@ -7,8 +7,8 @@ import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.WordWrap;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
-import static com.ebicep.warlords.util.Utils.woolSortedByColor;
+import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class DebugMenuGameOptions {
 

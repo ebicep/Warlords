@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.java;
 
 import java.util.Objects;
 import java.util.function.Function;

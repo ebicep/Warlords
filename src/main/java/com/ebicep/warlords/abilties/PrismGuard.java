@@ -1,16 +1,16 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
+import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
 

@@ -1,12 +1,12 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

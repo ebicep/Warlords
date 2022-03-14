@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardGameType;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Location;
 
 import java.util.List;

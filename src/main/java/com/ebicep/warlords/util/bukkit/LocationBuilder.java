@@ -1,6 +1,7 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.bukkit;
 
 
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

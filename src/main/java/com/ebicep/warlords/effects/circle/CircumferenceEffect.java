@@ -1,8 +1,8 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.TeamBasedEffect;
-import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;

@@ -9,7 +9,7 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

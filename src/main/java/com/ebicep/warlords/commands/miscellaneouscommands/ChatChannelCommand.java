@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
-import com.ebicep.warlords.util.ChatChannels;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

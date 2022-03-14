@@ -7,9 +7,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.queuesystem.QueueManager;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

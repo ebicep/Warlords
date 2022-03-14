@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.bukkit;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,12 +8,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ItemBuilder {
     @Nonnull

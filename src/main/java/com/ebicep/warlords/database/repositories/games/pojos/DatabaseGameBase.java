@@ -1,7 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
@@ -13,12 +12,11 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.beta.hologram.line.ClickableHologramLine;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -32,7 +30,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public abstract class DatabaseGameBase {
 

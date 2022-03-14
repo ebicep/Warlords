@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.marker;
 
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
-import org.bukkit.ChatColor;
 
 /**
  * Marks a location for the debug screen/command

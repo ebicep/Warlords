@@ -1,6 +1,8 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.warlords;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;

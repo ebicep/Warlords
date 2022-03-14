@@ -7,14 +7,14 @@ import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 
-import static com.ebicep.warlords.util.Utils.lerp;
+import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
 

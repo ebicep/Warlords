@@ -2,7 +2,7 @@ package com.ebicep.warlords.database.leaderboards.sections;
 
 import com.ebicep.warlords.database.leaderboards.Leaderboard;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

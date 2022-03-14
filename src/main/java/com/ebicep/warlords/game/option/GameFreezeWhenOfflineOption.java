@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 
 public class GameFreezeWhenOfflineOption implements Option {

@@ -3,8 +3,8 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.util.Pair;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ebicep.warlords.util.Utils.*;
+import static com.ebicep.warlords.util.warlords.Utils.*;
 
 public class GameStartCommand implements TabExecutor {
 

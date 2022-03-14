@@ -9,8 +9,8 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
@@ -22,7 +22,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.OptionalInt;
 
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
+import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
 /**
  * Causes the game to end in a draw after a timeout

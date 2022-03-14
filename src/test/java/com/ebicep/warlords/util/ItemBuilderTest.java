@@ -1,11 +1,14 @@
 package com.ebicep.warlords.util;
 
-import java.util.Arrays;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 
 public class ItemBuilderTest {
 

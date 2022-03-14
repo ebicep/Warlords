@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.bukkit;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;

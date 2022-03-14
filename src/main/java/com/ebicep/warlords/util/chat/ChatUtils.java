@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.chat;
 
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;

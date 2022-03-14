@@ -4,8 +4,8 @@ import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 
 /**

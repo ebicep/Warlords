@@ -11,8 +11,8 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.Pair;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

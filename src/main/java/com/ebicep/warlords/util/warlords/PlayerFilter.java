@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.warlords;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.ebicep.warlords.util.Utils.radiusAround;
-import static com.ebicep.warlords.util.Utils.sortClosestBy;
+import static com.ebicep.warlords.util.warlords.Utils.radiusAround;
+import static com.ebicep.warlords.util.warlords.Utils.sortClosestBy;
 
 // TODO run regex
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)

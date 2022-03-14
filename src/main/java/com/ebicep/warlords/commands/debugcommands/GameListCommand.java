@@ -5,20 +5,19 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
-import com.ebicep.warlords.util.Utils;
-
-import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
-
-import java.util.EnumSet;
-import java.util.OptionalInt;
-
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.EnumSet;
+import java.util.OptionalInt;
+
+import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
+
 public class GameListCommand implements CommandExecutor {
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 

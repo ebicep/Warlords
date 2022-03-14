@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.chat;
 
 public enum DefaultFontInfo {
 

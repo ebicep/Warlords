@@ -3,8 +3,8 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
 public class SimulationTeleportOption extends TeleportOnEventOption {

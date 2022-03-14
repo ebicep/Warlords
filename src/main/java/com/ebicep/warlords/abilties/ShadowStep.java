@@ -1,11 +1,11 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.FireWorkEffectPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;

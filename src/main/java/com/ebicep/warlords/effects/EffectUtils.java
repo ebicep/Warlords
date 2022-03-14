@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;

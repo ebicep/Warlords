@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game;
 
-import com.ebicep.warlords.util.LocationFactory;
-import com.ebicep.warlords.util.Pair;
+import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 

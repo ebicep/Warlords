@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.ChatUtils.sendMessage;
+import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
     public static final String WARLORDS_DATABASE_MESSAGEFEED = "warlords.database.messagefeed";

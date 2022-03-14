@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
-import com.ebicep.warlords.util.LocationFactory;
+import com.ebicep.warlords.util.bukkit.LocationFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
+import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
 // MAPS:
 // "Crossfire"

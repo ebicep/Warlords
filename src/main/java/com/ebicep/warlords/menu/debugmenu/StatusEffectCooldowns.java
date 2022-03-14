@@ -1,4 +1,4 @@
-package com.ebicep.warlords.menu;
+package com.ebicep.warlords.menu.debugmenu;
 
 
 import com.ebicep.warlords.abilties.CripplingStrike;

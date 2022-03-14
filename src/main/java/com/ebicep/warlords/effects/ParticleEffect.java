@@ -1,5 +1,6 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.effects;
 
+import com.ebicep.warlords.util.bukkit.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;

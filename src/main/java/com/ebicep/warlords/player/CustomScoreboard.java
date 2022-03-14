@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

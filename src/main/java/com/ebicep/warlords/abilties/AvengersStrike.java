@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;

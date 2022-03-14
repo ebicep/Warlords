@@ -9,9 +9,9 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.poll.polls.GamePoll;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;

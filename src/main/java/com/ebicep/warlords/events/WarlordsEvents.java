@@ -21,7 +21,11 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
@@ -48,8 +52,8 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
 
 public class WarlordsEvents implements Listener {
 

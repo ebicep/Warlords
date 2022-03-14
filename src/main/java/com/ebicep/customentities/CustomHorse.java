@@ -1,8 +1,6 @@
 package com.ebicep.customentities;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.ItemBuilder;
 import net.minecraft.server.v1_8_R3.EntityHorse;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -13,7 +11,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class CustomHorse extends EntityHorse {
 

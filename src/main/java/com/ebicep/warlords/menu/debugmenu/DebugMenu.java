@@ -1,17 +1,12 @@
 package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.WordWrap;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -20,8 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static com.ebicep.warlords.menu.Menu.*;
-import static com.ebicep.warlords.util.Utils.woolSortedByColor;
+import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
 public class DebugMenu {
 

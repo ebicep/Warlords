@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;

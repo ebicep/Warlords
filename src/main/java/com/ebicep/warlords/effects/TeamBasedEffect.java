@@ -1,6 +1,5 @@
 package com.ebicep.warlords.effects;
 
-import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

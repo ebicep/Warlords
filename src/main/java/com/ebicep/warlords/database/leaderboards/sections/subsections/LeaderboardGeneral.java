@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
-import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Location;
 
 import java.util.List;

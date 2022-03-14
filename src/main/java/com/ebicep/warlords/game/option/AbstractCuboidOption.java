@@ -1,7 +1,7 @@
 
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.util.LocationFactory;
+import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
 import org.bukkit.World;
 

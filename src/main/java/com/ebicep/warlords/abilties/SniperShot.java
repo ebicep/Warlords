@@ -1,9 +1,9 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Matrix4d;
-import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;

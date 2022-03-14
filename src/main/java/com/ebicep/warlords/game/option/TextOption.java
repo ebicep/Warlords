@@ -2,14 +2,16 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PacketUtils;
-
-import java.util.*;
-import javax.annotation.Nonnull;
-
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Allows you to send a text to all players on start

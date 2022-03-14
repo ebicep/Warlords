@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
 public class DuelsTeleportOption extends TeleportOnEventOption {

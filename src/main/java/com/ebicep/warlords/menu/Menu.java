@@ -1,6 +1,6 @@
 package com.ebicep.warlords.menu;
 
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

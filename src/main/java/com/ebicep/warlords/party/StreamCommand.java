@@ -2,7 +2,7 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;

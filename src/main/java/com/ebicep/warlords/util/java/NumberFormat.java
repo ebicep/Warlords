@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.java;
 
 import java.text.DecimalFormat;
 import java.util.Map;

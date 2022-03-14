@@ -5,13 +5,12 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.util.GameRunnable;
-
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Bukkit;
 
 import java.util.EnumSet;
 
-import org.bukkit.Bukkit;
+import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
 /**
  * Causes a win for the game to trigger if any team has X amount of points more

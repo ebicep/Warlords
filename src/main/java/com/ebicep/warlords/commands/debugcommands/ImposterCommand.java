@@ -5,18 +5,13 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.ImposterModeOption;
-import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ImposterCommand implements CommandExecutor {
 

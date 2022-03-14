@@ -11,12 +11,11 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.menu.StatusEffectCooldowns;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.NumberFormat;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -35,7 +34,7 @@ import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
-import static com.ebicep.warlords.util.Utils.woolSortedByColor;
+import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class DebugMenuPlayerOptions {
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {

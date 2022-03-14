@@ -4,8 +4,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.MarkerOption;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.util.Pair;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;

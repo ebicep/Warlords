@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.flags;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;

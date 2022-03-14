@@ -5,21 +5,22 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.Pair;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  *
  */
 public class RespawnProtectionOption implements Option, Listener {
-    
+
     private static final int DEFAULT_PROTECTION_TIME = 4;
     private static final int DEFAULT_RADIUS = 5;
     private final Map<WarlordsPlayer, Pair<Location, Integer>> spawnProtection = new HashMap<>();

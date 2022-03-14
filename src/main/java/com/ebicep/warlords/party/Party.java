@@ -2,7 +2,7 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
-import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

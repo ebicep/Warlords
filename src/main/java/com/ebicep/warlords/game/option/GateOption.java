@@ -1,13 +1,13 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.LocationFactory;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.ebicep.warlords.util.ChatUtils.sendMessage;
-import static com.ebicep.warlords.util.Utils.iterable;
+import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
+import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMarker {
 

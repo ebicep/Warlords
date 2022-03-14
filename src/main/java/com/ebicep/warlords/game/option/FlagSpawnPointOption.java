@@ -3,18 +3,16 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.game.flags.*;
-import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-
-
+import com.ebicep.warlords.game.flags.*;
+import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import net.minecraft.server.v1_8_R3.Vec3D;

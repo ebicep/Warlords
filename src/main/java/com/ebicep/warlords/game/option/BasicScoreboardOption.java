@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 
 import javax.annotation.Nonnull;

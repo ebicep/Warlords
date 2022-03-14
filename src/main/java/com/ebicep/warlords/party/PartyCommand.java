@@ -3,7 +3,7 @@ package com.ebicep.warlords.party;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.queuesystem.QueueManager;
-import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;

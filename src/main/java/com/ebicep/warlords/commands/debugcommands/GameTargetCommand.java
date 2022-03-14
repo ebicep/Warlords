@@ -5,7 +5,7 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ebicep.warlords.util.Utils.startsWithIgnoreCase;
+import static com.ebicep.warlords.util.warlords.Utils.startsWithIgnoreCase;
 
 public abstract class GameTargetCommand implements TabExecutor {
 

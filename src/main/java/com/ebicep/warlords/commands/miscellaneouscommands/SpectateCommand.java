@@ -5,16 +5,15 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.util.ItemBuilder;
-
-import java.util.Optional;
-
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class SpectateCommand implements CommandExecutor {
 
@@ -23,7 +22,7 @@ public class SpectateCommand implements CommandExecutor {
 
         Player player = BaseCommand.requirePlayerOutsideGame(sender);
         if (player != null) {
-            if(!Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().acceptsSpectators())) {
+            if (!Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().acceptsSpectators())) {
                 sender.sendMessage(ChatColor.RED + "There are no active games right now!");
                 return true;
             }

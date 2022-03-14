@@ -3,12 +3,12 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.EffectUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
 public class Repentance extends AbstractAbility {

@@ -1,5 +1,6 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import org.bukkit.ChatColor;
 
 public class WordWrap {

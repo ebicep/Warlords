@@ -1,13 +1,14 @@
 
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.warlords;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-
-import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Copy of a BukkitRunable designed for quick registration of tasks related to a game

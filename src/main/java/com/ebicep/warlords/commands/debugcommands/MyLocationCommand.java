@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;

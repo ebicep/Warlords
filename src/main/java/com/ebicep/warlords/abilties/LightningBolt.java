@@ -1,11 +1,11 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

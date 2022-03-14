@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.util.bukkit;
 
 import org.bukkit.Location;
 import org.bukkit.World;
