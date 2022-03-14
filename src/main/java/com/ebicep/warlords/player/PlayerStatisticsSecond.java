@@ -82,6 +82,14 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         return getLastEventsAsAttacker(amount, 60); //max last 60 seconds
     }
 
+    public WarlordsDamageHealingFinalEvent getLastEventAsSelf() {
+        return getLastEventsAsSelf(1, 1).get(0);
+    }
+
+    public WarlordsDamageHealingFinalEvent getLastEventAsAttacker() {
+        return getLastEventsAsAttacker(1, 1).get(0);
+    }
+
     @NotNull
     @Override
     public Iterator<Entry> iterator() {

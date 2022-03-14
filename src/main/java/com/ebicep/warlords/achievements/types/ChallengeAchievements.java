@@ -123,7 +123,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Classes.PYROMANCER,
             warlordsPlayer -> {
-                WarlordsDamageHealingFinalEvent lastEvent = warlordsPlayer.getSecondStats().getLastEventsAsAttacker(1, 1).get(0);
+                WarlordsDamageHealingFinalEvent lastEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
                 return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer().getLocation().distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
             },
             false),
@@ -189,10 +189,17 @@ public enum ChallengeAchievements implements Achievement {
             "Generate over 3k healing by inflicting one instance of LEECH on the enemy flag carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.APOTHECARY,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventsAsAttacker(1, 1).get(0);
+                WarlordsDamageHealingFinalEvent lastHealingEvent = warlordsPlayer.getSecondStats().getLastEventAsSelf();
+                if (lastDamageEvent.isHasFlag()) {
+                    return lastHealingEvent.getAbility().equals("Leech") && lastHealingEvent.getValue() >= 3000;
+                }
+                return false;
+            },
             false),
     EXTENDED_COMBAT("Extended Combat",
-            "Stay in combat for over 40 seconds and deal 10k damage to the enemy carrier. ",
+            "Stay in combat for over 40 seconds and deal 10k damage to the enemy carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.BERSERKER,
             warlordsPlayer -> false,
@@ -243,7 +250,40 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier after landing 5 or more abilities on them.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.EARTHWARDEN,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(10);
+                int indexCarrier = -1;
+                int indexCarrierKilled = -1;
+                WarlordsPlayer carrier = null;
+                for (int i = 0; i < events.size(); i++) {
+                    if (events.get(i).isHasFlag()) {
+                        indexCarrier = i;
+                        carrier = events.get(i).getPlayer();
+                        break;
+                    }
+                }
+                if (indexCarrier != -1) {
+                    for (int i = 0; i < events.size(); i++) {
+                        WarlordsDamageHealingFinalEvent event = events.get(i);
+                        if (event.getPlayer().equals(carrier) && event.isDead()) {
+                            indexCarrierKilled = i;
+                            break;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+                if (indexCarrierKilled != -1) {
+                    WarlordsPlayer finalCarrier = carrier;
+                    int numberOfAbilityAttackers = (int) events.subList(indexCarrier, indexCarrierKilled).stream()
+                            .filter(warlordsDamageHealingFinalEvent -> warlordsDamageHealingFinalEvent.getPlayer().equals(finalCarrier))
+                            .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getAbility().isEmpty())
+                            .count();
+                    return numberOfAbilityAttackers >= 5;
+                } else {
+                    return false;
+                }
+            },
             false),
 
     ;
