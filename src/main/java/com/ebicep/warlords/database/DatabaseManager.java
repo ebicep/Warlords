@@ -213,6 +213,9 @@ public class DatabaseManager {
         weaponSkins.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
         weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
         weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
+        weaponSkins.put(Classes.ASSASSIN, databasePlayer.getRogue().getAssassin().getWeapon());
+        weaponSkins.put(Classes.VINDICATOR, databasePlayer.getRogue().getVindicator().getWeapon());
+        weaponSkins.put(Classes.APOTHECARY, databasePlayer.getRogue().getApothecary().getWeapon());
         Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
 
         HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<>();
@@ -228,6 +231,9 @@ public class DatabaseManager {
         classesSkillBoosts.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getSkillBoost());
         classesSkillBoosts.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getSkillBoost());
         classesSkillBoosts.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getSkillBoost());
+        classesSkillBoosts.put(Classes.ASSASSIN, databasePlayer.getRogue().getAssassin().getSkillBoost());
+        classesSkillBoosts.put(Classes.VINDICATOR, databasePlayer.getRogue().getVindicator().getSkillBoost());
+        classesSkillBoosts.put(Classes.APOTHECARY, databasePlayer.getRogue().getApothecary().getSkillBoost());
         classesSkillBoosts.values().removeAll(Collections.singleton(null));
         Warlords.getPlayerSettings(player.getUniqueId()).setClassesSkillBoosts(classesSkillBoosts);
 
