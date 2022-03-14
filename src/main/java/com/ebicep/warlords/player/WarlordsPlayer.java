@@ -93,7 +93,6 @@ public final class WarlordsPlayer {
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
-    private UUID markedTarget;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
@@ -223,16 +222,16 @@ public final class WarlordsPlayer {
 
         int initialHealth = health;
 
+        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.doBeforeReductionFromSelf(event);
+        }
+        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.doBeforeReductionFromAttacker(event);
+        }
+
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
             critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
-        }
-
-        // Assassin takes damage, remove ability.
-        if (getCooldownManager().hasCooldownFromName("Cloaked")) {
-            getCooldownManager().removeCooldownByName("Cloaked");
-            this.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
-            updateArmor();
         }
 
         //crit
@@ -307,9 +306,6 @@ public final class WarlordsPlayer {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 }
 
-                if (attacker.getMarkedTarget() == uuid && !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
-                    damageValue *= 1.25;
-                }
             }
         }
 
@@ -477,47 +473,14 @@ public final class WarlordsPlayer {
                         }
                     });
 
-                    // Assassin Mark
-                    gameState.getGame().forEachOfflineWarlordsPlayer(p -> {
-                        if (p.getMarkedTarget() == uuid) {
-                            p.setMarkedTarget(null);
-                            if (attacker.getUuid() == p.getUuid()) {
-                                p.sendMessage("");
-                                p.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
-                                p.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-                                p.getCooldownManager().removeCooldownByName("Cloaked");
-                                new GameRunnable(gameState.getGame()) {
-
-                                    @Override
-                                    public void run() {
-                                        p.getSpec().getPurple().setCurrentCooldown(0);
-                                        p.getSpec().getOrange().setCurrentCooldown(0);
-                                        p.updatePurpleItem();
-                                        p.updateOrangeItem();
-                                        p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
-                                    }
-                                }.runTaskLater(2);
-                            } else {
-                                new GameRunnable(gameState.getGame()) {
-
-                                    @Override
-                                    public void run() {
-                                        p.getSpec().getPurple().setCurrentCooldown(p.getSpec().getPurple().getCurrentCooldown() / 2);
-                                        p.getSpec().getOrange().setCurrentCooldown(p.getSpec().getOrange().getCurrentCooldown() / 2);
-                                        p.updatePurpleItem();
-                                        p.updateOrangeItem();
-                                        p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost() / 2);
-                                    }
-                                }.runTaskLater(2);
-                                p.sendMessage(GIVE_ARROW + ChatColor.RED + " Your marked target has died!");
-                                p.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-                                p.getCooldownManager().removeCooldownByName("Cloaked");
-                            }
-                            if (p.getEntity() instanceof Player) {
-                                ((Player) p.getEntity()).playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
-                            }
+                    for (WarlordsPlayer enemy : PlayerFilter.playingGame(game)
+                            .enemiesOf(this)
+                            .stream().collect(Collectors.toList())
+                    ) {
+                        for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
+                            abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
                         }
-                    });
+                    }
 
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
@@ -876,6 +839,7 @@ public final class WarlordsPlayer {
             if (attacker != this) {
                 hitBy.putAll(attacker.getHealedBy());
             }
+            hitBy.remove(attacker);
         }
 
         this.addDeath();
@@ -1052,15 +1016,17 @@ public final class WarlordsPlayer {
 
         ArmorManager.resetArmor(player, getSpecClass(), getTeam());
 
-        if (cooldownManager.hasCooldownFromName("Cloaked")) {
+        if (cooldownManager.hasCooldownFromName("Cloaked") && !hasFlag()) {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+        } else {
+            getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
         }
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.showPlayer(player);
         }
 
-        if (this.flagDamageMultiplier > 0) {
+        if (hasFlag()) {
             ItemStack item = new ItemStack(Material.BANNER);
             BannerMeta banner = (BannerMeta) item.getItemMeta();
             banner.setBaseColor(getTeam() == Team.RED ? DyeColor.BLUE : DyeColor.RED);
@@ -1716,7 +1682,7 @@ public final class WarlordsPlayer {
         applySkillBoost(player);
         player.closeInventory();
         this.assignItemLore(player);
-        ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+        updateArmor();
 
         resetPlayerAddons();
 
@@ -1725,7 +1691,6 @@ public final class WarlordsPlayer {
         } else {
             player.setGameMode(GameMode.ADVENTURE);
         }
-        // TODO Update the inventory based on the status of isUndyingArmyDead here
     }
 
     private void resetPlayerAddons() {
@@ -1871,9 +1836,7 @@ public final class WarlordsPlayer {
     }
 
     public boolean hasFlag() {
-        return this.carriedFlag != null
-                && this.carriedFlag.getFlag() instanceof PlayerFlagLocation
-                && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this;
+        return FlagHolder.isPlayerHolderFlag(this);
     }
 
     public String getColoredName() {
@@ -1994,14 +1957,6 @@ public final class WarlordsPlayer {
 
     public List<Float> getRecordDamage() {
         return recordDamage;
-    }
-
-    public UUID getMarkedTarget() {
-        return markedTarget;
-    }
-
-    public void setMarkedTarget(UUID markedTarget) {
-        this.markedTarget = markedTarget;
     }
 
     public float getCurrentHealthModifier() {

@@ -33,6 +33,20 @@ public interface DamageHealingInstance {
 
 
     /**
+     * Calls before any reduction - based on self cooldowns
+     */
+    default void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
+
+    }
+
+    /**
+     * Calls before any reduction - based on attackers cooldowns
+     */
+    default void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
+
+    }
+
+    /**
      * If attacker has abilities that increase their crit chance (inferno)
      */
     default int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
@@ -93,15 +107,22 @@ public interface DamageHealingInstance {
     }
 
     /**
-     * Called after all damage modifications - based on self cooldowns
+     * Called after all damage modifications and after the damage has been applied - based on self cooldowns
      */
     default void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
     }
 
     /**
-     * Called after all damage modifications - based on attackers cooldowns
+     * Called after all damage modifications and after the damage has been applied - based on attackers cooldowns
      */
     default void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called if the player dies - based on all enemies cooldowns
+     */
+    default void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+
     }
 
     /**

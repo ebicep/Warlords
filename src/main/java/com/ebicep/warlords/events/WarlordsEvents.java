@@ -1,11 +1,8 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.abilties.IceBarrier;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.TimeWarp;
-import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
@@ -53,7 +50,6 @@ import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
-import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -710,6 +706,8 @@ public class WarlordsEvents implements Listener {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
             WarlordsPlayer player = pfl.getPlayer();
             player.setCarriedFlag(event.getInfo());
+            //removing invis for assassins
+            OrderOfEviscerate.removeCloak(player, false);
             if (event.getOld() instanceof PlayerFlagLocation) {
                 // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
                 if (pfl.getComputedHumanMultiplier() % 10 == 0) {
@@ -766,6 +764,7 @@ public class WarlordsEvents implements Listener {
         } else if (event.getNew() instanceof GroundFlagLocation) {
             if (event.getOld() instanceof PlayerFlagLocation) {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
+                pfl.getPlayer().updateArmor();
                 String flag = event.getTeam().coloredPrefix();
                 ChatColor playerColor = event.getTeam().enemy().teamColor();
                 event.getGame().forEachOnlinePlayer((p, t) -> {

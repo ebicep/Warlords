@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
@@ -17,12 +18,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
-
-import static com.ebicep.warlords.player.WarlordsPlayer.RECEIVE_ARROW;
+import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility {
 
     private int duration = 8;
+    private WarlordsPlayer markedPlayer;
 
     public OrderOfEviscerate() {
         super("Order of Eviscerate", 0, 0, 50, 60, -1, 100);
@@ -62,13 +63,64 @@ public class OrderOfEviscerate extends AbstractAbility {
                 duration * 20
         ) {
             @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsPlayer attacker = event.getAttacker();
+            public void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
+                OrderOfEviscerate.removeCloak(wp, false);
+            }
+
+            @Override
+            public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
+                //mark message here so it displays before damage
                 WarlordsPlayer victim = event.getPlayer();
-                if (attacker.getMarkedTarget() != victim.getUuid()) {
-                    attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + victim.getName());
+                if (!Objects.equals(this.getCooldownObject().getMarkedPlayer(), victim)) {
+                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + victim.getName());
                 }
-                attacker.setMarkedTarget(victim.getUuid());
+                this.getCooldownObject().setMarkedPlayer(victim);
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (this.getCooldownObject().getMarkedPlayer().equals(event.getPlayer()) &&
+                        !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
+                    return currentDamageValue * 1.25f;
+                }
+                return currentDamageValue;
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
+                wp.getCooldownManager().removeCooldownByName("Cloaked");
+                if (isKiller) {
+                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
+                    new GameRunnable(wp.getGame()) {
+
+                        @Override
+                        public void run() {
+                            wp.getSpec().getPurple().setCurrentCooldown(0);
+                            wp.getSpec().getOrange().setCurrentCooldown(0);
+                            wp.updatePurpleItem();
+                            wp.updateOrangeItem();
+                            wp.subtractEnergy(-wp.getSpec().getOrange().getEnergyCost());
+                        }
+                    }.runTaskLater(2);
+                } else {
+                    new GameRunnable(wp.getGame()) {
+
+                        @Override
+                        public void run() {
+                            wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You assisted in killing your mark," + ChatColor.YELLOW + " your cooldowns have been reduced by half" + ChatColor.GRAY + "!");
+
+                            wp.getSpec().getPurple().setCurrentCooldown(wp.getSpec().getPurple().getCurrentCooldown() / 2);
+                            wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() / 2);
+                            wp.updatePurpleItem();
+                            wp.updateOrangeItem();
+                            wp.subtractEnergy(-wp.getSpec().getOrange().getEnergyCost() / 2);
+                        }
+                    }.runTaskLater(2);
+                }
+                if (wp.getEntity() instanceof Player) {
+                    ((Player) wp.getEntity()).playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
+                }
             }
         });
 
@@ -86,35 +138,28 @@ public class OrderOfEviscerate extends AbstractAbility {
         );
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
-
-        wp.updateArmor();
-
+        if (!FlagHolder.isPlayerHolderFlag(wp)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
+            wp.updateArmor();
+            PlayerFilter.playingGame(wp.getGame())
+                    .enemiesOf(wp)
+                    .forEach(warlordsPlayer -> {
+                        LivingEntity livingEntity = warlordsPlayer.getEntity();
+                        if (livingEntity instanceof Player) {
+                            ((Player) livingEntity).hidePlayer(player);
+                        }
+                    });
+        }
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
-
-        PlayerFilter.playingGame(wp.getGame())
-                .enemiesOf(wp)
-                .forEach(warlordsPlayer -> {
-                    LivingEntity livingEntity = warlordsPlayer.getEntity();
-                    if (livingEntity instanceof Player) {
-                        ((Player) livingEntity).hidePlayer(player);
-                    }
-                });
 
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     this.cancel();
-                    wp.updateArmor();
-                    wp.setMarkedTarget(null);
+                    //wp.setMarkedTarget(null);
                     cancelSpeed.run();
-                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
-                    if (wp.getEntity() instanceof Player) {
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.showPlayer((Player) wp.getEntity());
-                        }
-                    }
+                    removeCloak(wp, true);
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0.01f, 0.28f, 0.01f, 0.05f, 6, wp.getLocation(), 500);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
@@ -125,11 +170,27 @@ public class OrderOfEviscerate extends AbstractAbility {
         return true;
     }
 
+    public static void removeCloak(WarlordsPlayer warlordsPlayer, boolean forceRemove) {
+        if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
+            warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
+            warlordsPlayer.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+            warlordsPlayer.updateArmor();
+        }
+    }
+
     public int getDuration() {
         return duration;
     }
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public WarlordsPlayer getMarkedPlayer() {
+        return markedPlayer;
+    }
+
+    public void setMarkedPlayer(WarlordsPlayer markedPlayer) {
+        this.markedPlayer = markedPlayer;
     }
 }
