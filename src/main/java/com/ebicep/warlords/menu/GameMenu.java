@@ -143,16 +143,22 @@ public class GameMenu {
                     (m, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Spec: §6" + subClass);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                        setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
-                        openClassMenu(player, selectedGroup);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                        playerSettings.setSelectedClass(subClass);
+
                         AbstractPlayerClass apc = subClass.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                 .getOrDefault(subClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                                 .lore("")
                                 .get());
 
+                        openClassMenu(player, selectedGroup);
+
+                        if (DatabaseManager.playerService == null) return;
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.setLastSpec(subClass);
+                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -191,7 +197,6 @@ public class GameMenu {
                         openSkillBoostMenu(player, selectedGroup);
 
                         if (DatabaseManager.playerService == null) return;
-                        //sync bc player should be cached
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
                         DatabaseManager.updatePlayerAsync(databasePlayer);
@@ -283,7 +288,6 @@ public class GameMenu {
                                     .get());
 
                             if (DatabaseManager.playerService == null) return;
-                            //sync bc player should be cached
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                             databasePlayer.getSpec(selectedClass).setWeapon(weapon);
                             DatabaseManager.updatePlayerAsync(databasePlayer);
@@ -408,27 +412,25 @@ public class GameMenu {
                             Helmets.setSelectedShaman(player, helmet);
                         } else if (
                                 helmet == Helmets.SIMPLE_ROGUE_HELMET ||
-                                helmet == Helmets.GREATER_ROGUE_HELMET ||
-                                helmet == Helmets.MASTERWORK_ROGUE_HELMET ||
-                                helmet == Helmets.LEGENDARY_ROGUE_HELMET
+                                        helmet == Helmets.GREATER_ROGUE_HELMET ||
+                                        helmet == Helmets.MASTERWORK_ROGUE_HELMET ||
+                                        helmet == Helmets.LEGENDARY_ROGUE_HELMET
                         ) {
                             Helmets.setSelectedRogue(player, helmet);
                         }
-
-                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
-
-                        Warlords.newChain().async(() -> {
-                            if (DatabaseManager.playerService == null) return;
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
-                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
-                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
-                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
-                            databasePlayer.getRogue().setHelmet(selectedHelmets.get(4));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
-                        }).execute();
-                        openArmorMenu(player, pageNumber);
                         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
+
+                        openArmorMenu(player, pageNumber);
+
+                        if (DatabaseManager.playerService == null) return;
+                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
+                        databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
+                        databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
+                        databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+                        databasePlayer.getRogue().setHelmet(selectedHelmets.get(4));
+                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -469,18 +471,18 @@ public class GameMenu {
                         } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_ROGUE || armorSet == ArmorSets.GREATER_CHESTPLATE_ROGUE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_ROGUE) {
                             ArmorSets.setSelectedRogue(player, armorSet);
                         }
-                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
-                        Warlords.newChain().async(() -> {
-                            if (DatabaseManager.playerService == null) return;
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
-                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
-                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
-                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
-                            databasePlayer.getRogue().setArmor(armorSetsList.get(4));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
-                        }).execute();
+
                         openArmorMenu(player, pageNumber);
+
+                        if (DatabaseManager.playerService == null) return;
+                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.getMage().setArmor(armorSetsList.get(0));
+                        databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
+                        databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
+                        databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+                        databasePlayer.getRogue().setArmor(armorSetsList.get(4));
+                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
             if (xPosition == 3) {
