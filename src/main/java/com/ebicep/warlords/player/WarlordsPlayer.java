@@ -1425,6 +1425,10 @@ public final class WarlordsPlayer {
         }
     }
 
+    public boolean onHorse() {
+        return this.entity.isInsideVehicle();
+    }
+
     public float getMaxEnergy() {
         return maxEnergy;
     }

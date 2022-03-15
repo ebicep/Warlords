@@ -76,7 +76,7 @@ public class ShadowStep extends AbstractAbility {
                 }
 
                 wp.getLocation(playerLoc);
-                boolean hitGround = player.isOnGround();
+                boolean hitGround = player.isOnGround() || wp.onHorse();
                 y = playerLoc.getY();
 
                 if (wasOnGround && !hitGround) {
