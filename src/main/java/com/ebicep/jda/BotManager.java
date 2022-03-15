@@ -60,9 +60,12 @@ public class BotManager {
 
                 @Override
                 public void run() {
-                    if (getCompGamesServer() == null || getWL2Server() == null) {
-                        System.out.println("[BotManager]: Comp/WL2Server guild is null, ending task");
-                        this.cancel();
+                    try {
+                        if (getCompGamesServer() == null || getWL2Server() == null) {
+                            System.out.println("[BotManager]: Comp/WL2Server guild is null");
+                        }
+                    } catch (Exception e) {
+                        return;
                     }
                     if (counter % 3 == 0) {
                         if (numberOfMessagesSentLast30Sec > 0) {

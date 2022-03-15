@@ -159,7 +159,6 @@ public class OrderOfEviscerate extends AbstractAbility {
             public void run() {
                 if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     this.cancel();
-                    //wp.setMarkedTarget(null);
                     cancelSpeed.run();
                     removeCloak(wp, true);
                 } else {
