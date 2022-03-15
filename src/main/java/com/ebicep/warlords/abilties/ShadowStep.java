@@ -71,7 +71,8 @@ public class ShadowStep extends AbstractAbility {
             public void run() {
                 counter++;
 
-                if (counter == 300) {
+                // if player never lands in the span of 10 seconds, remove damage.
+                if (counter == 200 || wp.isDead()) {
                     this.cancel();
                 }
 
@@ -100,10 +101,6 @@ public class ShadowStep extends AbstractAbility {
                             .with(FireworkEffect.Type.BALL)
                             .build());
 
-                    this.cancel();
-                }
-
-                if (wp.isDead()) {
                     this.cancel();
                 }
             }

@@ -51,14 +51,6 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 wp.subtractEnergy(energyCost);
 
-                for (WarlordsPlayer healTarget : PlayerFilter
-                        .playingGame(wp.getGame())
-                        .excluding(getPlayersHit())
-                        .aliveTeammatesOf(wp)
-                ) {
-                    markTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                }
-
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
