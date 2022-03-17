@@ -20,6 +20,7 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
     public final List<Leaderboard> leaderboards = new ArrayList<>();
 
     public final List<Hologram> lifeTimeHolograms = new ArrayList<>();
+    public final List<Hologram> season6Holograms = new ArrayList<>();
     public final List<Hologram> season5Holograms = new ArrayList<>();
     public final List<Hologram> season4Holograms = new ArrayList<>();
     public final List<Hologram> weeklyHolograms = new ArrayList<>();
@@ -31,6 +32,7 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
 
     public List<Hologram> getCollectionHologram(PlayersCollections collections) {
         if (collections == PlayersCollections.LIFETIME) return this.lifeTimeHolograms;
+        if (collections == PlayersCollections.SEASON_6) return this.season6Holograms;
         if (collections == PlayersCollections.SEASON_5) return this.season5Holograms;
         if (collections == PlayersCollections.SEASON_4) return this.season4Holograms;
         if (collections == PlayersCollections.WEEKLY) return this.weeklyHolograms;
@@ -39,7 +41,12 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
     }
 
     public List<Hologram> getAllHolograms() {
-        return Stream.of(lifeTimeHolograms, season5Holograms, season4Holograms, weeklyHolograms, dailyHolograms)
+        return Stream.of(lifeTimeHolograms,
+                        season6Holograms,
+                        season5Holograms,
+                        season4Holograms,
+                        weeklyHolograms,
+                        dailyHolograms)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
@@ -54,6 +61,10 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
 
     public List<Hologram> getLifeTimeHolograms() {
         return lifeTimeHolograms;
+    }
+
+    public List<Hologram> getSeason6Holograms() {
+        return season6Holograms;
     }
 
     public List<Hologram> getSeason5Holograms() {

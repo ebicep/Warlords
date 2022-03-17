@@ -166,6 +166,9 @@ public class CustomScoreboard {
                 case LIFETIME:
                     databasePlayerList = leaderboard.getSortedAllTime();
                     break;
+                case SEASON_6:
+                    databasePlayerList = leaderboard.getSortedSeason6();
+                    break;
                 case SEASON_5:
                     databasePlayerList = leaderboard.getSortedSeason5();
                     break;

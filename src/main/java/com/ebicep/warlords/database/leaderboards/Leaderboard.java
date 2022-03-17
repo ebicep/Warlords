@@ -18,6 +18,7 @@ public class Leaderboard {
     private final String title;
     private final Location location;
     private final List<DatabasePlayer> sortedAllTime = new ArrayList<>();
+    private final List<DatabasePlayer> sortedSeason6 = new ArrayList<>();
     private final List<DatabasePlayer> sortedSeason5 = new ArrayList<>();
     private final List<DatabasePlayer> sortedSeason4 = new ArrayList<>();
     private final List<DatabasePlayer> sortedWeekly = new ArrayList<>();
@@ -50,6 +51,8 @@ public class Leaderboard {
         switch (collections) {
             case LIFETIME:
                 return sortedAllTime;
+            case SEASON_6:
+                return sortedSeason6;
             case SEASON_5:
                 return sortedSeason5;
             case SEASON_4:
@@ -68,9 +71,9 @@ public class Leaderboard {
                 this.sortedAllTime.clear();
                 this.sortedAllTime.addAll(newSortedPlayers);
                 return;
-            case WEEKLY:
-                this.sortedWeekly.clear();
-                this.sortedWeekly.addAll(newSortedPlayers);
+            case SEASON_6:
+                this.sortedSeason6.clear();
+                this.sortedSeason6.addAll(newSortedPlayers);
                 return;
             case SEASON_5:
                 this.sortedSeason5.clear();
@@ -79,6 +82,10 @@ public class Leaderboard {
             case SEASON_4:
                 this.sortedSeason4.clear();
                 this.sortedSeason4.addAll(newSortedPlayers);
+                return;
+            case WEEKLY:
+                this.sortedWeekly.clear();
+                this.sortedWeekly.addAll(newSortedPlayers);
                 return;
             case DAILY:
                 this.sortedDaily.clear();
@@ -170,6 +177,10 @@ public class Leaderboard {
 
     public List<DatabasePlayer> getSortedAllTime() {
         return sortedAllTime;
+    }
+
+    public List<DatabasePlayer> getSortedSeason6() {
+        return sortedSeason6;
     }
 
     public List<DatabasePlayer> getSortedSeason5() {

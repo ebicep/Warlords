@@ -958,11 +958,6 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                     }
-
-                    // Loops every 100 ticks - 5 seconds.
-                    if (counter % 100 == 0) {
-                        BotManager.sendStatusMessage(false);
-                    }
                 }
                 counter++;
             }

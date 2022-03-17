@@ -209,7 +209,7 @@ public abstract class DatabaseGameBase {
         }
 
         DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
-        DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.SEASON_5);
+        DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.SEASON_6);
         DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
         DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.DAILY);
 
@@ -226,7 +226,7 @@ public abstract class DatabaseGameBase {
         } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
         if (databasePlayerSeason != null) {
             databasePlayerSeason.updateStats(databaseGame, gamePlayer, add);
-            DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_5);
+            DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
         } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
         if (databasePlayerWeekly != null) {
             databasePlayerWeekly.updateStats(databaseGame, gamePlayer, add);

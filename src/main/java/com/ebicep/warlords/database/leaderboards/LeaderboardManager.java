@@ -126,7 +126,7 @@ public class LeaderboardManager {
 
                 @Override
                 public void run() {
-                    if (loadedBoards.get() == 5) {
+                    if (loadedBoards.get() == 6) {
                         loaded = true;
 
                         long endTime = System.nanoTime();
@@ -212,6 +212,8 @@ public class LeaderboardManager {
 
         if (selectedTime == PlayersCollections.LIFETIME) {
             leaderboardCategory.getLifeTimeHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        } else if (selectedTime == PlayersCollections.SEASON_6) {
+            leaderboardCategory.getSeason6Holograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else if (selectedTime == PlayersCollections.SEASON_5) {
             leaderboardCategory.getSeason5Holograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else if (selectedTime == PlayersCollections.SEASON_4) {
@@ -333,6 +335,9 @@ public class LeaderboardManager {
                 switch (selectedTime) {
                     case LIFETIME:
                         databasePlayers = leaderboard.getSortedAllTime();
+                        break;
+                    case SEASON_6:
+                        databasePlayers = leaderboard.getSortedSeason6();
                         break;
                     case SEASON_5:
                         databasePlayers = leaderboard.getSortedSeason5();

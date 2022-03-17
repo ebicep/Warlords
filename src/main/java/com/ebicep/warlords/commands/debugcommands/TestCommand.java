@@ -1,6 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -10,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.sr.SRCalculator;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,9 +16,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
-
-import java.util.Comparator;
-import java.util.Map;
 
 
 public class TestCommand implements CommandExecutor {
@@ -86,7 +81,7 @@ public class TestCommand implements CommandExecutor {
         }
 
 
-        SRCalculator.recalculateSR();
+        //SRCalculator.recalculateSR();
 
         Player player = (Player) sender;
 //        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
@@ -108,6 +103,29 @@ public class TestCommand implements CommandExecutor {
 //        });
 //
 
+        int assassinWins = 0;
+        int assassinLosses = 0;
+        int vindicatorWins = 0;
+        int vindicatorLosses = 0;
+        int apothecaryWins = 0;
+        int apothecaryLosses = 0;
+        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5)) {
+            assassinWins += databasePlayer.getRogue().getAssassin().getWins();
+            assassinLosses += databasePlayer.getRogue().getAssassin().getLosses();
+            vindicatorWins += databasePlayer.getRogue().getVindicator().getWins();
+            vindicatorLosses += databasePlayer.getRogue().getVindicator().getLosses();
+            apothecaryWins += databasePlayer.getRogue().getApothecary().getWins();
+            apothecaryLosses += databasePlayer.getRogue().getApothecary().getLosses();
+        }
+        System.out.println("Assassin Wins: " + assassinWins);
+        System.out.println("Assassin Losses: " + assassinLosses);
+        System.out.println(((double) assassinWins / (assassinWins + assassinLosses) * 10) / 10 + "%");
+        System.out.println("Vindicator Wins: " + vindicatorWins);
+        System.out.println("Vindicator Losses: " + vindicatorLosses);
+        System.out.println(((double) vindicatorWins / (vindicatorWins + vindicatorLosses) * 10) / 10 + "%");
+        System.out.println("Apothecary Wins: " + apothecaryWins);
+        System.out.println("Apothecary Losses: " + apothecaryLosses);
+        System.out.println(((double) apothecaryWins / (apothecaryWins + apothecaryLosses) * 10) / 10 + "%");
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
 //            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
