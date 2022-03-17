@@ -73,7 +73,7 @@ public class BotManager {
                     }
                     counter++;
                 }
-            }.runTaskTimer(Warlords.getInstance(), 200, 20);
+            }.runTaskTimer(Warlords.getInstance(), 100, 20);
         }
     }
 
@@ -141,9 +141,9 @@ public class BotManager {
     }
 
     public static void sendStatusMessage(boolean onQuit) {
-        if (!Warlords.serverIP.equals("51.81.49.127")) {
-            return;
-        }
+//        if (!Warlords.serverIP.equals("51.81.49.127")) {
+//            return;
+//        }
         DateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
         dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
         EmbedBuilder eb = new EmbedBuilder()
@@ -152,8 +152,8 @@ public class BotManager {
                 .setFooter(dateFormat.format(new Date()) + " EST");
         eb.setDescription("**Players Online**: " + (onQuit ? Bukkit.getOnlinePlayers().size() - 1 : Bukkit.getOnlinePlayers().size()) + "\n");
         eb.appendDescription("**Players In Game**: " + Warlords.getGameManager().getPlayerCount() + "\n");
-        eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby()+ "\n");
-        for(GameHolder holder : Warlords.getGameManager().getGames()) {
+        eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby() + "\n");
+        for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
             if(game == null) {
                 eb.appendDescription("**Game**: " + holder.getMap().getMapName() + " Inactive\n");
@@ -182,6 +182,12 @@ public class BotManager {
 
         MessageEmbed messageEmbed = eb.build();
         getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> {
+            try {
+                textChannel.getLatestMessageId();
+            } catch (Exception e) {
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
+                return;
+            }
             if (compStatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             } else if (textChannel.getLatestMessageId().equals(compStatusMessage.getId())) {
@@ -192,6 +198,12 @@ public class BotManager {
             }
         });
         getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> {
+            try {
+                textChannel.getLatestMessageId();
+            } catch (Exception e) {
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
+                return;
+            }
             if (wl2StatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
             } else if (textChannel.getLatestMessageId().equals(wl2StatusMessage.getId())) {
