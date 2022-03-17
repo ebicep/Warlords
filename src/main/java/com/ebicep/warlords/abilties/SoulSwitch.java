@@ -25,10 +25,10 @@ public class SoulSwitch extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Switch locations with an enemy, blinding" +
-                "them for 1.5 seconds. Has an optimal range of\n" +
-                "§e" + radius + " §7blocks. Soul Switch has\n" +
-                "§7low vertical range.";
+        description = "§7Switch locations with an enemy, blinding\n" +
+                "§7them for §61.5 §7seconds. Has an optimal range\n" +
+                "§7of §e" + radius + " §7blocks. Soul Switch has low\n" +
+                "§7vertical range.";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SoulSwitch extends AbstractAbility {
 
                 swapTarget.getEntity().addPotionEffect(
                         new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
-                swapTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.GRAY + "You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
+                swapTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
                         ownLocation.getX(),
@@ -59,7 +59,7 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getYaw(),
                         swapLocation.getPitch()));
 
-                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + "You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
+                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
                 wp.teleport(new Location(
                         swapLocation.getWorld(),
                         swapLocation.getX(),

@@ -38,7 +38,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
-                "§7Vulnerable enemies take §c25% §7more damage from behind." +
+                "§7Vulnerable enemies take §c20% §7more damage from behind." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Shadow Step and Order of Eviscerate's cooldown\n" +
@@ -83,7 +83,7 @@ public class OrderOfEviscerate extends AbstractAbility {
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (this.getCooldownObject().getMarkedPlayer().equals(event.getPlayer()) &&
                         !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
-                    return currentDamageValue * 1.25f;
+                    return currentDamageValue * 1.2f;
                 }
                 return currentDamageValue;
             }
