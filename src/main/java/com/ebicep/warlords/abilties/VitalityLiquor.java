@@ -39,7 +39,7 @@ public class VitalityLiquor extends AbstractAbility {
                 "§7Each enemy afflicted with your §aLEECH §7effect\n" +
                 "§7within the range will cause the enemy to\n" +
                 "§7discharge an additional shockwave of vitality\n" +
-                "§7that heals 2 nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
+                "§7that heals §e2 §7nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
                 "§7and increase their energy regeneration by\n" +
                 "§e15 §7for §6" + duration + " §7seconds.";
     }

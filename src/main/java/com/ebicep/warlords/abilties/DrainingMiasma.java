@@ -36,7 +36,7 @@ public class DrainingMiasma extends AbstractAbility {
                 "§7enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
                 "§7poisoned by your Draining Miasma are slowed by\n" +
-                "§e25% §7for §63 §7seconds on cast." +
+                "§e20% §7for §63 §7seconds on cast." +
                 "\n\n" +
                 "§7The caster emits healing particles that heal all\n" +
                 "§7allies within the range for §a" + damageDealtHealing + "% §7of the damage\n" +
@@ -63,6 +63,7 @@ public class DrainingMiasma extends AbstractAbility {
                 .entitiesAround(wp, getEnemyHitRadius(), getEnemyHitRadius(), getEnemyHitRadius())
                 .aliveEnemiesOf(wp)
         ) {
+            Runnable cancelSpeed = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -20, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     "Draining Miasma",
                     "MIASMA",
@@ -70,11 +71,11 @@ public class DrainingMiasma extends AbstractAbility {
                     tempDrainingMiasma,
                     wp,
                     CooldownTypes.DEBUFF,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                        cancelSpeed.run();
+                    },
                     duration * 20
             );
-
-            miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
 
             new GameRunnable(wp.getGame()) {
 

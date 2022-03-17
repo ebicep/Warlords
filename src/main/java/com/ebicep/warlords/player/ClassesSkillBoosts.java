@@ -627,9 +627,9 @@ public enum ClassesSkillBoosts {
                 }
             }
     ),
-    BLINDING_ASSAULT("Blinding Assault",
-            "§7Reduce the cooldown by Blinding Assault\nby 40%",
-            "§aReduce the cooldown by Blinding Assault\nby §c40%",
+    BLINDING_ASSAULT("Shadow Step",
+            "§7Reduce the cooldown by Shadow Step\nby 40%",
+            "§aReduce the cooldown by Shadow Step\nby §c40%",
             ShadowStep.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
