@@ -81,7 +81,7 @@ public class OrderOfEviscerate extends AbstractAbility {
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (this.getCooldownObject().getMarkedPlayer().equals(event.getPlayer()) &&
+                if (Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
                         !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
                     return currentDamageValue * 1.2f;
                 }

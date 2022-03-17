@@ -908,8 +908,11 @@ public class Warlords extends JavaPlugin {
                             // Cooldowns
 
                             // Checks whether the player has a flag cooldown.
-                            if (wps.getFlagCooldown() > 0) {
-                                wps.setFlagCooldown(wps.getFlagCooldown() - 1);
+                            if (wps.getFlagDropCooldown() > 0) {
+                                wps.setFlagDropCooldown(wps.getFlagDropCooldown() - 1);
+                            }
+                            if (wps.getFlagPickCooldown() > 0) {
+                                wps.setFlagPickCooldown(wps.getFlagPickCooldown() - 1);
                             }
 
                             // Checks whether the player has the healing powerup active.

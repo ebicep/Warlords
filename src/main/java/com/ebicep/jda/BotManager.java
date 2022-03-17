@@ -141,9 +141,9 @@ public class BotManager {
     }
 
     public static void sendStatusMessage(boolean onQuit) {
-//        if (!Warlords.serverIP.equals("51.81.49.127")) {
-//            return;
-//        }
+        if (!Warlords.serverIP.equals("51.81.49.127")) {
+            return;
+        }
         DateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
         dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
         EmbedBuilder eb = new EmbedBuilder()
