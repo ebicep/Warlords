@@ -312,8 +312,8 @@ public class WarlordsEvents implements Listener {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
-                        double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
-                        if (distance > 2) {
+                        double distance = Utils.getDistance(player, .25);
+                        if (distance >= 2) {
                             player.sendMessage(ChatColor.RED + "You can't mount in the air!");
                         } else if (wp.getCarriedFlag() != null) {
                             player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
