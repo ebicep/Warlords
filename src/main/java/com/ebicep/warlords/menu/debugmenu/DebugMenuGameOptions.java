@@ -394,7 +394,9 @@ public class DebugMenuGameOptions {
                     (m, e) -> {
                         List<GameAddon> addons = new ArrayList<>();
                         addons.add(GameAddon.PRIVATE_GAME);
-                        addons.add(GameAddon.CUSTOM_GAME);
+                        if (!player.isOp()) {
+                            addons.add(GameAddon.CUSTOM_GAME);
+                        }
                         openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
                     }
             );
