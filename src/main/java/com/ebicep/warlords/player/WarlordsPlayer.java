@@ -459,7 +459,7 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
-                attacker.addDamage(damageValue);
+                attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
 
@@ -603,7 +603,7 @@ public final class WarlordsPlayer {
                 // Displays the healing message.
                 sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield, false);
                 health += healValue;
-                addHealing(healValue);
+                addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
                 if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
                     playHitSound(attacker);
@@ -632,7 +632,7 @@ public final class WarlordsPlayer {
                 }
 
                 health += healValue;
-                attacker.addHealing(healValue);
+                attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
                 if (!isMeleeHit && !ability.equals("Healing Rain")) {
                     playHitSound(attacker);
@@ -1507,16 +1507,14 @@ public final class WarlordsPlayer {
         this.minuteStats.addDeath();
     }
 
-    public void addDamage(float amount) {
-        boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
+    public void addDamage(float amount, boolean onCarrier) {
         this.minuteStats.addDamage((long) amount);
         if (onCarrier) {
             this.minuteStats.addDamageOnCarrier((long) amount);
         }
     }
 
-    public void addHealing(float amount) {
-        boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
+    public void addHealing(float amount, boolean onCarrier) {
         this.minuteStats.addHealing((long) amount);
         if (onCarrier) {
             this.minuteStats.addHealingOnCarrier((long) amount);
