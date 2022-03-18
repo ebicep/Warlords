@@ -171,12 +171,17 @@ public class FlagSpawnPointOption implements Option {
                     return;
                 }
 
+                if (wp.getFlagPickCooldown() != 0) {
+                    wp.sendMessage("§cYou cannot pick up the flag yet!");
+                    return;
+                }
+
                 if (renderer.getLastFlagState() != info.getFlag()) {
                     // Prevent the player from interacting when the render state is outdated
                     return;
                 }
 
-                wp.setFlagCooldown(2);
+                wp.setFlagDropCooldown(2);
 
                 if (info.getFlag() instanceof GroundFlagLocation) {
                     GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
@@ -193,7 +198,7 @@ public class FlagSpawnPointOption implements Option {
                 } else if (info.getFlag() instanceof SpawnFlagLocation) {
                     if (team == info.getTeam()) {
                         // Nothing
-                        wp.sendMessage("§cYou can't steal your own team's flag!");
+                        wp.sendMessage("§cYou cannot steal your own team's flag!");
                     } else {
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, 0));

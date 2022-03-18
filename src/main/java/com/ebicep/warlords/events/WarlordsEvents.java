@@ -312,8 +312,8 @@ public class WarlordsEvents implements Listener {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
-                        double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
-                        if (distance > 2) {
+                        double distance = Utils.getDistance(player, .25);
+                        if (distance >= 2) {
                             player.sendMessage(ChatColor.RED + "You can't mount in the air!");
                         } else if (wp.getCarriedFlag() != null) {
                             player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
@@ -328,13 +328,13 @@ public class WarlordsEvents implements Listener {
                     player.getInventory().remove(UndyingArmy.BONE);
                     wp.addDamageInstance(Warlords.getPlayer(player), "", 100000, 100000, -1, 100, false);
                 } else if (itemHeld.getType() == Material.BANNER) {
-                    if (wp.getFlagCooldown() > 0) {
+                    if (wp.getFlagDropCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
                     } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
                         player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
                     } else {
                         FlagHolder.dropFlagForPlayer(wp);
-                        wp.setFlagCooldown(5);
+                        wp.setFlagDropCooldown(5);
                     }
                 } else if (itemHeld.getType() == Material.COMPASS) {
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);

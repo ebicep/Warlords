@@ -97,7 +97,8 @@ public final class WarlordsPlayer {
     private CustomHorse horse;
     private float horseCooldown;
     private float currentHealthModifier = 1;
-    private int flagCooldown;
+    private int flagDropCooldown;
+    private int flagPickCooldown;
     private int hitCooldown;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
@@ -144,7 +145,8 @@ public final class WarlordsPlayer {
         this.energyModifier = 1;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.horseCooldown = 0;
-        this.flagCooldown = 0;
+        this.flagDropCooldown = 0;
+        this.flagPickCooldown = 0;
         this.cooldownModifier = 1;
         this.hitCooldown = 20;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
@@ -1453,12 +1455,20 @@ public final class WarlordsPlayer {
         this.horseCooldown = horseCooldown;
     }
 
-    public int getFlagCooldown() {
-        return flagCooldown;
+    public int getFlagDropCooldown() {
+        return flagDropCooldown;
     }
 
-    public void setFlagCooldown(int flagCooldown) {
-        this.flagCooldown = flagCooldown;
+    public void setFlagDropCooldown(int flagDropCooldown) {
+        this.flagDropCooldown = flagDropCooldown;
+    }
+
+    public int getFlagPickCooldown() {
+        return flagPickCooldown;
+    }
+
+    public void setFlagPickCooldown(int flagPickCooldown) {
+        this.flagPickCooldown = flagPickCooldown;
     }
 
     public int getHitCooldown() {

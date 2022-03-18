@@ -37,6 +37,8 @@ public class ShadowStep extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = wp.getLocation();
 
+        wp.setFlagPickCooldown(2);
+
         if (wp.getCarriedFlag() != null) {
             player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
             player.setFallDistance(-5);

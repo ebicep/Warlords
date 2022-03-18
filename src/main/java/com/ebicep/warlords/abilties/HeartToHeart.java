@@ -41,11 +41,11 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
-        if (wp.getCarriedFlag() != null) {
+        if (wp.hasFlag()) {
             radius = 7;
             verticalRadius = 3;
         } else {
+            wp.setFlagPickCooldown(2);
             radius = 15;
             verticalRadius = 15;
         }

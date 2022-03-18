@@ -242,11 +242,12 @@ public class Utils {
         double distance = 0;
         for (double i = loc.getY(); i >= -100; i -= accuracy) {
             loc.setY(i);
-            distance += accuracy;
             if (loc.getBlock().getType().isSolid()) {
                 break;
             }
+            distance += accuracy;
         }
+        distance -= accuracy;
         return distance;
     }
 
