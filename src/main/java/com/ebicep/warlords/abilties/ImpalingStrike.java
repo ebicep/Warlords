@@ -53,7 +53,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
                 if (!event.getAbility().equals("Draining Miasma")) {
                     event.getAttacker().addHealingInstance(
-                            event.getAttacker(),
+                            wp,
                             "Leech",
                             currentDamageValue * healingMultiplier,
                             currentDamageValue * healingMultiplier,

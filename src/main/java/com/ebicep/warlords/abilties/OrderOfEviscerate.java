@@ -34,8 +34,8 @@ public class OrderOfEviscerate extends AbstractAbility {
         description = "§7Cloak yourself for §6" + duration + " §7seconds, granting\n" +
                 "§7you §e40% §7movement speed and making you §einvisible\n" +
                 "§7to the enemy for the duration. However, taking fall\n" +
-                "§7damage or taking any type of ability damage will end\n" +
-                "§7your invisibility." +
+                "§7damage or any type of ability damage twice will\n" +
+                "§7end your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
                 "§7Vulnerable enemies take §c20% §7more damage. Additionally,\n" +
@@ -68,7 +68,7 @@ public class OrderOfEviscerate extends AbstractAbility {
             public void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
                 counter++;
 
-                if (counter == 3) {
+                if (counter == 2) {
                     OrderOfEviscerate.removeCloak(wp, false);
                 }
             }
