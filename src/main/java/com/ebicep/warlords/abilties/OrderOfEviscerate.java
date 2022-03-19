@@ -77,7 +77,7 @@ public class OrderOfEviscerate extends AbstractAbility {
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
                 WarlordsPlayer victim = event.getPlayer();
-                if (this.getCooldownObject().getMarkedPlayer() != null && this.getCooldownObject().getMarkedPlayer() != wp) {
+                if (victim != wp) {
                     if (!Objects.equals(this.getCooldownObject().getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + victim.getName());
                     }
