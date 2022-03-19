@@ -14,7 +14,7 @@ import org.bukkit.event.Listener;
 public class RespawnWaveOption implements Option, Listener {
     public static final int DEFAULT_INITIAL_DELAY = 0;
     public static final int DEFAULT_TASK_PERIOD = 12;
-    public static final int DEFAULT_MIN_RESPAWN_TIMER = 4;
+    public static final int DEFAULT_MIN_RESPAWN_TIMER = 5;
     
     private int initialDelay;
     private int taskPeriod;

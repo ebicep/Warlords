@@ -511,9 +511,9 @@ public class Warlords extends JavaPlugin {
         // TODO persist this.playerSettings to a database
     }
 
+    private int counter = 0;
     private void startMainLoop() {
         new BukkitRunnable() {
-            int counter = 0;
 
             @Override
             public void run() {
@@ -966,6 +966,10 @@ public class Warlords extends JavaPlugin {
             }
 
         }.runTaskTimer(this, 0, 0);
+    }
+
+    public int getCounter() {
+        return counter;
     }
 
     private Map<UUID, Game> getPlayersToGame() {

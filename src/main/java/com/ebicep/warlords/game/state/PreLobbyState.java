@@ -368,7 +368,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     );
                 }
 
-                return new PlayingState(game);
+                return new SyncTimerState(game);
             }
             timer--;
         } else {
