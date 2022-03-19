@@ -38,12 +38,13 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
-                "§7Vulnerable enemies take §c20% §7more damage from behind." +
+                "§7Vulnerable enemies take §c20% §7more damage. Additionally,\n" +
+                "§7enemies hit from behind take an additional §c20% §7more damage." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Shadow Step and Order of Eviscerate's cooldown\n" +
                 "§7and refund the energy cost. Assisting in killing your\n" +
-                "§7mark will only refund half the cooldown,";
+                "§7mark will only refund half the cooldown.";
     }
 
     @Override
@@ -62,9 +63,14 @@ public class OrderOfEviscerate extends AbstractAbility {
                 },
                 duration * 20
         ) {
+            int counter = 0;
             @Override
             public void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
-                OrderOfEviscerate.removeCloak(wp, false);
+                counter++;
+
+                if (counter == 3) {
+                    OrderOfEviscerate.removeCloak(wp, false);
+                }
             }
 
             @Override
@@ -81,11 +87,14 @@ public class OrderOfEviscerate extends AbstractAbility {
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
-                        !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
+                if (
+                    Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
+                    !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
+                ) {
+                    return currentDamageValue * 1.4f;
+                } else {
                     return currentDamageValue * 1.2f;
                 }
-                return currentDamageValue;
             }
 
             @Override
@@ -162,7 +171,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     cancelSpeed.run();
                     removeCloak(wp, true);
                 } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0.01f, 0.28f, 0.01f, 0.05f, 6, wp.getLocation(), 500);
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 3, wp.getLocation(), 500);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
                 }
             }

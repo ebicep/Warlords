@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 public class DrainingMiasma extends AbstractAbility {
 
     private int duration = 5;
-    private int enemyHitRadius = 6;
+    private int enemyHitRadius = 8;
     private int allyHitRadius = 6;
     // Percent
     private final int maxHealthDamage = 4;

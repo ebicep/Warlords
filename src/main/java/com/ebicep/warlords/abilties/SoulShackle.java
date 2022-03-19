@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -66,12 +67,11 @@ public class SoulShackle extends AbstractAbility {
                 silenceDuration = maxSilenceDurationInTicks;
             }
 
-            System.out.println(minSilenceDurationInTicks);
-            System.out.println(maxSilenceDurationInTicks);
-            System.out.println(silenceDuration);
-
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
+            if (shackleTarget.getEntity() instanceof Player) {
+                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
+            }
             shackleTarget.getCooldownManager().addRegularCooldown(
                     "Shackle Silence",
                     "SILENCE",
