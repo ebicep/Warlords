@@ -141,7 +141,9 @@ public abstract class DatabaseGameBase {
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
-            addGameToDatabase(databaseGame);
+            if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+                addGameToDatabase(databaseGame);
+            }
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {

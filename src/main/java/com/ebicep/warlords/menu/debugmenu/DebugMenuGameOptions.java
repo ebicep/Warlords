@@ -77,7 +77,9 @@ public class DebugMenuGameOptions {
                     (m, e) -> openMapsCategoryMenu(player, map)
             );
         }
-        menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
+        if (player.hasPermission("warlords.game.customtoggle")) {
+            menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
+        }
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -392,7 +394,9 @@ public class DebugMenuGameOptions {
                     (m, e) -> {
                         List<GameAddon> addons = new ArrayList<>();
                         addons.add(GameAddon.PRIVATE_GAME);
-                        addons.add(GameAddon.CUSTOM_GAME);
+                        if (!player.isOp()) {
+                            addons.add(GameAddon.CUSTOM_GAME);
+                        }
                         openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
                     }
             );
