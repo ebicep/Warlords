@@ -179,7 +179,7 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } //COMPS
-        else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer <= 12000) {
+        else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer >= 6000) {
             String gameEnd = "[GAME] A game ended with ";
             if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
@@ -192,7 +192,7 @@ public class PlayingState implements State, TimerDebugAble {
             DatabaseGameBase.addGame(game, winEvent, true);
         } //END GAME
         else {
-            if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer <= 12000) {
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, winEvent, false);
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB/COMP game was not added to the database and player information remained the same");

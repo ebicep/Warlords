@@ -379,7 +379,7 @@ public final class WarlordsPlayer {
                     }
 
                     cooldownManager.removeCooldown(arcaneShield);
-                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, false, true, true));
+                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 1, false, true, true));
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
