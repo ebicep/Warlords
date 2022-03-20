@@ -169,6 +169,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     this.cancel();
                     cancelSpeed.run();
+                    setMarkedPlayer(null);
                     removeCloak(wp, true);
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 3, wp.getLocation(), 500);
