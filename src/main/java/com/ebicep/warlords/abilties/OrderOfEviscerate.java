@@ -99,6 +99,9 @@ public class OrderOfEviscerate extends AbstractAbility {
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (!Objects.equals(event.getPlayer(), this.getCooldownObject().getMarkedPlayer())) {
+                    return;
+                }
                 wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
                 wp.getCooldownManager().removeCooldownByName("Cloaked");
                 if (isKiller) {
@@ -141,7 +144,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     "Cloaked",
                     "INVIS",
                     OrderOfEviscerate.class,
-                    new OrderOfEviscerate(),
+                    null,
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {
@@ -169,7 +172,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                 if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     this.cancel();
                     cancelSpeed.run();
-                    setMarkedPlayer(null);
                     removeCloak(wp, true);
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 3, wp.getLocation(), 500);

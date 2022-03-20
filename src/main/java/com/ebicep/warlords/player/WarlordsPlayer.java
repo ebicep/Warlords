@@ -817,8 +817,10 @@ public final class WarlordsPlayer {
     }
 
     public void cancelHealingPowerUp() {
-        sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
-        this.getCooldownManager().removeCooldown(HealingPowerup.class);
+        if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
+            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
+            this.getCooldownManager().removeCooldown(HealingPowerup.class);
+        }
     }
 
     public void removeHorse() {
