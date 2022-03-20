@@ -210,6 +210,7 @@ public class PowerupOption implements Option {
         SPEED(10, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(SpeedPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Speed",
                         "SPEED",
@@ -235,6 +236,7 @@ public class PowerupOption implements Option {
         HEALING(5, Material.WOOL, (short) 5) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(HealingPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Healing",
                         "HEAL",
@@ -258,6 +260,7 @@ public class PowerupOption implements Option {
         ENERGY(30, Material.WOOL, (short) 3) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(EnergyPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Energy",
                         "ENERGY",
@@ -281,6 +284,7 @@ public class PowerupOption implements Option {
         DAMAGE(30, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Damage",
                         "DMG",

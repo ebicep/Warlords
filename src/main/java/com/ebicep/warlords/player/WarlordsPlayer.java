@@ -111,7 +111,6 @@ public final class WarlordsPlayer {
     private boolean canCrit = true;
     private double flagDamageMultiplier = 0;
     private boolean teamFlagCompass = true;
-    private boolean powerUpHeal = false;
     private LivingEntity entity;
     @Nullable
     private FlagInfo carriedFlag = null;
@@ -269,7 +268,6 @@ public final class WarlordsPlayer {
                     health -= min;
                     playHurtAnimation(this.entity, attacker);
                 }
-
             } else {
 
                 // Fall Damage
@@ -819,11 +817,8 @@ public final class WarlordsPlayer {
     }
 
     public void cancelHealingPowerUp() {
-        if (powerUpHeal) {
-            powerUpHeal = false;
-            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
-            this.getCooldownManager().removeCooldown(HealingPowerup.class);
-        }
+        sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
+        this.getCooldownManager().removeCooldown(HealingPowerup.class);
     }
 
     public void removeHorse() {
@@ -1477,14 +1472,6 @@ public final class WarlordsPlayer {
 
     public void setHitCooldown(int hitCooldown) {
         this.hitCooldown = hitCooldown;
-    }
-
-    public boolean isPowerUpHeal() {
-        return powerUpHeal;
-    }
-
-    public void setPowerUpHeal(boolean powerUpHeal) {
-        this.powerUpHeal = powerUpHeal;
     }
 
     public void addKill() {
