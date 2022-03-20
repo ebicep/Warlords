@@ -579,8 +579,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the proc chance by\nof Earthliving Weapon§7by 20%",
-            "§7Increase the proc chance by\nof Earthliving Weapon§7by 20%",
+            "§7Increase the proc chance by\nof Earthliving Weapon§7 by 20%",
+            "§7Increase the proc chance by\nof Earthliving Weapon§7 by 20%",
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {

@@ -51,15 +51,16 @@ public class SoulShackle extends AbstractAbility {
                 .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
+                .lookingAtFirst(wp)
                 .limit(maxShackleTargets)
         ) {
-            wp.getSpeed().addSpeedModifier("Shacke Speed", 40, 30, "BASE");
+            wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
             wp.subtractEnergy(energyCost);
             wp.sendMessage(
                 WarlordsPlayer.RECEIVE_ARROW +
                 ChatColor.GRAY + " You shackled " +
                 ChatColor.YELLOW + shackleTarget.getName() +
-                ChatColor.GRAY + "!"
+                        ChatColor.GRAY + "!"
             );
 
             int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
@@ -69,8 +70,10 @@ public class SoulShackle extends AbstractAbility {
 
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
-            if (shackleTarget.getEntity() instanceof Player) {
-                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
+            if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+                if (shackleTarget.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
+                }
             }
             shackleTarget.getCooldownManager().addRegularCooldown(
                     "Shackle Silence",

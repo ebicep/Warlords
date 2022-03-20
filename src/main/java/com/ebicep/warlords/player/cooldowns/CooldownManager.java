@@ -130,15 +130,18 @@ public class CooldownManager {
      */
     public <T> void addRegularCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft) {
         this.totalCooldowns++;
-        abstractCooldowns.add(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft));
+        addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft));
     }
 
     public <T> void addPersistentCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, Predicate<T> objectCheck) {
         this.totalCooldowns++;
-        abstractCooldowns.add(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck));
+        addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck));
     }
 
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {
+        if (hasCooldownFromName("Vindicate Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
+            return;
+        }
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
     }
