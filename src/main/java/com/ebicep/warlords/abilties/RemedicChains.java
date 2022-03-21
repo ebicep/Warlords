@@ -24,19 +24,16 @@ public class RemedicChains extends AbstractAbility {
     private final int alliesAffected = 3;
     // Percent
     private final float healingMultiplier = 0.125f;
-    private int maxHealthHealing = 2;
 
     public RemedicChains() {
-        super("Remedic Chains", 636, 758, 16, 50, 20, 200);
+        super("Remedic Chains", 656, 770, 16, 50, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
-                "§7the damage they deal by §c10% §7and causing them\n" +
-                "§7them to regenerate §a" + maxHealthHealing + "% §7max health (even when\n" +
-                "§7taking damage) as long as the link is active.\n" +
-                "Lasts §6" + duration + " §7seconds" +
+                "§7the damage they deal by §c12% §7as long as the\n" +
+                "§7link is active. Lasts §6" + duration + " §7seconds" +
                 "\n\n" +
                 "§7When the link expires you and the allies\n" +
                 "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
@@ -71,7 +68,7 @@ public class RemedicChains extends AbstractAbility {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.1f;
+                    return currentDamageValue * 1.12f;
                 }
             });
 
@@ -86,7 +83,7 @@ public class RemedicChains extends AbstractAbility {
                     WarlordsPlayer.RECEIVE_ARROW + " " +
                     ChatColor.GRAY + wp.getName() + "'s" +
                     ChatColor.YELLOW + " Remedic Chains" +
-                    ChatColor.GRAY + " is now healing you for " +
+                    ChatColor.GRAY + " is now increasing your §cdamage §7for " +
                     ChatColor.GOLD + duration +
                     ChatColor.GRAY + " seconds!"
             );
@@ -102,30 +99,6 @@ public class RemedicChains extends AbstractAbility {
 
                     if (counter % 20 == 0 && !outOfRange) {
                         timeLinked.compute(chainTarget, (k, v) -> v == null ? 1 : v + 1);
-
-                        float maxHealing = chainTarget.getMaxHealth() * maxHealthHealing / 100f;
-                        chainTarget.addHealingInstance(
-                                wp,
-                                name,
-                                maxHealing,
-                                maxHealing,
-                                -1,
-                                100,
-                                false,
-                                false
-                        );
-
-                        float selfMaxHealing = wp.getMaxHealth() * maxHealthHealing / 100f;
-                        wp.addHealingInstance(
-                                wp,
-                                name,
-                                selfMaxHealing,
-                                selfMaxHealing,
-                                -1,
-                                100,
-                                false,
-                                false
-                        );
                     }
 
                     if (counter % 8 == 0) {
@@ -148,7 +121,7 @@ public class RemedicChains extends AbstractAbility {
                                 }
 
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
-                                chainTarget.sendMessage(ChatColor.RED + "You left the link range early!");
+                                chainTarget.sendMessage(ChatColor.RED + "You left the Remedic Chains link early!");
                                 this.cancel();
                             }
 
@@ -169,6 +142,17 @@ public class RemedicChains extends AbstractAbility {
                                         false
                                 );
                             }
+
+                            wp.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false
+                            );
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
                             Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.06f, 1.4f);
@@ -198,7 +182,7 @@ public class RemedicChains extends AbstractAbility {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.1f;
+                    return currentDamageValue * 1.12f;
                 }
             });
         } else {
@@ -206,14 +190,6 @@ public class RemedicChains extends AbstractAbility {
         }
 
         return targetHit >= 1;
-    }
-
-    public int getMaxHealthHealing() {
-        return maxHealthHealing;
-    }
-
-    public void setMaxHealthHealing(int maxHealthHealing) {
-        this.maxHealthHealing = maxHealthHealing;
     }
 
     public int getLinkBreakRadius() {

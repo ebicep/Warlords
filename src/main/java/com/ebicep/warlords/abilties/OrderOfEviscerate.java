@@ -39,7 +39,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
                 "§7Vulnerable enemies take §c20% §7more damage. Additionally,\n" +
-                "§7enemies hit from behind take an additional §c20% §7more damage." +
+                "§7enemies hit from behind take an additional §c10% §7more damage." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Shadow Step and Order of Eviscerate's cooldown\n" +
@@ -91,7 +91,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
                     !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
-                    return currentDamageValue * 1.4f;
+                    return currentDamageValue * 1.3f;
                 } else {
                     return currentDamageValue * 1.2f;
                 }
@@ -164,7 +164,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         }
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
-        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
+        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
 
         new GameRunnable(wp.getGame()) {
             @Override
@@ -175,7 +175,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     removeCloak(wp, true);
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 3, wp.getLocation(), 500);
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.15f, 2);
                 }
             }
         }.runTaskTimer(0, 1);

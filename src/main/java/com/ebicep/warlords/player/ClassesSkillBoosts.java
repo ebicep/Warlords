@@ -720,10 +720,10 @@ public enum ClassesSkillBoosts {
                 }
             }
     ),
-    SOOTHING_PUDDLE("Soothing Puddle",
-            "§7Increase the amount of health you\n§7restore with Soothing Puddle\n§7by 20%",
-            "§aIncrease the amount of health you\n§arestore with Soothing Puddle\n§aby §c20%",
-            SoothingPuddle.class,
+    SOOTHING_PUDDLE("Soothing Elixir",
+            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 20%",
+            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c20%",
+            SoothingElixir.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
@@ -740,13 +740,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of max health\nyou restore per second with Remedic\nChains by 2% and increase the link break\nradius by 5 blocks.",
-            "§aIncrease the amount of max health\nyou restore per second with Remedic\nChains by §c2% §aand increase the link break\nradius by §c5 §ablocks.",
+            "§7Increase the amount of health\nyou restore with Remedic\nChains by 10% and increase the link break\nradius by 8 blocks.",
+            "§aIncrease the amount of health\nyou restore with Remedic\nChains by §c10% §aand increase the link break\nradius by §c8 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
-                    ((RemedicChains) abstractAbility).setMaxHealthHealing(4);
-                    ((RemedicChains) abstractAbility).setLinkBreakRadius(20);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                    ((RemedicChains) abstractAbility).setLinkBreakRadius(8);
                 }
             }
     ),
