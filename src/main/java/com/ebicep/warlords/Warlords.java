@@ -612,7 +612,13 @@ public class Warlords extends JavaPlugin {
 
                         for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                             ability.checkSecondaryAbilities();
+
+                            if (wp.isSneaking() && !wp.isWasSneaking()) {
+                                ability.runSecondAbilities();
+                            }
                         }
+
+                        wp.setWasSneaking(wp.isSneaking());
 
                         // Checks whether the player has overheal active and is full health or not.
                         boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);

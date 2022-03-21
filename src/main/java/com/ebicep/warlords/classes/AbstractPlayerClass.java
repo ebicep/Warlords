@@ -17,7 +17,8 @@ import javax.annotation.Nonnull;
 
 public abstract class AbstractPlayerClass {
 
-    private final int cooldownDelay = 1;
+    private final int abilityCooldownDelay = 1;
+    private final int secondaryAbilityCooldownDelay = 5;
     protected int maxHealth;
     protected int maxEnergy;
     protected int energyPerSec;
@@ -29,6 +30,7 @@ public abstract class AbstractPlayerClass {
     protected AbstractAbility blue;
     protected AbstractAbility orange;
     protected boolean abilityCD = true;
+    protected boolean secondaryAbilityCD = true;
     protected String name;
     protected String className;
     protected String classNameShort;
@@ -98,7 +100,10 @@ public abstract class AbstractPlayerClass {
                 break;
             case 1:
                 if (red.getCurrentCooldown() != 0) {
-                    red.runSecondAbilities();
+                    if (secondaryAbilityCD) {
+                        red.runSecondAbilities();
+                        resetSecondaryAbilityCD();
+                    }
                     break;
                 }
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
@@ -112,7 +117,10 @@ public abstract class AbstractPlayerClass {
                 break;
             case 2:
                 if (purple.getCurrentCooldown() != 0) {
-                    purple.runSecondAbilities();
+                    if (secondaryAbilityCD) {
+                        purple.runSecondAbilities();
+                        resetSecondaryAbilityCD();
+                    }
                     break;
                 }
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
@@ -127,7 +135,10 @@ public abstract class AbstractPlayerClass {
                 break;
             case 3:
                 if (blue.getCurrentCooldown() != 0) {
-                    blue.runSecondAbilities();
+                    if (secondaryAbilityCD) {
+                        blue.runSecondAbilities();
+                        resetSecondaryAbilityCD();
+                    }
                     break;
                 }
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
@@ -142,7 +153,10 @@ public abstract class AbstractPlayerClass {
                 break;
             case 4:
                 if (orange.getCurrentCooldown() != 0) {
-                    orange.runSecondAbilities();
+                    if (secondaryAbilityCD) {
+                        orange.runSecondAbilities();
+                        resetSecondaryAbilityCD();
+                    }
                     break;
                 }
                 if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
@@ -175,7 +189,18 @@ public abstract class AbstractPlayerClass {
             public void run() {
                 abilityCD = true;
             }
-        }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+        }.runTaskLater(Warlords.getInstance(), abilityCooldownDelay);
+    }
+
+    private void resetSecondaryAbilityCD() {
+        secondaryAbilityCD = false;
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                secondaryAbilityCD = true;
+            }
+        }.runTaskLater(Warlords.getInstance(), secondaryAbilityCooldownDelay);
     }
 
     private void sendRightClickPacket(Player player) {

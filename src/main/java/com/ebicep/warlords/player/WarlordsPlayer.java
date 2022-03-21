@@ -100,6 +100,7 @@ public final class WarlordsPlayer {
     private int flagDropCooldown;
     private int flagPickCooldown;
     private int hitCooldown;
+    private boolean wasSneaking = false;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
@@ -1777,6 +1778,14 @@ public final class WarlordsPlayer {
 
     public boolean isSneaking() {
         return this.entity instanceof Player && ((Player) this.entity).isSneaking();
+    }
+
+    public boolean isWasSneaking() {
+        return wasSneaking;
+    }
+
+    public void setWasSneaking(boolean wasSneaking) {
+        this.wasSneaking = wasSneaking;
     }
 
     public boolean isEnemyAlive(@Nullable Entity other) {
