@@ -1,6 +1,7 @@
-package com.ebicep.warlords.classes;
+package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.ArcaneShield;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -12,6 +13,9 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class AbstractAbility {
 
@@ -31,6 +35,9 @@ public abstract class AbstractAbility {
     protected int critMultiplier;
     protected String description;
     protected boolean boosted;
+
+    //Sneak ability
+    protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         this.name = name;
@@ -136,6 +143,30 @@ public abstract class AbstractAbility {
         return description;
     }
 
+    public List<SecondaryAbility> getSecondaryAbilities() {
+        return secondaryAbilities;
+    }
+
+    public void addSecondaryAbility(Runnable runnable, boolean infiniteUses, Predicate<SecondaryAbility> shouldRemove) {
+        secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove));
+    }
+
+    public void runSecondAbilities() {
+        for (int i = 0; i < secondaryAbilities.size(); i++) {
+            SecondaryAbility secondaryAbility = secondaryAbilities.get(i);
+
+            secondaryAbility.getRunnable().run();
+            if (!secondaryAbility.isHasInfiniteUses()) {
+                secondaryAbilities.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public void checkSecondaryAbilities() {
+        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.getShouldRemove().test(secondaryAbility));
+    }
+
     public ItemStack getItem(ItemStack baseItem) {
         return new ItemBuilder(baseItem)
                 .name(ChatColor.GOLD + getName())
@@ -158,33 +189,32 @@ public abstract class AbstractAbility {
     public String format(double input) {
         return decimalFormat.format(input);
     }
-    
+
     public void runEverySecond() {
     }
 
-    /*
-flameburst/chain: 9.4
-breath: 6.3
-water breath: 12.53
-time warp: 28.19
-arcane shield/bloodlust/rod/repentance: 31.32
-barrier/inferno/berserk: 46.98
-healing rain/wrath: 52.85
-ground slam: 9.32
-defender slam: 7.34
-vene: 14.09
-last stand: 56.38
-wave: 11.74
-orbs/holy radiance: 19.57
-army/presence/hammer/healing totem/sg totem: 70.47
-reckless charge: 9.98
-infusion/earthliving/windfury: 15.66
-prot radiance: 9.87
-boulder: 7.05
-chain heal: 7.99
-consecrate: 7.83
-capac totem: 62.64
-spirit link: 8.61
-souldbind: 21.92
-    */
+    public static class SecondaryAbility {
+
+        private final Runnable runnable;
+        private final boolean hasInfiniteUses;
+        public final Predicate<SecondaryAbility> shouldRemove;
+
+        public SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
+            this.runnable = runnable;
+            this.hasInfiniteUses = hasInfiniteUses;
+            this.shouldRemove = shouldRemove;
+        }
+
+        public Runnable getRunnable() {
+            return runnable;
+        }
+
+        public boolean isHasInfiniteUses() {
+            return hasInfiniteUses;
+        }
+
+        public Predicate<SecondaryAbility> getShouldRemove() {
+            return shouldRemove;
+        }
+    }
 }

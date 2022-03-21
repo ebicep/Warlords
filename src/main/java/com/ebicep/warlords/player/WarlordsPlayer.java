@@ -3,10 +3,10 @@ package com.ebicep.warlords.player;
 import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.rogue.specs.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
@@ -1137,8 +1137,12 @@ public final class WarlordsPlayer {
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemStack cooldown = new ItemStack(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte) 8);
-            player.getInventory().setItem(slot, cooldown);
+            ItemBuilder cooldown = new ItemBuilder(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte) 8)
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            if (!ability.getSecondaryAbilities().isEmpty()) {
+                cooldown.enchant(Enchantment.OXYGEN, 1);
+            }
+            player.getInventory().setItem(slot, cooldown.get());
         } else {
             player.getInventory().setItem(
                     slot,
@@ -1253,7 +1257,6 @@ public final class WarlordsPlayer {
         assignItemLore(Bukkit.getPlayer(uuid));
 
         if (DatabaseManager.playerService == null) return;
-        //sync bc player should be cached
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
         DatabaseManager.updatePlayerAsync(databasePlayer);

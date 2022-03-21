@@ -340,7 +340,7 @@ public class WarlordsEvents implements Listener {
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     wp.toggleTeamFlagCompass();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode()) {
-                    wp.getSpec().onRightClick(wp, player);
+                    wp.getSpec().onRightClick(wp, player, player.getInventory().getHeldItemSlot(), false);
                 }
             } else {
                 PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
@@ -430,7 +430,7 @@ public class WarlordsEvents implements Listener {
         if (wp != null) {
             if (!wp.getGame().isFrozen()) {
                 if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-                    wp.getSpec().onRightClickHotKey(wp, e.getPlayer(), slot);
+                    wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
                     e.setCancelled(true);
                 }
             }

@@ -1,6 +1,6 @@
 package com.ebicep.customentities;
 
-import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.FallingBlock;
 

@@ -1,14 +1,13 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.Protector;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -100,18 +99,29 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
+        wp.subtractEnergy(energyCost);
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().add(1, 0, 1).clone();
         ArmorStand hammer = spawnHammer(location, wp);
-
-        wp.subtractEnergy(energyCost);
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         HammerOfLight tempHammerOfLight = new HammerOfLight();
-        wp.getCooldownManager().addRegularCooldown(name, "HAMMER", HammerOfLight.class, tempHammerOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+
+        RegularCooldown<HammerOfLight> hammerOfLightCooldown = new RegularCooldown<>(
+                name,
+                "HAMMER",
+                HammerOfLight.class,
+                tempHammerOfLight,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        );
+
+        wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
 
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
-
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -124,88 +134,14 @@ public class HammerOfLight extends AbstractAbility {
 
         location.add(0, 1, 0);
 
-        final int[] timeLeftHammer = {duration};
         new GameRunnable(wp.getGame()) {
             int counter = 0;
 
             @Override
             public void run() {
                 if (counter % 20 == 0) {
-                    timeLeftHammer[0]--;
-                    for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                            .entitiesAround(location, radius, radius, radius)
-                            .isAlive()
-                    ) {
-                        if (wp.isTeammateAlive(warlordsPlayer)) {
-                            warlordsPlayer.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false, false);
-                        } else {
-                            warlordsPlayer.addDamageInstance(
-                                    wp,
-                                    name,
-                                    178,
-                                    244,
-                                    critChance,
-                                    critMultiplier,
-                                    false);
-                        }
-                    }
-                }
-                if (timeLeftHammer[0] <= 0) {
-                    hammer.remove();
-                    this.cancel();
-                    task.cancel();
-                }
-                counter++;
-            }
-
-        }.runTaskTimer(0, 0);
-        new GameRunnable(wp.getGame()) {
-            boolean wasSneaking = false;
-
-            @Override
-            public void run() {
-                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
-                    tempHammerOfLight.setCrownOfLight(true);
-                    new CooldownFilter<>(wp, RegularCooldown.class)
-                            .filterCooldownObject(tempHammerOfLight)
-                            .findAny()
-                            .ifPresent(regularCooldown -> {
-                                regularCooldown.setNameAbbreviation("CROWN");
-                            });
-
-                    Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
-                    Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
-
-                    BukkitTask particles = new GameRunnable(wp.getGame()) {
-                        @Override
-                        public void run() {
-                            double angle = 0;
-                            for (int i = 0; i < 9; i++) {
-                                double x = .4 * Math.cos(angle);
-                                double z = .4 * Math.sin(angle);
-                                angle += 40;
-                                Vector v = new Vector(x, 2, z);
-                                Location loc = wp.getLocation().clone().add(v);
-                                ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
-                            }
-
-                            CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation().add(0, 0.75f, 0), radius / 2f);
-                            circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
-                            circle.playEffects();
-                        }
-                    }.runTaskTimer(0, 6);
-                    new GameRunnable(wp.getGame()) {
-                        int timeLeft = timeLeftHammer[0];
-
-                        @Override
-                        public void run() {
+                    if (tempHammerOfLight.isCrownOfLight()) {
+                        if (wp.isAlive()) {
                             PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                     .aliveTeammatesOf(wp)
                                     .forEach(teammate -> teammate.addHealingInstance(
@@ -216,25 +152,81 @@ public class HammerOfLight extends AbstractAbility {
                                             critChance,
                                             critMultiplier,
                                             false, false));
-                            timeLeft--;
-
-                            if (timeLeft <= 0 || wp.isDead()) {
-                                this.cancel();
-                                particles.cancel();
+                        }
+                    } else {
+                        for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                                .entitiesAround(location, radius, radius, radius)
+                                .isAlive()
+                        ) {
+                            if (wp.isTeammateAlive(warlordsPlayer)) {
+                                warlordsPlayer.addHealingInstance(
+                                        wp,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
+                                        false, false);
+                            } else {
+                                warlordsPlayer.addDamageInstance(
+                                        wp,
+                                        name,
+                                        178,
+                                        244,
+                                        critChance,
+                                        critMultiplier,
+                                        false);
                             }
                         }
-                    }.runTaskTimer(2, 20);
-                    this.cancel();
-                    timeLeftHammer[0] = 0;
+                    }
                 }
-
-                wasSneaking = wp.isSneaking();
-
-                if (wp.isDead() || timeLeftHammer[0] <= 0) {
+                if (!wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
+                    hammer.remove();
+                    task.cancel();
                     this.cancel();
                 }
+                counter++;
             }
+
         }.runTaskTimer(0, 0);
+
+        addSecondaryAbility(() -> {
+                    if (wp.isAlive() && wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
+                        hammer.remove();
+                        task.cancel();
+                        tempHammerOfLight.setCrownOfLight(true);
+                        hammerOfLightCooldown.setNameAbbreviation("CROWN");
+
+                        Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
+                        Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
+
+                        new GameRunnable(wp.getGame()) {
+                            @Override
+                            public void run() {
+                                double angle = 0;
+                                for (int i = 0; i < 9; i++) {
+                                    double x = .4 * Math.cos(angle);
+                                    double z = .4 * Math.sin(angle);
+                                    angle += 40;
+                                    Vector v = new Vector(x, 2, z);
+                                    Location loc = wp.getLocation().clone().add(v);
+                                    ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
+                                }
+
+                                CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation().add(0, 0.75f, 0), radius / 2f);
+                                circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
+                                circle.playEffects();
+
+                                if (!wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()) {
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(0, 6);
+                    }
+                },
+                false,
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()
+        );
 
         return true;
     }

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -108,58 +108,49 @@ public class OrbsOfLife extends AbstractAbility {
 
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
-            boolean wasSneaking = false;
-
-            @Override
-            public void run() {
-                counter++;
-                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
-                    //setting target player to move towards (includes self)
-                    tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                            .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                            .aliveTeammatesOf(wp)
-                            .closestFirst(orb.getArmorStand().getLocation())
-                            .findFirstOrNull()
-                    ));
-                    //moving orb
-                    new GameRunnable(wp.getGame()) {
-                        @Override
-                        public void run() {
-                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
-                                WarlordsPlayer target = targetOrb.getPlayerToMoveTowards();
-                                ArmorStand orbArmorStand = targetOrb.getArmorStand();
-                                Location orbLocation = orbArmorStand.getLocation();
-                                Entity orb = orbArmorStand.getPassenger();
-                                //must eject passenger then reassign it before teleporting bc ???
-                                orbArmorStand.eject();
-                                orbArmorStand.teleport(
-                                        new LocationBuilder(orbLocation.clone())
-                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
-                                                .get()
-                                );
-                                orbArmorStand.setPassenger(orb);
-                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
-                            });
-                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
-                                this.cancel();
+        addSecondaryAbility(() -> {
+                    if (wp.isAlive()) {
+                        //setting target player to move towards (includes self)
+                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                .aliveTeammatesOf(wp)
+                                .closestFirst(orb.getArmorStand().getLocation())
+                                .findFirstOrNull()
+                        ));
+                        //moving orb
+                        new GameRunnable(wp.getGame()) {
+                            @Override
+                            public void run() {
+                                tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
+                                    WarlordsPlayer target = targetOrb.getPlayerToMoveTowards();
+                                    ArmorStand orbArmorStand = targetOrb.getArmorStand();
+                                    Location orbLocation = orbArmorStand.getLocation();
+                                    Entity orb = orbArmorStand.getPassenger();
+                                    //must eject passenger then reassign it before teleporting bc ???
+                                    orbArmorStand.eject();
+                                    orbArmorStand.teleport(
+                                            new LocationBuilder(orbLocation.clone())
+                                                    .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
+                                                    .get()
+                                    );
+                                    orbArmorStand.setPassenger(orb);
+                                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
+                                });
+                                if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                                    this.cancel();
+                                }
                             }
-                        }
-                    }.runTaskTimer(0, 1);
+                        }.runTaskTimer(0, 1);
 
-                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
-                    Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.08f, 0.7f);
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
-                }
+                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
+                        Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.08f, 0.7f);
+                        ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
 
-                wasSneaking = player.isSneaking();
-
-                if (counter >= 20 * duration || wp.isDead()) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 0);
+                    }
+                },
+                true,
+                secondaryAbility -> wp.isDead()
+        );
 
         return true;
     }

@@ -14,6 +14,7 @@ import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
@@ -608,6 +609,10 @@ public class Warlords extends JavaPlugin {
                         }
 
                         wp.getCooldownManager().reduceCooldowns();
+
+                        for (AbstractAbility ability : wp.getSpec().getAbilities()) {
+                            ability.checkSecondaryAbilities();
+                        }
 
                         // Checks whether the player has overheal active and is full health or not.
                         boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);

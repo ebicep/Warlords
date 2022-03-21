@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -16,6 +17,7 @@ import javax.annotation.Nonnull;
 
 public abstract class AbstractPlayerClass {
 
+    private final int cooldownDelay = 1;
     protected int maxHealth;
     protected int maxEnergy;
     protected int energyPerSec;
@@ -30,9 +32,6 @@ public abstract class AbstractPlayerClass {
     protected String name;
     protected String className;
     protected String classNameShort;
-    public boolean isSilenced = false;
-
-    private final int cooldownDelay = 1;
 
     public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.maxHealth = maxHealth;
@@ -70,22 +69,23 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
+    public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (wp.getGameState() != wp.getGame().getState()) {
             return;
         }
 
-        if (wp.isDeath()) {
+        if (wp.isDead()) {
             return;
         }
 
-        isSilenced = wp.getCooldownManager().hasCooldown(SoulShackle.class);
-
-        int slot = player.getInventory().getHeldItemSlot();
-        if (slot == 0) {
-            if (!isSilenced) {
+        switch (slot) {
+            case 0:
+                if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                    player.sendMessage(ChatColor.RED + "You have been silenced!");
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    break;
+                }
                 if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     weapon.onActivate(wp, player);
                     if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
@@ -95,130 +95,75 @@ public abstract class AbstractPlayerClass {
                 } else {
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
-            } else {
-                player.sendMessage(ChatColor.RED + "You have been silenced!");
-                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-            }
-        } else if (slot == 1) {
-            if (red.getCurrentCooldown() == 0) {
+                break;
+            case 1:
+                if (red.getCurrentCooldown() != 0) {
+                    red.runSecondAbilities();
+                    break;
+                }
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = red.onActivate(wp, player);
                     if (shouldApplyCooldown) {
-                        red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
+                        red.setCurrentCooldown((float) (red.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
                     resetAbilityCD();
                 }
-            }
-        } else if (slot == 2) {
-            if (purple.getCurrentCooldown() == 0) {
+                break;
+            case 2:
+                if (purple.getCurrentCooldown() != 0) {
+                    purple.runSecondAbilities();
+                    break;
+                }
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = purple.onActivate(wp, player);
                     if (shouldApplyCooldown) {
-                        purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
+                        purple.setCurrentCooldown((float) (purple.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
                     resetAbilityCD();
                 }
-            }
-        } else if (slot == 3) {
-            if (blue.getCurrentCooldown() == 0) {
+
+                break;
+            case 3:
+                if (blue.getCurrentCooldown() != 0) {
+                    blue.runSecondAbilities();
+                    break;
+                }
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = blue.onActivate(wp, player);
                     if (shouldApplyCooldown) {
-                        blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
+                        blue.setCurrentCooldown((float) (blue.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
                     resetAbilityCD();
                 }
-            }
-        } else if (slot == 4) {
-            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                boolean shouldApplyCooldown = orange.onActivate(wp, player);
-                if (shouldApplyCooldown) {
-                    orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
-                    sendRightClickPacket(player);
+
+                break;
+            case 4:
+                if (orange.getCurrentCooldown() != 0) {
+                    orange.runSecondAbilities();
+                    break;
                 }
-                resetAbilityCD();
-            }
+                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+                    boolean shouldApplyCooldown = orange.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
+                        orange.setCurrentCooldown((float) (orange.getCooldown() * wp.getCooldownModifier()));
+                        sendRightClickPacket(player);
+                    }
+                    resetAbilityCD();
+                }
+                break;
+        }
+
+        if (hotkeyMode) {
+            player.getInventory().setHeldItemSlot(0);
         }
 
         if (slot == 0 || slot == 1 || slot == 2 || slot == 3 || slot == 4) {
             if (player.getVehicle() != null) {
                 player.getVehicle().remove();
             }
-        }
-    }
-
-    public void onRightClickHotKey(WarlordsPlayer wp, Player player, int slot) {
-
-        // Makes it so abilities cannot be used when the game is over
-        if (wp.getGameState() != wp.getGame().getState()) {
-            return;
-        }
-
-        if (wp.isDeath()) {
-            return;
-        }
-
-        if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                weapon.onActivate(wp, player);
-                if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike))
-                    sendRightClickPacket(player);
-                resetAbilityCD();
-            } else {
-                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-            }
-        } else if (slot == 1) {
-            if (red.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = red.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-            }
-        } else if (slot == 2) {
-            if (purple.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = purple.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-            }
-        } else if (slot == 3) {
-            if (blue.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = blue.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-            }
-        } else if (slot == 4) {
-            if (orange.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = orange.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-            }
-        }
-        player.getInventory().setHeldItemSlot(0);
-
-        if (player.getVehicle() != null) {
-            player.getVehicle().remove();
         }
     }
 
@@ -278,6 +223,10 @@ public abstract class AbstractPlayerClass {
         this.damageResistance = damageResistance;
     }
 
+    public AbstractAbility[] getAbilities() {
+        return new AbstractAbility[]{weapon, red, purple, blue, orange};
+    }
+
     public AbstractAbility getWeapon() {
         return weapon;
     }
@@ -333,7 +282,7 @@ public abstract class AbstractPlayerClass {
     public String getClassNameShortWithBrackets() {
         return ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + this.classNameShort + ChatColor.DARK_GRAY + "]";
     }
-    
+
     public void runEverySecond() {
         this.red.runEverySecond();
         this.blue.runEverySecond();

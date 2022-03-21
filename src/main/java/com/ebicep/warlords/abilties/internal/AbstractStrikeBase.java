@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;

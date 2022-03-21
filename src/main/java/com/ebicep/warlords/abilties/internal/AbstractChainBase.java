@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Location;

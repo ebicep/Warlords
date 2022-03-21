@@ -1,9 +1,6 @@
 package com.ebicep.warlords.player.cooldowns;
 
-import com.ebicep.warlords.abilties.Intervene;
-import com.ebicep.warlords.abilties.OrbsOfLife;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
@@ -180,7 +177,8 @@ public class CooldownManager {
 
     public void clearCooldowns() {
         abstractCooldowns.removeIf(cd ->
-                cd.getCooldownClass() != OrbsOfLife.class
+                cd.getCooldownClass() != OrbsOfLife.class &&
+                        cd.getCooldownClass() != HammerOfLight.class
         );
         PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
             wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);

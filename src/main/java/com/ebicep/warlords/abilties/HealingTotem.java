@@ -64,9 +64,18 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addRegularCooldown(name, "TOTEM", HealingTotem.class, new HealingTotem(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
-
+        RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
+                name,
+                "TOTEM",
+                HealingTotem.class,
+                new HealingTotem(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        );
+        wp.getCooldownManager().addCooldown(healingTotemCooldown);
         new GameRunnable(wp.getGame()) {
             int timeLeft = 5;
 
@@ -143,14 +152,8 @@ public class HealingTotem extends AbstractTotemBase {
             }
 
         }.runTaskTimer(0, 20);
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
 
-            @Override
-            public void run() {
-                if (wp.isDead() || counter >= 20 * duration) {
-                    this.cancel();
-                } else if (wp.isSneaking()) {
+        addSecondaryAbility(() -> {
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
@@ -174,11 +177,9 @@ public class HealingTotem extends AbstractTotemBase {
                             });
                     Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                     new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
-                    this.cancel();
-                }
-                counter++;
-            }
-        }.runTaskTimer(0, 0);
+                },
+                false,
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown));
     }
 
 

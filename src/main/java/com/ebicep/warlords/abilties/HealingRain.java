@@ -1,13 +1,14 @@
 package com.ebicep.warlords.abilties;
 
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Overheal;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -46,13 +47,23 @@ public class HealingRain extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
+        wp.subtractEnergy(energyCost);
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
 
-        wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addRegularCooldown(name, "RAIN", HealingRain.class, new HealingRain(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(
+                name,
+                "RAIN",
+                HealingRain.class,
+                new HealingRain(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        );
+        wp.getCooldownManager().addCooldown(healingRainCooldown);
 
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
@@ -70,26 +81,21 @@ public class HealingRain extends AbstractAbility {
 
         location.add(0, 1, 0);
 
-        BukkitTask rainSneakAbility = new GameRunnable(wp.getGame()) {
-            boolean wasSneaking = false;
-
-            @Override
-            public void run() {
-                if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
-                    wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
-                    location.setX(wp.getLocation().getX());
-                    location.setY(wp.getLocation().getY());
-                    location.setZ(wp.getLocation().getZ());
-                }
-
-                wasSneaking = wp.isSneaking();
-            }
-        }.runTaskTimer(0, 0);
+        addSecondaryAbility(() -> {
+                    if (wp.isAlive()) {
+                        wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
+                        location.setX(wp.getLocation().getX());
+                        location.setY(wp.getLocation().getY());
+                        location.setZ(wp.getLocation().getZ());
+                    }
+                },
+                true,
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingRainCooldown)
+        );
 
         new GameRunnable(wp.getGame()) {
             int counter = 0;
-            int timeLeft = duration;
 
             @Override
             public void run() {
@@ -115,19 +121,13 @@ public class HealingRain extends AbstractAbility {
                                     }, Overheal.OVERHEAL_DURATION * 20);
                         }
                     }
-
-                    if (timeLeft < 0) {
-                        this.cancel();
-                        task.cancel();
-                        rainSneakAbility.cancel();
-                    }
                 }
+                counter++;
 
-                if (counter % 20 == 0) {
-                    timeLeft--;
+                if (!wp.getCooldownManager().hasCooldown(healingRainCooldown)) {
+                    this.cancel();
+                    task.cancel();
                 }
-
-                counter--;
             }
 
         }.runTaskTimer(0, 0);

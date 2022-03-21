@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;

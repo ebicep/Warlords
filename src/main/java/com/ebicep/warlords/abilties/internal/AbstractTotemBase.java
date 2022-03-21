@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties.internal;
 
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.abilties.DeathsDebt;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;

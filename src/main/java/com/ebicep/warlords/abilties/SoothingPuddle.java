@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
