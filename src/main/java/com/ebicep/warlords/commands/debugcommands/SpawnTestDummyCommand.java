@@ -46,6 +46,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
                 WarlordsPlayer testDummy = new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings());
                 Warlords.addPlayer(testDummy);
+                player.getGame().addPlayer(offlinePlayer, false);
                 if (args.length >= 2 && args[1].equalsIgnoreCase("false")) {
                     testDummy.setTakeDamage(false);
                 } else if (args.length >= 2 && args[1].equalsIgnoreCase("true")) {

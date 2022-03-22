@@ -7,19 +7,19 @@ import org.bukkit.event.HandlerList;
 public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
-    private WarlordsPlayer attacker;
-    private String ability;
-    private int initialHealth;
-    private int finalHealth;
-    private float valueBeforeAllReduction;
-    private float valueBeforeInterveneReduction;
-    private float valueBeforeShieldReduction;
-    private float value;
-    private int critChance;
-    private int critMultiplier;
-    private boolean isCrit;
-    private boolean hasFlag;
-    private boolean isDead;
+    private final WarlordsPlayer attacker;
+    private final String ability;
+    private final int initialHealth;
+    private final int finalHealth;
+    private final float valueBeforeAllReduction;
+    private final float valueBeforeInterveneReduction;
+    private final float valueBeforeShieldReduction;
+    private final float value;
+    private final int critChance;
+    private final int critMultiplier;
+    private final boolean isCrit;
+    private final boolean hasFlag;
+    private final boolean isDead;
 
     private boolean isDamageInstance;
 

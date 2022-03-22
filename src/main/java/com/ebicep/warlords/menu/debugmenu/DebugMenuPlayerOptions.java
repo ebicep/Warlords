@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -400,24 +401,24 @@ public class DebugMenuPlayerOptions {
         );
         //cooldowns
         int yLevel = 0;
-//        List<AbstractCooldown> abstractCooldowns = new ArrayList<>(target.getCooldownManager().getCooldowns());
-//        abstractCooldowns.sort(Comparator.comparing(AbstractCooldown::getTimeLeft));
-//        for (int i = 0; i < abstractCooldowns.size(); i++) {
-//            if (i % 7 == 0) {
-//                yLevel++;
-//                if (yLevel > 4) break;
-//            }
-//            AbstractCooldown abstractCooldown = abstractCooldowns.get(i);
-//            menu.setItem((i % 7) + 1, yLevel,
-//                    new ItemBuilder(woolSortedByColor[i % woolSortedByColor.length])
-//                            .name(ChatColor.GOLD + abstractCooldown.getName())
-//                            .lore(ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(abstractCooldown.getTimeLeft() * 10) / 10.0) + "s",
-//                                    ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
-//                            )
-//                            .get(),
-//                    (m, e) -> openCooldownMenu(player, target, abstractCooldown)
-//            );
-//        }
+        List<AbstractCooldown> abstractCooldowns = new ArrayList<>(target.getCooldownManager().getCooldowns());
+        //abstractCooldowns.sort(Comparator.comparing(AbstractCooldown::get));
+        for (int i = 0; i < abstractCooldowns.size(); i++) {
+            if (i % 7 == 0) {
+                yLevel++;
+                if (yLevel > 4) break;
+            }
+            AbstractCooldown abstractCooldown = abstractCooldowns.get(i);
+            menu.setItem((i % 7) + 1, yLevel,
+                    new ItemBuilder(woolSortedByColor[i % woolSortedByColor.length])
+                            .name(ChatColor.GOLD + abstractCooldown.getName())
+                            .lore(ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + "?",//(Math.round(abstractCooldown.getTimeLeft() * 10) / 10.0) + "s",
+                                    ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
+                            )
+                            .get(),
+                    (m, e) -> openCooldownMenu(player, target, abstractCooldown)
+            );
+        }
         menu.setItem(3, 5, MENU_BACK, (m, e) -> openCooldownsMenu(player, target));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -481,7 +482,9 @@ public class DebugMenuPlayerOptions {
                             .get(),
                     (m, e) -> {
                         if (target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
-//                            abstractCooldown.subtractTime(-durations[finalI]);
+                            if (abstractCooldown instanceof RegularCooldown) {
+                                ((RegularCooldown<?>) abstractCooldown).subtractTime(-durations[finalI]);
+                            }
                             player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + abstractCooldown.getName() + "'s duration was increased by " + durations[finalI] + " seconds");
                         } else {
                             openCooldownsMenu(player, target);

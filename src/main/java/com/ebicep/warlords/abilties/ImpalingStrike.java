@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 public class ImpalingStrike extends AbstractStrikeBase {
 
     private int leechDuration = 5;
+    private float healingDoneFromEnemyCarrier = 0;
 
     public ImpalingStrike() {
         super("Impaling Strike", 313, 398, 0, 90, 20, 175);
@@ -61,9 +62,15 @@ public class ImpalingStrike extends AbstractStrikeBase {
                             100,
                             false,
                             false
-                    );
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        if (event.getPlayer().hasFlag()) {
+                            this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                        }
+                    });
                 }
             }
+
+
         });
     }
 
@@ -73,5 +80,13 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     public void setLeechDuration(int leechDuration) {
         this.leechDuration = leechDuration;
+    }
+
+    public float getHealingDoneFromEnemyCarrier() {
+        return healingDoneFromEnemyCarrier;
+    }
+
+    public void addHealingDoneFromEnemyCarrier(float amount) {
+        this.healingDoneFromEnemyCarrier += amount;
     }
 }

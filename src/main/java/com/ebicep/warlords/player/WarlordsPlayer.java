@@ -14,6 +14,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
@@ -176,15 +177,15 @@ public final class WarlordsPlayer {
                 '}';
     }
 
-    private void addHealingDamageInstance(WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addHealingDamageInstance(WarlordsDamageHealingEvent event) {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            return;
+            return Optional.empty();
         }
         if (event.isHealingInstance()) {
-            addHealingInstance(event);
+            return addHealingInstance(event);
         } else {
-            addDamageInstance(event);
+            return addDamageInstance(event);
         }
     }
 
@@ -199,7 +200,7 @@ public final class WarlordsPlayer {
      * @param critMultiplier  The critical multiplier of the damage instance.
      * @param ignoreReduction Whether the instance has to ignore damage reductions.
      */
-    public void addDamageInstance(
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsPlayer attacker,
             String ability,
             float min,
@@ -208,10 +209,10 @@ public final class WarlordsPlayer {
             int critMultiplier,
             boolean ignoreReduction
     ) {
-        this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
+        return this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
     }
 
-    private void addDamageInstance(WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(WarlordsDamageHealingEvent event) {
         WarlordsPlayer attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
@@ -223,9 +224,11 @@ public final class WarlordsPlayer {
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
 
+        WarlordsDamageHealingFinalEvent finalEvent = null;
+
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
-            return;
+            return Optional.empty();
         }
 
         int initialHealth = health;
@@ -289,7 +292,8 @@ public final class WarlordsPlayer {
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
             cancelHealingPowerUp();
-            return;
+
+            return Optional.empty();
         }
 
         // Reduction before Intervene.
@@ -389,7 +393,7 @@ public final class WarlordsPlayer {
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
-                    return;
+                    return Optional.empty();
                 } else {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
@@ -467,6 +471,23 @@ public final class WarlordsPlayer {
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
 
+                finalEvent = new WarlordsDamageHealingFinalEvent(
+                        this,
+                        attacker,
+                        ability,
+                        initialHealth,
+                        damageHealValueBeforeAllReduction,
+                        damageHealValueBeforeInterveneReduction,
+                        damageHealValueBeforeShieldReduction,
+                        damageValue,
+                        critChance,
+                        critMultiplier,
+                        isCrit,
+                        true);
+//                secondStats.addDamageHealingEventAsSelf(finalEvent);
+//                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+//
+//                checkForAchievementsDamage(attacker);
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
@@ -518,20 +539,7 @@ public final class WarlordsPlayer {
         getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
         attacker.getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
 
-//        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(
-//                this,
-//                attacker,
-//                ability,
-//                initialHealth,
-//                damageValue,
-//                critChance,
-//                critMultiplier,
-//                isCrit,
-//                true);
-//        secondStats.addDamageHealingEventAsSelf(finalEvent);
-//        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-//
-//        checkForAchievementsDamage(attacker);
+        return Optional.ofNullable(finalEvent);
     }
 
     /**
@@ -546,7 +554,7 @@ public final class WarlordsPlayer {
      * @param ignoreReduction       Whether the instance has to ignore damage reductions.
      * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
      */
-    public void addHealingInstance(
+    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsPlayer attacker,
             String ability,
             float min,
@@ -556,10 +564,10 @@ public final class WarlordsPlayer {
             boolean ignoreReduction,
             boolean isLastStandFromShield
     ) {
-        addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false));
+        return this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false));
     }
 
-    private void addHealingInstance(WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(WarlordsDamageHealingEvent event) {
         WarlordsPlayer attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
@@ -570,9 +578,11 @@ public final class WarlordsPlayer {
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
 
+        WarlordsDamageHealingFinalEvent finalEvent = null;
+
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
-            return;
+            return Optional.empty();
         }
 
         int initialHealth = health;
@@ -587,10 +597,11 @@ public final class WarlordsPlayer {
             healValue *= critMultiplier / 100f;
         }
 
+        final float healValueBeforeReduction = healValue;
 
-        for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
-            if (regularCooldown.isHealing()) {
-                healValue = regularCooldown.doBeforeHealFromSelf(event, healValue);
+        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+            if (abstractCooldown.isHealing()) {
+                healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
             }
         }
 
@@ -601,7 +612,7 @@ public final class WarlordsPlayer {
                 healValue = this.maxHealth - this.health;
             }
 
-            if (healValue < 0) return;
+            if (healValue < 0) return Optional.empty();
 
             if (healValue != 0) {
                 // Displays the healing message.
@@ -628,7 +639,7 @@ public final class WarlordsPlayer {
                     healValue = maxHealth - this.health;
                 }
 
-                if (healValue < 0) return;
+                if (healValue < 0) return Optional.empty();
 
                 boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
                 if (healValue != 0) {
@@ -644,20 +655,25 @@ public final class WarlordsPlayer {
             }
         }
 
-//        WarlordsDamageHealingFinalEvent finalEvent = new WarlordsDamageHealingFinalEvent(
-//                this,
-//                attacker,
-//                ability,
-//                initialHealth,
-//                healValue,
-//                critChance,
-//                critMultiplier,
-//                isCrit,
-//                false);
+        finalEvent = new WarlordsDamageHealingFinalEvent(
+                this,
+                attacker,
+                ability,
+                initialHealth,
+                healValueBeforeReduction,
+                healValueBeforeReduction,
+                healValueBeforeReduction,
+                healValue,
+                critChance,
+                critMultiplier,
+                isCrit,
+                false);
 //        secondStats.addDamageHealingEventAsSelf(finalEvent);
 //        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 //
 //        checkForAchievementsHealing(attacker);
+
+        return Optional.of(finalEvent);
     }
 
     /**
@@ -901,12 +917,19 @@ public final class WarlordsPlayer {
         ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.BLITZKRIEG);
         ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SNIPE_SHOT);
         ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.DUCK_TANK);
+        ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.SPLIT_SECOND);
+        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.REVENGE_BLAST);
         if (hasFlag()) {
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ASSASSINATE);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SILENCE_PEON);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ORBIFICATOR);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.HOUR_OF_RECKONING);
         }
     }
 
     private void checkForAchievementsHealing(WarlordsPlayer attacker) {
+        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.LYCHEESIS);
+
         if (hasFlag()) {
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.REJUVENATION);
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.CLERICAL_PRODIGY);
