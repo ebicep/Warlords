@@ -11,6 +11,9 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private String ability;
     private int initialHealth;
     private int finalHealth;
+    private float valueBeforeAllReduction;
+    private float valueBeforeInterveneReduction;
+    private float valueBeforeShieldReduction;
     private float value;
     private int critChance;
     private int critMultiplier;
@@ -29,6 +32,9 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             WarlordsPlayer attacker,
             String ability,
             int initialHealth,
+            float valueBeforeAllReduction,
+            float valueBeforeInterveneReduction,
+            float valueBeforeShieldReduction,
             float value,
             int critChance,
             int critMultiplier,
@@ -40,11 +46,14 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         this.ability = ability;
         this.initialHealth = initialHealth;
         this.finalHealth = player.getHealth();
+        this.valueBeforeAllReduction = valueBeforeAllReduction;
+        this.valueBeforeInterveneReduction = valueBeforeInterveneReduction;
+        this.valueBeforeShieldReduction = valueBeforeShieldReduction;
         this.value = value;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.hasFlag = player.hasFlag();
-        this.isDead = player.isDead();
+        this.isDead = isDamageInstance && player.getHealth() <= 0 && !player.getCooldownManager().checkUndyingArmy(false);
         this.isCrit = isCrit;
         this.isDamageInstance = isDamageInstance;
 
@@ -65,6 +74,18 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
 
     public int getFinalHealth() {
         return finalHealth;
+    }
+
+    public float getValueBeforeAllReduction() {
+        return valueBeforeAllReduction;
+    }
+
+    public float getValueBeforeInterveneReduction() {
+        return valueBeforeInterveneReduction;
+    }
+
+    public float getValueBeforeShieldReduction() {
+        return valueBeforeShieldReduction;
     }
 
     public float getValue() {

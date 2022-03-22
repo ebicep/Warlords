@@ -1,12 +1,16 @@
 package com.ebicep.warlords.achievements.types;
 
+import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -183,14 +187,24 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier (that you silenced) while the silence duration is still up. ",
             GameMode.CAPTURE_THE_FLAG,
             Classes.VINDICATOR,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
+                if (lastDamageEvent.isDead()) {
+                    return new CooldownFilter<>(lastDamageEvent.getPlayer(), RegularCooldown.class)
+                            .filterCooldownFrom(warlordsPlayer)
+                            .filterCooldownClassAndMapToObjectsOfClass(SoulShackle.class)
+                            .findAny()
+                            .isPresent();
+                }
+                return false;
+            },
             false),
     LYCHEESIS("Lycheesis",
             "Generate over 3k healing by inflicting one instance of LEECH on the enemy flag carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.APOTHECARY,
             warlordsPlayer -> {
-                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventsAsAttacker(1, 1).get(0);
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
                 WarlordsDamageHealingFinalEvent lastHealingEvent = warlordsPlayer.getSecondStats().getLastEventAsSelf();
                 if (lastDamageEvent.isHasFlag()) {
                     return lastHealingEvent.getAbility().equals("Leech") && lastHealingEvent.getValue() >= 3000;
@@ -208,31 +222,91 @@ public enum ChallengeAchievements implements Achievement {
             "Prevent over 2k damage dealt to the flag carrier within 1s of the ability activating.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.DEFENDER,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                        .filterCooldownFrom(warlordsPlayer)
+                        .filter(regularCooldown -> regularCooldown.getStartingTicks() - regularCooldown.getTicksLeft() <= 1)
+                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.class)
+                        .anyMatch(intervene -> intervene.getDamagePrevented() >= 2000);
+            },
             false),
     ORBIFICATOR("Orbificator",
             "Return the flag while being popped from your Undying Army.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.REVENANT,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
+                WarlordsPlayer victim = lastDamageEvent.getPlayer();
+                if (victim.isDead() && victim.hasFlag()) {
+                    return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+                            .anyMatch(undyingArmy -> undyingArmy.getPlayersPopped().containsKey(warlordsPlayer));
+                }
+                return false;
+            },
             false),
     REVENGE_BLAST("Revenge Blast",
             "Kill 3 enemies within 5s of your flag carrier dying. ",
             GameMode.CAPTURE_THE_FLAG,
             Classes.AVENGER,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                boolean carrierDeadLast5Seconds = false;
+                for (WarlordsPlayer player : PlayerFilter.playingGame(warlordsPlayer.getGame())
+                        .teammatesOf(warlordsPlayer)
+                        .excluding(warlordsPlayer)
+                        .stream()
+                        .collect(Collectors.toList())
+                ) {
+                    if (player.getSecondStats().getEventsAsSelfFromLastSecond(5)
+                            .stream()
+                            .anyMatch(WarlordsDamageHealingFinalEvent::isDead)
+                    ) {
+                        carrierDeadLast5Seconds = true;
+                        break;
+                    }
+                }
+
+                if (carrierDeadLast5Seconds) {
+                    return warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(5)
+                            .stream()
+                            .filter(WarlordsDamageHealingFinalEvent::isDead)
+                            .count() >= 3;
+                } else {
+                    return false;
+                }
+            },
             false),
     HOUR_OF_RECKONING("Hour of Reckoning",
             "Kill the enemy carrier while 4 or more allies are affected by your Inspiring Presence.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.CRUSADER,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
+                WarlordsPlayer victim = lastDamageEvent.getPlayer();
+                if (victim.isDead() && victim.hasFlag()) {
+                    return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                            .anyMatch(inspiringPresence -> inspiringPresence.getPlayersEffected().size() >= 4 + 1); //includes self
+                }
+                return false;
+            },
             false),
     TALENT_SHREDDER("Talent Shredder",
             "Deal 3k damage to the enemy carrier while they have an active shield/damage reduction.",
             GameMode.CAPTURE_THE_FLAG,
             Classes.PROTECTOR,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+//                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
+//                WarlordsPlayer victim = lastDamageEvent.getPlayer();
+//                if(
+//                        victim.getCooldownManager().hasCooldown(ArcaneShield.class) ||
+//                        victim.getCooldownManager().hasCooldown(IceBarrier.class) ||
+//                        victim.getCooldownManager().hasCooldown(LastStand.class)
+//                ) {
+//
+//                }
+                return false;
+            },
             false),
     ROADBLOCK("Roadblock?!",
             "Proc your Capacitor Totem three (or more) times after your carrier passes through the totem.",

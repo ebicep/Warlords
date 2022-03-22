@@ -11,12 +11,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class InspiringPresence extends AbstractAbility {
 
     private int duration = 12;
     private final int speedBuff = 30;
     private final int radius = 10;
+    private List<WarlordsPlayer> playersEffected = new ArrayList<>();
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
@@ -42,6 +46,7 @@ public class InspiringPresence extends AbstractAbility {
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
+                    tempPresence.getPlayersEffected().add(nearPlayer);
                     wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Inspiring Presence inspired " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                     nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
                     nearPlayer.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -73,5 +78,9 @@ public class InspiringPresence extends AbstractAbility {
 
     public void decrementDuration() {
         this.duration -= .05;
+    }
+
+    public List<WarlordsPlayer> getPlayersEffected() {
+        return playersEffected;
     }
 }

@@ -250,7 +250,7 @@ public final class WarlordsPlayer {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
         }
-        final float damageHealValueBeforeReduction = damageValue;
+        final float damageHealValueBeforeAllReduction = damageValue;
         addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
 
         if (attacker == this && (isFallDamage || isMeleeHit)) {
@@ -316,6 +316,8 @@ public final class WarlordsPlayer {
             }
         }
 
+        final float damageHealValueBeforeInterveneReduction = damageValue;
+
         // Intervene
         Optional<RegularCooldown> optionalInterveneCooldown = new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClass(Intervene.class)
@@ -364,6 +366,9 @@ public final class WarlordsPlayer {
                 }
             }
 
+            final float damageHealValueBeforeShieldReduction = damageValue;
+
+
             // Arcane Shield
             List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
@@ -398,7 +403,7 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
                     }
 
-                    addAbsorbed(Math.abs(damageHealValueBeforeReduction));
+                    addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
                 for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {

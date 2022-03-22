@@ -13,10 +13,12 @@ import java.util.function.Consumer;
  */
 public class RegularCooldown<T> extends AbstractCooldown<T> {
 
+    protected int startingTicks;
     protected int ticksLeft;
 
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
+        this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
     }
 
@@ -61,4 +63,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         return ticksLeft > 0;
     }
 
+    public int getStartingTicks() {
+        return startingTicks;
+    }
 }
