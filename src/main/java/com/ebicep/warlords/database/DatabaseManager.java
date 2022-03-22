@@ -114,7 +114,13 @@ public class DatabaseManager {
                         .delay(20 * 10) // to make sure leaderboards are cached
                         .async(() -> {
                             //adding new document with top weekly players
-                            Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+                            Document topPlayers;
+                            try {
+                                topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+                            } catch (Exception e) {
+                                System.out.println("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+                                return;
+                            }
 
                             MongoCollection<Document> weeklyLeaderboards = warlordsDatabase.getCollection("Weekly_Leaderboards");
                             weeklyLeaderboards.insertOne(topPlayers);
