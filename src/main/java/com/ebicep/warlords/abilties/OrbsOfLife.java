@@ -66,7 +66,7 @@ public class OrbsOfLife extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addCooldown(new PersistentCooldown<OrbsOfLife>(
+        PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<OrbsOfLife>(
                 name,
                 "ORBS",
                 OrbsOfLife.class,
@@ -101,7 +101,8 @@ public class OrbsOfLife extends AbstractAbility {
                     spawnOrbs(event.getPlayer(), event.getAbility(), this);
                 }
             }
-        });
+        };
+        wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
@@ -149,7 +150,7 @@ public class OrbsOfLife extends AbstractAbility {
                     }
                 },
                 true,
-                secondaryAbility -> wp.isDead()
+                secondaryAbility -> wp.isDead() || !wp.getCooldownManager().hasCooldown(orbsOfLifeCooldown) || orbsOfLifeCooldown.isHidden()
         );
 
         return true;
