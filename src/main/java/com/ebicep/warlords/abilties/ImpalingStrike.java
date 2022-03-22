@@ -69,8 +69,6 @@ public class ImpalingStrike extends AbstractStrikeBase {
                     });
                 }
             }
-
-
         });
     }
 

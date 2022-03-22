@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -90,7 +89,7 @@ public class VitalityLiquor extends AbstractAbility {
                     .findAny()
                     .ifPresent(regularCooldown -> {
                         Utils.playGlobalSound(enemyTarget.getLocation(), Sound.GLASS, 2, 0.6f);
-
+                        enemyTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
                         new GameRunnable(wp.getGame()) {
                             @Override
                             public void run() {
@@ -129,17 +128,6 @@ public class VitalityLiquor extends AbstractAbility {
                                 .withColor(Color.ORANGE)
                                 .with(FireworkEffect.Type.STAR)
                                 .build());
-
-                        new GameRunnable(wp.getGame()) {
-                            @Override
-                            public void run() {
-                                if (wp.getCooldownManager().hasCooldown(tempVitalityLiquor)) {
-                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), enemyTarget.getLocation(), 255, 170, 0, 1);
-                                } else {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(0, 5);
                     });
         }
 

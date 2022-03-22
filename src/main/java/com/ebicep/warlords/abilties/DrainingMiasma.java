@@ -4,8 +4,10 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -20,10 +22,8 @@ public class DrainingMiasma extends AbstractAbility {
 
     private int duration = 5;
     private int enemyHitRadius = 8;
-    private int allyHitRadius = 6;
     // Percent
     private final int maxHealthDamage = 4;
-    private int damageDealtHealing = 40;
 
     public DrainingMiasma() {
         super("Draining Miasma", 0, 0, 55, 40, -1, 100);
@@ -36,12 +36,10 @@ public class DrainingMiasma extends AbstractAbility {
                 "§7enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
                 "§7poisoned by your Draining Miasma are slowed by\n" +
-                "§e20% §7for §63 §7seconds on cast." +
+                "§e25% §7for §63 §7seconds on cast." +
                 "\n\n" +
-                "§7The caster emits healing particles that heal all\n" +
-                "§7allies within the range for §a" + damageDealtHealing + "% §7of the damage\n" +
-                "§7dealt and increase their movement speed by §e30%\n" +
-                "§7for §62 §7seconds.\n";
+                "§7Each enemy hit will be afflicted with §aLEECH §7for\n" +
+                "§65 §7seconds.";
     }
 
     @Override
@@ -63,7 +61,7 @@ public class DrainingMiasma extends AbstractAbility {
                 .entitiesAround(wp, getEnemyHitRadius(), getEnemyHitRadius(), getEnemyHitRadius())
                 .aliveEnemiesOf(wp)
         ) {
-            Runnable cancelSpeed = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -20, 3 * 20, "BASE");
+            Runnable cancelSpeed = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     "Draining Miasma",
                     "MIASMA",
@@ -77,10 +75,47 @@ public class DrainingMiasma extends AbstractAbility {
                     duration * 20
             );
 
+            miasmaTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
+            miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
+                    "Leech Debuff",
+                    "LEECH",
+                    ImpalingStrike.class,
+                    new ImpalingStrike(),
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                    },
+                    5 * 20
+            ) {
+                @Override
+                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    float healingMultiplier;
+                    if (event.getAttacker() == wp) {
+                        healingMultiplier = 0.25f;
+                    } else {
+                        healingMultiplier = 0.15f;
+                    }
+
+                    if (!event.getAbility().equals("Draining Miasma")) {
+                        event.getAttacker().addHealingInstance(
+                                wp,
+                                "Leech",
+                                currentDamageValue * healingMultiplier,
+                                currentDamageValue * healingMultiplier,
+                                -1,
+                                100,
+                                false,
+                                false
+                        ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                            if (event.getPlayer().hasFlag()) {
+                                this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                            }
+                        });
+                    }
+                }
+            });
+
             new GameRunnable(wp.getGame()) {
-
-                float totalDamage = 0;
-
                 @Override
                 public void run() {
                     float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
@@ -96,7 +131,6 @@ public class DrainingMiasma extends AbstractAbility {
                                 false
                         );
 
-                        totalDamage += healthDamage;
                         Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
 
                         for (int i = 0; i < 3; i++) {
@@ -109,26 +143,6 @@ public class DrainingMiasma extends AbstractAbility {
                                     500
                             );
                         }
-
-                        for (WarlordsPlayer ally : PlayerFilter
-                                .entitiesAround(wp, getAllyHitRadius(), getAllyHitRadius(), getAllyHitRadius())
-                                .aliveTeammatesOf(wp)
-                        ) {
-                            ally.addHealingInstance(
-                                    wp,
-                                    name,
-                                    totalDamage * damageDealtHealing / 100f,
-                                    totalDamage * damageDealtHealing / 100f,
-                                    -1,
-                                    100,
-                                    false,
-                                    false
-                            );
-
-                            totalDamage = 0;
-
-                            ally.getSpeed().addSpeedModifier("Draining Miasma Speed", 30, 2 * 20, "BASE");
-                        }
                     } else {
                         this.cancel();
                     }
@@ -139,27 +153,11 @@ public class DrainingMiasma extends AbstractAbility {
         return true;
     }
 
-    public int getDamageDealtHealing() {
-        return damageDealtHealing;
-    }
-
-    public void setDamageDealtHealing(int damageDealtHealing) {
-        this.damageDealtHealing = damageDealtHealing;
-    }
-
     public int getEnemyHitRadius() {
         return enemyHitRadius;
     }
 
     public void setEnemyHitRadius(int enemyHitRadius) {
         this.enemyHitRadius = enemyHitRadius;
-    }
-
-    public int getAllyHitRadius() {
-        return allyHitRadius;
-    }
-
-    public void setAllyHitRadius(int allyHitRadius) {
-        this.allyHitRadius = allyHitRadius;
     }
 }
