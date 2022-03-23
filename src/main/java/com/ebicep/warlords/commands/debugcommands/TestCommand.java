@@ -74,9 +74,10 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
 
-            warlordsPlayer.getGame().warlordsPlayers().forEach(warlordsPlayer1 -> {
-                System.out.println(warlordsPlayer1.getName() + " - " + warlordsPlayer1.isDead());
-            });
+//            warlordsPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED);
+//            warlordsPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_RED);
 
         }
 
@@ -102,30 +103,30 @@ public class TestCommand implements CommandExecutor {
 //            DatabaseManager.gameService.create(databaseGameCTF);
 //        });
 //
-
-        int assassinWins = 0;
-        int assassinLosses = 0;
-        int vindicatorWins = 0;
-        int vindicatorLosses = 0;
-        int apothecaryWins = 0;
-        int apothecaryLosses = 0;
-        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5)) {
-            assassinWins += databasePlayer.getRogue().getAssassin().getWins();
-            assassinLosses += databasePlayer.getRogue().getAssassin().getLosses();
-            vindicatorWins += databasePlayer.getRogue().getVindicator().getWins();
-            vindicatorLosses += databasePlayer.getRogue().getVindicator().getLosses();
-            apothecaryWins += databasePlayer.getRogue().getApothecary().getWins();
-            apothecaryLosses += databasePlayer.getRogue().getApothecary().getLosses();
-        }
-        System.out.println("Assassin Wins: " + assassinWins);
-        System.out.println("Assassin Losses: " + assassinLosses);
-        System.out.println(((double) assassinWins / (assassinWins + assassinLosses) * 10) / 10 + "%");
-        System.out.println("Vindicator Wins: " + vindicatorWins);
-        System.out.println("Vindicator Losses: " + vindicatorLosses);
-        System.out.println(((double) vindicatorWins / (vindicatorWins + vindicatorLosses) * 10) / 10 + "%");
-        System.out.println("Apothecary Wins: " + apothecaryWins);
-        System.out.println("Apothecary Losses: " + apothecaryLosses);
-        System.out.println(((double) apothecaryWins / (apothecaryWins + apothecaryLosses) * 10) / 10 + "%");
+//
+//        int assassinWins = 0;
+//        int assassinLosses = 0;
+//        int vindicatorWins = 0;
+//        int vindicatorLosses = 0;
+//        int apothecaryWins = 0;
+//        int apothecaryLosses = 0;
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5)) {
+//            assassinWins += databasePlayer.getRogue().getAssassin().getWins();
+//            assassinLosses += databasePlayer.getRogue().getAssassin().getLosses();
+//            vindicatorWins += databasePlayer.getRogue().getVindicator().getWins();
+//            vindicatorLosses += databasePlayer.getRogue().getVindicator().getLosses();
+//            apothecaryWins += databasePlayer.getRogue().getApothecary().getWins();
+//            apothecaryLosses += databasePlayer.getRogue().getApothecary().getLosses();
+//        }
+//        System.out.println("Assassin Wins: " + assassinWins);
+//        System.out.println("Assassin Losses: " + assassinLosses);
+//        System.out.println(((double) assassinWins / (assassinWins + assassinLosses) * 10) / 10 + "%");
+//        System.out.println("Vindicator Wins: " + vindicatorWins);
+//        System.out.println("Vindicator Losses: " + vindicatorLosses);
+//        System.out.println(((double) vindicatorWins / (vindicatorWins + vindicatorLosses) * 10) / 10 + "%");
+//        System.out.println("Apothecary Wins: " + apothecaryWins);
+//        System.out.println("Apothecary Losses: " + apothecaryLosses);
+//        System.out.println(((double) apothecaryWins / (apothecaryWins + apothecaryLosses) * 10) / 10 + "%");
 
 //        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
 //            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());

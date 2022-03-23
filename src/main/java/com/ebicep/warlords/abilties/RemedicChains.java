@@ -73,19 +73,19 @@ public class RemedicChains extends AbstractAbility {
             });
 
             player.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
-                    ChatColor.GRAY + " Your Remedic Chains is now protecting " +
-                    ChatColor.YELLOW + chainTarget.getName() +
-                    ChatColor.GRAY + "!"
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " Your Remedic Chains is now protecting " +
+                            ChatColor.YELLOW + chainTarget.getName() +
+                            ChatColor.GRAY + "!"
             );
 
             chainTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW + " " +
-                    ChatColor.GRAY + wp.getName() + "'s" +
-                    ChatColor.YELLOW + " Remedic Chains" +
-                    ChatColor.GRAY + " is now increasing your §cdamage §7for " +
-                    ChatColor.GOLD + duration +
-                    ChatColor.GRAY + " seconds!"
+                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                            ChatColor.GRAY + wp.getName() + "'s" +
+                            ChatColor.YELLOW + " Remedic Chains" +
+                            ChatColor.GRAY + " is now increasing your §cdamage §7for " +
+                            ChatColor.GOLD + duration +
+                            ChatColor.GRAY + " seconds!"
             );
 
             HashMap<WarlordsPlayer, Integer> timeLinked = new HashMap<>();

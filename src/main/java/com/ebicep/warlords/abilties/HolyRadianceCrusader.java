@@ -64,8 +64,8 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                 }, markDuration * 20);
                 markTarget.getSpeed().addSpeedModifier("Crusader Mark Speed", 25, 20 * markDuration, "BASE");
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_GREEN + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override

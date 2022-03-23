@@ -84,7 +84,7 @@ public class HealingRain extends AbstractAbility {
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
                         wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
+                        wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
                         location.setX(wp.getLocation().getX());
                         location.setY(wp.getLocation().getY());
                         location.setZ(wp.getLocation().getZ());

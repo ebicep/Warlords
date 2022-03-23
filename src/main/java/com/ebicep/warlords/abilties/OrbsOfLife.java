@@ -143,7 +143,7 @@ public class OrbsOfLife extends AbstractAbility {
                             }
                         }.runTaskTimer(0, 1);
 
-                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
+                        wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
                         Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.08f, 0.7f);
                         ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
 

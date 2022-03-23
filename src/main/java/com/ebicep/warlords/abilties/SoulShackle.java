@@ -57,9 +57,9 @@ public class SoulShackle extends AbstractAbility {
             wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
             wp.subtractEnergy(energyCost);
             wp.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW +
-                ChatColor.GRAY + " You shackled " +
-                ChatColor.YELLOW + shackleTarget.getName() +
+                WarlordsPlayer.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " You shackled " +
+                        ChatColor.YELLOW + shackleTarget.getName() +
                         ChatColor.GRAY + "!"
             );
 

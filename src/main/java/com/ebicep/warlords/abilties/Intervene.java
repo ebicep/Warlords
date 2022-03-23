@@ -69,16 +69,16 @@ public class Intervene extends AbstractAbility {
             vt.getCooldownManager().getCooldowns().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
                     cd.getFrom().sendMessage(
-                        WarlordsPlayer.GIVE_ARROW + " " +
-                        cd.getFrom().getName() + "'s " +
-                        ChatColor.YELLOW + "Intervene " +
-                        ChatColor.GRAY + "has expired!"
+                        WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                                cd.getFrom().getName() + "'s " +
+                                ChatColor.YELLOW + "Intervene " +
+                                ChatColor.GRAY + "has expired!"
                     );
                     vt.sendMessage(
-                        WarlordsPlayer.GIVE_ARROW + " " +
-                        cd.getFrom().getName() + "'s " +
-                        ChatColor.YELLOW + "Intervene " +
-                        ChatColor.GRAY + "has expired!"
+                            WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                                    cd.getFrom().getName() + "'s " +
+                                    ChatColor.YELLOW + "Intervene " +
+                                    ChatColor.GRAY + "has expired!"
                     );
 
                     return true;
@@ -88,8 +88,8 @@ public class Intervene extends AbstractAbility {
             });
 
             wp.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW + "§7 You are now protecting " +
-                vt.getName() + " with your §eIntervene!"
+                    WarlordsPlayer.GIVE_ARROW_GREEN + "§7 You are now protecting " +
+                            vt.getName() + " with your §eIntervene!"
             );
             wp.getCooldownManager().addRegularCooldown(
                     name,
@@ -103,10 +103,10 @@ public class Intervene extends AbstractAbility {
             );
 
             vt.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW + "§7 " +
-                wp.getName() + " is shielding you with their " +
-                ChatColor.YELLOW + "Intervene" +
-                ChatColor.GRAY + "!"
+                    WarlordsPlayer.RECEIVE_ARROW_GREEN + "§7 " +
+                            wp.getName() + " is shielding you with their " +
+                            ChatColor.YELLOW + "Intervene" +
+                            ChatColor.GRAY + "!"
             );
             vt.getCooldownManager().addRegularCooldown(
                     name,
@@ -131,15 +131,15 @@ public class Intervene extends AbstractAbility {
                         RegularCooldown interveneRegularCooldown = optionalRegularCooldown.get();
                         if (interveneRegularCooldown.getTicksLeft() <= 20)
                             vt.sendMessage(
-                                WarlordsPlayer.RECEIVE_ARROW + " " +
-                                ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
-                                (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!"
+                                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                                            ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
+                                            (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!"
                             );
                         else
                             vt.sendMessage(
-                                WarlordsPlayer.RECEIVE_ARROW + " " +
-                                ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
-                                (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!"
+                                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                                            ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
+                                            (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!"
                             );
                     } else {
                         this.cancel();
@@ -157,18 +157,18 @@ public class Intervene extends AbstractAbility {
                             vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > breakRadius * breakRadius
                     ) {
                         wp.sendMessage(
-                            WarlordsPlayer.GIVE_ARROW + " " +
-                            ChatColor.GRAY + wp.getName() + "'s " +
-                            ChatColor.YELLOW + "Intervene " +
-                            ChatColor.GRAY + "has expired!"
+                                WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                                        ChatColor.GRAY + wp.getName() + "'s " +
+                                        ChatColor.YELLOW + "Intervene " +
+                                        ChatColor.GRAY + "has expired!"
                         );
                         wp.getCooldownManager().removeCooldown(tempIntervene);
 
                         vt.sendMessage(
-                            WarlordsPlayer.GIVE_ARROW + " " +
-                            ChatColor.GRAY + wp.getName() + "'s " +
-                            ChatColor.YELLOW + "Intervene " +
-                            ChatColor.GRAY + "has expired!"
+                                WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                                        ChatColor.GRAY + wp.getName() + "'s " +
+                                        ChatColor.YELLOW + "Intervene " +
+                                        ChatColor.GRAY + "has expired!"
                         );
                         vt.getCooldownManager().removeCooldown(tempIntervene);
 

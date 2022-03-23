@@ -91,17 +91,17 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 );
 
                 player.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
-                    ChatColor.GRAY + " You have marked " +
-                    ChatColor.GREEN + markTarget.getName() +
-                    ChatColor.GRAY + "!"
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " You have marked " +
+                            ChatColor.GREEN + markTarget.getName() +
+                            ChatColor.GRAY + "!"
                 );
 
                 markTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
-                    ChatColor.GRAY + " You have been granted " +
-                    ChatColor.GREEN + "Protector's Mark" +
-                    ChatColor.GRAY + " by " + wp.getName() + "!"
+                        WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " You have been granted " +
+                                ChatColor.GREEN + "Protector's Mark" +
+                                ChatColor.GRAY + " by " + wp.getName() + "!"
                 );
 
                 new GameRunnable(wp.getGame()) {

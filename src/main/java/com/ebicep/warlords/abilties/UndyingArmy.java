@@ -79,22 +79,22 @@ public class UndyingArmy extends AbstractAbility {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
                 wp.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
-                    ChatColor.GRAY + " Your " +
-                    ChatColor.YELLOW + "Undying Army" +
-                    ChatColor.GRAY + " is now protecting " +
-                    teammate.getName() +
-                    ChatColor.GRAY + "."
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " Your " +
+                            ChatColor.YELLOW + "Undying Army" +
+                            ChatColor.GRAY + " is now protecting " +
+                            teammate.getName() +
+                            ChatColor.GRAY + "."
                 );
 
                 teammate.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW +
-                    ChatColor.GRAY + " " +
-                    ChatColor.GRAY + wp.getName() + "'s " +
-                    ChatColor.YELLOW + "Undying Army" +
-                    ChatColor.GRAY + " is now protecting you for " +
-                    ChatColor.GOLD + duration +
-                    ChatColor.GRAY + " seconds."
+                        WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " " +
+                                ChatColor.GRAY + wp.getName() + "'s " +
+                                ChatColor.YELLOW + "Undying Army" +
+                                ChatColor.GRAY + " is now protecting you for " +
+                                ChatColor.GOLD + duration +
+                                ChatColor.GRAY + " seconds."
                 );
             }
             teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmy.class, tempUndyingArmy, wp, CooldownTypes.ABILITY, cooldownManager -> {

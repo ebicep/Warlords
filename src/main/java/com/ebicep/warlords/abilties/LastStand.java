@@ -122,17 +122,17 @@ public class LastStand extends AbstractAbility {
             });
 
             player.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW +
-                ChatColor.GRAY + " Your Last Stand is now protecting " +
-                ChatColor.YELLOW + standTarget.getName() +
-                ChatColor.GRAY + "!"
+                WarlordsPlayer.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " Your Last Stand is now protecting " +
+                        ChatColor.YELLOW + standTarget.getName() +
+                        ChatColor.GRAY + "!"
             );
 
             standTarget.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW +
-                ChatColor.GRAY + " " + player.getName() + "'s " +
-                ChatColor.YELLOW + "Last Stand" +
-                ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"
+                    WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " " + player.getName() + "'s " +
+                            ChatColor.YELLOW + "Last Stand" +
+                            ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"
             );
         }
 

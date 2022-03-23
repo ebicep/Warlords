@@ -62,8 +62,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         markDuration * 20
                 );
 
-                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GOLD + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been cursed with " + ChatColor.GOLD + "Avenger's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked " + ChatColor.GOLD + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED + ChatColor.GRAY + " You have been cursed with " + ChatColor.GOLD + "Avenger's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override

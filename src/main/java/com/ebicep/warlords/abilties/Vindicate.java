@@ -52,19 +52,19 @@ public class Vindicate extends AbstractAbility {
                 .closestFirst(wp)
         ) {
             wp.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW +
-                ChatColor.GRAY + " Your Vindicate is now protecting " +
-                ChatColor.YELLOW + vindicateTarget.getName() +
-                ChatColor.GRAY + "!"
+                WarlordsPlayer.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " Your Vindicate is now protecting " +
+                        ChatColor.YELLOW + vindicateTarget.getName() +
+                        ChatColor.GRAY + "!"
             );
 
             vindicateTarget.sendMessage(
-                WarlordsPlayer.RECEIVE_ARROW + " " +
-                ChatColor.GRAY + wp.getName() + "'s" +
-                ChatColor.YELLOW + " Vindicate" +
-                ChatColor.GRAY + " is now protecting you from de-buffs for " +
-                ChatColor.GOLD + vindicateDuration +
-                ChatColor.GRAY + " seconds!"
+                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                            ChatColor.GRAY + wp.getName() + "'s" +
+                            ChatColor.YELLOW + " Vindicate" +
+                            ChatColor.GRAY + " is now protecting you from de-buffs for " +
+                            ChatColor.GOLD + vindicateDuration +
+                            ChatColor.GRAY + " seconds!"
             );
 
             // Vindicate Immunity

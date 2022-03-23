@@ -66,8 +66,15 @@ import java.util.stream.Collectors;
 
 public final class WarlordsPlayer {
 
-    public static final String GIVE_ARROW = ChatColor.RED + "\u00AB";
-    public static final String RECEIVE_ARROW = ChatColor.GREEN + "\u00BB";
+    //RED << (Receiving from enemy / Negative from team?)
+    public static final String RECEIVE_ARROW_RED = ChatColor.RED + "\u00AB";
+    //GREEN << (Receiving from team / Positive from enemy?)
+    public static final String RECEIVE_ARROW_GREEN = ChatColor.GREEN + "\u00AB";
+    //RED >> (Doing negatives teammates?)
+    public static final String GIVE_ARROW_RED = ChatColor.RED + "\u00BB";
+    //GREEN >> (Doing negatives to enemy / Doing positives to team)
+    public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
+
     @Deprecated
     private final PlayingState gameState;
     private final Game game;
@@ -260,7 +267,7 @@ public final class WarlordsPlayer {
 
             if (isMeleeHit) {
                 // True damage
-                sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage.");
+                sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (entity instanceof Player) {
@@ -275,7 +282,7 @@ public final class WarlordsPlayer {
             } else {
 
                 // Fall Damage
-                sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
+                sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health - damageValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
                     // Title card "YOU DIED!"
@@ -400,11 +407,11 @@ public final class WarlordsPlayer {
                     }
 
                     if (isMeleeHit) {
-                        sendMessage(GIVE_ARROW + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
+                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
+                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
                     } else {
-                        sendMessage(GIVE_ARROW + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
+                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
+                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
@@ -655,6 +662,8 @@ public final class WarlordsPlayer {
             }
         }
 
+        attacker.sendMessage(ChatColor.GREEN + "Total Healing: " + attacker.getMinuteStats().total().getHealing());
+
         finalEvent = new WarlordsDamageHealingFinalEvent(
                 this,
                 attacker,
@@ -685,7 +694,7 @@ public final class WarlordsPlayer {
      */
     private void sendHealingMessage(@Nonnull WarlordsPlayer player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
         StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY)
+        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
         if (isCrit) {
             ownFeed.append(" critically");
@@ -716,7 +725,7 @@ public final class WarlordsPlayer {
     private void sendHealingMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
         // Own Message
         StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY)
+        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
         if (isCrit) {
             ownFeed.append(" critically");
@@ -740,7 +749,7 @@ public final class WarlordsPlayer {
 
         // Ally Message
         StringBuilder allyFeed = new StringBuilder();
-        allyFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" ").append(sender.getName())
+        allyFeed.append(RECEIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ").append(sender.getName())
                 .append("'s ").append(ability);
         if (isCrit) {
             allyFeed.append(" critically");
@@ -774,7 +783,7 @@ public final class WarlordsPlayer {
     private void sendDamageMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, String ability, float damageValue, boolean isCrit, boolean isMeleeHit) {
         // Receiver feed
         StringBuilder enemyFeed = new StringBuilder();
-        enemyFeed.append(GIVE_ARROW).append(ChatColor.GRAY).append(" ").append(sender.getName());
+        enemyFeed.append(RECEIVE_ARROW_RED).append(ChatColor.GRAY).append(" ").append(sender.getName());
         if (!isMeleeHit) {
             enemyFeed.append("'s ").append(ability);
         }
@@ -795,7 +804,7 @@ public final class WarlordsPlayer {
 
         // Sender feed
         StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" ");
+        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ");
         if (isMeleeHit) {
             ownFeed.append("You hit ");
         } else {
@@ -1419,10 +1428,10 @@ public final class WarlordsPlayer {
         }
         if ((int) amount != 0) {
             if (this == giver) {
-                sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
             } else {
-                sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
-                giver.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
             }
         }
     }

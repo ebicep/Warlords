@@ -47,7 +47,7 @@ public class InspiringPresence extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     tempPresence.getPlayersEffected().add(nearPlayer);
-                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Inspiring Presence inspired " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
+                    wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Inspiring Presence inspired " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                     nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
                     nearPlayer.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.ABILITY, cooldownManager -> {
                     }, duration * 20);
