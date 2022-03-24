@@ -161,13 +161,13 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Classes selectedClass = playerSettings.getSelectedClass();
-            AbstractPlayerClass apc = selectedClass.create.get();
+            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            AbstractPlayerClass apc = selectedSpec.create.get();
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
@@ -507,7 +507,7 @@ public class WarlordsEvents implements Listener {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
                 WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
                 if (wp != null) {
-                    if (wp.isDeath()) {
+                    if (wp.isDead()) {
                         wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
                     } else {
                         wp.addDamageInstance(wp, "Fall", 1000000, 1000000, -1, 100, false);
@@ -600,15 +600,15 @@ public class WarlordsEvents implements Listener {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
+                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
 
                         if (wp == null) {
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
-                                    ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +
+                                    ChatColor.GOLD + Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3) +
                                     ChatColor.DARK_GRAY + "][" +
                                     ChatColor.GRAY + (level < 10 ? "0" : "") + level +
                                     ChatColor.DARK_GRAY + "][" +
-                                    playerSettings.getSelectedClass().specType.getColoredSymbol() +
+                                    playerSettings.getSelectedSpec().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
 
                                     (prefix) +
@@ -626,9 +626,9 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.DARK_GRAY + "][" +
                                 ChatColor.GRAY + (level < 10 ? "0" : "") + level +
                                 ChatColor.DARK_GRAY + "][" +
-                                playerSettings.getSelectedClass().specType.getColoredSymbol() +
+                                playerSettings.getSelectedSpec().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
-                                (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
+                                (wp.isDead() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
 
                                 (prefix) +
                                 (prefixColor) + "%1$s" +

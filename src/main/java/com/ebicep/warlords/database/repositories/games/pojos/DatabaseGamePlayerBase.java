@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerStatisticsMinute;
+import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,7 +16,7 @@ public class DatabaseGamePlayerBase {
 
     protected String uuid;
     protected String name;
-    protected Classes spec;
+    protected Specializations spec;
     @Field("blocks_travelled")
     protected int blocksTravelled;
     @Field("x_locations")
@@ -83,7 +83,7 @@ public class DatabaseGamePlayerBase {
         return name;
     }
 
-    public Classes getSpec() {
+    public Specializations getSpec() {
         return spec;
     }
 

@@ -115,13 +115,13 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static Weapons getSelected(OfflinePlayer player, Classes classes) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
+    public static Weapons getSelected(OfflinePlayer player, Specializations specializations) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(specializations, FELFLAME_BLADE);
     }
 
     @Deprecated
-    public static void setSelected(OfflinePlayer player, Classes classes, Weapons weapon) {
-        Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().put(classes, weapon);
+    public static void setSelected(OfflinePlayer player, Specializations specializations, Weapons weapon) {
+        Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().put(specializations, weapon);
     }
 
     public static Weapons getWeapon(String name) {

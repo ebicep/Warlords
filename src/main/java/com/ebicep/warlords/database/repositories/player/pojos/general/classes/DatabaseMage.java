@@ -8,13 +8,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsCl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 
 public class DatabaseMage extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    protected DatabaseSpecialization pyromancer = new DatabaseSpecialization(ClassesSkillBoosts.FIREBALL);
-    protected DatabaseSpecialization cryomancer = new DatabaseSpecialization(ClassesSkillBoosts.FROST_BOLT);
-    protected DatabaseSpecialization aquamancer = new DatabaseSpecialization(ClassesSkillBoosts.WATER_BOLT);
+    protected DatabaseSpecialization pyromancer = new DatabaseSpecialization(SkillBoosts.FIREBALL);
+    protected DatabaseSpecialization cryomancer = new DatabaseSpecialization(SkillBoosts.FROST_BOLT);
+    protected DatabaseSpecialization aquamancer = new DatabaseSpecialization(SkillBoosts.WATER_BOLT);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
 

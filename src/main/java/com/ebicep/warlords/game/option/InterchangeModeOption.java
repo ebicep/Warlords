@@ -25,9 +25,9 @@ public class InterchangeModeOption implements Option {
 
     public static final int MAX_SWAP_TIME = 60;
     public static final int MIN_SWAP_TIME = 30;
-    private final HashMap<UUID, Classes> previousSelectedClasses = new HashMap<>();
-    private final HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
-    private final HashMap<UUID, HashMap<Classes, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
+    private final HashMap<UUID, Specializations> previousSelectedSpecs = new HashMap<>();
+    private final HashMap<UUID, HashMap<Specializations, SkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
+    private final HashMap<UUID, HashMap<Specializations, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
     private final HashMap<UUID, List<ArmorManager.Helmets>> previousSelectedHelmets = new HashMap<>();
     private final HashMap<UUID, List<ArmorManager.ArmorSets>> previousSelectedArmorSets = new HashMap<>();
 
@@ -43,7 +43,7 @@ public class InterchangeModeOption implements Option {
         //saving player info as it will be modified during the game
         game.getPlayers().forEach((uuid, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            previousSelectedClasses.put(uuid, playerSettings.getSelectedClass());
+            previousSelectedSpecs.put(uuid, playerSettings.getSelectedSpec());
             previousSelectedSkillBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
             previousSelectedWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
             previousSelectedHelmets.put(uuid, ArmorManager.Helmets.getSelected(uuid));
@@ -76,8 +76,8 @@ public class InterchangeModeOption implements Option {
         //resetting player info
         game.getPlayers().forEach((uuid, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            playerSettings.setSelectedClass(previousSelectedClasses.get(uuid));
-            playerSettings.setClassesSkillBoosts(previousSelectedSkillBoosts.get(uuid));
+            playerSettings.setSelectedSpec(previousSelectedSpecs.get(uuid));
+            playerSettings.setSpecsSkillBoosts(previousSelectedSkillBoosts.get(uuid));
             playerSettings.setWeaponSkins(previousSelectedWeaponSkins.get(uuid));
             playerSettings.setHelmets(previousSelectedHelmets.get(uuid));
             playerSettings.setArmorSets(previousSelectedArmorSets.get(uuid));
@@ -98,9 +98,9 @@ public class InterchangeModeOption implements Option {
 
         //Storing all player information as swapping jumbles it up
         HashMap<UUID, Location> playerLocations = new HashMap<>();
-        HashMap<UUID, Classes> playerClasses = new HashMap<>();
-        HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> playerBoosts = new HashMap<>();
-        HashMap<UUID, HashMap<Classes, Weapons>> playerWeaponSkins = new HashMap<>();
+        HashMap<UUID, Specializations> playerClasses = new HashMap<>();
+        HashMap<UUID, HashMap<Specializations, SkillBoosts>> playerBoosts = new HashMap<>();
+        HashMap<UUID, HashMap<Specializations, Weapons>> playerWeaponSkins = new HashMap<>();
         HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets = new HashMap<>();
         HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets = new HashMap<>();
         HashMap<UUID, Boolean> playerOnHorse = new HashMap<>();
@@ -108,7 +108,7 @@ public class InterchangeModeOption implements Option {
             UUID uuid = teamPlayer.getUuid();
             playerLocations.put(uuid, teamPlayer.getLocation());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            playerClasses.put(uuid, playerSettings.getSelectedClass());
+            playerClasses.put(uuid, playerSettings.getSelectedSpec());
             playerBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
             playerWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
             playerHelmets.put(uuid, playerSettings.getHelmets());
@@ -156,9 +156,9 @@ public class InterchangeModeOption implements Option {
             );
         }
         //copying over playersettings
-        playerSettings.setSelectedClass(playerClasses.get(firstPlayerUuid));
+        playerSettings.setSelectedSpec(playerClasses.get(firstPlayerUuid));
         playerSettings.setWeaponSkins(playerWeaponSkins.get(firstPlayerUuid));
-        playerSettings.setClassesSkillBoosts(playerBoosts.get(firstPlayerUuid));
+        playerSettings.setSpecsSkillBoosts(playerBoosts.get(firstPlayerUuid));
         playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
         playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
 
@@ -178,9 +178,9 @@ public class InterchangeModeOption implements Option {
     //firstplayer gets the stats of the second
     private void transferPlayerStats(WarlordsPlayer firstPlayer, WarlordsPlayer secondPlayer,
                                      HashMap<UUID, Location> playerLocations,
-                                     HashMap<UUID, Classes> playerClasses,
-                                     HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> playerBoosts,
-                                     HashMap<UUID, HashMap<Classes, Weapons>> playerWeaponSkins,
+                                     HashMap<UUID, Specializations> playerClasses,
+                                     HashMap<UUID, HashMap<Specializations, SkillBoosts>> playerBoosts,
+                                     HashMap<UUID, HashMap<Specializations, Weapons>> playerWeaponSkins,
                                      HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets,
                                      HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets,
                                      HashMap<UUID, Boolean> playerOnHorse
@@ -204,9 +204,9 @@ public class InterchangeModeOption implements Option {
         }
         //copying over playersettings
         PlayerSettings playerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
-        playerSettings.setSelectedClass(playerClasses.get(firstPlayerUuid));
+        playerSettings.setSelectedSpec(playerClasses.get(firstPlayerUuid));
         playerSettings.setWeaponSkins(playerWeaponSkins.get(firstPlayerUuid));
-        playerSettings.setClassesSkillBoosts(playerBoosts.get(firstPlayerUuid));
+        playerSettings.setSpecsSkillBoosts(playerBoosts.get(firstPlayerUuid));
         playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
         playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
         if (firstPlayer.getEntity() instanceof Player) {

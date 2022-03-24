@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.Weapons;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,7 +13,7 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
 
     protected Weapons weapon = Weapons.FELFLAME_BLADE;
     @Field("skill_boost")
-    protected ClassesSkillBoosts skillBoost;
+    protected SkillBoosts skillBoost;
 
     public DatabaseSpecialization() {
 
@@ -25,7 +25,7 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
         this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
     }
 
-    public DatabaseSpecialization(ClassesSkillBoosts skillBoost) {
+    public DatabaseSpecialization(SkillBoosts skillBoost) {
         this.skillBoost = skillBoost;
     }
 
@@ -37,11 +37,11 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
         this.weapon = weapon;
     }
 
-    public ClassesSkillBoosts getSkillBoost() {
+    public SkillBoosts getSkillBoost() {
         return skillBoost;
     }
 
-    public void setSkillBoost(ClassesSkillBoosts skillBoost) {
+    public void setSkillBoost(SkillBoosts skillBoost) {
         this.skillBoost = skillBoost;
     }
 }

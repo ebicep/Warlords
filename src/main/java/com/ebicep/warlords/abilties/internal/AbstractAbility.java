@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -54,7 +54,7 @@ public abstract class AbstractAbility {
 
     public abstract boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
 
-    public void boostSkill(ClassesSkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
+    public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {
             boosted = true;
             skillBoost.applyBoost.accept(this);

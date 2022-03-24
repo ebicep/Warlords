@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.duel.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
+import com.ebicep.warlords.player.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
@@ -31,13 +31,13 @@ public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implemen
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         this.totalTimePlayed += 900 - ((DatabaseGameDuel) databaseGame).getTimeLeft();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
     }
 
     @Override
-    public DatabaseBaseDuel getSpec(Classes classes) {
-        switch (classes) {
+    public DatabaseBaseDuel getSpec(Specializations specializations) {
+        switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
             case CRYOMANCER:
@@ -73,8 +73,8 @@ public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implemen
     }
 
     @Override
-    public DatabaseBaseDuel getClass(ClassesGroup classesGroup) {
-        switch (classesGroup) {
+    public DatabaseBaseDuel getClass(Classes classes) {
+        switch (classes) {
             case MAGE:
                 return mage;
             case WARRIOR:

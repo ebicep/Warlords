@@ -11,7 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.interception.Datab
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
+import com.ebicep.warlords.player.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
@@ -37,7 +37,7 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
@@ -53,8 +53,8 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
     }
 
     @Override
-    public AbstractDatabaseStatInformation getSpec(Classes classes) {
-        switch (classes) {
+    public AbstractDatabaseStatInformation getSpec(Specializations specializations) {
+        switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
             case CRYOMANCER:
@@ -90,8 +90,8 @@ public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation imp
     }
 
     @Override
-    public AbstractDatabaseStatInformation getClass(ClassesGroup classesGroup) {
-        switch (classesGroup) {
+    public AbstractDatabaseStatInformation getClass(Classes classes) {
+        switch (classes) {
             case MAGE:
                 return mage;
             case WARRIOR:

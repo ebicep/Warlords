@@ -93,7 +93,7 @@ public final class WarlordsPlayer {
     private UUID uuid;
     private Team team;
     private AbstractPlayerClass spec;
-    private Classes specClass;
+    private Specializations specClass;
     private Weapons weapon;
     private int health;
     private int maxHealth;
@@ -145,7 +145,7 @@ public final class WarlordsPlayer {
         this.minuteStats = new PlayerStatisticsMinute();
         this.secondStats = new PlayerStatisticsSecond(gameState);
         this.team = team;
-        this.specClass = settings.getSelectedClass();
+        this.specClass = settings.getSelectedSpec();
         this.spec = specClass.create.get();
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
@@ -160,7 +160,7 @@ public final class WarlordsPlayer {
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
-        this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
+        this.weapon = Weapons.getSelected(player, settings.getSelectedSpec());
         this.deathLocation = this.entity.getLocation();
         updatePlayerReference(p);
         this.compassTarget = gameState.getGame()
@@ -977,7 +977,7 @@ public final class WarlordsPlayer {
 
     public void updateJimmyHealth() {
         if (getEntity() instanceof Zombie) {
-            if (isDeath()) {
+            if (isDead()) {
                 getEntity().setCustomName("");
             } else {
                 String oldName = getEntity().getCustomName();
@@ -1029,7 +1029,7 @@ public final class WarlordsPlayer {
     }
 
     public void applySkillBoost(Player player) {
-        ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(Bukkit.getOfflinePlayer(uuid));
+        SkillBoosts selectedBoost = Warlords.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId()).getSkillBoostForClass();
         if (selectedBoost != null) {
             if (spec.getWeapon().getClass() == selectedBoost.ability) {
                 spec.getWeapon().boostSkill(selectedBoost, spec);
@@ -1136,7 +1136,7 @@ public final class WarlordsPlayer {
                                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
                                 "",
                                 ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                Classes.getSelectedBoost(player).selectedDescription,
+                                Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass().selectedDescription,
                                 "",
                                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
                                 ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
@@ -1274,12 +1274,12 @@ public final class WarlordsPlayer {
         return spec;
     }
 
-    public void setSpec(AbstractPlayerClass spec, ClassesSkillBoosts skillBoost) {
-        Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec.getName()));
-        Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedClass(skillBoost);
+    public void setSpec(AbstractPlayerClass spec, SkillBoosts skillBoost) {
+        Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
+        Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
         Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
-        this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
+        this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
         this.weapon = Weapons.getSelected(player, this.specClass);
         this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getAddons().contains(GameAddon.COOLDOWN_MODE) ? 1.5 : 1));
         this.health = this.maxHealth;
@@ -1685,11 +1685,6 @@ public final class WarlordsPlayer {
         this.dead = dead;
     }
 
-    @Deprecated
-    public boolean isDeath() {
-        return isDead();
-    }
-
     public boolean isAlive() {
         return !isDead();
     }
@@ -1734,7 +1729,7 @@ public final class WarlordsPlayer {
 
         resetPlayerAddons();
 
-        if (isDeath()) {
+        if (isDead()) {
             player.setGameMode(GameMode.SPECTATOR);
         } else {
             player.setGameMode(GameMode.ADVENTURE);
@@ -1774,7 +1769,7 @@ public final class WarlordsPlayer {
         }
     }
 
-    public Classes getSpecClass() {
+    public Specializations getSpecClass() {
         return specClass;
     }
 
@@ -1832,7 +1827,7 @@ public final class WarlordsPlayer {
     public boolean isEnemyAlive(@Nullable WarlordsPlayer p) {
         return p != null &&
                 p.getGame() == getGame() &&
-                !p.isDeath() &&
+                !p.isDead() &&
                 p.getTeam() != getTeam();
     }
 
@@ -1849,7 +1844,7 @@ public final class WarlordsPlayer {
     public boolean isTeammateAlive(@Nullable WarlordsPlayer p) {
         return p != null &&
                 p.getGame() == getGame() &&
-                !p.isDeath() &&
+                !p.isDead() &&
                 p.getTeam() == getTeam();
     }
 

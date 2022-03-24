@@ -148,19 +148,19 @@ public class PreLobbyState implements State, TimerDebugAble {
                     int maxSRDiff = 200;
                     for (int i = 0; i < 5000; i++) {
                         HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
                         });
                         //specs that dont have an even amount of players to redistribute later
                         List<Player> playersLeft = new ArrayList<>();
                         //distributing specs evenly
                         playerSpecs.forEach((classes, playerList) -> {
-                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
-                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec() == classes).count();
+                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec() == classes).count();
                             for (Player player : playerList) {
                                 //add to red team
                                 if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
@@ -236,19 +236,19 @@ public class PreLobbyState implements State, TimerDebugAble {
                     if (bestTeam.isEmpty()) {
                         failSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
                         //all players are online or else they wouldve been removed from queue
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
                         });
                         List<Player> playersLeft = new ArrayList<>();
                         //distributing specs evenly
                         playerSpecs.forEach((classes, playerList) -> {
-                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
-                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec() == classes).count();
+                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec() == classes).count();
                             for (Player player : playerList) {
                                 //add to red team
                                 if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
@@ -272,7 +272,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         int amountOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
                         final boolean[] toBlueTeam = {amountOnBlue <= amountOnRed};
                         playersLeft.stream()
-                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
+                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedSpec().specType))
                                 .forEachOrdered(player -> {
                                     if (toBlueTeam[0]) {
                                         teams.put(player, Team.BLUE);
@@ -297,12 +297,12 @@ public class PreLobbyState implements State, TimerDebugAble {
                     if (bestTeamSRDifference > 5000) {
                         secondFailSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
-                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        HashMap<Specializations, List<Player>> playerSpecs = new HashMap<>();
                         game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
                             Player player = e.getKey();
                             Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedSpec(), v -> new ArrayList<>()).add(player);
                         });
                         int blueSR = 0;
                         int redSR = 0;
@@ -325,7 +325,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     bestTeam.forEach((player, team) -> {
                         game.setPlayerTeam(player, team);
-                        ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+                        ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
                         LobbyLocationMarker location = LobbyLocationMarker.getFirstLobbyLocation(game, team);
                         if (location != null) {
                             player.teleport(location.getLocation());
@@ -348,9 +348,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                             bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
-                                Classes classes = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass();
+                                Specializations specializations = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
                                 value.sendMessage(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey().getName() + ChatColor.GRAY + " - " +
-                                        classes.specType.chatColor + classes.name + ChatColor.GRAY + " - " +
+                                        specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
                                         ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId().toString()));
                             });
 
@@ -404,7 +404,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             mapSuffix = game.getMap().getMapName();
         }
 
-        Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
+        Specializations specializations = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         if (hasEnoughPlayers()) {
             customScoreboard.giveNewSideBar(init,
                     ChatColor.GRAY + dateString,
@@ -414,8 +414,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                     "   ",
                     ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
                     "    ",
-                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
-                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), specializations)) + " " + ChatColor.GOLD + Specializations.getClass(specializations).name,
+                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + specializations.name,
                     "     ",
                     ChatColor.YELLOW + Warlords.VERSION);
         } else {
@@ -428,8 +428,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                     ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
                     ChatColor.WHITE + "players join ",
                     "    ",
-                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
-                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), specializations)) + " " + ChatColor.GOLD + Specializations.getClass(specializations).name,
+                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + specializations.name,
                     "     ",
                     ChatColor.YELLOW + Warlords.VERSION);
         }
@@ -565,7 +565,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                 }
             }
 
-            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
         }
         
         LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);

@@ -11,9 +11,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.SpecType;
+import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -201,12 +201,12 @@ public enum GameMode {
 
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(p.getUniqueId());
-            Classes selectedClass = playerSettings.getSelectedClass();
-            AbstractPlayerClass apc = selectedClass.create.get();
+            Specializations selectedSpec = playerSettings.getSelectedSpec();
+            AbstractPlayerClass apc = selectedSpec.create.get();
 
             return new ItemBuilder(apc.getWeapon()
                     .getItem(playerSettings.getWeaponSkins()
-                            .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                            .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item))
                     .name("§aWeapon Skin Preview")
                     .lore("")
                     .get();
@@ -259,15 +259,15 @@ public enum GameMode {
             StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
                     (int) game.getPlayers().keySet().stream()
                             .map(Warlords::getPlayerSettings)
-                            .map(PlayerSettings::getSelectedClass)
+                            .map(PlayerSettings::getSelectedSpec)
                             .filter(c -> c.specType == value)
                             .count() + "\n\n");
-            Arrays.stream(Classes.values())
+            Arrays.stream(Specializations.values())
                     .filter(classes -> classes.specType == value)
                     .forEach(classes -> {
                         int playersOnSpec = (int) game.getPlayers().keySet().stream()
                                 .map(Warlords::getPlayerSettings)
-                                .map(PlayerSettings::getSelectedClass)
+                                .map(PlayerSettings::getSelectedSpec)
                                 .filter(c -> c == classes)
                                 .count();
                         lore.append(ChatColor.GREEN).append(classes.name).append(": ").append(ChatColor.YELLOW).append(playersOnSpec).append("\n");

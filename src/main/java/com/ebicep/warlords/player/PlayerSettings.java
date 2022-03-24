@@ -10,38 +10,38 @@ import java.util.*;
 import static com.ebicep.warlords.player.ArmorManager.Helmets.*;
 
 public class PlayerSettings implements ConfigurationSerializable {
-    private Classes selectedClass = Classes.PYROMANCER;
-    private final HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<Classes, ClassesSkillBoosts>() {{
-        put(Classes.PYROMANCER, ClassesSkillBoosts.FIREBALL);
-        put(Classes.CRYOMANCER, ClassesSkillBoosts.FROST_BOLT);
-        put(Classes.AQUAMANCER, ClassesSkillBoosts.WATER_BOLT);
-        put(Classes.BERSERKER, ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
-        put(Classes.DEFENDER, ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);
-        put(Classes.REVENANT, ClassesSkillBoosts.ORBS_OF_LIFE);
-        put(Classes.AVENGER, ClassesSkillBoosts.AVENGER_STRIKE);
-        put(Classes.CRUSADER, ClassesSkillBoosts.CRUSADER_STRIKE);
-        put(Classes.PROTECTOR, ClassesSkillBoosts.PROTECTOR_STRIKE);
-        put(Classes.THUNDERLORD, ClassesSkillBoosts.LIGHTNING_BOLT);
-        put(Classes.SPIRITGUARD, ClassesSkillBoosts.FALLEN_SOULS);
-        put(Classes.EARTHWARDEN, ClassesSkillBoosts.EARTHEN_SPIKE);
-        put(Classes.ASSASSIN, ClassesSkillBoosts.JUDGEMENT_STRIKE);
-        put(Classes.VINDICATOR, ClassesSkillBoosts.RIGHTEOUS_STRIKE);
-        put(Classes.APOTHECARY, ClassesSkillBoosts.IMPALING_STRIKE);
+    private Specializations selectedSpec = Specializations.PYROMANCER;
+    private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<Specializations, SkillBoosts>() {{
+        put(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
+        put(Specializations.CRYOMANCER, SkillBoosts.FROST_BOLT);
+        put(Specializations.AQUAMANCER, SkillBoosts.WATER_BOLT);
+        put(Specializations.BERSERKER, SkillBoosts.WOUNDING_STRIKE_BERSERKER);
+        put(Specializations.DEFENDER, SkillBoosts.WOUNDING_STRIKE_DEFENDER);
+        put(Specializations.REVENANT, SkillBoosts.ORBS_OF_LIFE);
+        put(Specializations.AVENGER, SkillBoosts.AVENGER_STRIKE);
+        put(Specializations.CRUSADER, SkillBoosts.CRUSADER_STRIKE);
+        put(Specializations.PROTECTOR, SkillBoosts.PROTECTOR_STRIKE);
+        put(Specializations.THUNDERLORD, SkillBoosts.LIGHTNING_BOLT);
+        put(Specializations.SPIRITGUARD, SkillBoosts.FALLEN_SOULS);
+        put(Specializations.EARTHWARDEN, SkillBoosts.EARTHEN_SPIKE);
+        put(Specializations.ASSASSIN, SkillBoosts.JUDGEMENT_STRIKE);
+        put(Specializations.VINDICATOR, SkillBoosts.RIGHTEOUS_STRIKE);
+        put(Specializations.APOTHECARY, SkillBoosts.IMPALING_STRIKE);
     }};
     private boolean hotKeyMode = true;
-    private HashMap<Classes, Weapons> weaponSkins = new HashMap<Classes, Weapons>() {{
-        put(Classes.PYROMANCER, Weapons.FELFLAME_BLADE);
-        put(Classes.CRYOMANCER, Weapons.FELFLAME_BLADE);
-        put(Classes.AQUAMANCER, Weapons.FELFLAME_BLADE);
-        put(Classes.BERSERKER, Weapons.FELFLAME_BLADE);
-        put(Classes.DEFENDER, Weapons.FELFLAME_BLADE);
-        put(Classes.REVENANT, Weapons.FELFLAME_BLADE);
-        put(Classes.AVENGER, Weapons.FELFLAME_BLADE);
-        put(Classes.CRUSADER, Weapons.FELFLAME_BLADE);
-        put(Classes.PROTECTOR, Weapons.FELFLAME_BLADE);
-        put(Classes.THUNDERLORD, Weapons.FELFLAME_BLADE);
-        put(Classes.SPIRITGUARD, Weapons.FELFLAME_BLADE);
-        put(Classes.EARTHWARDEN, Weapons.FELFLAME_BLADE);
+    private HashMap<Specializations, Weapons> weaponSkins = new HashMap<Specializations, Weapons>() {{
+        put(Specializations.PYROMANCER, Weapons.FELFLAME_BLADE);
+        put(Specializations.CRYOMANCER, Weapons.FELFLAME_BLADE);
+        put(Specializations.AQUAMANCER, Weapons.FELFLAME_BLADE);
+        put(Specializations.BERSERKER, Weapons.FELFLAME_BLADE);
+        put(Specializations.DEFENDER, Weapons.FELFLAME_BLADE);
+        put(Specializations.REVENANT, Weapons.FELFLAME_BLADE);
+        put(Specializations.AVENGER, Weapons.FELFLAME_BLADE);
+        put(Specializations.CRUSADER, Weapons.FELFLAME_BLADE);
+        put(Specializations.PROTECTOR, Weapons.FELFLAME_BLADE);
+        put(Specializations.THUNDERLORD, Weapons.FELFLAME_BLADE);
+        put(Specializations.SPIRITGUARD, Weapons.FELFLAME_BLADE);
+        put(Specializations.EARTHWARDEN, Weapons.FELFLAME_BLADE);
     }};
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     /**
@@ -61,27 +61,27 @@ public class PlayerSettings implements ConfigurationSerializable {
     private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_ROGUE;
 
     @Nonnull
-    public Classes getSelectedClass() {
-        return selectedClass;
+    public Specializations getSelectedSpec() {
+        return selectedSpec;
     }
 
-    public void setSelectedClass(@Nonnull Classes selectedClass) {
-        this.selectedClass = selectedClass;
+    public void setSelectedSpec(@Nonnull Specializations selectedSpec) {
+        this.selectedSpec = selectedSpec;
     }
 
-    public ClassesSkillBoosts getSkillBoostForClass() {
-        return classesSkillBoosts.get(selectedClass);
+    public SkillBoosts getSkillBoostForClass() {
+        return classesSkillBoosts.get(selectedSpec);
     }
 
-    public HashMap<Classes, ClassesSkillBoosts> getClassesSkillBoosts() {
+    public HashMap<Specializations, SkillBoosts> getClassesSkillBoosts() {
         return classesSkillBoosts;
     }
 
-    public void setSkillBoostForSelectedClass(ClassesSkillBoosts classesSkillBoost) {
-        classesSkillBoosts.put(selectedClass, classesSkillBoost);
+    public void setSkillBoostForSelectedSpec(SkillBoosts classesSkillBoost) {
+        classesSkillBoosts.put(selectedSpec, classesSkillBoost);
     }
 
-    public void setClassesSkillBoosts(HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts) {
+    public void setSpecsSkillBoosts(HashMap<Specializations, SkillBoosts> classesSkillBoosts) {
         this.classesSkillBoosts.putAll(classesSkillBoosts);
     }
 
@@ -102,7 +102,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> config = new LinkedHashMap<>();
-        config.put("class", selectedClass.name());
+        config.put("class", selectedSpec.name());
         //config.put("classessSkillBoost", classesSkillBoosts.name());
         config.put("hotKeyMode", Boolean.toString(hotKeyMode));
         config.put("particleQuality", particleQuality.name());
@@ -113,7 +113,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     public static PlayerSettings deserialize(@Nonnull Map<String, Object> config) {
         PlayerSettings settings = new PlayerSettings();
         try {
-            settings.setSelectedClass(Classes.valueOf(config.get("class").toString()));
+            settings.setSelectedSpec(Specializations.valueOf(config.get("class").toString()));
         } catch (IllegalArgumentException ignored) {
         }
         try {
@@ -136,11 +136,11 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.hotKeyMode = hotKeyMode;
     }
 
-    public HashMap<Classes, Weapons> getWeaponSkins() {
+    public HashMap<Specializations, Weapons> getWeaponSkins() {
         return weaponSkins;
     }
 
-    public void setWeaponSkins(HashMap<Classes, Weapons> weaponSkins) {
+    public void setWeaponSkins(HashMap<Specializations, Weapons> weaponSkins) {
         this.weaponSkins = weaponSkins;
     }
 

@@ -1,13 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
+import com.ebicep.warlords.player.Specializations;
 
 public interface DatabasePlayer {
 
-    AbstractDatabaseStatInformation getSpec(Classes classes);
+    AbstractDatabaseStatInformation getSpec(Specializations specializations);
 
-    AbstractDatabaseStatInformation getClass(ClassesGroup classesGroup);
+    AbstractDatabaseStatInformation getClass(Classes classes);
 
     AbstractDatabaseStatInformation[] getClasses();
 

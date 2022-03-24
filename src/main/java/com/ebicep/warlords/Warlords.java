@@ -824,13 +824,13 @@ public class Warlords extends JavaPlugin {
                             OrbsOfLife.Orb orb = itr.next();
                             Location orbPosition = orb.getArmorStand().getLocation();
                             if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == wp)) &&
-                                    orbPosition.distanceSquared(playerPosition) < 1.35 * 1.35 && !wp.isDeath()) {
+                                    orbPosition.distanceSquared(playerPosition) < 1.35 * 1.35 && !wp.isDead()) {
 
                                 orb.remove();
                                 itr.remove();
 
                                 float orbHeal = OrbsOfLife.ORB_HEALING;
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }
 
@@ -860,7 +860,7 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the Orb of Life has lived for 8 seconds.
-                            if (orb.getBukkitEntity().getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDeath())) {
+                            if (orb.getBukkitEntity().getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
                                 orb.remove();
                                 itr.remove();
                             }
@@ -965,7 +965,7 @@ public class Warlords extends JavaPlugin {
                             LivingEntity player = warlordsPlayer.getEntity();
                             List<Location> locations = warlordsPlayer.getLocations();
 
-                            if (warlordsPlayer.isDeath() && !locations.isEmpty()) {
+                            if (warlordsPlayer.isDead() && !locations.isEmpty()) {
                                 locations.add(locations.get(locations.size() - 1));
                             } else {
                                 locations.add(player.getLocation());

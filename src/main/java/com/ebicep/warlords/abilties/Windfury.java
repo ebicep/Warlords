@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
@@ -74,7 +74,7 @@ public class Windfury extends AbstractAbility {
                                     player1.playSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                                 });
 
-                                if (Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.WINDFURY_WEAPON) {
+                                if (Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == SkillBoosts.WINDFURY_WEAPON) {
                                     victim.addDamageInstance(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
                                 } else {
                                     victim.addDamageInstance(attacker, "Windfury Weapon", min * 1.35f, max * 1.35f, 25, 200, false);

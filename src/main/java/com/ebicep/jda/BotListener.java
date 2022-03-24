@@ -5,7 +5,7 @@ import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -224,9 +224,9 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                 Warlords.getPlayerSettings(uuid).setWantedTeam(Team.RED);
                                             }
                                             if (!spec.isEmpty()) {
-                                                Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec));
+                                                Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
                                                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                                                databasePlayer.setLastSpec(Classes.getClass(spec));
+                                                databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
                                                 DatabaseManager.updatePlayerAsync(databasePlayer);
                                                 // TODO: fix
                                                 /*if (!isExperimental) {

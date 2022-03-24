@@ -127,12 +127,12 @@ public class ExperienceManager {
         double damageMultiplier;
         double healingMultiplier;
         double absorbedMultiplier;
-        Classes classes = warlordsPlayer.getSpecClass();
-        if (classes.specType == SpecType.DAMAGE) {
+        Specializations specializations = warlordsPlayer.getSpecClass();
+        if (specializations.specType == SpecType.DAMAGE) {
             damageMultiplier = .80;
             healingMultiplier = .10;
             absorbedMultiplier = .10;
-        } else if (classes.specType == SpecType.HEALER) {
+        } else if (specializations.specType == SpecType.HEALER) {
             damageMultiplier = .275;
             healingMultiplier = .65;
             absorbedMultiplier = .75;
@@ -292,21 +292,21 @@ public class ExperienceManager {
 //        return exp;
 //    }
 
-    public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
+    public static long getExperienceForClass(UUID uuid, Classes classes) {
         if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getClass(classesGroup).getExperience();
+        return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
     }
 
-    public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
-        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classesGroup));
+    public static int getLevelForClass(UUID uuid, Classes classes) {
+        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classes));
     }
 
-    public static long getExperienceForSpec(UUID uuid, Classes spec) {
+    public static long getExperienceForSpec(UUID uuid, Specializations spec) {
         return getExperienceFromSpec(uuid, spec);
     }
 
-    public static int getLevelForSpec(UUID uuid, Classes spec) {
+    public static int getLevelForSpec(UUID uuid, Specializations spec) {
         return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
     }
 
@@ -316,10 +316,10 @@ public class ExperienceManager {
         return databasePlayer == null ? 0L : databasePlayer.getExperience();
     }
 
-    private static long getExperienceFromSpec(UUID uuid, Classes classes) {
+    private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
         if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getSpec(classes).getExperience();
+        return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
     }
 
     public static String getLevelString(int level) {

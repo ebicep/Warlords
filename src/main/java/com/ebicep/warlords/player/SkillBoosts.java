@@ -5,7 +5,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 
 import java.util.function.Consumer;
 
-public enum ClassesSkillBoosts {
+public enum SkillBoosts {
     FIREBALL("Fireball",
             "§7Increases the damage you\n§7deal with Fireball by 20%",
             "§aIncreases the damage you\n§adeal with Fireball by §c20%",
@@ -771,7 +771,7 @@ public enum ClassesSkillBoosts {
     public final Class ability;
     public final Consumer<AbstractAbility> applyBoost;
 
-    ClassesSkillBoosts(String name, String description, String selectedDescription, Class ability, Consumer<AbstractAbility> applyBoost) {
+    SkillBoosts(String name, String description, String selectedDescription, Class ability, Consumer<AbstractAbility> applyBoost) {
         this.name = name;
         this.description = description;
         this.selectedDescription = selectedDescription;

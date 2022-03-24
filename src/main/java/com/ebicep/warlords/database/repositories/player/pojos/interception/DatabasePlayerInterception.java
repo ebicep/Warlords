@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.interception.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
+import com.ebicep.warlords.player.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerInterception extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
@@ -38,13 +38,13 @@ public class DatabasePlayerInterception extends AbstractDatabaseStatInformation 
         this.pointsDefended += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsDefended();
         this.totalTimePlayed += 900 - ((DatabaseGameInterception) databaseGame).getTimeLeft();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
     }
 
     @Override
-    public DatabaseBaseInterception getSpec(Classes classes) {
-        switch (classes) {
+    public DatabaseBaseInterception getSpec(Specializations specializations) {
+        switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
             case CRYOMANCER:
@@ -80,8 +80,8 @@ public class DatabasePlayerInterception extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public DatabaseBaseInterception getClass(ClassesGroup classesGroup) {
-        switch (classesGroup) {
+    public DatabaseBaseInterception getClass(Classes classes) {
+        switch (classes) {
             case MAGE:
                 return mage;
             case WARRIOR:

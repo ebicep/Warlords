@@ -1,186 +1,55 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.mage.specs.Aquamancer;
-import com.ebicep.warlords.classes.mage.specs.Cryomancer;
-import com.ebicep.warlords.classes.mage.specs.Pyromancer;
-import com.ebicep.warlords.classes.paladin.specs.Avenger;
-import com.ebicep.warlords.classes.paladin.specs.Crusader;
-import com.ebicep.warlords.classes.paladin.specs.Protector;
-import com.ebicep.warlords.classes.rogue.specs.Apothecary;
-import com.ebicep.warlords.classes.rogue.specs.Assassin;
-import com.ebicep.warlords.classes.rogue.specs.Vindicator;
-import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
-import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
-import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
-import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
-import com.ebicep.warlords.util.bukkit.WordWrap;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.player.ClassesSkillBoosts.*;
+import static com.ebicep.warlords.player.Specializations.*;
 
 public enum Classes {
-    PYROMANCER("Pyromancer",
-            Pyromancer::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Mage specialization that uses the destructive Fire spells to obliterate enemies.", 200),
-            SpecType.DAMAGE,
-            FIREBALL, FLAME_BURST, TIME_WARP_PYROMANCER, ARCANE_SHIELD_PYROMANCER, INFERNO),
-    CRYOMANCER("Cryomancer",
-            Cryomancer::new,
-            WordWrap.wrapWithNewline("§7A defense-oriented Mage specialization that uses Ice spells to slow down enemies and to creative defensive barriers.", 200),
-            SpecType.TANK,
-            FROST_BOLT, FREEZING_BREATH, TIME_WARP_CRYOMANCER, ARCANE_SHIELD_CRYOMANCER, ICE_BARRIER),
-    AQUAMANCER("Aquamancer",
-            Aquamancer::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Mage specialization that uses Water spells to heal allies and to deal minor damage to enemies. This specialization has access to the 'Overheal' ability.", 200),
-            SpecType.HEALER,
-            WATER_BOLT, WATER_BREATH, TIME_WARP_AQUAMANCER, ARCANE_SHIELD_AQUAMANCER, HEALING_RAIN),
-    BERSERKER("Berserker",
-            Berserker::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Warrior specialization with a lust for blood and anger issues.", 200),
-            SpecType.DAMAGE,
-            WOUNDING_STRIKE_BERSERKER, SEISMIC_WAVE_BERSERKER, GROUND_SLAM_BERSERKER, BLOOD_LUST, BERSERK),
-    DEFENDER("Defender",
-            Defender::new,
-            WordWrap.wrapWithNewline("§7A defense-oriented Warrior specialization that can protect teammates by mitigating damage and intercepting enemy hits.", 200),
-            SpecType.TANK,
-            WOUNDING_STRIKE_DEFENDER, SEISMIC_WAVE_DEFENDER, GROUND_SLAM_DEFENDER, INTERVENE, LAST_STAND),
-    REVENANT("Revenant",
-            Revenant::new,
-            WordWrap.wrapWithNewline("§7A support-oriented Warrior specialization that can give allies a second chance of life.", 200),
-            SpecType.HEALER,
-            CRIPPLING_STRIKE, RECKLESS_CHARGE, GROUND_SLAM_REVENANT, ORBS_OF_LIFE, UNDYING_ARMY),
-    AVENGER("Avenger",
-            Avenger::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Paladin specialization that focuses on draining energy from enemies and has access to minor healing.", 200),
-            SpecType.DAMAGE,
-            AVENGER_STRIKE, CONSECRATE_AVENGER, LIGHT_INFUSION_AVENGER, HOLY_RADIANCE_AVENGER, AVENGERS_WRATH),
-    CRUSADER("Crusader",
-            Crusader::new,
-            WordWrap.wrapWithNewline("§7A defense-oriented Paladin specialization that inspires allies by granting them more energy in battle and has access to minor healing.", 200),
-            SpecType.TANK,
-            CRUSADER_STRIKE, CONSECRATE_CRUSADER, LIGHT_INFUSION_CRUSADER, HOLY_RADIANCE_CRUSADER, INSPIRING_PRESENCE),
-    PROTECTOR("Protector",
-            Protector::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Paladin specialization that converts damage into healing for his allies and has access to greater healing abilities.", 200),
-            SpecType.HEALER,
-            PROTECTOR_STRIKE, CONSECRATE_PROTECTOR, LIGHT_INFUSION_PROTECTOR, HOLY_RADIANCE_PROTECTOR, HAMMER_OF_LIGHT),
-    THUNDERLORD("Thunderlord",
-            Thunderlord::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Shaman specialization that calls upon the power of Lightning to electrocute enemies.", 200),
-            SpecType.DAMAGE,
-            LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON, LIGHTNING_ROD, CAPACITOR_TOTEM),
-    SPIRITGUARD("Spiritguard",
-            Spiritguard::new,
-            WordWrap.wrapWithNewline("§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death.", 200),
-            SpecType.TANK,
-            FALLEN_SOULS, SPIRIT_LINK, SOULBINDING_WEAPON, REPENTANCE, DEATHS_DEBT),
-    EARTHWARDEN("Earthwarden",
-            Earthwarden::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.", 200),
-            SpecType.HEALER,
-            EARTHEN_SPIKE, BOULDER, EARTHLIVING_WEAPON, CHAIN_HEAL, HEALING_TOTEM),
-    ASSASSIN("Assassin",
-            Assassin::new,
-            WordWrap.wrapWithNewline("§7A damage-oriented Rogue specialization that is a master of stealth, rapidly taking out any enemies who cross them.", 200),
-            SpecType.DAMAGE,
-            JUDGEMENT_STRIKE, INCENDIARY_CURSE, BLINDING_ASSAULT, SOUL_SWITCH, ORDER_OF_EVISCERATE),
-    VINDICATOR("Vindicator",
-            Vindicator::new,
-            WordWrap.wrapWithNewline("§7A defense-oriented Rogue specialization that deceives enemies by disabling their powers and use bulk power to protect allies.", 200),
-            SpecType.TANK,
-            RIGHTEOUS_STRIKE, SOUL_SHACKLE, HEART_TO_HEART, PRISM_GUARD, VINDICATE),
-    APOTHECARY("Apothecary",
-            Apothecary::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", 200),
-            SpecType.HEALER,
-            IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_LIQUOR, REMEDIC_CHAINS, DRAINING_MIASMA),
-
-    ;
+    MAGE(
+            "Mage",
+            new ItemStack(Material.INK_SACK, 1, (short) 12),
+            "§7The mage has access to powerful\n§7Arcane, Fire, Ice and Water magic.",
+            PYROMANCER, CRYOMANCER, AQUAMANCER
+    ),
+    WARRIOR(
+            "Warrior",
+            new ItemStack(Material.COAL, 1, (short) 1),
+            "§7The Warrior uses brute force to\n§7overpower their opponents in melee\n§7combat or to defend their allies.",
+            BERSERKER, DEFENDER, REVENANT
+    ),
+    PALADIN(
+            "Paladin",
+            new ItemStack(Material.INK_SACK, 1, (short) 11),
+            "§7The Paladin's strongest ally is the\n§7light. They use it to empower their\n§7weapon in order to vanquish foes and\n§7protect teammates.",
+            AVENGER, CRUSADER, PROTECTOR
+    ),
+    SHAMAN(
+            "Shaman",
+            new ItemStack(Material.INK_SACK, 1, (short) 2),
+            "§7The Shaman has an unbreakable bond\n§7with nature. This grants them access to\n§7devastating abilities that are\n§7empowered by the elements.",
+            THUNDERLORD, SPIRITGUARD, EARTHWARDEN
+    ),
+    ROGUE(
+            "Rogue",
+            new ItemStack(Material.INK_SACK, 1, (short) 9),
+            "§7The Rogue is a master of deception.\n§7Always looking to gain the upper hand\n§7in the shadows.",
+            ASSASSIN, VINDICATOR, APOTHECARY
+    );
 
     public final String name;
-    public final Supplier<AbstractPlayerClass> create;
+    public final ItemStack item;
     public final String description;
-    public final SpecType specType;
-    public final List<ClassesSkillBoosts> skillBoosts;
+    public final List<Specializations> subclasses;
 
-    Classes(String name, Supplier<AbstractPlayerClass> create, String description, SpecType specType, ClassesSkillBoosts... skillBoosts) {
+    Classes(String name, ItemStack item, String description, Specializations... subclasses) {
         this.name = name;
-        this.create = create;
+        this.item = item;
         this.description = description;
-        this.specType = specType;
-        this.skillBoosts = Arrays.asList(skillBoosts);
-    }
-
-    public static Classes getClass(String name) {
-        if(name == null) {
-            return PYROMANCER;
-        }
-        for (Classes value : Classes.values()) {
-            if (value.name.equalsIgnoreCase(name)) {
-                return value;
-            }
-        }
-        return PYROMANCER;
-    }
-
-    public static ClassesGroup getClassesGroup(Classes selected) {
-        return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
-    }
-
-    public static ClassesGroup getClassesGroup(String specName) {
-        return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.stream().anyMatch(subClass -> subClass.name.equalsIgnoreCase(specName))).collect(Collectors.toList()).get(0);
-    }
-
-    /**
-     *
-     * @param player
-     * @return
-     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).selectedClass()} instead
-     */
-    @Deprecated
-    public static Classes getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
-    }
-
-    /**
-     *
-     * @param player
-     * @param selectedClass
-     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(selectedClass)} instead
-     */
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, Classes selectedClass) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(selectedClass);
-        // Game.State.updateTempPlayer(player);
-        // setSelectedBoost(player, selectedClass.skillBoosts.get(0)); // This is already done by the player settings
-    }
-
-    /**
-     *
-     * Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts()} instead
-     */
-    public static ClassesSkillBoosts getSelectedBoost(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
-    }
-
-    /**
-     *
-     * @param player
-     * @param selectedBoost
-     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts(selectedBoost)} instead
-     */
-    @Deprecated
-    public static void setSelectedBoost(OfflinePlayer player, ClassesSkillBoosts selectedBoost) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedClass(selectedBoost);
-        // Game.State.updateTempPlayer(player);
+        this.subclasses = Collections.unmodifiableList(Arrays.asList(subclasses));
     }
 }

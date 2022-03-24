@@ -167,7 +167,7 @@ public class FlagSpawnPointOption implements Option {
 
             private void onFlagInteract(WarlordsPlayer wp) {
                 Team team = wp.getTeam();
-                if (wp.isDeath()) {
+                if (wp.isDead()) {
                     return;
                 }
 

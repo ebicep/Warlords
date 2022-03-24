@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
@@ -78,7 +78,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())))
                             .limit(2)
                     ) {
-                        if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                        if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
                             ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing * 1.2f, currentDamageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
                         } else {
                             ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing, currentDamageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.player.Classes.*;
+import static com.ebicep.warlords.player.Specializations.*;
 
 public class ArmorManager {
 
@@ -271,10 +271,10 @@ public class ArmorManager {
         }
     }
 
-    public static void resetArmor(Player player, Classes selectedClass, Team team) {
+    public static void resetArmor(Player player, Specializations selectedSpec, Team team) {
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
-        if (selectedClass == PYROMANCER || selectedClass == CRYOMANCER || selectedClass == AQUAMANCER) {
+        if (selectedSpec == PYROMANCER || selectedSpec == CRYOMANCER || selectedSpec == AQUAMANCER) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(0).itemBlue : ArmorSets.getSelected(player).get(0).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(0).name : ChatColor.RED + ArmorSets.getSelected(player).get(0).name)
                     .lore(armorDescription)
@@ -283,7 +283,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(0).name : ChatColor.RED + Helmets.getSelected(player).get(0).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == BERSERKER || selectedClass == DEFENDER || selectedClass == REVENANT) {
+        } else if (selectedSpec == BERSERKER || selectedSpec == DEFENDER || selectedSpec == REVENANT) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(1).itemBlue : ArmorSets.getSelected(player).get(1).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(1).name : ChatColor.RED + ArmorSets.getSelected(player).get(1).name)
                     .lore(armorDescription)
@@ -292,7 +292,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(1).name : ChatColor.RED + Helmets.getSelected(player).get(1).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR) {
+        } else if (selectedSpec == AVENGER || selectedSpec == CRUSADER || selectedSpec == PROTECTOR) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(2).itemBlue : ArmorSets.getSelected(player).get(2).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(2).name : ChatColor.RED + ArmorSets.getSelected(player).get(2).name)
                     .lore(armorDescription)
@@ -301,7 +301,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(2).name : ChatColor.RED + Helmets.getSelected(player).get(2).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == THUNDERLORD || selectedClass == SPIRITGUARD || selectedClass == EARTHWARDEN) {
+        } else if (selectedSpec == THUNDERLORD || selectedSpec == SPIRITGUARD || selectedSpec == EARTHWARDEN) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(3).itemBlue : ArmorSets.getSelected(player).get(3).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(3).name : ChatColor.RED + ArmorSets.getSelected(player).get(3).name)
                     .lore(armorDescription)
@@ -310,7 +310,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(3).name : ChatColor.RED + Helmets.getSelected(player).get(3).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+        } else if (selectedSpec == ASSASSIN || selectedSpec == VINDICATOR || selectedSpec == APOTHECARY) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(4).itemBlue : ArmorSets.getSelected(player).get(4).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(4).name : ChatColor.RED + ArmorSets.getSelected(player).get(4).name)
                     .lore(armorDescription)
@@ -356,13 +356,13 @@ public class ArmorManager {
         player.getInventory().setArmorContents(armor);
     }
 
-    public static void resetArmor(UUID uuid, LivingEntity livingEntity, Classes selectedClass, Team team) {
+    public static void resetArmor(UUID uuid, LivingEntity livingEntity, Specializations selectedSpec, Team team) {
         List<Helmets> helmets = Helmets.getSelected(uuid);
         List<ArmorSets> armorSets = ArmorSets.getSelected(uuid);
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
 
-        if (selectedClass == PYROMANCER || selectedClass == CRYOMANCER || selectedClass == AQUAMANCER) {
+        if (selectedSpec == PYROMANCER || selectedSpec == CRYOMANCER || selectedSpec == AQUAMANCER) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(0).itemBlue : armorSets.get(0).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(0).name : ChatColor.RED + armorSets.get(0).name)
                     .lore(armorDescription)
@@ -371,7 +371,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(0).name : ChatColor.RED + helmets.get(0).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == BERSERKER || selectedClass == DEFENDER || selectedClass == REVENANT) {
+        } else if (selectedSpec == BERSERKER || selectedSpec == DEFENDER || selectedSpec == REVENANT) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(1).itemBlue : armorSets.get(1).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(1).name : ChatColor.RED + armorSets.get(1).name)
                     .lore(armorDescription)
@@ -380,7 +380,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(1).name : ChatColor.RED + helmets.get(1).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR) {
+        } else if (selectedSpec == AVENGER || selectedSpec == CRUSADER || selectedSpec == PROTECTOR) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(2).itemBlue : armorSets.get(2).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(2).name : ChatColor.RED + armorSets.get(2).name)
                     .lore(armorDescription)
@@ -389,7 +389,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(2).name : ChatColor.RED + helmets.get(2).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == THUNDERLORD || selectedClass == SPIRITGUARD || selectedClass == EARTHWARDEN) {
+        } else if (selectedSpec == THUNDERLORD || selectedSpec == SPIRITGUARD || selectedSpec == EARTHWARDEN) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(3).itemBlue : armorSets.get(3).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(3).name : ChatColor.RED + armorSets.get(3).name)
                     .lore(armorDescription)
@@ -398,7 +398,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + helmets.get(3).name : ChatColor.RED + helmets.get(3).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+        } else if (selectedSpec == ASSASSIN || selectedSpec == VINDICATOR || selectedSpec == APOTHECARY) {
             armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(4).itemBlue : armorSets.get(4).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(4).name : ChatColor.RED + armorSets.get(4).name)
                     .lore(armorDescription)

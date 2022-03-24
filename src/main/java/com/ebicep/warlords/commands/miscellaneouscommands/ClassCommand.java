@@ -2,8 +2,8 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.Specializations;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,15 +27,15 @@ public class ClassCommand implements CommandExecutor {
             PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
             if (args.length != 0) {
                 try {
-                    Classes selectedClass = Classes.valueOf(args[0].toUpperCase(Locale.ROOT));
-                    settings.setSelectedClass(selectedClass);
+                    Specializations selectedSpec = Specializations.valueOf(args[0].toUpperCase(Locale.ROOT));
+                    settings.setSelectedSpec(selectedSpec);
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Classes.values()));
+                    sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Specializations.values()));
                     return true;
                 }
             }
 
-            Classes selected = settings.getSelectedClass();
+            Specializations selected = settings.getSelectedSpec();
             player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + selected);
         }
         return true;

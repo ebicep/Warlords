@@ -8,13 +8,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsCl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 
 public class DatabaseWarrior extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    private DatabaseSpecialization berserker = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
-    private DatabaseSpecialization defender = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);
-    private DatabaseSpecialization revenant = new DatabaseSpecialization(ClassesSkillBoosts.ORBS_OF_LIFE);
+    private DatabaseSpecialization berserker = new DatabaseSpecialization(SkillBoosts.WOUNDING_STRIKE_BERSERKER);
+    private DatabaseSpecialization defender = new DatabaseSpecialization(SkillBoosts.WOUNDING_STRIKE_DEFENDER);
+    private DatabaseSpecialization revenant = new DatabaseSpecialization(SkillBoosts.ORBS_OF_LIFE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
 

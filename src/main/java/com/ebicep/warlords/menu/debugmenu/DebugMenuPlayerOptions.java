@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
-import static com.ebicep.warlords.player.Classes.setSelectedBoost;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class DebugMenuPlayerOptions {
@@ -125,7 +124,7 @@ public class DebugMenuPlayerOptions {
                                             .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
                                     target.teleport(teleportDestination);
                                 }
-                                ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
+                                ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedSpec(), otherTeam);
                                 player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
                                 openPlayerMenu(player, target);
                                 break;
@@ -648,25 +647,25 @@ public class DebugMenuPlayerOptions {
 
     public static void openSpecMenu(Player player, WarlordsPlayer target) {
         Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 6);
-        ClassesGroup[] values = ClassesGroup.values();
+        Classes[] values = Classes.values();
         for (int i = 0; i < values.length; i++) {
-            ClassesGroup group = values[i];
+            Classes group = values[i];
             menu.setItem(2, i,
                     new ItemBuilder(group.item)
                             .name(ChatColor.GREEN + group.name)
                             .get(),
                     (m, e) -> {
                     });
-            List<Classes> classes = group.subclasses;
-            for (int j = 0; j < classes.size(); j++) {
+            List<Specializations> aClasses = group.subclasses;
+            for (int j = 0; j < aClasses.size(); j++) {
                 int finalJ = j;
-                ItemBuilder spec = new ItemBuilder(classes.get(j).specType.itemStack).name(ChatColor.GREEN + classes.get(j).name);
-                if (target.getSpecClass() == classes.get(j)) {
+                ItemBuilder spec = new ItemBuilder(aClasses.get(j).specType.itemStack).name(ChatColor.GREEN + aClasses.get(j).name);
+                if (target.getSpecClass() == aClasses.get(j)) {
                     spec.enchant(Enchantment.OXYGEN, 1);
                     spec.flags(ItemFlag.HIDE_ENCHANTS);
                 }
                 menu.setItem(4 + j, i, spec.get(),
-                        (m, e) -> openSkillBoostMenu(player, target, classes.get(finalJ))
+                        (m, e) -> openSkillBoostMenu(player, target, aClasses.get(finalJ))
                 );
             }
         }
@@ -675,25 +674,25 @@ public class DebugMenuPlayerOptions {
         menu.openForPlayer(player);
     }
 
-    public static void openSkillBoostMenu(Player player, WarlordsPlayer target, Classes selectedClass) {
+    public static void openSkillBoostMenu(Player player, WarlordsPlayer target, Specializations selectedSpec) {
         Menu menu = new Menu("Skill Boost: " + target.getName(), 9 * 4);
-        List<ClassesSkillBoosts> values = selectedClass.skillBoosts;
+        List<SkillBoosts> values = selectedSpec.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
-            ClassesSkillBoosts skillBoost = values.get(i);
+            SkillBoosts skillBoost = values.get(i);
             menu.setItem(
                     i + 2,
                     1,
-                    new ItemBuilder(selectedClass.specType.itemStack)
-                            .name(ChatColor.RED + skillBoost.name + " (" + selectedClass.name + ")")
+                    new ItemBuilder(selectedSpec.specType.itemStack)
+                            .name(ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
                             .lore(skillBoost.description,
                                     "",
                                     ChatColor.YELLOW + "Click to select!"
                             ).get(),
                     (m, e) -> {
-                        setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
-                        target.setSpec(selectedClass.create.get(), skillBoost);
+                        Warlords.getPlayerSettings(target.getUuid()).setSkillBoostForSelectedSpec(skillBoost);
+                        target.setSpec(selectedSpec.create.get(), skillBoost);
                         target.getGameState().updatePlayerName(target);
-                        player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedClass.name);
+                        player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedSpec.name);
                         openSpecMenu(player, target);
                     }
             );

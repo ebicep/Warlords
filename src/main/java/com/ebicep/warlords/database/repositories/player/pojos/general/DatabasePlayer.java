@@ -14,8 +14,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.interception.Datab
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;
+import com.ebicep.warlords.player.Specializations;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -54,7 +54,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Field("public_queue_stats")
     private DatabasePlayerPubStats pubStats = new DatabasePlayerPubStats();
     @Field("last_spec")
-    private Classes lastSpec = Classes.PYROMANCER;
+    private Specializations lastSpec = Specializations.PYROMANCER;
     @Field("hotkeymode")
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
@@ -80,7 +80,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
         //UPDATE GAMEMODES
         switch (gameMode) {
@@ -103,8 +103,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public DatabaseSpecialization getSpec(Classes classes) {
-        switch (classes) {
+    public DatabaseSpecialization getSpec(Specializations specializations) {
+        switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
             case CRYOMANCER:
@@ -140,8 +140,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public AbstractDatabaseStatInformation getClass(ClassesGroup classesGroup) {
-        switch (classesGroup) {
+    public AbstractDatabaseStatInformation getClass(Classes classes) {
+        switch (classes) {
             case MAGE:
                 return mage;
             case WARRIOR:
@@ -286,11 +286,11 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         this.pubStats = pubStats;
     }
 
-    public Classes getLastSpec() {
+    public Specializations getLastSpec() {
         return lastSpec;
     }
 
-    public void setLastSpec(Classes lastSpec) {
+    public void setLastSpec(Specializations lastSpec) {
         this.lastSpec = lastSpec;
     }
 

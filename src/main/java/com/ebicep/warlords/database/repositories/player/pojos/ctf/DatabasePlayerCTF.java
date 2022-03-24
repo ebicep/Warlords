@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
+import com.ebicep.warlords.player.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
@@ -53,13 +53,13 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
         this.totalTimeInRespawn += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getSecondsInRespawn();
         this.totalTimePlayed += 900 - ((DatabaseGameCTF) databaseGame).getTimeLeft();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
     }
 
     @Override
-    public DatabaseBaseCTF getSpec(Classes classes) {
-        switch (classes) {
+    public DatabaseBaseCTF getSpec(Specializations specializations) {
+        switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
             case CRYOMANCER:
@@ -95,8 +95,8 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     }
 
     @Override
-    public DatabaseBaseCTF getClass(ClassesGroup classesGroup) {
-        switch (classesGroup) {
+    public DatabaseBaseCTF getClass(Classes classes) {
+        switch (classes) {
             case MAGE:
                 return mage;
             case WARRIOR:

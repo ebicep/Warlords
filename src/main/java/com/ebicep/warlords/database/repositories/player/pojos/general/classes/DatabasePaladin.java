@@ -8,13 +8,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsCl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 
 public class DatabasePaladin extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    private DatabaseSpecialization avenger = new DatabaseSpecialization(ClassesSkillBoosts.AVENGER_STRIKE);
-    private DatabaseSpecialization crusader = new DatabaseSpecialization(ClassesSkillBoosts.CRUSADER_STRIKE);
-    private DatabaseSpecialization protector = new DatabaseSpecialization(ClassesSkillBoosts.PROTECTOR_STRIKE);
+    private DatabaseSpecialization avenger = new DatabaseSpecialization(SkillBoosts.AVENGER_STRIKE);
+    private DatabaseSpecialization crusader = new DatabaseSpecialization(SkillBoosts.CRUSADER_STRIKE);
+    private DatabaseSpecialization protector = new DatabaseSpecialization(SkillBoosts.PROTECTOR_STRIKE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_PALADIN_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
 

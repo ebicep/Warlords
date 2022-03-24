@@ -8,13 +8,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsCl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.SkillBoosts;
 
 public class DatabaseShaman extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    private DatabaseSpecialization thunderlord = new DatabaseSpecialization(ClassesSkillBoosts.LIGHTNING_BOLT);
-    private DatabaseSpecialization spiritguard = new DatabaseSpecialization(ClassesSkillBoosts.FALLEN_SOULS);
-    private DatabaseSpecialization earthwarden = new DatabaseSpecialization(ClassesSkillBoosts.EARTHEN_SPIKE);
+    private DatabaseSpecialization thunderlord = new DatabaseSpecialization(SkillBoosts.LIGHTNING_BOLT);
+    private DatabaseSpecialization spiritguard = new DatabaseSpecialization(SkillBoosts.FALLEN_SOULS);
+    private DatabaseSpecialization earthwarden = new DatabaseSpecialization(SkillBoosts.EARTHEN_SPIKE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
 

@@ -7,8 +7,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.SpecType;
+import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -58,11 +58,11 @@ public class RegularGamesMenu {
         }
 
         //two columns of class icons
-        for (int i = 0; i < ClassesGroup.values().length; i++) {
-            ClassesGroup classesGroup = ClassesGroup.values()[i];
-            menu.setItem(2, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (m, e) -> {
+        for (int i = 0; i < Classes.values().length; i++) {
+            Classes classes = Classes.values()[i];
+            menu.setItem(2, i + 1, new ItemBuilder(classes.item).name(ChatColor.GREEN + classes.name).get(), (m, e) -> {
             });
-            menu.setItem(6, i + 1, new ItemBuilder(classesGroup.item).name(ChatColor.GREEN + classesGroup.name).get(), (m, e) -> {
+            menu.setItem(6, i + 1, new ItemBuilder(classes.item).name(ChatColor.GREEN + classes.name).get(), (m, e) -> {
             });
         }
 
@@ -113,9 +113,9 @@ public class RegularGamesMenu {
                     if (!uuidsWithPerms.contains(player.getUniqueId())) return;
                     for (RegularGamePlayer teamPlayer : teamPlayers) {
                         UUID uuid = teamPlayer.getUuid();
-                        Classes spec = teamPlayer.getSelectedClass();
+                        Specializations spec = teamPlayer.getSelectedSpec();
                         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                        Warlords.getPlayerSettings(uuid).setSelectedClass(spec);
+                        Warlords.getPlayerSettings(uuid).setSelectedSpec(spec);
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
                         databasePlayer.setLastSpec(spec);
                         DatabaseManager.updatePlayerAsync(databasePlayer);
@@ -137,8 +137,8 @@ public class RegularGamesMenu {
 
         //showing general list of spec and respective players
         List<String> playerOnSpecs = new ArrayList<>();
-        for (Classes value : Classes.values()) {
-            Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedClass() == value).findFirst();
+        for (Specializations value : Specializations.values()) {
+            Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedSpec() == value).findFirst();
             if (playerOptional.isPresent()) {
                 playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName());
             } else {
@@ -159,20 +159,20 @@ public class RegularGamesMenu {
         if (checkPlayers.get(team)) {
             checkPlayers.put(team, false);
             //removing all duplicate specs
-            List<Classes> assignedClasses = new ArrayList<>();
+            List<Specializations> assignedClasses = new ArrayList<>();
             List<RegularGamePlayer> playersToReassign = new ArrayList<>();
             for (RegularGamePlayer p : teamPlayers) {
-                Classes selectedClass = p.getSelectedClass();
-                if (assignedClasses.contains(selectedClass)) {
+                Specializations selectedSpec = p.getSelectedSpec();
+                if (assignedClasses.contains(selectedSpec)) {
                     playersToReassign.add(p);
                 } else {
-                    assignedClasses.add(selectedClass);
+                    assignedClasses.add(selectedSpec);
                 }
             }
             for (RegularGamePlayer p : playersToReassign) {
-                for (Classes value : Classes.values()) {
+                for (Specializations value : Specializations.values()) {
                     if (!assignedClasses.contains(value)) {
-                        p.setSelectedClass(value);
+                        p.setSelectedSpec(value);
                         assignedClasses.add(value);
                         break;
                     }
@@ -180,27 +180,27 @@ public class RegularGamesMenu {
             }
         }
         //player skulls with their spec
-        List<Classes> assignedClasses = new ArrayList<>();
+        List<Specializations> assignedClasses = new ArrayList<>();
         for (RegularGamePlayer p : teamPlayers) {
             UUID uuid = p.getUuid();
-            Classes selectedClass = p.getSelectedClass();
-            ClassesGroup classesGroup = Classes.getClassesGroup(selectedClass);
+            Specializations selectedSpec = p.getSelectedSpec();
+            Classes classes = Specializations.getClass(selectedSpec);
 
-            int x = selectedClass.specType == SpecType.DAMAGE ? 3 :
-                    selectedClass.specType == SpecType.TANK ? 4 :
-                            selectedClass.specType == SpecType.HEALER ? 5 :
+            int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
+                    selectedSpec.specType == SpecType.TANK ? 4 :
+                            selectedSpec.specType == SpecType.HEALER ? 5 :
                                     -1;
-            int y = classesGroup == ClassesGroup.MAGE ? 1 :
-                    classesGroup == ClassesGroup.WARRIOR ? 2 :
-                            classesGroup == ClassesGroup.PALADIN ? 3 :
-                                    classesGroup == ClassesGroup.SHAMAN ? 4 :
+            int y = classes == Classes.MAGE ? 1 :
+                    classes == Classes.WARRIOR ? 2 :
+                            classes == Classes.PALADIN ? 3 :
+                                    classes == Classes.SHAMAN ? 4 :
                                             -1;
             if (x == -1 || y == -1) {
                 System.out.println("ERROR trying to get players spec position for regular game menu");
                 continue;
             }
 
-            assignedClasses.add(selectedClass);
+            assignedClasses.add(selectedSpec);
 
             ItemBuilder itemBuilder;
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -208,11 +208,11 @@ public class RegularGamesMenu {
             if (selectedPlayersToSwap.get(team).contains(uuid)) {
                 itemBuilder = new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.CREEPER.ordinal()))
                         .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
-                        .lore(ChatColor.GOLD + p.getSelectedClass().name);
+                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
             } else {
                 itemBuilder = new ItemBuilder(Warlords.getHead(uuid))
                         .name(ChatColor.AQUA + name)
-                        .lore(ChatColor.GOLD + p.getSelectedClass().name);
+                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
             }
 
             menu.setItem(
@@ -238,19 +238,19 @@ public class RegularGamesMenu {
             );
         }
         //fillers
-        Arrays.stream(Classes.values())
+        Arrays.stream(Specializations.values())
                 .filter(classes -> !assignedClasses.contains(classes)).collect(Collectors.toList())
-                .forEach(selectedClass -> {
-                    ClassesGroup classesGroup = Classes.getClassesGroup(selectedClass);
+                .forEach(selectedSpec -> {
+                    Classes classes = Specializations.getClass(selectedSpec);
 
-                    int x = selectedClass.specType == SpecType.DAMAGE ? 3 :
-                            selectedClass.specType == SpecType.TANK ? 4 :
-                                    selectedClass.specType == SpecType.HEALER ? 5 :
+                    int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
+                            selectedSpec.specType == SpecType.TANK ? 4 :
+                                    selectedSpec.specType == SpecType.HEALER ? 5 :
                                             -1;
-                    int y = classesGroup == ClassesGroup.MAGE ? 1 :
-                            classesGroup == ClassesGroup.WARRIOR ? 2 :
-                                    classesGroup == ClassesGroup.PALADIN ? 3 :
-                                            classesGroup == ClassesGroup.SHAMAN ? 4 :
+                    int y = classes == Classes.MAGE ? 1 :
+                            classes == Classes.WARRIOR ? 2 :
+                                    classes == Classes.PALADIN ? 3 :
+                                            classes == Classes.SHAMAN ? 4 :
                                                     -1;
                     menu.setItem(
                             x,
@@ -266,7 +266,7 @@ public class RegularGamesMenu {
                                             .filter(p -> p.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
                                             .findFirst()
                                             .ifPresent(p -> {
-                                                p.setSelectedClass(selectedClass);
+                                                p.setSelectedSpec(selectedSpec);
                                                 selectedPlayersToSwap.get(team).clear();
                                             });
                                 }
@@ -282,9 +282,9 @@ public class RegularGamesMenu {
         Optional<RegularGamePlayer> regularGamePlayer1 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(0))).findFirst();
         Optional<RegularGamePlayer> regularGamePlayer2 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(1))).findFirst();
         if (!regularGamePlayer1.isPresent() || !regularGamePlayer2.isPresent()) return;
-        Classes classToSwap = regularGamePlayer1.get().getSelectedClass();
-        regularGamePlayer1.get().setSelectedClass(regularGamePlayer2.get().getSelectedClass());
-        regularGamePlayer2.get().setSelectedClass(classToSwap);
+        Specializations classToSwap = regularGamePlayer1.get().getSelectedSpec();
+        regularGamePlayer1.get().setSelectedSpec(regularGamePlayer2.get().getSelectedSpec());
+        regularGamePlayer2.get().setSelectedSpec(classToSwap);
         selectedPlayersToSwap.get(team).clear();
     }
 
@@ -301,12 +301,12 @@ public class RegularGamesMenu {
     public static class RegularGamePlayer {
         private final UUID uuid;
         private final Team team;
-        private Classes selectedClass;
+        private Specializations selectedSpec;
 
-        public RegularGamePlayer(UUID uuid, Team team, Classes selectedClass) {
+        public RegularGamePlayer(UUID uuid, Team team, Specializations selectedSpec) {
             this.uuid = uuid;
             this.team = team;
-            this.selectedClass = selectedClass;
+            this.selectedSpec = selectedSpec;
         }
 
         public UUID getUuid() {
@@ -317,12 +317,12 @@ public class RegularGamesMenu {
             return team;
         }
 
-        public Classes getSelectedClass() {
-            return selectedClass;
+        public Specializations getSelectedSpec() {
+            return selectedSpec;
         }
 
-        public void setSelectedClass(Classes selectedClass) {
-            this.selectedClass = selectedClass;
+        public void setSelectedSpec(Specializations selectedSpec) {
+            this.selectedSpec = selectedSpec;
         }
     }
 }
