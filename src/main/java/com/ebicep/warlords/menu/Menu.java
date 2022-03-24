@@ -1,5 +1,6 @@
 package com.ebicep.warlords.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -7,11 +8,20 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.function.BiConsumer;
 
 public class Menu extends AbstractMenuBase {
-    public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> e.getWhoClicked().closeInventory();
+    public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                e.getWhoClicked().closeInventory();
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
+    };
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {
     };
     private final Inventory inventory;
