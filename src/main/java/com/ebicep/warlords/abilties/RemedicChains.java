@@ -26,7 +26,7 @@ public class RemedicChains extends AbstractAbility {
     private final float healingMultiplier = 0.125f;
 
     public RemedicChains() {
-        super("Remedic Chains", 656, 770, 16, 50, 20, 200);
+        super("Remedic Chains", 728, 815, 16, 50, 20, 200);
     }
 
     @Override

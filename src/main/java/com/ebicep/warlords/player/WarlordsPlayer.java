@@ -662,7 +662,7 @@ public final class WarlordsPlayer {
             }
         }
 
-        attacker.sendMessage(ChatColor.GREEN + "Total Healing: " + attacker.getMinuteStats().total().getHealing());
+        //attacker.sendMessage(ChatColor.GREEN + "Total Healing: " + attacker.getMinuteStats().total().getHealing());
 
         finalEvent = new WarlordsDamageHealingFinalEvent(
                 this,
@@ -727,22 +727,28 @@ public final class WarlordsPlayer {
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
+
         if (isCrit) {
             ownFeed.append(" critically");
         }
+
         if (isOverHeal) {
             ownFeed.append(" overhealed ").append(name).append(" for ").append(ChatColor.GREEN);
         } else {
             ownFeed.append(" healed ").append(name).append(" for ").append(ChatColor.GREEN);
         }
+
         if (isCrit) {
             ownFeed.append("§l");
         }
+
         ownFeed.append(Math.round(healValue));
         ownFeed.append(isCrit ? "!" : "");
+
         if (isLastStandFromShield) {
             ownFeed.append(" Absorbed!");
         }
+
         ownFeed.append(ChatColor.GRAY).append(" health.");
 
         sender.sendMessage(ownFeed.toString());
@@ -751,22 +757,28 @@ public final class WarlordsPlayer {
         StringBuilder allyFeed = new StringBuilder();
         allyFeed.append(RECEIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ").append(sender.getName())
                 .append("'s ").append(ability);
+
         if (isCrit) {
             allyFeed.append(" critically");
         }
+
         if (isOverHeal) {
             allyFeed.append(" overhealed you for ").append(ChatColor.GREEN);
         } else {
             allyFeed.append(" healed you for ").append(ChatColor.GREEN);
         }
+
         if (isCrit) {
             allyFeed.append("§l");
         }
+
         allyFeed.append(Math.round(healValue));
         allyFeed.append(isCrit ? "!" : "");
+
         if (isLastStandFromShield) {
             allyFeed.append(" Absorbed!");
         }
+
         allyFeed.append(ChatColor.GRAY).append(" health.");
 
         receiver.sendMessage(allyFeed.toString());

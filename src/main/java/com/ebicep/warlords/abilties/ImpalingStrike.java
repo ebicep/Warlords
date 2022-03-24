@@ -52,22 +52,20 @@ public class ImpalingStrike extends AbstractStrikeBase {
                     healingMultiplier = 0.15f;
                 }
 
-                if (!event.getAbility().equals("Draining Miasma")) {
-                    event.getAttacker().addHealingInstance(
-                            wp,
-                            "Leech",
-                            currentDamageValue * healingMultiplier,
-                            currentDamageValue * healingMultiplier,
-                            -1,
-                            100,
-                            false,
-                            false
-                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                        if (event.getPlayer().hasFlag()) {
-                            this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
-                        }
-                    });
-                }
+                event.getAttacker().addHealingInstance(
+                        wp,
+                        "Leech",
+                        currentDamageValue * healingMultiplier,
+                        currentDamageValue * healingMultiplier,
+                        -1,
+                        100,
+                        false,
+                        false
+                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    if (event.getPlayer().hasFlag()) {
+                        this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                    }
+                });
             }
         });
     }

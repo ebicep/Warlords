@@ -68,7 +68,7 @@ public class DrainingMiasma extends AbstractAbility {
                     DrainingMiasma.class,
                     tempDrainingMiasma,
                     wp,
-                    CooldownTypes.DEBUFF,
+                    CooldownTypes.ABILITY,
                     cooldownManager -> {
                         cancelSpeed.run();
                     },
@@ -96,22 +96,20 @@ public class DrainingMiasma extends AbstractAbility {
                         healingMultiplier = 0.15f;
                     }
 
-                    if (!event.getAbility().equals("Draining Miasma")) {
-                        event.getAttacker().addHealingInstance(
-                                wp,
-                                "Leech",
-                                currentDamageValue * healingMultiplier,
-                                currentDamageValue * healingMultiplier,
-                                -1,
-                                100,
-                                false,
-                                false
-                        ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                            if (event.getPlayer().hasFlag()) {
-                                this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
-                            }
-                        });
-                    }
+                    event.getAttacker().addHealingInstance(
+                            wp,
+                            "Leech",
+                            currentDamageValue * healingMultiplier,
+                            currentDamageValue * healingMultiplier,
+                            -1,
+                            100,
+                            false,
+                            false
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        if (event.getPlayer().hasFlag()) {
+                            this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                        }
+                    });
                 }
             });
 
