@@ -747,7 +747,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof RemedicChains) {
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    ((RemedicChains) abstractAbility).setLinkBreakRadius(8);
+                    ((RemedicChains) abstractAbility).setLinkBreakRadius(23);
                 }
             }
     ),
