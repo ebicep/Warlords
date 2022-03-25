@@ -22,13 +22,22 @@ public class GameStartTrait extends Trait {
 
     @Override
     public void run() {
+        // we do a little trolling
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Players");
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Chesskings in Game");
+        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby() + " in Lobby to throw for Chessking");
+        hologramTrait.setLine(2, ChatColor.GRAY.toString() + Warlords.getGameManager().getQueueSize() + " in Queue to deafen Chessking");
+        hologramTrait.setLine(3, ChatColor.AQUA + "UH HELLLO? WHAT ARE YOU GUYS DOING HELLO");
+        hologramTrait.setLine(4, ChatColor.YELLOW + ChatColor.BOLD.toString() + "I CANT DO MORE");
+        hologramTrait.setLine(5, ChatColor.YELLOW + ChatColor.BOLD.toString() + "I FUCKING HATE MY TEAM FOR THROWING GAMES");
+
+
+        /*hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby() + " in Lobby");
         hologramTrait.setLine(2, ChatColor.GRAY.toString() + Warlords.getGameManager().getQueueSize() + " in Queue");
         hologramTrait.setLine(3, ChatColor.AQUA + "WARLORDS 2 PUBLIC QUEUE");
         hologramTrait.setLine(4, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-        hologramTrait.setLine(5, ChatColor.YELLOW + ChatColor.BOLD.toString() + "[RANDOM MAP MODE]");
+        hologramTrait.setLine(5, ChatColor.YELLOW + ChatColor.BOLD.toString() + "[RANDOM MAP MODE]");*/
     }
 
     @EventHandler

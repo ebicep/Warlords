@@ -30,7 +30,7 @@ public class NPCManager {
 
                     gameStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
                     gameStartNPC.addTrait(GameStartTrait.class);
-                    gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
+                    gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 //        gameStartNPC.getOrAddTrait(LookClose.class).lookClose(true);
 //        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLook(true);
 //        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLookDelay(1);

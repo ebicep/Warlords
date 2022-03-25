@@ -1,8 +1,12 @@
 package com.ebicep.warlords.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -13,6 +17,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
@@ -25,6 +30,9 @@ public class SoothingElixir extends AbstractAbility {
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
 
+    private final int puddleMinHealing = 158;
+    private final int puddleMaxHealing = 204;
+
     public SoothingElixir() {
         super("Soothing Elixir", 551, 648, 8, 60, 25, 175);
     }
@@ -34,7 +42,9 @@ public class SoothingElixir extends AbstractAbility {
         description = "§7Throw a short range elixir bottle, The bottle\n" +
                 "§7will shatter upon impact, healing nearby allies\n" +
                 "§7for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and damage nearby\n" +
-                "§7enemies for §c" + puddleMinDamage + " §7- §c" + puddleMaxDamage + " §7damage.";
+                "§7enemies for §c" + puddleMinDamage + " §7- §c" + puddleMaxDamage + " §7damage. The projectile\n" +
+                "§7will form a small puddle that heals allies for\n" +
+                "§a" + puddleMinHealing + " §7- §a" + puddleMaxHealing + " §7health per second. Lasts §64 §7seconds.";
     }
 
     @Override
@@ -131,6 +141,44 @@ public class SoothingElixir extends AbstractAbility {
                                 false,
                                 false);
                     }
+
+                    CircleEffect circleEffect = new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            newLoc.add(0, -1, 0),
+                            HITBOX,
+                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                    );
+
+                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
+                    wp.getGame().registerGameTask(task);
+                    new GameRunnable(wp.getGame()) {
+                        int timeLeft = 4;
+
+                        @Override
+                        public void run() {
+                            PlayerFilter.entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
+                                    .aliveTeammatesOf(wp)
+                                    .forEach((ally) -> ally.addHealingInstance(
+                                            wp,
+                                            name,
+                                            puddleMinHealing,
+                                            puddleMaxHealing,
+                                            critChance,
+                                            critMultiplier,
+                                            false,
+                                            false));
+
+                            timeLeft--;
+
+                            if (timeLeft <= 0) {
+                                this.cancel();
+                                task.cancel();
+                            }
+                        }
+
+                    }.runTaskTimer(20, 20);
 
                     for (WarlordsPlayer nearEntity : PlayerFilter
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
