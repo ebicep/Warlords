@@ -90,7 +90,8 @@ public class SoothingElixir extends AbstractAbility {
                 }
 
                 WarlordsPlayer directHit;
-                if (!newLoc.getBlock().isEmpty()
+                if (
+                        !newLoc.getBlock().isEmpty()
                         && newLoc.getBlock().getType() != Material.GRASS
                         && newLoc.getBlock().getType() != Material.BARRIER
                         && newLoc.getBlock().getType() != Material.VINE
@@ -100,9 +101,9 @@ public class SoothingElixir extends AbstractAbility {
                 } else {
                     directHit = PlayerFilter
                             .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveTeammatesOfExcludingSelf(wp).findFirstOrNull();
+                            .aliveTeammatesOfExcludingSelf(wp)
+                            .findFirstOrNull();
                     shouldExplode = directHit != null;
-                    newLoc.add(0, -1, 0);
                 }
 
                 if (shouldExplode) {
