@@ -167,11 +167,10 @@ public class GameMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openSkillBoostMenu(Player player, Specializations selectedGroup) {
-        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+    public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
         SkillBoosts selectedBoost = Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
         Menu menu = new Menu("Skill Boost", 9 * 6);
-        List<SkillBoosts> values = selectedGroup.skillBoosts;
+        List<SkillBoosts> values = selectedSpec.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             SkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(selectedSpec.specType.itemStack)
@@ -193,8 +192,8 @@ public class GameMenu {
                     builder.get(),
                     (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
-                        Warlords.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(selectedBoost);
-                        openSkillBoostMenu(player, selectedGroup);
+                        Warlords.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
+                        openSkillBoostMenu(player, selectedSpec);
 
                         if (DatabaseManager.playerService == null) return;
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
