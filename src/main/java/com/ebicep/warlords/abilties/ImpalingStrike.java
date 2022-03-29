@@ -15,7 +15,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
     private float healingDoneFromEnemyCarrier = 0;
 
     public ImpalingStrike() {
-        super("Impaling Strike", 313, 398, 0, 90, 20, 175);
+        super("Impaling Strike", 323, 418, 0, 90, 20, 175);
     }
 
     @Override

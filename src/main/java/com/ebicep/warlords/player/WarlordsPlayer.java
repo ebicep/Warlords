@@ -1915,7 +1915,7 @@ public final class WarlordsPlayer {
             v.multiply(0.75);
         }
         if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-            v.multiply(0.6);
+            v.multiply(0.5);
         }
         if (cooldownManager.hasCooldownFromName("KB Increase")) {
             v.multiply(1.5);
@@ -1930,7 +1930,7 @@ public final class WarlordsPlayer {
                 v.multiply(0.75);
             }
             if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-                v.multiply(0.6);
+                v.multiply(0.5);
             }
             if (cooldownManager.hasCooldownFromName("KB Increase")) {
                 v.multiply(1.5);

@@ -27,7 +27,7 @@ public class SoulShackle extends AbstractAbility {
     private int maxSilenceDurationInTicks = 70;
 
     public SoulShackle() {
-        super("Soul Shackle", 388, 513, 9, 40, 20, 175);
+        super("Soul Shackle", 426, 565, 9, 40, 20, 175);
     }
 
     @Override
@@ -51,6 +51,7 @@ public class SoulShackle extends AbstractAbility {
                 .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
+                .closestFirst(wp)
                 .lookingAtFirst(wp)
                 .limit(maxShackleTargets)
         ) {

@@ -94,8 +94,9 @@ public class VitalityLiquor extends AbstractAbility {
                             @Override
                             public void run() {
                                 for (WarlordsPlayer allyTarget : PlayerFilter
-                                        .entitiesAround(player, 6, 6, 6)
+                                        .entitiesAround(enemyTarget, 6, 6, 6)
                                         .aliveTeammatesOf(wp)
+                                        .closestFirst(enemyTarget)
                                         .limit(2)
                                 ) {
                                     allyTarget.addHealingInstance(
