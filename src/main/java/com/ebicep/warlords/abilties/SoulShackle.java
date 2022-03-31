@@ -20,14 +20,14 @@ import javax.annotation.Nonnull;
 
 public class SoulShackle extends AbstractAbility {
 
-    private final int shackleRange = 12;
+    private final int shackleRange = 15;
     private float shacklePool = 0;
     private final int maxShackleTargets = 1;
     private int minSilenceDurationInTicks = 40;
     private int maxSilenceDurationInTicks = 70;
 
     public SoulShackle() {
-        super("Soul Shackle", 426, 565, 9, 40, 20, 175);
+        super("Soul Shackle", 446, 589, 9, 40, 20, 175);
     }
 
     @Override

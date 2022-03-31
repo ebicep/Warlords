@@ -143,17 +143,6 @@ public class RemedicChains extends AbstractAbility {
                                 );
                             }
 
-                            wp.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false,
-                                    false
-                            );
-
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
                             Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.06f, 1.4f);
                             this.cancel();
@@ -177,6 +166,16 @@ public class RemedicChains extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                false,
+                                false
+                        );
                     },
                     duration * 20
             ) {

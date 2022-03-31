@@ -21,7 +21,7 @@ public class Vindicate extends AbstractAbility {
     private final int radius = 8;
     private final int vindicateDuration = 12;
     private final int vindicateSelfDuration = 8;
-    private float vindicateDamageReduction = 25;
+    private float vindicateDamageReduction = 30;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
@@ -53,18 +53,18 @@ public class Vindicate extends AbstractAbility {
         ) {
             wp.sendMessage(
                 WarlordsPlayer.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " Your Vindicate is now protecting " +
-                        ChatColor.YELLOW + vindicateTarget.getName() +
-                        ChatColor.GRAY + "!"
+                ChatColor.GRAY + " Your Vindicate is now protecting " +
+                ChatColor.YELLOW + vindicateTarget.getName() +
+                ChatColor.GRAY + "!"
             );
 
             vindicateTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
-                            ChatColor.GRAY + wp.getName() + "'s" +
-                            ChatColor.YELLOW + " Vindicate" +
-                            ChatColor.GRAY + " is now protecting you from de-buffs for " +
-                            ChatColor.GOLD + vindicateDuration +
-                            ChatColor.GRAY + " seconds!"
+                WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                ChatColor.GRAY + wp.getName() + "'s" +
+                ChatColor.YELLOW + " Vindicate" +
+                ChatColor.GRAY + " is now protecting you from de-buffs for " +
+                ChatColor.GOLD + vindicateDuration +
+                ChatColor.GRAY + " seconds!"
             );
 
             // Vindicate Immunity

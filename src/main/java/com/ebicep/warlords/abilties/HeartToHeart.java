@@ -22,6 +22,7 @@ public class HeartToHeart extends AbstractAbility {
     private int radius = 15;
     private int verticalRadius = 15;
     private int vindDuration = 6;
+    private float healthRestore = 600;
 
     public HeartToHeart() {
         super("Heart To Heart", 0, 0, 12, 20, -1, 100);
@@ -29,11 +30,11 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
+        description = "§7Throw a chain towards an ally in a §e15 §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
                 "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
                 "§7granting immunity to de-buffs. You are healed\n" +
-                "§7for §a400 §7health after reaching your ally." +
+                "§7for §a" + healthRestore + " §7health after reaching your ally." +
                 "\n\n" +
                 "§7Heart To Heart's range is greatly reduced when\n" +
                 "§7holding a flag.";
@@ -42,8 +43,8 @@ public class HeartToHeart extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         if (wp.hasFlag()) {
-            radius = 7;
-            verticalRadius = 1;
+            radius = 9;
+            verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
             radius = 15;
@@ -127,7 +128,7 @@ public class HeartToHeart extends AbstractAbility {
 
                     if (timer >= 8) {
                         wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
-                        wp.addHealingInstance(wp, name, 400, 400, -1, 100, false, false);
+                        wp.addHealingInstance(wp, name, healthRestore, healthRestore, -1, 100, false, false);
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 0, 1);
@@ -140,5 +141,13 @@ public class HeartToHeart extends AbstractAbility {
 
     public void setVindDuration(int vindDuration) {
         this.vindDuration = vindDuration;
+    }
+
+    public float getHealthRestore() {
+        return healthRestore;
+    }
+
+    public void setHealthRestore(float healthRestore) {
+        this.healthRestore = healthRestore;
     }
 }

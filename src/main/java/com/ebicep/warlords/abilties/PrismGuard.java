@@ -41,8 +41,9 @@ public class PrismGuard extends AbstractAbility {
                 "§7the bubble is reduced by §c25%§7." +
                 "\n\n" +
                 "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
-                "§7all allies for up to " + healingString + " §7missing health\n" +
-                "§7based on how long they've been in the bubble.\n";
+                "§7you for " + healingString + " §7missing health and\n" +
+                "§7allies for half the amount based on how long\n" +
+                "§7they've been in the bubble.\n";
     }
 
     @Override
@@ -59,6 +60,17 @@ public class PrismGuard extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    float healingValue = 600 + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            healingValue,
+                            healingValue,
+                            -1,
+                            100,
+                            false,
+                            false
+                    );
                 },
                 duration * 20
         ) {
@@ -109,7 +121,6 @@ public class PrismGuard extends AbstractAbility {
 
                     playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
                     Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
-                    timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
 
                     isInsideBubble.clear();
                     for (WarlordsPlayer enemyInsideBubble : PlayerFilter
@@ -172,8 +183,8 @@ public class PrismGuard extends AbstractAbility {
                         entry.getKey().addHealingInstance(
                                 wp,
                                 name,
-                                totalHealing,
-                                totalHealing,
+                                totalHealing / 2,
+                                totalHealing / 2,
                                 -1,
                                 100,
                                 false,

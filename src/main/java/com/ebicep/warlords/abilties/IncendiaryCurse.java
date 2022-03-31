@@ -31,7 +31,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        double blindDuration = blindDurationInTicks == 40 ? 1.5 : 2;
+        double blindDuration = blindDurationInTicks == 40 ? 1.5 : 2.5;
         description = "§7Ignite the targeted area with a cross flame,\n" +
                     "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
                     "§7hit are blinded for §6" + format(blindDuration) + " §7seconds.";
