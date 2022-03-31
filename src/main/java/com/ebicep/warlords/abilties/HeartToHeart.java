@@ -34,7 +34,7 @@ public class HeartToHeart extends AbstractAbility {
                 "§7radius, grappling the Vindicator towards the ally.\n" +
                 "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
                 "§7granting immunity to de-buffs. You are healed\n" +
-                "§7for §a" + healthRestore + " §7health after reaching your ally." +
+                "§7for §a" + format(healthRestore) + " §7health after reaching your ally." +
                 "\n\n" +
                 "§7Heart To Heart's range is greatly reduced when\n" +
                 "§7holding a flag.";

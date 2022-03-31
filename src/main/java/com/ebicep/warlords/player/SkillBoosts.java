@@ -49,13 +49,13 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 70% but reduce the Crit\nChance bonus by 10%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c70% §abut reduce the Crit\nChance bonus §aby §c10%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 60% but reduce the Crit\nChance bonus by 10%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60% §abut reduce the Crit\nChance bonus §aby §c10%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
                     ((Inferno) abstractAbility).setCritChanceIncrease(20);
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(100);
+                    ((Inferno) abstractAbility).setCritMultiplierIncrease(90);
                 }
             }
     ),
@@ -679,12 +679,12 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 300",
-            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c300",
+            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 200",
+            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c200",
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(900);
+                    ((HeartToHeart) abstractAbility).setHealthRestore(800);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }

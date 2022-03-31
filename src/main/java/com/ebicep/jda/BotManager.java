@@ -155,9 +155,8 @@ public class BotManager {
         eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby() + "\n");
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
-            if(game == null) {
-                eb.appendDescription("**Game**: " + holder.getMap().getMapName() + " Inactive\n");
-            } else {
+
+            if (game != null) {
                 if (game.getState() instanceof PreLobbyState) {
                     PreLobbyState state = (PreLobbyState) game.getState();
                     if (!state.hasEnoughPlayers()) {
