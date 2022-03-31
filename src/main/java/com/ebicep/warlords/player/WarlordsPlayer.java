@@ -732,7 +732,7 @@ public final class WarlordsPlayer {
     ) {
         // Own Message
         StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(RECEIVE_ARROW_GREEN).append(ChatColor.GRAY)
+        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
 
         if (isCrit) {

@@ -187,4 +187,6 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
     public void setDuelStats(DatabasePlayerDuel duelStats) {
         this.duelStats = duelStats;
     }
+
+
 }
