@@ -169,8 +169,6 @@ public class BotManager {
                     String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                     String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                     eb.appendDescription("**Game**: " + game.getMap().getMapName() + " - " + time + word + " - " + game.getPoints(Team.BLUE)+ ":" + game.getPoints(Team.RED) + "\n");
-                } else {
-                    eb.appendDescription("**Game**: Ending" + "\n");
                 }
             }
         }

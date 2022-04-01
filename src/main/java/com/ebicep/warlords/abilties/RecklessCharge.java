@@ -59,9 +59,6 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             //travels 7 at peak jump
             chargeDistance = Math.max(Math.min(Utils.getDistance(player, .1) * 5, 6.9), 6);
         }
-        if (wp.getCarriedFlag() != null) {
-            chargeDistance /= 4;
-        }
 
         boolean finalInAir = inAir;
 

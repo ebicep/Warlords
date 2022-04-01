@@ -32,7 +32,7 @@ public class HeartToHeart extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Throw a chain towards an ally in a §e15 §7block\n" +
                 "§7radius, grappling the Vindicator towards the ally.\n" +
-                "§7You and the targeted ally gain VIND for §6" + vindDuration + " §7seconds,\n" +
+                "§7You and the targeted ally gain §6VIND §7for §6" + vindDuration + " §7seconds,\n" +
                 "§7granting immunity to de-buffs. You are healed\n" +
                 "§7for §a" + format(healthRestore) + " §7health after reaching your ally." +
                 "\n\n" +
