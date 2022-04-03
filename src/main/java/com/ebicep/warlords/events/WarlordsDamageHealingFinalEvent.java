@@ -1,12 +1,21 @@
 package com.ebicep.warlords.events;
 
+import com.ebicep.warlords.player.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent {
     private static final HandlerList handlers = new HandlerList();
 
+    private final List<CooldownRecord> playerCooldowns = new ArrayList<>();
+    private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
     private final WarlordsPlayer attacker;
     private final String ability;
     private final int initialHealth;
@@ -21,11 +30,11 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private final boolean hasFlag;
     private final boolean isDead;
 
+    private final boolean attackerInCombat;
+
     private boolean isDamageInstance;
 
     private int inGameTick;
-
-    private boolean cancelled;
 
     public WarlordsDamageHealingFinalEvent(
             WarlordsPlayer player,
@@ -42,6 +51,14 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             boolean isDamageInstance
     ) {
         super(player);
+        this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
+                .map(CooldownRecord::new)
+                .collect(Collectors.toList())
+        );
+        this.attackerCooldowns.addAll(attacker.getCooldownManager().getCooldowns().stream()
+                .map(CooldownRecord::new)
+                .collect(Collectors.toList())
+        );
         this.attacker = attacker;
         this.ability = ability;
         this.initialHealth = initialHealth;
@@ -52,12 +69,23 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         this.value = value;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        this.isCrit = isCrit;
         this.hasFlag = player.hasFlag();
         this.isDead = isDamageInstance && player.getHealth() <= 0 && !player.getCooldownManager().checkUndyingArmy(false);
-        this.isCrit = isCrit;
+
+        this.attackerInCombat = attacker.getRegenTimer() > 6;
+
         this.isDamageInstance = isDamageInstance;
 
         this.inGameTick = player.getGameState().getTicksElapsed();
+    }
+
+    public List<CooldownRecord> getPlayerCooldowns() {
+        return playerCooldowns;
+    }
+
+    public List<CooldownRecord> getAttackerCooldowns() {
+        return attackerCooldowns;
     }
 
     public WarlordsPlayer getAttacker() {
@@ -112,6 +140,10 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return isDead;
     }
 
+    public boolean isAttackerInCombat() {
+        return attackerInCombat;
+    }
+
     public boolean isDamageInstance() {
         return isDamageInstance;
     }
@@ -122,16 +154,6 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
 
     public int getInGameTick() {
         return inGameTick;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 
     @Override
@@ -157,8 +179,30 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
                 ", isDead=" + isDead +
                 ", isDamageInstance=" + isDamageInstance +
                 ", inGameSecond=" + inGameTick +
-                ", cancelled=" + cancelled +
                 ", player=" + player +
                 '}';
+    }
+
+    public static class CooldownRecord {
+
+        private final AbstractCooldown<?> abstractCooldown;
+        private final int ticksLeft;
+
+        public CooldownRecord(AbstractCooldown<?> abstractCooldown) {
+            this.abstractCooldown = abstractCooldown;
+            if (abstractCooldown instanceof RegularCooldown) {
+                this.ticksLeft = ((RegularCooldown<?>) abstractCooldown).getTicksLeft();
+            } else {
+                this.ticksLeft = -1;
+            }
+        }
+
+        public AbstractCooldown<?> getAbstractCooldown() {
+            return abstractCooldown;
+        }
+
+        public int getTicksLeft() {
+            return ticksLeft;
+        }
     }
 }

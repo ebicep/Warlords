@@ -1,25 +1,22 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
+import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -114,18 +111,19 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
-                if (checkFrom instanceof LivingEntity && lookingAtTotem((LivingEntity) checkFrom)) {
-                    ArmorStand totem = getTotem(wp);
-                    assert totem != null;
+                Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
+                if (checkFrom instanceof LivingEntity && optionalTotem.isPresent()) {
+                    ArmorStand totem = optionalTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, totem);
+                    partOfChainLightningPulseDamage(wp, optionalTotem.get());
                     return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             } else {
-                ArmorStand totem = Utils.getTotemDownAndClose(wp, checkFrom);
-                if (totem != null) {
+                Optional<CapacitorTotem> capacitorTotem = AbstractTotemBase.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.class);
+                if (capacitorTotem.isPresent()) {
+                    ArmorStand totem = capacitorTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, totem);
+                    partOfChainLightningPulseDamage(wp, capacitorTotem.get());
                     return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             }
@@ -163,12 +161,16 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         }
     }
 
-    private void partOfChainLightningPulseDamage(WarlordsPlayer wp, Entity totem) {
+    private void partOfChainLightningPulseDamage(WarlordsPlayer wp, CapacitorTotem capacitorTotem) {
+        ArmorStand totem = capacitorTotem.getTotem();
         int radius = 6;
         pulseDamage(wp, PlayerFilter.entitiesAround(totem, radius, radius, radius).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
+
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
+
+        capacitorTotem.addProc();
     }
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
@@ -184,28 +186,25 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             );
         });
     }
+//
+//    private boolean lookingAtTotem(@Nonnull LivingEntity player) {
+//        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();
+//        //eye.setY(eye.getY() + .5);
+//        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+//            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
+//                Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
+//                float dot = (float) toEntity.normalize().dot(eye.getDirection());
+//                return dot > .93f;
+//            }
+//        }
+//        return false;
+//    }
 
-    private boolean lookingAtTotem(@Nonnull LivingEntity player) {
-        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();
-        //eye.setY(eye.getY() + .5);
-        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
-                Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
-                float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                return dot > .93f;
-            }
-        }
-        return false;
-    }
-
-    @Nullable
-    private ArmorStand getTotem(@Nonnull WarlordsPlayer player) {
-        for (Entity entity : player.getEntity().getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
-                return (ArmorStand) entity;
-            }
-        }
-        return null;
+    private Optional<CapacitorTotem> getLookingAtTotem(WarlordsPlayer warlordsPlayer) {
+        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
+                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
+                .findFirst();
     }
 
     @Override

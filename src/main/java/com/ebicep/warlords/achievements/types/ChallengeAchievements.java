@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -17,10 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -212,7 +210,21 @@ public enum ChallengeAchievements implements Achievement {
             "Stay in combat for over 40 seconds and deal 10k damage to the enemy carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.BERSERKER,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(40);
+                float totalDamageToCarrier = 0;
+                for (WarlordsDamageHealingFinalEvent event : events) {
+                    if (event.isHasFlag()) {
+                        if (event.isAttackerInCombat()) {
+                            totalDamageToCarrier += event.getValue();
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+
+                return totalDamageToCarrier >= 10000;
+            },
             false),
     SPLIT_SECOND("Split Second",
             "Prevent over 2k damage dealt to the flag carrier within 1s of the ability activating.",
@@ -290,29 +302,78 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.PROTECTOR,
             warlordsPlayer -> {
-//                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
-//                WarlordsPlayer victim = lastDamageEvent.getPlayer();
-//                if(
-//                        victim.getCooldownManager().hasCooldown(ArcaneShield.class) ||
-//                        victim.getCooldownManager().hasCooldown(IceBarrier.class) ||
-//                        victim.getCooldownManager().hasCooldown(LastStand.class)
-//                ) {
-//
-//                }
-                return false;
+                List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(3);
+                WarlordsPlayer carrier = null;
+                int index = -1;
+                for (int i = 0; i < events.size(); i++) {
+                    WarlordsDamageHealingFinalEvent event = events.get(i);
+                    if (event.isHasFlag() && event.getPlayerCooldowns().stream()
+                            .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                            .filter(RegularCooldown.class::isInstance)
+                            .map(RegularCooldown.class::cast)
+                            .anyMatch(regularCooldown ->
+                                    regularCooldown.getCooldownObject() instanceof ArcaneShield ||
+                                            regularCooldown.getCooldownObject() instanceof IceBarrier ||
+                                            regularCooldown.getCooldownObject() instanceof LastStand
+                            )
+                    ) {
+                        carrier = event.getPlayer();
+                        index = i;
+                    }
+                }
+
+                if (carrier != null) {
+                    int totalDamage = 0;
+                    for (int i = index; i < events.size(); i++) {
+                        WarlordsDamageHealingFinalEvent event = events.get(i);
+                        if (event.getPlayer() == carrier && event.isHasFlag()) {
+                            totalDamage += event.getValue();
+                        }
+                    }
+
+                    return totalDamage >= 3000;
+                } else {
+                    return false;
+                }
             },
             false),
     ROADBLOCK("Roadblock?!",
             "Proc your Capacitor Totem three (or more) times after your carrier passes through the totem.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.THUNDERLORD,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsPlayer.getSecondStats().getLastEventAsAttacker();
+                return lastDamageEvent.getAttackerCooldowns().stream()
+                        .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                        .filter(RegularCooldown.class::isInstance)
+                        .map(RegularCooldown.class::cast)
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(), CapacitorTotem.class))
+                        .map(regularCooldown -> ((CapacitorTotem) regularCooldown.getCooldownObject()))
+                        .anyMatch(capacitorTotem -> capacitorTotem.getNumberOfProcsAfterCarrierPassed() >= 3);
+            },
             false),
     PERSISTENT_THREAT("Persistent Threat",
             "Proc soulbinding healing/cooldown reduction 10 times on the enemy carrier within 20 seconds.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.SPIRITGUARD,
-            warlordsPlayer -> false,
+            warlordsPlayer -> {
+                List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(20);
+                for (WarlordsDamageHealingFinalEvent event : events) {
+                    if (event.isHasFlag()) {
+                        return event.getAttackerCooldowns().stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .filter(PersistentCooldown.class::isInstance)
+                                .map(PersistentCooldown.class::cast)
+                                .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.class))
+                                .map(persistentCooldown -> ((Soulbinding) persistentCooldown.getCooldownObject()))
+                                .anyMatch(soulbinding -> soulbinding.getAllProcedPlayers().stream()
+                                        .filter(wp -> wp == event.getPlayer())
+                                        .count() >= 10
+                                );
+                    }
+                }
+                return false;
+            },
             false),
     WHERE_ARE_YOU_GOING("Where are you going?",
             "Kill the enemy flag carrier after landing 5 or more abilities on them.",

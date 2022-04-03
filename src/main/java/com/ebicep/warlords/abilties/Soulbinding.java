@@ -22,6 +22,9 @@ public class Soulbinding extends AbstractAbility {
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private int bindDuration = 2;
 
+    private List<WarlordsPlayer> playersProcedBySouls = new ArrayList<>();
+    private List<WarlordsPlayer> playersProcedByLink = new ArrayList<>();
+
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
     }
@@ -97,6 +100,7 @@ public class Soulbinding extends AbstractAbility {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
                 if (!soulBindedPlayer.isHitWithSoul()) {
                     soulBindedPlayer.setHitWithSoul(true);
+                    playersProcedBySouls.add(warlordsPlayer);
                     return true;
                 }
                 break;
@@ -110,6 +114,7 @@ public class Soulbinding extends AbstractAbility {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
                 if (!soulBindedPlayer.isHitWithLink()) {
                     soulBindedPlayer.setHitWithLink(true);
+                    playersProcedByLink.add(warlordsPlayer);
                     return true;
                 }
                 break;
@@ -124,6 +129,14 @@ public class Soulbinding extends AbstractAbility {
 
     public void setBindDuration(int bindDuration) {
         this.bindDuration = bindDuration;
+    }
+
+    public List<WarlordsPlayer> getAllProcedPlayers() {
+        List<WarlordsPlayer> procedPlayers = new ArrayList<>();
+        procedPlayers.addAll(playersProcedBySouls);
+        procedPlayers.addAll(playersProcedByLink);
+        return procedPlayers;
+
     }
 
     public static class SoulBoundPlayer {

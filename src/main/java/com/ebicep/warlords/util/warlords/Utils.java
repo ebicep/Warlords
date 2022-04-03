@@ -1,6 +1,9 @@
 package com.ebicep.warlords.util.warlords;
 
+import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
@@ -16,13 +19,11 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Utils {
@@ -145,27 +146,6 @@ public class Utils {
     public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
         return player.hasLineOfSight(player2);
     }
-
-    @Nullable
-    public static ArmorStand getTotemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
-        for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
-            if (entity instanceof ArmorStand && (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase()))) {
-                return (ArmorStand) entity;
-            }
-        }
-        return null;
-    }
-
-    public static List<ArmorStand> getCapacitorTotemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
-        List<ArmorStand> totems = new ArrayList<>();
-        for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
-            if (entity instanceof ArmorStand && (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase()))) {
-                totems.add((ArmorStand) entity);
-            }
-        }
-        return totems;
-    }
-
 
     public static class ArmorStandComparator implements Comparator<Entity> {
         @Override

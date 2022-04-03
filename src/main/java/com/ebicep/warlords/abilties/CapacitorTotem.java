@@ -2,9 +2,13 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.game.option.FlagCapturePointOption;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,8 +23,16 @@ public class CapacitorTotem extends AbstractTotemBase {
     private int duration = 8;
     private int radius = 6;
 
+    private int numberOfProcs = 0;
+    private int numberOfProcsAfterCarrierPassed = 0;
+    private boolean teamCarrierPassedThrough = false;
+
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
+    }
+
+    public CapacitorTotem(ArmorStand totem) {
+        super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200, totem);
     }
 
     @Override
@@ -39,7 +51,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     protected void onTotemStand(ArmorStand totemStand, WarlordsPlayer warlordsPlayer) {
-        totemStand.setMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
+        totemStand.setMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), this));
     }
 
     @Override
@@ -49,21 +61,49 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addRegularCooldown(name, "TOTEM", CapacitorTotem.class, new CapacitorTotem(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        Location totemLocation = wp.getLocation().clone();
+
+        CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand);
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "TOTEM",
+                CapacitorTotem.class,
+                tempCapacitorTotem,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        );
         new GameRunnable(wp.getGame()) {
+            int counter = 0;
             int timeLeft = duration;
 
             @Override
             public void run() {
-                if (timeLeft == 0) {
-                    totemStand.remove();
-                    this.cancel();
+                if (counter % 20 == 0) {
+                    if (timeLeft == 0) {
+                        totemStand.remove();
+                        this.cancel();
+                    }
                 }
+
+                if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
+                    if (PlayerFilter.playingGame(wp.getGame())
+                            .teammatesOfExcludingSelf(wp)
+                            .stream()
+                            .filter(WarlordsPlayer::hasFlag)
+                            .map(WarlordsPlayer::getLocation)
+                            .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
+                        tempCapacitorTotem.setTeamCarrierPassedThrough(true);
+                    }
+                }
+
+                counter++;
                 timeLeft--;
             }
 
-        }.runTaskTimer(0, 20);
+        }.runTaskTimer(0, 0);
     }
 
     public int getDuration() {
@@ -80,5 +120,29 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public void addProc() {
+        numberOfProcs++;
+        if (teamCarrierPassedThrough) {
+            numberOfProcsAfterCarrierPassed++;
+        }
+    }
+
+    public int getNumberOfProcs() {
+        return numberOfProcs;
+    }
+
+    public int getNumberOfProcsAfterCarrierPassed() {
+        return numberOfProcsAfterCarrierPassed;
+    }
+
+
+    public boolean isTeamCarrierPassedThrough() {
+        return teamCarrierPassedThrough;
+    }
+
+    public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
+        this.teamCarrierPassedThrough = teamCarrierPassedThrough;
     }
 }

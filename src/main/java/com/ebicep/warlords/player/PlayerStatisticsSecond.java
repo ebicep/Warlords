@@ -2,6 +2,8 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -109,5 +111,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         public List<WarlordsDamageHealingFinalEvent> getEventsAsAttacker() {
             return eventsAsAttacker;
         }
+
     }
+
 }

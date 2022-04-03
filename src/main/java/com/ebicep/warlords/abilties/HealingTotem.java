@@ -32,6 +32,10 @@ public class HealingTotem extends AbstractTotemBase {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
     }
 
+    public HealingTotem(ArmorStand totem) {
+        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175, totem);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that\n" +
@@ -69,7 +73,7 @@ public class HealingTotem extends AbstractTotemBase {
                 name,
                 "TOTEM",
                 HealingTotem.class,
-                new HealingTotem(),
+                new HealingTotem(totemStand),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

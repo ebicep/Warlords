@@ -39,6 +39,10 @@ public class DeathsDebt extends AbstractTotemBase {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
     }
 
+    public DeathsDebt(ArmorStand totem) {
+        super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100, totem);
+    }
+
     @Override
     public void updateDescription(Player player) {
         int selfDamagePercent = selfDamageInPercentPerSecond == .1667f ? 100 : 75;
@@ -76,7 +80,7 @@ public class DeathsDebt extends AbstractTotemBase {
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         final int ticksLeft = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
 
-        DeathsDebt tempDeathsDebt = new DeathsDebt();
+        DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand);
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
