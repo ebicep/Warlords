@@ -89,7 +89,6 @@ public class VitalityLiquor extends AbstractAbility {
                     .findAny()
                     .ifPresent(regularCooldown -> {
                         Utils.playGlobalSound(enemyTarget.getLocation(), Sound.GLASS, 2, 0.6f);
-                        enemyTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
                         new GameRunnable(wp.getGame()) {
                             @Override
                             public void run() {

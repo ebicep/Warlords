@@ -103,7 +103,7 @@ public class Intervene extends AbstractAbility {
             );
 
             vt.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW_GREEN + "§7 " +
+                    WarlordsPlayer.GIVE_ARROW_GREEN + "§7 " +
                             wp.getName() + " is shielding you with their " +
                             ChatColor.YELLOW + "Intervene" +
                             ChatColor.GRAY + "!"
@@ -131,13 +131,13 @@ public class Intervene extends AbstractAbility {
                         RegularCooldown interveneRegularCooldown = optionalRegularCooldown.get();
                         if (interveneRegularCooldown.getTicksLeft() <= 20)
                             vt.sendMessage(
-                                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                                    WarlordsPlayer.GIVE_ARROW_GREEN + " " +
                                             ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
                                             (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!"
                             );
                         else
                             vt.sendMessage(
-                                    WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                                    WarlordsPlayer.GIVE_ARROW_GREEN + " " +
                                             ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
                                             (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!"
                             );

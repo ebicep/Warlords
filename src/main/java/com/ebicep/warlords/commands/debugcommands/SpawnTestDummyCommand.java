@@ -45,7 +45,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 Team team = teamOpt.get();
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
                 WarlordsPlayer testDummy = new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings());
-                //testDummy.setHealth(testDummy.getMaxHealth() / 2);
+                testDummy.setHealth(testDummy.getMaxHealth() / 2);
                 Warlords.addPlayer(testDummy);
                 player.getGame().addPlayer(offlinePlayer, false);
                 if (args.length >= 2 && args[1].equalsIgnoreCase("false")) {

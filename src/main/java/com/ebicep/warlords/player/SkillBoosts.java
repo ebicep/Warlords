@@ -49,12 +49,12 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 60% but reduce the Crit\nChance bonus by 15%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60% §abut reduce the Crit\nChance bonus §aby §c15%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 60% but reduce the Crit\nChance bonus by 10%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60% §abut reduce the Crit\nChance bonus §aby §c10%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
-                    ((Inferno) abstractAbility).setCritChanceIncrease(15);
+                    ((Inferno) abstractAbility).setCritChanceIncrease(20);
                     ((Inferno) abstractAbility).setCritMultiplierIncrease(90);
                 }
             }
@@ -198,13 +198,13 @@ public enum SkillBoosts {
             }
     ),
     BERSERK("Berserk",
-            "§7Increase the damage bonus of Berserk\n§7by 20% but increase the damage you take\n§7by 10%",
-            "§aIncrease the damage bonus of Berserk\n§aby §c20% §abut increase the damage you take\n§aby §c10%",
+            "§7Increase the damage bonus of Berserk\n§7by 20% but increase the damage you take\n§7by 5%",
+            "§aIncrease the damage bonus of Berserk\n§aby §c20% §abut increase the damage you take\n§aby §c5%",
             Berserk.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Berserk) {
                     ((Berserk) abstractAbility).setDamageIncrease(50);
-                    ((Berserk) abstractAbility).setDamageTakenIncrease(20);
+                    ((Berserk) abstractAbility).setDamageTakenIncrease(15);
                 }
             }
     ),
@@ -580,7 +580,7 @@ public enum SkillBoosts {
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
             "§7Increase the proc chance by\nof Earthliving Weapon§7 by 20%",
-            "§7Increase the proc chance by\nof Earthliving Weapon§7 by 20%",
+            "§aIncrease the proc chance by\nof Earthliving Weapon by §c20%",
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
@@ -617,12 +617,12 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 0.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c0.5 §aseconds.",
+            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 1 second.",
+            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c1 §asecond.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(60);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
@@ -636,11 +636,14 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch\nby 25%",
-            "§aReduce the cooldown by Soul Switch\nby §c25%",
+            "§7Reduce the cooldown by Soul Switch\nby 25% and increase the range\nby 2 blocks.",
+            "§aReduce the cooldown by Soul Switch\nby §c25% §aand increase the range\nby §c2 §ablocks",
             SoulSwitch.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                if (abstractAbility instanceof SoulSwitch) {
+                    ((SoulSwitch) abstractAbility).setRadius(15);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                }
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
@@ -676,13 +679,13 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart\nby 25% and increase the VIND buff\nduration by 2 seconds.",
-            "§aReduce the cooldown of Heart ot Heart\nby §c25% §aand increase the VIND buff\nduration by §c2 §aseconds.",
+            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 200",
+            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c200",
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setVindDuration(8);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    ((HeartToHeart) abstractAbility).setHealthRestore(800);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -703,18 +706,18 @@ public enum SkillBoosts {
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate) {
-                    ((Vindicate) abstractAbility).setVindicateDamageReduction(35);
+                    ((Vindicate) abstractAbility).setVindicateDamageReduction(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     IMPALING_STRIKE("Impaling Strike",
-            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 10% and increase the leech\nduration by 3 seconds.",
-            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c10% §aand increase the leech\nduration by §c3 §aseconds.",
+            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 10% and increase the leech\nduration by 5 seconds.",
+            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c10% §aand increase the leech\nduration by §c5 §aseconds.",
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike) {
-                    ((ImpalingStrike) abstractAbility).setLeechDuration(8);
+                    ((ImpalingStrike) abstractAbility).setLeechDuration(10);
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
                 }
@@ -740,14 +743,14 @@ public enum SkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of health\nyou restore with Remedic\nChains by 10% and increase the link break\nradius by 8 blocks.",
-            "§aIncrease the amount of health\nyou restore with Remedic\nChains by §c10% §aand increase the link break\nradius by §c8 §ablocks.",
+            "§7Increase the amount of health\nyou restore with Remedic\nChains by 10% and increase the link break\nradius by 10 blocks.",
+            "§aIncrease the amount of health\nyou restore with Remedic\nChains by §c10% §aand increase the link break\nradius by §c10 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    ((RemedicChains) abstractAbility).setLinkBreakRadius(23);
+                    ((RemedicChains) abstractAbility).setLinkBreakRadius(25);
                 }
             }
     ),

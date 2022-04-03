@@ -360,6 +360,7 @@ public final class WarlordsPlayer {
             for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.onInterveneFromAttacker(event, damageValue);
             }
+
         } else {
 
             // Damage reduction after Intervene
@@ -378,7 +379,6 @@ public final class WarlordsPlayer {
             }
 
             final float damageHealValueBeforeShieldReduction = damageValue;
-
 
             // Arcane Shield
             List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
@@ -722,7 +722,14 @@ public final class WarlordsPlayer {
      * @param isLastStandFromShield whether the message is last stand healing.
      * @param isOverHeal            whether the message is overhealing.
      */
-    private void sendHealingMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
+    private void sendHealingMessage(
+            @Nonnull WarlordsPlayer sender,
+            @Nonnull WarlordsPlayer receiver,
+            float healValue, String ability,
+            boolean isCrit,
+            boolean isLastStandFromShield,
+            boolean isOverHeal
+    ) {
         // Own Message
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
@@ -792,7 +799,14 @@ public final class WarlordsPlayer {
      * @param isCrit      whether if it's a critical hit message.
      * @param isMeleeHit  whether if it's a melee hit.
      */
-    private void sendDamageMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, String ability, float damageValue, boolean isCrit, boolean isMeleeHit) {
+    private void sendDamageMessage(
+            @Nonnull WarlordsPlayer sender,
+            @Nonnull WarlordsPlayer receiver,
+            String ability,
+            float damageValue,
+            boolean isCrit,
+            boolean isMeleeHit
+    ) {
         // Receiver feed
         StringBuilder enemyFeed = new StringBuilder();
         enemyFeed.append(RECEIVE_ARROW_RED).append(ChatColor.GRAY).append(" ").append(sender.getName());

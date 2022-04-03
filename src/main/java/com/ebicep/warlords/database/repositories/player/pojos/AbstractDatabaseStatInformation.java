@@ -178,4 +178,5 @@ public abstract class AbstractDatabaseStatInformation {
     public void setExperience(long experience) {
         this.experience = experience;
     }
+
 }

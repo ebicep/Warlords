@@ -85,6 +85,8 @@ public class TestCommand implements CommandExecutor {
         //SRCalculator.recalculateSR();
 
         Player player = (Player) sender;
+
+
 //        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
 //            document.put("map", document.getString("map").toUpperCase());
 //            if(document.get("map").equals("WARSONG REMASTERED")) {
@@ -136,7 +138,6 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(warlordsPlayer1.getName());
 //            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
 //        });
-
 
 //        DatabaseManager.gameService.create(new DatabaseGameCTF(), GamesCollections.ALL);
 //        DatabaseManager.gameService.create(new DatabaseGameTDM(), GamesCollections.ALL);

@@ -174,8 +174,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                     cancelSpeed.run();
                     removeCloak(wp, true);
                 } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 3, wp.getLocation(), 500);
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.15f, 2);
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.25f, 2);
                 }
             }
         }.runTaskTimer(0, 1);
