@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -26,6 +27,9 @@ import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -134,6 +138,27 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public State run() {
+        game.players().forEach(uuidTeamEntry -> {
+            WarlordsPlayer wp = Warlords.getPlayer(uuidTeamEntry.getKey());
+            ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+            if (wp != null) {
+                byteArrayDataOutput.writeUTF(wp.getName());
+                byteArrayDataOutput.writeInt((int) wp.getEnergy());
+                byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
+                AbstractPlayerClass spec = wp.getSpec();
+                byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed().getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple().getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue().getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange().getCurrentCooldown() + .5));
+                game.spectators().forEach(uuid -> {
+                    Player player = Bukkit.getPlayer(uuid);
+                    if (player != null && player.getName().equals("sumSmash")) {
+                        player.sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
+                    }
+                });
+            }
+        });
+
         return null;
     }
 

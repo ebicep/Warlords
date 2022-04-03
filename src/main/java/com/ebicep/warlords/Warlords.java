@@ -444,12 +444,14 @@ public class Warlords extends JavaPlugin {
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
 
-
         for (String command : this.getDescription().getCommands().keySet()) {
             if (getCommand(command).getExecutor() == this) {
                 getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[Warlords] Warning, command " + command + " is specified in plugin.yml, but not defined in the plugins");
             }
         }
+
+        //Sending data to mod
+        Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
     }
 
     @Override
