@@ -87,7 +87,8 @@ public enum Weapons {
     // mythic
     FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), MYTHIC),
     FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), MYTHIC),
-    FABLED_HEROICS_SWORD_2("Bumbleblade", new ItemStack(Material.NETHER_BRICK_ITEM), MYTHIC),
+    FABLED_HEROICS_SWORD_2("Bumbleblade", new ItemStack(Material.NETHER_BRICK_ITEM), LEGENDARY),
+    FABLED_HEROICS_DRUMSTICK("Cornelius", new ItemStack(Material.SUGAR_CANE), LEGENDARY),
 
     ;
 
