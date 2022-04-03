@@ -2,9 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
-import com.ebicep.warlords.game.option.FlagCapturePointOption;
-import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -86,6 +83,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                         totemStand.remove();
                         this.cancel();
                     }
+                    timeLeft--;
                 }
 
                 if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
@@ -100,7 +98,6 @@ public class CapacitorTotem extends AbstractTotemBase {
                 }
 
                 counter++;
-                timeLeft--;
             }
 
         }.runTaskTimer(0, 0);

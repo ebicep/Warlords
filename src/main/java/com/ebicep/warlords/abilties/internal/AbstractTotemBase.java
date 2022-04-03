@@ -62,7 +62,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(AbstractTotemBase.class)
-                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
                 .findFirst();
     }
@@ -71,7 +70,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
                 .findFirst();
     }
@@ -80,7 +78,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
                 .collect(Collectors.toList());
     }

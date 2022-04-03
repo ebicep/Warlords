@@ -1,10 +1,8 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.PlayerStatisticsSecond;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
@@ -168,18 +166,24 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     @Override
     public String toString() {
         return "WarlordsDamageHealingFinalEvent{" +
-                "attacker=" + attacker +
+                "playerCooldowns=" + playerCooldowns +
+                ", attackerCooldowns=" + attackerCooldowns +
+                ", attacker=" + attacker +
                 ", ability='" + ability + '\'' +
                 ", initialHealth=" + initialHealth +
                 ", finalHealth=" + finalHealth +
+                ", valueBeforeAllReduction=" + valueBeforeAllReduction +
+                ", valueBeforeInterveneReduction=" + valueBeforeInterveneReduction +
+                ", valueBeforeShieldReduction=" + valueBeforeShieldReduction +
                 ", value=" + value +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
+                ", isCrit=" + isCrit +
                 ", hasFlag=" + hasFlag +
                 ", isDead=" + isDead +
+                ", attackerInCombat=" + attackerInCombat +
                 ", isDamageInstance=" + isDamageInstance +
-                ", inGameSecond=" + inGameTick +
-                ", player=" + player +
+                ", inGameTick=" + inGameTick +
                 '}';
     }
 

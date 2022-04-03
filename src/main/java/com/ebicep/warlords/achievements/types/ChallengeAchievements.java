@@ -319,6 +319,7 @@ public enum ChallengeAchievements implements Achievement {
                     ) {
                         carrier = event.getPlayer();
                         index = i;
+                        break;
                     }
                 }
 
@@ -391,6 +392,7 @@ public enum ChallengeAchievements implements Achievement {
                         break;
                     }
                 }
+
                 if (indexCarrier != -1) {
                     for (int i = 0; i < events.size(); i++) {
                         WarlordsDamageHealingFinalEvent event = events.get(i);
@@ -402,6 +404,7 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
+
                 if (indexCarrierKilled != -1) {
                     WarlordsPlayer finalCarrier = carrier;
                     int numberOfAbilityAttackers = (int) events.subList(indexCarrier, indexCarrierKilled).stream()

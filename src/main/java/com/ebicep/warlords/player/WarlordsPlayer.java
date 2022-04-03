@@ -432,6 +432,23 @@ public final class WarlordsPlayer {
                 }
                 removeHorse();
 
+                finalEvent = new WarlordsDamageHealingFinalEvent(
+                        this,
+                        attacker,
+                        ability,
+                        initialHealth,
+                        damageHealValueBeforeAllReduction,
+                        damageHealValueBeforeInterveneReduction,
+                        damageHealValueBeforeShieldReduction,
+                        damageValue,
+                        critChance,
+                        critMultiplier,
+                        isCrit,
+                        true);
+//                secondStats.addDamageHealingEventAsSelf(finalEvent);
+//                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+//
+//                checkForAchievementsDamage(attacker);
             } else {
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
@@ -495,6 +512,7 @@ public final class WarlordsPlayer {
 //                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 //
 //                checkForAchievementsDamage(attacker);
+
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
@@ -959,7 +977,15 @@ public final class WarlordsPlayer {
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SILENCE_PEON);
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ORBIFICATOR);
             ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.HOUR_OF_RECKONING);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.TALENT_SHREDDER);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.PERSISTENT_THREAT);
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.WHERE_ARE_YOU_GOING);
+
+            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.EXTENDED_COMBAT); //NEED TEST
+
         }
+        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ROADBLOCK);
+
     }
 
     private void checkForAchievementsHealing(WarlordsPlayer attacker) {
