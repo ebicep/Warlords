@@ -49,13 +49,13 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 60% but reduce the Crit\nChance bonus by 10%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60% §abut reduce the Crit\nChance bonus §aby §c10%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 70% but reduce the Crit\nChance bonus by 10%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c70% §abut reduce the Crit\nChance bonus §aby §c10%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
                     ((Inferno) abstractAbility).setCritChanceIncrease(20);
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(90);
+                    ((Inferno) abstractAbility).setCritMultiplierIncrease(100);
                 }
             }
     ),

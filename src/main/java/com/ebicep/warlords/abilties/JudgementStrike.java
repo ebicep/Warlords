@@ -20,7 +20,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Every 3rd attack is a §cguaranteed §7critical strike.\n" +
+                "§7Every fourth attack is a §cguaranteed §7critical strike.\n" +
                 "§7Critical strikes temporarily increase your movement\n" +
                 "§7speed by §e25% §7for §e2 §7seconds.";
     }
@@ -30,7 +30,7 @@ public class JudgementStrike extends AbstractStrikeBase {
 
         attacksDone++;
         int critChance = this.critChance;
-        if (attacksDone == 3) {
+        if (attacksDone == 4) {
             attacksDone = 0;
             critChance = 100;
         }

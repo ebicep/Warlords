@@ -26,7 +26,7 @@ public class DrainingMiasma extends AbstractAbility {
     private final int maxHealthDamage = 4;
 
     public DrainingMiasma() {
-        super("Draining Miasma", 0, 0, 55, 40, -1, 100);
+        super("Draining Miasma", 0, 0, 50, 40, -1, 100);
     }
 
     @Override

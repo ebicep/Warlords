@@ -23,6 +23,7 @@ import java.util.Objects;
 public class OrderOfEviscerate extends AbstractAbility {
 
     private int duration = 8;
+    private float damageThreshold = 0;
     private WarlordsPlayer markedPlayer;
 
     public OrderOfEviscerate() {
@@ -33,8 +34,8 @@ public class OrderOfEviscerate extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Cloak yourself for §6" + duration + " §7seconds, granting\n" +
                 "§7you §e40% §7movement speed and making you §einvisible\n" +
-                "§7to the enemy for the duration. However, taking fall\n" +
-                "§7damage or any type of ability damage twice will\n" +
+                "§7to the enemy for the duration. However, taking up to\n" +
+                "§c600 §7fall damage or any type of ability damage will\n" +
                 "§7end your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
@@ -51,6 +52,22 @@ public class OrderOfEviscerate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
+        damageThreshold = 0;
+        new GameRunnable(wp.getGame()) {
+
+            @Override
+            public void run() {
+                if (damageThreshold > 600) {
+                    this.cancel();
+                    OrderOfEviscerate.removeCloak(wp, false);
+                }
+
+                if (wp.isDead()) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 0);
+
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<OrderOfEviscerate>(
                 "Order of Eviscerate",
@@ -63,16 +80,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                 },
                 duration * 20
         ) {
-            int counter = 0;
-            @Override
-            public void doBeforeReductionFromSelf(WarlordsDamageHealingEvent event) {
-                counter++;
-
-                if (counter == 2) {
-                    OrderOfEviscerate.removeCloak(wp, false);
-                }
-            }
-
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
@@ -167,15 +174,20 @@ public class OrderOfEviscerate extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
 
         new GameRunnable(wp.getGame()) {
+            int counter = 0;
             @Override
             public void run() {
+                counter++;
                 if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     this.cancel();
                     cancelSpeed.run();
                     removeCloak(wp, true);
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.25f, 2);
+                    if (counter % 20 == 0) {
+                        ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
+                    }
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
                 }
             }
         }.runTaskTimer(0, 1);
@@ -205,5 +217,13 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     public void setMarkedPlayer(WarlordsPlayer markedPlayer) {
         this.markedPlayer = markedPlayer;
+    }
+
+    public float getDamageThreshold() {
+        return damageThreshold;
+    }
+
+    public void addToDamageThreshold(float damageThreshold) {
+        this.damageThreshold += damageThreshold;
     }
 }

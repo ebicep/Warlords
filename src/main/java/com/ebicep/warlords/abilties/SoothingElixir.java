@@ -34,7 +34,7 @@ public class SoothingElixir extends AbstractAbility {
     private final int puddleMaxHealing = 204;
 
     public SoothingElixir() {
-        super("Soothing Elixir", 551, 648, 8, 60, 25, 175);
+        super("Soothing Elixir", 551, 648, 7, 60, 25, 175);
     }
 
     @Override

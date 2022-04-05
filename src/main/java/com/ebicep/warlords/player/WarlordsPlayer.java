@@ -8,6 +8,7 @@ import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.classes.rogue.specs.Assassin;
 import com.ebicep.warlords.classes.rogue.specs.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -462,6 +463,10 @@ public final class WarlordsPlayer {
                     regenTimer = 10;
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
+
+                    if (spec instanceof Assassin) {
+                        ((OrderOfEviscerate) spec.getOrange()).addToDamageThreshold(damageValue);
+                    }
 
                     if (spec instanceof Vindicator) {
                         ((SoulShackle) spec.getRed()).addToShacklePool(damageValue);
