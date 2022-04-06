@@ -737,14 +737,18 @@ public enum SkillBoosts {
             "§aIncrease the amount of health you\n§arestore with Vitality Liquor\n§aby §c10% §aand reduce the cooldown\nby §c25%",
             VitalityLiquor.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                if (abstractAbility instanceof VitalityLiquor) {
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                    ((VitalityLiquor) abstractAbility).setMinWaveHealing(((VitalityLiquor) abstractAbility).getMinWaveHealing() * 1.1f);
+                    ((VitalityLiquor) abstractAbility).setMaxWaveHealing(((VitalityLiquor) abstractAbility).getMaxWaveHealing() * 1.1f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                }
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of health\nyou restore with Remedic\nChains by 10% and increase the link break\nradius by 10 blocks.",
-            "§aIncrease the amount of health\nyou restore with Remedic\nChains by §c10% §aand increase the link break\nradius by §c10 §ablocks.",
+            "§7Increase the amount of health\nyou restore with Remedic Chains\nby 10% and increase the link break\nradius by 10 blocks.",
+            "§aIncrease the amount of health\nyou restore with Remedic Chains\nby §c10% §aand increase the link break\nradius by §c10 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
@@ -755,13 +759,13 @@ public enum SkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the range of Draining Miasma\nby 2 blocks and reduce the cooldown\nby 25%",
-            "§aIncrease the range of Draining Miasma\nby §c2 §ablocks and reduce the cooldown\nby §c25%",
+            "§7Increase the leech duration of Draining Miasma\nby 3 seconds and reduce the cooldown\nby 30%",
+            "§aIncrease the leech duration of Draining Miasma\nby §c3 §aseconds and reduce the cooldown\nby §c30%",
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
-                    ((DrainingMiasma) abstractAbility).setEnemyHitRadius(10);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    ((DrainingMiasma) abstractAbility).setLeechDuration(8);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),

@@ -65,7 +65,6 @@ public class EarthenSpike extends AbstractAbility {
                 EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), p, wp);
                 wp.subtractEnergy(energyCost);
 
-
                 new GameRunnable(wp.getGame()) {
                     private final float SPEED = 1;
                     private final float SPEED_SQUARED = SPEED * SPEED;

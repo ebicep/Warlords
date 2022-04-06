@@ -22,8 +22,8 @@ public class VitalityLiquor extends AbstractAbility {
 
     private final int acuRange = 8;
     private final int duration = 3;
-    private final float minWaveHealing = 268;
-    private final float maxWaveHealing = 324;
+    private float minWaveHealing = 268;
+    private float maxWaveHealing = 324;
 
     public VitalityLiquor() {
         super("Vitality Liquor", 359, 485, 14, 30, 25, 175);
@@ -134,4 +134,19 @@ public class VitalityLiquor extends AbstractAbility {
         return true;
     }
 
+    public float getMinWaveHealing() {
+        return minWaveHealing;
+    }
+
+    public void setMinWaveHealing(float minWaveHealing) {
+        this.minWaveHealing = minWaveHealing;
+    }
+
+    public float getMaxWaveHealing() {
+        return maxWaveHealing;
+    }
+
+    public void setMaxWaveHealing(float maxWaveHealing) {
+        this.maxWaveHealing = maxWaveHealing;
+    }
 }

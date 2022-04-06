@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 public class DrainingMiasma extends AbstractAbility {
 
     private int duration = 5;
+    private int leechDuration = 5;
     private int enemyHitRadius = 8;
     // Percent
     private final int maxHealthDamage = 4;
@@ -39,7 +40,7 @@ public class DrainingMiasma extends AbstractAbility {
                 "§e25% §7for §63 §7seconds on cast." +
                 "\n\n" +
                 "§7Each enemy hit will be afflicted with §aLEECH §7for\n" +
-                "§65 §7seconds.";
+                "§6" + leechDuration + " §7seconds.";
     }
 
     @Override
@@ -85,7 +86,7 @@ public class DrainingMiasma extends AbstractAbility {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                     },
-                    5 * 20
+                    leechDuration * 20
             ) {
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -157,5 +158,13 @@ public class DrainingMiasma extends AbstractAbility {
 
     public void setEnemyHitRadius(int enemyHitRadius) {
         this.enemyHitRadius = enemyHitRadius;
+    }
+
+    public int getLeechDuration() {
+        return leechDuration;
+    }
+
+    public void setLeechDuration(int leechDuration) {
+        this.leechDuration = leechDuration;
     }
 }
