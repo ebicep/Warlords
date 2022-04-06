@@ -368,6 +368,7 @@ public class Warlords extends JavaPlugin {
         new PollCommand().register(this);
         new AchievementsCommand().register(this);
         new FindPlayer().register(this);
+        new MuteCommand().register(this);
 
         updateHeads();
 

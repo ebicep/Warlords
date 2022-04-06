@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.commands.debugcommands.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -320,7 +321,7 @@ public class WarlordsEvents implements Listener {
                         } else {
                             player.playSound(player.getLocation(), "mountup", 1, 1);
                             wp.getHorse().spawn();
-                            wp.setHorseCooldown(wp.getHorse().getCooldown());
+                            wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
                         }
                     }
 
@@ -563,6 +564,10 @@ public class WarlordsEvents implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
+        if (MuteCommand.mutedPlayers.getOrDefault(uuid, false)) {
+            e.setCancelled(true);
+            return;
+        }
         try {
             // We need to do this in a callSyncMethod, because we need it to happen in the main thread. or else weird bugs can happen in other threads
             Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {

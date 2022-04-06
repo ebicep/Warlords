@@ -110,6 +110,9 @@ commands:
   findplayer:
     description: Finds player in game
     aliases: [ findplayer ]
+  mute:
+    description: Mute
+    aliases: [ mute, unmute, mutelist ]
 
 permissions:
   group.default:

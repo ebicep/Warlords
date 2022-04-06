@@ -297,6 +297,13 @@ public final class WarlordsPlayer {
                     playHurtAnimation(entity, attacker);
                 }
 
+                for (OrderOfEviscerate orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.class)
+                        .collect(Collectors.toList())
+                ) {
+                    orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
+                }
+
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
             cancelHealingPowerUp();
@@ -463,10 +470,6 @@ public final class WarlordsPlayer {
                     regenTimer = 10;
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
-
-                    if (spec instanceof Assassin) {
-                        ((OrderOfEviscerate) spec.getOrange()).addToDamageThreshold(damageValue);
-                    }
 
                     if (spec instanceof Vindicator) {
                         ((SoulShackle) spec.getRed()).addToShacklePool(damageValue);
