@@ -52,22 +52,6 @@ public class OrderOfEviscerate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
-        damageThreshold = 0;
-        new GameRunnable(wp.getGame()) {
-
-            @Override
-            public void run() {
-                if (damageThreshold > 600) {
-                    this.cancel();
-                    OrderOfEviscerate.removeCloak(wp, false);
-                }
-
-                if (wp.isDead()) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 0);
-
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<OrderOfEviscerate>(
                 "Order of Eviscerate",
@@ -102,6 +86,12 @@ public class OrderOfEviscerate extends AbstractAbility {
                 } else {
                     return currentDamageValue * 1.2f;
                 }
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                OrderOfEviscerate orderOfEviscerate = this.getCooldownObject();
+                orderOfEviscerate.addAndCheckDamageThreshold(currentDamageValue, wp);
             }
 
             @Override
@@ -193,6 +183,13 @@ public class OrderOfEviscerate extends AbstractAbility {
         }.runTaskTimer(0, 1);
 
         return true;
+    }
+
+    public void addAndCheckDamageThreshold(float damageValue, WarlordsPlayer warlordsPlayer) {
+        addToDamageThreshold(damageThreshold);
+        if (getDamageThreshold() >= 600) {
+            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
+        }
     }
 
     public static void removeCloak(WarlordsPlayer warlordsPlayer, boolean forceRemove) {
