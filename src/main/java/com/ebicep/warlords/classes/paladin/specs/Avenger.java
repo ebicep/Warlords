@@ -13,4 +13,9 @@ public class Avenger extends AbstractPaladin {
                 new HolyRadianceAvenger(582, 760, 19.57f, 20, 15, 175),
                 new AvengersWrath());
     }
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

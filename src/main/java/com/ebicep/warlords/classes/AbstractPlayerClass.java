@@ -15,7 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractPlayerClass {
+public abstract class AbstractPlayerClass<
+        WeaponType extends AbstractAbility,
+        RedType extends AbstractAbility,
+        PurpleType extends AbstractAbility,
+        BlueType extends AbstractAbility,
+        OrangeType extends AbstractAbility> {
 
     private final int abilityCooldownDelay = 1;
     private final int secondaryAbilityCooldownDelay = 5;
@@ -24,18 +29,18 @@ public abstract class AbstractPlayerClass {
     protected int energyPerSec;
     protected int energyOnHit;
     protected int damageResistance;
-    protected AbstractAbility weapon;
-    protected AbstractAbility red;
-    protected AbstractAbility purple;
-    protected AbstractAbility blue;
-    protected AbstractAbility orange;
+    protected WeaponType weapon;
+    protected RedType red;
+    protected PurpleType purple;
+    protected BlueType blue;
+    protected OrangeType orange;
     protected boolean abilityCD = true;
     protected boolean secondaryAbilityCD = true;
     protected String name;
     protected String className;
     protected String classNameShort;
 
-    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, WeaponType weapon, RedType red, PurpleType purple, BlueType blue, OrangeType orange) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
@@ -71,6 +76,8 @@ public abstract class AbstractPlayerClass {
         }
     }
 
+    public abstract String getFormattedData();
+
     public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (wp.getGameState() != wp.getGame().getState()) {
@@ -89,6 +96,7 @@ public abstract class AbstractPlayerClass {
                     break;
                 }
                 if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+                    weapon.addTimesUsed();
                     weapon.onActivate(wp, player);
                     if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
                         sendRightClickPacket(player);
@@ -109,6 +117,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = red.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        red.addTimesUsed();
                         red.setCurrentCooldown((float) (red.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -126,6 +135,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = purple.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        purple.addTimesUsed();
                         purple.setCurrentCooldown((float) (purple.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -144,6 +154,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = blue.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        blue.addTimesUsed();
                         blue.setCurrentCooldown((float) (blue.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -162,6 +173,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = orange.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        orange.addTimesUsed();
                         orange.setCurrentCooldown((float) (orange.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -256,40 +268,20 @@ public abstract class AbstractPlayerClass {
         return weapon;
     }
 
-    public void setWeapon(AbstractAbility weapon) {
-        this.weapon = weapon;
-    }
-
     public AbstractAbility getRed() {
         return red;
-    }
-
-    public void setRed(AbstractAbility red) {
-        this.red = red;
     }
 
     public AbstractAbility getPurple() {
         return purple;
     }
 
-    public void setPurple(AbstractAbility purple) {
-        this.purple = purple;
-    }
-
     public AbstractAbility getBlue() {
         return blue;
     }
 
-    public void setBlue(AbstractAbility blue) {
-        this.blue = blue;
-    }
-
     public AbstractAbility getOrange() {
         return orange;
-    }
-
-    public void setOrange(AbstractAbility orange) {
-        this.orange = orange;
     }
 
     public String getName() {

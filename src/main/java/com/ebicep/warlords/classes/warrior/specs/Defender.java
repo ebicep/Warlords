@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.warrior.specs.defender;
+package com.ebicep.warlords.classes.warrior.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
@@ -14,4 +14,8 @@ public class Defender extends AbstractWarrior {
                 new LastStand());
     }
 
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

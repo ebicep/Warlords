@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.warrior.specs.berserker;
+package com.ebicep.warlords.classes.warrior.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
@@ -11,5 +11,10 @@ public class Berserker extends AbstractWarrior {
                 new GroundSlam("Ground Slam", 448.8f, 606.1f, 9.32f, 60, 15, 200),
                 new BloodLust(),
                 new Berserk());
+    }
+
+    @Override
+    public String getFormattedData() {
+        return null;
     }
 }

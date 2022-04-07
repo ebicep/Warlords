@@ -12,4 +12,9 @@ public class Cryomancer extends AbstractMage {
                 new ArcaneShield(),
                 new IceBarrier());
     }
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

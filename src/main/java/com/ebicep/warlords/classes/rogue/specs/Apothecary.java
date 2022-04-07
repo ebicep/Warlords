@@ -14,4 +14,9 @@ public class Apothecary extends AbstractRogue {
                 new DrainingMiasma()
         );
     }
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

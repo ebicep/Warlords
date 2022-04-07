@@ -14,4 +14,9 @@ public class Assassin extends AbstractRogue {
                 new OrderOfEviscerate()
         );
     }
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

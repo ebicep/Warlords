@@ -25,6 +25,8 @@ public abstract class AbstractAbility {
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
 
+    protected int timesUsed = 0;
+
     protected String name;
     protected float minDamageHeal;
     protected float maxDamageHeal;
@@ -68,6 +70,18 @@ public abstract class AbstractAbility {
                 arcaneShield.setMaxShieldHealth((int) (abstractPlayerClass.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
             }
         }
+    }
+
+    public void addTimesUsed() {
+        this.timesUsed++;
+    }
+
+    public int getTimesUsed() {
+        return timesUsed;
+    }
+
+    public void setTimesUsed(int timesUsed) {
+        this.timesUsed = timesUsed;
     }
 
     public String getName() {

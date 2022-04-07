@@ -13,4 +13,10 @@ public class Crusader extends AbstractPaladin {
                 new HolyRadianceCrusader(582, 760,19.57f, 20, 15, 175),
                 new InspiringPresence());
     }
+
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

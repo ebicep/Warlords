@@ -4,6 +4,8 @@ import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
 
 public class Aquamancer extends AbstractMage {
+
+
     public Aquamancer() {
         super("Aquamancer", 5200, 355, 20, 14, 0,
                 new WaterBolt(),
@@ -11,5 +13,10 @@ public class Aquamancer extends AbstractMage {
                 new TimeWarp(),
                 new ArcaneShield(),
                 new HealingRain());
+    }
+
+    @Override
+    public String getFormattedData() {
+        return null;
     }
 }

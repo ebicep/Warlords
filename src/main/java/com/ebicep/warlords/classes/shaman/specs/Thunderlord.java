@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.shaman.specs.thunderlord;
+package com.ebicep.warlords.classes.shaman.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
@@ -12,5 +12,10 @@ public class Thunderlord extends AbstractShaman {
                 new LightningRod(),
                 new CapacitorTotem()
         );
+    }
+
+    @Override
+    public String getFormattedData() {
+        return null;
     }
 }

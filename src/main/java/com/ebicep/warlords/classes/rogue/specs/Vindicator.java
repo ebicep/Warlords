@@ -14,4 +14,9 @@ public class Vindicator extends AbstractRogue {
                 new Vindicate()
         );
     }
+
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

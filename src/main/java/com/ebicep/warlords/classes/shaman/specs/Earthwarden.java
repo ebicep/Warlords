@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.shaman.specs.earthwarden;
+package com.ebicep.warlords.classes.shaman.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
@@ -15,4 +15,8 @@ public class Earthwarden extends AbstractShaman {
         );
     }
 
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

@@ -3,7 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;

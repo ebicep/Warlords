@@ -14,4 +14,8 @@ public class Protector extends AbstractPaladin {
                 new HammerOfLight());
     }
 
+    @Override
+    public String getFormattedData() {
+        return null;
+    }
 }

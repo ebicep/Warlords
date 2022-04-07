@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class Inferno extends AbstractAbility {
+    protected int shotsAmplified = 0;
 
     private final int duration = 18;
     private int critChanceIncrease = 30;
@@ -52,6 +53,7 @@ public class Inferno extends AbstractAbility {
             public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
                 if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
                     return currentCritChance;
+                shotsAmplified++;
                 return currentCritChance + critChanceIncrease;
             }
 

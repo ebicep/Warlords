@@ -10,12 +10,12 @@ import com.ebicep.warlords.classes.paladin.specs.Protector;
 import com.ebicep.warlords.classes.rogue.specs.Apothecary;
 import com.ebicep.warlords.classes.rogue.specs.Assassin;
 import com.ebicep.warlords.classes.rogue.specs.Vindicator;
-import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
-import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
-import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
-import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
+import com.ebicep.warlords.classes.shaman.specs.Earthwarden;
+import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
+import com.ebicep.warlords.classes.shaman.specs.Thunderlord;
+import com.ebicep.warlords.classes.warrior.specs.Berserker;
+import com.ebicep.warlords.classes.warrior.specs.Defender;
+import com.ebicep.warlords.classes.warrior.specs.Revenant;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 
 import java.util.Arrays;

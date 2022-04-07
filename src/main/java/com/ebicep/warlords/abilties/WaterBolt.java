@@ -23,6 +23,21 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = "§7Shoot a bolt of water that will burst\n" +
+                "§7for §c231 §7- §c299 §7damage and restore\n" +
+                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to allies. A\n" +
+                "§7direct hit will cause §a15% §7increased\n" +
+                "§7damage or healing for the target hit." +
+                "\n\n" +
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks." +
+                "\n\n" +
+                "§7Water Bolt can overheal allies for up to\n" +
+                "§a10% §7of their max health as bonus health\n" +
+                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
+    }
+
+    @Override
     protected String getActivationSound() {
         return "mage.waterbolt.activation";
     }
@@ -123,19 +138,4 @@ public class WaterBolt extends AbstractProjectileBase {
         }
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Shoot a bolt of water that will burst\n" +
-                "§7for §c231 §7- §c299 §7damage and restore\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to allies. A\n" +
-                "§7direct hit will cause §a15% §7increased\n" +
-                "§7damage or healing for the target hit." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks." +
-                "\n\n" +
-                "§7Water Bolt can overheal allies for up to\n" +
-                "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
-    }
-	
 }

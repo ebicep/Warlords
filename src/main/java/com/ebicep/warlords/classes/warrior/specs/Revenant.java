@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.warrior.specs.revenant;
+package com.ebicep.warlords.classes.warrior.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
@@ -11,5 +11,10 @@ public class Revenant extends AbstractWarrior {
                 new GroundSlam("Ground Slam", 326, 441, 9.32f, 30, 35, 200),
                 new OrbsOfLife(),
                 new UndyingArmy());
+    }
+
+    @Override
+    public String getFormattedData() {
+        return null;
     }
 }

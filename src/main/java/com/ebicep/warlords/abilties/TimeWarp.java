@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
+    protected int timesSuccessful = 0;
 
     private final double duration = 5;
     private int warpHealPercentage = 30;
@@ -50,6 +51,8 @@ public class TimeWarp extends AbstractAbility {
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
+                                timesSuccessful++;
+
                                 wp.addHealingInstance(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false, false);
                                 Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
