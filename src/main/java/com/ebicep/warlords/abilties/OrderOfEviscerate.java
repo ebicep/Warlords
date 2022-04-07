@@ -89,7 +89,7 @@ public class OrderOfEviscerate extends AbstractAbility {
             }
 
             @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 OrderOfEviscerate orderOfEviscerate = this.getCooldownObject();
                 orderOfEviscerate.addAndCheckDamageThreshold(currentDamageValue, wp);
             }
@@ -186,7 +186,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     }
 
     public void addAndCheckDamageThreshold(float damageValue, WarlordsPlayer warlordsPlayer) {
-        addToDamageThreshold(damageThreshold);
+        addToDamageThreshold(damageValue);
         if (getDamageThreshold() >= 600) {
             OrderOfEviscerate.removeCloak(warlordsPlayer, false);
         }
