@@ -679,12 +679,12 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 200",
-            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c200",
+            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 250",
+            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c250",
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(800);
+                    ((HeartToHeart) abstractAbility).setHealthRestore(850);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
