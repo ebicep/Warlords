@@ -142,7 +142,6 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 return true;
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
-                return false;
             }
         }
         return false;
