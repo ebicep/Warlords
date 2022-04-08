@@ -7,12 +7,15 @@ import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
@@ -35,6 +38,14 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 "§7heals yourself by §a50-75% §7of the\n" +
                 "§7damage done. Based on your current\n" +
                 "health.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Struck", "" + timesUsed));
+
+        return info;
     }
 
     @Override

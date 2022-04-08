@@ -24,6 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
+
+    protected int playersHit = 0;
+    protected int playersHitBySplash = 0;
+    protected int directHits = 0;
+    protected int numberOfDismounts = 0;
+
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
     protected final double projectileSpeed;
@@ -44,6 +50,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Gets the sound used when this projectile is activated
+     *
      * @return
      */
     @Nullable
@@ -58,6 +65,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Plays this projectile effect at a location
+     *
      * @param projectile
      */
     @SuppressWarnings("deprecation")
@@ -70,6 +78,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
      * @param projectile
      * @param block
      * @return true if it should destroy itself
@@ -78,6 +87,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
      * @param projectile
      * @param wp
      * @return true if it should destroy itself
@@ -86,6 +96,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
+     *
      * @param projectile
      * @param hit
      * @param impactLocation
@@ -96,26 +107,22 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             @Nonnull Location impactLocation
     );
 
-    @Deprecated
-    protected abstract void onHit(
-            @Nonnull WarlordsPlayer shooter,
-            @Nonnull Location currentLocation,
-            @Nonnull Location startingLocation,
-            @Nullable WarlordsPlayer hit
-    );
+//    @Deprecated
+//    protected abstract int onHit(
+//            @Nonnull WarlordsPlayer shooter,
+//            @Nonnull Location currentLocation,
+//            @Nonnull Location startingLocation,
+//            @Nullable WarlordsPlayer hit
+//    );
+
 
     /**
      * Called when the projectile is destroyed by an collision
+     *
      * @param projectile The projectile
-     * @param hit The player that this projectile impacted on, if any
+     * @param hit        The player that this projectile impacted on, if any
      */
-    @SuppressWarnings("deprecation")
-    protected void onHit(
-            @Nonnull InternalProjectile projectile,
-            @Nullable WarlordsPlayer hit
-    ) {
-        onHit(projectile.shooter, projectile.currentLocation, projectile.startingLocation, hit);
-    }
+    protected abstract int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit);
 
     @Nullable
     protected WarlordsPlayer getFromEntity(Entity e) {
@@ -127,6 +134,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     /**
      * Modifies the speed every tick, in case it is needed
+     *
      * @param projectile
      */
     @SuppressWarnings("deprecation")
@@ -137,9 +145,11 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Deprecated
     protected void updateSpeed(Vector speedVector, int ticksLived) {
     }
-double lerp(double a, double b, double target) {
-    return a + target * (b - a);
-}
+
+    double lerp(double a, double b, double target) {
+        return a + target * (b - a);
+    }
+
     @Nullable
     protected MovingObjectPosition checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsPlayer shooter) {
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
@@ -147,9 +157,9 @@ double lerp(double a, double b, double target) {
         Vec3D after = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         int radius = 3;/* TODO */
         PlayerFilter.entitiesInRectangle(
-            currentLocation.getWorld(),
-            Math.min(before.a - radius, after.a - radius), Math.min(before.b - radius, after.b - radius), Math.min(before.c - radius, after.c - radius),
-            Math.max(before.a + radius, after.a + radius), Math.max(before.b + radius, after.b + radius), Math.max(before.c + radius, after.c + radius)
+                currentLocation.getWorld(),
+                Math.min(before.a - radius, after.a - radius), Math.min(before.b - radius, after.b - radius), Math.min(before.c - radius, after.c - radius),
+                Math.max(before.a + radius, after.a + radius), Math.max(before.b + radius, after.b + radius), Math.max(before.c + radius, after.c + radius)
         ).enemiesOf(shooter).filter(e -> true /* TODO */);
 
         @Nullable
@@ -177,7 +187,7 @@ double lerp(double a, double b, double target) {
                 if (mop != null) {
                     mop.entity = nmsEntity;
                     double distance = before.distanceSquared(mop.pos);
-                    if(shouldEndProjectileOnHit(projectile, wp)) {
+                    if (shouldEndProjectileOnHit(projectile, wp)) {
                         if (hit == null || distance < hitDistance) {
                             hitDistance = distance;
                             hit = mop;
@@ -241,6 +251,7 @@ double lerp(double a, double b, double target) {
 
     /**
      * Calculated the initial projectile location
+     *
      * @param shooter
      * @param startingLocation
      * @return
@@ -248,8 +259,10 @@ double lerp(double a, double b, double target) {
     protected Location getProjectileStartingLocation(WarlordsPlayer shooter, Location startingLocation) {
         return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
     }
+
     /**
      * Calculated the initial projectile speed
+     *
      * @param shooter
      * @param startingLocation
      * @return
@@ -276,6 +289,10 @@ double lerp(double a, double b, double target) {
         projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
 
         return true;
+    }
+
+    public int getDirectHits() {
+        return directHits;
     }
 
     public class InternalProjectile extends BukkitRunnable {
@@ -322,7 +339,14 @@ double lerp(double a, double b, double target) {
                 updateSpeed(this);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
                 if (hasCollided != null) {
-                    onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
+                    int hitBySplash = onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
+                    if (hasCollided.entity != null) {
+                        directHits++;
+                    }
+                    if (hitBySplash > 0) {
+                        playersHit++;
+                        playersHitBySplash += hitBySplash;
+                    }
                     cancel();
                 } else if (ticksLived >= maxTicks) {
                     cancel();
@@ -396,6 +420,7 @@ double lerp(double a, double b, double target) {
             this.distance = distance;
             this.hit = hit;
         }
+
         @Override
         public int compareTo(PendingHit o) {
             return Double.compare(distance, o.distance);

@@ -8,14 +8,19 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LastStand extends AbstractAbility {
+    protected int playersLastStanded = 0;
 
     private final int selfDuration = 12;
     private final int allyDuration = 6;
@@ -47,6 +52,15 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Last Standed", "" + playersLastStanded));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
@@ -73,6 +87,8 @@ public class LastStand extends AbstractAbility {
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
+            playersLastStanded++;
+
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
                     name,

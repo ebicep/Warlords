@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class WonderTrap extends AbstractAbility {
 
@@ -29,6 +31,11 @@ public class WonderTrap extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "PLACEHOLDER";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        return null;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -12,13 +13,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FreezingBreath extends AbstractAbility {
+    protected int playersHit = 0;
 
     private final int slowDuration = 4;
 
     public FreezingBreath() {
         super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+
+        return info;
     }
 
     @Override
@@ -45,6 +58,7 @@ public class FreezingBreath extends AbstractAbility {
         PlayerFilter.entitiesAroundRectangle(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
                 .forEach(target -> {
+                    playersHit++;
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
                         target.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

@@ -7,6 +7,8 @@ import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -14,6 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractPlayerClass {
 
@@ -71,6 +76,22 @@ public abstract class AbstractPlayerClass {
         }
     }
 
+    public List<TextComponent> getFormattedData() {
+        List<TextComponent> textComponentList = new ArrayList<>();
+        ChatColor[] chatColors = {ChatColor.GREEN, ChatColor.RED, ChatColor.LIGHT_PURPLE, ChatColor.AQUA, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY};
+        for (int i = 0; i < getAbilities().length; i++) {
+            AbstractAbility ability = getAbilities()[i];
+            textComponentList.add(new TextComponentBuilder(chatColors[i] + ability.getName())
+                    .setHoverText(ability.getAbilityInfo().stream()
+                            .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
+                            .collect(Collectors.joining("\n"))
+                    )
+                    .getTextComponent());
+        }
+
+        return textComponentList;
+    }
+
     public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (wp.getGameState() != wp.getGame().getState()) {
@@ -91,6 +112,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     weapon.onActivate(wp, player);
                     if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                        weapon.addTimesUsed();
                         sendRightClickPacket(player);
                     }
                     resetAbilityCD();
@@ -109,6 +131,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = red.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        red.addTimesUsed();
                         red.setCurrentCooldown((float) (red.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -126,6 +149,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = purple.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        purple.addTimesUsed();
                         purple.setCurrentCooldown((float) (purple.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -144,6 +168,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = blue.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        blue.addTimesUsed();
                         blue.setCurrentCooldown((float) (blue.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -162,6 +187,7 @@ public abstract class AbstractPlayerClass {
                 if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     boolean shouldApplyCooldown = orange.onActivate(wp, player);
                     if (shouldApplyCooldown) {
+                        orange.addTimesUsed();
                         orange.setCurrentCooldown((float) (orange.getCooldown() * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -256,40 +282,20 @@ public abstract class AbstractPlayerClass {
         return weapon;
     }
 
-    public void setWeapon(AbstractAbility weapon) {
-        this.weapon = weapon;
-    }
-
     public AbstractAbility getRed() {
         return red;
-    }
-
-    public void setRed(AbstractAbility red) {
-        this.red = red;
     }
 
     public AbstractAbility getPurple() {
         return purple;
     }
 
-    public void setPurple(AbstractAbility purple) {
-        this.purple = purple;
-    }
-
     public AbstractAbility getBlue() {
         return blue;
     }
 
-    public void setBlue(AbstractAbility blue) {
-        this.blue = blue;
-    }
-
     public AbstractAbility getOrange() {
         return orange;
-    }
-
-    public void setOrange(AbstractAbility orange) {
-        this.orange = orange;
     }
 
     public String getName() {

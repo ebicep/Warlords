@@ -3,11 +3,15 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RighteousStrike extends AbstractStrikeBase {
+    protected int silencedTargetStruck = 0;
 
     public RighteousStrike() {
         super("Righteous Strike", 412, 523, 0, 90, 20, 175);
@@ -26,8 +30,18 @@ public class RighteousStrike extends AbstractStrikeBase {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Silenced Target Struck", "" + silencedTargetStruck));
+
+        return info;
+    }
+
+    @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
+            silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 16);
             wp.getSpec().getBlue().subtractCooldown(0.8f);
         } else {

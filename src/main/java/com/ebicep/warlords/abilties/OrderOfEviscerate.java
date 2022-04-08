@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -18,9 +19,14 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility {
+    protected int numberOfFullResets = 0;
+    protected int numberOfHalfResets = 0;
+    protected int numberOfBackstabs = 0;
 
     private int duration = 8;
     private float damageThreshold = 0;
@@ -46,6 +52,17 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7Shadow Step and Order of Eviscerate's cooldown\n" +
                 "§7and refund the energy cost. Assisting in killing your\n" +
                 "§7mark will only refund half the cooldown.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Number of Full Resets", "" + numberOfFullResets));
+        info.add(new Pair<>("Number of Half Resets", "" + numberOfHalfResets));
+        info.add(new Pair<>("Number of Backstabs", "" + numberOfBackstabs));
+
+        return info;
     }
 
     @Override
@@ -82,6 +99,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
                     !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
+                    numberOfBackstabs++;
                     return currentDamageValue * 1.3f;
                 } else {
                     return currentDamageValue * 1.2f;
@@ -102,6 +120,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
                 wp.getCooldownManager().removeCooldownByName("Cloaked");
                 if (isKiller) {
+                    numberOfFullResets++;
+
                     wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
                     new GameRunnable(wp.getGame()) {
 
@@ -115,6 +135,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     }.runTaskLater(2);
                 } else {
+                    numberOfHalfResets++;
+
                     new GameRunnable(wp.getGame()) {
 
                         @Override

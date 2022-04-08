@@ -1,11 +1,16 @@
-package com.ebicep.warlords.classes.shaman.specs.spiritguard;
+package com.ebicep.warlords.classes.shaman.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 
 public class Spiritguard extends AbstractShaman {
+
     public Spiritguard() {
-        super("Spiritguard", 5530, 305, 10,
+        super(
+                "Spiritguard",
+                5530,
+                305,
+                10,
                 new FallenSouls(),
                 new SpiritLink(),
                 new Soulbinding(),

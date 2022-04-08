@@ -19,15 +19,17 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractTotemBase extends AbstractAbility {
 
-    private ArmorStand totem;
+    protected WarlordsPlayer owner;
+    protected ArmorStand totem;
 
     public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, ArmorStand totem) {
+    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, ArmorStand totem, WarlordsPlayer owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.totem = totem;
+        this.owner = owner;
     }
 
     protected abstract ItemStack getTotemItemStack();

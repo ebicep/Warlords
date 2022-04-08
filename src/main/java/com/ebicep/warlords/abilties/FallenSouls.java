@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
+    protected int playersHit = 0;
 
     private static final float fallenSoulHitBox = 1.25f;
     private static final float fallenSoulSpeed = 1.95f;
@@ -35,6 +37,15 @@ public class FallenSouls extends AbstractAbility {
                 "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
                 "§7cooldown of Spirit Link by §62 §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+
+        return info;
     }
 
     @Override
@@ -114,6 +125,7 @@ public class FallenSouls extends AbstractAbility {
                 .filter(p -> !fallenSoul.getPlayersHit().contains(p))
                 .aliveEnemiesOf(wp)
         ) {
+            playersHit++;
             warlordsPlayer.addDamageInstance(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
             fallenSoul.getPlayersHit().add(warlordsPlayer);
             fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
@@ -122,6 +134,8 @@ public class FallenSouls extends AbstractAbility {
                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                     .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(warlordsPlayer))
                     .forEachOrdered(soulbinding -> {
+                        fallenSoul.getShooter().doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
+
                         fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
@@ -138,6 +152,7 @@ public class FallenSouls extends AbstractAbility {
                                 .closestFirst(wp.getLocation())
                                 .limit(2)
                         ) {
+                            fallenSoul.getShooter().doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 
                             warlordsPlayer1.getSpec().getRed().subtractCooldown(1);
                             warlordsPlayer1.getSpec().getPurple().subtractCooldown(1);

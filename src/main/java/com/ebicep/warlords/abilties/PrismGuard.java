@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -15,14 +16,13 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
+    protected int timesProjectilesReduced = 0;
+    protected int timesOtherReduced = 0;
 
     private int bubbleRadius = 4;
     private int duration = 4;
@@ -44,6 +44,16 @@ public class PrismGuard extends AbstractAbility {
                 "§7you for " + healingString + " §7missing health and\n" +
                 "§7allies for half the amount based on how long\n" +
                 "§7they've been in the bubble.\n";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Projectiles Damage Reduced", "" + timesProjectilesReduced));
+        info.add(new Pair<>("Times Other Damage Reduced", "" + timesOtherReduced));
+
+        return info;
     }
 
     @Override
@@ -88,9 +98,11 @@ public class PrismGuard extends AbstractAbility {
                     if (isInsideBubble.contains(event.getAttacker())) {
                         return currentDamageValue;
                     } else {
+                        timesProjectilesReduced++;
                         return currentDamageValue * .4f;
                     }
                 } else {
+                    timesOtherReduced++;
                     return currentDamageValue * .75f;
                 }
             }
@@ -160,9 +172,11 @@ public class PrismGuard extends AbstractAbility {
                                     if (isInsideBubble.contains(event.getAttacker())) {
                                         return currentDamageValue;
                                     } else {
+                                        timesProjectilesReduced++;
                                         return currentDamageValue * .4f;
                                     }
                                 } else {
+                                    timesOtherReduced++;
                                     return currentDamageValue * .75f;
                                 }
                             }

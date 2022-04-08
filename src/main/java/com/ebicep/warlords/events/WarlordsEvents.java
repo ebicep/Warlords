@@ -3,7 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
@@ -261,23 +261,25 @@ public class WarlordsEvents implements Listener {
 
                     if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
 
-                        Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
+                        Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
                         new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
                             .filter(PersistentCooldown::isShown)
                             .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                             .forEachOrdered(soulbinding -> {
+                                wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
+
                                 if (soulbinding.hasBoundPlayer(wpVictim)) {
                                     soulbinding.getSoulBindedPlayers().stream()
                                             .filter(p -> p.getBoundPlayer() == wpVictim)
                                             .forEach(boundPlayer -> {
                                                 boundPlayer.setHitWithSoul(false);
                                                 boundPlayer.setHitWithLink(false);
-                                                boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
+                                                boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
                                             });
                                 } else {
                                     wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
                                     wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
-                                    soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
+                                    soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
                                     Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                 }
                             });

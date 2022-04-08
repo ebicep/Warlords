@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShadowStep extends AbstractAbility {
+    protected int totalPlayersHit = 0;
 
     public ShadowStep() {
         super("Shadow Step", 466, 598, 12, 20, 15, 175);
@@ -32,6 +34,16 @@ public class ShadowStep extends AbstractAbility {
                 "§7Shadow Step has reduced range when\n" +
                 "§7holding a Flag.";
     }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + totalPlayersHit));
+
+        return info;
+    }
+
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
@@ -60,6 +72,7 @@ public class ShadowStep extends AbstractAbility {
                 .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
+            totalPlayersHit++;
             assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
             playersHit.add(assaultTarget);
@@ -94,6 +107,7 @@ public class ShadowStep extends AbstractAbility {
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
                     ) {
+                        totalPlayersHit++;
                         landingTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }

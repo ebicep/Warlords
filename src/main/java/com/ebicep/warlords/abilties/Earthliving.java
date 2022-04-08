@@ -6,13 +6,19 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Earthliving extends AbstractAbility {
+    protected int timesProcd = 0;
+    protected int playersHealed = 0;
 
     private final int duration = 8;
     private int procChance = 40;
@@ -30,6 +36,16 @@ public class Earthliving extends AbstractAbility {
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Proc'd", "" + timesProcd));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+
+        return info;
     }
 
     @Override
@@ -60,6 +76,7 @@ public class Earthliving extends AbstractAbility {
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < procChance) {
+                        timesProcd++;
 
                         attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
 
@@ -72,6 +89,7 @@ public class Earthliving extends AbstractAbility {
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                         ) {
+                            playersHealed++;
                             nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
                         }
                     }

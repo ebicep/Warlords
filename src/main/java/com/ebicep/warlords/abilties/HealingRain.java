@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,16 +18,28 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
+    protected int playersHealed = 0;
 
     private int duration = 12;
     private int radius = 8;
 
     public HealingRain() {
         super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+
+        return info;
     }
 
     @Override
@@ -104,6 +117,7 @@ public class HealingRain extends AbstractAbility {
                             .entitiesAround(location, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                     ) {
+                        playersHealed++;
                         teammateInRain.addHealingInstance(
                                 wp,
                                 name,

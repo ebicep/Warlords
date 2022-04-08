@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,10 +15,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
 public class Intervene extends AbstractAbility {
+    protected int playersIntervened = 0;
+    protected int carriersIntervened = 0;
 
     private float damagePrevented = 0;
 
@@ -44,6 +49,16 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Intervened", "" + playersIntervened));
+        info.add(new Pair<>("Carriers Intervened", "" + carriersIntervened));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         setDamagePrevented(0);
 
@@ -54,6 +69,10 @@ public class Intervene extends AbstractAbility {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
+            playersIntervened++;
+            if (vt.hasFlag()) {
+                carriersIntervened++;
+            }
             // Green line / Sound
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), vt.getLocation(), ParticleEffect.VILLAGER_HAPPY);
             Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1, 1);

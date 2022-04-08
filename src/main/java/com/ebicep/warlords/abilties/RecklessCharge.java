@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
+    protected int playersCharged = 0;
 
     private static final List<UUID> stunnedPlayers = new ArrayList<>();
     private int stunTimeInTicks = 10;
@@ -39,6 +41,16 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                 "§7for §6" + stunDuration + " §7seconds. Charge is reduced\n" +
                 "§7when carrying a flag.";
     }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Charged", "" + playersCharged));
+
+        return info;
+    }
+
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {

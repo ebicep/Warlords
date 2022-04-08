@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,7 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Consecrate extends AbstractAbility {
+    protected int strikesBoosted = 0;
+    protected int playersHit = 0;
 
     protected int strikeDamageBoost;
     protected float radius;
@@ -37,6 +43,15 @@ public class Consecrate extends AbstractAbility {
                 "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
                 "§7your paladin strikes. Lasts §65\n" +
                 "§7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Strikes Boosted", "" + strikesBoosted));
+        return info;
     }
 
     @Override
@@ -71,6 +86,7 @@ public class Consecrate extends AbstractAbility {
                 PlayerFilter.entitiesAround(location, radius, 6, radius)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsPlayer -> {
+                            playersHit++;
                             warlordsPlayer.addDamageInstance(
                                     wp,
                                     name,
@@ -90,6 +106,10 @@ public class Consecrate extends AbstractAbility {
         }.runTaskTimer(0, 20);
 
         return true;
+    }
+
+    public void addStrikesBoosted() {
+        strikesBoosted++;
     }
 
     public void setRadius(float radius) {

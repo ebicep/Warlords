@@ -2,10 +2,7 @@ package com.ebicep.warlords.game.option.marker;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.flags.FlagInfo;
-import com.ebicep.warlords.game.flags.FlagLocation;
-import com.ebicep.warlords.game.flags.GroundFlagLocation;
-import com.ebicep.warlords.game.flags.PlayerFlagLocation;
+import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -108,16 +105,29 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     static boolean isPlayerHolderFlag(WarlordsPlayer player) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagLocation flag = holder.getFlag();
-            if (flag instanceof PlayerFlagLocation && ((PlayerFlagLocation)flag).getPlayer().equals(player)) {
+            if (flag instanceof PlayerFlagLocation && ((PlayerFlagLocation) flag).getPlayer().equals(player)) {
                 return true;
             }
         }
         return false;
     }
-    
+
+    static boolean playerTryingToPick(WarlordsPlayer player) {
+        for (FlagHolder flagHolder : player.getGame().getMarkers(FlagHolder.class)) {
+            FlagInfo flagInfo = flagHolder.getInfo();
+            if (flagInfo.getFlag() instanceof SpawnFlagLocation && flagInfo.getTeam() != player.getTeam()) {
+                if (flagInfo.getFlag().getLocation().distanceSquared(player.getLocation()) < 12 * 12) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static FlagHolder create(FlagInfo info) {
         return create(() -> info);
     }
+
     static FlagHolder create(Supplier<FlagInfo> info) {
         return new FlagHolder() {
             @Override

@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,7 +23,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HealingTotem extends AbstractTotemBase {
+    protected int playersHealed = 0;
+    protected int playersCrippled = 0;
 
     private final int radius = 7;
     private final int duration = 6;
@@ -32,8 +38,8 @@ public class HealingTotem extends AbstractTotemBase {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
     }
 
-    public HealingTotem(ArmorStand totem) {
-        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175, totem);
+    public HealingTotem(ArmorStand totem, WarlordsPlayer owner) {
+        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175, totem, owner);
     }
 
     @Override
@@ -50,6 +56,16 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7pulse with immense force, crippling all\n" +
                 "§7enemies for §6" + crippleDuration + " §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Players Crippled", "" + playersCrippled));
+
+        return info;
     }
 
     @Override
@@ -73,7 +89,7 @@ public class HealingTotem extends AbstractTotemBase {
                 name,
                 "TOTEM",
                 HealingTotem.class,
-                new HealingTotem(totemStand),
+                new HealingTotem(totemStand, wp),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -123,6 +139,7 @@ public class HealingTotem extends AbstractTotemBase {
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
+                                playersHealed++;
                                 nearPlayer.addHealingInstance(
                                         wp,
                                         name,
@@ -136,6 +153,7 @@ public class HealingTotem extends AbstractTotemBase {
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
+                                playersHealed++;
                                 nearPlayer.addHealingInstance(
                                         wp,
                                         name,
@@ -162,6 +180,7 @@ public class HealingTotem extends AbstractTotemBase {
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
+                                playersCrippled++;
                                 wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
                                 p.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
                                         "Totem Crippling",

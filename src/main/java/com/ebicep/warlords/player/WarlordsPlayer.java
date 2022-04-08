@@ -8,9 +8,8 @@ import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.rogue.specs.Assassin;
 import com.ebicep.warlords.classes.rogue.specs.Vindicator;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -63,6 +62,7 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class WarlordsPlayer {
@@ -82,7 +82,7 @@ public final class WarlordsPlayer {
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats;
     private final PlayerStatisticsSecond secondStats;
-    private final List<Achievement.AbstractAchievementRecord> achievementsUnlocked = new ArrayList<>();
+    private final List<Achievement.AbstractAchievementRecord<?>> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
@@ -408,6 +408,7 @@ public final class WarlordsPlayer {
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
+                    doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
                     if (entity instanceof Player) {
@@ -1047,6 +1048,23 @@ public final class WarlordsPlayer {
         }
     }
 
+
+    /**
+     * Performs consumer action on WarlordsPlayers static (not the temp ones made on onActivate()) spec abilities that matches the given class.
+     * Player specs and their abilities are unknown at this point.
+     *
+     * @param abilityClass The class of the ability.
+     * @param consumer     What to perform on the ability
+     * @param <T>          The type of the ability.
+     */
+    public <T extends AbstractAbility> void doOnStaticAbility(Class<T> abilityClass, Consumer<T> consumer) {
+        for (AbstractAbility ability : spec.getAbilities()) {
+            if (ability.getClass().equals(abilityClass)) {
+                consumer.accept(abilityClass.cast(ability));
+            }
+        }
+    }
+
     public CooldownManager getCooldownManager() {
         return cooldownManager;
     }
@@ -1478,10 +1496,13 @@ public final class WarlordsPlayer {
         this.energy = energy;
     }
 
-    public void addEnergy(WarlordsPlayer giver, String ability, float amount) {
+    public float addEnergy(WarlordsPlayer giver, String ability, float amount) {
+        float energyGiven = 0;
         if (energy + amount > maxEnergy) {
+            energyGiven = maxEnergy - energy;
             this.energy = maxEnergy;
         } else if (energy + amount > 0) {
+            energyGiven = amount;
             this.energy += amount;
         } else {
             this.energy = 1;
@@ -1494,17 +1515,26 @@ public final class WarlordsPlayer {
                 giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
             }
         }
+
+        return energyGiven;
     }
 
-    public void subtractEnergy(int amount) {
+    public float subtractEnergy(int amount) {
+        float amountSubtracted = 0;
         if (!infiniteEnergy) {
             amount *= energyModifier;
             if (energy - amount > maxEnergy) {
+                amountSubtracted = maxEnergy - energy;
                 energy = maxEnergy;
+            } else if (energy - amount < 0) {
+                amountSubtracted = energy;
+                energy = 0;
             } else {
-                this.energy -= amount;
+                amountSubtracted = amount;
+                energy -= amount;
             }
         }
+        return amountSubtracted;
     }
 
     public void sendMessage(String message) {
@@ -1613,41 +1643,6 @@ public final class WarlordsPlayer {
 
     public void addAbsorbed(float amount) {
         this.minuteStats.addAbsorbed((long) amount);
-    }
-
-    public ItemStack getStatItemStack(String name) {
-        ItemStack itemStack = new ItemStack(Material.STONE);
-        ItemMeta meta = itemStack.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
-        List<PlayerStatisticsMinute.Entry> entries = this.minuteStats.getEntries();
-        int length = entries.size();
-        for (int i = 0; i < length; i++) {
-            PlayerStatisticsMinute.Entry entry = entries.get(length - i - 1);
-            switch (name) {
-                case "Kills":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getKills()));
-                    break;
-                case "Assists":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getAssists()));
-                    break;
-                case "Deaths":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getDeaths()));
-                    break;
-                case "Damage":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getDamage()));
-                    break;
-                case "Healing":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getHealing()));
-                    break;
-                case "Absorbed":
-                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getAbsorbed()));
-                    break;
-            }
-        }
-        meta.setLore(lore);
-        itemStack.setItemMeta(meta);
-        return itemStack;
     }
 
     public String getStatString(String name) {
@@ -2096,7 +2091,7 @@ public final class WarlordsPlayer {
         return secondStats;
     }
 
-    public List<Achievement.AbstractAchievementRecord> getAchievementsUnlocked() {
+    public List<Achievement.AbstractAchievementRecord<?>> getAchievementsUnlocked() {
         return achievementsUnlocked;
     }
 

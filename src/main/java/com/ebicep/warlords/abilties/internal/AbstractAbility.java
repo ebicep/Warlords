@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -24,6 +25,8 @@ public abstract class AbstractAbility {
     static {
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
+
+    protected int timesUsed = 0;
 
     protected String name;
     protected float minDamageHeal;
@@ -52,6 +55,8 @@ public abstract class AbstractAbility {
 
     public abstract void updateDescription(Player player);
 
+    public abstract List<Pair<String, String>> getAbilityInfo();
+
     /**
      * @param wp
      * @param player
@@ -69,6 +74,19 @@ public abstract class AbstractAbility {
             }
         }
     }
+
+    public void addTimesUsed() {
+        this.timesUsed++;
+    }
+
+    public int getTimesUsed() {
+        return timesUsed;
+    }
+
+    public void setTimesUsed(int timesUsed) {
+        this.timesUsed = timesUsed;
+    }
+
 
     public String getName() {
         return name;

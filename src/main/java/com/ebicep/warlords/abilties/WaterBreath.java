@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,8 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WaterBreath extends AbstractAbility {
+    protected int playersHealed = 0;
+    protected int debuffsRemoved = 0;
 
     public WaterBreath() {
         super("Water Breath", 528, 723, 6.3f, 60, 25, 175);
@@ -34,9 +39,19 @@ public class WaterBreath extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Debuffs Removed", "" + debuffsRemoved));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().removeDebuffCooldowns();
+        debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
 
@@ -55,7 +70,9 @@ public class WaterBreath extends AbstractAbility {
                 Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                 if (viewDirection.dot(direction) > .68) {
                     if (wp.isTeammateAlive(target)) {
-                        target.getCooldownManager().removeDebuffCooldowns();
+                        playersHealed++;
+
+                        debuffsRemoved += target.getCooldownManager().removeDebuffCooldowns();
                         target.getSpeed().removeSlownessModifiers();
                         target.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                         target.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);

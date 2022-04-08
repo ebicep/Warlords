@@ -5,9 +5,12 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImpalingStrike extends AbstractStrikeBase {
 
@@ -26,6 +29,14 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 "§7damage to a leeched enemy, they heal for §a15%\n" +
                 "§7of the damage dealt. You heal for §a25% §7of the\n" +
                 "§7damage you deal to a leeched enemy instead.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Players Stuck", "" + timesUsed));
+
+        return info;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,7 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IncendiaryCurse extends AbstractAbility {
+    protected int playersHit = 0;
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
@@ -33,8 +38,17 @@ public class IncendiaryCurse extends AbstractAbility {
     public void updateDescription(Player player) {
         double blindDuration = blindDurationInTicks == 40 ? 1.5 : 2.5;
         description = "§7Ignite the targeted area with a cross flame,\n" +
-                    "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
-                    "§7hit are blinded for §6" + format(blindDuration) + " §7seconds.";
+                "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
+                "§7hit are blinded for §6" + format(blindDuration) + " §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+
+        return info;
     }
 
     @Override
@@ -114,6 +128,8 @@ public class IncendiaryCurse extends AbstractAbility {
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                             .aliveEnemiesOf(wp)
                     ) {
+                        playersHit++;
+
                         nearEntity.addDamageInstance(
                                 wp,
                                 name,

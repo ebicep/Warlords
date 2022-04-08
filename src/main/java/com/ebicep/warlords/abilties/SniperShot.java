@@ -4,11 +4,13 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class SniperShot extends AbstractProjectileBase {
 
@@ -22,6 +24,11 @@ public class SniperShot extends AbstractProjectileBase {
     public void updateDescription(Player player) {
         description = "Shoot a massive projectile at rapid speed," +
                 "dealing " + format(minDamageHeal) + " - " + format(maxDamageHeal) + " damage to the first target it hits.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        return null;
     }
 
     @Nullable
@@ -53,16 +60,18 @@ public class SniperShot extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsPlayer shooter, @Nonnull Location currentLocation, @Nonnull Location startingLocation, @Nullable WarlordsPlayer hit) {
-        if (hit != null) {
-            hit.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier,
-                    false);
-        }
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit) {
+//        if (hit != null) {
+//            hit.addDamageInstance(
+//                    shooter,
+//                    name,
+//                    minDamageHeal,
+//                    maxDamageHeal,
+//                    critChance,
+//                    critMultiplier,
+//                    false);
+//        }
+        return 0;
     }
+
 }

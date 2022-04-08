@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -16,6 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
@@ -41,7 +45,17 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
     }
 
     @Override
-    public void chain(WarlordsPlayer wp, Player player) {
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Players Marked", "" + playersMarked));
+
+        return info;
+    }
+
+    @Override
+    public boolean chain(WarlordsPlayer wp, Player player) {
         for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -49,8 +63,6 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
-                wp.subtractEnergy(energyCost);
-
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
@@ -126,10 +138,14 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                         }
                     }
                 }.runTaskTimer(0, 10);
+
+                return true;
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
+                return false;
             }
         }
+        return false;
     }
 
     public void setMarkDuration(int markDuration) {

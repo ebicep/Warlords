@@ -8,13 +8,18 @@ import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Windfury extends AbstractAbility {
+    protected int timesProcd = 0;
 
     private int procChance = 35;
     private final int duration = 8;
@@ -33,6 +38,15 @@ public class Windfury extends AbstractAbility {
                 "§7weapon damage. The first melee hit is\n" +
                 "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +
                 "§7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Proc'd", "" + timesProcd));
+
+        return info;
     }
 
     @Override
@@ -65,6 +79,7 @@ public class Windfury extends AbstractAbility {
                         windfuryActivate = 0;
                     }
                     if (windfuryActivate < procChance) {
+                        timesProcd++;
                         new BukkitRunnable() {
                             int counter = 0;
 

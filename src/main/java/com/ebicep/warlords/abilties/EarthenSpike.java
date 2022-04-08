@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
+    protected int playersSpiked = 0;
+    protected int carrierSpiked = 0;
 
     private final int radius = 10;
 
@@ -50,6 +53,16 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Spiked", "" + playersSpiked));
+        info.add(new Pair<>("Times Carrier Spiked", "" + carrierSpiked));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation();
         for (WarlordsPlayer p : PlayerFilter
@@ -58,6 +71,7 @@ public class EarthenSpike extends AbstractAbility {
                 .lookingAtFirst(wp)
         ) {
             if (Utils.isLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+                addTimesUsed();
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
@@ -135,6 +149,10 @@ public class EarthenSpike extends AbstractAbility {
                                     .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                     .aliveEnemiesOf(wp)
                             ) {
+                                playersSpiked++;
+                                if (spikeTarget.hasFlag()) {
+                                    carrierSpiked++;
+                                }
                                 spikeTarget.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                 //todo tweak distance to ground where you cant get kbed up (1.82 is max jump blocks, double spike kb might be possible with this)
                                 if (Utils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {

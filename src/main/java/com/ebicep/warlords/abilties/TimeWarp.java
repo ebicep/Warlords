@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -14,12 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
+    protected int timesSuccessful = 0;
 
     private final double duration = 5;
     private int warpHealPercentage = 30;
 
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Successful", "" + timesSuccessful));
+
+        return info;
     }
 
     @Override
@@ -50,6 +61,8 @@ public class TimeWarp extends AbstractAbility {
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
+                                timesSuccessful++;
+
                                 wp.addHealingInstance(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false, false);
                                 Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
@@ -97,5 +110,9 @@ public class TimeWarp extends AbstractAbility {
 
     public void setWarpHealPercentage(int warpHealPercentage) {
         this.warpHealPercentage = warpHealPercentage;
+    }
+
+    public int getTimesSuccessful() {
+        return timesSuccessful;
     }
 }

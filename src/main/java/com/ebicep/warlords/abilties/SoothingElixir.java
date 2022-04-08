@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,7 +22,11 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SoothingElixir extends AbstractAbility {
+    protected int playersHealed = 0;
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
@@ -45,6 +50,15 @@ public class SoothingElixir extends AbstractAbility {
                 "§7enemies for §c" + puddleMinDamage + " §7- §c" + puddleMaxDamage + " §7damage. The projectile\n" +
                 "§7will form a small puddle that heals allies for\n" +
                 "§a" + puddleMinHealing + " §7- §a" + puddleMaxHealing + " §7health per second. Lasts §64 §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+
+        return info;
     }
 
     @Override

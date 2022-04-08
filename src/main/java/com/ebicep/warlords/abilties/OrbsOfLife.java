@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Random;
 
 public class OrbsOfLife extends AbstractAbility {
+    protected int orbsProduced = 0;
 
     public static final double SPAWN_RADIUS = 1.15;
     public static float ORB_HEALING = 225;
@@ -63,6 +65,15 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Orbs Produced", "" + orbsProduced));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
@@ -80,25 +91,25 @@ public class OrbsOfLife extends AbstractAbility {
         ) {
             @Override
             public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 }
             }
 
             @Override
             public void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 }
             }
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                    spawnOrbs(wp, event.getPlayer(), event.getAbility(), this);
                 }
             }
         };
@@ -156,9 +167,15 @@ public class OrbsOfLife extends AbstractAbility {
         return true;
     }
 
-    public void spawnOrbs(WarlordsPlayer victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+    public void add2OrbsProduced() {
+        this.orbsProduced += 2;
+    }
+
+    public void spawnOrbs(WarlordsPlayer owner, WarlordsPlayer victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
         if (ability.isEmpty() || ability.equals("Intervene")) return;
         if (cooldown.isHidden()) return;
+        owner.doOnStaticAbility(OrbsOfLife.class, OrbsOfLife::add2OrbsProduced);
+
         OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);

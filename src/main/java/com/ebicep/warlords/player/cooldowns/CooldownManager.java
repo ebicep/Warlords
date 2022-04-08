@@ -103,8 +103,10 @@ public class CooldownManager {
         return abstractCooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF).collect(Collectors.toList());
     }
 
-    public void removeDebuffCooldowns() {
-        abstractCooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.DEBUFF);
+    public int removeDebuffCooldowns() {
+        List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF).collect(Collectors.toList());
+        abstractCooldowns.removeAll(toRemove);
+        return toRemove.size();
     }
 
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
@@ -204,6 +206,7 @@ public class CooldownManager {
                 .collect(Collectors.toList())
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
+                this.warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
                 counter++;
             }
         }

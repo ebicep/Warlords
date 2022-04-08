@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,10 +15,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RemedicChains extends AbstractAbility {
+    protected int playersLinked = 0;
+    protected int numberOfBrokenLinks = 0;
 
     private int linkBreakRadius = 15;
     private final int duration = 8;
@@ -45,6 +50,17 @@ public class RemedicChains extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Linked", "" + playersLinked));
+        info.add(new Pair<>("Times Link Broke", "" + numberOfBrokenLinks));
+
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         RemedicChains tempRemedicChain = new RemedicChains();
 
@@ -55,6 +71,8 @@ public class RemedicChains extends AbstractAbility {
                 .closestFirst(wp)
                 .limit(alliesAffected)
         ) {
+            playersLinked++;
+
             chainTarget.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
                     name,
                     "REMEDIC",
@@ -106,6 +124,8 @@ public class RemedicChains extends AbstractAbility {
                             EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
                             // Ally is out of range, break link
                             if (outOfRange) {
+                                numberOfBrokenLinks++;
+
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
                                     float totalHealingMultiplier = (healingMultiplier * entry.getValue());
                                     entry.getKey().addHealingInstance(

@@ -4,10 +4,14 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LightInfusion extends AbstractAbility {
 
@@ -24,6 +28,14 @@ public class LightInfusion extends AbstractAbility {
                 "§7restoring §a120 §7energy and\n" +
                 "§7increasing your movement speed by\n" +
                 "§e" + speedBuff + "% §7for §6" + duration + " §7seconds";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+
+        return info;
     }
 
     @Override

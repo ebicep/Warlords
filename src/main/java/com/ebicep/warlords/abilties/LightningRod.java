@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LightningRod extends AbstractAbility {
@@ -30,6 +32,16 @@ public class LightningRod extends AbstractAbility {
                 "§e" + energyRestore + " §7energy and knock all nearby enemies\n" +
                 "§7in a §e" + knockbackRadius + " §7block radius back.";
     }
+
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+
+        return info;
+    }
+
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
@@ -52,18 +64,7 @@ public class LightningRod extends AbstractAbility {
         List<CapacitorTotem> totemDownAndClose = AbstractTotemBase.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
         totemDownAndClose.forEach(capacitorTotem -> {
             ArmorStand totem = capacitorTotem.getTotem();
-            PlayerFilter.entitiesAround(totem.getLocation(), 6, 6, 6)
-                    .aliveEnemiesOf(wp)
-                    .forEach(enemy -> enemy.addDamageInstance(
-                            wp,
-                            wp.getSpec().getOrange().getName(),
-                            wp.getSpec().getOrange().getMinDamageHeal(),
-                            wp.getSpec().getOrange().getMaxDamageHeal(),
-                            wp.getSpec().getOrange().getCritChance(),
-                            wp.getSpec().getOrange().getCritMultiplier(),
-                            false)
-                    );
-            new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
+            capacitorTotem.pulseDamage();
 
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

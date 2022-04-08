@@ -4,14 +4,18 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AvengersWrath extends AbstractAbility {
+    protected int extraPlayersStruck = 0;
 
     private int duration = 12;
 
@@ -28,6 +32,15 @@ public class AvengersWrath extends AbstractAbility {
                 "§7target. Your energy per second is\n" +
                 "§7increased by §e20 §7for the duration\n" +
                 "§7of the effect. Lasts §6" + duration + " §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Extra Players Struck", "" + extraPlayersStruck));
+
+        return info;
     }
 
     @Override
@@ -61,6 +74,10 @@ public class AvengersWrath extends AbstractAbility {
         }.runTaskTimer(0, 4);
 
         return true;
+    }
+
+    public void addExtraPlayersStruck() {
+        extraPlayersStruck++;
     }
 
     public int getDuration() {

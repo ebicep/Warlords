@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.shaman.specs.earthwarden;
+package com.ebicep.warlords.classes.shaman.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
@@ -6,7 +6,11 @@ import com.ebicep.warlords.classes.shaman.AbstractShaman;
 public class Earthwarden extends AbstractShaman {
 
     public Earthwarden() {
-        super("Earthwarden", 5530, 355, 10,
+        super(
+                "Earthwarden",
+                5530,
+                355,
+                10,
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),

@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,9 +24,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DeathsDebt extends AbstractTotemBase {
+    protected int playersDamaged = 0;
+    protected int playersHealed = 0;
 
     private int respiteRadius = 10;
     private int debtRadius = 8;
@@ -39,8 +44,8 @@ public class DeathsDebt extends AbstractTotemBase {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
     }
 
-    public DeathsDebt(ArmorStand totem) {
-        super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100, totem);
+    public DeathsDebt(ArmorStand totem, WarlordsPlayer owner) {
+        super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100, totem, owner);
     }
 
     @Override
@@ -62,6 +67,16 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+
+        return info;
+    }
+
+    @Override
     protected ItemStack getTotemItemStack() {
         return new ItemStack(Material.JUNGLE_FENCE_GATE);
     }
@@ -80,7 +95,7 @@ public class DeathsDebt extends AbstractTotemBase {
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         final int ticksLeft = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
 
-        DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand);
+        DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand, wp);
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
@@ -112,6 +127,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                 PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                         .aliveEnemiesOf(wp)
                                         .forEach((nearPlayer) -> {
+                                            playersDamaged++;
                                             nearPlayer.addDamageInstance(wp,
                                                     name,
                                                     tempDeathsDebt.getDelayedDamage() * .15f,
@@ -214,6 +230,7 @@ public class DeathsDebt extends AbstractTotemBase {
         PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
                 .forEach((nearPlayer) -> {
+                    playersHealed++;
                     nearPlayer.addHealingInstance(wp, name,
                             damage * .15f,
                             damage * .15f,

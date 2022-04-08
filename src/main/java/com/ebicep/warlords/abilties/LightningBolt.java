@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -14,6 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
@@ -29,6 +33,16 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
                 "\n" +
                 "§7Has a maximum range of §e60 §7blocks.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Shots Fired", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
+
+        return info;
     }
 
     @Override
@@ -61,6 +75,10 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsPlayer wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             projectile.getHit().add(hit);
+            playersHit++;
+            if (hit.onHorse()) {
+                numberOfDismounts++;
+            }
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
@@ -74,21 +92,27 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected void onHit(InternalProjectile projectile, WarlordsPlayer hit) {
-        final Location currentLocation = projectile.getCurrentLocation();
+    protected int onHit(InternalProjectile projectile, WarlordsPlayer hit) {
+        WarlordsPlayer wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
-        WarlordsPlayer wp = projectile.getShooter();
-        for (WarlordsPlayer warlordsPlayer : PlayerFilter
+        int playersHit = 0;
+        for (WarlordsPlayer enemy : PlayerFilter
                 .entitiesAround(currentLocation, 3, 3, 3)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
         ) {
+            playersHit++;
+            if (enemy.onHorse()) {
+                numberOfDismounts++;
+            }
             //hitting player
-            warlordsPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            Utils.playGlobalSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+            Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
 
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);
@@ -96,6 +120,8 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 wp.updateRedItem((Player) wp.getEntity());
             }
         }
+
+        return playersHit;
     }
 
     @Override
@@ -141,10 +167,5 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     protected void playEffect(Location currentLocation, int ticksLived) {
     }
 
-    @Override
-    @Deprecated
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer hit) {
-        throw new UnsupportedOperationException("Deprecated");
-    }
 
 }
