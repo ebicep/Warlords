@@ -9,14 +9,18 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Vindicate extends AbstractAbility {
+    protected int debuffsRemovedOnCast = 0;
 
     private final int radius = 8;
     private final int vindicateDuration = 12;
@@ -35,6 +39,15 @@ public class Vindicate extends AbstractAbility {
                 "§7affected by de-buffs and grants §650% §7knockback\n" +
                 "§7resistance for §6" + vindicateDuration + " §7seconds. You gain §e" + format(vindicateDamageReduction) + "%\n" +
                 "§7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Debuffs Removed On Cast", "" + debuffsRemovedOnCast));
+
+        return info;
     }
 
     @Override
@@ -69,7 +82,7 @@ public class Vindicate extends AbstractAbility {
 
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
-            vindicateTarget.getCooldownManager().removeDebuffCooldowns();
+            debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
             vindicateTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
             vindicateTarget.getCooldownManager().addRegularCooldown(
                     "Vindicate Debuff Immunity",

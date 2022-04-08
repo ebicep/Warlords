@@ -3,7 +3,9 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -18,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroundSlam extends AbstractAbility {
+    protected int playersHit = 0;
+    protected int carrierHit = 0;
+    protected int warpsKnockbacked = 0;
 
     public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -31,11 +36,19 @@ public class GroundSlam extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
-        List<WarlordsPlayer> playersHit = new ArrayList<>();
+        List<WarlordsPlayer> currentPlayersHit = new ArrayList<>();
         Location location = player.getLocation();
 
         for (int i = 0; i < 6; i++) {
@@ -64,14 +77,20 @@ public class GroundSlam extends AbstractAbility {
                         //DAMAGE
                         PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
                                 .enemiesOf(wp)
+                                .excluding(currentPlayersHit)
                                 .forEach(enemy -> {
-                                    if (!playersHit.contains(enemy)) {
-                                        playersHit.add(enemy);
-                                        final Location loc = enemy.getLocation();
-                                        final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
-                                        enemy.setVelocity(v, false);
-                                        enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    playersHit++;
+                                    if (enemy.hasFlag()) {
+                                        carrierHit++;
                                     }
+                                    if (enemy.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(enemy)) {
+                                        warpsKnockbacked++;
+                                    }
+                                    currentPlayersHit.add(enemy);
+                                    final Location loc = enemy.getLocation();
+                                    final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
+                                    enemy.setVelocity(v, false);
+                                    enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                 });
                     }
                     fallingBlockLocations.remove(fallingBlockLocation);

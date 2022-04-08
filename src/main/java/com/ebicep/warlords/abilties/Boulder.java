@@ -3,7 +3,9 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,7 +19,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Boulder extends AbstractAbility {
+    protected int playersHit = 0;
+    protected int carrierHit = 0;
+    protected int warpsKnockbacked = 0;
 
     private static final double SPEED = 0.290;
     private static final double GRAVITY = -0.0059;
@@ -32,6 +40,17 @@ public class Boulder extends AbstractAbility {
                 "§7and deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies near the impact point\n" +
                 "§7and knocks them back slightly.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
+        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
+
+        return info;
     }
 
     @Override
@@ -113,6 +132,13 @@ public class Boulder extends AbstractAbility {
                                     .entitiesAround(newLoc, 5.5, 5.5, 5.5)
                                     .aliveEnemiesOf(wp)
                             ) {
+                                playersHit++;
+                                if (p.hasFlag()) {
+                                    carrierHit++;
+                                }
+                                if (p.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                                    warpsKnockbacked++;
+                                }
                                 Vector v;
                                 if (p == directHitFinal) {
                                     v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);

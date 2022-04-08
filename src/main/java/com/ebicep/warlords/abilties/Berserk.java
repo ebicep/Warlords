@@ -6,12 +6,18 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Berserk extends AbstractAbility {
+    protected int hitsDoneAmplified = 0;
+    protected int hitsTakenAmplified = 0;
 
     private final int duration = 18;
     // Percent
@@ -32,6 +38,16 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Hits Done Amplified", "" + hitsDoneAmplified));
+        info.add(new Pair<>("Hits Taken Amplified", "" + hitsTakenAmplified));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
@@ -49,11 +65,13 @@ public class Berserk extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsTakenAmplified++;
                 return currentDamageValue * (1 + damageTakenIncrease / 100);
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsDoneAmplified++;
                 return currentDamageValue * (1 + damageIncrease / 100);
             }
         });

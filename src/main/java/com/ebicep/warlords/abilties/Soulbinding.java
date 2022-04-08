@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -17,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
+    protected int playersBinded = 0;
+    protected int soulProcs = 0;
+    protected int linkProcs = 0;
+    protected int soulTeammatesCDReductions = 0;
+    protected int linkTeammatesHealed = 0;
 
     private final int duration = 12;
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
@@ -45,6 +51,19 @@ public class Soulbinding extends AbstractAbility {
                 "§7Successful soulbind procs will grant you\n" +
                 "§7§625% §7knockback resistance for §61.2\n" +
                 "§7seconds. (max §63.6 §7seconds)";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Binded", "" + playersBinded));
+        info.add(new Pair<>("Soul Procs", "" + soulProcs));
+        info.add(new Pair<>("Soul Teammates CD Reductions", "" + soulTeammatesCDReductions));
+        info.add(new Pair<>("Link Procs", "" + linkProcs));
+        info.add(new Pair<>("Link Teammates Healed", "" + linkTeammatesHealed));
+
+        return info;
     }
 
     @Override
@@ -80,6 +99,26 @@ public class Soulbinding extends AbstractAbility {
         }.runTaskTimer(0, 4);
 
         return true;
+    }
+
+    public void addPlayersBinded() {
+        playersBinded++;
+    }
+
+    public void addSoulProcs() {
+        soulProcs++;
+    }
+
+    public void addLinkProcs() {
+        linkProcs++;
+    }
+
+    public void addSoulTeammatesCDReductions() {
+        soulTeammatesCDReductions++;
+    }
+
+    public void addLinkTeammatesHealed() {
+        linkTeammatesHealed++;
     }
 
     public List<SoulBoundPlayer> getSoulBindedPlayers() {

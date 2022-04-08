@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,8 +18,11 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VitalityLiquor extends AbstractAbility {
+    protected int numberOfAdditionalWaves = 0;
 
     private final int acuRange = 8;
     private final int duration = 3;
@@ -41,6 +45,15 @@ public class VitalityLiquor extends AbstractAbility {
                 "§7that heals §e2 §7nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
                 "§7and increase their energy regeneration by\n" +
                 "§e15 §7for §6" + duration + " §7seconds.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Number of Additional Waves", "" + numberOfAdditionalWaves));
+
+        return info;
     }
 
     @Override
@@ -98,6 +111,7 @@ public class VitalityLiquor extends AbstractAbility {
                                         .closestFirst(enemyTarget)
                                         .limit(2)
                                 ) {
+                                    numberOfAdditionalWaves++;
                                     allyTarget.addHealingInstance(
                                             wp,
                                             name,

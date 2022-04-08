@@ -6,11 +6,15 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SpiritLink extends AbstractChainBase {
@@ -30,6 +34,16 @@ public class SpiritLink extends AbstractChainBase {
                 "§7speed for §61.5 §7seconds, and take §c15%\n" +
                 "§7reduced damage for §64.5 §7seconds.";
     }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+
+        return info;
+    }
+
 
     @Override
     protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
@@ -136,6 +150,7 @@ public class SpiritLink extends AbstractChainBase {
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
+            warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
             nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false, false);
         }
     }

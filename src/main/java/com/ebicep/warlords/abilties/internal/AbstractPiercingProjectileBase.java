@@ -25,7 +25,10 @@ import java.util.List;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
-    protected int shotsHit = 0;
+    protected int playersHit = 0;
+    protected int playersHitBySplash = 0;
+    protected int directHits = 0;
+    protected int numberOfDismounts = 0;
 
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
@@ -104,13 +107,14 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             @Nonnull Location impactLocation
     );
 
-    @Deprecated
-    protected abstract void onHit(
-            @Nonnull WarlordsPlayer shooter,
-            @Nonnull Location currentLocation,
-            @Nonnull Location startingLocation,
-            @Nullable WarlordsPlayer hit
-    );
+//    @Deprecated
+//    protected abstract int onHit(
+//            @Nonnull WarlordsPlayer shooter,
+//            @Nonnull Location currentLocation,
+//            @Nonnull Location startingLocation,
+//            @Nullable WarlordsPlayer hit
+//    );
+
 
     /**
      * Called when the projectile is destroyed by an collision
@@ -118,16 +122,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param projectile The projectile
      * @param hit        The player that this projectile impacted on, if any
      */
-    @SuppressWarnings("deprecation")
-    protected void onHit(
-            @Nonnull InternalProjectile projectile,
-            @Nullable WarlordsPlayer hit
-    ) {
-        if (hit != null) {
-            shotsHit++;
-        }
-        onHit(projectile.shooter, projectile.currentLocation, projectile.startingLocation, hit);
-    }
+    protected abstract int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit);
 
     @Nullable
     protected WarlordsPlayer getFromEntity(Entity e) {
@@ -296,6 +291,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         return true;
     }
 
+    public int getDirectHits() {
+        return directHits;
+    }
+
     public class InternalProjectile extends BukkitRunnable {
         private final List<WarlordsPlayer> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
@@ -340,7 +339,14 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
                 updateSpeed(this);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
                 if (hasCollided != null) {
-                    onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
+                    int hitBySplash = onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
+                    if (hasCollided.entity != null) {
+                        directHits++;
+                    }
+                    if (hitBySplash > 0) {
+                        playersHit++;
+                        playersHitBySplash += hitBySplash;
+                    }
                     cancel();
                 } else if (ticksLived >= maxTicks) {
                     cancel();

@@ -3,12 +3,16 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Fireball extends AbstractProjectileBase {
 
@@ -18,6 +22,17 @@ public class Fireball extends AbstractProjectileBase {
 
     public Fireball() {
         super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Shots Fired", "" + timesUsed));
+        info.add(new Pair<>("Direct Hits", "" + directHits));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
+
+        return info;
     }
 
     @Override
@@ -49,7 +64,11 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsPlayer shooter, @Nonnull Location currentLocation, @Nonnull Location startingLocation, WarlordsPlayer victim) {
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit) {
+        WarlordsPlayer shooter = projectile.getShooter();
+        Location startingLocation = projectile.getStartingLocation();
+        Location currentLocation = projectile.getCurrentLocation();
+
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 1.5f, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
@@ -57,11 +76,14 @@ public class Fireball extends AbstractProjectileBase {
         Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
-            1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
+        double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :
+                1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
-        if (victim != null) {
-            victim.addDamageInstance(
+        if (hit != null) {
+            if (hit.onHorse()) {
+                numberOfDismounts++;
+            }
+            hit.addDamageInstance(
                     shooter,
                     name,
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -70,12 +92,17 @@ public class Fireball extends AbstractProjectileBase {
                     critMultiplier,
                     false);
         }
-        
+
+        int playersHit = 0;
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
-                .excluding(victim)
+                .excluding(hit)
                 .aliveEnemiesOf(shooter)
         ) {
+            playersHit++;
+            if (nearEntity.onHorse()) {
+                numberOfDismounts++;
+            }
             nearEntity.addDamageInstance(
                     shooter,
                     name,
@@ -85,6 +112,8 @@ public class Fireball extends AbstractProjectileBase {
                     critMultiplier,
                     false);
         }
+
+        return playersHit;
     }
 
     @Override

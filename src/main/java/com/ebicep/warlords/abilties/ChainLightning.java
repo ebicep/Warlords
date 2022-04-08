@@ -2,12 +2,12 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
-import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
@@ -17,12 +17,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
+
+    protected int numberOfDismounts = 0;
 
     private int damageReduction = 0;
 
@@ -55,6 +54,16 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 "§7resistance. This buff lasts §64.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
+
+        return info;
     }
 
     @Override
@@ -154,6 +163,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     break;
             }
             playersHit.add(hit);
+            if (hit.onHorse()) {
+                numberOfDismounts++;
+            }
             hit.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
@@ -163,9 +175,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private void partOfChainLightningPulseDamage(WarlordsPlayer wp, CapacitorTotem capacitorTotem) {
         ArmorStand totem = capacitorTotem.getTotem();
-        int radius = 6;
-        pulseDamage(wp, PlayerFilter.entitiesAround(totem, radius, radius, radius).aliveEnemiesOf(wp).stream());
-        new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
+        capacitorTotem.pulseDamage();
 
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
@@ -173,19 +183,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         capacitorTotem.addProc();
     }
 
-    private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
-        near.forEach((player) -> {
-            player.addDamageInstance(
-                    warlordsPlayer,
-                    warlordsPlayer.getSpec().getOrange().getName(),
-                    warlordsPlayer.getSpec().getOrange().getMinDamageHeal(),
-                    warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(),
-                    warlordsPlayer.getSpec().getOrange().getCritChance(),
-                    warlordsPlayer.getSpec().getOrange().getCritMultiplier(),
-                    false
-            );
-        });
-    }
 //
 //    private boolean lookingAtTotem(@Nonnull LivingEntity player) {
 //        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();

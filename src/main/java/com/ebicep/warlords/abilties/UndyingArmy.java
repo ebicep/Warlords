@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -20,11 +21,14 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 
 public class UndyingArmy extends AbstractAbility {
+    protected int playersArmied = 0;
 
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(ChatColor.RED + "Instant Kill")
@@ -68,6 +72,15 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Armied", "" + playersArmied));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
@@ -78,13 +91,15 @@ public class UndyingArmy extends AbstractAbility {
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
+                playersArmied++;
+
                 wp.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN +
-                            ChatColor.GRAY + " Your " +
-                            ChatColor.YELLOW + "Undying Army" +
-                            ChatColor.GRAY + " is now protecting " +
-                            teammate.getName() +
-                            ChatColor.GRAY + "."
+                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " Your " +
+                                ChatColor.YELLOW + "Undying Army" +
+                                ChatColor.GRAY + " is now protecting " +
+                                teammate.getName() +
+                                ChatColor.GRAY + "."
                 );
 
                 teammate.sendMessage(

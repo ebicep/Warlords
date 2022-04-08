@@ -12,10 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractHolyRadianceBase extends AbstractAbility {
+    protected int playersHealed = 0;
+    protected int playersMarked = 0;
 
     private final int radius;
 
@@ -24,16 +24,16 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         this.radius = radius;
     }
 
-    public abstract void chain(WarlordsPlayer wp, Player player);
-
-    List<WarlordsPlayer> playersHit = new ArrayList<>();
+    public abstract boolean chain(WarlordsPlayer wp, Player player);
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
         wp.subtractEnergy(energyCost);
 
-        chain(wp, player);
+        if (chain(wp, player)) {
+            playersMarked++;
+        }
 
         for (WarlordsPlayer radianceTarget : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
@@ -49,7 +49,6 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                             maxDamageHeal
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
-            playersHit.add(radianceTarget);
         }
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
@@ -107,8 +106,9 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 double distance = targetLocation.distanceSquared(armorStandLocation);
 
                 if (distance < speed * speed) {
+                    playersHealed++;
+
                     target.addHealingInstance(owner, name, minHeal, maxHeal, critChance, critMultiplier, false, false);
-                    playersHit.add(target);
                     this.cancel();
                     return;
                 }
@@ -123,9 +123,5 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
             }
         }
-    }
-
-    public List<WarlordsPlayer> getPlayersHit() {
-        return playersHit;
     }
 }

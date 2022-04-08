@@ -17,6 +17,8 @@ import java.util.List;
 
 public abstract class AbstractChainBase extends AbstractAbility {
 
+    protected int playersHit = 0;
+
     public AbstractChainBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
@@ -31,6 +33,8 @@ public abstract class AbstractChainBase extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer warlordsPlayer, @Nonnull Player player) {
         int hitCounter = getHitCounterAndActivate(warlordsPlayer, player);
         if (hitCounter != 0) {
+            playersHit += hitCounter;
+
             PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);

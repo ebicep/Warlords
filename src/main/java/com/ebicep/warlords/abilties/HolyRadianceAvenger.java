@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -11,6 +12,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
@@ -35,7 +39,17 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
     }
 
     @Override
-    public void chain(WarlordsPlayer wp, Player player) {
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Players Marked", "" + playersMarked));
+
+        return info;
+    }
+
+    @Override
+    public boolean chain(WarlordsPlayer wp, Player player) {
         for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveEnemiesOf(wp)
@@ -75,10 +89,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         }
                     }
                 }.runTaskTimer(0, 10);
+
+                return true;
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
+                return false;
             }
         }
+        return false;
     }
-
 }

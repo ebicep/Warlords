@@ -6,7 +6,11 @@ import com.ebicep.warlords.classes.shaman.AbstractShaman;
 public class Earthwarden extends AbstractShaman {
 
     public Earthwarden() {
-        super("Earthwarden", 5530, 355, 10,
+        super(
+                "Earthwarden",
+                5530,
+                355,
+                10,
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),
@@ -15,8 +19,4 @@ public class Earthwarden extends AbstractShaman {
         );
     }
 
-    @Override
-    public String getFormattedData() {
-        return null;
-    }
 }

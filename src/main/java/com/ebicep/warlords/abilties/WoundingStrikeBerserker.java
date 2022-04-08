@@ -6,10 +6,13 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
@@ -24,6 +27,14 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 "§7and §cwounding §7them for §63 §7seconds.\n" +
                 "§7A wounded player receives §c40% §7less\n" +
                 "§7healing for the duration of the effect.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Players Stuck", "" + timesUsed));
+
+        return info;
     }
 
     @Override

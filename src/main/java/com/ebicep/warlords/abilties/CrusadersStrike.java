@@ -2,14 +2,18 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class CrusadersStrike extends AbstractStrikeBase {
+    protected int energyGivenToPlayers = 0;
 
     private final int energyGiven = 24;
     private final int energyRadius = 10;
@@ -27,6 +31,15 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 "\n\n" +
                 "§7MARKED allies get priority in restoring energy and\n" +
                 "§7increases their speed by §e40% §7for §61 §7second.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Players Struck", "" + timesUsed));
+        info.add(new Pair<>("Energy Given", "" + energyGivenToPlayers));
+
+        return info;
     }
 
     @Override
@@ -49,7 +62,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                     if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
                         nearTeamPlayer.getSpeed().addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
                     }
-                    nearTeamPlayer.addEnergy(wp, name, energyGiven);
+                    energyGivenToPlayers += nearTeamPlayer.addEnergy(wp, name, energyGiven);
                 });
     }
 }

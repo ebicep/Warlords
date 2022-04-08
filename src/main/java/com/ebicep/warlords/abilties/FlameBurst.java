@@ -4,11 +4,17 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlameBurst extends AbstractProjectileBase {
 
@@ -16,6 +22,16 @@ public class FlameBurst extends AbstractProjectileBase {
 
     public FlameBurst() {
         super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 500, false);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
+
+        return info;
     }
 
     @Override
@@ -51,17 +67,26 @@ public class FlameBurst extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit) {
+        WarlordsPlayer shooter = projectile.getShooter();
+        Location startingLocation = projectile.getStartingLocation();
+        Location currentLocation = projectile.getCurrentLocation();
+
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 2, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1, 3, currentLocation, 500);
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
 
+        int playersHit = 0;
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)
         ) {
+            playersHit++;
+            if (nearEntity.onHorse()) {
+                numberOfDismounts++;
+            }
             nearEntity.addDamageInstance(
                     shooter,
                     name,
@@ -72,6 +97,8 @@ public class FlameBurst extends AbstractProjectileBase {
                     false
             );
         }
+
+        return playersHit;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
+    protected int playersHealed = 0;
+    protected int playersDamaged = 0;
 
     private static final int radius = 6;
     private final int duration = 10;
@@ -37,6 +40,16 @@ public class HammerOfLight extends AbstractAbility {
 
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
+
+        return info;
     }
 
     public static boolean standingInHammer(WarlordsPlayer owner, Entity standing) {
@@ -144,14 +157,17 @@ public class HammerOfLight extends AbstractAbility {
                         if (wp.isAlive()) {
                             PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                     .aliveTeammatesOf(wp)
-                                    .forEach(teammate -> teammate.addHealingInstance(
-                                            wp,
-                                            "Crown of Light",
-                                            minDamageHeal * 1.5f,
-                                            maxDamageHeal * 1.5f,
-                                            critChance,
-                                            critMultiplier,
-                                            false, false));
+                                    .forEach(teammate -> {
+                                        playersHealed++;
+                                        teammate.addHealingInstance(
+                                                wp,
+                                                "Crown of Light",
+                                                minDamageHeal * 1.5f,
+                                                maxDamageHeal * 1.5f,
+                                                critChance,
+                                                critMultiplier,
+                                                false, false);
+                                    });
                         }
                     } else {
                         for (WarlordsPlayer warlordsPlayer : PlayerFilter
@@ -159,6 +175,7 @@ public class HammerOfLight extends AbstractAbility {
                                 .isAlive()
                         ) {
                             if (wp.isTeammateAlive(warlordsPlayer)) {
+                                playersHealed++;
                                 warlordsPlayer.addHealingInstance(
                                         wp,
                                         name,
@@ -168,6 +185,7 @@ public class HammerOfLight extends AbstractAbility {
                                         critMultiplier,
                                         false, false);
                             } else {
+                                playersDamaged++;
                                 warlordsPlayer.addDamageInstance(
                                         wp,
                                         name,

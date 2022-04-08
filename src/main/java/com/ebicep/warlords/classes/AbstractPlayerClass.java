@@ -7,6 +7,8 @@ import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -14,13 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class AbstractPlayerClass<
-        WeaponType extends AbstractAbility,
-        RedType extends AbstractAbility,
-        PurpleType extends AbstractAbility,
-        BlueType extends AbstractAbility,
-        OrangeType extends AbstractAbility> {
+public abstract class AbstractPlayerClass {
 
     private final int abilityCooldownDelay = 1;
     private final int secondaryAbilityCooldownDelay = 5;
@@ -29,18 +29,18 @@ public abstract class AbstractPlayerClass<
     protected int energyPerSec;
     protected int energyOnHit;
     protected int damageResistance;
-    protected WeaponType weapon;
-    protected RedType red;
-    protected PurpleType purple;
-    protected BlueType blue;
-    protected OrangeType orange;
+    protected AbstractAbility weapon;
+    protected AbstractAbility red;
+    protected AbstractAbility purple;
+    protected AbstractAbility blue;
+    protected AbstractAbility orange;
     protected boolean abilityCD = true;
     protected boolean secondaryAbilityCD = true;
     protected String name;
     protected String className;
     protected String classNameShort;
 
-    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, WeaponType weapon, RedType red, PurpleType purple, BlueType blue, OrangeType orange) {
+    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
@@ -76,7 +76,21 @@ public abstract class AbstractPlayerClass<
         }
     }
 
-    public abstract String getFormattedData();
+    public List<TextComponent> getFormattedData() {
+        List<TextComponent> textComponentList = new ArrayList<>();
+        ChatColor[] chatColors = {ChatColor.GREEN, ChatColor.RED, ChatColor.LIGHT_PURPLE, ChatColor.AQUA, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY};
+        for (int i = 0; i < getAbilities().length; i++) {
+            AbstractAbility ability = getAbilities()[i];
+            textComponentList.add(new TextComponentBuilder(chatColors[i] + ability.getName())
+                    .setHoverText(ability.getAbilityInfo().stream()
+                            .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
+                            .collect(Collectors.joining("\n"))
+                    )
+                    .getTextComponent());
+        }
+
+        return textComponentList;
+    }
 
     public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
@@ -96,9 +110,9 @@ public abstract class AbstractPlayerClass<
                     break;
                 }
                 if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    weapon.addTimesUsed();
                     weapon.onActivate(wp, player);
                     if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                        weapon.addTimesUsed();
                         sendRightClickPacket(player);
                     }
                     resetAbilityCD();

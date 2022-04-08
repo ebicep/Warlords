@@ -3,7 +3,9 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeismicWave extends AbstractAbility {
+    protected int playersHit = 0;
+    protected int carrierHit = 0;
+    protected int warpsKnockbacked = 0;
 
     private float velocity = 1.25f;
 
@@ -30,6 +35,17 @@ public class SeismicWave extends AbstractAbility {
                 "§7forward that deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "\n" +
                 "§7damage to all enemies hit and\n" +
                 "knocks them back slightly.";
+    }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
+        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
+
+        return info;
     }
 
     @Override
@@ -55,6 +71,13 @@ public class SeismicWave extends AbstractAbility {
                         .excluding(playersHit)
                         .closestFirst(wp)
                 ) {
+                    this.playersHit++;
+                    if (p.hasFlag()) {
+                        carrierHit++;
+                    }
+                    if (p.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                        warpsKnockbacked++;
+                    }
                     playersHit.add(p);
                     final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     p.setVelocity(v, false);

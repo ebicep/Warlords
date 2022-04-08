@@ -34,6 +34,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .lookingAtFirst(wp)
                 .first((nearPlayer) -> {
                     if (Utils.isLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                        addTimesUsed();
                         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
