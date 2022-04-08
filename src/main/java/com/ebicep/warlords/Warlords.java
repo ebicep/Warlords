@@ -376,7 +376,7 @@ public class Warlords extends JavaPlugin {
         readWeaponConfig();
         saveWeaponConfig();
 
-        TimeZone.setDefault(TimeZone.getTimeZone("EST"));
+        TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");

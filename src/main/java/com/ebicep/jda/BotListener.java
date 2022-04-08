@@ -328,8 +328,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             String futureTime = args[2];
                                             SimpleDateFormat hourFormat = new SimpleDateFormat("hh");
                                             SimpleDateFormat minuteFormat = new SimpleDateFormat("mm");
-                                            hourFormat.setTimeZone(TimeZone.getTimeZone("EST"));
-                                            minuteFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+                                            hourFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+                                            minuteFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
                                             Date date = new Date();
                                             int currentHour = Integer.parseInt(hourFormat.format(date));
                                             int currentMinute = Integer.parseInt(minuteFormat.format(date));

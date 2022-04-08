@@ -145,11 +145,11 @@ public class BotManager {
             return;
         }
         DateFormat dateFormat = new SimpleDateFormat("hh:mm aa");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+        dateFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
         EmbedBuilder eb = new EmbedBuilder()
                 .setTitle("Server Status", null)
                 .setColor(3066993)
-                .setFooter(dateFormat.format(new Date()) + " EST");
+                .setTimestamp(new Date().toInstant());
         eb.setDescription("**Players Online**: " + (onQuit ? Bukkit.getOnlinePlayers().size() - 1 : Bukkit.getOnlinePlayers().size()) + "\n");
         eb.appendDescription("**Players In Game**: " + Warlords.getGameManager().getPlayerCount() + "\n");
         eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby() + "\n");
@@ -178,6 +178,7 @@ public class BotManager {
         eb.appendDescription(stringBuilder);
 
         MessageEmbed messageEmbed = eb.build();
+
         getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> {
             try {
                 textChannel.getLatestMessageId();
