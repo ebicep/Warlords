@@ -7,15 +7,14 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -27,11 +26,19 @@ public class Consecrate extends AbstractAbility {
 
     protected int strikeDamageBoost;
     protected float radius;
+    protected Location location;
 
     public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost, float radius) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.radius = radius;
+    }
+
+    public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost, float radius, Location location) {
+        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
+        this.strikeDamageBoost = strikeDamageBoost;
+        this.radius = radius;
+        this.location = location;
     }
 
     @Override
@@ -58,14 +65,20 @@ public class Consecrate extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
-
         Location location = player.getLocation().clone();
-        ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
-        consecrate.setMetadata("Consecrate - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
-        consecrate.setGravity(false);
-        consecrate.setVisible(false);
-        consecrate.setMarker(true);
+
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "CONS",
+                Consecrate.class,
+                new Consecrate(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                5 * 20
+        );
+
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -74,6 +87,8 @@ public class Consecrate extends AbstractAbility {
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                 new DoubleLineEffect(ParticleEffect.SPELL)
         );
+
+        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
         new GameRunnable(wp.getGame()) {
@@ -97,7 +112,6 @@ public class Consecrate extends AbstractAbility {
                                     false);
                         });
                 if (timeLeft == 0) {
-                    consecrate.remove();
                     this.cancel();
                     task.cancel();
                 }
@@ -114,5 +128,13 @@ public class Consecrate extends AbstractAbility {
 
     public void setRadius(float radius) {
         this.radius = radius;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

@@ -37,7 +37,7 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player p, @Nonnull WarlordsPlayer nearPlayer) {
-        if (standingOnConsecrate(p, nearPlayer.getEntity())) {
+        if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
         } else {
@@ -55,7 +55,7 @@ public class AvengersStrike extends AbstractStrikeBase {
             ) {
                 wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
                 //checking if player is in consecrate
-                if (standingOnConsecrate(p, wrathTarget.getEntity())) {
+                if (standingOnConsecrate(wp, wrathTarget)) {
                     wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                     wrathTarget.addDamageInstance(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
                 } else {

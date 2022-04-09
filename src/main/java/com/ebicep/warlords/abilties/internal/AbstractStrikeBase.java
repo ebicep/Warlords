@@ -9,9 +9,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -90,19 +87,10 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         }
     }
 
-    protected boolean standingOnConsecrate(Player owner, WarlordsPlayer standing) {
-        return standingOnConsecrate(owner, standing.getEntity());
+    protected boolean standingOnConsecrate(WarlordsPlayer owner, WarlordsPlayer standing) {
+        return new CooldownFilter<>(owner, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
+                .anyMatch(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius());
     }
 
-    protected boolean standingOnConsecrate(Player owner, LivingEntity standing) {
-        for (Entity entity : owner.getWorld().getEntities()) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Consecrate - " + owner.getName())) {
-                if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
-    }
 }
