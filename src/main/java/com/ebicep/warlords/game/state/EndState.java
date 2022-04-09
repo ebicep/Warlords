@@ -143,7 +143,7 @@ public class EndState implements State, TimerDebugAble {
                             .getTextComponent())
             );
 
-            sendMessageToAllGamePlayer(game, "", false);
+            ChatUtils.sendMessage(player, false, "");
 
             //ABILITY INFO
             List<TextComponent> formattedData = wp.getSpec().getFormattedData();
