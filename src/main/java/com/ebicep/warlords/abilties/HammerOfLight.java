@@ -110,7 +110,7 @@ public class HammerOfLight extends AbstractAbility {
             if (location.clone().add(1, 0, 0).getBlock().getType() == Material.AIR) {
                 location.add(.6, 0, 0);
             } else if (location.clone().add(-1, 0, 0).getBlock().getType() == Material.AIR) {
-                location.add(-.61, 0, 0);
+                location.add(-.6, 0, 0);
             } else if (location.clone().add(0, 0, 1).getBlock().getType() == Material.AIR) {
                 location.add(0, 0, .6);
             } else if (location.clone().add(0, 0, -1).getBlock().getType() == Material.AIR) {
