@@ -319,7 +319,7 @@ public final class WarlordsPlayer {
             damageValue *= getFlagDamageMultiplier();
 
             // Checks whether the player is standing in a Hammer of Light.
-            if (!HammerOfLight.standingInHammer(attacker, entity)) {
+            if (!HammerOfLight.isStandingInHammer(attacker, this)) {
 
                 // Damage Increase
                 // Example: 1.1 = 10% increase.
@@ -342,7 +342,7 @@ public final class WarlordsPlayer {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> regularCooldown.getFrom() != this)
                 .findFirst();
-        if (optionalInterveneCooldown.isPresent() && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
+        if (optionalInterveneCooldown.isPresent() && !HammerOfLight.isStandingInHammer(attacker, this) && isEnemy(attacker)) {
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsPlayer intervenedBy = optionalInterveneCooldown.get().getFrom();
 
@@ -373,7 +373,7 @@ public final class WarlordsPlayer {
 
             // Damage reduction after Intervene
             if (!ignoreReduction) {
-                if (!HammerOfLight.standingInHammer(attacker, entity)) {
+                if (!HammerOfLight.isStandingInHammer(attacker, this)) {
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
                     for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
@@ -393,7 +393,7 @@ public final class WarlordsPlayer {
                     .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
                     .collect(Collectors.toList());
 
-            if (!arcaneShields.isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
+            if (!arcaneShields.isEmpty() && isEnemy(attacker) && !HammerOfLight.isStandingInHammer(attacker, this)) {
                 ArcaneShield arcaneShield = arcaneShields.get(0);
                 //adding dmg to shield
                 arcaneShield.addShieldHealth(-damageValue);

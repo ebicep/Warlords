@@ -1,13 +1,12 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.classes.paladin.specs.Protector;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -17,77 +16,57 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
-    protected int playersHealed = 0;
-    protected int playersDamaged = 0;
-
     private static final int radius = 6;
     private final int duration = 10;
+    protected int playersHealed = 0;
+    protected int playersDamaged = 0;
     private boolean isCrownOfLight = false;
+    private Location location;
 
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
     }
 
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
-
-        return info;
+    public HammerOfLight(Location location) {
+        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+        this.location = location;
     }
 
-    public static boolean standingInHammer(WarlordsPlayer owner, Entity standing) {
-        if (!(owner.getSpec() instanceof Protector)) return false;
-        for (Entity entity : owner.getWorld().getEntities()) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Hammer of Light - " + owner.getName())) {
-                if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
+    public static boolean isStandingInHammer(WarlordsPlayer owner, WarlordsPlayer standing) {
+        return new CooldownFilter<>(owner, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                .filter(HammerOfLight::isHammer)
+                .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < radius * radius);
     }
 
-    // in case we use it again
     public static List<WarlordsPlayer> getStandingInHammer(WarlordsPlayer owner) {
-        List<WarlordsPlayer> playersInHammer = new ArrayList<>();
-        for (Entity entity : owner.getWorld().getEntities()) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Hammer of Light - " + owner.getName())) {
-                for (WarlordsPlayer enemy : PlayerFilter
-                        .entitiesAround(entity, radius, 4, radius)
-                        .enemiesOf(owner)
-                        .isAlive()) {
-                    playersInHammer.add(enemy);
-                }
-                break;
-            }
-        }
-        return playersInHammer;
-    }
-
-    public boolean isCrownOfLight() {
-        return isCrownOfLight;
-    }
-
-    public void setCrownOfLight(boolean crownOfLight) {
-        isCrownOfLight = crownOfLight;
+        Set<WarlordsPlayer> playersInHammer = new HashSet<>();
+        new CooldownFilter<>(owner, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                .filter(HammerOfLight::isHammer)
+                .map(HammerOfLight::getLocation)
+                .forEach(loc -> {
+                    for (WarlordsPlayer enemy : PlayerFilter
+                            .entitiesAround(loc, radius, 4, radius)
+                            .enemiesOf(owner)
+                            .isAlive()) {
+                        playersInHammer.add(enemy);
+                    }
+                });
+        return new ArrayList<>(playersInHammer);
     }
 
     @Override
@@ -110,15 +89,36 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Players Healed", "" + playersHealed));
+        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
+
+        return info;
+    }
+
+    @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
 
-        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().add(1, 0, 1).clone();
-        ArmorStand hammer = spawnHammer(location, wp);
-        HammerOfLight tempHammerOfLight = new HammerOfLight();
+        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone().add(.6, 0, .6).clone();
+        if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
+            if (location.clone().add(1, 0, 0).getBlock().getType() == Material.AIR) {
+                location.add(.6, 0, 0);
+            } else if (location.clone().add(-1, 0, 0).getBlock().getType() == Material.AIR) {
+                location.add(-.61, 0, 0);
+            } else if (location.clone().add(0, 0, 1).getBlock().getType() == Material.AIR) {
+                location.add(0, 0, .6);
+            } else if (location.clone().add(0, 0, -1).getBlock().getType() == Material.AIR) {
+                location.add(0, 0, -.6);
+            }
+        }
+        ArmorStand hammer = spawnHammer(location);
+        HammerOfLight tempHammerOfLight = new HammerOfLight(location);
 
         RegularCooldown<HammerOfLight> hammerOfLightCooldown = new RegularCooldown<>(
                 name,
@@ -210,6 +210,21 @@ public class HammerOfLight extends AbstractAbility {
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive() && wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
+//                        new BukkitRunnable() {
+//                            int counter = 0;
+//                            @Override
+//                            public void run() {
+//                                if(counter == 0) {
+//                                    hammer.setRightArmPose(new EulerAngle(5.15, 0, 0));
+//                                }
+//                                hammer.teleport(hammer.getLocation().clone().add(0, 5, 0));
+//                                if(counter >= 20) {
+//                                    hammer.remove();
+//                                    this.cancel();
+//                                }
+//                                counter++;
+//                            }
+//                        }.runTaskTimer(Warlords.getInstance(), 0, 1);
                         hammer.remove();
                         task.cancel();
                         tempHammerOfLight.setCrownOfLight(true);
@@ -249,7 +264,7 @@ public class HammerOfLight extends AbstractAbility {
         return true;
     }
 
-    public ArmorStand spawnHammer(Location location, WarlordsPlayer warlordsPlayer) {
+    public ArmorStand spawnHammer(Location location) {
         Location newLocation = location.clone();
         for (int i = 0; i < 10; i++) {
             if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
@@ -259,7 +274,7 @@ public class HammerOfLight extends AbstractAbility {
         newLocation.add(0, -1, 0);
 
         ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
-        hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        //hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
         hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
         hammer.setItemInHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);
@@ -267,5 +282,22 @@ public class HammerOfLight extends AbstractAbility {
         hammer.setMarker(true);
 
         return hammer;
+    }
+
+
+    public boolean isHammer() {
+        return !isCrownOfLight;
+    }
+
+    public boolean isCrownOfLight() {
+        return isCrownOfLight;
+    }
+
+    public void setCrownOfLight(boolean crownOfLight) {
+        isCrownOfLight = crownOfLight;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }
