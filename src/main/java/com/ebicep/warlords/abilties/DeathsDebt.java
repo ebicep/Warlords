@@ -82,10 +82,6 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     @Override
-    protected void onTotemStand(ArmorStand totemStand, WarlordsPlayer warlordsPlayer) {
-    }
-
-    @Override
     protected void playSound(Player player, Location location) {
         //TODO find the right sound - this aint right chief
         Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);

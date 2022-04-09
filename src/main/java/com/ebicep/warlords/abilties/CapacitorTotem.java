@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -14,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +55,6 @@ public class CapacitorTotem extends AbstractTotemBase {
     @Override
     protected ItemStack getTotemItemStack() {
         return new ItemStack(Material.RED_ROSE, 1, (short) 4);
-    }
-
-    @Override
-    protected void onTotemStand(ArmorStand totemStand, WarlordsPlayer warlordsPlayer) {
-        totemStand.setMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), this));
     }
 
     @Override

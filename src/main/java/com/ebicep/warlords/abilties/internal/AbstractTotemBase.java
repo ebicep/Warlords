@@ -34,8 +34,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
 
     protected abstract ItemStack getTotemItemStack();
 
-    protected abstract void onTotemStand(ArmorStand totemStand, WarlordsPlayer wp);
-
     protected abstract void playSound(Player player, Location location);
 
     protected abstract void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand);
@@ -51,7 +49,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         totemStand.setVisible(false);
         totemStand.setGravity(false);
         totemStand.setHelmet(getTotemItemStack());
-        onTotemStand(totemStand, wp);
         playSound(player, standLocation);
 
         onActivation(wp, player, totemStand);
