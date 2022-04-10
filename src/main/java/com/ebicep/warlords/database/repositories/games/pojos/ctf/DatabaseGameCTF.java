@@ -45,7 +45,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
 
     public DatabaseGameCTF(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
-        this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
+        this.timeLeft = WinAfterTimeoutOption.getTimeRemaining(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);

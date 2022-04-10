@@ -245,6 +245,11 @@ public class DatabaseManager {
         classesSkillBoosts.put(Specializations.VINDICATOR, databasePlayer.getRogue().getVindicator().getSkillBoost());
         classesSkillBoosts.put(Specializations.APOTHECARY, databasePlayer.getRogue().getApothecary().getSkillBoost());
         classesSkillBoosts.values().removeAll(Collections.singleton(null));
+        classesSkillBoosts.forEach((specializations, skillBoosts) -> {
+            if (!specializations.skillBoosts.contains(skillBoosts)) {
+                classesSkillBoosts.put(specializations, specializations.skillBoosts.get(0));
+            }
+        });
         Warlords.getPlayerSettings(player.getUniqueId()).setSpecsSkillBoosts(classesSkillBoosts);
 
         Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());

@@ -5,8 +5,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Date;
 
 @Document(collection = "Games_Information_Duel")
 public class DatabaseGameDuel extends DatabaseGameBase {
@@ -30,7 +26,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
 
     public DatabaseGameDuel(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
-        this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
+        this.timeLeft = WinAfterTimeoutOption.getTimeRemaining(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.players = new DatabaseGamePlayersDuel(game);
     }

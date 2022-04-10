@@ -222,9 +222,9 @@ public class WinAfterTimeoutOption implements Option {
         }
     }
     
-    public static OptionalInt getTimeLeft(@Nonnull Game game) {
+    public static OptionalInt getTimeRemaining(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if(option instanceof WinAfterTimeoutOption) {
+            if (option instanceof WinAfterTimeoutOption) {
                 WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) option;
                 return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
             }

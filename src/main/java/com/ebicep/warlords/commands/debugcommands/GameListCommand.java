@@ -61,7 +61,7 @@ public class GameListCommand implements CommandExecutor {
                         .append(ChatColor.GRAY).append("..")
                         .append(ChatColor.GREEN).append(game.getMaxPlayers())
                         .append(ChatColor.GRAY).append("] ");
-                OptionalInt timeLeft = WinAfterTimeoutOption.getTimeLeft(game);
+                OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
                 String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 message.append(time).append(word);
