@@ -66,14 +66,14 @@ public abstract class AbstractDatabaseStatInformation {
     );
 
     public double getKDA() {
-        if (deaths == 0) {
+        if (deaths <= 0) {
             return 0;
         }
         return (kills + assists) / (double) deaths;
     }
 
     public double getKillsPerGame() {
-        return plays == 0 ? 0 : (double) kills / plays;
+        return plays <= 0 ? 0 : (double) kills / plays;
     }
 
     public int getKills() {
@@ -85,7 +85,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public double getKillsAssistsPerGame() {
-        return plays == 0 ? 0 : (double) (kills + assists) / plays;
+        return plays <= 0 ? 0 : (double) (kills + assists) / plays;
     }
 
     public int getAssists() {
@@ -97,7 +97,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public double getDeathsPerGame() {
-        return plays == 0 ? 0 : (double) deaths / plays;
+        return plays <= 0 ? 0 : (double) deaths / plays;
     }
 
     public int getDeaths() {
@@ -144,7 +144,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public long getDHPPerGame() {
-        return plays == 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
+        return plays <= 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
     }
 
     public long getDamage() {

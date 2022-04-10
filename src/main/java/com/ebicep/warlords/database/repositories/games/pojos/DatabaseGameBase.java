@@ -172,6 +172,7 @@ public abstract class DatabaseGameBase {
                 databaseGame.updatePlayerStatsFromGame(databaseGame, true);
                 databaseGame.setCounted(true);
                 DatabaseManager.updateGameAsync(databaseGame, collection);
+                DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
             }
         } else {
             //game not in database then add game and update player stats if counted
@@ -199,6 +200,7 @@ public abstract class DatabaseGameBase {
                 databaseGame.updatePlayerStatsFromGame(databaseGame, false);
                 databaseGame.setCounted(false);
                 DatabaseManager.updateGameAsync(databaseGame, collection);
+                DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
             }
         }
         //else game not in database then do nothing
