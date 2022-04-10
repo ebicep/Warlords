@@ -100,6 +100,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         });
 
         if (standingOnConsecrate(wp, nearPlayer)) {
+            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
         } else {
             nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
