@@ -226,8 +226,10 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             if (!spec.isEmpty()) {
                                                 Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
                                                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                                                databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
-                                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                if (databasePlayer != null) {
+                                                    databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
+                                                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                }
                                                 // TODO: fix
                                                 /*if (!isExperimental) {
                                                     Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
