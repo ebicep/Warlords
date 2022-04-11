@@ -9,11 +9,9 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -63,21 +61,43 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
         ) {
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-
-                PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0, 1);
                 EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.PUMPKIN), 20);
 
-                HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                markTarget.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, markDuration * 20);
+                HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
+                        minDamageHeal,
+                        maxDamageHeal,
+                        cooldown,
+                        energyCost,
+                        critChance,
+                        critMultiplier
+                );
                 markTarget.getSpeed().addSpeedModifier("Crusader Mark Speed", 25, 20 * markDuration, "BASE");
+                markTarget.getCooldownManager().addRegularCooldown(
+                        name,
+                        "CRUS MARK",
+                        HolyRadianceCrusader.class,
+                        tempMark,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {},
+                        markDuration * 20
+                );
 
-                player.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_GREEN + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " You have marked " +
+                    ChatColor.YELLOW + markTarget.getName() +
+                    ChatColor.GRAY + "!"
+                );
+
+                markTarget.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " You have been granted " +
+                    ChatColor.YELLOW + "Crusader's Mark" +
+                    ChatColor.GRAY + " by " + wp.getName() + "!"
+                );
 
                 new GameRunnable(wp.getGame()) {
                     @Override

@@ -121,13 +121,7 @@ public class HealingTotem extends AbstractTotemBase {
                     CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
                     circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5));
                     circle.playEffects();
-
-                    //1
-                    //1.35
-                    //1.7
-                    //2.05
-                    //2.4
-                    //2.85
+                    // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.85
                     float healMultiplier = 1 + (.35f * (5 - timeLeft));
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)

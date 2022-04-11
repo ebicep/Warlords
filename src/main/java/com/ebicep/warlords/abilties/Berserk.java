@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -49,8 +48,10 @@ public class Berserk extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
+
+        Berserk tempBerserk = new Berserk();
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier(name, speedBuff, duration * 20, "BASE");
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
                 name,
@@ -76,15 +77,19 @@ public class Berserk extends AbstractAbility {
             }
         });
 
-        Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
-
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempBerserk)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 2.1, 0);
-                    ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
+                    ParticleEffect.VILLAGER_ANGRY.display(
+                            0,
+                            0,
+                            0,
+                            0.1f,
+                            1,
+                            wp.getLocation().add(0, 1.2, 0),
+                            500
+                    );
                 } else {
                     cancelSpeed.run();
                     this.cancel();

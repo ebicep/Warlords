@@ -76,6 +76,8 @@ public class OrbsOfLife extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
+
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
         PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<OrbsOfLife>(
                 name,
@@ -118,8 +120,6 @@ public class OrbsOfLife extends AbstractAbility {
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
 
-        Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
-
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
                         //setting target player to move towards (includes self)
@@ -146,18 +146,40 @@ public class OrbsOfLife extends AbstractAbility {
                                                     .get()
                                     );
                                     orbArmorStand.setPassenger(orb);
-                                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
+                                    ParticleEffect.VILLAGER_HAPPY.display(
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            1,
+                                            orbArmorStand.getLocation().add(0, 1.65, 0),
+                                            500
+                                    );
                                 });
+
                                 if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                     this.cancel();
                                 }
                             }
                         }.runTaskTimer(0, 1);
 
-                        wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
                         Utils.playGlobalSound(wp.getLocation(), Sound.LEVEL_UP, 0.08f, 0.7f);
-                        ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
+                        wp.sendMessage(
+                                WarlordsPlayer.GIVE_ARROW_GREEN +
+                                        ChatColor.GRAY + " Your current " +
+                                        ChatColor.GREEN + name +
+                                        ChatColor.GRAY + " will now levitate towards you or a teammate!"
+                        );
 
+                        ParticleEffect.ENCHANTMENT_TABLE.display(
+                                0.8f,
+                                0,
+                                0.8f,
+                                0.2f,
+                                10,
+                                wp.getLocation().add(0, 1.5, 0),
+                                500
+                        );
                     }
                 },
                 true,

@@ -25,6 +25,17 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = "§7Shoot a fireball that will explode\n" +
+                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
+                "§7direct hit will cause the enemy\n" +
+                "§7to take an additional §c15% §7extra\n" +
+                "§7damage." +
+                "\n\n" +
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
+    }
+
+    @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Shots Fired", "" + timesUsed));
@@ -115,16 +126,4 @@ public class Fireball extends AbstractProjectileBase {
 
         return playersHit;
     }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Shoot a fireball that will explode\n" +
-                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
-                "§7direct hit will cause the enemy\n" +
-                "§7to take an additional §c15% §7extra\n" +
-                "§7damage." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
-    }
-	
 }

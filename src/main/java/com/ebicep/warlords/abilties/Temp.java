@@ -7,15 +7,15 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class temp extends AbstractAbility {
+public class Temp extends AbstractAbility {
 
-    public temp() {
-        super("temp", 0, 0, 0, 0, 0, 0);
+    public Temp() {
+        super("Placeholder Ability", 0, 0, 0, 0, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
-
+        description = "Placeholder Ability";
     }
 
     @Override
@@ -25,7 +25,6 @@ public class temp extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-
         return true;
     }
 

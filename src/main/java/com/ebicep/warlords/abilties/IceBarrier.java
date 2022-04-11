@@ -53,6 +53,8 @@ public class IceBarrier extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
+        Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
+
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<IceBarrier>(
                 name,
@@ -73,16 +75,29 @@ public class IceBarrier extends AbstractAbility {
             }
         });
 
-        Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
-
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempIceBarrier)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 1.5, 0);
-                    ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);
-                    ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.2F, 0.3F, 0.0001F, 1, location, 500);
+                    Location particleLoc = wp.getLocation().add(0, 1.5, 0);
+                    ParticleEffect.CLOUD.display(
+                            0.2f,
+                            0.2f,
+                            0.2f,
+                            0.001f,
+                            1,
+                            particleLoc,
+                            500
+                    );
+                    ParticleEffect.FIREWORKS_SPARK.display(
+                            0.3f,
+                            0.2f,
+                            0.3f,
+                            0.0001f,
+                            1,
+                            particleLoc,
+                            500
+                    );
                 } else {
                     this.cancel();
                 }

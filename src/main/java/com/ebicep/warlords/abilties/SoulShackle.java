@@ -68,11 +68,14 @@ public class SoulShackle extends AbstractAbility {
         ) {
             wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
             wp.subtractEnergy(energyCost);
+            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
+            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
+
             wp.sendMessage(
                 WarlordsPlayer.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You shackled " +
-                        ChatColor.YELLOW + shackleTarget.getName() +
-                        ChatColor.GRAY + "!"
+                ChatColor.GRAY + " You shackled " +
+                ChatColor.YELLOW + shackleTarget.getName() +
+                ChatColor.GRAY + "!"
             );
 
             int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
@@ -98,11 +101,7 @@ public class SoulShackle extends AbstractAbility {
                     },
                     silenceDuration
             );
-
             shacklePool = 0;
-
-            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
-            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
 
             EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 20);
 

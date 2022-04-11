@@ -72,14 +72,16 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     @Override
-    protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        warlordsPlayer.getCooldownManager().removeCooldown(ChainLightning.class);
-        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
+    protected void onHit(WarlordsPlayer wp, Player player, int hitCounter) {
+        Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
+
+        wp.getCooldownManager().removeCooldown(ChainLightning.class);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
                 name,
                 "CHAIN",
                 ChainLightning.class,
                 new ChainLightning(hitCounter),
-                warlordsPlayer,
+                wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
@@ -92,12 +94,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 return newDamageValue;
             }
         });
-        warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
+        wp.getSpec().getRed().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
-
-        Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
-
     }
 
     @Override
@@ -137,18 +136,20 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 } // no else
             }
         } // no else
+
         PlayerFilter filter = firstCheck ?
                 PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
                         .filter(e ->
                                 Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
                                         Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
-                        ) :
-                PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange).lookingAtFirst(wp);
+                        ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange).lookingAtFirst(wp);
+
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier;
+
             switch (playersSize) {
                 case 0:
                     // We hit the first player
@@ -162,11 +163,22 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     damageMultiplier = .7f;
                     break;
             }
+
             playersHit.add(hit);
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
+
+            hit.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal * damageMultiplier,
+                    maxDamageHeal * damageMultiplier,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
+
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize + (hasHitTotem ? 1 : 0);
@@ -182,20 +194,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
         capacitorTotem.addProc();
     }
-
-//
-//    private boolean lookingAtTotem(@Nonnull LivingEntity player) {
-//        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();
-//        //eye.setY(eye.getY() + .5);
-//        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-//            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
-//                Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
-//                float dot = (float) toEntity.normalize().dot(eye.getDirection());
-//                return dot > .93f;
-//            }
-//        }
-//        return false;
-//    }
 
     private Optional<CapacitorTotem> getLookingAtTotem(WarlordsPlayer warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)

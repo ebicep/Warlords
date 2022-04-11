@@ -64,6 +64,7 @@ public class HealingRain extends AbstractAbility {
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
+        Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
         RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(
                 name,
@@ -78,8 +79,6 @@ public class HealingRain extends AbstractAbility {
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
 
-        Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
-
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -91,7 +90,6 @@ public class HealingRain extends AbstractAbility {
         );
 
         BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
-
         location.add(0, 1, 0);
 
         addSecondaryAbility(() -> {

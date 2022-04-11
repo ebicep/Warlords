@@ -63,7 +63,6 @@ public class ProtectorsStrike extends AbstractStrikeBase {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 String ability = event.getAbility();
-                // Protector's Strike
                 if (ability.equals("Protector's Strike")) {
                     float healthFraction = lerp(0, 1, (float) wp.getHealth() / wp.getMaxHealth());
 
@@ -77,10 +76,17 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
                     float allyHealing = 0.75f + healthFraction * 0.25f;
                     float ownHealing = 0.5f + (1 - healthFraction) * 0.25f;
-
                     // Self Heal
-                    wp.addHealingInstance(wp, ability, currentDamageValue * ownHealing, currentDamageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
-
+                    wp.addHealingInstance(
+                            wp,
+                            ability,
+                            currentDamageValue * ownHealing,
+                            currentDamageValue * ownHealing,
+                            isCrit ? 100 : -1,
+                            100,
+                            false,
+                            false
+                    );
                     // Ally Heal
                     for (WarlordsPlayer ally : PlayerFilter
                             .entitiesAround(wp, 10, 10, 10)
@@ -90,9 +96,27 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             .limit(2)
                     ) {
                         if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
-                            ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing * 1.2f, currentDamageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                            ally.addHealingInstance(
+                                    wp,
+                                    ability,
+                                    currentDamageValue * allyHealing * 1.2f,
+                                    currentDamageValue * allyHealing * 1.2f,
+                                    isCrit ? 100 : -1,
+                                    100,
+                                    false,
+                                    false
+                            );
                         } else {
-                            ally.addHealingInstance(wp, ability, currentDamageValue * allyHealing, currentDamageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
+                            ally.addHealingInstance(
+                                    wp,
+                                    ability,
+                                    currentDamageValue * allyHealing,
+                                    currentDamageValue * allyHealing,
+                                    isCrit ? 100 : -1,
+                                    100,
+                                    false,
+                                    false
+                            );
                         }
                     }
                 }

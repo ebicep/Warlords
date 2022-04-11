@@ -112,7 +112,16 @@ public class CapacitorTotem extends AbstractTotemBase {
     public void pulseDamage() {
         PlayerFilter.entitiesAround(totem.getLocation(), radius, radius, radius)
                 .enemiesOf(owner)
-                .forEach(warlordsPlayer -> warlordsPlayer.addDamageInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false));
+                .forEach(warlordsPlayer -> warlordsPlayer.addDamageInstance(
+                        owner,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier,
+                        false
+                ));
+
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
     }
 

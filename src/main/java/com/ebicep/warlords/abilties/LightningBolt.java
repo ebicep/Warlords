@@ -82,7 +82,6 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
-
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);
             if (wp.getEntity() instanceof Player) {

@@ -18,6 +18,7 @@ import java.util.Optional;
 public class CripplingStrike extends AbstractStrikeBase {
 
     private int consecutiveStrikeCounter = 0;
+    private final int crippleDuration = 3;
 
     public CripplingStrike() {
         super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
@@ -32,7 +33,7 @@ public class CripplingStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and §ccrippling §7them for §63 §7seconds.\n" +
+                "§7and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
                 "§7A §ccrippled §7player deals §c10% §7less\n" +
                 "§7damage for the duration of the effect.\n" +
                 "§7Adds §c5% §7less damage dealt per\n" +
@@ -49,8 +50,22 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class).findAny();
+        nearPlayer.addDamageInstance(
+                wp,
+                name,
+                minDamageHeal,
+                maxDamageHeal,
+                critChance,
+                critMultiplier,
+                false
+        );
+
+        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(
+                nearPlayer,
+                RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                .findAny();
+
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrike cripplingStrike = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class);
@@ -66,7 +81,7 @@ public class CripplingStrike extends AbstractStrikeBase {
                             wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
                     },
-                    3 * 20
+                    crippleDuration * 20
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -85,7 +100,7 @@ public class CripplingStrike extends AbstractStrikeBase {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
                             wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
-                    }, 3 * 20
+                    }, crippleDuration * 20
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

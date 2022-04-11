@@ -25,6 +25,14 @@ public class FlameBurst extends AbstractProjectileBase {
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = "§7Launch a flame burst that will explode\n" +
+                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
+                "§7chance increases by §c1% §7for each\n" +
+                "§7travelled block. Up to 100%.";
+    }
+
+    @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
@@ -87,6 +95,7 @@ public class FlameBurst extends AbstractProjectileBase {
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
+
             nearEntity.addDamageInstance(
                     shooter,
                     name,
@@ -100,13 +109,4 @@ public class FlameBurst extends AbstractProjectileBase {
 
         return playersHit;
     }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Launch a flame burst that will explode\n" +
-            "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
-            "§7chance increases by §c1% §7for each\n" +
-            "§7travelled block. Up to 100%.";
-    }
-	
 }

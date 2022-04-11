@@ -53,12 +53,10 @@ public class Vindicate extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-
         Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
 
         Vindicate tempVindicate = new Vindicate();
-
         for (WarlordsPlayer vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)

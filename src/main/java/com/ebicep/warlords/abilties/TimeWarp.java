@@ -63,11 +63,19 @@ public class TimeWarp extends AbstractAbility {
                             cooldownManager -> {
                                 timesSuccessful++;
 
-                                wp.addHealingInstance(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false, false);
+                                wp.addHealingInstance(
+                                        wp,
+                                        name,
+                                        wp.getMaxHealth() * (warpHealPercentage / 100f),
+                                        wp.getMaxHealth() * (warpHealPercentage / 100f),
+                                        -1,
+                                        100,
+                                        false,
+                                        false
+                                );
+
                                 Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-
                                 wp.getEntity().teleport(warpLocation);
-
                                 warpTrail.clear();
                                 counter = 0;
                                 this.cancel();
@@ -80,8 +88,7 @@ public class TimeWarp extends AbstractAbility {
                 if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                     this.cancel();
                 }
-
-                //PARTICLES
+                // Particles
                 if (counter % 4 == 0) {
                     for (Location location : warpTrail) {
                         ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
@@ -92,7 +99,6 @@ public class TimeWarp extends AbstractAbility {
 
                     int points = 6;
                     double radius = 0.5d;
-
                     for (int e = 0; e < points; e++) {
                         double angle = 2 * Math.PI * e / points;
                         Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));

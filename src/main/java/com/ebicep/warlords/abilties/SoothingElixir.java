@@ -34,7 +34,6 @@ public class SoothingElixir extends AbstractAbility {
 
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
-
     private final int puddleMinHealing = 158;
     private final int puddleMaxHealing = 204;
 
@@ -102,7 +101,6 @@ public class SoothingElixir extends AbstractAbility {
                 boolean shouldExplode;
 
                 timer++;
-
                 if (last) {
                     Matrix4d center = new Matrix4d(newLoc);
                     for (float i = 0; i < 6; i++) {
@@ -115,10 +113,10 @@ public class SoothingElixir extends AbstractAbility {
 
                 WarlordsPlayer directHit;
                 if (
-                        !newLoc.getBlock().isEmpty()
-                        && newLoc.getBlock().getType() != Material.GRASS
-                        && newLoc.getBlock().getType() != Material.BARRIER
-                        && newLoc.getBlock().getType() != Material.VINE
+                    !newLoc.getBlock().isEmpty()
+                    && newLoc.getBlock().getType() != Material.GRASS
+                    && newLoc.getBlock().getType() != Material.BARRIER
+                    && newLoc.getBlock().getType() != Material.VINE
                 ) {
                     // Explode based on collision
                     shouldExplode = true;
@@ -159,7 +157,7 @@ public class SoothingElixir extends AbstractAbility {
                     CircleEffect circleEffect = new CircleEffect(
                             wp.getGame(),
                             wp.getTeam(),
-                            newLoc.add(0, -1, 0),
+                            newLoc,
                             HITBOX,
                             new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                             new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)

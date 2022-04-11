@@ -74,6 +74,7 @@ public class HeartToHeart extends AbstractAbility {
             if (wp.hasFlag()) {
                 timesUsedWithFlag++;
             }
+
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 
@@ -106,10 +107,8 @@ public class HeartToHeart extends AbstractAbility {
             );
 
             new BukkitRunnable() {
-
                 final Location playerLoc = wp.getLocation();
                 int timer = 0;
-
                 @Override
                 public void run() {
                     timer++;
@@ -144,7 +143,16 @@ public class HeartToHeart extends AbstractAbility {
 
                     if (timer >= 8) {
                         wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
-                        wp.addHealingInstance(wp, name, healthRestore, healthRestore, -1, 100, false, false);
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                healthRestore,
+                                healthRestore,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 0, 1);

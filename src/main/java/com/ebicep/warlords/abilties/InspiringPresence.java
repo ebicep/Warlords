@@ -51,21 +51,49 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
-        wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
-        PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                .aliveTeammatesOfExcludingSelf(wp)
-                .forEach((nearPlayer) -> {
-                    playersHit++;
-                    tempPresence.getPlayersEffected().add(nearPlayer);
-                    wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Inspiring Presence inspired " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
-                    nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
-                    nearPlayer.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                    }, duration * 20);
-                });
-
         Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
+
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "PRES",
+                InspiringPresence.class,
+                tempPresence,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    cancelSpeed.run();
+                },
+                duration * 20
+        );
+
+        for (WarlordsPlayer presenceTarget : PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOfExcludingSelf(wp)
+        ) {
+            playersHit++;
+            tempPresence.getPlayersEffected().add(presenceTarget);
+            wp.sendMessage(
+                WarlordsPlayer.GIVE_ARROW_GREEN +
+                ChatColor.GRAY + " Your Inspiring Presence inspired " +
+                ChatColor.YELLOW + presenceTarget.getName() +
+                ChatColor.GRAY + "!"
+            );
+
+            Runnable cancelAllySpeed = presenceTarget.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
+            presenceTarget.getCooldownManager().addRegularCooldown(
+                    name,
+                    "PRES",
+                    InspiringPresence.class,
+                    tempPresence,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                        cancelAllySpeed.run();
+                    },
+                    duration * 20
+            );
+        }
 
         new GameRunnable(wp.getGame()) {
             @Override

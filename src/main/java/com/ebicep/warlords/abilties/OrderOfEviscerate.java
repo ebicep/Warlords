@@ -121,8 +121,13 @@ public class OrderOfEviscerate extends AbstractAbility {
                 wp.getCooldownManager().removeCooldownByName("Cloaked");
                 if (isKiller) {
                     numberOfFullResets++;
+                    wp.sendMessage(
+                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " You killed your mark," +
+                        ChatColor.YELLOW + " your cooldowns have been reset" +
+                        ChatColor.GRAY + "!"
+                    );
 
-                    wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
                     new GameRunnable(wp.getGame()) {
 
                         @Override
@@ -141,7 +146,12 @@ public class OrderOfEviscerate extends AbstractAbility {
 
                         @Override
                         public void run() {
-                            wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You assisted in killing your mark," + ChatColor.YELLOW + " your cooldowns have been reduced by half" + ChatColor.GRAY + "!");
+                            wp.sendMessage(
+                                WarlordsPlayer.GIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " You assisted in killing your mark," +
+                                ChatColor.YELLOW + " your cooldowns have been reduced by half" +
+                                ChatColor.GRAY + "!"
+                            );
 
                             wp.getSpec().getPurple().setCurrentCooldown(wp.getSpec().getPurple().getCurrentCooldown() / 2);
                             wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() / 2);
@@ -151,9 +161,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     }.runTaskLater(2);
                 }
-                if (wp.getEntity() instanceof Player) {
-                    ((Player) wp.getEntity()).playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
-                }
+
+                wp.playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
             }
         });
 

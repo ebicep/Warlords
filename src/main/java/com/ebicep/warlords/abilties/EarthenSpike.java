@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,20 +64,20 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location location = player.getLocation();
-        for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(player, radius, radius, radius)
+        for (WarlordsPlayer spikeTarget : PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+            if (Utils.isLookingAt(player, spikeTarget.getEntity()) && Utils.hasLineOfSight(player, spikeTarget.getEntity())) {
                 addTimesUsed();
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                 FallingBlock block = spawnFallingBlock(location, location);
-                EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), p, wp);
+                EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);
                 wp.subtractEnergy(energyCost);
 
                 new GameRunnable(wp.getGame()) {
@@ -170,6 +171,7 @@ public class EarthenSpike extends AbstractAbility {
                                     break;
                                 }
                             }
+
                             ArmorStand stand = (ArmorStand) targetLocation.getWorld().spawnEntity(targetLocation.add(0, -.6, 0), EntityType.ARMOR_STAND);
                             stand.setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
                             stand.setGravity(false);

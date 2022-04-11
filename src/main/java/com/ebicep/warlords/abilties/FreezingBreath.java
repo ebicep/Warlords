@@ -61,7 +61,15 @@ public class FreezingBreath extends AbstractAbility {
                     playersHit++;
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
-                        target.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                        target.addDamageInstance(
+                                wp,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                false
+                        );
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
                     }
                 });
@@ -80,14 +88,12 @@ public class FreezingBreath extends AbstractAbility {
             final Matrix4d center = new Matrix4d(playerLoc);
 
             public void playEffect() {
-
                 if (animationTimer > 12) {
                     this.cancel();
-                    //Bukkit.broadcastMessage(String.valueOf(center));
                 }
 
-                        ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
-                                center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
+                ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
+                        center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;

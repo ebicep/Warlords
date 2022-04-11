@@ -6,7 +6,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,33 +49,61 @@ public class ChainHeal extends AbstractChainBase {
     @Override
     protected int getHitCounterAndActivate(WarlordsPlayer wp, Player p) {
         int hitCounter = 0;
-        for (WarlordsPlayer nearPlayer : PlayerFilter
+        for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(p, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(p, nearPlayer.getEntity())) {
-                //self heal
-                p.playSound(p.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                nearPlayer.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                chain(p.getLocation(), nearPlayer.getLocation());
+            if (Utils.isLookingAtChain(p, chainTarget.getEntity())) {
+                wp.addHealingInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance, critMultiplier,
+                        false,
+                        false
+                );
+
+                chainTarget.addHealingInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier,
+                        false,
+                        false
+                );
+
+                chain(p.getLocation(), chainTarget.getLocation());
                 hitCounter++;
 
-                for (WarlordsPlayer chainPlayerOne : PlayerFilter
-                        .entitiesAround(nearPlayer, bounceRange, bounceRange, bounceRange)
+                for (WarlordsPlayer bounceTarget : PlayerFilter
+                        .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
                         .aliveTeammatesOf(wp)
-                        .excluding(wp, nearPlayer)
+                        .excluding(wp, chainTarget)
                 ) {
-                    chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealingInstance(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false, false);
-                    hitCounter++;
+                    chain(chainTarget.getLocation(), bounceTarget.getLocation());
+                    bounceTarget.addHealingInstance(
+                            wp,
+                            name,
+                            minDamageHeal * 0.8f,
+                            maxDamageHeal * 0.8f,
+                            critChance,
+                            critMultiplier,
+                            false,
+                            false
+                    );
 
+                    hitCounter++;
                     break;
                 }
+
                 break;
             }
         }
+
         return hitCounter;
     }
 
@@ -91,7 +118,6 @@ public class ChainHeal extends AbstractChainBase {
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
-
         warlordsPlayer.updateBlueItem(player);
     }
 

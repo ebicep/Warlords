@@ -46,24 +46,43 @@ public class CrusadersStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
+            nearPlayer.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal * 1.15f,
+                    maxDamageHeal * 1.15f,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
         } else {
-            nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            nearPlayer.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
         }
-        //reloops near players to give energy to
-        PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
+
+        // Give energy to nearby allies and check if they have mark active
+        for (WarlordsPlayer energyTarget : PlayerFilter
+                .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .sorted(
                     Comparator.comparing(
-                        (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
-                        .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())
-                    ))
+                    (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
+                    .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation()))
+                )
                 .limit(2)
-                .forEach((nearTeamPlayer) -> {
-                    if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
-                        nearTeamPlayer.getSpeed().addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
-                    }
-                    energyGivenToPlayers += nearTeamPlayer.addEnergy(wp, name, energyGiven);
-                });
+        ) {
+            if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
+                energyTarget.getSpeed().addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
+            }
+
+            energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven);
+        }
     }
 }

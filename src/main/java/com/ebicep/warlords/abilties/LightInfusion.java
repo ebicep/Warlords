@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -41,10 +40,11 @@ public class LightInfusion extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+        Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
 
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
@@ -52,26 +52,38 @@ public class LightInfusion extends AbstractAbility {
                 tempLightInfusion,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                    cancelSpeed.run();
+                },
                 duration * 20
         );
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-
         for (int i = 0; i < 10; i++) {
-            Location particleLoc = player.getLocation().add(0, 1.5, 0);
-            ParticleEffect.SPELL.display(1, 0F, 1, 0.3F, 3, particleLoc, 500);
+            ParticleEffect.SPELL.display(
+                    1,
+                    0,
+                    1,
+                    0.3f,
+                    3,
+                    wp.getLocation().add(0, 1.5, 0),
+                    500
+            );
         }
 
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempLightInfusion)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 1.2, 0);
-                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
+                    ParticleEffect.SPELL.display(
+                            0.3f,
+                            0.1f,
+                            0.3f,
+                            0.2f,
+                            2,
+                            wp.getLocation().add(0, 1.2, 0),
+                            500
+                    );
                 } else {
-                    cancelSpeed.run();
                     this.cancel();
                 }
             }

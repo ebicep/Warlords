@@ -110,6 +110,7 @@ public class Intervene extends AbstractAbility {
                     WarlordsPlayer.GIVE_ARROW_GREEN + "§7 You are now protecting " +
                             vt.getName() + " with your §eIntervene!"
             );
+
             wp.getCooldownManager().addRegularCooldown(
                     name,
                     "VENE",
@@ -122,11 +123,12 @@ public class Intervene extends AbstractAbility {
             );
 
             vt.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN + "§7 " +
-                            wp.getName() + " is shielding you with their " +
-                            ChatColor.YELLOW + "Intervene" +
-                            ChatColor.GRAY + "!"
+                WarlordsPlayer.GIVE_ARROW_GREEN + "§7 " +
+                wp.getName() + " is shielding you with their " +
+                ChatColor.YELLOW + "Intervene" +
+                ChatColor.GRAY + "!"
             );
+
             vt.getCooldownManager().addRegularCooldown(
                     name,
                     "VENE",
@@ -176,18 +178,18 @@ public class Intervene extends AbstractAbility {
                             vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > breakRadius * breakRadius
                     ) {
                         wp.sendMessage(
-                                WarlordsPlayer.RECEIVE_ARROW_RED + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s " +
-                                        ChatColor.YELLOW + "Intervene " +
-                                        ChatColor.GRAY + "has expired!"
+                            WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                            ChatColor.GRAY + wp.getName() + "'s " +
+                            ChatColor.YELLOW + "Intervene " +
+                            ChatColor.GRAY + "has expired!"
                         );
                         wp.getCooldownManager().removeCooldown(tempIntervene);
 
                         vt.sendMessage(
-                                WarlordsPlayer.RECEIVE_ARROW_RED + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s " +
-                                        ChatColor.YELLOW + "Intervene " +
-                                        ChatColor.GRAY + "has expired!"
+                            WarlordsPlayer.RECEIVE_ARROW_RED + " " +
+                            ChatColor.GRAY + wp.getName() + "'s " +
+                            ChatColor.YELLOW + "Intervene " +
+                            ChatColor.GRAY + "has expired!"
                         );
                         vt.getCooldownManager().removeCooldown(tempIntervene);
 
