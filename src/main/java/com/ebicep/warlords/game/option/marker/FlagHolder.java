@@ -93,8 +93,8 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
 
     static boolean dropFlagForPlayer(WarlordsPlayer player) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
-            if(holder.update(i -> i.getFlag() instanceof PlayerFlagLocation
-                    && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag())
+            if (holder.update(i -> i.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player)
+                    ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag())
                     : null) != null) {
                 return true;
             }

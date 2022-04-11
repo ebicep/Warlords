@@ -5,10 +5,11 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.Nonnull;
-import org.bukkit.Location;
 
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
 	
@@ -22,7 +23,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     }
 
     public GroundFlagLocation(PlayerFlagLocation playerFlagLocation) {
-        this(playerFlagLocation.getLocation(), playerFlagLocation.getPickUpTicks());
+        this(playerFlagLocation.getLocation(), playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getPickUpTicks() + 600 : playerFlagLocation.getPickUpTicks());
     }
 
     @Override
