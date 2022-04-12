@@ -57,6 +57,20 @@ public class Vindicate extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
 
         Vindicate tempVindicate = new Vindicate();
+        wp.getSpeed().removeSlownessModifiers();
+        debuffsRemovedOnCast += wp.getCooldownManager().removeDebuffCooldowns();
+        wp.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+        wp.getCooldownManager().addRegularCooldown(
+                "Vindicate Debuff Immunity",
+                "VIND",
+                Vindicate.class,
+                tempVindicate,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                vindicateDuration * 20
+        );
+
         for (WarlordsPlayer vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -115,7 +129,6 @@ public class Vindicate extends AbstractAbility {
         circle.playEffects();
 
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
-
         return true;
     }
 
