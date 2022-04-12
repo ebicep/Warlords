@@ -88,7 +88,7 @@ public class GroundSlam extends AbstractAbility {
                             currentPlayersHit.add(slamTarget);
                             final Location loc = slamTarget.getLocation();
                             final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
-                            slamTarget.setVelocity(v, false);
+                            slamTarget.setVelocity(v, false, false);
 
                             slamTarget.addDamageInstance(
                                     wp,

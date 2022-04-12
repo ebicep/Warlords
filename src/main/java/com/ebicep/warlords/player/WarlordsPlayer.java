@@ -58,6 +58,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1953,49 +1954,40 @@ public final class WarlordsPlayer {
         return getTeam().teamColor().toString() + ChatColor.BOLD + getName();
     }
 
-    public void setVelocity(org.bukkit.util.Vector v) {
-        if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-            v.multiply(0.75);
-        }
-        if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-            v.multiply(0.5);
-        }
-        if (cooldownManager.hasCooldownFromName("KB Increase")) {
-            v.multiply(1.5);
-        }
-
-        setVelocity(v, true);
+    public void setVelocity(Vector v, boolean ignoreModifications) {
+        setVelocity(v, true, ignoreModifications);
     }
 
-    public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
+    public void setVelocity(Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
-            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-                v.multiply(0.75);
+            if (!ignoreModifications) {
+                if (cooldownManager.hasCooldownFromName("KB Resistance")) {
+                    v.multiply(0.75);
+                }
+                if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
+                    v.multiply(0.5);
+                }
+                if (cooldownManager.hasCooldownFromName("KB Increase")) {
+                    v.multiply(1.5);
+                }
             }
-            if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-                v.multiply(0.5);
-            }
-            if (cooldownManager.hasCooldownFromName("KB Increase")) {
-                v.multiply(1.5);
-            }
-
             this.entity.setVelocity(v);
         }
     }
 
-    public void setVelocity(Location from, double multipliedBy, double y, boolean kbAfterHorse) {
-        this.setVelocity(from, getLocation(), multipliedBy, y, kbAfterHorse);
-    }
-
-    public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
-        if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
-            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
-            } else {
-                this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
-            }
-        }
-    }
+//    public void setVelocity(Location from, double multipliedBy, double y, boolean kbAfterHorse) {
+//        this.setVelocity(from, getLocation(), multipliedBy, y, kbAfterHorse);
+//    }
+//
+//    public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
+//        if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
+//            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
+//                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
+//            } else {
+//                this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
+//            }
+//        }
+//    }
 
     public World getWorld() {
         return this.entity.getWorld();
