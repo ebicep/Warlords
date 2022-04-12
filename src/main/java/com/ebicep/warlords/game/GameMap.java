@@ -81,7 +81,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.OnKill(5));
             options.add(new RespawnWaveOption());
@@ -182,7 +186,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());
@@ -283,7 +291,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());
@@ -339,7 +351,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());
@@ -398,7 +414,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());
@@ -450,7 +470,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption(2000));
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());
@@ -503,7 +527,11 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
+            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());
             options.add(new AbstractScoreOnEventOption.OnKill());

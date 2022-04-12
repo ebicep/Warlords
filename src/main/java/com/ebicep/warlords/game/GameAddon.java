@@ -106,6 +106,22 @@ public enum GameAddon {
             player.setHealth(player.getHealth() * 3);
         }
     },
+    DISABLE_CRIT(
+            "Disable Critical Hits",
+            null,
+            "Prevents all players from hitting critical hits."
+    ) {
+        @Override
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+            player.setCanCrit(false);
+        }
+    },
+    DOUBLE_TIMER(
+            "Double Timer",
+            null,
+            "Doubles the max duration of the game."
+    ) {
+    },
     MEGA_GAME(
             "Mega Game",
             null,
