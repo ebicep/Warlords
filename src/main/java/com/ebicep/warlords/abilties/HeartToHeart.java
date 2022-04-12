@@ -143,7 +143,7 @@ public class HeartToHeart extends AbstractAbility {
                     }
 
                     if (timer >= 8) {
-                        wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
+                        wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2), false);
                         wp.addHealingInstance(wp, name, healthRestore, healthRestore, -1, 100, false, false);
                     }
                 }

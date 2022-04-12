@@ -78,12 +78,12 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             @Override
             public void run() {
                 if (finalInAir) {
-                    wp.setVelocity(location.getDirection().multiply(2).setY(.2));
+                    wp.setVelocity(location.getDirection().multiply(2).setY(.2), true);
                 } else {
-                    wp.setVelocity(location.getDirection().multiply(1.5).setY(.2));
+                    wp.setVelocity(location.getDirection().multiply(1.5).setY(.2), true);
                 }
             }
-        }.runTaskLater(0);
+        }.runTaskLater(1);
 
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
@@ -100,7 +100,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                         (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0) ||
                         maxChargeDuration <= 0
                 ) {
-                    wp.setVelocity(new Vector(0, 0, 0));
+                    wp.setVelocity(new Vector(0, 0, 0), false);
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {

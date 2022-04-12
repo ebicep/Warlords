@@ -81,6 +81,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <outputFile>${outputFilePath}</outputFile>
                         </configuration>
                     </execution>
                 </executions>
