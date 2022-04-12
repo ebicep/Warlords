@@ -61,8 +61,22 @@ public class Berserk extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    cancelSpeed.run();
                 },
-                duration * 20
+                duration * 20,
+                ticksLeft -> {
+                    if (ticksLeft % 3 == 0) {
+                        ParticleEffect.VILLAGER_ANGRY.display(
+                                0,
+                                0,
+                                0,
+                                0.1f,
+                                1,
+                                wp.getLocation().add(0, 1.2, 0),
+                                500
+                        );
+                    }
+                }
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -77,6 +91,7 @@ public class Berserk extends AbstractAbility {
             }
         });
 
+        /*
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -96,6 +111,8 @@ public class Berserk extends AbstractAbility {
                 }
             }
         }.runTaskTimer(0, 3);
+
+         */
 
         return true;
     }

@@ -54,11 +54,25 @@ public class AvengersWrath extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                ticksLeft -> {
+                    if (ticksLeft % 4 == 0) {
+                        ParticleEffect.SPELL.display(
+                                0.3F,
+                                0.1F,
+                                0.3F,
+                                0.2F,
+                                6,
+                                wp.getLocation().add(0, 1.2, 0),
+                                500
+                        );
+                    }
+                }
         );
 
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
+        /*
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -78,6 +92,8 @@ public class AvengersWrath extends AbstractAbility {
             }
         }.runTaskTimer(0, 4);
 
+
+         */
         return true;
     }
 

@@ -55,18 +55,36 @@ public class ArcaneShield extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
-        wp.getCooldownManager().addRegularCooldown(name, "ARCA", ArcaneShield.class, tempArcaneShield, wp, CooldownTypes.ABILITY,
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "ARCA",
+                ArcaneShield.class,
+                tempArcaneShield,
+                wp,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
                         }
                     }
-                }, duration * 20);
+                },
+                duration * 20,
+                ticksLeft -> {
+                    if (ticksLeft % 3 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.5, 0);
+                        ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
+                        ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
+                        ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0, 1, location, 500);
+                    }
+                }
+        );
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
 
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 
+        /*
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -82,6 +100,8 @@ public class ArcaneShield extends AbstractAbility {
             }
 
         }.runTaskTimer(0, 3);
+
+         */
 
         return true;
     }

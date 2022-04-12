@@ -6,6 +6,9 @@ import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -15,11 +18,19 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     protected int startingTicks;
     protected int ticksLeft;
+    protected List<Consumer<Integer>> consumers;
 
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
+    }
+
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Consumer<Integer>... consumers) {
+        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
+        this.startingTicks = ticksLeft;
+        this.ticksLeft = ticksLeft;
+        this.consumers = Arrays.asList(consumers);
     }
 
     @Override
@@ -35,6 +46,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public void onTick() {
+        consumers.forEach(integerConsumer -> integerConsumer.accept(ticksLeft));
         subtractTime(1);
     }
 
@@ -65,5 +77,9 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     public int getStartingTicks() {
         return startingTicks;
+    }
+
+    public void removeConsumer(Consumer<Integer> consumer) {
+        this.consumers.remove(consumer);
     }
 }

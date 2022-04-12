@@ -53,7 +53,19 @@ public class BloodLust extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                ticksLeft -> {
+                    if (ticksLeft % 4 == 0) {
+                        ParticleEffect.REDSTONE.display(
+                                new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                wp.getLocation().add(
+                                        (Math.random() - 0.5) * 1,
+                                        1.2,
+                                        (Math.random() - 0.5) * 1),
+                                500
+                        );
+                    }
+                }
         ) {
             @Override
             public boolean distinct() {
@@ -77,6 +89,7 @@ public class BloodLust extends AbstractAbility {
             }
         });
 
+        /*
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -94,6 +107,8 @@ public class BloodLust extends AbstractAbility {
                 }
             }
         }.runTaskTimer(0, 4);
+
+         */
 
         return true;
     }
