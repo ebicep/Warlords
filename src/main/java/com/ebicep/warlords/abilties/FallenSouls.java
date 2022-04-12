@@ -25,7 +25,7 @@ public class FallenSouls extends AbstractAbility {
     protected int playersHit = 0;
 
     private static final float fallenSoulHitBox = 1.25f;
-    private static final float fallenSoulSpeed = 1.95f;
+    private static final float fallenSoulSpeed = 2;
 
     public FallenSouls() {
         super("Fallen Souls", 164f, 212f, 0, 55, 20, 180);
@@ -50,6 +50,9 @@ public class FallenSouls extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
+
         Location location = player.getLocation();
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getLeftDirection(location).multiply(.5)), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
@@ -62,10 +65,6 @@ public class FallenSouls extends AbstractAbility {
         locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
 
         FallenSoul fallenSoul = new FallenSoul(wp, fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
-
-        wp.subtractEnergy(energyCost);
-
-        Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
 
         new GameRunnable(wp.getGame()) {
 

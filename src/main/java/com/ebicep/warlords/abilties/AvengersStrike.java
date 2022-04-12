@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AvengersStrike extends AbstractStrikeBase {
-    protected float energyStole = 0;
 
+    protected float energyStole = 0;
     private final int energySteal = 10;
 
     public AvengersStrike() {
@@ -39,10 +39,27 @@ public class AvengersStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player p, @Nonnull WarlordsPlayer nearPlayer) {
         if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
+            nearPlayer.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal * 1.2f,
+                    maxDamageHeal * 1.2f,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
         } else {
-            nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            nearPlayer.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
         }
+
         energyStole += nearPlayer.subtractEnergy(energySteal);
 
         if (wp.getCooldownManager().hasCooldown(AvengersWrath.class)) {
@@ -57,10 +74,27 @@ public class AvengersStrike extends AbstractStrikeBase {
                 //checking if player is in consecrate
                 if (standingOnConsecrate(wp, wrathTarget)) {
                     wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-                    wrathTarget.addDamageInstance(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
+                    wrathTarget.addDamageInstance(
+                            wp,
+                            name,
+                            minDamageHeal * 1.2f,
+                            maxDamageHeal * 1.2f,
+                            critChance,
+                            critMultiplier,
+                            false
+                    );
                 } else {
-                    wrathTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    wrathTarget.addDamageInstance(
+                            wp,
+                            name,
+                            minDamageHeal,
+                            maxDamageHeal,
+                            critChance,
+                            critMultiplier,
+                            false
+                    );
                 }
+
                 energyStole += wrathTarget.subtractEnergy(energySteal);
             }
         }

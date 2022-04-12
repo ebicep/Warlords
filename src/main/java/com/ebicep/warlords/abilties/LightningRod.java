@@ -42,23 +42,30 @@ public class LightningRod extends AbstractAbility {
         return info;
     }
 
-
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        wp.addHealingInstance(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false, false);
+        Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
-        Location playerLocation = player.getLocation();
+        wp.addHealingInstance(
+                wp,
+                name,
+                (wp.getMaxHealth() * .3f),
+                (wp.getMaxHealth() * .3f),
+                critChance,
+                critMultiplier,
+                false,
+                false
+        );
 
-        PlayerFilter.entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
+        for (WarlordsPlayer knockbackTarget : PlayerFilter
+                .entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
-                .forEach((p) -> {
-                    //knockback
-                    final Location loc = p.getLocation();
-                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.45).setY(0.35);
-
-                    p.setVelocity(v, false);
-                });
+        ) {
+            final Location loc = knockbackTarget.getLocation();
+            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
+            knockbackTarget.setVelocity(v, false);
+        }
 
         // pulsedamage
         List<CapacitorTotem> totemDownAndClose = AbstractTotemBase.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
@@ -72,9 +79,8 @@ public class LightningRod extends AbstractAbility {
             capacitorTotem.addProc();
         });
 
-        new FallingBlockWaveEffect(playerLocation, knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
-        player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
-        Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
+        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
+        player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
 
         return true;
     }

@@ -43,8 +43,7 @@ public class SpiritLink extends AbstractChainBase {
 
         return info;
     }
-
-
+    
     @Override
     protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
         int hitCounter = 0;

@@ -48,9 +48,11 @@ public class ShadowStep extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = wp.getLocation();
+        wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
+        Utils.playGlobalSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
 
         wp.setFlagPickCooldown(2);
-
         if (wp.getCarriedFlag() != null) {
             player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
             player.setFallDistance(-5);
@@ -59,8 +61,6 @@ public class ShadowStep extends AbstractAbility {
             player.setFallDistance(-10);
         }
 
-        Utils.playGlobalSound(player.getLocation(), "rogue.drainingmiasma.activation", 1, 2);
-        Utils.playGlobalSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                 .withColor(Color.BLACK)
@@ -85,7 +85,6 @@ public class ShadowStep extends AbstractAbility {
             @Override
             public void run() {
                 counter++;
-
                 // if player never lands in the span of 10 seconds, remove damage.
                 if (counter == 200 || wp.isDead()) {
                     this.cancel();

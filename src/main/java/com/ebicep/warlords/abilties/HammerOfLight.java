@@ -45,6 +45,25 @@ public class HammerOfLight extends AbstractAbility {
         this.location = location;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = "§7Throw down a Hammer of Light on\n" +
+                "§7the ground, dealing §c178 §7- §c244 §7damage\n" +
+                "§7damage every second to nearby enemies and\n" +
+                "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
+                "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
+                "§7pierces shields and defenses of enemies\n" +
+                "§7standing on top of the Hammer of Light.\n" +
+                "§7Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
+                "§7Removing the damage and piercing BUT increasing\n" +
+                "§7the healing §7by §a50% §7and reducing the\n" +
+                "§7energy cost of your Protector's Strike by\n" +
+                "§e10 §7energy. You cannot put the Hammer of Light\n" +
+                "§7back down after you converted it.";
+    }
+
     public static boolean isStandingInHammer(WarlordsPlayer owner, WarlordsPlayer standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
@@ -70,25 +89,6 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c178 §7- §c244 §7damage\n" +
-                "§7damage every second to nearby enemies and\n" +
-                "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
-                "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
-                "§7pierces shields and defenses of enemies\n" +
-                "§7standing on top of the Hammer of Light.\n" +
-                "§7Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
-                "§7Removing the damage and piercing BUT increasing\n" +
-                "§7the healing §7by §a50% §7and reducing the\n" +
-                "§7energy cost of your Protector's Strike by\n" +
-                "§e10 §7energy. You cannot put the Hammer of Light\n" +
-                "§7back down after you converted it.";
-    }
-
-    @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
@@ -102,8 +102,9 @@ public class HammerOfLight extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost);
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
@@ -117,6 +118,7 @@ public class HammerOfLight extends AbstractAbility {
                 location.add(0, 0, -.6);
             }
         }
+
         ArmorStand hammer = spawnHammer(location);
         HammerOfLight tempHammerOfLight = new HammerOfLight(location);
 
@@ -134,7 +136,6 @@ public class HammerOfLight extends AbstractAbility {
 
         wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -143,8 +144,8 @@ public class HammerOfLight extends AbstractAbility {
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                 new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
         );
-        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
 
+        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
         location.add(0, 1, 0);
 
         new GameRunnable(wp.getGame()) {
@@ -155,49 +156,56 @@ public class HammerOfLight extends AbstractAbility {
                 if (counter % 20 == 0) {
                     if (tempHammerOfLight.isCrownOfLight()) {
                         if (wp.isAlive()) {
-                            PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
+                            for (WarlordsPlayer allyTarget : PlayerFilter
+                                    .entitiesAround(wp.getLocation(), radius, radius, radius)
                                     .aliveTeammatesOf(wp)
-                                    .forEach(teammate -> {
-                                        playersHealed++;
-                                        teammate.addHealingInstance(
-                                                wp,
-                                                "Crown of Light",
-                                                minDamageHeal * 1.5f,
-                                                maxDamageHeal * 1.5f,
-                                                critChance,
-                                                critMultiplier,
-                                                false, false);
-                                    });
+                            ) {
+                                playersHealed++;
+                                allyTarget.addHealingInstance(
+                                        wp,
+                                        "Crown of Light",
+                                        minDamageHeal * 1.5f,
+                                        maxDamageHeal * 1.5f,
+                                        critChance,
+                                        critMultiplier,
+                                        false,
+                                        false
+                                );
+                            }
                         }
                     } else {
-                        for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                        for (WarlordsPlayer hammerTarget : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
                                 .isAlive()
                         ) {
-                            if (wp.isTeammateAlive(warlordsPlayer)) {
+                            if (wp.isTeammateAlive(hammerTarget)) {
                                 playersHealed++;
-                                warlordsPlayer.addHealingInstance(
+                                hammerTarget.addHealingInstance(
                                         wp,
                                         name,
                                         minDamageHeal,
                                         maxDamageHeal,
                                         critChance,
                                         critMultiplier,
-                                        false, false);
+                                        false,
+                                        false
+                                );
                             } else {
                                 playersDamaged++;
-                                warlordsPlayer.addDamageInstance(
+                                hammerTarget.addDamageInstance(
                                         wp,
                                         name,
                                         178,
                                         244,
                                         critChance,
                                         critMultiplier,
-                                        false);
+                                        false
+                                );
                             }
                         }
                     }
                 }
+
                 if (!wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
                     hammer.remove();
                     task.cancel();
@@ -283,7 +291,6 @@ public class HammerOfLight extends AbstractAbility {
 
         return hammer;
     }
-
 
     public boolean isHammer() {
         return !isCrownOfLight;

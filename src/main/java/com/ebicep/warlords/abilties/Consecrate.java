@@ -100,9 +100,9 @@ public class Consecrate extends AbstractAbility {
                 timeLeft--;
                 PlayerFilter.entitiesAround(location, radius, 6, radius)
                         .aliveEnemiesOf(wp)
-                        .forEach(warlordsPlayer -> {
+                        .forEach(wp -> {
                             playersHit++;
-                            warlordsPlayer.addDamageInstance(
+                            wp.addDamageInstance(
                                     wp,
                                     name,
                                     minDamageHeal,

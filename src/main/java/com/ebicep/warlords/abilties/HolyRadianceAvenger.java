@@ -63,7 +63,15 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
                 EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.LEAVES, 1, (short) 2), 8);
 
-                HolyRadianceAvenger tempMark = new HolyRadianceAvenger(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+                HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
+                        minDamageHeal,
+                        maxDamageHeal,
+                        cooldown,
+                        energyCost,
+                        critChance,
+                        critMultiplier
+                );
+
                 markTarget.getCooldownManager().addRegularCooldown(
                         name,
                         "AVENGER MARK",
@@ -76,8 +84,19 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         markDuration * 20
                 );
 
-                wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked " + ChatColor.GOLD + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED + ChatColor.GRAY + " You have been cursed with " + ChatColor.GOLD + "Avenger's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                wp.sendMessage(
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " You have marked " +
+                    ChatColor.GOLD + markTarget.getName() +
+                    ChatColor.GRAY + "!"
+                );
+
+                markTarget.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW_RED +
+                    ChatColor.GRAY + " You have been cursed with " +
+                    ChatColor.GOLD + "Avenger's Mark" +
+                    ChatColor.GRAY + " by " + wp.getName() + "!"
+                );
 
                 new GameRunnable(wp.getGame()) {
                     @Override

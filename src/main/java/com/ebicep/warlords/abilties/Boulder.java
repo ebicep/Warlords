@@ -56,6 +56,7 @@ public class Boulder extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
@@ -99,7 +100,15 @@ public class Boulder extends AbstractAbility {
                 boolean shouldExplode;
 
                 if (last) {
-                    ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, newLoc.clone().add(0, -1, 0), 500);
+                    ParticleEffect.CRIT.display(
+                            0.3f,
+                            0.3f,
+                            0.3f,
+                            0.1f,
+                            4,
+                            newLoc.clone().add(0, -1, 0),
+                            500
+                    );
                 }
 
                 WarlordsPlayer directHit = null;
@@ -148,11 +157,9 @@ public class Boulder extends AbstractAbility {
                                 p.setVelocity(v, false, false);
                                 p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             }
+
                             newLoc.setPitch(-12);
                             Location impactLocation = newLoc.clone().subtract(speed);
-
-                            //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
-
                             spawnFallingBlocks(impactLocation, 3, 10);
 
                             new GameRunnable(wp.getGame()) {
@@ -171,8 +178,6 @@ public class Boulder extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
-
         return true;
     }
 
@@ -186,10 +191,7 @@ public class Boulder extends AbstractAbility {
             double x = initialCircleRadius * Math.cos(angle);
             double z = initialCircleRadius * Math.sin(angle);
             angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
-
             spawnLoc.add(x, 1, z);
-
-            //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 1, spawnLoc, 100);
 
             if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
                 switch ((int) (Math.random() * 3)) {
@@ -205,6 +207,7 @@ public class Boulder extends AbstractAbility {
                     default:
                         throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                 }
+
                 fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(-.5).setY(.25));
                 fallingBlock.setDropItem(false);
                 WarlordsEvents.addEntityUUID(fallingBlock);

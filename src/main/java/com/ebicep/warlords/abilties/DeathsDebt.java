@@ -117,20 +117,23 @@ public class DeathsDebt extends AbstractTotemBase {
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManagerDebt -> {
-                                //final damage tick
+                                // Final damage tick
                                 wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                 // Enemy damage
-                                PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
+                                for (WarlordsPlayer totemTarget : PlayerFilter
+                                        .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                         .aliveEnemiesOf(wp)
-                                        .forEach((nearPlayer) -> {
-                                            playersDamaged++;
-                                            nearPlayer.addDamageInstance(wp,
-                                                    name,
-                                                    tempDeathsDebt.getDelayedDamage() * .15f,
-                                                    tempDeathsDebt.getDelayedDamage() * .15f,
-                                                    critChance,
-                                                    critMultiplier, false);
-                                        });
+                                ) {
+                                    playersDamaged++;
+                                    totemTarget.addDamageInstance(
+                                            wp,
+                                            name,
+                                            tempDeathsDebt.getDelayedDamage() * .15f,
+                                            tempDeathsDebt.getDelayedDamage() * .15f,
+                                            critChance,
+                                            critMultiplier, false
+                                    );
+                                }
                                 // 6 damage waves, stop the function
                                 totemStand.remove();
                                 particles.cancel();
@@ -142,7 +145,10 @@ public class DeathsDebt extends AbstractTotemBase {
                     if (!tempDeathsDebt.playerInRadius) {
                         wp.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                     } else {
-                        wp.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                        wp.sendMessage(
+                            WarlordsPlayer.RECEIVE_ARROW_RED + " §2Spirit's Respite §7delayed §c" +
+                            Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid."
+                        );
                     }
                     circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                     circle.setRadius(debtRadius);
@@ -157,12 +163,11 @@ public class DeathsDebt extends AbstractTotemBase {
                 tempDeathsDebt.addDelayedDamage(currentDamageValue);
             }
         };
+
         wp.getCooldownManager().addCooldown(spiritRespiteCooldown);
 
         new GameRunnable(wp.getGame()) {
-
             int counter = 0;
-
             @Override
             public void run() {
                 if (wp.isDead()) {
@@ -176,29 +181,35 @@ public class DeathsDebt extends AbstractTotemBase {
                         this.cancel();
                         return;
                     }
+
                     boolean isPlayerInRadius = wp.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
                     if (!isPlayerInRadius && wp.getCooldownManager().hasCooldown(tempDeathsDebt) && !tempDeathsDebt.isInDebt()) {
                         tempDeathsDebt.setInDebt(true);
                         tempDeathsDebt.setPlayerInRadius(false);
                         spiritRespiteCooldown.setTicksLeft(0);
                     }
-
-                    //every second
+                    // Every second
                     if (counter % 20 == 0) {
                         if (!tempDeathsDebt.isInDebt()) {
                             //respite
                             Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                            wp.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + Math.round(spiritRespiteCooldown.getTicksLeft() / 20f) + " §7seconds left.");
+                            wp.sendMessage(
+                                ChatColor.GREEN + WarlordsPlayer.GIVE_ARROW_GREEN + " §2Spirit's Respite §7delayed §c" +
+                                Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" +
+                                Math.round(spiritRespiteCooldown.getTicksLeft() / 20f) + " §7seconds left."
+                            );
                         } else {
                             //during debt
                             onDebtTick(wp, totemStand, tempDeathsDebt);
                         }
                     }
+
                     counter++;
 
                     if (deathsDebtCooldown.get() == null) {
                         return;
                     }
+
                     if (!wp.getCooldownManager().hasCooldown(deathsDebtCooldown.get())) {
                         totemStand.remove();
                         particles.cancel();
@@ -216,23 +227,34 @@ public class DeathsDebt extends AbstractTotemBase {
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
         float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()));
         // Player damage
-        wp.addDamageInstance(wp, "",
+        wp.addDamageInstance(
+                wp,
+                "",
                 debtTrueDamage,
                 debtTrueDamage,
                 critChance,
                 critMultiplier,
-                false);
+                false
+        );
         // Teammate heal
-        PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
+        for (WarlordsPlayer allyTarget :  PlayerFilter
+                .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
-                .forEach((nearPlayer) -> {
-                    playersHealed++;
-                    nearPlayer.addHealingInstance(wp, name,
-                            damage * .15f,
-                            damage * .15f,
-                            critChance, critMultiplier, false, false);
-                });
-        //adding to rep pool
+        ) {
+            playersHealed++;
+            allyTarget.addHealingInstance(
+                    wp,
+                    name,
+                    damage * .15f,
+                    damage * .15f,
+                    critChance,
+                    critMultiplier,
+                    false,
+                    false
+            );
+        }
+        // Adding damage to Repentance Pool
+        // @see Repentance.class
         if (wp.getSpec().getBlue() instanceof Repentance) {
             ((Repentance) wp.getSpec().getBlue()).addToPool(debtTrueDamage);
         }

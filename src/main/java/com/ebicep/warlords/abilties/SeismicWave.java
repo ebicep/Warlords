@@ -65,23 +65,24 @@ public class SeismicWave extends AbstractAbility {
         List<WarlordsPlayer> playersHit = new ArrayList<>();
         for (List<Location> fallingBlockLocation : fallingBlockLocations) {
             for (Location loc : fallingBlockLocation) {
-                for (WarlordsPlayer p : PlayerFilter
+                for (WarlordsPlayer waveTarget : PlayerFilter
                         .entitiesAroundRectangle(loc, .6, 4, .6)
                         .aliveEnemiesOf(wp)
                         .excluding(playersHit)
                         .closestFirst(wp)
                 ) {
                     this.playersHit++;
-                    if (p.hasFlag()) {
+                    if (waveTarget.hasFlag()) {
                         carrierHit++;
                     }
-                    if (p.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                    if (waveTarget.getCooldownManager().hasCooldown(TimeWarp.class) && FlagHolder.playerTryingToPick(waveTarget)) {
                         warpsKnockbacked++;
                     }
-                    playersHit.add(p);
-                    final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-                    p.setVelocity(v, false, false);
-                    p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+
+                    playersHit.add(waveTarget);
+                    final Vector v = player.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
+                    waveTarget.setVelocity(v, false, false);
+                    waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
             }
         }

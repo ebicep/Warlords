@@ -54,6 +54,7 @@ public class IncendiaryCurse extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
@@ -91,7 +92,15 @@ public class IncendiaryCurse extends AbstractAbility {
                 boolean shouldExplode;
 
                 if (last) {
-                    ParticleEffect.FIREWORKS_SPARK.display(0.1f, 0.1f, 0.1f, 0.1f, 4, newLoc.clone().add(0, -1, 0), 500);
+                    ParticleEffect.FIREWORKS_SPARK.display(
+                            0.1f,
+                            0.1f,
+                            0.1f,
+                            0.1f,
+                            4,
+                            newLoc.clone().add(0, -1, 0),
+                            500
+                    );
                 }
 
                 WarlordsPlayer directHit;
@@ -150,8 +159,6 @@ public class IncendiaryCurse extends AbstractAbility {
             }
 
         }.runTaskTimer(0, 1);
-
-        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

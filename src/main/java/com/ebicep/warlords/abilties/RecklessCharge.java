@@ -55,14 +55,15 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
+
         Location location = player.getLocation();
         location.setPitch(0);
-
         Location chargeLocation = location.clone();
         double chargeDistance;
         List<WarlordsPlayer> playersHit = new ArrayList<>();
-
         boolean inAir = false;
+
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {
             inAir = true;
             //travels 5 blocks
@@ -74,7 +75,6 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
         boolean finalInAir = inAir;
         new GameRunnable(wp.getGame()) {
-
             @Override
             public void run() {
                 if (finalInAir) {
@@ -84,9 +84,6 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                 }
             }
         }.runTaskLater(1);
-
-        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
-
 
         double finalChargeDistance = chargeDistance;
         new GameRunnable(wp.getGame()) {

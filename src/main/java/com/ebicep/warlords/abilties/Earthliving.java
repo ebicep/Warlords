@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -51,6 +50,8 @@ public class Earthliving extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+
         Earthliving tempEarthliving = new Earthliving();
         final boolean[] firstProc = {true};
         wp.getCooldownManager().addCooldown(new RegularCooldown<Earthliving>(
@@ -77,8 +78,16 @@ public class Earthliving extends AbstractAbility {
                     }
                     if (earthlivingActivate < procChance) {
                         timesProcd++;
-
-                        attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
+                        attacker.addHealingInstance(
+                                attacker,
+                                name,
+                                132 * 2.4f,
+                                179 * 2.4f,
+                                critChance,
+                                critMultiplier,
+                                false,
+                                false
+                        );
 
                         victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
                             p.playSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
@@ -90,22 +99,35 @@ public class Earthliving extends AbstractAbility {
                                 .limit(2)
                         ) {
                             playersHealed++;
-                            nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false, false);
+                            nearPlayer.addHealingInstance(
+                                    attacker,
+                                    name,
+                                    132 * 2.4f,
+                                    179 * 2.4f,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false
+                            );
                         }
                     }
                 }
             }
         });
 
-        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempEarthliving)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 1.2, 0);
-                    ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 2, location, 500);
+                    ParticleEffect.VILLAGER_HAPPY.display(
+                            0.3f,
+                            0.3f,
+                            0.3f,
+                            0.1f,
+                            2,
+                            wp.getLocation().add(0, 1.2, 0),
+                            500
+                    );
                 } else {
                     this.cancel();
                 }

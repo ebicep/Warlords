@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -64,9 +63,15 @@ public class AvengersWrath extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempAvengersWrath)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 1.2, 0);
-                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
+                    ParticleEffect.SPELL.display(
+                            0.3F,
+                            0.1F,
+                            0.3F,
+                            0.2F,
+                            6,
+                            wp.getLocation().add(0, 1.2, 0),
+                            500
+                    );
                 } else {
                     this.cancel();
                 }

@@ -76,9 +76,7 @@ public class Repentance extends AbstractAbility {
         });
 
         Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
-
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
-
         return true;
     }
 

@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -42,6 +41,8 @@ public class BloodLust extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
+
         BloodLust tempBloodLust = new BloodLust();
         wp.getCooldownManager().addCooldown(new RegularCooldown<BloodLust>(
                 name,
@@ -63,19 +64,31 @@ public class BloodLust extends AbstractAbility {
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsPlayer attacker = event.getAttacker();
                 BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
-                attacker.addHealingInstance(attacker, "Blood Lust", currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f), currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
+                attacker.addHealingInstance(
+                        attacker,
+                        name,
+                        currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f),
+                        currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f),
+                        -1,
+                        100,
+                        false,
+                        false
+                );
             }
         });
-
-        Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempBloodLust)) {
-                    Location location = wp.getLocation();
-                    location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);
+                    ParticleEffect.REDSTONE.display(
+                            new ParticleEffect.OrdinaryColor(255, 0, 0),
+                            wp.getLocation().add(
+                                    (Math.random() - 0.5) * 1,
+                                    1.2,
+                                    (Math.random() - 0.5) * 1),
+                            500
+                    );
                 } else {
                     this.cancel();
                 }
