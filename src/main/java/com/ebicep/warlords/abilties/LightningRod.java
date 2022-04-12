@@ -64,7 +64,7 @@ public class LightningRod extends AbstractAbility {
         ) {
             final Location loc = knockbackTarget.getLocation();
             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
-            knockbackTarget.setVelocity(v);
+            knockbackTarget.setVelocity(v, false);
         }
 
         // pulsedamage

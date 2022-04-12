@@ -83,7 +83,7 @@ public class WaterBreath extends AbstractAbility {
                         final Location loc = target.getLocation();
                         final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);
 
-                        target.setVelocity(v);
+                        target.setVelocity(v, false);
                     }
                 }
             });
