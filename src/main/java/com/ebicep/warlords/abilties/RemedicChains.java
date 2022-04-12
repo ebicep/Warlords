@@ -90,7 +90,7 @@ public class RemedicChains extends AbstractAbility {
                 }
             });
 
-            player.sendMessage(
+            wp.sendMessage(
                     WarlordsPlayer.GIVE_ARROW_GREEN +
                             ChatColor.GRAY + " Your Remedic Chains is now protecting " +
                             ChatColor.YELLOW + chainTarget.getName() +
@@ -195,6 +195,8 @@ public class RemedicChains extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                        if (wp.isDead()) return;
+
                         wp.addHealingInstance(
                                 wp,
                                 name,

@@ -74,26 +74,13 @@ public class HeartToHeart extends AbstractAbility {
             if (wp.hasFlag()) {
                 timesUsedWithFlag++;
             }
-
+            wp.subtractEnergy(energyCost);
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 
             HeartToHeart tempHeartToHeart = new HeartToHeart();
-            wp.subtractEnergy(energyCost);
 
             // remove other instances of vindicate buff to override
-            heartTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-            heartTarget.getCooldownManager().addRegularCooldown(
-                    "Vindicate Debuff Immunity",
-                    "VIND",
-                    HeartToHeart.class,
-                    tempHeartToHeart,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    vindDuration * 20
-            );
-
             wp.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
             wp.getCooldownManager().addRegularCooldown(
                     "Vindicate Debuff Immunity",
@@ -102,7 +89,21 @@ public class HeartToHeart extends AbstractAbility {
                     tempHeartToHeart,
                     wp,
                     CooldownTypes.BUFF,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
+                    vindDuration * 20
+            );
+
+            heartTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+            heartTarget.getCooldownManager().addRegularCooldown(
+                    "Vindicate Debuff Immunity",
+                    "VIND",
+                    HeartToHeart.class,
+                    tempHeartToHeart,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
                     vindDuration * 20
             );
 

@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -22,13 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility {
-    protected int playersHit = 0;
-
     private final int duration = 5;
-    private int leechDuration = 5;
-    private int enemyHitRadius = 8;
     // Percent
     private final int maxHealthDamage = 4;
+    protected int playersHit = 0;
+    private int leechDuration = 5;
+    private int enemyHitRadius = 8;
 
     public DrainingMiasma() {
         super("Draining Miasma", 0, 0, 50, 40, -1, 100);
@@ -86,7 +84,35 @@ public class DrainingMiasma extends AbstractAbility {
                     cooldownManager -> {
                         cancelSpeed.run();
                     },
-                    duration * 20
+                    duration * 20,
+                    (cooldown, ticksLeft) -> {
+                        if (ticksLeft % 20 == 0) {
+                            Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
+
+                            for (int i = 0; i < 3; i++) {
+                                ParticleEffect.REDSTONE.display(
+                                        new ParticleEffect.OrdinaryColor(30, 200, 30),
+                                        miasmaTarget.getLocation().clone().add(
+                                                (Math.random() * 2) - 1,
+                                                1.2 + (Math.random() * 2) - 1,
+                                                (Math.random() * 2) - 1),
+                                        500
+                                );
+                            }
+
+                            float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                            // 4% current health damage.
+                            miasmaTarget.addDamageInstance(
+                                    wp,
+                                    name,
+                                    50 + healthDamage,
+                                    50 + healthDamage,
+                                    -1,
+                                    100,
+                                    false
+                            );
+                        }
+                    }
             );
 
             miasmaTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
@@ -126,40 +152,6 @@ public class DrainingMiasma extends AbstractAbility {
                     });
                 }
             });
-
-            new GameRunnable(wp.getGame()) {
-                @Override
-                public void run() {
-                    float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                    if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
-                        // 4% current health damage.
-                        miasmaTarget.addDamageInstance(
-                                wp,
-                                name,
-                                50 + healthDamage,
-                                50 + healthDamage,
-                                -1,
-                                100,
-                                false
-                        );
-
-                        Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
-
-                        for (int i = 0; i < 3; i++) {
-                            ParticleEffect.REDSTONE.display(
-                                    new ParticleEffect.OrdinaryColor(30, 200, 30),
-                                    miasmaTarget.getLocation().clone().add(
-                                    (Math.random() * 2) - 1,
-                                    1.2 + (Math.random() * 2) - 1,
-                                    (Math.random() * 2) - 1),
-                                    500
-                            );
-                        }
-                    } else {
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(0, 20);
         }
 
         return true;

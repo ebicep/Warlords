@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -66,19 +65,6 @@ public class HealingRain extends AbstractAbility {
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
-        RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(
-                name,
-                "RAIN",
-                HealingRain.class,
-                new HealingRain(),
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                duration * 20
-        );
-        wp.getCooldownManager().addCooldown(healingRainCooldown);
-
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -89,8 +75,47 @@ public class HealingRain extends AbstractAbility {
                 new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
         );
 
-        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
-        location.add(0, 1, 0);
+        BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
+
+        RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(
+                name,
+                "RAIN",
+                HealingRain.class,
+                new HealingRain(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    particleTask.cancel();
+                },
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 10 == 0) {
+                        for (WarlordsPlayer teammateInRain : PlayerFilter
+                                .entitiesAround(location, radius, radius, radius)
+                                .aliveTeammatesOf(wp)
+                        ) {
+                            playersHealed++;
+                            teammateInRain.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false);
+
+                            if (teammateInRain != wp) {
+                                teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
+                                teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
+                                        "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                        }, Overheal.OVERHEAL_DURATION * 20);
+                            }
+                        }
+                    }
+                }
+        );
+        wp.getCooldownManager().addCooldown(healingRainCooldown);
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
@@ -104,45 +129,6 @@ public class HealingRain extends AbstractAbility {
                 true,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingRainCooldown)
         );
-
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
-
-            @Override
-            public void run() {
-                if (counter % 10 == 0) {
-                    for (WarlordsPlayer teammateInRain : PlayerFilter
-                            .entitiesAround(location, radius, radius, radius)
-                            .aliveTeammatesOf(wp)
-                    ) {
-                        playersHealed++;
-                        teammateInRain.addHealingInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier,
-                                false,
-                                false);
-
-                        if (teammateInRain != wp) {
-                            teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
-                            teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
-                                    "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                    }, Overheal.OVERHEAL_DURATION * 20);
-                        }
-                    }
-                }
-                counter++;
-
-                if (!wp.getCooldownManager().hasCooldown(healingRainCooldown)) {
-                    this.cancel();
-                    task.cancel();
-                }
-            }
-
-        }.runTaskTimer(0, 0);
 
         return true;
     }

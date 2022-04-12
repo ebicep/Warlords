@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,6 +44,8 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
+        Utils.playGlobalSound(player.getLocation(), "mage.inferno.activation", 2, 1);
+
         Inferno tempInferno = new Inferno();
         wp.getCooldownManager().addCooldown(new RegularCooldown<Inferno>(
                 name,
@@ -55,7 +56,15 @@ public class Inferno extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 3 == 0) {
+                        Location location = wp.getLocation().add(0, 1.2, 0);
+                        ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
+                        ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                        ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                    }
+                }
         ) {
             @Override
             public boolean distinct() {
@@ -77,22 +86,6 @@ public class Inferno extends AbstractAbility {
                 return currentCritMultiplier + critMultiplierIncrease;
             }
         });
-
-        Utils.playGlobalSound(player.getLocation(), "mage.inferno.activation", 2, 1);
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempInferno)) {
-                    Location location = wp.getLocation().add(0, 1.2, 0);
-                    ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
-                    ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
-                    ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 3);
 
         return true;
     }

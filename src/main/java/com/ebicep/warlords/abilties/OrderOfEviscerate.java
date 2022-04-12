@@ -68,6 +68,8 @@ public class OrderOfEviscerate extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<OrderOfEviscerate>(
@@ -78,8 +80,17 @@ public class OrderOfEviscerate extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    cancelSpeed.run();
+                    removeCloak(wp, true);
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
+                    if (ticksLeft % 20 == 0) {
+                        ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
+                    }
+                }
         ) {
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
@@ -190,28 +201,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     });
         }
-
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
-        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
-
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
-            @Override
-            public void run() {
-                counter++;
-                if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
-                    this.cancel();
-                    cancelSpeed.run();
-                    removeCloak(wp, true);
-                } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
-                    if (counter % 20 == 0) {
-                        ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
-                    }
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
-                }
-            }
-        }.runTaskTimer(0, 1);
 
         return true;
     }

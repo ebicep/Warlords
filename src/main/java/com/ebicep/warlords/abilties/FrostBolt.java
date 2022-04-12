@@ -79,10 +79,10 @@ public class FrostBolt extends AbstractProjectileBase {
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
+        Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
+
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
-
-        Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :

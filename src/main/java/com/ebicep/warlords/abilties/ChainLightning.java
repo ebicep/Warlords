@@ -74,6 +74,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     @Override
     protected void onHit(WarlordsPlayer wp, Player player, int hitCounter) {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
+        player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
         wp.getCooldownManager().removeCooldown(ChainLightning.class);
         wp.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
@@ -95,8 +96,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             }
         });
         wp.getSpec().getRed().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
-
-        player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
     }
 
     @Override

@@ -51,6 +51,7 @@ public class SeismicWave extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
@@ -60,7 +61,6 @@ public class SeismicWave extends AbstractAbility {
             fallingBlockLocations.add(getWave(location, i));
         }
 
-        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<WarlordsPlayer> playersHit = new ArrayList<>();
         for (List<Location> fallingBlockLocation : fallingBlockLocations) {

@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -50,10 +49,11 @@ public class InspiringPresence extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        InspiringPresence tempPresence = new InspiringPresence();
         Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
+
+        InspiringPresence tempPresence = new InspiringPresence();
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "PRES",
@@ -64,7 +64,15 @@ public class InspiringPresence extends AbstractAbility {
                 cooldownManager -> {
                     cancelSpeed.run();
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.5, 0);
+                        ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
+                        ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
+                    }
+                }
         );
 
         for (WarlordsPlayer presenceTarget : PlayerFilter
@@ -73,6 +81,7 @@ public class InspiringPresence extends AbstractAbility {
         ) {
             playersHit++;
             tempPresence.getPlayersEffected().add(presenceTarget);
+
             wp.sendMessage(
                 WarlordsPlayer.GIVE_ARROW_GREEN +
                 ChatColor.GRAY + " Your Inspiring Presence inspired " +
@@ -94,20 +103,6 @@ public class InspiringPresence extends AbstractAbility {
                     duration * 20
             );
         }
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempPresence)) {
-                    Location location = wp.getLocation();
-                    location.add(0, 1.5, 0);
-                    ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                    ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
 
         return true;
     }

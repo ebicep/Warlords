@@ -63,9 +63,9 @@ public class LastStand extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
         Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
 
+        LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
                 name,
                 "LAST",
@@ -137,16 +137,16 @@ public class LastStand extends AbstractAbility {
                 }
             });
 
-            player.sendMessage(
-                WarlordsPlayer.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " Your Last Stand is now protecting " +
-                        ChatColor.YELLOW + standTarget.getName() +
-                        ChatColor.GRAY + "!"
+            wp.sendMessage(
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " Your Last Stand is now protecting " +
+                            ChatColor.YELLOW + standTarget.getName() +
+                            ChatColor.GRAY + "!"
             );
 
             standTarget.sendMessage(
                     WarlordsPlayer.RECEIVE_ARROW_GREEN +
-                            ChatColor.GRAY + " " + player.getName() + "'s " +
+                            ChatColor.GRAY + " " + wp.getName() + "'s " +
                             ChatColor.YELLOW + "Last Stand" +
                             ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"
             );

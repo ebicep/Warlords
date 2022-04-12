@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -78,65 +77,23 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
+        HealingTotem tempHealingTotem = new HealingTotem(totemStand, wp);
+        ;
         RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
                 HealingTotem.class,
-                new HealingTotem(totemStand, wp),
+                tempHealingTotem,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                },
-                duration * 20
-        );
-        wp.getCooldownManager().addCooldown(healingTotemCooldown);
-        new GameRunnable(wp.getGame()) {
-            int timeLeft = 5;
+                    totemStand.remove();
 
-            @Override
-            public void run() {
-                if (timeLeft != 0) {
-                    Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
-                    ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, initParticleLoc, 500);
+                    Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
+                    Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
 
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
-                    }
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
-                    Location totemLoc = totemStand.getLocation();
-                    totemLoc.add(0, 2, 0);
-                    Location particleLoc = totemLoc.clone();
-                    for (int i = 0; i < 1; i++) {
-                        for (int j = 0; j < 12; j++) {
-                            double angle = j / 10D * Math.PI * 2;
-                            double width = radius;
-                            particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
-                            particleLoc.setY(totemLoc.getY() + i / 2D);
-                            particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
-
-                            ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
-                        }
-                    }
-
-                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
-                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5));
-                    circle.playEffects();
-                    // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.85
-                    float healMultiplier = 1 + (.35f * (5 - timeLeft));
-                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                            .aliveTeammatesOf(wp)
-                            .forEach((nearPlayer) -> {
-                                playersHealed++;
-                                nearPlayer.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal * healMultiplier,
-                                        maxDamageHeal * healMultiplier,
-                                        critChance,
-                                        critMultiplier,
-                                        false, false);
-                            });
-                } else {
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -150,20 +107,69 @@ public class HealingTotem extends AbstractTotemBase {
                                         critMultiplier,
                                         false, false);
                             });
-                    Utils.playGlobalSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
-                    Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
+                },
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 20 == 0) {
+                        Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
 
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
+                        ParticleEffect.VILLAGER_HAPPY.display(
+                                0.4F,
+                                0.2F,
+                                0.4F,
+                                0.05F,
+                                5,
+                                totemStand.getLocation().clone().add(0, 1.6, 0),
+                                500);
 
-                    totemStand.remove();
-                    this.cancel();
+                        Location totemLoc = totemStand.getLocation();
+                        totemLoc.add(0, 2, 0);
+                        Location particleLoc = totemLoc.clone();
+                        for (int i = 0; i < 1; i++) {
+                            for (int j = 0; j < 12; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = radius;
+                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(totemLoc.getY() + i / 2D);
+                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
+
+                                ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
+                            }
+                        }
+
+                        CircleEffect circle = new CircleEffect(
+                                wp.getGame(),
+                                wp.getTeam(),
+                                totemStand.getLocation().add(0, 1, 0),
+                                radius,
+                                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5)
+                        );
+                        circle.playEffects();
+
+                        // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.85
+                        float healMultiplier = 1 + (.35f * (5 - (ticksLeft / 20)));
+                        PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
+                                .aliveTeammatesOf(wp)
+                                .forEach(teammate -> {
+                                    playersHealed++;
+                                    teammate.addHealingInstance(
+                                            wp,
+                                            name,
+                                            minDamageHeal * healMultiplier,
+                                            maxDamageHeal * healMultiplier,
+                                            critChance,
+                                            critMultiplier,
+                                            false, false);
+                                });
+                    }
                 }
-                timeLeft--;
-            }
-
-        }.runTaskTimer(0, 20);
+        );
+        wp.getCooldownManager().addCooldown(healingTotemCooldown);
 
         addSecondaryAbility(() -> {
+                    Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
+                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
+
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
@@ -173,7 +179,7 @@ public class HealingTotem extends AbstractTotemBase {
                                         "Totem Crippling",
                                         "CRIP",
                                         HealingTotem.class,
-                                        new HealingTotem(),
+                                        tempHealingTotem,
                                         wp,
                                         CooldownTypes.DEBUFF,
                                         cooldownManager -> {
@@ -186,11 +192,10 @@ public class HealingTotem extends AbstractTotemBase {
                                     }
                                 });
                             });
-                    Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
-                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
                 },
                 false,
-                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown));
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
+        );
     }
 
 

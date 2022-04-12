@@ -105,6 +105,8 @@ public class SpiritLink extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
+        player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
+
         // speed buff
         warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
         warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<SpiritLink>(
@@ -126,8 +128,6 @@ public class SpiritLink extends AbstractChainBase {
         });
 
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
-
-        player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
     }
 
     @Override

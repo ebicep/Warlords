@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -81,7 +80,12 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         CooldownTypes.DEBUFF,
                         cooldownManager -> {
                         },
-                        markDuration * 20
+                        markDuration * 20,
+                        (cooldown, ticksLeft) -> {
+                            if (ticksLeft % 10 == 0) {
+                                EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
+                            }
+                        }
                 );
 
                 wp.sendMessage(
@@ -97,17 +101,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                     ChatColor.GOLD + "Avenger's Mark" +
                     ChatColor.GRAY + " by " + wp.getName() + "!"
                 );
-
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(0, 10);
 
                 return true;
             } else {

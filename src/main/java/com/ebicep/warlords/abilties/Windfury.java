@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -52,6 +51,7 @@ public class Windfury extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
+
         Windfury tempWindfury = new Windfury();
         final boolean[] firstProc = {true};
         wp.getCooldownManager().addCooldown(new RegularCooldown<Windfury>(
@@ -63,7 +63,19 @@ public class Windfury extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 4 == 0) {
+                        ParticleEffect.CRIT.display(
+                                0.2f,
+                                0,
+                                0.2f,
+                                0.1f,
+                                3,
+                                wp.getLocation().add(0, 1.2, 0),
+                                500);
+                    }
+                }
         ) {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -85,9 +97,7 @@ public class Windfury extends AbstractAbility {
 
                             @Override
                             public void run() {
-                                victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((player1, t) -> {
-                                    player1.playSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                                });
+                                Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
 
                                 if (Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == SkillBoosts.WINDFURY_WEAPON) {
                                     victim.addDamageInstance(
@@ -121,24 +131,6 @@ public class Windfury extends AbstractAbility {
                 }
             }
         });
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempWindfury)) {
-                    ParticleEffect.CRIT.display(
-                            0.2f,
-                            0,
-                            0.2f,
-                            0.1f,
-                            3,
-                            wp.getLocation().add(0, 1.2, 0),
-                            500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
 
         return true;
     }

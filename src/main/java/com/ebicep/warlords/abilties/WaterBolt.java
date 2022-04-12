@@ -92,7 +92,6 @@ public class WaterBolt extends AbstractProjectileBase {
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
-
         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
 

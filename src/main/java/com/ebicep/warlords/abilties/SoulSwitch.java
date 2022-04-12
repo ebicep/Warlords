@@ -56,11 +56,16 @@ public class SoulSwitch extends AbstractAbility {
             } else if (wp.getCarriedFlag() != null) {
                 wp.sendMessage(ChatColor.RED + "You cannot Soul Switch while holding the flag!");
             } else {
+                wp.subtractEnergy(energyCost);
+                Utils.playGlobalSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
+
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();
 
-                swapTarget.getEntity().addPotionEffect(
-                        new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
+                EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
+                EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
+
+                swapTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
                 swapTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
@@ -78,13 +83,6 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getZ(),
                         ownLocation.getYaw(),
                         ownLocation.getPitch()));
-
-                wp.subtractEnergy(energyCost);
-
-                EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
-                EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
-
-                Utils.playGlobalSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
 
                 return true;
             }

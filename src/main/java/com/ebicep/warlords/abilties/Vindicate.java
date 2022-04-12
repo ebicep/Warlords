@@ -56,6 +56,16 @@ public class Vindicate extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
 
+        new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                player.getLocation(),
+                radius,
+                new CircumferenceEffect(ParticleEffect.SPELL, ParticleEffect.REDSTONE).particlesPerCircumference(2)
+        ).playEffects();
+
+        EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
+
         Vindicate tempVindicate = new Vindicate();
         for (WarlordsPlayer vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
@@ -63,8 +73,8 @@ public class Vindicate extends AbstractAbility {
                 .closestFirst(wp)
         ) {
             wp.sendMessage(
-                WarlordsPlayer.GIVE_ARROW_GREEN +
-                ChatColor.GRAY + " Your Vindicate is now protecting " +
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " Your Vindicate is now protecting " +
                 ChatColor.YELLOW + vindicateTarget.getName() +
                 ChatColor.GRAY + "!"
             );
@@ -109,12 +119,6 @@ public class Vindicate extends AbstractAbility {
                 return currentDamageValue * getVindicateDamageReduction();
             }
         });
-
-        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
-        circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL, ParticleEffect.REDSTONE).particlesPerCircumference(2));
-        circle.playEffects();
-
-        EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
 
         return true;
     }

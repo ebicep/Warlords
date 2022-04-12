@@ -47,6 +47,9 @@ public class LightningRod extends AbstractAbility {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
+        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
+        player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
+
         wp.addHealingInstance(
                 wp,
                 name,
@@ -71,16 +74,14 @@ public class LightningRod extends AbstractAbility {
         List<CapacitorTotem> totemDownAndClose = AbstractTotemBase.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
         totemDownAndClose.forEach(capacitorTotem -> {
             ArmorStand totem = capacitorTotem.getTotem();
-            capacitorTotem.pulseDamage();
 
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
+            capacitorTotem.pulseDamage();
             capacitorTotem.addProc();
         });
 
-        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
-        player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
 
         return true;
     }

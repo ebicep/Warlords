@@ -7,7 +7,6 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -83,6 +82,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                         wp,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
+                            if (markTarget.isDead()) return;
+
                             ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, markTarget.getLocation(), 500);
                             Utils.playGlobalSound(markTarget.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
                             for (WarlordsPlayer waveTarget : PlayerFilter
@@ -101,14 +102,31 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                                 );
                             }
                         },
-                        markDuration * 20
+                        markDuration * 20,
+                        (cooldown, ticksLeft) -> {
+                            if (ticksLeft % 10 == 0) {
+                                Location playerLoc = markTarget.getLocation();
+                                Location particleLoc = playerLoc.clone();
+                                for (int i = 0; i < 4; i++) {
+                                    for (int j = 0; j < 10; j++) {
+                                        double angle = j / 9D * Math.PI * 2;
+                                        double width = 1;
+                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                        particleLoc.setY(playerLoc.getY() + i / 6D);
+                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
+                                    }
+                                }
+                            }
+                        }
                 );
 
-                player.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN +
-                            ChatColor.GRAY + " You have marked " +
-                            ChatColor.GREEN + markTarget.getName() +
-                            ChatColor.GRAY + "!"
+                wp.sendMessage(
+                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " You have marked " +
+                                ChatColor.GREEN + markTarget.getName() +
+                                ChatColor.GRAY + "!"
                 );
 
                 markTarget.sendMessage(
@@ -117,29 +135,6 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                                 ChatColor.GREEN + "Protector's Mark" +
                                 ChatColor.GRAY + " by " + wp.getName() + "!"
                 );
-
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            Location playerLoc = markTarget.getLocation();
-                            Location particleLoc = playerLoc.clone();
-                            for (int i = 0; i < 4; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    double angle = j / 9D * Math.PI * 2;
-                                    double width = 1;
-                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                    particleLoc.setY(playerLoc.getY() + i / 6D);
-                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
-                                }
-                            }
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(0, 10);
 
                 return true;
             } else {

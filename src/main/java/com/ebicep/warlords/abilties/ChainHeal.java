@@ -109,6 +109,8 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
+        Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
+
         if ((hitCounter + 1) * 2.5f > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
             warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
         } else {
@@ -116,8 +118,6 @@ public class ChainHeal extends AbstractChainBase {
         }
         warlordsPlayer.updateRedItem(player);
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
-
-        Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
         warlordsPlayer.updateBlueItem(player);
     }
 

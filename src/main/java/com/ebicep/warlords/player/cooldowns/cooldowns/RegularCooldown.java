@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -18,15 +19,17 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     protected int startingTicks;
     protected int ticksLeft;
-    protected List<Consumer<Integer>> consumers;
+    protected final List<BiConsumer<RegularCooldown<T>, Integer>> consumers;
 
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
+        this.consumers = new ArrayList<>();
     }
 
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Consumer<Integer>... consumers) {
+    @SafeVarargs
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, BiConsumer<RegularCooldown<T>, Integer>... consumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
@@ -35,6 +38,9 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public String getNameAbbreviation() {
+        if (ticksLeft <= 0) {
+            return "";
+        }
         return (nameAbbreviation.equals("WND") ||
                 nameAbbreviation.equals("CRIP") ||
                 nameAbbreviation.equals("LEECH") ||
@@ -46,7 +52,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public void onTick() {
-        consumers.forEach(integerConsumer -> integerConsumer.accept(ticksLeft));
+        consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft));
         subtractTime(1);
     }
 

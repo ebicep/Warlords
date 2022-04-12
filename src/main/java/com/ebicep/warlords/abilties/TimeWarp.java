@@ -6,7 +6,6 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,7 +16,7 @@ import java.util.List;
 public class TimeWarp extends AbstractAbility {
     protected int timesSuccessful = 0;
 
-    private final double duration = 5;
+    private final int duration = 5;
     private int warpHealPercentage = 30;
 
     public TimeWarp() {
@@ -43,73 +42,58 @@ public class TimeWarp extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        new GameRunnable(wp.getGame()) {
+        wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 
-            private int counter = 0;
-            final Location warpLocation = wp.getLocation();
-            final List<Location> warpTrail = new ArrayList<>();
+        Location warpLocation = wp.getLocation();
+        List<Location> warpTrail = new ArrayList<>();
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "TIME",
+                TimeWarp.class,
+                new TimeWarp(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) return;
+                    timesSuccessful++;
 
-            @Override
-            public void run() {
-                if (counter == 1) {
-                    wp.subtractEnergy(energyCost);
-                    wp.getCooldownManager().addRegularCooldown(
-                            name,
-                            "TIME",
-                            TimeWarp.class,
-                            new TimeWarp(),
+                    Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
+
+                    wp.addHealingInstance(
                             wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {
-                                timesSuccessful++;
+                            name,
+                            wp.getMaxHealth() * (warpHealPercentage / 100f),
+                            wp.getMaxHealth() * (warpHealPercentage / 100f),
+                            -1,
+                            100,
+                            false,
+                            false
+                    );
 
-                                wp.addHealingInstance(
-                                        wp,
-                                        name,
-                                        wp.getMaxHealth() * (warpHealPercentage / 100f),
-                                        wp.getMaxHealth() * (warpHealPercentage / 100f),
-                                        -1,
-                                        100,
-                                        false,
-                                        false
-                                );
+                    wp.getEntity().teleport(warpLocation);
+                    warpTrail.clear();
+                },
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 4 == 0) {
+                        for (Location location : warpTrail) {
+                            ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
+                        }
 
-                                Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                                wp.getEntity().teleport(warpLocation);
-                                warpTrail.clear();
-                                counter = 0;
-                                this.cancel();
-                            },
-                            (int) (duration * 20));
+                        warpTrail.add(wp.getLocation());
+                        ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
 
-                    Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
-                }
-
-                if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
-                    this.cancel();
-                }
-                // Particles
-                if (counter % 4 == 0) {
-                    for (Location location : warpTrail) {
-                        ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
-                    }
-
-                    warpTrail.add(wp.getLocation());
-                    ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
-
-                    int points = 6;
-                    double radius = 0.5d;
-                    for (int e = 0; e < points; e++) {
-                        double angle = 2 * Math.PI * e / points;
-                        Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                        ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
+                        int points = 6;
+                        double radius = 0.5d;
+                        for (int e = 0; e < points; e++) {
+                            double angle = 2 * Math.PI * e / points;
+                            Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                            ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
+                        }
                     }
                 }
-
-                counter++;
-            }
-
-        }.runTaskTimer(0, 0);
+        );
 
         return true;
     }

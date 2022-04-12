@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -54,8 +53,8 @@ public class BloodLust extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                ticksLeft -> {
-                    if (ticksLeft % 4 == 0) {
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 3 == 0) {
                         ParticleEffect.REDSTONE.display(
                                 new ParticleEffect.OrdinaryColor(255, 0, 0),
                                 wp.getLocation().add(
@@ -88,27 +87,6 @@ public class BloodLust extends AbstractAbility {
                 );
             }
         });
-
-        /*
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempBloodLust)) {
-                    ParticleEffect.REDSTONE.display(
-                            new ParticleEffect.OrdinaryColor(255, 0, 0),
-                            wp.getLocation().add(
-                                    (Math.random() - 0.5) * 1,
-                                    1.2,
-                                    (Math.random() - 0.5) * 1),
-                            500
-                    );
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
-
-         */
 
         return true;
     }

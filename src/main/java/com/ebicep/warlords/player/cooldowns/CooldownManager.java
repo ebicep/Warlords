@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -126,9 +127,10 @@ public class CooldownManager {
      * @param cooldownType   what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
      * @param onRemove       runs when the cooldown is over
      * @param timeLeft       how long should the cooldown last.
+     * @param consumers
      */
     @SafeVarargs
-    public final <T> void addRegularCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, Consumer<Integer>... consumers) {
+    public final <T> void addRegularCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, BiConsumer<RegularCooldown<T>, Integer>... consumers) {
         addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, consumers));
     }
 
@@ -179,13 +181,23 @@ public class CooldownManager {
     }
 
     public void clearCooldowns() {
-        abstractCooldowns.removeIf(cd ->
+        List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream().filter(cd ->
+                //these cooldowns are still active on death
                 cd.getCooldownClass() != OrbsOfLife.class &&
-                        cd.getCooldownClass() != HammerOfLight.class
-        );
-        PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
-            wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);
-        });
+                        !(cd.getCooldownClass() == HammerOfLight.class && ((HammerOfLight) cd.getCooldownObject()).isHammer()) &&
+                        cd.getCooldownClass() != HealingRain.class &&
+                        cd.getCooldownClass() != HealingTotem.class &&
+                        cd.getCooldownClass() != Consecrate.class
+        ).collect(Collectors.toList());
+
+        cooldownsToRemove.forEach(abstractCooldown -> abstractCooldown.getOnRemove().accept(this));
+        abstractCooldowns.removeAll(cooldownsToRemove);
+
+        PlayerFilter.playingGame(warlordsPlayer.getGame())
+                .teammatesOf(warlordsPlayer)
+                .forEach(wp -> {
+                    wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);
+                });
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {

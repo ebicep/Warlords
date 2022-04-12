@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -44,14 +43,15 @@ public class Repentance extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
+        EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
+
         pool += 2000;
-        assert warlordsPlayer != null;
-        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Repentance>(
                 name, "REPE",
                 Repentance.class,
                 new Repentance(),
-                warlordsPlayer,
+                wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
@@ -75,8 +75,6 @@ public class Repentance extends AbstractAbility {
             }
         });
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
-        EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
         return true;
     }
 

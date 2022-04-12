@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
@@ -16,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Earthliving extends AbstractAbility {
+    private final int duration = 8;
     protected int timesProcd = 0;
     protected int playersHealed = 0;
-
-    private final int duration = 8;
     private int procChance = 40;
 
     public Earthliving() {
@@ -63,7 +61,20 @@ public class Earthliving extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 4 == 0) {
+                        ParticleEffect.VILLAGER_HAPPY.display(
+                                0.3f,
+                                0.3f,
+                                0.3f,
+                                0.1f,
+                                2,
+                                wp.getLocation().add(0, 1.2, 0),
+                                500
+                        );
+                    }
+                }
         ) {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -78,6 +89,8 @@ public class Earthliving extends AbstractAbility {
                     }
                     if (earthlivingActivate < procChance) {
                         timesProcd++;
+                        Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+
                         attacker.addHealingInstance(
                                 attacker,
                                 name,
@@ -88,10 +101,6 @@ public class Earthliving extends AbstractAbility {
                                 false,
                                 false
                         );
-
-                        victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
-                            p.playSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-                        });
 
                         for (WarlordsPlayer nearPlayer : PlayerFilter
                                 .entitiesAround(attacker, 6, 6, 6)
@@ -114,25 +123,6 @@ public class Earthliving extends AbstractAbility {
                 }
             }
         });
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempEarthliving)) {
-                    ParticleEffect.VILLAGER_HAPPY.display(
-                            0.3f,
-                            0.3f,
-                            0.3f,
-                            0.1f,
-                            2,
-                            wp.getLocation().add(0, 1.2, 0),
-                            500
-                    );
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
 
         return true;
     }

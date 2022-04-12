@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -42,9 +41,9 @@ public class LightInfusion extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
-        LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
-
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+
+        LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
@@ -55,7 +54,20 @@ public class LightInfusion extends AbstractAbility {
                 cooldownManager -> {
                     cancelSpeed.run();
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 4 == 0) {
+                        ParticleEffect.SPELL.display(
+                                0.3f,
+                                0.1f,
+                                0.3f,
+                                0.2f,
+                                2,
+                                wp.getLocation().add(0, 1.2, 0),
+                                500
+                        );
+                    }
+                }
         );
 
         for (int i = 0; i < 10; i++) {
@@ -70,24 +82,6 @@ public class LightInfusion extends AbstractAbility {
             );
         }
 
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempLightInfusion)) {
-                    ParticleEffect.SPELL.display(
-                            0.3f,
-                            0.1f,
-                            0.3f,
-                            0.2f,
-                            2,
-                            wp.getLocation().add(0, 1.2, 0),
-                            500
-                    );
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
 
         return true;
     }

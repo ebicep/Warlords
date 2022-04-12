@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -66,16 +65,19 @@ public class SoulShackle extends AbstractAbility {
                 .lookingAtFirst(wp)
                 .limit(maxShackleTargets)
         ) {
-            wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
             wp.subtractEnergy(energyCost);
             Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
             Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
 
+            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 20);
+
+            wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
+
             wp.sendMessage(
-                WarlordsPlayer.GIVE_ARROW_GREEN +
-                ChatColor.GRAY + " You shackled " +
-                ChatColor.YELLOW + shackleTarget.getName() +
-                ChatColor.GRAY + "!"
+                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                            ChatColor.GRAY + " You shackled " +
+                            ChatColor.YELLOW + shackleTarget.getName() +
+                            ChatColor.GRAY + "!"
             );
 
             int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
@@ -99,35 +101,28 @@ public class SoulShackle extends AbstractAbility {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                     },
-                    silenceDuration
-            );
-            shacklePool = 0;
+                    silenceDuration,
+                    (cooldown, ticksLeft) -> {
+                        if (ticksLeft % 10 == 0) {
+                            Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
 
-            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 20);
+                            Location playerLoc = shackleTarget.getLocation();
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 10; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 10D * Math.PI * 2;
+                                    double width = 1.075;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 5D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-            new GameRunnable(wp.getGame()) {
-                @Override
-                public void run() {
-                    if (shackleTarget.getCooldownManager().hasCooldown(tempSoulShackle)) {
-                        Location playerLoc = shackleTarget.getLocation();
-                        Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 1.075;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                                }
                             }
                         }
-                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
-                    } else {
-                        this.cancel();
                     }
-                }
-            }.runTaskTimer(0, 10);
+            );
+            shacklePool = 0;
 
             return true;
         }

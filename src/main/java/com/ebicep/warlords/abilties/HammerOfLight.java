@@ -102,9 +102,9 @@ public class HammerOfLight extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost);
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
@@ -119,6 +119,17 @@ public class HammerOfLight extends AbstractAbility {
             }
         }
 
+        CircleEffect circleEffect = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                location,
+                radius,
+                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
+        );
+
+        BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
+
         ArmorStand hammer = spawnHammer(location);
         HammerOfLight tempHammerOfLight = new HammerOfLight(location);
 
@@ -130,91 +141,69 @@ public class HammerOfLight extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    hammer.remove();
+                    particleTask.cancel();
                 },
-                duration * 20
-        );
-
-        wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
-
-        CircleEffect circleEffect = new CircleEffect(
-                wp.getGame(),
-                wp.getTeam(),
-                location,
-                radius,
-                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
-        );
-
-        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
-        location.add(0, 1, 0);
-
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
-
-            @Override
-            public void run() {
-                if (counter % 20 == 0) {
-                    if (tempHammerOfLight.isCrownOfLight()) {
-                        if (wp.isAlive()) {
-                            for (WarlordsPlayer allyTarget : PlayerFilter
-                                    .entitiesAround(wp.getLocation(), radius, radius, radius)
-                                    .aliveTeammatesOf(wp)
-                            ) {
-                                playersHealed++;
-                                allyTarget.addHealingInstance(
-                                        wp,
-                                        "Crown of Light",
-                                        minDamageHeal * 1.5f,
-                                        maxDamageHeal * 1.5f,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
-                                );
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 20 == 0) {
+                        if (tempHammerOfLight.isCrownOfLight()) {
+                            if (wp.isAlive()) {
+                                for (WarlordsPlayer allyTarget : PlayerFilter
+                                        .entitiesAround(wp.getLocation(), radius, radius, radius)
+                                        .aliveTeammatesOf(wp)
+                                ) {
+                                    playersHealed++;
+                                    allyTarget.addHealingInstance(
+                                            wp,
+                                            "Crown of Light",
+                                            minDamageHeal * 1.5f,
+                                            maxDamageHeal * 1.5f,
+                                            critChance,
+                                            critMultiplier,
+                                            false,
+                                            false
+                                    );
+                                }
                             }
-                        }
-                    } else {
-                        for (WarlordsPlayer hammerTarget : PlayerFilter
-                                .entitiesAround(location, radius, radius, radius)
-                                .isAlive()
-                        ) {
-                            if (wp.isTeammateAlive(hammerTarget)) {
-                                playersHealed++;
-                                hammerTarget.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
-                                );
-                            } else {
-                                playersDamaged++;
-                                hammerTarget.addDamageInstance(
-                                        wp,
-                                        name,
-                                        178,
-                                        244,
-                                        critChance,
-                                        critMultiplier,
-                                        false
-                                );
+                        } else {
+                            for (WarlordsPlayer hammerTarget : PlayerFilter
+                                    .entitiesAround(location, radius, radius, radius)
+                                    .isAlive()
+                            ) {
+                                if (wp.isTeammateAlive(hammerTarget)) {
+                                    playersHealed++;
+                                    hammerTarget.addHealingInstance(
+                                            wp,
+                                            name,
+                                            minDamageHeal,
+                                            maxDamageHeal,
+                                            critChance,
+                                            critMultiplier,
+                                            false,
+                                            false
+                                    );
+                                } else {
+                                    playersDamaged++;
+                                    hammerTarget.addDamageInstance(
+                                            wp,
+                                            name,
+                                            178,
+                                            244,
+                                            critChance,
+                                            critMultiplier,
+                                            false
+                                    );
+                                }
                             }
                         }
                     }
                 }
+        );
 
-                if (!wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
-                    hammer.remove();
-                    task.cancel();
-                    this.cancel();
-                }
-                counter++;
-            }
+        wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
 
-        }.runTaskTimer(0, 0);
+        location.add(0, 1, 0);
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive() && wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
@@ -234,9 +223,7 @@ public class HammerOfLight extends AbstractAbility {
 //                            }
 //                        }.runTaskTimer(Warlords.getInstance(), 0, 1);
                         hammer.remove();
-                        task.cancel();
-                        tempHammerOfLight.setCrownOfLight(true);
-                        hammerOfLightCooldown.setNameAbbreviation("CROWN");
+                        particleTask.cancel();
 
                         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
                         Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
@@ -263,6 +250,9 @@ public class HammerOfLight extends AbstractAbility {
                                 }
                             }
                         }.runTaskTimer(0, 6);
+
+                        tempHammerOfLight.setCrownOfLight(true);
+                        hammerOfLightCooldown.setNameAbbreviation("CROWN");
                     }
                 },
                 false,

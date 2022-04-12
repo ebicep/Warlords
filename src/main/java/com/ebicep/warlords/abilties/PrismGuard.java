@@ -59,55 +59,6 @@ public class PrismGuard extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-        PrismGuard tempWideGuard = new PrismGuard();
-        Set<WarlordsPlayer> isInsideBubble = new HashSet<>();
-
-        wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
-                "Prism Guard",
-                "GUARD",
-                PrismGuard.class,
-                tempWideGuard,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                    float healingValue = 600 + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            healingValue,
-                            healingValue,
-                            -1,
-                            100,
-                            false,
-                            false
-                    );
-                },
-                duration * 20
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                String ability = event.getAbility();
-                if (
-                    ability.equals("Fireball") ||
-                    ability.equals("Frostbolt") ||
-                    ability.equals("Water Bolt") ||
-                    ability.equals("Lightning Bolt") ||
-                    ability.equals("Flame Burst") ||
-                    ability.equals("Fallen Souls")
-                ) {
-                    if (isInsideBubble.contains(event.getAttacker())) {
-                        return currentDamageValue;
-                    } else {
-                        timesProjectilesReduced++;
-                        return currentDamageValue * .4f;
-                    }
-                } else {
-                    timesOtherReduced++;
-                    return currentDamageValue * .75f;
-                }
-            }
-        });
-
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
         Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
 
@@ -123,77 +74,47 @@ public class PrismGuard extends AbstractAbility {
             }
         }.runTaskLater(3);
 
+        Set<WarlordsPlayer> isInsideBubble = new HashSet<>();
         HashMap<WarlordsPlayer, Integer> timeInBubble = new HashMap<>();
 
-        // Third Particle Sphere
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempWideGuard)) {
-
-                    playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
-                    Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
-
-                    isInsideBubble.clear();
-                    for (WarlordsPlayer enemyInsideBubble : PlayerFilter
-                            .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
-                            .aliveEnemiesOf(wp)
-                    ) {
-                        isInsideBubble.add(enemyInsideBubble);
-                    }
-
-                    for (WarlordsPlayer bubblePlayer : PlayerFilter
-                            .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                    ) {
-                        bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
-                        bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
-                                "Prism Guard",
-                                "GUARD",
-                                PrismGuard.class,
-                                tempWideGuard,
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager -> {
-                                },
-                                20
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                String ability = event.getAbility();
-                                if (
-                                    ability.equals("Fireball") ||
-                                    ability.equals("Frostbolt") ||
-                                    ability.equals("Water Bolt") ||
-                                    ability.equals("Lightning Bolt") ||
-                                    ability.equals("Flame Burst") ||
-                                    ability.equals("Fallen Souls")
-                                ) {
-                                    if (isInsideBubble.contains(event.getAttacker())) {
-                                        return currentDamageValue;
-                                    } else {
-                                        timesProjectilesReduced++;
-                                        return currentDamageValue * .4f;
-                                    }
-                                } else {
-                                    timesOtherReduced++;
-                                    return currentDamageValue * .75f;
-                                }
-                            }
-                        });
-                        timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
-                    }
-                } else {
-                    this.cancel();
-
+        PrismGuard tempWideGuard = new PrismGuard();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
+                "Prism Guard",
+                "GUARD",
+                PrismGuard.class,
+                tempWideGuard,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (wp.isDead()) return;
                     Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
 
+                    new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            wp.getLocation(),
+                            bubbleRadius,
+                            new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2)
+                    ).playEffects();
+
+                    float healingValue = 600 + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            healingValue,
+                            healingValue,
+                            -1,
+                            100,
+                            false,
+                            false
+                    );
+
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // 5% missing health * 4
-                        float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
+                        float teammateHealingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
                         int timeInSeconds = entry.getValue() * 3 / 20;
-                        float totalHealing = (timeInSeconds * healingValue);
+                        float totalHealing = (timeInSeconds * teammateHealingValue);
                         entry.getKey().addHealingInstance(
                                 wp,
                                 name,
@@ -205,13 +126,90 @@ public class PrismGuard extends AbstractAbility {
                                 false
                         );
                     }
+                },
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft > duration * 20 - 5) return;
 
-                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), bubbleRadius);
-                    circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2));
-                    circle.playEffects();
+                    if (ticksLeft % 3 == 0) {
+                        playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
+
+                        isInsideBubble.clear();
+                        for (WarlordsPlayer enemyInsideBubble : PlayerFilter
+                                .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
+                                .aliveEnemiesOf(wp)
+                        ) {
+                            isInsideBubble.add(enemyInsideBubble);
+                        }
+
+                        for (WarlordsPlayer bubblePlayer : PlayerFilter
+                                .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
+                                .aliveTeammatesOfExcludingSelf(wp)
+                        ) {
+                            bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
+                            bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
+                                    "Prism Guard",
+                                    "GUARD",
+                                    PrismGuard.class,
+                                    tempWideGuard,
+                                    wp,
+                                    CooldownTypes.ABILITY,
+                                    cooldownManager -> {
+                                    },
+                                    20
+                            ) {
+                                @Override
+                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    String ability = event.getAbility();
+                                    if (
+                                            ability.equals("Fireball") ||
+                                                    ability.equals("Frostbolt") ||
+                                                    ability.equals("Water Bolt") ||
+                                                    ability.equals("Lightning Bolt") ||
+                                                    ability.equals("Flame Burst") ||
+                                                    ability.equals("Fallen Souls")
+                                    ) {
+                                        if (isInsideBubble.contains(event.getAttacker())) {
+                                            return currentDamageValue;
+                                        } else {
+                                            timesProjectilesReduced++;
+                                            return currentDamageValue * .4f;
+                                        }
+                                    } else {
+                                        timesOtherReduced++;
+                                        return currentDamageValue * .75f;
+                                    }
+                                }
+                            });
+                            timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                String ability = event.getAbility();
+                if (
+                        ability.equals("Fireball") ||
+                                ability.equals("Frostbolt") ||
+                                ability.equals("Water Bolt") ||
+                                ability.equals("Lightning Bolt") ||
+                                ability.equals("Flame Burst") ||
+                                ability.equals("Fallen Souls")
+                ) {
+                    if (isInsideBubble.contains(event.getAttacker())) {
+                        return currentDamageValue;
+                    } else {
+                        timesProjectilesReduced++;
+                        return currentDamageValue * .4f;
+                    }
+                } else {
+                    timesOtherReduced++;
+                    return currentDamageValue * .75f;
                 }
             }
-        }.runTaskTimer(5, 3);
+        });
 
         return true;
     }

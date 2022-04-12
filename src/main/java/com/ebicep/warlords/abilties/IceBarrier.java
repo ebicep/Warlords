@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -65,7 +64,30 @@ public class IceBarrier extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 5 == 0) {
+                        Location particleLoc = wp.getLocation().add(0, 1.5, 0);
+                        ParticleEffect.CLOUD.display(
+                                0.2f,
+                                0.2f,
+                                0.2f,
+                                0.001f,
+                                1,
+                                particleLoc,
+                                500
+                        );
+                        ParticleEffect.FIREWORKS_SPARK.display(
+                                0.3f,
+                                0.2f,
+                                0.3f,
+                                0.0001f,
+                                1,
+                                particleLoc,
+                                500
+                        );
+                    }
+                }
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -74,35 +96,6 @@ public class IceBarrier extends AbstractAbility {
                 return newDamageValue;
             }
         });
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempIceBarrier)) {
-                    Location particleLoc = wp.getLocation().add(0, 1.5, 0);
-                    ParticleEffect.CLOUD.display(
-                            0.2f,
-                            0.2f,
-                            0.2f,
-                            0.001f,
-                            1,
-                            particleLoc,
-                            500
-                    );
-                    ParticleEffect.FIREWORKS_SPARK.display(
-                            0.3f,
-                            0.2f,
-                            0.3f,
-                            0.0001f,
-                            1,
-                            particleLoc,
-                            500
-                    );
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 5);
 
         return true;
     }

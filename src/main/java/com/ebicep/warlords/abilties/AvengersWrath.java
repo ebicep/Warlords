@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -44,6 +43,8 @@ public class AvengersWrath extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
+
         AvengersWrath tempAvengersWrath = new AvengersWrath();
         wp.getCooldownManager().addRegularCooldown(
                 name,
@@ -55,7 +56,7 @@ public class AvengersWrath extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                ticksLeft -> {
+                (cooldown, ticksLeft) -> {
                     if (ticksLeft % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3F,
@@ -70,30 +71,6 @@ public class AvengersWrath extends AbstractAbility {
                 }
         );
 
-        Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
-
-        /*
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempAvengersWrath)) {
-                    ParticleEffect.SPELL.display(
-                            0.3F,
-                            0.1F,
-                            0.3F,
-                            0.2F,
-                            6,
-                            wp.getLocation().add(0, 1.2, 0),
-                            500
-                    );
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 4);
-
-
-         */
         return true;
     }
 

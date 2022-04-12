@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -51,8 +50,9 @@ public class Berserk extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
 
-        Berserk tempBerserk = new Berserk();
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier(name, speedBuff, duration * 20, "BASE");
+
+        Berserk tempBerserk = new Berserk();
         wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
                 name,
                 "BERS",
@@ -64,7 +64,7 @@ public class Berserk extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                ticksLeft -> {
+                (cooldown, ticksLeft) -> {
                     if (ticksLeft % 3 == 0) {
                         ParticleEffect.VILLAGER_ANGRY.display(
                                 0,
@@ -72,7 +72,7 @@ public class Berserk extends AbstractAbility {
                                 0,
                                 0.1f,
                                 1,
-                                wp.getLocation().add(0, 1.2, 0),
+                                wp.getLocation().add(0, 1.5, 0),
                                 500
                         );
                     }
@@ -90,29 +90,6 @@ public class Berserk extends AbstractAbility {
                 return currentDamageValue * (1 + damageIncrease / 100);
             }
         });
-
-        /*
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempBerserk)) {
-                    ParticleEffect.VILLAGER_ANGRY.display(
-                            0,
-                            0,
-                            0,
-                            0.1f,
-                            1,
-                            wp.getLocation().add(0, 1.2, 0),
-                            500
-                    );
-                } else {
-                    cancelSpeed.run();
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 3);
-
-         */
 
         return true;
     }

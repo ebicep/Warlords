@@ -69,21 +69,29 @@ public class Soulbinding extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
+        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
+
         Soulbinding tempSoulBinding = new Soulbinding();
-        wp.getCooldownManager().addPersistentCooldown(name, "SOUL", Soulbinding.class, tempSoulBinding, wp, CooldownTypes.ABILITY,
+        wp.getCooldownManager().addPersistentCooldown(
+                name,
+                "SOUL",
+                Soulbinding.class,
+                tempSoulBinding,
+                wp,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ((Player) wp.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
                         }
                     }
-                }, duration * 20, soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty());
+                },
+                duration * 20,
+                soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty());
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
         player.getInventory().getItem(0).setItemMeta(newItemMeta);
-
-        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         new GameRunnable(wp.getGame()) {
             @Override

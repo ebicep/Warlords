@@ -6,7 +6,6 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -81,46 +80,41 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         tempMark,
                         wp,
                         CooldownTypes.BUFF,
-                        cooldownManager -> {},
-                        markDuration * 20
+                        cooldownManager -> {
+                        },
+                        markDuration * 20,
+                        (cooldown, ticksLeft) -> {
+                            if (ticksLeft % 10 == 0) {
+                                Location playerLoc = markTarget.getLocation();
+                                Location particleLoc = playerLoc.clone();
+                                for (int i = 0; i < 4; i++) {
+                                    for (int j = 0; j < 10; j++) {
+                                        double angle = j / 8D * Math.PI * 2;
+                                        double width = 1;
+                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                        particleLoc.setY(playerLoc.getY() + i / 6D);
+                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), particleLoc, 500);
+                                    }
+                                }
+                            }
+                        }
                 );
 
-                player.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " You have marked " +
-                    ChatColor.YELLOW + markTarget.getName() +
-                    ChatColor.GRAY + "!"
+                wp.sendMessage(
+                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " You have marked " +
+                                ChatColor.YELLOW + markTarget.getName() +
+                                ChatColor.GRAY + "!"
                 );
 
                 markTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " You have been granted " +
-                    ChatColor.YELLOW + "Crusader's Mark" +
-                    ChatColor.GRAY + " by " + wp.getName() + "!"
+                        WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " You have been granted " +
+                                ChatColor.YELLOW + "Crusader's Mark" +
+                                ChatColor.GRAY + " by " + wp.getName() + "!"
                 );
-
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            Location playerLoc = markTarget.getLocation();
-                            Location particleLoc = playerLoc.clone();
-                            for (int i = 0; i < 4; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    double angle = j / 8D * Math.PI * 2;
-                                    double width = 1;
-                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                    particleLoc.setY(playerLoc.getY() + i / 6D);
-                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), particleLoc, 500);
-                                }
-                            }
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(0, 10);
 
                 return true;
             } else {

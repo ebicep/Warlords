@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -75,38 +74,23 @@ public class CapacitorTotem extends AbstractTotemBase {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    totemStand.remove();
                 },
-                duration * 20
+                duration * 20,
+                (cooldown, ticksLeft) -> {
+                    if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
+                        if (PlayerFilter.playingGame(wp.getGame())
+                                .teammatesOfExcludingSelf(wp)
+                                .stream()
+                                .filter(WarlordsPlayer::hasFlag)
+                                .map(WarlordsPlayer::getLocation)
+                                .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
+                            tempCapacitorTotem.setTeamCarrierPassedThrough(true);
+                        }
+                    }
+                }
         );
-        new GameRunnable(wp.getGame()) {
-            int counter = 0;
-            int timeLeft = duration;
 
-            @Override
-            public void run() {
-                if (counter % 20 == 0) {
-                    if (timeLeft == 0) {
-                        totemStand.remove();
-                        this.cancel();
-                    }
-                    timeLeft--;
-                }
-
-                if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
-                    if (PlayerFilter.playingGame(wp.getGame())
-                            .teammatesOfExcludingSelf(wp)
-                            .stream()
-                            .filter(WarlordsPlayer::hasFlag)
-                            .map(WarlordsPlayer::getLocation)
-                            .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
-                        tempCapacitorTotem.setTeamCarrierPassedThrough(true);
-                    }
-                }
-
-                counter++;
-            }
-
-        }.runTaskTimer(0, 0);
     }
 
     public void pulseDamage() {

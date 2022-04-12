@@ -134,6 +134,17 @@ public class SoothingElixir extends AbstractAbility {
                     Utils.playGlobalSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 
+                    CircleEffect circleEffect = new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            newLoc,
+                            HITBOX,
+                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                    );
+                    BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
+                    wp.getGame().registerGameTask(particleTask);
+
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.WHITE)
                             .with(FireworkEffect.Type.BURST)
@@ -154,17 +165,6 @@ public class SoothingElixir extends AbstractAbility {
                                 false);
                     }
 
-                    CircleEffect circleEffect = new CircleEffect(
-                            wp.getGame(),
-                            wp.getTeam(),
-                            newLoc,
-                            HITBOX,
-                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
-                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
-                    );
-
-                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
-                    wp.getGame().registerGameTask(task);
                     new GameRunnable(wp.getGame()) {
                         int timeLeft = 4;
 
@@ -186,7 +186,7 @@ public class SoothingElixir extends AbstractAbility {
 
                             if (timeLeft <= 0) {
                                 this.cancel();
-                                task.cancel();
+                                particleTask.cancel();
                             }
                         }
 

@@ -79,9 +79,10 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
+            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
+
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);
             if (wp.getEntity() instanceof Player) {
@@ -95,8 +96,9 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsPlayer wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
-        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
+
+        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
 
         int playersHit = 0;
         for (WarlordsPlayer enemy : PlayerFilter
@@ -108,10 +110,10 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
+            Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+
             //hitting player
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-
-            Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
 
             //reducing chain cooldown
             wp.getSpec().getRed().subtractCooldown(2);

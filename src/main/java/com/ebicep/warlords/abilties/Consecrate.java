@@ -9,7 +9,6 @@ import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -67,18 +66,7 @@ public class Consecrate extends AbstractAbility {
 
         Location location = player.getLocation().clone();
 
-        wp.getCooldownManager().addRegularCooldown(
-                name,
-                "CONS",
-                Consecrate.class,
-                new Consecrate(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location),
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                5 * 20
-        );
-
+        Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -87,37 +75,37 @@ public class Consecrate extends AbstractAbility {
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                 new DoubleLineEffect(ParticleEffect.SPELL)
         );
+        BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
-
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
-        new GameRunnable(wp.getGame()) {
-
-            int timeLeft = 5;
-
-            @Override
-            public void run() {
-                timeLeft--;
-                PlayerFilter.entitiesAround(location, radius, 6, radius)
-                        .aliveEnemiesOf(wp)
-                        .forEach(wp -> {
-                            playersHit++;
-                            wp.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false);
-                        });
-                if (timeLeft == 0) {
-                    this.cancel();
-                    task.cancel();
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "CONS",
+                Consecrate.class,
+                new Consecrate(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    effectTask.cancel();
+                },
+                5 * 20,
+                (cooldown, ticksLeft) -> {
+                    if (ticksLeft % 20 == 0) {
+                        PlayerFilter.entitiesAround(location, radius, 6, radius)
+                                .aliveEnemiesOf(wp)
+                                .forEach(enemy -> {
+                                    playersHit++;
+                                    enemy.addDamageInstance(
+                                            wp,
+                                            name,
+                                            minDamageHeal,
+                                            maxDamageHeal,
+                                            critChance,
+                                            critMultiplier,
+                                            false);
+                                });
+                    }
                 }
-            }
-
-        }.runTaskTimer(0, 20);
+        );
 
         return true;
     }
@@ -126,12 +114,12 @@ public class Consecrate extends AbstractAbility {
         strikesBoosted++;
     }
 
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
     public float getRadius() {
         return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     public Location getLocation() {
