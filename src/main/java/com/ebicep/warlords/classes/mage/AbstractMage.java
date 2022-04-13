@@ -3,8 +3,7 @@ package com.ebicep.warlords.classes.mage;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 
-public abstract class AbstractMage
-        extends AbstractPlayerClass {
+public abstract class AbstractMage extends AbstractPlayerClass {
 
     public AbstractMage(String name,
                         int maxHealth,
@@ -19,6 +18,8 @@ public abstract class AbstractMage
                         AbstractAbility orange
     ) {
         super(name, maxHealth, maxEnergy, energyPerSec, energyOnHit, damageResistance, weapon, red, purple, blue, orange);
+        this.className = "Mage";
+        this.classNameShort = "MAG";
     }
 
 }

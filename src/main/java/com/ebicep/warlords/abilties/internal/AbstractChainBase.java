@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Location;
@@ -35,8 +36,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
         if (hitCounter != 0) {
             playersHit += hitCounter;
 
-            PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+            AbstractPlayerClass.sendRightClickPacket(player);
             warlordsPlayer.subtractEnergy(energyCost);
 
             onHit(warlordsPlayer, player, hitCounter);

@@ -3,8 +3,7 @@ package com.ebicep.warlords.classes.rogue;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 
-public abstract class AbstractRogue
-        extends AbstractPlayerClass {
+public abstract class AbstractRogue extends AbstractPlayerClass {
 
     public AbstractRogue(String name,
                          int maxHealth,
@@ -17,5 +16,7 @@ public abstract class AbstractRogue
                          AbstractAbility orange
     ) {
         super(name, maxHealth, maxEnergy, 20, 20, damageResistance, weapon, red, purple, blue, orange);
+        this.className = "Rogue";
+        this.classNameShort = "ROG";
     }
 }

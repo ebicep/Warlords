@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -32,8 +33,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .first((nearPlayer) -> {
                     if (Utils.isLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                         addTimesUsed();
-                        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-                        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+                        AbstractPlayerClass.sendRightClickPacket(player);
 
                         Optional<HammerOfLight> optionalHammer = new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class).findAny();
                         if (optionalHammer.isPresent()) {

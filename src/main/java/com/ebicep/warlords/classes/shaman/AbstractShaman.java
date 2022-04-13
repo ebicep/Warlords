@@ -3,8 +3,7 @@ package com.ebicep.warlords.classes.shaman;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 
-public abstract class AbstractShaman
-        extends AbstractPlayerClass {
+public abstract class AbstractShaman extends AbstractPlayerClass {
 
     public AbstractShaman(String name,
                           int maxHealth,
@@ -17,5 +16,7 @@ public abstract class AbstractShaman
                           AbstractAbility orange
     ) {
         super(name, maxHealth, maxEnergy, 20, 20, damageResistance, weapon, red, purple, blue, orange);
+        this.className = "Shaman";
+        this.classNameShort = "SHA";
     }
 }
