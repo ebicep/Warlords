@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.java.Pair;
@@ -73,8 +74,7 @@ public class EarthenSpike extends AbstractAbility {
         ) {
             if (Utils.isLookingAt(player, spikeTarget.getEntity()) && Utils.hasLineOfSight(player, spikeTarget.getEntity())) {
                 addTimesUsed();
-                PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+                AbstractPlayerClass.sendRightClickPacket(player);
 
                 FallingBlock block = spawnFallingBlock(location, location);
                 EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);

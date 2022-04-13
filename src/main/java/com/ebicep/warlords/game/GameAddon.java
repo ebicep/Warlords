@@ -85,14 +85,12 @@ public enum GameAddon {
     COOLDOWN_MODE(
             "Cooldown Mode",
             null,
-            "Reduces energy costs and cooldowns by 50% and increases max health by 50%."
+            "Reduces energy costs and cooldowns by 75%"
     ) {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
-            player.setMaxHealth((int) (player.getMaxHealth() * 1.5));
-            player.setHealth((int) (player.getHealth() * 1.5));
-            player.setEnergyModifier(player.getEnergyModifier() * 0.5);
-            player.setCooldownModifier(player.getCooldownModifier() * 0.5);
+            player.setEnergyModifier(player.getEnergyModifier() * 0.25);
+            player.setCooldownModifier(player.getCooldownModifier() * 0.25);
         }
     },
     TRIPLE_HEALTH(
@@ -105,6 +103,22 @@ public enum GameAddon {
             player.setMaxHealth(player.getMaxHealth() * 3);
             player.setHealth(player.getHealth() * 3);
         }
+    },
+    DISABLE_CRIT(
+            "No Critical Hits",
+            null,
+            "Prevents all players from hitting critical hits."
+    ) {
+        @Override
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+            player.setCanCrit(false);
+        }
+    },
+    DOUBLE_TIMER(
+            "Double Timer",
+            null,
+            "Doubles the max duration of the game."
+    ) {
     },
     MEGA_GAME(
             "Mega Game",

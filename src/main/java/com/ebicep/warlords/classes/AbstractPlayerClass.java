@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractPlayerClass {
 
-    private final int abilityCooldownDelay = 1;
-    private final int secondaryAbilityCooldownDelay = 5;
     protected int maxHealth;
     protected int maxEnergy;
     protected int energyPerSec;
@@ -52,22 +50,6 @@ public abstract class AbstractPlayerClass {
         this.blue = blue;
         this.orange = orange;
         this.name = name;
-        if (red.getName().contains("Consecrate")) {
-            className = "Paladin";
-            classNameShort = "PAL";
-        } else if (purple.getName().contains("Time")) {
-            className = "Mage";
-            classNameShort = "MAG";
-        } else if (purple.getName().contains("Ground")) {
-            className = "Warrior";
-            classNameShort = "WAR";
-        } else if (red.getName().contains("Curse") || red.getName().contains("Shackle") || red.getName().contains("Soothing")) {
-            className = "Rogue";
-            classNameShort = "ROG";
-        } else {
-            className = "Shaman";
-            classNameShort = "SHA";
-        }
 
         if (blue instanceof ArcaneShield) {
             ArcaneShield arcaneShield = ((ArcaneShield) blue);
@@ -121,78 +103,16 @@ public abstract class AbstractPlayerClass {
                 }
                 break;
             case 1:
-                if (red.getCurrentCooldown() != 0) {
-                    if (secondaryAbilityCD) {
-                        red.runSecondAbilities();
-                        resetSecondaryAbilityCD();
-                    }
-                    break;
-                }
-                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = red.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        red.addTimesUsed();
-                        red.setCurrentCooldown((float) (red.getCooldown() * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
+                onRightClickAbility(red, wp, player);
                 break;
             case 2:
-                if (purple.getCurrentCooldown() != 0) {
-                    if (secondaryAbilityCD) {
-                        purple.runSecondAbilities();
-                        resetSecondaryAbilityCD();
-                    }
-                    break;
-                }
-                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = purple.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        purple.addTimesUsed();
-                        purple.setCurrentCooldown((float) (purple.getCooldown() * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-
+                onRightClickAbility(purple, wp, player);
                 break;
             case 3:
-                if (blue.getCurrentCooldown() != 0) {
-                    if (secondaryAbilityCD) {
-                        blue.runSecondAbilities();
-                        resetSecondaryAbilityCD();
-                    }
-                    break;
-                }
-                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = blue.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        blue.addTimesUsed();
-                        blue.setCurrentCooldown((float) (blue.getCooldown() * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
-
+                onRightClickAbility(blue, wp, player);
                 break;
             case 4:
-                if (orange.getCurrentCooldown() != 0) {
-                    if (secondaryAbilityCD) {
-                        orange.runSecondAbilities();
-                        resetSecondaryAbilityCD();
-                    }
-                    break;
-                }
-                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    boolean shouldApplyCooldown = orange.onActivate(wp, player);
-                    if (shouldApplyCooldown) {
-                        orange.addTimesUsed();
-                        orange.setCurrentCooldown((float) (orange.getCooldown() * wp.getCooldownModifier()));
-                        sendRightClickPacket(player);
-                    }
-                    resetAbilityCD();
-                }
+                onRightClickAbility(orange, wp, player);
                 break;
         }
 
@@ -207,6 +127,26 @@ public abstract class AbstractPlayerClass {
         }
     }
 
+    private void onRightClickAbility(AbstractAbility ability, WarlordsPlayer wp, Player player) {
+        if (ability.getCurrentCooldown() != 0) {
+            if (secondaryAbilityCD) {
+                ability.runSecondAbilities();
+                resetSecondaryAbilityCD();
+            }
+            return;
+        }
+        if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+            boolean shouldApplyCooldown = ability.onActivate(wp, player);
+            if (shouldApplyCooldown) {
+                ability.addTimesUsed();
+                ability.setCurrentCooldown((float) (ability.getCooldown() * wp.getCooldownModifier()));
+                sendRightClickPacket(player);
+            }
+            resetAbilityCD();
+        }
+
+    }
+
     private void resetAbilityCD() {
         abilityCD = false;
         new BukkitRunnable() {
@@ -215,7 +155,7 @@ public abstract class AbstractPlayerClass {
             public void run() {
                 abilityCD = true;
             }
-        }.runTaskLater(Warlords.getInstance(), abilityCooldownDelay);
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     private void resetSecondaryAbilityCD() {
@@ -226,10 +166,10 @@ public abstract class AbstractPlayerClass {
             public void run() {
                 secondaryAbilityCD = true;
             }
-        }.runTaskLater(Warlords.getInstance(), secondaryAbilityCooldownDelay);
+        }.runTaskLater(Warlords.getInstance(), 5);
     }
 
-    private void sendRightClickPacket(Player player) {
+    public static void sendRightClickPacket(Player player) {
         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
     }

@@ -67,14 +67,28 @@ public class Vindicate extends AbstractAbility {
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
 
         Vindicate tempVindicate = new Vindicate();
+        wp.getSpeed().removeSlownessModifiers();
+        debuffsRemovedOnCast += wp.getCooldownManager().removeDebuffCooldowns();
+        wp.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+        wp.getCooldownManager().addRegularCooldown(
+                "Vindicate Debuff Immunity",
+                "VIND",
+                Vindicate.class,
+                tempVindicate,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                vindicateDuration * 20
+        );
+
         for (WarlordsPlayer vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
         ) {
             wp.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN +
-                            ChatColor.GRAY + " Your Vindicate is now protecting " +
+                WarlordsPlayer.GIVE_ARROW_GREEN +
+                ChatColor.GRAY + " Your Vindicate is now protecting " +
                 ChatColor.YELLOW + vindicateTarget.getName() +
                 ChatColor.GRAY + "!"
             );

@@ -46,25 +46,29 @@ public abstract class GameTargetCommand implements TabExecutor {
             Set<GameManager.GameHolder> holder = new HashSet<>();
             gameInstances = holder;
             List<GameManager.GameHolder> matched = new ArrayList<>();
-            for (String arg : args) {
-                matched.clear();
-                for (GameManager.GameHolder h : getGames()) {
-                    Game game = h.getGame();
-                    if (
-                            "*".equals(arg)
-                                    || h.getName().equalsIgnoreCase(arg)
-                                    || h.getMap().name().equalsIgnoreCase(arg)
-                                    || (game != null && game.getGameMode().name().equalsIgnoreCase(arg))
-                                    || (game != null && game.getGameId().toString().equalsIgnoreCase(arg))
-                    ) {
-                        matched.add(h);
+            if (sender.hasPermission("warlords.game.end.remote")) {
+                for (String arg : args) {
+                    matched.clear();
+                    for (GameManager.GameHolder h : getGames()) {
+                        Game game = h.getGame();
+                        if (
+                                "*".equals(arg)
+                                        || h.getName().equalsIgnoreCase(arg)
+                                        || h.getMap().name().equalsIgnoreCase(arg)
+                                        || (game != null && game.getGameMode().name().equalsIgnoreCase(arg))
+                                        || (game != null && game.getGameId().toString().equalsIgnoreCase(arg))
+                        ) {
+                            matched.add(h);
+                        }
                     }
+                    if (matched.isEmpty()) {
+                        sender.sendMessage(ChatColor.RED + "Unable to find: " + arg);
+                        continue;
+                    }
+                    holder.addAll(matched);
                 }
-                if (matched.isEmpty()) {
-                    sender.sendMessage(ChatColor.RED + "Unable to find: " + arg);
-                    continue;
-                }
-                holder.addAll(matched);
+            } else {
+                sender.sendMessage(ChatColor.RED + "You do not have permission to remotely end games.");
             }
         }
         

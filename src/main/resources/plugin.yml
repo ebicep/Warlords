@@ -17,6 +17,9 @@ commands:
     description: Kills the game
     permission: warlords.game.kill
     usage: /<command> [...game holder name/map name/category name/game uuid]
+  endprivategame:
+    description: Terminates a private game.
+    usage: /<command>
   menu:
     description: Opens the game menu.
     usage: /menu
@@ -113,6 +116,9 @@ commands:
   mute:
     description: Mute
     aliases: [ mute, unmute, mutelist ]
+  resource:
+    description: Gets the resource pack
+    usage: /resource
 
 permissions:
   group.default:

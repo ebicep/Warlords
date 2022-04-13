@@ -16,5 +16,7 @@ public abstract class AbstractWarrior extends AbstractPlayerClass {
                            AbstractAbility orange
     ) {
         super(name, maxHealth, maxEnergy, 20, 20, damageResistance, weapon, red, purple, blue, orange);
+        this.className = "Warrior";
+        this.classNameShort = "WAR";
     }
 }
