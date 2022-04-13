@@ -337,6 +337,7 @@ public class Warlords extends JavaPlugin {
 
         new GameStartCommand().register(this);
         new GameTerminateCommand().register(this);
+        new PrivateGameTerminateCommand().register(this);
         new GameKillCommand().register(this);
         new GameListCommand().register(this);
         new MenuCommand().register(this);
@@ -369,6 +370,7 @@ public class Warlords extends JavaPlugin {
         new AchievementsCommand().register(this);
         new FindPlayer().register(this);
         new MuteCommand().register(this);
+        new ResourcepackCommand().register(this);
 
         updateHeads();
 

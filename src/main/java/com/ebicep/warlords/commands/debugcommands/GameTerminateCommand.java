@@ -22,8 +22,10 @@ public class GameTerminateCommand extends GameTargetCommand implements TabExecut
             sender.sendMessage(ChatColor.RED + "No valid targets found!");
             return;
         }
+
         for (GameHolder holder : gameInstances) {
             Game game = holder.getGame();
+
             if (game == null) {
                 sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "The game is not active now");
                 continue;
