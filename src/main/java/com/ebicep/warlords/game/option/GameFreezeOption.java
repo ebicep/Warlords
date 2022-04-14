@@ -29,7 +29,9 @@ public class GameFreezeOption implements Option, Listener {
         public void onEvent(PlayerMoveEvent e) {
             WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
             if (wp != null && wp.getGame().isFrozen() && Utils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
-                if (e.getPlayer().getVehicle() == null) {
+                if (wp.isDead()) {
+                    e.getPlayer().teleport(e.getPlayer().getLocation());
+                } else if (e.getPlayer().getVehicle() == null) {
                     e.setTo(e.getFrom());
                 } else {
                     e.setCancelled(true);

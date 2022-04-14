@@ -38,18 +38,6 @@ public class UndyingArmy extends AbstractAbility {
         super("Undying Army", 0, 0, 62.64f, 60, 0, 0);
     }
 
-    public HashMap<WarlordsPlayer, Boolean> getPlayersPopped() {
-        return playersPopped;
-    }
-
-    public boolean isArmyDead(WarlordsPlayer warlordsPlayer) {
-        return playersPopped.get(warlordsPlayer);
-    }
-
-    public void pop(WarlordsPlayer warlordsPlayer) {
-        playersPopped.put(warlordsPlayer, true);
-    }
-
     @Override
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
@@ -185,6 +173,18 @@ public class UndyingArmy extends AbstractAbility {
         }
 
         return true;
+    }
+
+    public HashMap<WarlordsPlayer, Boolean> getPlayersPopped() {
+        return playersPopped;
+    }
+
+    public boolean isArmyDead(WarlordsPlayer warlordsPlayer) {
+        return playersPopped.get(warlordsPlayer);
+    }
+
+    public void pop(WarlordsPlayer warlordsPlayer) {
+        playersPopped.put(warlordsPlayer, true);
     }
 
     public void setMaxArmyAllies(int maxArmyAllies) {

@@ -72,7 +72,7 @@ public class Berserk extends AbstractAbility {
                                 0,
                                 0.1f,
                                 1,
-                                wp.getLocation().add(0, 1.5, 0),
+                                wp.getLocation().add(0, 1.75, 0),
                                 500
                         );
                     }

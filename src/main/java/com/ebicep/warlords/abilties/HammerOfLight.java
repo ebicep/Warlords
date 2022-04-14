@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -171,7 +170,7 @@ public class HammerOfLight extends AbstractAbility {
                                     .entitiesAround(location, radius, radius, radius)
                                     .isAlive()
                             ) {
-                                if (wp.isTeammateAlive(hammerTarget)) {
+                                if (wp.isTeammate(hammerTarget)) {
                                     playersHealed++;
                                     hammerTarget.addHealingInstance(
                                             wp,
@@ -228,9 +227,8 @@ public class HammerOfLight extends AbstractAbility {
                         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
                         Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
 
-                        new GameRunnable(wp.getGame()) {
-                            @Override
-                            public void run() {
+                        hammerOfLightCooldown.addBiConsumer((cooldown, ticksLeft) -> {
+                            if (ticksLeft % 6 == 0) {
                                 double angle = 0;
                                 for (int i = 0; i < 9; i++) {
                                     double x = .4 * Math.cos(angle);
@@ -241,15 +239,16 @@ public class HammerOfLight extends AbstractAbility {
                                     ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
                                 }
 
-                                CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation().add(0, 0.75f, 0), radius / 2f);
-                                circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
-                                circle.playEffects();
-
-                                if (!wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()) {
-                                    this.cancel();
-                                }
+                                new CircleEffect(
+                                        wp.getGame(),
+                                        wp.getTeam(),
+                                        wp.getLocation().add(0, 0.75f, 0),
+                                        radius / 2f,
+                                        new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f)
+                                ).playEffects();
                             }
-                        }.runTaskTimer(0, 6);
+                        });
+
 
                         tempHammerOfLight.setCrownOfLight(true);
                         hammerOfLightCooldown.setNameAbbreviation("CROWN");

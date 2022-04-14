@@ -127,15 +127,35 @@ public class CooldownManager {
      * @param cooldownType   what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
      * @param onRemove       runs when the cooldown is over
      * @param timeLeft       how long should the cooldown last.
-     * @param consumers
+     * @param biConsumers
      */
     @SafeVarargs
-    public final <T> void addRegularCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, BiConsumer<RegularCooldown<T>, Integer>... consumers) {
-        addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, consumers));
+    public final <T> void addRegularCooldown(String name,
+                                             String actionBarName,
+                                             Class<T> cooldownClass,
+                                             T cooldownObject,
+                                             WarlordsPlayer from,
+                                             CooldownTypes cooldownType,
+                                             Consumer<CooldownManager> onRemove,
+                                             int timeLeft,
+                                             BiConsumer<RegularCooldown<T>, Integer>... biConsumers
+    ) {
+        addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, biConsumers));
     }
 
-    public <T> void addPersistentCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, Predicate<T> objectCheck) {
-        addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck));
+    @SafeVarargs
+    public final <T> void addPersistentCooldown(String name,
+                                                String actionBarName,
+                                                Class<T> cooldownClass,
+                                                T cooldownObject,
+                                                WarlordsPlayer from,
+                                                CooldownTypes cooldownType,
+                                                Consumer<CooldownManager> onRemove,
+                                                int timeLeft,
+                                                Predicate<T> objectCheck,
+                                                BiConsumer<RegularCooldown<T>, Integer>... biConsumers
+    ) {
+        addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck, biConsumers));
     }
 
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {
@@ -164,11 +184,15 @@ public class CooldownManager {
         }
     }
 
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
+        abstractCooldowns.remove(abstractCooldown);
+    }
+
     public void removeCooldown(Class<?> cooldownClass) {
         abstractCooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
     }
 
-    public void removeCooldown(Object cooldownObject) {
+    public void removeCooldownByObject(Object cooldownObject) {
         abstractCooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
     }
 

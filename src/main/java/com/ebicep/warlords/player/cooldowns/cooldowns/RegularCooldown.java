@@ -29,11 +29,11 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     }
 
     @SafeVarargs
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, BiConsumer<RegularCooldown<T>, Integer>... consumers) {
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, BiConsumer<RegularCooldown<T>, Integer>... biConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
-        this.consumers = Arrays.asList(consumers);
+        this.consumers = new ArrayList<>(Arrays.asList(biConsumers));
     }
 
     @Override
@@ -85,7 +85,11 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         return startingTicks;
     }
 
-    public void removeConsumer(Consumer<Integer> consumer) {
-        this.consumers.remove(consumer);
+    public void addBiConsumer(BiConsumer<RegularCooldown<T>, Integer> biConsumer) {
+        this.consumers.add(biConsumer);
+    }
+
+    public void removeBiConsumer(BiConsumer<RegularCooldown<T>, Integer> biConsumer) {
+        this.consumers.remove(biConsumer);
     }
 }
