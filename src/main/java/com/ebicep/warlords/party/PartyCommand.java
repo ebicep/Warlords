@@ -154,7 +154,10 @@ public class PartyCommand implements TabExecutor {
                             return true;
                         }
                         party.get().join(player.getUniqueId());
-                        QueueManager.queue.remove(player.getUniqueId());
+                        if (QueueManager.queue.contains(player.getUniqueId())) {
+                            QueueManager.queue.remove(player.getUniqueId());
+                            QueueManager.sendNewQueue();
+                        }
                         return true;
                     }
                     case "leave":
