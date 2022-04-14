@@ -8,8 +8,6 @@ import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.rogue.specs.Vindicator;
-import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -474,14 +472,9 @@ public final class WarlordsPlayer {
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
-                    if (spec instanceof Vindicator) {
-                        ((SoulShackle) spec.getRed()).addToShacklePool(damageValue);
-                    }
-
-                    // Repentance
-                    if (spec instanceof Spiritguard) {
-                        ((Repentance) spec.getBlue()).addToPool(damageValue);
-                    }
+                    float finalDamageValue = damageValue;
+                    doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
+                    doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
                     for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
                         abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
