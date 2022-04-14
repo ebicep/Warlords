@@ -641,7 +641,6 @@ public class Warlords extends JavaPlugin {
                         if (wp.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
                             wp.getSpeed().removeSlownessModifiers();
                             wp.getCooldownManager().removeDebuffCooldowns();
-                            wp.getEntity().removePotionEffect(PotionEffectType.BLINDNESS);
                         }
 
                         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)

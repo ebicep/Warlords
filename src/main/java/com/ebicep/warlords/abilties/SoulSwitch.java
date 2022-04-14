@@ -65,7 +65,7 @@ public class SoulSwitch extends AbstractAbility {
                 EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
                 EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
 
-                swapTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false), true);
+                swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
                 swapTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),

@@ -57,6 +57,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -1988,6 +1989,18 @@ public final class WarlordsPlayer {
 //            }
 //        }
 //    }
+
+    public void addPotionEffect(PotionEffect potionEffect) {
+        if (this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
+                    PotionEffectType.CONFUSION.equals(potionEffect.getType())
+            ) {
+                return;
+            }
+        }
+        //addPotionEffect(effect, force);
+        this.getEntity().addPotionEffect(potionEffect, true);
+    }
 
     public World getWorld() {
         return this.entity.getWorld();

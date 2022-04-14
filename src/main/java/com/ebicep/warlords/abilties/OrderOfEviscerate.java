@@ -190,7 +190,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     },
                     duration * 20
             );
-            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
+            wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false));
             wp.updateArmor();
             PlayerFilter.playingGame(wp.getGame())
                     .enemiesOf(wp)
