@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -17,9 +16,9 @@ import java.util.List;
 
 public class Repentance extends AbstractAbility {
 
+    private final int duration = 12;
     private float pool = 0;
     private int damageConvertPercent = 10;
-    private final int duration = 12;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20, 0, 0);
@@ -66,13 +65,11 @@ public class Repentance extends AbstractAbility {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsPlayer attacker = event.getAttacker();
-                if (attacker.getSpec() instanceof Spiritguard) {
-                    Repentance repentance = (Repentance) attacker.getSpec().getBlue();
-                    int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
-                    attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
-                    repentance.setPool(repentance.getPool() * .5f);
-                    attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
-                }
+
+                int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
+                attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
+                attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
+                pool *= .5;
             }
         });
 
@@ -81,6 +78,10 @@ public class Repentance extends AbstractAbility {
 
     public float getPool() {
         return pool;
+    }
+
+    public void setPool(float pool) {
+        this.pool = pool;
     }
 
     public int getDamageConvertPercent() {
@@ -95,10 +96,6 @@ public class Repentance extends AbstractAbility {
         this.pool += amount;
     }
 
-    public void setPool(float pool) {
-        this.pool = pool;
-    }
-    
     @Override
     public void runEverySecond() {
         if (pool > 0) {

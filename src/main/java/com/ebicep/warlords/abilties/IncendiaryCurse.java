@@ -148,10 +148,8 @@ public class IncendiaryCurse extends AbstractAbility {
                                 critMultiplier,
                                 false
                         );
-                        nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false), true);
-                        nearEntity.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false), true);
+                        nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
+                        nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
                     }
 
                     this.cancel();
