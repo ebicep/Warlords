@@ -1,12 +1,15 @@
 package com.ebicep.warlords.queuesystem;
 
 import com.ebicep.jda.BotManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,17 +17,18 @@ public class QueueManager {
 
     public static final List<UUID> queue = new ArrayList<>();
     public static final List<FutureQueuePlayer> futureQueue = new ArrayList<>();
-    public static final List<Message> queueMessages = new ArrayList<>();
+    public static Message queueMessage = null;
 
     public static void sendNewQueue() {
-        queueMessages.forEach(m -> {
-            if (m != null) {
-                m.delete().queue();
+        try {
+            if (queueMessage != null) {
+                queueMessage.delete().queue();
             }
-        });
-        queueMessages.clear();
+        } catch (Exception e) {
+
+        }
         BotManager.getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
-            textChannel.sendMessage(QueueManager.getQueueDiscord()).queue(QueueManager.queueMessages::add);
+            textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queue(message -> queueMessage = message);
         });
     }
 
@@ -44,20 +48,25 @@ public class QueueManager {
         return stringBuilder.toString();
     }
 
-    public static String getQueueDiscord() {
-        StringBuilder stringBuilder = new StringBuilder("**Queue -**\n");
-        for (int i = 0; i < queue.size(); i++) {
-            UUID uuid = queue.get(i);
-            stringBuilder.append("    ").append(i + 1).append(". ").append(Bukkit.getOfflinePlayer(uuid).getName()).append("\n");
+    public static MessageEmbed getQueueDiscord() {
+        StringBuilder queue = new StringBuilder();
+        for (int i = 0; i < QueueManager.queue.size(); i++) {
+            UUID uuid = QueueManager.queue.get(i);
+            queue.append("    ").append(i + 1).append(". ").append(Bukkit.getOfflinePlayer(uuid).getName()).append("\n");
         }
-        if (!futureQueue.isEmpty()) {
-            stringBuilder.append("\n");
-            stringBuilder.append("**Future Queue -**\n");
-            futureQueue.forEach(futureQueuePlayer -> {
-                stringBuilder.append("    ").append("- ").append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
-            });
-        }
-        return stringBuilder.toString();
+        StringBuilder futureQueue = new StringBuilder();
+        QueueManager.futureQueue.forEach(futureQueuePlayer -> {
+            futureQueue.append("    ").append("- ").append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
+        });
+
+        return new EmbedBuilder()
+                .setColor(3066993)
+                .setTimestamp(new Date().toInstant())
+                .addField("Current Queue", queue.toString(), true)
+                .addField("\u200B", "\u200B", true)
+                .addField("Future Queue", futureQueue.toString(), true)
+                .setFooter("Usage: /queue")
+                .build();
     }
 
     public static void addPlayerToQueue(String name, boolean atBeginning) {

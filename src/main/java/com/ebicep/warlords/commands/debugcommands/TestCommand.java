@@ -80,7 +80,19 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_RED);
 
         }
-
+//       // QueueManager.sendNewQueue();
+//        BotManager.getCompGamesServer().upsertCommand("queue", "Join, Leave, or Refresh the queue")
+//                .addSubcommands(new SubcommandData("refresh", "Refresh the queue"))
+//                .addSubcommands(new SubcommandData("join", "Join the queue")
+//                        .addOption(OptionType.STRING, "time", "Future time in EST PM format (e.g. '4:15')", false)
+//                )
+//                .addSubcommands(new SubcommandData("leave", "Leave the queue"))
+//                .queue();
+//        BotManager.getCompGamesServer().retrieveCommands().queue(commands ->
+//            for (net.dv8tion.jda.api.interactions.commands.Command command1 : commands) {
+//                System.out.println(command1.getName() + " - " + command1.getId());
+//            }
+//        });
 
         //SRCalculator.recalculateSR();
 

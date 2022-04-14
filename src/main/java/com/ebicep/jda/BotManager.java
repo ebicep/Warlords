@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
+import com.ebicep.warlords.queuesystem.QueueListener;
+import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -51,7 +53,7 @@ public class BotManager {
         if (botToken != null) {
             jda = JDABuilder.createDefault(botToken)
                     .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                    .addEventListeners(new BotListener())
+                    .addEventListeners(new BotListener(), new QueueListener())
                     .build();
 
             task = new BukkitRunnable() {
@@ -62,6 +64,16 @@ public class BotManager {
                 public void run() {
                     if (jda.getStatus() != JDA.Status.CONNECTED) {
                         return;
+                    }
+                    if (Warlords.serverIP.equals("51.81.49.127")) {
+                        if (counter == 0) {
+                            getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
+                                textChannel.getIterableHistory()
+                                        .takeAsync(1000)
+                                        .thenAccept(textChannel::purgeMessages)
+                                        .thenAccept(unused -> QueueManager.sendNewQueue());
+                            });
+                        }
                     }
                     if (counter % 3 == 0) {
                         if (numberOfMessagesSentLast30Sec > 0) {

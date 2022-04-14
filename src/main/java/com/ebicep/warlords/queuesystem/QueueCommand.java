@@ -101,7 +101,7 @@ public class QueueCommand implements CommandExecutor {
                 return true;
             }
             default: {
-                sender.sendMessage(ChatColor.RED + "Invalid Arguments (-queue join/leave)");
+                sender.sendMessage(ChatColor.RED + "Invalid Arguments (/queue join/leave)");
                 return true;
             }
         }
