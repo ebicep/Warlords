@@ -33,7 +33,7 @@ public class Vindicate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Allies within an §e" + radius + " §7block radius gain the\n" +
+        description = "§7All allies within an §e" + radius + " §7block radius gain the\n" +
                 "§7status §6VIND §7which clears all de-buffs. In\n" +
                 "§7addition, the status §6VIND §7prevents allies from being\n" +
                 "§7affected by de-buffs and grants §650% §7knockback\n" +
@@ -120,7 +120,7 @@ public class Vindicate extends AbstractAbility {
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
                 "Vindicate Resistance",
-                "VIND RES",
+                "VIND RESIST",
                 Vindicate.class,
                 tempVindicate,
                 wp,

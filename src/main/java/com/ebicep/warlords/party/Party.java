@@ -114,11 +114,7 @@ public class Party {
                     getPartyLeader().setPartyPlayerType(PartyPlayerType.MODERATOR);
                     partyPlayer.setPartyPlayerType(PartyPlayerType.LEADER);
                     String newLeaderName = Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName();
-                    if (newLeaderName.equalsIgnoreCase("Plikie") || newLeaderName.equalsIgnoreCase("sumSmash")) {
-                        sendMessageToAllPartyPlayers(ChatColor.AQUA + newLeaderName + ChatColor.GREEN + " has hijacked the party!", ChatColor.BLUE, true);
-                    } else {
-                        sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + newLeaderName, ChatColor.BLUE, true);
-                    }
+                    sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + newLeaderName, ChatColor.BLUE, true);
                 });
     }
 

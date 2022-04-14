@@ -114,8 +114,8 @@ public enum GameAddon {
             player.setCanCrit(false);
         }
     },
-    DOUBLE_TIMER(
-            "Double Timer",
+    DOUBLE_TIME(
+            "Double Time",
             null,
             "Doubles the max duration of the game."
     ) {
