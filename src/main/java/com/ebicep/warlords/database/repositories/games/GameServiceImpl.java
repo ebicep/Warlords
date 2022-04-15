@@ -37,21 +37,21 @@ public class GameServiceImpl implements GameService {
     @Override
     public void create(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.insert(game, collection.collectionName);
-        System.out.println("[GameService]: " + game.getDate() + " - was created in " + collection.collectionName);
+        System.out.println("[GameService] " + game.getDate() + " - was created in " + collection.collectionName);
         mongoTemplate.insert(game, GamesCollections.ALL.collectionName);
-        System.out.println("[GameService]: " + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
+        System.out.println("[GameService] " + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
     }
 
     @Override
     public void save(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.save(game, collection.collectionName);
-        System.out.println("[GameService]: Updated " + game.getDate() + " in " + collection.collectionName);
+        System.out.println("[GameService] Updated " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void delete(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.remove(game, collection.collectionName);
-        System.out.println("[GameService]: Deleted " + game.getDate() + " in " + collection.collectionName);
+        System.out.println("[GameService] Deleted " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class QueueManager {
 
@@ -25,10 +26,10 @@ public class QueueManager {
                 queueMessage.delete().queue();
             }
         } catch (Exception e) {
-
+            System.out.println("[QueueManager] Error while deleting queue message");
         }
         BotManager.getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
-            textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queue(message -> queueMessage = message);
+            textChannel.sendMessageEmbeds(QueueManager.getQueueDiscord()).queueAfter(1, TimeUnit.SECONDS, message -> queueMessage = message);
         });
     }
 

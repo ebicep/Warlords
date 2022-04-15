@@ -94,8 +94,8 @@ public class QueueListener extends ListenerAdapter {
                             event.reply("Invalid Time - EST PM format (e.g. '6:30')").queue();
                         }
                     } else {
-                        event.reply("You have joined the queue").queue();
                         QueueManager.addPlayerToQueue(playerName, false);
+                        event.reply("You have joined the queue").queue();
                     }
                     QueueManager.sendNewQueue();
                     break;

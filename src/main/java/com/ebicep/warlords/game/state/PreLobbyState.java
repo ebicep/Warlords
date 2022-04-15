@@ -357,6 +357,23 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                         }
                     }
+
+                    System.out.println(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
+                    System.out.println(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
+                    System.out.println(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
+                    System.out.println(ChatColor.BLUE + "Blue Players: " + ChatColor.GOLD + bluePlayers + ChatColor.GRAY + " - " + ChatColor.BLUE + "SR: " + ChatColor.GOLD + bestBlueSR);
+                    System.out.println(ChatColor.RED + "Red Players: " + ChatColor.GOLD + redPlayers + ChatColor.GRAY + " - " + ChatColor.RED + "SR: " + ChatColor.GOLD + bestRedSR);
+                    System.out.println(ChatColor.GREEN + "Fail Safe: " + ChatColor.GOLD + failSafeActive);
+                    System.out.println(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
+                    System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
+                    bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
+                        Specializations specializations = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
+                        System.out.println(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey().getName() + ChatColor.GRAY + " - " +
+                                specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
+                                ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId().toString()));
+                    });
+
+                    System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
                 }
 
                 if (game.getPlayers().size() >= 14) {
