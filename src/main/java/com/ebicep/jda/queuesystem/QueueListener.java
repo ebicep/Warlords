@@ -1,4 +1,4 @@
-package com.ebicep.warlords.queuesystem;
+package com.ebicep.jda.queuesystem;
 
 import com.ebicep.warlords.Warlords;
 import net.dv8tion.jda.api.entities.Member;

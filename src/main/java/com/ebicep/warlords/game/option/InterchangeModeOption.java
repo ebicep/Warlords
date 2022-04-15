@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public static final int MAX_SWAP_TIME = 60;
-    public static final int MIN_SWAP_TIME = 30;
+    public static final int MAX_SWAP_TIME = 80;
+    public static final int MIN_SWAP_TIME = 50;
     private final HashMap<UUID, Specializations> previousSelectedSpecs = new HashMap<>();
     private final HashMap<UUID, HashMap<Specializations, SkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
     private final HashMap<UUID, HashMap<Specializations, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
