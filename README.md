@@ -1,4 +1,6 @@
-# Warlords 2.0 is a remake of the infamous Warlords available on the Hypixel Network.
+# Warlords 2.0
+
+Warlords 2.0 is a remake of the infamous Warlords minigame available on the Hypixel Network.
 
 Our version holds various QoL improvements, a new class, new maps and balance changes.
 
