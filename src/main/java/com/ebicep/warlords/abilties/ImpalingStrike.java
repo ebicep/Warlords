@@ -34,7 +34,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Stuck", "" + timesUsed));
+        info.add(new Pair<>("Players Struck", "" + timesUsed));
 
         return info;
     }

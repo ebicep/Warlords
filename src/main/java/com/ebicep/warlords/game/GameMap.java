@@ -81,7 +81,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -186,7 +186,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -291,7 +291,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -351,7 +351,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -414,7 +414,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -470,7 +470,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption(2000));
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());
@@ -527,7 +527,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIMER)) {
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));
             } else {
                 options.add(new WinAfterTimeoutOption());

@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class Repentance extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
