@@ -18,5 +18,4 @@ public class Revenant extends AbstractWarrior {
                 new UndyingArmy()
         );
     }
-
 }

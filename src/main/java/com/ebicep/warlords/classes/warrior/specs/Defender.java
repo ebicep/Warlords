@@ -18,5 +18,4 @@ public class Defender extends AbstractWarrior {
                 new LastStand()
         );
     }
-
 }

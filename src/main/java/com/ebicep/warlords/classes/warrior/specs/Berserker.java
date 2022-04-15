@@ -18,5 +18,4 @@ public class Berserker extends AbstractWarrior {
                 new Berserk()
         );
     }
-
 }

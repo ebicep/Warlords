@@ -18,5 +18,4 @@ public class Assassin extends AbstractRogue {
                 new OrderOfEviscerate()
         );
     }
-
 }

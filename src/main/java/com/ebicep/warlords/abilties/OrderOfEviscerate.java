@@ -140,21 +140,19 @@ public class OrderOfEviscerate extends AbstractAbility {
                     );
 
                     new GameRunnable(wp.getGame()) {
-
                         @Override
                         public void run() {
                             wp.getSpec().getPurple().setCurrentCooldown(0);
                             wp.getSpec().getOrange().setCurrentCooldown(0);
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
-                            wp.subtractEnergy(-wp.getSpec().getOrange().getEnergyCost());
+                            wp.addEnergy(wp, name, energyCost);
                         }
                     }.runTaskLater(2);
                 } else {
                     numberOfHalfResets++;
 
                     new GameRunnable(wp.getGame()) {
-
                         @Override
                         public void run() {
                             wp.sendMessage(
@@ -168,7 +166,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                             wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() / 2);
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
-                            wp.subtractEnergy(-wp.getSpec().getOrange().getEnergyCost() / 2);
+                            wp.addEnergy(wp, name, energyCost / 2f);
                         }
                     }.runTaskLater(2);
                 }

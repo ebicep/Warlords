@@ -18,5 +18,4 @@ public class Spiritguard extends AbstractShaman {
                 new DeathsDebt()
         );
     }
-
 }

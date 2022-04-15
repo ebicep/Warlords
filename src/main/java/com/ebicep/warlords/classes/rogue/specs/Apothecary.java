@@ -18,5 +18,4 @@ public class Apothecary extends AbstractRogue {
                 new DrainingMiasma()
         );
     }
-
 }

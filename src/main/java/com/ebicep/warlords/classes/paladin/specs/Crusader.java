@@ -13,10 +13,9 @@ public class Crusader extends AbstractPaladin {
                 20,
                 new CrusadersStrike(),
                 new Consecrate(144, 194.4f, 50, 15, 200, 15, 4),
-                new LightInfusion(15.66f, -120),
+                new LightInfusion(15.66f, 120),
                 new HolyRadianceCrusader(582, 760, 19.57f, 20, 15, 175),
                 new InspiringPresence()
         );
     }
-
 }

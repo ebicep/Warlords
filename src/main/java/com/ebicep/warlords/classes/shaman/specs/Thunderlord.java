@@ -18,5 +18,4 @@ public class Thunderlord extends AbstractShaman {
                 new CapacitorTotem()
         );
     }
-
 }

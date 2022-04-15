@@ -18,5 +18,4 @@ public class Earthwarden extends AbstractShaman {
                 new HealingTotem()
         );
     }
-
 }
