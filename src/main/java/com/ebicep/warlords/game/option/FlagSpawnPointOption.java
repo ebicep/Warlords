@@ -171,7 +171,7 @@ public class FlagSpawnPointOption implements Option {
                     return;
                 }
 
-                if (wp.getFlagPickCooldown() != 0) {
+                if (wp.getFlagPickCooldown() != 0 && wp.getTeam() != info.getTeam()) {
                     wp.sendMessage("§cYou cannot pick up the flag yet!");
                     return;
                 }
