@@ -86,14 +86,16 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setSpecsSkillBoosts(HashMap<Specializations, SkillBoosts> classesSkillBoosts) {
-        for (SkillBoosts value : classesSkillBoosts.values()) {
-            if (value == null) {
-                System.out.println("ERROR: SETTING SKILL BOOSTS - SKILL BOOST IS NULL");
-                break;
+        if (classesSkillBoosts != null) {
+            for (SkillBoosts value : classesSkillBoosts.values()) {
+                if (value == null) {
+                    System.out.println("ERROR: SETTING SKILL BOOSTS - SKILL BOOST IS NULL");
+                    break;
+                }
             }
+            classesSkillBoosts.values().removeAll(Collections.singleton(null));
+            this.classesSkillBoosts.putAll(classesSkillBoosts);
         }
-        classesSkillBoosts.values().removeAll(Collections.singleton(null));
-        this.classesSkillBoosts.putAll(classesSkillBoosts);
     }
 
     @Nullable

@@ -196,7 +196,7 @@ public abstract class AbstractAbility {
                 .lore(
                         getCooldown() == 0 ? null :
                                 ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalHundredths(getCooldown()) + " seconds",
-                        getEnergyCost() == 0 || getEnergyCost() == 120 ? null :
+                        getEnergyCost() == 0 ? null :
                                 ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + getEnergyCost(),
                         getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + getCritChance() + "%" + "\n" +
