@@ -49,7 +49,7 @@ public class SoulSwitch extends AbstractAbility {
                 .entitiesAround(wp.getLocation(), radius, 6.5, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
-                .closestFirst(wp)
+                .lookingAtFirst(wp)
         ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(ChatColor.RED + "You cannot Soul Switch with a player holding the flag!");
