@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
@@ -86,6 +85,11 @@ public class InterchangeModeOption implements Option {
 
     private void swap(Game game) {
         TeamMarker.getTeams(game).forEach(team -> swapTeamMembers(game, team));
+        for (Option option : game.getOptions()) {
+            if (option instanceof FlagSpawnPointOption) {
+                ((FlagSpawnPointOption) option).getRenderer().render();
+            }
+        }
     }
 
     //the player BEFORE becomes the player AFTER
@@ -168,11 +172,11 @@ public class InterchangeModeOption implements Option {
         Warlords.getPlayers().put(secondPlayerUuid, firstPlayer);
 
 
-        Warlords.newChain()
-                .delay(100, TimeUnit.MILLISECONDS)
-                .sync(() -> {
-                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
-                }).execute();
+//        Warlords.newChain()
+//                .delay(100, TimeUnit.MILLISECONDS)
+//                .sync(() -> {
+//                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
+//                }).execute();
     }
 
     //firstplayer gets the stats of the second
@@ -215,11 +219,11 @@ public class InterchangeModeOption implements Option {
         Warlords.getPlayers().put(secondPlayer.getUuid(), firstPlayer);
 
 
-        Warlords.newChain()
-                .delay(100, TimeUnit.MILLISECONDS)
-                .sync(() -> {
-                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
-                }).execute();
+//        Warlords.newChain()
+//                .delay(100, TimeUnit.MILLISECONDS)
+//                .sync(() -> {
+//                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
+//                }).execute();
     }
 
     private void generateNextSwapTime() {
