@@ -16,8 +16,8 @@ public class LightInfusion extends AbstractAbility {
     private int duration = 3;
     private final int speedBuff = 40;
 
-    public LightInfusion(float cooldown, int energyCost) {
-        super("Light Infusion", 0, 0, cooldown, energyCost, 0, 0);
+    public LightInfusion(float cooldown) {
+        super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
     }
 
     @Override
@@ -38,12 +38,12 @@ public class LightInfusion extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        wp.addEnergy(wp, name, energyCost);
+        wp.addEnergy(wp, name, 120);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
 
-        LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
+        LightInfusion tempLightInfusion = new LightInfusion(cooldown);
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
