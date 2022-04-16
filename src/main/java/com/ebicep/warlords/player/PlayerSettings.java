@@ -69,8 +69,10 @@ public class PlayerSettings implements ConfigurationSerializable {
         return selectedSpec;
     }
 
-    public void setSelectedSpec(@Nonnull Specializations selectedSpec) {
-        this.selectedSpec = selectedSpec;
+    public void setSelectedSpec(Specializations selectedSpec) {
+        if (selectedSpec != null) {
+            this.selectedSpec = selectedSpec;
+        }
     }
 
     public SkillBoosts getSkillBoostForClass() {
@@ -82,7 +84,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setSkillBoostForSelectedSpec(SkillBoosts classesSkillBoost) {
-        classesSkillBoosts.put(selectedSpec, classesSkillBoost);
+        if (classesSkillBoost != null) {
+            classesSkillBoosts.put(selectedSpec, classesSkillBoost);
+        }
     }
 
     public void setSpecsSkillBoosts(HashMap<Specializations, SkillBoosts> classesSkillBoosts) {
@@ -210,7 +214,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setMageHelmet(ArmorManager.Helmets mageHelmet) {
-        this.mageHelmet = mageHelmet;
+        if (mageHelmet != null) {
+            this.mageHelmet = mageHelmet;
+        }
     }
 
     public ArmorManager.Helmets getWarriorHelmet() {
@@ -218,7 +224,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setWarriorHelmet(ArmorManager.Helmets warriorHelmet) {
-        this.warriorHelmet = warriorHelmet;
+        if (warriorHelmet != null) {
+            this.warriorHelmet = warriorHelmet;
+        }
     }
 
     public ArmorManager.Helmets getPaladinHelmet() {
@@ -226,7 +234,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setPaladinHelmet(ArmorManager.Helmets paladinHelmet) {
-        this.paladinHelmet = paladinHelmet;
+        if (paladinHelmet != null) {
+            this.paladinHelmet = paladinHelmet;
+        }
     }
 
     public ArmorManager.Helmets getShamanHelmet() {
@@ -234,7 +244,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setShamanHelmet(ArmorManager.Helmets shamanHelmet) {
-        this.shamanHelmet = shamanHelmet;
+        if (shamanHelmet != null) {
+            this.shamanHelmet = shamanHelmet;
+        }
     }
 
     public ArmorManager.Helmets getRogueHelmet() {
@@ -242,7 +254,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setRogueHelmet(ArmorManager.Helmets rogueHelmet) {
-        this.rogueHelmet = rogueHelmet;
+        if (rogueHelmet != null) {
+            this.rogueHelmet = rogueHelmet;
+        }
     }
 
     public ArmorManager.ArmorSets getMageArmor() {
@@ -250,7 +264,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setMageArmor(ArmorManager.ArmorSets mageArmor) {
-        this.mageArmor = mageArmor;
+        if (mageArmor != null) {
+            this.mageArmor = mageArmor;
+        }
     }
 
     public ArmorManager.ArmorSets getWarriorArmor() {
@@ -258,7 +274,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setWarriorArmor(ArmorManager.ArmorSets warriorArmor) {
-        this.warriorArmor = warriorArmor;
+        if (warriorArmor != null) {
+            this.warriorArmor = warriorArmor;
+        }
     }
 
     public ArmorManager.ArmorSets getPaladinArmor() {
@@ -266,7 +284,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setPaladinArmor(ArmorManager.ArmorSets paladinArmor) {
-        this.paladinArmor = paladinArmor;
+        if (paladinArmor != null) {
+            this.paladinArmor = paladinArmor;
+        }
     }
 
     public ArmorManager.ArmorSets getShamanArmor() {
@@ -274,7 +294,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setShamanArmor(ArmorManager.ArmorSets shamanArmor) {
-        this.shamanArmor = shamanArmor;
+        if (shamanArmor != null) {
+            this.shamanArmor = shamanArmor;
+        }
     }
 
     public ArmorManager.ArmorSets getRogueArmor() {
@@ -282,6 +304,8 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setRogueArmor(ArmorManager.ArmorSets rogueArmor) {
-        this.rogueArmor = rogueArmor;
+        if (rogueArmor != null) {
+            this.rogueArmor = rogueArmor;
+        }
     }
 }
