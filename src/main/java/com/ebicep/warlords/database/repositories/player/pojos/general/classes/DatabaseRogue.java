@@ -16,7 +16,7 @@ public class DatabaseRogue extends AbstractDatabaseStatInformation implements Da
     protected DatabaseSpecialization vindicator = new DatabaseSpecialization(SkillBoosts.FROST_BOLT);
     protected DatabaseSpecialization apothecary = new DatabaseSpecialization(SkillBoosts.WATER_BOLT);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_ROGUE_HELMET;
-    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE; //TODO change to rogue
+    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_ROGUE;
 
     public DatabaseRogue() {
         super();
