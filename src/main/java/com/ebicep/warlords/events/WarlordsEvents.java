@@ -167,11 +167,16 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
-                    .lore("")
-                    .get());
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            try {
+                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                        .lore("")
+                        .get());
+                player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            } catch (Exception e) {
+                System.out.println("ERROR: WEAPON THINGY - " + player.getName());
+                e.printStackTrace();
+            }
 
             if (!fromGame) {
                 Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
@@ -181,7 +186,7 @@ public class WarlordsEvents implements Listener {
                                 .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
-                                                // TODO: Fix team item
+                                        // TODO: Fix team item
                                                 // @see Team.java
                                                 new ItemBuilder(Material.WOOL).name("§aTeam Builder")
                                                         .get()

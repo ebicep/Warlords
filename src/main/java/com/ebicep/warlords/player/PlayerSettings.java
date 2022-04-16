@@ -158,6 +158,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setWeaponSkins(HashMap<Specializations, Weapons> weaponSkins) {
+        weaponSkins.values().removeAll(Collections.singleton(null));
         this.weaponSkins = weaponSkins;
     }
 
