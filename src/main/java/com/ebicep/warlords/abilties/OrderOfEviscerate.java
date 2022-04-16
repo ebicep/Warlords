@@ -128,8 +128,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 if (!Objects.equals(event.getPlayer(), this.getCooldownObject().getMarkedPlayer())) {
                     return;
                 }
-                wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-                wp.getCooldownManager().removeCooldownByName("Cloaked");
+                this.setTicksLeft(0);
                 if (isKiller) {
                     numberOfFullResets++;
                     wp.sendMessage(
