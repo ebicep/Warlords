@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.state;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
+import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;

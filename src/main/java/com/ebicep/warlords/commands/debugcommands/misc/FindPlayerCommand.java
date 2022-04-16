@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands;
+package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class FindPlayer implements CommandExecutor {
+public class FindPlayerCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {

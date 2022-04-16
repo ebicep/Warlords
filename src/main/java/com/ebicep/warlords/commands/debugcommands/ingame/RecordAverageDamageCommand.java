@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands;
+package com.ebicep.warlords.commands.debugcommands.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
@@ -8,7 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class RecordAverageDamage implements CommandExecutor {
+public class RecordAverageDamageCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {

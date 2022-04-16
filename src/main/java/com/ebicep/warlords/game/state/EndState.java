@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.state;
 
+import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -149,6 +150,8 @@ public class EndState implements State, TimerDebugAble {
             List<TextComponent> formattedData = wp.getSpec().getFormattedData();
             ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(formattedData.get(0), ChatUtils.SPACER, formattedData.get(1), ChatUtils.SPACER, formattedData.get(2)));
             ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(formattedData.get(3), ChatUtils.SPACER, formattedData.get(4)));
+
+            GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.put(player.getUniqueId(), formattedData);
 
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);

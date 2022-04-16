@@ -20,7 +20,9 @@ import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.classes.rogue.specs.Apothecary;
-import com.ebicep.warlords.commands.debugcommands.*;
+import com.ebicep.warlords.commands.debugcommands.game.*;
+import com.ebicep.warlords.commands.debugcommands.ingame.*;
+import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
@@ -351,7 +353,7 @@ public class Warlords extends JavaPlugin {
         new SpawnTestDummyCommand().register(this);
         new PartyCommand().register(this);
         new StreamCommand().register(this);
-        new RecordAverageDamage().register(this);
+        new RecordAverageDamageCommand().register(this);
         new ChatChannelCommand().register(this);
         new BotCommands().register(this);
         new LeaderboardCommand().register(this);
@@ -368,9 +370,10 @@ public class Warlords extends JavaPlugin {
         new DiscordCommand().register(this);
         new PollCommand().register(this);
         new AchievementsCommand().register(this);
-        new FindPlayer().register(this);
+        new FindPlayerCommand().register(this);
         new MuteCommand().register(this);
         new ResourcepackCommand().register(this);
+        new GetPlayerLastAbilityStatsCommand().register(this);
 
         updateHeads();
 

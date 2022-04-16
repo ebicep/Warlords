@@ -119,6 +119,9 @@ commands:
   resource:
     description: Gets the resource pack
     usage: /resource
+  abilitystats:
+    description: Displays players last abiiity stats
+    usage: /abilitystats
 
 permissions:
   group.default:

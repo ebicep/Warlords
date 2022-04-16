@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands;
+package com.ebicep.warlords.commands.debugcommands.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;

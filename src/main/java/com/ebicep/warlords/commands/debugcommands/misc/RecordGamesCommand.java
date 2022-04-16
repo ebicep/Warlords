@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands;
+package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.Warlords;
 import org.bukkit.ChatColor;

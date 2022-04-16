@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands.debugcommands;
+package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
