@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -87,7 +88,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 (cooldown, ticksLeft) -> {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
-                    if (ticksLeft % 20 == 0) {
+                    if (ticksLeft % 10 == 0) {
                         ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
                     }
                 }
@@ -131,16 +132,17 @@ public class OrderOfEviscerate extends AbstractAbility {
                 this.setTicksLeft(0);
                 if (isKiller) {
                     numberOfFullResets++;
-                    wp.sendMessage(
-                        WarlordsPlayer.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You killed your mark," +
-                        ChatColor.YELLOW + " your cooldowns have been reset" +
-                        ChatColor.GRAY + "!"
-                    );
 
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
+                            wp.sendMessage(
+                                    WarlordsPlayer.GIVE_ARROW_GREEN +
+                                            ChatColor.GRAY + " You killed your mark," +
+                                            ChatColor.YELLOW + " your cooldowns have been reset" +
+                                            ChatColor.GRAY + "!"
+                            );
+
                             wp.getSpec().getPurple().setCurrentCooldown(0);
                             wp.getSpec().getOrange().setCurrentCooldown(0);
                             wp.updatePurpleItem();
@@ -184,19 +186,36 @@ public class OrderOfEviscerate extends AbstractAbility {
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {
-                    },
-                    duration * 20
-            );
-            wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false));
-            wp.updateArmor();
-            PlayerFilter.playingGame(wp.getGame())
-                    .enemiesOf(wp)
-                    .forEach(warlordsPlayer -> {
-                        LivingEntity livingEntity = warlordsPlayer.getEntity();
-                        if (livingEntity instanceof Player) {
-                            ((Player) livingEntity).hidePlayer(player);
+                        wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+
+                        LivingEntity wpEntity = wp.getEntity();
+                        if (wpEntity instanceof Player) {
+                            PlayerFilter.playingGame(wp.getGame())
+                                    .enemiesOf(wp)
+                                    .stream().map(WarlordsPlayer::getEntity)
+                                    .filter(Player.class::isInstance)
+                                    .map(Player.class::cast)
+                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
                         }
-                    });
+                    },
+                    duration * 20,
+                    (cooldown, ticksLeft) -> {
+                        if (ticksLeft % 5 == 0) {
+                            wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
+
+                            LivingEntity wpEntity = wp.getEntity();
+                            if (wpEntity instanceof Player) {
+                                ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+                                PlayerFilter.playingGame(wp.getGame())
+                                        .enemiesOf(wp)
+                                        .stream().map(WarlordsPlayer::getEntity)
+                                        .filter(Player.class::isInstance)
+                                        .map(Player.class::cast)
+                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                            }
+                        }
+                    }
+            );
         }
 
         return true;

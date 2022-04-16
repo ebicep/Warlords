@@ -1130,16 +1130,13 @@ public final class WarlordsPlayer {
 
         Player player = (Player) this.entity;
 
-        ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+        if (!cooldownManager.hasCooldownFromName("Cloaked") || hasFlag()) {
+            ArmorManager.resetArmor(player, getSpecClass(), getTeam());
 
-        if (cooldownManager.hasCooldownFromName("Cloaked") && !hasFlag()) {
-            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-        } else {
             getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
-        }
-
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.showPlayer(player);
+            for (Player otherPlayer : player.getWorld().getPlayers()) {
+                otherPlayer.showPlayer(player);
+            }
         }
 
         if (hasFlag()) {
