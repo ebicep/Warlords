@@ -34,7 +34,7 @@ public class QueueListener extends ListenerAdapter {
             String playerName = event.getMember().getEffectiveName();
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
             if (Objects.equals(event.getSubcommandName(), "join") || Objects.equals(event.getSubcommandName(), "leave")) {
-                if (offlinePlayer == null) {
+                if (offlinePlayer == null || offlinePlayer.getName().contains(" ") || offlinePlayer.getName().contains("?")) {
                     event.reply("Invalid Name").queue();
                     return;
                 }
@@ -48,11 +48,14 @@ public class QueueListener extends ListenerAdapter {
                     break;
                 }
                 case "join": {
-                    if (
-                            QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(playerUUID)) ||
-                                    QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(playerUUID))
-                    ) {
+                    if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
                         event.reply("You are already in the queue").queue();
+                        break;
+                    }
+                    if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(playerUUID))) {
+                        QueueManager.removePlayerFromFutureQueue(playerUUID);
+                        QueueManager.addPlayerToQueue(playerName, false);
+                        event.reply("You were moved from the future to the current queue").queue();
                         break;
                     }
                     OptionMapping timeOption = event.getOption("time");
@@ -63,8 +66,15 @@ public class QueueListener extends ListenerAdapter {
                             Date date = new Date();
                             int currentHour = Integer.parseInt(new SimpleDateFormat("hh").format(date));
                             int currentMinute = Integer.parseInt(new SimpleDateFormat("mm").format(date));
-                            int hourDiff = Integer.parseInt(time.substring(0, time.indexOf(':'))) - currentHour;
-                            int minuteDiff = Integer.parseInt(time.substring(time.indexOf(':') + 1)) - currentMinute;
+                            int targetHour = Integer.parseInt(time.substring(0, time.indexOf(':')));
+                            int targetMinute = Integer.parseInt(time.substring(time.indexOf(':') + 1));
+
+                            if (targetHour < 0 || targetMinute < 0 || targetHour > 23 || targetMinute > 59) {
+                                throw new Exception("Invalid time");
+                            }
+
+                            int hourDiff = targetHour - currentHour;
+                            int minuteDiff = targetMinute - currentMinute;
 
                             long futureTimeMillis = System.currentTimeMillis();
                             futureTimeMillis += hourDiff * 3600000L;
@@ -78,7 +88,7 @@ public class QueueListener extends ListenerAdapter {
                             } else if (futureMinuteDiff < 20) {
                                 event.reply("You cannot join the queue within 20 minutes. Join the server and type **/queue join** to join the queue now").queue();
                             } else {
-                                event.reply("You will join the queue in **" + futureMinuteDiff + "** minutes. Make sure you are online at that time or you will be automatically removed if there is an open party spot!").queue();
+                                event.reply("You will join the queue in **" + futureMinuteDiff + "** minutes. Make sure you are online at that time or you will be automatically removed if there is an open party spot").queue();
                                 QueueManager.addPlayerToFutureQueue(playerName, time, new BukkitRunnable() {
 
                                     @Override

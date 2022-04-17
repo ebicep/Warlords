@@ -57,7 +57,6 @@ import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
 import org.bukkit.GameMode;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -329,7 +328,7 @@ public class Warlords extends JavaPlugin {
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
-        ConfigurationSerialization.registerClass(PlayerSettings.class);
+        //ConfigurationSerialization.registerClass(PlayerSettings.class);
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
