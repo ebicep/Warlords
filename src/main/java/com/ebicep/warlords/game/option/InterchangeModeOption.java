@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -41,7 +42,9 @@ public class InterchangeModeOption implements Option {
     public void start(@Nonnull Game game) {
         //saving player info as it will be modified during the game
         game.getPlayers().forEach((uuid, team) -> {
+            System.out.println("SETTING " + Bukkit.getOfflinePlayer(uuid).getName());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            System.out.println(Bukkit.getOfflinePlayer(uuid).getName() + " " + playerSettings.getSelectedSpec());
             previousSelectedSpecs.put(uuid, playerSettings.getSelectedSpec());
             previousSelectedSkillBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
             previousSelectedWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
@@ -74,6 +77,7 @@ public class InterchangeModeOption implements Option {
     public void onGameEnding(@Nonnull Game game) {
         //resetting player info
         game.getPlayers().forEach((uuid, team) -> {
+            System.out.println("RESETTING " + Bukkit.getOfflinePlayer(uuid).getName());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
             playerSettings.setSelectedSpec(previousSelectedSpecs.get(uuid));
             playerSettings.setSpecsSkillBoosts(previousSelectedSkillBoosts.get(uuid));

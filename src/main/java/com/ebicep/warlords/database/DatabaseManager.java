@@ -226,6 +226,7 @@ public class DatabaseManager {
         weaponSkins.put(Specializations.ASSASSIN, databasePlayer.getRogue().getAssassin().getWeapon());
         weaponSkins.put(Specializations.VINDICATOR, databasePlayer.getRogue().getVindicator().getWeapon());
         weaponSkins.put(Specializations.APOTHECARY, databasePlayer.getRogue().getApothecary().getWeapon());
+        weaponSkins.values().removeAll(Collections.singleton(null));
         Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
 
         HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>();

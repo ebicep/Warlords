@@ -1,16 +1,18 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.game.Team;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.ebicep.warlords.player.ArmorManager.Helmets.*;
 
-public class PlayerSettings implements ConfigurationSerializable {
-    private Specializations selectedSpec = Specializations.PYROMANCER;
+public class PlayerSettings {
+
     private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<Specializations, SkillBoosts>() {{
         put(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
         put(Specializations.CRYOMANCER, SkillBoosts.FROST_BOLT);
@@ -28,8 +30,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Specializations.VINDICATOR, SkillBoosts.RIGHTEOUS_STRIKE);
         put(Specializations.APOTHECARY, SkillBoosts.IMPALING_STRIKE);
     }};
-    private boolean hotKeyMode = true;
-    private HashMap<Specializations, Weapons> weaponSkins = new HashMap<Specializations, Weapons>() {{
+    private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<Specializations, Weapons>() {{
         put(Specializations.PYROMANCER, Weapons.FELFLAME_BLADE);
         put(Specializations.CRYOMANCER, Weapons.FELFLAME_BLADE);
         put(Specializations.AQUAMANCER, Weapons.FELFLAME_BLADE);
@@ -43,6 +44,8 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Specializations.SPIRITGUARD, Weapons.FELFLAME_BLADE);
         put(Specializations.EARTHWARDEN, Weapons.FELFLAME_BLADE);
     }};
+    private Specializations selectedSpec = Specializations.PYROMANCER;
+    private boolean hotKeyMode = true;
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     /**
      * Preferred team in the upcoming warlords game
@@ -91,12 +94,6 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void setSpecsSkillBoosts(HashMap<Specializations, SkillBoosts> classesSkillBoosts) {
         if (classesSkillBoosts != null) {
-            for (SkillBoosts value : classesSkillBoosts.values()) {
-                if (value == null) {
-                    System.out.println("ERROR: SETTING SKILL BOOSTS - SKILL BOOST IS NULL");
-                    break;
-                }
-            }
             classesSkillBoosts.values().removeAll(Collections.singleton(null));
             this.classesSkillBoosts.putAll(classesSkillBoosts);
         }
@@ -116,41 +113,8 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.wantedTeam = wantedTeam;
     }
 
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> config = new LinkedHashMap<>();
-        config.put("class", selectedSpec.name());
-        //config.put("classessSkillBoost", classesSkillBoosts.name());
-        config.put("hotKeyMode", Boolean.toString(hotKeyMode));
-        config.put("particleQuality", particleQuality.name());
-        return config;
-    }
-
-    @Nonnull
-    public static PlayerSettings deserialize(@Nonnull Map<String, Object> config) {
-        PlayerSettings settings = new PlayerSettings();
-        try {
-            settings.setSelectedSpec(Specializations.valueOf(config.get("class").toString()));
-        } catch (IllegalArgumentException ignored) {
-        }
-        try {
-            //settings.setClassesSkillBoosts(ClassesSkillBoosts.valueOf(config.get("classessSkillBoost").toString()));
-        } catch (IllegalArgumentException ignored) {
-        }
-        settings.hotKeyMode = !"false".equals(config.get("hotKeyMode"));
-        try {
-            settings.setParticleQuality(Settings.ParticleQuality.valueOf(config.get("particleQuality").toString()));
-        } catch (IllegalArgumentException ignored) {
-        }
-        return settings;
-    }
-
     public boolean getHotKeyMode() {
         return hotKeyMode;
-    }
-
-    public void setHotKeyMode(boolean hotKeyMode) {
-        this.hotKeyMode = hotKeyMode;
     }
 
     public HashMap<Specializations, Weapons> getWeaponSkins() {
@@ -158,8 +122,10 @@ public class PlayerSettings implements ConfigurationSerializable {
     }
 
     public void setWeaponSkins(HashMap<Specializations, Weapons> weaponSkins) {
-        weaponSkins.values().removeAll(Collections.singleton(null));
-        this.weaponSkins = weaponSkins;
+        if (weaponSkins != null) {
+            weaponSkins.values().removeAll(Collections.singleton(null));
+            this.weaponSkins.putAll(weaponSkins);
+        }
     }
 
     public Settings.ParticleQuality getParticleQuality() {
@@ -174,6 +140,10 @@ public class PlayerSettings implements ConfigurationSerializable {
         return hotKeyMode;
     }
 
+    public void setHotKeyMode(boolean hotKeyMode) {
+        this.hotKeyMode = hotKeyMode;
+    }
+
     public List<ArmorManager.Helmets> getHelmets() {
         List<ArmorManager.Helmets> armorSets = new ArrayList<>();
         armorSets.add(mageHelmet);
@@ -182,6 +152,16 @@ public class PlayerSettings implements ConfigurationSerializable {
         armorSets.add(shamanHelmet);
         armorSets.add(rogueHelmet);
         return armorSets;
+    }
+
+    public void setHelmets(List<ArmorManager.Helmets> helmets) {
+        if (helmets != null) {
+            this.mageHelmet = helmets.get(0);
+            this.warriorHelmet = helmets.get(1);
+            this.paladinHelmet = helmets.get(2);
+            this.shamanHelmet = helmets.get(3);
+            this.rogueHelmet = helmets.get(4);
+        }
     }
 
     public List<ArmorManager.ArmorSets> getArmorSets() {
@@ -194,20 +174,14 @@ public class PlayerSettings implements ConfigurationSerializable {
         return armorSets;
     }
 
-    public void setHelmets(List<ArmorManager.Helmets> helmets) {
-        this.mageHelmet = helmets.get(0);
-        this.warriorHelmet = helmets.get(1);
-        this.paladinHelmet = helmets.get(2);
-        this.shamanHelmet = helmets.get(3);
-        this.rogueHelmet = helmets.get(4);
-    }
-
     public void setArmorSets(List<ArmorManager.ArmorSets> armorSets) {
-        this.mageArmor = armorSets.get(0);
-        this.warriorArmor = armorSets.get(1);
-        this.paladinArmor = armorSets.get(2);
-        this.shamanArmor = armorSets.get(3);
-        this.rogueArmor = armorSets.get(4);
+        if (armorSets != null) {
+            this.mageArmor = armorSets.get(0);
+            this.warriorArmor = armorSets.get(1);
+            this.paladinArmor = armorSets.get(2);
+            this.shamanArmor = armorSets.get(3);
+            this.rogueArmor = armorSets.get(4);
+        }
     }
 
     public ArmorManager.Helmets getMageHelmet() {

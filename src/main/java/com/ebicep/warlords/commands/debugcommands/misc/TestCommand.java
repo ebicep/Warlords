@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -98,6 +99,10 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        System.out.println(playerSettings.getSelectedSpec());
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        System.out.println(databasePlayer.getLastSpec());
 
 //        DatabaseManager.warlordsDatabase.getCollection("Temp").find().forEach(document -> {
 //            document.put("map", document.getString("map").toUpperCase());
