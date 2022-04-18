@@ -171,10 +171,7 @@ public class Intervene extends AbstractAbility {
                     },
                     duration * 20,
                     (cooldown, ticksLeft) -> {
-                        if (wp.isDead() ||
-                                //tempIntervene.getDamagePrevented() >= maxDamagePrevented / 2 ||
-                                veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius
-                        ) {
+                        if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
                             cooldown.setTicksLeft(0);
                             interveneCooldownVeneTarget.setTicksLeft(0);
                         }

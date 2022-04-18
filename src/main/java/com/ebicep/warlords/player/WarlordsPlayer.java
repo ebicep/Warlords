@@ -353,8 +353,6 @@ public final class WarlordsPlayer {
             damageValue *= .5;
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
-            intervenedBy.sendMessage(intervene.getDamagePrevented() + " ");
-
             intervene.addDamagePrevented(damageValue);
 
             //breaking vene if above damage threshold
@@ -377,9 +375,6 @@ public final class WarlordsPlayer {
             } else {
                 intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
             }
-
-            intervenedBy.sendMessage(intervene.getDamagePrevented() + " ");
-
 
             Location loc = getLocation();
             //EFFECTS + SOUNDS
