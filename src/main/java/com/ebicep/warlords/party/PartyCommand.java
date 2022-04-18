@@ -232,7 +232,7 @@ public class PartyCommand implements TabExecutor {
                             ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "There is already an ongoing poll!", ChatColor.BLUE, true);
                             return true;
                         }
-                        String pollInfo = args[1];
+                        String pollInfo = String.join("/", args);
                         int numberOfSlashes = (int) pollInfo.chars().filter(ch -> ch == '/').count();
                         if (numberOfSlashes <= 1) {
                             ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You must have a question and more than 1 answer!", ChatColor.BLUE, true);
