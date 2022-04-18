@@ -156,7 +156,7 @@ public class PartyCommand implements TabExecutor {
                         party.get().join(player.getUniqueId());
                         if (QueueManager.queue.contains(player.getUniqueId())) {
                             QueueManager.queue.remove(player.getUniqueId());
-                            QueueManager.sendNewQueue();
+                            QueueManager.sendQueue();
                         }
                         return true;
                     }
@@ -364,7 +364,7 @@ public class PartyCommand implements TabExecutor {
                                     Bukkit.dispatchCommand(sender, "p invite " + Bukkit.getPlayer(uuid).getName());
                                 });
                                 QueueManager.queue.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
-                                QueueManager.sendNewQueue();
+                                QueueManager.sendQueue();
                             }
                         }
                         return true;

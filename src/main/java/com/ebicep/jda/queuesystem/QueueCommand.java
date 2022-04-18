@@ -34,14 +34,14 @@ public class QueueCommand implements CommandExecutor {
                     QueueManager.addPlayerToQueue(sender.getName(), false);
                     QueueManager.removePlayerFromFutureQueue(sender.getName());
                     sender.sendMessage(ChatColor.GREEN + "You are now #" + QueueManager.queue.size() + " in queue!");
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                 }
                 return true;
             }
             case "leave": {
                 QueueManager.removePlayerFromQueue(sender.getName());
                 sender.sendMessage(ChatColor.RED + "You left the queue!");
-                QueueManager.sendNewQueue();
+                QueueManager.sendQueue();
                 return true;
             }
             case "add": {
@@ -59,7 +59,7 @@ public class QueueCommand implements CommandExecutor {
 
                     QueueManager.addPlayerToQueue(playerToAdd, false);
                     sender.sendMessage(QueueManager.getQueue());
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                 } else {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
                 }
@@ -83,7 +83,7 @@ public class QueueCommand implements CommandExecutor {
 
                     QueueManager.queue.remove(queuePos - 1);
                     sender.sendMessage(QueueManager.getQueue());
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                 } else {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
                 }
@@ -93,7 +93,7 @@ public class QueueCommand implements CommandExecutor {
                 if (sender.hasPermission("warlords.queue.clear")) {
                     QueueManager.queue.clear();
                     QueueManager.futureQueue.clear();
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                     sender.sendMessage(ChatColor.GREEN + "Queue cleared");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions");

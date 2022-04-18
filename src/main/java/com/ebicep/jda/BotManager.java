@@ -71,13 +71,19 @@ public class BotManager {
                                 textChannel.getIterableHistory()
                                         .takeAsync(1000)
                                         .thenAccept(textChannel::purgeMessages)
-                                        .thenAccept(unused -> QueueManager.sendNewQueue());
+                                        .thenAccept(unused -> QueueManager.sendQueue());
                             });
                         }
                     }
                     if (counter % 3 == 0) {
                         if (numberOfMessagesSentLast30Sec > 0) {
                             numberOfMessagesSentLast30Sec--;
+                        }
+                    }
+                    if (counter % 10 == 0) {
+                        if (QueueManager.sendQueue) {
+                            QueueManager.sendQueue = false;
+                            QueueManager.sendNewQueue();
                         }
                     }
                     if (counter % 30 == 0) {

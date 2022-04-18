@@ -44,7 +44,7 @@ public class QueueListener extends ListenerAdapter {
             switch (Objects.requireNonNull(event.getSubcommandName())) {
                 case "refresh": {
                     event.reply("Refreshing the Queue").queue();
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                     break;
                 }
                 case "join": {
@@ -96,7 +96,7 @@ public class QueueListener extends ListenerAdapter {
                                         QueueManager.addPlayerToQueue(playerName, false);
                                         QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(member.getEffectiveName()).getUniqueId()));
                                         textChannel.sendMessage("<@" + member.getId() + "> You are now in the queue, make sure you are on the server once the party is open").queue();
-                                        QueueManager.sendNewQueue();
+                                        QueueManager.sendQueue();
                                     }
                                 }.runTaskLater(Warlords.getInstance(), futureSecondDiff * 20));
                             }
@@ -107,7 +107,7 @@ public class QueueListener extends ListenerAdapter {
                         QueueManager.addPlayerToQueue(playerName, false);
                         event.reply("You have joined the queue").queue();
                     }
-                    QueueManager.sendNewQueue();
+                    QueueManager.sendQueue();
                     break;
                 }
                 case "leave": {
@@ -121,7 +121,7 @@ public class QueueListener extends ListenerAdapter {
                         } else {
                             event.reply("You are not in the queue").queue();
                         }
-                        QueueManager.sendNewQueue();
+                        QueueManager.sendQueue();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
