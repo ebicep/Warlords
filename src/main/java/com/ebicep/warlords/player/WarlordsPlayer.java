@@ -342,15 +342,45 @@ public final class WarlordsPlayer {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> regularCooldown.getFrom() != this)
                 .findFirst();
-        if (optionalInterveneCooldown.isPresent() && !HammerOfLight.isStandingInHammer(attacker, this) && isEnemy(attacker)) {
+        if (optionalInterveneCooldown.isPresent() &&
+                optionalInterveneCooldown.get().getTicksLeft() > 0 &&
+                !HammerOfLight.isStandingInHammer(attacker, this) &&
+                isEnemy(attacker)
+        ) {
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsPlayer intervenedBy = optionalInterveneCooldown.get().getFrom();
 
             damageValue *= .5;
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
+            intervenedBy.sendMessage(intervene.getDamagePrevented() + " ");
+
             intervene.addDamagePrevented(damageValue);
-            intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+
+            //breaking vene if above damage threshold
+            if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
+                //defender
+                new CooldownFilter<>(intervenedBy, RegularCooldown.class)
+                        .filterCooldownObject(intervene)
+                        .findFirst()
+                        .ifPresent(regularCooldown -> regularCooldown.setTicksLeft(0));
+                //vene target
+                optionalInterveneCooldown.get().setTicksLeft(0);
+
+                //remaining vene prevent damage
+                float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
+                intervenedBy.addDamageInstance(attacker, "Intervene", remainingVeneDamage, remainingVeneDamage, isCrit ? 100 : -1, 100, true);
+                //extra overVeneDamage to target
+                float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
+                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : -1, 100, true);
+
+            } else {
+                intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+            }
+
+            intervenedBy.sendMessage(intervene.getDamagePrevented() + " ");
+
+
             Location loc = getLocation();
             //EFFECTS + SOUNDS
             Utils.playGlobalSound(loc, "warrior.intervene.block", 2, 1);

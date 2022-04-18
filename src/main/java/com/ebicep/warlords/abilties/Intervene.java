@@ -18,9 +18,10 @@ import java.util.List;
 
 
 public class Intervene extends AbstractAbility {
-    private final int duration = 5;
     protected int playersIntervened = 0;
     protected int carriersIntervened = 0;
+
+    private final int duration = 5;
     private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
     private int radius = 10;
@@ -28,6 +29,11 @@ public class Intervene extends AbstractAbility {
 
     public Intervene() {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
+    }
+
+    public Intervene(float maxDamagePrevented) {
+        super("Intervene", 0, 0, 14.09f, 20, 0, 0);
+        this.maxDamagePrevented = maxDamagePrevented;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class Intervene extends AbstractAbility {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
-            Intervene tempIntervene = new Intervene();
+            Intervene tempIntervene = new Intervene(maxDamagePrevented);
 
             // Removing all other intervenes
             wp.getCooldownManager().getCooldowns().removeIf(cd ->
@@ -166,7 +172,7 @@ public class Intervene extends AbstractAbility {
                     duration * 20,
                     (cooldown, ticksLeft) -> {
                         if (wp.isDead() ||
-                                tempIntervene.getDamagePrevented() >= maxDamagePrevented / 2 ||
+                                //tempIntervene.getDamagePrevented() >= maxDamagePrevented / 2 ||
                                 veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius
                         ) {
                             cooldown.setTicksLeft(0);
