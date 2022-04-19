@@ -88,8 +88,8 @@ public class HealingRain extends AbstractAbility {
                     particleTask.cancel();
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 10 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 10 == 0) {
                         for (WarlordsPlayer teammateInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
                                 .aliveTeammatesOf(wp)

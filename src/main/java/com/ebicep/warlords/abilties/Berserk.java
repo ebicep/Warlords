@@ -64,8 +64,8 @@ public class Berserk extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 3 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 3 == 0) {
                         ParticleEffect.VILLAGER_ANGRY.display(
                                 0,
                                 0,

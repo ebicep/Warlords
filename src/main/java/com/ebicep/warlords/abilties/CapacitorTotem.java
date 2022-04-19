@@ -77,7 +77,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                     totemStand.remove();
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
+                (cooldown, ticksLeft, counter) -> {
                     if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
                         if (PlayerFilter.playingGame(wp.getGame())
                                 .teammatesOfExcludingSelf(wp)

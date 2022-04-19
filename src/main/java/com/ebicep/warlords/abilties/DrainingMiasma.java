@@ -85,8 +85,8 @@ public class DrainingMiasma extends AbstractAbility {
                         cancelSpeed.run();
                     },
                     duration * 20,
-                    (cooldown, ticksLeft) -> {
-                        if (ticksLeft % 20 == 0) {
+                    (cooldown, ticksLeft, counter) -> {
+                        if (counter % 20 == 0) {
                             Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
 
                             for (int i = 0; i < 3; i++) {

@@ -4,12 +4,12 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -19,7 +19,13 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     protected int startingTicks;
     protected int ticksLeft;
-    protected final List<BiConsumer<RegularCooldown<T>, Integer>> consumers;
+    protected int counter;
+    /**
+     * cooldown = this
+     * ticksLeft = ticksLeft of cooldown
+     * counter = counter incrementing every tick, separate from ticksLeft
+     */
+    protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers;
 
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
@@ -29,11 +35,11 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     }
 
     @SafeVarargs
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, BiConsumer<RegularCooldown<T>, Integer>... biConsumers) {
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
-        this.consumers = new ArrayList<>(Arrays.asList(biConsumers));
+        this.consumers = new ArrayList<>(Arrays.asList(triConsumers));
     }
 
     @Override
@@ -52,7 +58,8 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public void onTick() {
-        consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft));
+        consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft, counter));
+        counter++;
         subtractTime(1);
     }
 
@@ -85,11 +92,11 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         return startingTicks;
     }
 
-    public void addBiConsumer(BiConsumer<RegularCooldown<T>, Integer> biConsumer) {
-        this.consumers.add(biConsumer);
+    public void addTriConsumer(TriConsumer<RegularCooldown<T>, Integer, Integer> triConsumer) {
+        this.consumers.add(triConsumer);
     }
 
-    public void removeBiConsumer(BiConsumer<RegularCooldown<T>, Integer> biConsumer) {
-        this.consumers.remove(biConsumer);
+    public void removeTriConsumer(TriConsumer<RegularCooldown<T>, Integer, Integer> triConsumer) {
+        this.consumers.remove(triConsumer);
     }
 }

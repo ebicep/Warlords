@@ -88,8 +88,8 @@ public class Consecrate extends AbstractAbility {
                     effectTask.cancel();
                 },
                 5 * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 20 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                 .aliveEnemiesOf(wp)
                                 .forEach(enemy -> {

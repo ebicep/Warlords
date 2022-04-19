@@ -71,8 +71,8 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 3 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 3 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
                         ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);

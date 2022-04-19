@@ -53,8 +53,8 @@ public class BloodLust extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 3 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 3 == 0) {
                         ParticleEffect.REDSTONE.display(
                                 new ParticleEffect.OrdinaryColor(255, 0, 0),
                                 wp.getLocation().add(

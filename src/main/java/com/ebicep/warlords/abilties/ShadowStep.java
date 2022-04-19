@@ -67,6 +67,10 @@ public class ShadowStep extends AbstractAbility {
                 .with(FireworkEffect.Type.BALL)
                 .build());
 
+        if (wp.onHorse()) {
+            wp.removeHorse();
+        }
+
         List<WarlordsPlayer> playersHit = new ArrayList<>();
         for (WarlordsPlayer assaultTarget : PlayerFilter
                 .entitiesAround(player, 5, 5, 5)

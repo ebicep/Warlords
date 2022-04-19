@@ -26,14 +26,18 @@ public class Intervene extends AbstractAbility {
     private float maxDamagePrevented = 3600;
     private int radius = 10;
     private int breakRadius = 15;
+    private WarlordsPlayer caster;
+    private WarlordsPlayer target;
 
     public Intervene() {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
     }
 
-    public Intervene(float maxDamagePrevented) {
+    public Intervene(float maxDamagePrevented, WarlordsPlayer caster, WarlordsPlayer target) {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
         this.maxDamagePrevented = maxDamagePrevented;
+        this.caster = caster;
+        this.target = target;
     }
 
     @Override
@@ -80,7 +84,7 @@ public class Intervene extends AbstractAbility {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
-            Intervene tempIntervene = new Intervene(maxDamagePrevented);
+            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget);
 
             // Removing all other intervenes
             wp.getCooldownManager().getCooldowns().removeIf(cd ->
@@ -136,10 +140,10 @@ public class Intervene extends AbstractAbility {
                         );
                     },
                     duration * 20,
-                    (cooldown, ticksLeft) -> {
-                        if (ticksLeft % 20 == 0 && ticksLeft > 0) {
-                            int timeLeft = ticksLeft / 20;
-                            if (ticksLeft == 20) {
+                    (cooldown, ticksLeft, counter) -> {
+                        if (counter % 20 == 0 && ticksLeft > 0) {
+                            int timeLeft = Math.round(ticksLeft / 20f);
+                            if (timeLeft == 1) {
                                 veneTarget.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + " " +
                                         ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
                                         timeLeft + "§7 second!"
@@ -170,7 +174,7 @@ public class Intervene extends AbstractAbility {
                         );
                     },
                     duration * 20,
-                    (cooldown, ticksLeft) -> {
+                    (cooldown, ticksLeft, counter) -> {
                         if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
                             cooldown.setTicksLeft(0);
                             interveneCooldownVeneTarget.setTicksLeft(0);
@@ -224,5 +228,13 @@ public class Intervene extends AbstractAbility {
 
     public void setMaxDamagePrevented(float maxDamagePrevented) {
         this.maxDamagePrevented = maxDamagePrevented;
+    }
+
+    public WarlordsPlayer getCaster() {
+        return caster;
+    }
+
+    public WarlordsPlayer getTarget() {
+        return target;
     }
 }

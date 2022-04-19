@@ -3,9 +3,9 @@ package com.ebicep.warlords.player.cooldowns.cooldowns;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -23,8 +23,8 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
         this.objectCheck = objectCheck;
     }
 
-    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck, BiConsumer<RegularCooldown<T>, Integer>... biConsumers) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, biConsumers);
+    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
+        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, triConsumers);
         this.objectCheck = objectCheck;
     }
 

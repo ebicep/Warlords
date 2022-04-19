@@ -87,8 +87,8 @@ public class Soulbinding extends AbstractAbility {
                 },
                 duration * 20,
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 4 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
                         ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 2, location, 500);

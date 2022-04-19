@@ -139,8 +139,8 @@ public class UndyingArmy extends AbstractAbility {
                     cooldownManager -> {
                     },
                     duration * 20,
-                    (cooldown, ticksLeft) -> {
-                        if (ticksLeft % 20 == 0) {
+                    (cooldown, ticksLeft, counter) -> {
+                        if (counter % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
                                 float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);

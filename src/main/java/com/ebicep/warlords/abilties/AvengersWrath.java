@@ -56,8 +56,8 @@ public class AvengersWrath extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 4 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3F,
                                 0.1F,

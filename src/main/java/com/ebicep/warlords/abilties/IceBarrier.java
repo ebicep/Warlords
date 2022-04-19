@@ -65,8 +65,8 @@ public class IceBarrier extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 5 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 5 == 0) {
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
                         ParticleEffect.CLOUD.display(
                                 0.2f,

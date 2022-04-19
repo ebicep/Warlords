@@ -5,12 +5,13 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.TriConsumer;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -82,14 +83,52 @@ public class CooldownManager {
         abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
                 .filter(RegularCooldown.class::isInstance)
                 .map(RegularCooldown.class::cast)
-                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
+                .forEachOrdered(regularCooldown -> {
+                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks);
+                    if (Objects.equals(regularCooldown.getCooldownClass(), Intervene.class)) {
+                        Intervene intervene = (Intervene) regularCooldown.getCooldownObject();
+                        //player is defender that vened, then reduce vened target cooldown
+                        if (regularCooldown.getFrom() == warlordsPlayer) {
+                            new CooldownFilter<>(intervene.getTarget(), RegularCooldown.class)
+                                    .filterCooldownObject(intervene)
+                                    .findFirst()
+                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() + ticks));
+                        }
+                        //player with vene from defender, then reduce defender vene cooldown
+                        else {
+                            new CooldownFilter<>(intervene.getCaster(), RegularCooldown.class)
+                                    .filterCooldownObject(intervene)
+                                    .findFirst()
+                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() + ticks));
+                        }
+                    }
+                });
     }
 
     public void subtractTicksOnRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
         abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
                 .filter(RegularCooldown.class::isInstance)
                 .map(RegularCooldown.class::cast)
-                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
+                .forEachOrdered(regularCooldown -> {
+                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks);
+                    if (Objects.equals(regularCooldown.getCooldownClass(), Intervene.class)) {
+                        Intervene intervene = (Intervene) regularCooldown.getCooldownObject();
+                        //player is defender that vened, then reduce vened target cooldown
+                        if (regularCooldown.getFrom() == warlordsPlayer) {
+                            new CooldownFilter<>(intervene.getTarget(), RegularCooldown.class)
+                                    .filterCooldownObject(intervene)
+                                    .findFirst()
+                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() - ticks));
+                        }
+                        //player with vene from defender, then reduce defender vene cooldown
+                        else {
+                            new CooldownFilter<>(intervene.getCaster(), RegularCooldown.class)
+                                    .filterCooldownObject(intervene)
+                                    .findFirst()
+                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() - ticks));
+                        }
+                    }
+                });
     }
 
     public List<AbstractCooldown<?>> getBuffCooldowns() {
@@ -127,7 +166,7 @@ public class CooldownManager {
      * @param cooldownType   what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
      * @param onRemove       runs when the cooldown is over
      * @param timeLeft       how long should the cooldown last.
-     * @param biConsumers
+     * @param triConsumers
      */
     @SafeVarargs
     public final <T> void addRegularCooldown(String name,
@@ -138,9 +177,9 @@ public class CooldownManager {
                                              CooldownTypes cooldownType,
                                              Consumer<CooldownManager> onRemove,
                                              int timeLeft,
-                                             BiConsumer<RegularCooldown<T>, Integer>... biConsumers
+                                             TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers
     ) {
-        addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, biConsumers));
+        addCooldown(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, triConsumers));
     }
 
     @SafeVarargs
@@ -153,9 +192,9 @@ public class CooldownManager {
                                                 Consumer<CooldownManager> onRemove,
                                                 int timeLeft,
                                                 Predicate<T> objectCheck,
-                                                BiConsumer<RegularCooldown<T>, Integer>... biConsumers
+                                                TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers
     ) {
-        addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck, biConsumers));
+        addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck, triConsumers));
     }
 
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {

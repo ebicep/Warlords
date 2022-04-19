@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotemBase {
     protected int playersHealed = 0;
@@ -78,7 +79,7 @@ public class HealingTotem extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         HealingTotem tempHealingTotem = new HealingTotem(totemStand, wp);
-        ;
+        AtomicInteger cooldownCounter = new AtomicInteger();
         RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
@@ -94,6 +95,8 @@ public class HealingTotem extends AbstractTotemBase {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
+                    float healMultiplier = 1 + (.35f * ((cooldownCounter.get() / 20) + 1));
+                    System.out.println(healMultiplier);
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -101,16 +104,17 @@ public class HealingTotem extends AbstractTotemBase {
                                 nearPlayer.addHealingInstance(
                                         wp,
                                         name,
-                                        minDamageHeal * 3.1f,
-                                        maxDamageHeal * 3.1f,
+                                        minDamageHeal * healMultiplier,
+                                        maxDamageHeal * healMultiplier,
                                         critChance,
                                         critMultiplier,
                                         false, false);
                             });
                 },
                 duration * 20,
-                (cooldown, ticksLeft) -> {
-                    if (ticksLeft % 20 == 0) {
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 20 == 0) {
+                        cooldownCounter.set(counter);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
 
                         ParticleEffect.VILLAGER_HAPPY.display(
@@ -146,8 +150,8 @@ public class HealingTotem extends AbstractTotemBase {
                         );
                         circle.playEffects();
 
-                        // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.85
-                        float healMultiplier = 1 + (.35f * (5 - (ticksLeft / 20)));
+                        // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
+                        float healMultiplier = 1 + (.35f * (counter / 20));
                         PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
                                 .forEach(teammate -> {
