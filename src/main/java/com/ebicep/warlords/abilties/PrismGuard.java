@@ -24,8 +24,11 @@ public class PrismGuard extends AbstractAbility {
     protected int timesProjectilesReduced = 0;
     protected int timesOtherReduced = 0;
 
-    private int bubbleRadius = 4;
-    private int duration = 4;
+    private final int bubbleRadius = 4;
+    private final int duration = 4;
+    private int bubbleHealing = 600;
+    private int projectileDamageReduction = 60;
+    private int damageReduction = 25;
 
     public PrismGuard() {
         super("Prism Guard", 0, 0, 24, 40, -1, 100);
@@ -33,15 +36,14 @@ public class PrismGuard extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        String healingString = duration == 5 ? "§a750 §7+ §a25%" : "§a600 §7+ §a20%";
         description = "§7Create a bubble shield around you that\n" +
                 "§7lasts §6" + duration + " §7seconds. All projectiles that pass through\n" +
-                "§7the barrier have their damage reduced by §c60%§7.\n" +
+                "§7the barrier have their damage reduced by §c" + projectileDamageReduction + "%§7.\n" +
                 "§7Additionally, other damage taken by all allies inside\n" +
-                "§7the bubble is reduced by §c25%§7." +
+                "§7the bubble is reduced by §c" + damageReduction + "%§7." +
                 "\n\n" +
                 "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
-                "§7you for " + healingString + " §7missing health and\n" +
+                "§7you for §a" + bubbleHealing + " §7+ §a20% §7missing health and\n" +
                 "§7allies for half the amount based on how long\n" +
                 "§7they've been in the bubble.\n";
     }
@@ -98,7 +100,7 @@ public class PrismGuard extends AbstractAbility {
                             new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2)
                     ).playEffects();
 
-                    float healingValue = 600 + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
+                    float healingValue = bubbleHealing + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
                     wp.addHealingInstance(
                             wp,
                             name,
@@ -162,23 +164,16 @@ public class PrismGuard extends AbstractAbility {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     String ability = event.getAbility();
-                                    if (
-                                            ability.equals("Fireball") ||
-                                                    ability.equals("Frostbolt") ||
-                                                    ability.equals("Water Bolt") ||
-                                                    ability.equals("Lightning Bolt") ||
-                                                    ability.equals("Flame Burst") ||
-                                                    ability.equals("Fallen Souls")
-                                    ) {
+                                    if (isProjectile(ability)) {
                                         if (isInsideBubble.contains(event.getAttacker())) {
                                             return currentDamageValue;
                                         } else {
                                             timesProjectilesReduced++;
-                                            return currentDamageValue * .4f;
+                                            return currentDamageValue * (100 - projectileDamageReduction / 100f);
                                         }
                                     } else {
                                         timesOtherReduced++;
-                                        return currentDamageValue * .75f;
+                                        return currentDamageValue * (100 - damageReduction / 100f);
                                     }
                                 }
                             });
@@ -190,23 +185,16 @@ public class PrismGuard extends AbstractAbility {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 String ability = event.getAbility();
-                if (
-                        ability.equals("Fireball") ||
-                                ability.equals("Frostbolt") ||
-                                ability.equals("Water Bolt") ||
-                                ability.equals("Lightning Bolt") ||
-                                ability.equals("Flame Burst") ||
-                                ability.equals("Fallen Souls")
-                ) {
+                if (isProjectile(ability)) {
                     if (isInsideBubble.contains(event.getAttacker())) {
                         return currentDamageValue;
                     } else {
                         timesProjectilesReduced++;
-                        return currentDamageValue * .4f;
+                        return currentDamageValue * (100 - projectileDamageReduction / 100f);
                     }
                 } else {
                     timesOtherReduced++;
-                    return currentDamageValue * .75f;
+                    return currentDamageValue * (100 - damageReduction / 100f);
                 }
             }
         });
@@ -214,19 +202,37 @@ public class PrismGuard extends AbstractAbility {
         return true;
     }
 
-    public int getDuration() {
-        return duration;
+    private boolean isProjectile(String ability) {
+        return ability.equals("Fireball") ||
+                ability.equals("Frostbolt") ||
+                ability.equals("Water Bolt") ||
+                ability.equals("Lightning Bolt") ||
+                ability.equals("Flame Burst") ||
+                ability.equals("Fallen Souls") ||
+                ability.equals("Soothing Elixir");
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public int getProjectileDamageReduction() {
+        return projectileDamageReduction;
     }
 
-    public int getBubbleRadius() {
-        return bubbleRadius;
+    public void setProjectileDamageReduction(int projectileDamageReduction) {
+        this.projectileDamageReduction = projectileDamageReduction;
     }
 
-    public void setBubbleRadius(int bubbleRadius) {
-        this.bubbleRadius = bubbleRadius;
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
+    public int getBubbleHealing() {
+        return bubbleHealing;
+    }
+
+    public void setBubbleHealing(int bubbleHealing) {
+        this.bubbleHealing = bubbleHealing;
     }
 }

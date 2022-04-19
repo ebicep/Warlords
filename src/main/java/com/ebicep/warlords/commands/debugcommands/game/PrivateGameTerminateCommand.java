@@ -40,7 +40,7 @@ public class PrivateGameTerminateCommand extends GameTargetCommand implements Ta
             if (game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                 if (currentParty.isPresent()) {
                     Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
-                    if (partyLeader.getPlayer() == player) {
+                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer() == player) {
                         endGameInstance(sender, holder, game);
                         sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "Game has been terminated. Warping back to lobby...");
                     } else {

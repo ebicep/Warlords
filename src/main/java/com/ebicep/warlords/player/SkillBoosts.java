@@ -548,14 +548,14 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 20% and increase the range\n§7by 2 blocks",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c20% §aand increase the range\n§aby §c2 §ablocks",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 25% and increase the range\n§7by 3 blocks",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c25% §aand increase the range\n§aby §c3 §ablocks",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    ((CapacitorTotem) abstractAbility).setRadius(8);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    ((CapacitorTotem) abstractAbility).setRadius(9);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 }
             }
     ),
@@ -681,45 +681,46 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 1 second.",
-            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c1 §asecond.",
+            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 1.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c1.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(60);
+                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(70);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
     ),
     BLINDING_ASSAULT("Shadow Step",
-            "§7Reduce the cooldown by Shadow Step\nby 40%",
-            "§aReduce the cooldown by Shadow Step\nby §c40%",
+            "§7Reduce the cooldown by Shadow Step\nby 40% and become temporarily immune to\nfall damage after leaping.",
+            "§aReduce the cooldown by Shadow Step\nby §c40% §aand become temporarily immune to\nfall damage after leaping.",
             ShadowStep.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep) {
+                    ((ShadowStep) abstractAbility).setFallDamageNegation(1000);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch\nby 25% and increase the range\nby 2 blocks.",
-            "§aReduce the cooldown by Soul Switch\nby §c25% §aand increase the range\nby §c2 §ablocks",
+            "§7Reduce the cooldown by Soul Switch\nby 50% and increase the range\nby 2 blocks.",
+            "§aReduce the cooldown by Soul Switch\nby §c50% §aand increase the range\nby §c2 §ablocks",
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch) {
                     ((SoulSwitch) abstractAbility).setRadius(15);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "§7Increase the duration of Order Of Eviscerate\nby 4 seconds and reduce the cooldown\nby 20%.",
-            "§aIncrease the duration of Order Of Eviscerate\nby §c4 §aseconds and reduce the cooldown\nby §c20%.",
+            "§7Increase the duration of Order Of Eviscerate\nby 4 seconds and reduce the cooldown\nby 30%.",
+            "§aIncrease the duration of Order Of Eviscerate\nby §c4 §aseconds and reduce the cooldown\nby §c30%.",
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
                     ((OrderOfEviscerate) abstractAbility).setDuration(12);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -747,24 +748,25 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 250",
-            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c250",
+            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 300",
+            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c300",
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(850);
+                    ((HeartToHeart) abstractAbility).setHealthRestore(900);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     PRISM_GUARD("Prism Guard",
-            "§7Increase the range of Prism Guard\nby 2 blocks and increase the\nduration by 1 second.",
-            "§aIncrease the range of Prism Guard\nby §c2 §ablocks and increase the\nduration by §c1 §asecond.",
+            "§7Increase the damage reduction of Prism\nGuard by 15% and increase the amount of\nhealth you restore by 300",
+            "§aIncrease the damage reduction of Prism\nGuard by §c15% §aand increase the amount of\nhealth you restore by §c300",
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard) {
-                    ((PrismGuard) abstractAbility).setDuration(5);
-                    ((PrismGuard) abstractAbility).setBubbleRadius(6);
+                    ((PrismGuard) abstractAbility).setDamageReduction(40);
+                    ((PrismGuard) abstractAbility).setProjectileDamageReduction(75);
+                    ((PrismGuard) abstractAbility).setBubbleHealing(900);
                 }
             }
     ),
@@ -803,16 +805,16 @@ public enum SkillBoosts {
             }
     ),
     VITALITY_LIQUOR("Vitality Liquor",
-            "§7Increase the amount of health you\n§7restore with Vitality Liquor\n§7by 10% and reduce the cooldown\nby 25%",
-            "§aIncrease the amount of health you\n§arestore with Vitality Liquor\n§aby §c10% §aand reduce the cooldown\nby §c25%",
+            "§7Increase the amount of health you\n§7restore with Vitality Liquor\n§7by 15% and reduce the cooldown\nby 30%",
+            "§aIncrease the amount of health you\n§arestore with Vitality Liquor\n§aby §c15% §aand reduce the cooldown\nby §c30%",
             VitalityLiquor.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityLiquor) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    ((VitalityLiquor) abstractAbility).setMinWaveHealing(((VitalityLiquor) abstractAbility).getMinWaveHealing() * 1.1f);
-                    ((VitalityLiquor) abstractAbility).setMaxWaveHealing(((VitalityLiquor) abstractAbility).getMaxWaveHealing() * 1.1f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                    ((VitalityLiquor) abstractAbility).setMinWaveHealing(((VitalityLiquor) abstractAbility).getMinWaveHealing() * 1.15f);
+                    ((VitalityLiquor) abstractAbility).setMaxWaveHealing(((VitalityLiquor) abstractAbility).getMaxWaveHealing() * 1.15f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -829,12 +831,12 @@ public enum SkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the leech duration of Draining Miasma\nby 3 seconds and reduce the cooldown\nby 30%",
-            "§aIncrease the leech duration of Draining Miasma\nby §c3 §aseconds and reduce the cooldown\nby §c30%",
+            "§7Increase the leech duration of Draining Miasma\nby 5 seconds and reduce the cooldown\nby 30%",
+            "§aIncrease the leech duration of Draining Miasma\nby §c5 §aseconds and reduce the cooldown\nby §c30%",
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {
-                    ((DrainingMiasma) abstractAbility).setLeechDuration(8);
+                    ((DrainingMiasma) abstractAbility).setLeechDuration(10);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }

@@ -20,6 +20,8 @@ import java.util.List;
 public class ShadowStep extends AbstractAbility {
     protected int totalPlayersHit = 0;
 
+    private int fallDamageNegation = 10;
+
     public ShadowStep() {
         super("Shadow Step", 466, 598, 12, 20, 15, 175);
     }
@@ -55,10 +57,10 @@ public class ShadowStep extends AbstractAbility {
         wp.setFlagPickCooldown(2);
         if (wp.getCarriedFlag() != null) {
             player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
-            player.setFallDistance(-5);
+            player.setFallDistance(-fallDamageNegation);
         } else {
             player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
-            player.setFallDistance(-10);
+            player.setFallDistance(-fallDamageNegation);
         }
 
 
@@ -126,5 +128,9 @@ public class ShadowStep extends AbstractAbility {
         }.runTaskTimer(0, 0);
 
         return true;
+    }
+
+    public void setFallDamageNegation(int fallDamageNegation) {
+        this.fallDamageNegation = fallDamageNegation;
     }
 }
