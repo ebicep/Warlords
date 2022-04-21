@@ -436,11 +436,9 @@ public class WarlordsEvents implements Listener {
         int slot = e.getNewSlot();
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            if (!wp.getGame().isFrozen()) {
-                if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-                    wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
-                    e.setCancelled(true);
-                }
+            if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
+                wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
+                e.setCancelled(true);
             }
         }
     }
@@ -546,7 +544,7 @@ public class WarlordsEvents implements Listener {
                 //100 flat
                 if (e.getEntity() instanceof Player) {
                     WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
-                    if (wp != null) {
+                    if (wp != null && !wp.getGame().isFrozen()) {
                         wp.addDamageInstance(wp, "Fall", 100, 100, -1, 100, false);
                         wp.setRegenTimer(10);
                     }

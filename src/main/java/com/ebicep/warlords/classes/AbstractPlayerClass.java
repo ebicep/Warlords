@@ -84,47 +84,52 @@ public abstract class AbstractPlayerClass {
             return;
         }
 
-        switch (slot) {
-            case 0:
-                if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
-                    player.sendMessage(ChatColor.RED + "You have been silenced!");
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                    break;
-                }
-                if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    weapon.onActivate(wp, player);
-                    if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
-                        weapon.addTimesUsed();
-                        sendRightClickPacket(player);
+        if (!wp.getGame().isFrozen()) {
+
+            switch (slot) {
+                case 0:
+                    if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                        player.sendMessage(ChatColor.RED + "You have been silenced!");
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                        break;
                     }
-                    resetAbilityCD();
-                } else {
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+                        weapon.onActivate(wp, player);
+                        if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                            weapon.addTimesUsed();
+                            sendRightClickPacket(player);
+                        }
+                        resetAbilityCD();
+                    } else {
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    }
+                    break;
+                case 1:
+                    onRightClickAbility(red, wp, player);
+                    break;
+                case 2:
+                    onRightClickAbility(purple, wp, player);
+                    break;
+                case 3:
+                    onRightClickAbility(blue, wp, player);
+                    break;
+                case 4:
+                    onRightClickAbility(orange, wp, player);
+                    break;
+            }
+
+            if (slot == 0 || slot == 1 || slot == 2 || slot == 3 || slot == 4) {
+                if (player.getVehicle() != null) {
+                    player.getVehicle().remove();
                 }
-                break;
-            case 1:
-                onRightClickAbility(red, wp, player);
-                break;
-            case 2:
-                onRightClickAbility(purple, wp, player);
-                break;
-            case 3:
-                onRightClickAbility(blue, wp, player);
-                break;
-            case 4:
-                onRightClickAbility(orange, wp, player);
-                break;
+            }
+
         }
 
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);
         }
 
-        if (slot == 0 || slot == 1 || slot == 2 || slot == 3 || slot == 4) {
-            if (player.getVehicle() != null) {
-                player.getVehicle().remove();
-            }
-        }
     }
 
     private void onRightClickAbility(AbstractAbility ability, WarlordsPlayer wp, Player player) {
