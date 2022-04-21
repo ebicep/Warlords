@@ -70,7 +70,7 @@ public class RespawnProtectionOption implements Option, Listener {
                 while (itr.hasNext()) {
                     Map.Entry<WarlordsPlayer, Pair<Location, Integer>> next = itr.next();
                     int newVal = next.getValue().getB() - 1;
-                    if (newVal <= 0 || next.getKey().getLocation(location).distanceSquared(next.getValue().getA()) > radiusSquared) {
+                    if (newVal <= 0 || (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() && next.getKey().getLocation(location).distanceSquared(next.getValue().getA()) > radiusSquared)) {
                         itr.remove();
                     } else {
                         next.getValue().setB(newVal);
