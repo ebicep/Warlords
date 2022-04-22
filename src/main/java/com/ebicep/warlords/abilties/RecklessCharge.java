@@ -74,24 +74,21 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         }
 
         boolean finalInAir = inAir;
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (finalInAir) {
-                    wp.setVelocity(location.getDirection().multiply(2).setY(.2), true);
-                } else {
-                    wp.setVelocity(location.getDirection().multiply(1.5).setY(.2), true);
-                }
-            }
-        }.runTaskLater(1);
-
         double finalChargeDistance = chargeDistance;
+
         new GameRunnable(wp.getGame()) {
             //safety precaution
             int maxChargeDuration = 5;
 
             @Override
             public void run() {
+                if (maxChargeDuration == 5) {
+                    if (finalInAir) {
+                        wp.setVelocity(location.getDirection().multiply(2).setY(.2), true);
+                    } else {
+                        wp.setVelocity(location.getDirection().multiply(1.5).setY(.2), true);
+                    }
+                }
                 //cancel charge if hit a block, making the player stand still
                 if (wp.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
                         (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0) ||
