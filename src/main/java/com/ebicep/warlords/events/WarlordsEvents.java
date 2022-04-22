@@ -363,7 +363,7 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.BLAZE_POWDER) {
                     openMapsMenu(player);
                 } else if (itemHeld.getType() == Material.WOOL) {
-                    if (itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
+                    if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
                         Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
                             List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
                             if (!playerList.isEmpty()) {

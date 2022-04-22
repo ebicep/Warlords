@@ -177,7 +177,7 @@ public class DebugCommand implements TabExecutor {
                                     PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (UNFREEZE_TIME - timer), "", 0, 40, 0);
                                 });
                             } else {
-                                game.removeFrozenCause(game.getFrozenCauses().get(0));
+                                game.clearFrozenCause();
                                 sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been unfrozen!");
                                 this.cancel();
                             }
