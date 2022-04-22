@@ -74,21 +74,22 @@ public class BotManager {
                                         .thenAccept(unused -> QueueManager.sendQueue());
                             });
                         }
+                        if (counter % 10 == 0) {
+                            if (QueueManager.sendQueue) {
+                                QueueManager.sendQueue = false;
+                                QueueManager.sendNewQueue();
+                            }
+                        }
+                        if (counter % 30 == 0) {
+                            sendStatusMessage(false);
+                        }
                     }
                     if (counter % 3 == 0) {
                         if (numberOfMessagesSentLast30Sec > 0) {
                             numberOfMessagesSentLast30Sec--;
                         }
                     }
-                    if (counter % 10 == 0) {
-                        if (QueueManager.sendQueue) {
-                            QueueManager.sendQueue = false;
-                            QueueManager.sendNewQueue();
-                        }
-                    }
-                    if (counter % 30 == 0) {
-                        sendStatusMessage(false);
-                    }
+
                     counter++;
                 }
             }.runTaskTimer(Warlords.getInstance(), 100, 20);

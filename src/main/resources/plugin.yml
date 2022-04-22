@@ -122,6 +122,9 @@ commands:
   abilitystats:
     description: Displays players last abiiity stats
     usage: /abilitystats
+  afkdetection:
+    description: Toggle afk detection
+    usage: /afkdetection
 
 permissions:
   group.default:

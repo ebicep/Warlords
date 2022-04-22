@@ -1,5 +1,6 @@
 package com.ebicep.warlords.permissions;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.Player;
 
 public class PermissionHandler {
@@ -29,5 +30,18 @@ public class PermissionHandler {
     public static boolean isDefault(Player player) {
         return player.hasPermission("group.default");
     }
+
+    public static void sendMessageToDebug(Player player, String message) {
+        if (player.hasPermission("warlords.database.messagefeed")) {
+            player.sendMessage(message);
+        }
+    }
+
+    public static void sendMessageToDebug(WarlordsPlayer player, String message) {
+        if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
+            player.sendMessage(message);
+        }
+    }
+
 }
 
