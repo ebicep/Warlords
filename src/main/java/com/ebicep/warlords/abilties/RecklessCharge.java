@@ -97,7 +97,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                         (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0) ||
                         maxChargeDuration <= 0
                 ) {
-                    wp.setVelocity(new Vector(0, 0, 0), false);
+                    wp.setVelocity(new Vector(0, 0, 0), true);
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {
