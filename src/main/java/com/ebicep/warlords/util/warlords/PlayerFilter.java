@@ -131,7 +131,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
             double wp1Dot = -Utils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
             double wp2Dot = -Utils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
             output = Double.compare(wp1Dot, wp2Dot);
-            if (Math.abs(wp1Dot - wp2Dot) < .01) {
+            if (Math.abs(wp1Dot - wp2Dot) < .0125) {
                 Location userLocation = user.getLocation();
                 Location w1Location = wp1.getLocation();
                 Location w2Location = wp2.getLocation();

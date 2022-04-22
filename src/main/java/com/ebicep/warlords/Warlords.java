@@ -328,7 +328,6 @@ public class Warlords extends JavaPlugin {
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
-        //ConfigurationSerialization.registerClass(PlayerSettings.class);
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
@@ -336,43 +335,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
 
-        new GameStartCommand().register(this);
-        new GameTerminateCommand().register(this);
-        new PrivateGameTerminateCommand().register(this);
-        new GameKillCommand().register(this);
-        new GameListCommand().register(this);
-        new MenuCommand().register(this);
-        new ShoutCommand().register(this);
-        new HotkeyModeCommand().register(this);
-        new DebugCommand().register(this);
-        new ClassCommand().register(this);
-        new GetPlayersCommand().register(this);
-        new TestCommand().register(this);
-        new ParticleQualityCommand().register(this);
-        new SpawnTestDummyCommand().register(this);
-        new PartyCommand().register(this);
-        new StreamCommand().register(this);
-        new RecordAverageDamageCommand().register(this);
-        new ChatChannelCommand().register(this);
-        new BotCommands().register(this);
-        new LeaderboardCommand().register(this);
-        new RecordGamesCommand().register(this);
-        new GamesCommand().register(this);
-        new SpectateCommand().register(this);
-        new DebugModeCommand().register(this);
-        new MyLocationCommand().register(this);
-        new MessageCommand().register(this);
-        new ExperienceCommand().register(this);
-        new QueueCommand().register(this);
-        new ImposterCommand().register(this);
-        new LobbyCommand().register(this);
-        new DiscordCommand().register(this);
-        new PollCommand().register(this);
-        new AchievementsCommand().register(this);
-        new FindPlayerCommand().register(this);
-        new MuteCommand().register(this);
-        new ResourcepackCommand().register(this);
-        new GetPlayerLastAbilityStatsCommand().register(this);
+        registerCommands();
 
         updateHeads();
 
@@ -423,7 +386,7 @@ public class Warlords extends JavaPlugin {
                     }
                 });
         protocolManager.addPacketListener(
-                new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
+                new PacketAdapter(this, ListenerPriority.LOWEST, PacketType.Play.Client.STEER_VEHICLE) {
                     @Override
                     public void onPacketReceiving(PacketEvent e) {
                         if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
@@ -987,6 +950,48 @@ public class Warlords extends JavaPlugin {
 
     public int getCounter() {
         return counter;
+    }
+
+    private void registerCommands() {
+        new GameStartCommand().register(this);
+        new GameTerminateCommand().register(this);
+        new PrivateGameTerminateCommand().register(this);
+        new GameKillCommand().register(this);
+        new GameListCommand().register(this);
+        new MenuCommand().register(this);
+        new ShoutCommand().register(this);
+        new HotkeyModeCommand().register(this);
+        new DebugCommand().register(this);
+        new ClassCommand().register(this);
+        new GetPlayersCommand().register(this);
+        new TestCommand().register(this);
+        new ParticleQualityCommand().register(this);
+        new SpawnTestDummyCommand().register(this);
+        new PartyCommand().register(this);
+        new StreamCommand().register(this);
+        new RecordAverageDamageCommand().register(this);
+        new ChatChannelCommand().register(this);
+        new BotCommands().register(this);
+        new LeaderboardCommand().register(this);
+        new RecordGamesCommand().register(this);
+        new GamesCommand().register(this);
+        new SpectateCommand().register(this);
+        new DebugModeCommand().register(this);
+        new MyLocationCommand().register(this);
+        new MessageCommand().register(this);
+        new ExperienceCommand().register(this);
+        new QueueCommand().register(this);
+        new ImposterCommand().register(this);
+        new LobbyCommand().register(this);
+        new DiscordCommand().register(this);
+        new PollCommand().register(this);
+        new AchievementsCommand().register(this);
+        new FindPlayerCommand().register(this);
+        new MuteCommand().register(this);
+        new ResourcepackCommand().register(this);
+        new GetPlayerLastAbilityStatsCommand().register(this);
+        new ToggleAFKDetectionCommand().register(this);
+
     }
 
     private Map<UUID, Game> getPlayersToGame() {

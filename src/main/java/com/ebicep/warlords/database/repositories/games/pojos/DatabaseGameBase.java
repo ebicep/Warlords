@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
@@ -147,13 +148,12 @@ public abstract class DatabaseGameBase {
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {
-                if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
-                    if (updatePlayerStats) {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
-                    } else {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
-                    }
+                if (updatePlayerStats) {
+                    PermissionHandler.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
+                } else {
+                    PermissionHandler.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database but player information remained the same");
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();

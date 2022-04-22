@@ -23,6 +23,7 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
     protected int playersHit = 0;
+    protected int numberOfDismounts = 0;
 
     private static final float fallenSoulHitBox = 1.25f;
     private static final float fallenSoulSpeed = 2;
@@ -44,6 +45,7 @@ public class FallenSouls extends AbstractAbility {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
         info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
     }
@@ -125,6 +127,9 @@ public class FallenSouls extends AbstractAbility {
                 .aliveEnemiesOf(wp)
         ) {
             playersHit++;
+            if (warlordsPlayer.onHorse()) {
+                numberOfDismounts++;
+            }
             warlordsPlayer.addDamageInstance(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
             fallenSoul.getPlayersHit().add(warlordsPlayer);
             fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);

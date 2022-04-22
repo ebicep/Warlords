@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
-import com.ebicep.warlords.game.option.ImposterModeOption;
-import com.ebicep.warlords.game.option.InterchangeModeOption;
-import com.ebicep.warlords.game.option.PreGameItemOption;
+import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
@@ -33,6 +30,7 @@ public enum GameAddon {
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")
                     .get(), (g, p) -> openTeamMenu(p)));
+            game.getOptions().add(new AFKDetectionOption());
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
         }

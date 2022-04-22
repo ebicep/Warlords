@@ -18,6 +18,7 @@ import java.util.List;
 
 
 public class SpiritLink extends AbstractChainBase {
+    protected int numberOfDismounts = 0;
 
     private final int bounceRange = 10;
 
@@ -40,6 +41,7 @@ public class SpiritLink extends AbstractChainBase {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
         info.add(new Pair<>("Players Hit", "" + playersHit));
+        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
     }
@@ -54,6 +56,9 @@ public class SpiritLink extends AbstractChainBase {
                 .soulBindedFirst(wp)
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                if (nearPlayer.onHorse()) {
+                    numberOfDismounts++;
+                }
                 chain(player.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
@@ -69,6 +74,9 @@ public class SpiritLink extends AbstractChainBase {
                         .excluding(nearPlayer)
                         .soulBindedFirst(wp)
                 ) {
+                    if (chainPlayerOne.onHorse()) {
+                        numberOfDismounts++;
+                    }
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
                     chainPlayerOne.addDamageInstance(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
                     hitCounter++;
@@ -84,6 +92,9 @@ public class SpiritLink extends AbstractChainBase {
                             .excluding(nearPlayer, chainPlayerOne)
                             .soulBindedFirst(wp)
                     ) {
+                        if (chainPlayerTwo.onHorse()) {
+                            numberOfDismounts++;
+                        }
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
                         chainPlayerTwo.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
                         hitCounter++;
