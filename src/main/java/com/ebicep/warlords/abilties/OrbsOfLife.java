@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
@@ -28,7 +27,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,7 +257,7 @@ public class OrbsOfLife extends AbstractAbility {
                 }
             }
             this.armorStand = orbStand;
-            new BukkitRunnable() {
+            new GameRunnable(owner.getGame()) {
 
                 @Override
                 public void run() {
@@ -269,7 +267,7 @@ public class OrbsOfLife extends AbstractAbility {
                         ticksLived++;
                     }
                 }
-            }.runTaskTimer(Warlords.getInstance(), 30, 0);
+            }.runTaskTimer(30, 0);
         }
 
         @Override
