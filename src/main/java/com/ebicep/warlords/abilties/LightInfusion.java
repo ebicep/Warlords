@@ -82,7 +82,6 @@ public class LightInfusion extends AbstractAbility {
             );
         }
 
-
         return true;
     }
 
