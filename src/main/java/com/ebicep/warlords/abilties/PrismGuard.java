@@ -169,11 +169,11 @@ public class PrismGuard extends AbstractAbility {
                                             return currentDamageValue;
                                         } else {
                                             timesProjectilesReduced++;
-                                            return currentDamageValue * (100 - projectileDamageReduction / 100f);
+                                            return currentDamageValue * (100 - projectileDamageReduction) / 100f;
                                         }
                                     } else {
                                         timesOtherReduced++;
-                                        return currentDamageValue * (100 - damageReduction / 100f);
+                                        return currentDamageValue * (100 - damageReduction) / 100f;
                                     }
                                 }
                             });
@@ -190,11 +190,11 @@ public class PrismGuard extends AbstractAbility {
                         return currentDamageValue;
                     } else {
                         timesProjectilesReduced++;
-                        return currentDamageValue * (100 - projectileDamageReduction / 100f);
+                        return currentDamageValue * (100 - projectileDamageReduction) / 100f;
                     }
                 } else {
                     timesOtherReduced++;
-                    return currentDamageValue * (100 - damageReduction / 100f);
+                    return currentDamageValue * (100 - damageReduction) / 100f;
                 }
             }
         });

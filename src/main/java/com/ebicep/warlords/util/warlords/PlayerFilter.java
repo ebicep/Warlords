@@ -147,7 +147,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     @Nonnull
-    public PlayerFilter isDeath() {
+    public PlayerFilter isDead() {
         return filter(WarlordsPlayer::isAlive);
     }
 
