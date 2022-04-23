@@ -20,6 +20,7 @@ import java.util.List;
 public class CapacitorTotem extends AbstractTotemBase {
     private int duration = 8;
     private int radius = 6;
+    private Runnable pulseDamage;
 
     private int numberOfProcs = 0;
     private int numberOfProcsAfterCarrierPassed = 0;
@@ -29,8 +30,9 @@ public class CapacitorTotem extends AbstractTotemBase {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
     }
 
-    public CapacitorTotem(ArmorStand totem, WarlordsPlayer owner) {
+    public CapacitorTotem(ArmorStand totem, WarlordsPlayer owner, Runnable pulseDamage) {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200, totem, owner);
+        this.pulseDamage = pulseDamage;
     }
 
     @Override
@@ -65,7 +67,21 @@ public class CapacitorTotem extends AbstractTotemBase {
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         Location totemLocation = wp.getLocation().clone();
 
-        CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp);
+        CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp, () -> {
+            PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
+                    .enemiesOf(wp)
+                    .forEach(warlordsPlayer -> warlordsPlayer.addDamageInstance(
+                            wp,
+                            name,
+                            minDamageHeal,
+                            maxDamageHeal,
+                            critChance,
+                            critMultiplier,
+                            false
+                    ));
+
+            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
+        });
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "TOTEM",
@@ -94,19 +110,11 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
     public void pulseDamage() {
-        PlayerFilter.entitiesAround(totem.getLocation(), radius, radius, radius)
-                .enemiesOf(owner)
-                .forEach(warlordsPlayer -> warlordsPlayer.addDamageInstance(
-                        owner,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier,
-                        false
-                ));
+        pulseDamage.run();
+    }
 
-        new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
+    public Runnable getPulseDamage() {
+        return pulseDamage;
     }
 
     public int getDuration() {
