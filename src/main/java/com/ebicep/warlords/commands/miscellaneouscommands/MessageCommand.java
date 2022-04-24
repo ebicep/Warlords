@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,6 +22,10 @@ public class MessageCommand implements CommandExecutor {
         Player player = BaseCommand.requirePlayer(sender);
 
         if (player == null) {
+            return true;
+        }
+
+        if (MuteCommand.mutedPlayers.getOrDefault(player.getUniqueId(), false)) {
             return true;
         }
 
