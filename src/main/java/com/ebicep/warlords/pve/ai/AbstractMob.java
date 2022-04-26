@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 public abstract class AbstractMob {
 
     private final String mobName;
-    private final String mobDescription;
+    private final String mobSubName;
     private final int mobId;
     private final double mobHealth;
     private final double mobDamage;
@@ -21,9 +21,9 @@ public abstract class AbstractMob {
         decimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
 
-    public AbstractMob(String mobName, String mobDescription, int mobId, double mobHealth, double mobDamage, double mobSpeed, double mobArmor) {
+    public AbstractMob(String mobName, String mobSubName, int mobId, double mobHealth, double mobDamage, double mobSpeed, double mobArmor) {
         this.mobName = mobName;
-        this.mobDescription = mobDescription;
+        this.mobSubName = mobSubName;
         this.mobId = mobId;
         this.mobHealth = mobHealth;
         this.mobDamage = mobDamage;
@@ -40,8 +40,8 @@ public abstract class AbstractMob {
         return mobName;
     }
 
-    public String getMobDescription() {
-        return mobDescription;
+    public String getMobSubName() {
+        return mobSubName;
     }
 
     public int getMobId() {

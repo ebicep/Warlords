@@ -1,23 +1,26 @@
 package com.ebicep.warlords.pve;
 
+import org.bukkit.ChatColor;
+
 import javax.annotation.Nonnull;
 
 public enum DifficultyIndex {
-    BEGINNER("Beginner", 0, 0),
-    MEDIUM("Medium", 15, 1200),
-    EXPERT("Expert", 30, 2500),
-    ENDLESS("Endless", 30, 2500)
+
+    BEGINNER("Beginner", 0, ChatColor.GREEN),
+    MEDIUM("Medium", 15, ChatColor.YELLOW),
+    EXPERT("Expert", 30, ChatColor.GOLD),
+    ENDLESS("Endless", 30, ChatColor.RED)
 
     ;
 
     private final String name;
     private final int requiredLevel;
-    private final int recommendedWeaponScore;
+    private final ChatColor difficultyColor;
 
-    DifficultyIndex(@Nonnull String name, int requiredLevel, int recommendedWeaponScore) {
+    DifficultyIndex(@Nonnull String name, int requiredLevel, ChatColor difficultyColor) {
         this.name = name;
         this.requiredLevel = requiredLevel;
-        this.recommendedWeaponScore = recommendedWeaponScore;
+        this.difficultyColor = difficultyColor;
     }
 
     public String getName() {
@@ -28,7 +31,7 @@ public enum DifficultyIndex {
         return requiredLevel;
     }
 
-    public int getRecommendedWeaponScore() {
-        return recommendedWeaponScore;
+    public ChatColor getDifficultyColor() {
+        return difficultyColor;
     }
 }
