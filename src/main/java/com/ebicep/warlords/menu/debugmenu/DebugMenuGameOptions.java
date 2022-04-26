@@ -1,6 +1,7 @@
 package com.ebicep.warlords.menu.debugmenu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
@@ -9,7 +10,6 @@ import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -457,8 +457,9 @@ public class DebugMenuGameOptions {
                     stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                 });
             }
-            System.out.println("start map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
+            System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
+            GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "));
+            //Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
         });
         menu.openForPlayer(player);
     }
