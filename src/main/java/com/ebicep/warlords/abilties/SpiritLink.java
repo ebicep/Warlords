@@ -56,6 +56,7 @@ public class SpiritLink extends AbstractChainBase {
                 .soulBindedFirst(wp)
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                playersHit++;
                 if (nearPlayer.onHorse()) {
                     numberOfDismounts++;
                 }
@@ -74,6 +75,7 @@ public class SpiritLink extends AbstractChainBase {
                         .excluding(nearPlayer)
                         .soulBindedFirst(wp)
                 ) {
+                    playersHit++;
                     if (chainPlayerOne.onHorse()) {
                         numberOfDismounts++;
                     }
@@ -92,6 +94,7 @@ public class SpiritLink extends AbstractChainBase {
                             .excluding(nearPlayer, chainPlayerOne)
                             .soulBindedFirst(wp)
                     ) {
+                        playersHit++;
                         if (chainPlayerTwo.onHorse()) {
                             numberOfDismounts++;
                         }
