@@ -44,19 +44,21 @@ public class AFKDetectionOption implements Option, Listener {
 
                 game.getState(PlayingState.class).ifPresent(state -> {
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(game)) {
+                        if (warlordsPlayer.getName().equalsIgnoreCase("TestDummy")) continue;
                         if (!warlordsPlayer.isSneaking()) { //make sure no ppl that are sneaking are marked as AFK
                             playerLocations.computeIfAbsent(warlordsPlayer, k -> new ArrayList<>()).add(warlordsPlayer.getLocation());
                             List<Location> locations = playerLocations.get(warlordsPlayer);
                             if (locations.size() >= 2) {
                                 Location lastLocation = locations.get(locations.size() - 1);
                                 Location secondLastLocation = locations.get(locations.size() - 2);
-                                if (locations.size() >= 3) {
+                                if (locations.size() >= 4) {
                                     Location thirdLastLocation = locations.get(locations.size() - 3);
-                                    if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation)) {
-                                        //hasnt moved for 7.5 seconds
+                                    Location fourthLastLocation = locations.get(locations.size() - 4);
+                                    if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation)) {
+                                        //hasnt moved for 10 seconds
                                         for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 7.5 seconds)");
+                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 10 seconds)");
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                         }
                                         if (canFreeze) {
