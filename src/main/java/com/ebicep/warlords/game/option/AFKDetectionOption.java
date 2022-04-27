@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -41,9 +42,11 @@ public class AFKDetectionOption implements Option, Listener {
             @Override
             public void run() {
                 if (!enabled) return;
+                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME)) return;
 
                 game.getState(PlayingState.class).ifPresent(state -> {
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(game)) {
+                        if (warlordsPlayer.isDead()) continue;
                         if (warlordsPlayer.getName().equalsIgnoreCase("TestDummy")) continue;
                         if (!warlordsPlayer.isSneaking()) { //make sure no ppl that are sneaking are marked as AFK
                             playerLocations.computeIfAbsent(warlordsPlayer, k -> new ArrayList<>()).add(warlordsPlayer.getLocation());

@@ -159,7 +159,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "We highly recommend you to download our resourcepack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "We highly recommend you to download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn");
             ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -170,9 +170,7 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             try {
                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
-                        .lore("")
-                        .get());
+                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview").get());
                 player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
             } catch (Exception e) {
                 System.out.println("ERROR: WEAPON THINGY - " + player.getName());
