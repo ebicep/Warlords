@@ -7,15 +7,14 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WinByPointsOption implements Option, Listener {
     public static final int DEFAULT_POINT_LIMIT = 1000;
@@ -28,6 +27,7 @@ public class WinByPointsOption implements Option, Listener {
     public WinByPointsOption() {
         this(DEFAULT_POINT_LIMIT);
     }
+
     public WinByPointsOption(int pointLimit) {
         this.pointLimit = pointLimit;
     }     

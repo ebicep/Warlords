@@ -61,15 +61,6 @@ public enum GameMap {
 
                     options.add(new AbstractScoreOnEventOption.FlagCapture(250));
                     break;
-                /*case INTERCEPTION:
-                    options.add(new InterceptionPointOption("Middle #1", loc.addXYZ(13.5, 23, -26.5)));
-                    options.add(new InterceptionPointOption("Middle #2", loc.addXYZ(-13.5, 23, 26.5)));
-                    options.add(new InterceptionPointOption("Stairs #1", loc.addXYZ(-44.5, 34, 22.5)));
-                    options.add(new InterceptionPointOption("Stairs #2", loc.addXYZ(44.5, 34, -20.5)));
-
-                    options.add(new ScoreOnEventOption.OnInterceptionCapture(25));
-                    options.add(new ScoreOnEventOption.OnInterceptionTimer(1));
-                    break;*/
                 default:
                     throw new IllegalStateException("Not prepared to handle gamemode " + category);
             }
@@ -99,52 +90,6 @@ public enum GameMap {
         }
 
     },
-    /*SIMULATION_RIFT(
-            "Illusion Rift",
-            11,
-            9,
-            60 * SECOND,
-            "",
-            GameMode.SIMULATION_TRIAL
-    ) {
-        @Override
-        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-14.5, 22.5, -0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(44.5, 41.5, 62.5, 160, 0), Team.RED).asOption());
-
-            options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.ENERGY));
-
-            options.add(new PowerupOption(loc.addXYZ(55.5, 36.5, -23.5), PowerupType.SPEED));
-
-            options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupType.HEALING));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
-
-            options.add(new FlagSpawnPointOption(loc.addXYZ(61.5, 46.5, 56.5, 140, 0), Team.BLUE));
-
-            options.add(new GateOption(loc, -9, 19, 5, -19, 26, -5));
-            options.add(new GateOption(loc, 39, 39, 57, 49, 49, 67));
-
-            options.add(new WinByPointsOption(400));
-            options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
-            options.add(new ScoreOnEventOption.FlagReturn());
-            options.add(new ScoreOnEventOption.FlagHolding(2));
-            options.add(new SimulationTeleportOption());
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
-
-            return options;
-        }
-
-    },*/
     CROSSFIRE(
             "Crossfire",
             32,
@@ -205,51 +150,6 @@ public enum GameMap {
         }
 
     },
-    /*SIMULATION_CROSSFIRE(
-            "Illusion Crossfire",
-            11,
-            9,
-            60 * SECOND,
-            "",
-            GameMode.SIMULATION_TRIAL
-    ) {
-        @Override
-        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-
-            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(115.5, 6, 23.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(214.5, 36, 116.5), Team.RED).asOption());
-
-            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(217.5, 36.5, 89.5), PowerupType.SPEED));
-            options.add(new PowerupOption(loc.addXYZ(96.5, 6.5, 108.5), PowerupType.HEALING));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(133, 11.5, 130.5, 125, 0), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(90.5, 11.5, 0.5, -45, 0), Team.BLUE));
-
-            options.add(new FlagSpawnPointOption(loc.addXYZ(225.5, 44.5, 93.5), Team.BLUE));
-
-            options.add(new GateOption(loc, 110, 4, 18, 120, 11, 28));
-            options.add(new GateOption(loc, 209, 34, 111, 219, 42, 121));
-
-            options.add(new WinByPointsOption(400));
-            options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
-            options.add(new ScoreOnEventOption.FlagReturn());
-            options.add(new ScoreOnEventOption.FlagHolding(2));
-            options.add(new SimulationTeleportOption());
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
-
-            return options;
-        }
-
-    },*/
     WARSONG(
             "Warsong Remastered",
             32,
@@ -489,6 +389,548 @@ public enum GameMap {
         }
 
     },
+    SIEGE(
+            "Siege",
+            28,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    FALSTAD_GATE(
+            "Falstad Gate",
+            28,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    RUINS(
+            "Ruins",
+            32,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    BLACK_TEMPLE(
+            "Black Temple",
+            32,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    STORMWIND(
+            "Stormwind",
+            28,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    DORIVEN_BASIN(
+            "Doriven Basin",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    SCORCHED(
+            "Scorched",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    PHANTOM(
+            "Phantom",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    NEOLITHIC(
+            "Neolithic",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    SUN_AND_MOON(
+            "Sun and Moon",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+
+            options.add(new InterceptionPointOption("Eclipse", loc.addXYZ(0.5, 85, 0.5)));
+            options.add(new InterceptionPointOption("Glacier", loc.addXYZ(23.5, 62, 70.5)));
+            options.add(new InterceptionPointOption("Sun", loc.addXYZ(-18.5, 67, 134.5)));
+            options.add(new InterceptionPointOption("Moon", loc.addXYZ(19.5, 67, -133.5)));
+            options.add(new InterceptionPointOption("Valley", loc.addXYZ(-22.5, 62, -69.5)));
+
+            options.add(new AbstractScoreOnEventOption.OnInterceptionCapture(25));
+            options.add(new AbstractScoreOnEventOption.OnInterceptionTimer(1));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(2000));
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(3600));
+            } else {
+                options.add(new WinAfterTimeoutOption(1800));
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    DEATH_VALLEY(
+            "Death Valley",
+            60,
+            18,
+            60 * SECOND,
+            "",
+            GameMode.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+
+            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
+            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+
+            options.add(new WinByPointsOption(1000));
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
     DEBUG(
             "Debug",
             96,
@@ -546,14 +988,14 @@ public enum GameMap {
         }
 
     },
-    /*HEAVEN_WILL(
+    HEAVEN_WILL(
             "Heaven's Will",
             2,
             2,
             60 * SECOND,
             "",
             GameMode.DUEL
-            ) {
+    ) {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
@@ -568,12 +1010,10 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 9, 176.5).yaw(-140), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 8, 143.5).yaw(40), Team.RED));
 
-            //options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-            //options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
-
             options.add(new WinByPointsOption(5));
+            options.add(new MercyWinOption(3));
             options.add(new WinAfterTimeoutOption(300));
-            options.add(new ScoreOnEventOption.OnKill(1));
+            options.add(new AbstractScoreOnEventOption.OnKill(1));
             options.add(new RespawnWaveOption(0, 1, 0));
             options.add(new GraveOption());
             options.add(new DuelsTeleportOption());
@@ -584,10 +1024,9 @@ public enum GameMap {
             return options;
         }
 
-    }*/
+    }
 
     ;
-
 
     private final String mapName;
     private final int maxPlayers;

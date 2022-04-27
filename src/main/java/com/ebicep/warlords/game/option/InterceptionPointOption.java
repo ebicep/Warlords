@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 public class InterceptionPointOption implements Option {
 
     private static final ItemStack NEUTRAL_ITEM_STACK = new ItemStack(Material.WOOL);
-	public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3;
-	public static final double DEFAULT_MAX_CAPTURE_RADIUS = 6;
+	public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3.5;
+	public static final double DEFAULT_MAX_CAPTURE_RADIUS = 5;
 	public static final double DEFAULT_CAPTURE_SPEED = 0.01;
 	private Game game;
 	@Nonnull
@@ -335,7 +335,7 @@ public class InterceptionPointOption implements Option {
 						teamOwning = teamAttacking;
 						Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
                         WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
-                        String message = teamOwning.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §ehas captured the " + teamOwning.teamColor() + name + ChatColor.WHITE + "!";
+                        String message = teamOwning.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §ehas captured " + teamOwning.teamColor() + name + ChatColor.WHITE + "!";
                         
                         game.forEachOnlinePlayer((p, t) -> {
                             p.sendMessage(message);

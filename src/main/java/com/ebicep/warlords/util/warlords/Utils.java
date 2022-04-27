@@ -1,9 +1,6 @@
 package com.ebicep.warlords.util.warlords;
 
-import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
@@ -19,11 +16,11 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Utils {
@@ -47,6 +44,22 @@ public class Utils {
     };
 
     public static final ItemStack[] woolSortedByColor = {
+            new ItemStack(Material.WOOL, 1, (byte) 0),
+            new ItemStack(Material.WOOL, 1, (byte) 8),
+            new ItemStack(Material.WOOL, 1, (byte) 7),
+            new ItemStack(Material.WOOL, 1, (byte) 15),
+            new ItemStack(Material.WOOL, 1, (byte) 12),
+            new ItemStack(Material.WOOL, 1, (byte) 14),
+            new ItemStack(Material.WOOL, 1, (byte) 1),
+            new ItemStack(Material.WOOL, 1, (byte) 4),
+            new ItemStack(Material.WOOL, 1, (byte) 5),
+            new ItemStack(Material.WOOL, 1, (byte) 13),
+            new ItemStack(Material.WOOL, 1, (byte) 9),
+            new ItemStack(Material.WOOL, 1, (byte) 3),
+            new ItemStack(Material.WOOL, 1, (byte) 11),
+            new ItemStack(Material.WOOL, 1, (byte) 10),
+            new ItemStack(Material.WOOL, 1, (byte) 2),
+            new ItemStack(Material.WOOL, 1, (byte) 6),
             new ItemStack(Material.WOOL, 1, (byte) 0),
             new ItemStack(Material.WOOL, 1, (byte) 8),
             new ItemStack(Material.WOOL, 1, (byte) 7),

@@ -28,7 +28,7 @@ public class MercyWinOption implements Option {
     }
 
     public MercyWinOption(int mercyLimit) {
-        this(DEFAULT_LIMIT, DEFAULT_TIMER);
+        this(mercyLimit, DEFAULT_TIMER);
     }
 
     public MercyWinOption(int mercyLimit, int timer) {

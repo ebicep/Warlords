@@ -319,12 +319,22 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Arathi-1", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-1")));
         gameManager.addGameHolder("Arathi-2", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-2")));
 
-        // CURRENTLY DISABLED
+        // TDM
+        gameManager.addGameHolder("Siege-0", GameMap.SIEGE, new LocationFactory(Bukkit.getWorld("Siege-0")));
+        gameManager.addGameHolder("Ruins-0", GameMap.RUINS, new LocationFactory(Bukkit.getWorld("Ruins-0")));
+        gameManager.addGameHolder("FalstadGate-0", GameMap.FALSTAD_GATE, new LocationFactory(Bukkit.getWorld("FalstadGate-0")));
+        gameManager.addGameHolder("Stormwind-0", GameMap.STORMWIND, new LocationFactory(Bukkit.getWorld("Stormwind-0")));
+        gameManager.addGameHolder("BlackTemple-0", GameMap.BLACK_TEMPLE, new LocationFactory(Bukkit.getWorld("BlackTemple-0")));
 
-        //gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
-        //gameManager.addGameHolder("SimulationCrossfire-0", GameMap.SIMULATION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("SimulationCrossfire")));
-        //gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        // DOM
+        gameManager.addGameHolder("SunAndMoon-0", GameMap.SUN_AND_MOON, new LocationFactory(Bukkit.getWorld("SunAndMoon-0")));
+        gameManager.addGameHolder("Phantom-0", GameMap.PHANTOM, new LocationFactory(Bukkit.getWorld("Phantom-0")));
+        gameManager.addGameHolder("Neolithic-0", GameMap.NEOLITHIC, new LocationFactory(Bukkit.getWorld("Neolithic-0")));
+        gameManager.addGameHolder("DorivenBasin-0", GameMap.DORIVEN_BASIN, new LocationFactory(Bukkit.getWorld("DorivenBasin-0")));
+        gameManager.addGameHolder("DeathValley-0", GameMap.DEATH_VALLEY, new LocationFactory(Bukkit.getWorld("DeathValley-0")));
+
+        // CURRENTLY DISABLED
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven-0")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

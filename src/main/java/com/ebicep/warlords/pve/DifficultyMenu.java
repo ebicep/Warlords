@@ -11,7 +11,7 @@ import java.util.List;
 public class DifficultyMenu {
 
     public static void openDifficultyMenu(Player player) {
-        Menu menu = new Menu("Difficulty Menu", 9 * 6);
+        Menu menu = new Menu("Difficulty Menu", 9 * 4);
         DifficultyIndex[] index = DifficultyIndex.values();
         for (int i = 0; i < index.length; i++) {
             DifficultyIndex difficulty = index[i];

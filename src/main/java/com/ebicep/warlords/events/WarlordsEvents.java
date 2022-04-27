@@ -201,7 +201,7 @@ public class WarlordsEvents implements Listener {
                 player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
             }
 
-            player.getInventory().setItem(5, new ItemBuilder(Material.APPLE).name("§aPvE Start Menu").get());
+            player.getInventory().setItem(5, new ItemBuilder(Material.DIAMOND).name("§aPvE Start Menu").get());
 
             if (fromGame) {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
@@ -363,7 +363,7 @@ public class WarlordsEvents implements Listener {
                     Bukkit.getServer().dispatchCommand(player, "wl");
                 } else if (itemHeld.getType() == Material.BLAZE_POWDER) {
                     openMapsMenu(player);
-                } else if (itemHeld.getType() == Material.APPLE) {
+                } else if (itemHeld.getType() == Material.DIAMOND) {
                     openDifficultyMenu(player);
                 } else if (itemHeld.getType() == Material.WOOL) {
                     if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
