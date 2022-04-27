@@ -30,7 +30,7 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §710% §7and\n§7reduce the cooldown by 50%.",
+            "§7Increase the amount of health\nyou restore with Time Warp by §710% §7and\n§7reduce the cooldown by 50%.",
             "§aIncrease the amount of health\n§ayou restore with Time Warp by §c10% §aand\n§areduce the cooldown by §c50%.",
             TimeWarp.class,
             abstractAbility -> {
@@ -352,8 +352,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Removes the energy cost of\n§7Consecrate and\n§7reduce the cooldown\n§7by 40%",
-            "§aRemoves the energy cost of\n§aConsecrate and\n§areduce the cooldown\n§aby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\nreduce the cooldown\nby 40%",
+            "§aRemove the energy cost\nof Consecrate and\nreduce the cooldown\nby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -406,8 +406,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Removes the energy cost of\n§7Consecrate and\n§7reduce the cooldown\n§7by 40%",
-            "§aRemoves the energy cost of\n§aConsecrate and\n§areduce the cooldown\n§aby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\n§7reduce the cooldown\n§7by 40%",
+            "§aRemove the energy cost\nof Consecrate and\n§areduce the cooldown\n§aby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
