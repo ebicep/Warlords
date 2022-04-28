@@ -174,6 +174,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Timer = " + timer);
         System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         System.out.println("GameMode = " + game.getGameMode());
+        System.out.println("Map = " + game.getMap());
         System.out.println("Game Addons = " + game.getAddons());
         System.out.println(" ----- GAME END ----- ");
 

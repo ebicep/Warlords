@@ -132,7 +132,9 @@ public enum GameMode {
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
-                    ChatColor.GREEN + "GO!"
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "First team to reach 1000 points wins!"
             ));
             return options;
         }

@@ -314,6 +314,7 @@ public class PowerupOption implements Option {
             this.debugData = debugData;
             this.debugMaterial = debugMaterial;
         }
+
         public int getDuration() {
             return duration;
         }

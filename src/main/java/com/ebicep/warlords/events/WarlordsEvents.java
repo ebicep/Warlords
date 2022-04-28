@@ -298,11 +298,6 @@ public class WarlordsEvents implements Listener {
                     wpAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
             }
-        /*} else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
-            if (!Warlords.game.onSameTeam((Player) e.getEntity().getPassenger(), (Player) e.getDamager())) {
-                e.getEntity().remove();
-            }
-        }*/
         }
         e.setCancelled(true);
     }
@@ -317,7 +312,7 @@ public class WarlordsEvents implements Listener {
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
-                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
+                if (player.getInventory().getHeldItemSlot() == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
@@ -332,7 +327,6 @@ public class WarlordsEvents implements Listener {
                             wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
                         }
                     }
-
                 } else if (itemHeld.getType() == Material.BONE) {
                     player.getInventory().remove(UndyingArmy.BONE);
                     wp.addDamageInstance(Warlords.getPlayer(player), "", 100000, 100000, -1, 100, false);
@@ -355,34 +349,40 @@ public class WarlordsEvents implements Listener {
                 PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
                 if (state != null) {
                     state.interactEvent(player, player.getInventory().getHeldItemSlot());
-                } else if (itemHeld.getType() == Material.NETHER_STAR) {
-                    //menu
-                    openMainMenu(player);
-                } else if (itemHeld.getType() == Material.EMERALD) {
-                    //wl command
-                    Bukkit.getServer().dispatchCommand(player, "wl");
-                } else if (itemHeld.getType() == Material.BLAZE_POWDER) {
-                    openMapsMenu(player);
-                } else if (itemHeld.getType() == Material.DIAMOND) {
-                    openDifficultyMenu(player);
-                } else if (itemHeld.getType() == Material.WOOL) {
-                    if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
-                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
-                            List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
-                            if (!playerList.isEmpty()) {
-                                party.getRegularGamesMenu().openMenuForPlayer(player);
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
-                                            party.getRegularGamesMenu().openMenuForPlayer(player);
-                                        } else {
-                                            this.cancel();
-                                        }
+                } else {
+                    switch (itemHeld.getType()) {
+                        case NETHER_STAR:
+                            openMainMenu(player);
+                            break;
+                        case EMERALD:
+                            Bukkit.getServer().dispatchCommand(player, "wl");
+                            break;
+                        case BLAZE_POWDER:
+                            openMapsMenu(player);
+                            break;
+                        case DIAMOND:
+                            openDifficultyMenu(player);
+                            break;
+                        case WOOL:
+                            if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
+                                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                                    if (!playerList.isEmpty()) {
+                                        party.getRegularGamesMenu().openMenuForPlayer(player);
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                                    party.getRegularGamesMenu().openMenuForPlayer(player);
+                                                } else {
+                                                    this.cancel();
+                                                }
+                                            }
+                                        }.runTaskTimer(Warlords.getInstance(), 20, 10);
                                     }
-                                }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                                });
                             }
-                        });
+                            break;
                     }
                 }
             }
@@ -396,13 +396,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onMount(VehicleEnterEvent e) {
-//        if (e.getVehicle() instanceof Horse) {
-//            if (!((Horse) e.getVehicle()).getOwner().equals(e.getEntered())) {
-//                System.out.println(e.getEntered().getLocation());
-//                //e.getVehicle().remove();
-//                //e.setCancelled(true);
-//            }
-//        }
     }
 
     @EventHandler
