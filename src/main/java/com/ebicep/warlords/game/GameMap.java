@@ -1085,7 +1085,7 @@ public enum GameMap {
         return mapDirPath;
     }
 
-    public List<GameMode> getCategories() {
+    public List<GameMode> getGameModes() {
         return gameMode;
     }
 

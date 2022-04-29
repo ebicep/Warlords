@@ -35,7 +35,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getGameModes().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             if (next.getGame() != null && (next.getGame().playersCount() == 0 || next.getGame().isClosed())) {
@@ -192,7 +192,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getGameModes().contains(entry.getCategory())) {
                 invalidMapCategory = true;
                 continue; // Skip if the user wants to join a game with a different category
             }
@@ -342,7 +342,7 @@ public class GameManager implements AutoCloseable {
         private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable GameMode category) {
             if (game == null) {
                 GameMode newCategory = category != null ? category
-                        : map.getCategories().get((int) (Math.random() * map.getCategories().size()));
+                        : map.getGameModes().get((int) (Math.random() * map.getGameModes().size()));
                 game = new Game(requestedGameAddons, map, newCategory, locations);
                 game.start();
             }

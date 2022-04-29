@@ -160,7 +160,7 @@ public final class Game implements Runnable, AutoCloseable {
     /**
      * Gets the used map category for construction. This is any of the
      * categories returned by
-     * {@link GameMap#getCategories()} () getCategory} method
+     * {@link GameMap#getGameModes()} () getCategory} method
      * on the {@link #getMap() getMap method}
      *
      * @return the map category

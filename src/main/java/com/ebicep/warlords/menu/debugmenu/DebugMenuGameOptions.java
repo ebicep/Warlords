@@ -72,7 +72,7 @@ public class DebugMenuGameOptions {
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getCategories().stream().map(gameMode -> gameMode.name).collect(Collectors.joining(", ")))
+                            .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getGameModes().stream().map(gameMode -> gameMode.name).collect(Collectors.joining(", ")))
                             .get(),
                     (m, e) -> openMapsCategoryMenu(player, map)
             );
@@ -382,11 +382,11 @@ public class DebugMenuGameOptions {
     }
 
     public static void openMapsCategoryMenu(Player player, GameMap selectedGameMap) {
-        int menuHeight = (4 + selectedGameMap.getCategories().size() / 7);
+        int menuHeight = (4 + selectedGameMap.getGameModes().size() / 7);
         Menu menu = new Menu(selectedGameMap.getMapName(), 9 * menuHeight);
 
-        for (int i = 0; i < selectedGameMap.getCategories().size(); i++) {
-            GameMode gameMode = selectedGameMap.getCategories().get(i);
+        for (int i = 0; i < selectedGameMap.getGameModes().size(); i++) {
+            GameMode gameMode = selectedGameMap.getGameModes().get(i);
             menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + gameMode.name)

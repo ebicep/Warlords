@@ -37,7 +37,7 @@ public class GameListCommand implements CommandExecutor {
             if (game == null) {
                 message.append(']').append(ChatColor.GOLD).append(" <inactive>");
             } else {
-                if (holder.getMap().getCategories().size() > 1) {
+                if (holder.getMap().getGameModes().size() > 1) {
                     message.append(ChatColor.GRAY).append("/").append(ChatColor.AQUA).append(toTitleHumanCase(game.getGameMode()));
                 }
                 message.append(ChatColor.GRAY).append("] ");

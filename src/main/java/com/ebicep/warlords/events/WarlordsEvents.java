@@ -312,7 +312,7 @@ public class WarlordsEvents implements Listener {
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
-                if (player.getInventory().getHeldItemSlot() == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
+                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
