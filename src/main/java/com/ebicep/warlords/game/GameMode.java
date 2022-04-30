@@ -78,7 +78,7 @@ public enum GameMode {
                     "",
                     color + "Capture the marked points to",
                     color + "earn points! The first team with a",
-                    color + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!",
+                    color + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1500 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!",
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
@@ -127,9 +127,9 @@ public enum GameMode {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
                     "",
-                    color + "First team to reach 1000 points wins",
-                    color + "the game!",
-                    ""
+                    color + "Eliminate players from the enemy team to",
+                    color + "gain points for your team! The first team",
+                    color + "to reach " + ChatColor.BLUE + "1000 " + color + "points wins the game!"
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,
@@ -163,6 +163,31 @@ public enum GameMode {
                     ChatColor.YELLOW + "Let the trials begin!"
             ));
             options.add(new NoRespawnIfOfflineOption());
+            return options;
+        }
+    },
+    WAVE_DEFENSE(
+            "[PH] Wave Defense",
+            null,
+            null,
+            null
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Defend your crystal against waves of",
+                    color + "monsters!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the wave defense commence."
+            ));
             return options;
         }
     },

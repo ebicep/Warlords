@@ -1,6 +1,7 @@
 package com.ebicep.customentities.npc;
 
 import com.ebicep.customentities.npc.traits.GameStartTrait;
+import com.ebicep.customentities.npc.traits.PveStartTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import net.citizensnpcs.api.CitizensAPI;
@@ -16,6 +17,7 @@ public class NPCManager {
 
     public static final NPCRegistry npcRegistry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
     public static NPC gameStartNPC;
+    public static NPC pveStartNPC;
 
     public static void createGameNPC() {
         if (!Warlords.citizensEnabled) return;
@@ -31,13 +33,21 @@ public class NPCManager {
                     gameStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
                     gameStartNPC.addTrait(GameStartTrait.class);
                     gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
-//        gameStartNPC.getOrAddTrait(LookClose.class).lookClose(true);
-//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLook(true);
-//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLookDelay(1);
-//        gameStartNPC.getOrAddTrait(LookClose.class).setRange(50);
 
                     gameStartNPC.data().set("nameplate-visible", false);
-                    gameStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 744.5, 90, 0));
+                    gameStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 741.5, 90, 0));
+
+                    if (CitizensAPI.getTraitFactory().getTrait("PveStartTrait") != null) {
+                        CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(PveStartTrait.class).withName("PveStartTrait"));
+                    }
+                    CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(PveStartTrait.class).withName("PveStartTrait"));
+
+                    pveStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "pve-mode");
+                    pveStartNPC.addTrait(PveStartTrait.class);
+                    pveStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Jager02");
+
+                    pveStartNPC.data().set("nameplate-visible", false);
+                    pveStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 747.5, 90, 0));
                 })
                 .execute();
 

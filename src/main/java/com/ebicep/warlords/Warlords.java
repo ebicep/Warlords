@@ -476,7 +476,7 @@ public class Warlords extends JavaPlugin {
         }
         try {
             Bukkit.getWorld("MainLobby").getEntities().stream()
-                    .filter(entity -> entity.getName().equals("capture-the-flag"))
+                    .filter(entity -> entity.getName().equals("capture-the-flag") || entity.getName().equals("pve-mode"))
                     .forEach(Entity::remove);
         } catch (Exception e) {
             e.printStackTrace();

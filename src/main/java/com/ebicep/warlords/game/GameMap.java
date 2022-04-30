@@ -867,7 +867,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
 
-            options.add(new GateOption(loc.addXYZ(-99, 89, 4), loc.addXYZ(-99, 93, -3)));
+            options.add(new GateOption(loc.addXYZ(-100, 89, 4), loc.addXYZ(-100, 93, -3)));
             options.add(new GateOption(loc.addXYZ(100, 89, 4), loc.addXYZ(100, 93, -3)));
 
             options.add(new WinByPointsOption(1500));

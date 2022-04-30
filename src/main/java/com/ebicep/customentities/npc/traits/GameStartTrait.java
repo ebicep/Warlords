@@ -25,10 +25,8 @@ public class GameStartTrait extends Trait {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby() + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.GRAY.toString() + Warlords.getGameManager().getQueueSize() + " in Queue");
-        hologramTrait.setLine(3, ChatColor.AQUA + "WARLORDS 2 PUBLIC QUEUE");
-        hologramTrait.setLine(4, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-        hologramTrait.setLine(5, ChatColor.YELLOW + ChatColor.BOLD.toString() + "[RANDOM MAP MODE]");
+        hologramTrait.setLine(2, ChatColor.AQUA + "WARLORDS 2 PUBLIC QUEUE");
+        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 
     @EventHandler
