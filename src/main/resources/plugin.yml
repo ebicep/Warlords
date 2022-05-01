@@ -1,5 +1,5 @@
 name: Warlords
-version: Fabled Heroics
+version: PLACEHOLDER
 authors: [ebic, Plikie]
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]

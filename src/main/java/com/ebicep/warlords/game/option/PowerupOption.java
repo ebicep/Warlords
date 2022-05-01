@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.abilties.internal.DamagePowerup;
-import com.ebicep.warlords.abilties.internal.EnergyPowerup;
-import com.ebicep.warlords.abilties.internal.HealingPowerup;
-import com.ebicep.warlords.abilties.internal.SpeedPowerup;
+import com.ebicep.warlords.abilties.internal.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -302,6 +299,34 @@ public class PowerupOption implements Option {
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§c§lDAMAGE");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
+            }
+        },
+
+        COOLDOWN(30, Material.WOOL, (short) 9) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(CooldownPowerup.class);
+                warlordsPlayer.getCooldownManager().addRegularCooldown(
+                        "Cooldown",
+                        "CDR",
+                        CooldownPowerup.class,
+                        CooldownPowerup.COOLDOWN_POWERUP,
+                        null,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                            warlordsPlayer.setCooldownModifier(1);
+                            warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.AQUA + ChatColor.BOLD + "COOLDOWN" + ChatColor.GOLD + " powerup has worn off.");
+                        } ,
+                        option.getDuration() * 20
+                );
+                warlordsPlayer.setCooldownModifier(0.75);
+                warlordsPlayer.sendMessage(String.format("§6You activated the §b§lCOOLDOWN §6powerup! §a+25%% §6Cooldown reduction for §a%d §6seconds!", option.getDuration()));
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§b§lCOOLDOWN");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 9));
             }
         };
 

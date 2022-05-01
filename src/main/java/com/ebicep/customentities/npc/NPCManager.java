@@ -44,7 +44,7 @@ public class NPCManager {
 
                     pveStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "pve-mode");
                     pveStartNPC.addTrait(PveStartTrait.class);
-                    pveStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Jager02");
+                    pveStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
                     pveStartNPC.data().set("nameplate-visible", false);
                     pveStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 747.5, 90, 0));
