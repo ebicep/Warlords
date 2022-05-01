@@ -76,7 +76,7 @@ public class DrainingMiasma extends AbstractAbility {
             Runnable cancelSpeed = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     "Draining Miasma",
-                    "MIASMA",
+                    "MIAS",
                     DrainingMiasma.class,
                     tempDrainingMiasma,
                     wp,
@@ -118,7 +118,7 @@ public class DrainingMiasma extends AbstractAbility {
             miasmaTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
             miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
                     "Leech Debuff",
-                    "LEECH",
+                    "LCH",
                     ImpalingStrike.class,
                     new ImpalingStrike(),
                     wp,

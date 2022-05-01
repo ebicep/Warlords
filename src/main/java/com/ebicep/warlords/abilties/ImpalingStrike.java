@@ -45,7 +45,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
         nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
         nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
                 "Leech Debuff",
-                "LEECH",
+                "LCH",
                 ImpalingStrike.class,
                 new ImpalingStrike(),
                 wp,

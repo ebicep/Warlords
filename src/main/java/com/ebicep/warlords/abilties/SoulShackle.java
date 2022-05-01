@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -9,10 +10,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -66,13 +64,16 @@ public class SoulShackle extends AbstractAbility {
                 .limit(maxShackleTargets)
         ) {
             wp.subtractEnergy(energyCost);
-            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
-            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
+            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
 
-            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 20);
+            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
+            FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
+                    .withColor(Color.YELLOW)
+                    .with(FireworkEffect.Type.BALL)
+                    .build());
 
             wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
-
             wp.sendMessage(
                     WarlordsPlayer.GIVE_ARROW_GREEN +
                             ChatColor.GRAY + " You shackled " +
