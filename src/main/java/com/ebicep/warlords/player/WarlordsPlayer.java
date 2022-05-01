@@ -1432,7 +1432,7 @@ public final class WarlordsPlayer {
 
     private void decrementRespawnTimer() {
         // Respawn
-        if (respawnTimer == 0) {
+        if (respawnTimer == 1) {
             respawn();
         } else if (respawnTimer > 0) {
             minuteStats.addTotalRespawnTime();
