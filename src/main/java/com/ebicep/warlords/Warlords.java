@@ -80,7 +80,6 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
-
 public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
