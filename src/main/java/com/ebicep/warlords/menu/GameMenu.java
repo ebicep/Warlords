@@ -141,7 +141,7 @@ public class GameMenu {
                     1,
                     builder.get(),
                     (m, e) -> {
-                        player.sendMessage(ChatColor.WHITE + "Spec: §6" + subClass);
+                        player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + subClass.name);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
