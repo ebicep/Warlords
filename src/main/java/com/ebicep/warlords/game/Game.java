@@ -71,6 +71,7 @@ public final class Game implements Runnable, AutoCloseable {
     private State nextState = null;
     private boolean closed = false;
     private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private boolean unfreezeCooldown = false;
     private int maxPlayers;
     private int minPlayers;
     private boolean acceptsPlayers;
@@ -198,9 +199,17 @@ public final class Game implements Runnable, AutoCloseable {
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
 
-    public void clearFrozenCause() {
+    public void clearFrozenCauses() {
         frozenCauses.clear();
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+    }
+
+    public boolean isUnfreezeCooldown() {
+        return unfreezeCooldown;
+    }
+
+    public void setUnfreezeCooldown(boolean unfreezeCooldown) {
+        this.unfreezeCooldown = unfreezeCooldown;
     }
 
     /**

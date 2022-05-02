@@ -39,23 +39,34 @@ public class AFKDetectionOption implements Option, Listener {
     public void start(@Nonnull Game game) {
         new GameRunnable(game) {
 
+            boolean wasFrozen = false;
+
             @Override
             public void run() {
                 if (!enabled) return;
                 if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME)) return;
 
+                //skips right after unfreeze
+                if (wasFrozen) {
+                    wasFrozen = false;
+                    return;
+                }
+
                 game.getState(PlayingState.class).ifPresent(state -> {
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(game)) {
                         if (warlordsPlayer.isDead()) continue;
                         if (warlordsPlayer.getName().equalsIgnoreCase("TestDummy")) continue;
-                        if (!warlordsPlayer.isSneaking()) { //make sure no ppl that are sneaking are marked as AFK
-                            playerLocations.computeIfAbsent(warlordsPlayer, k -> new ArrayList<>()).add(warlordsPlayer.getLocation());
-                            List<Location> locations = playerLocations.get(warlordsPlayer);
-                            if (locations.size() >= 2) {
-                                Location lastLocation = locations.get(locations.size() - 1);
-                                Location secondLastLocation = locations.get(locations.size() - 2);
+                        if (warlordsPlayer.isSneaking())
+                            continue; //make sure no ppl that are sneaking are marked as AFK
+
+                        playerLocations.computeIfAbsent(warlordsPlayer, k -> new ArrayList<>()).add(warlordsPlayer.getLocation());
+                        List<Location> locations = playerLocations.get(warlordsPlayer);
+                        if (locations.size() >= 2) {
+                            Location lastLocation = locations.get(locations.size() - 1);
+                            Location secondLastLocation = locations.get(locations.size() - 2);
+                            if (locations.size() >= 3) {
+                                Location thirdLastLocation = locations.get(locations.size() - 3);
                                 if (locations.size() >= 4) {
-                                    Location thirdLastLocation = locations.get(locations.size() - 3);
                                     Location fourthLastLocation = locations.get(locations.size() - 4);
                                     if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation)) {
                                         //hasnt moved for 10 seconds
@@ -66,17 +77,27 @@ public class AFKDetectionOption implements Option, Listener {
                                         }
                                         if (canFreeze) {
                                             warlordsPlayer.getGame().addFrozenCause(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " has been detected as AFK.");
+                                            wasFrozen = true;
                                         }
                                         continue;
                                     }
                                 }
-                                if (lastLocation.equals(secondLastLocation)) {
-                                    //hasnt moved for 5 seconds
+                                if (secondLastLocation.equals(thirdLastLocation)) {
+                                    //hasnt moved for 7.5 seconds
                                     for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
                                         PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                        PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
+                                        PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)");
                                         PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                     }
+                                }
+                                continue;
+                            }
+                            if (lastLocation.equals(secondLastLocation)) {
+                                //hasnt moved for 5 seconds
+                                for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
+                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
+                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                 }
                             }
                         }
