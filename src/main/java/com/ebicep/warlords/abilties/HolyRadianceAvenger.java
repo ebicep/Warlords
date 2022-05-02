@@ -73,7 +73,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
                 markTarget.getCooldownManager().addRegularCooldown(
                         name,
-                        "AVENGER MARK",
+                        "AVE MARK",
                         HolyRadianceAvenger.class,
                         tempMark,
                         wp,

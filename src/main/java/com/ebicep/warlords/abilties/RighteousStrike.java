@@ -44,6 +44,7 @@ public class RighteousStrike extends AbstractStrikeBase {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 16);
             wp.getSpec().getBlue().subtractCooldown(0.8f);
+            wp.getSpec().getBlue().updateDescription(player);
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
         }

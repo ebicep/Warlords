@@ -47,10 +47,12 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         if (ticksLeft <= 0) {
             return "";
         }
+
         return (nameAbbreviation.equals("WND") ||
                 nameAbbreviation.equals("CRIP") ||
-                nameAbbreviation.equals("LEECH") ||
-                nameAbbreviation.equals("MIASMA") ||
+                nameAbbreviation.equals("LCH") ||
+                nameAbbreviation.equals("MIAS") ||
+                nameAbbreviation.equals("AVE MARK") ||
                 nameAbbreviation.equals("SILENCE")
 
                 ? ChatColor.RED : ChatColor.GREEN) + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1) + " ";
