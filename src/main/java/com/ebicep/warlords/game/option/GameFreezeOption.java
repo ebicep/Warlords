@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType;
  * Supports actually freezing the internalPlayers in the game
  */
 public class GameFreezeOption implements Option, Listener {
-    
+
     private static Listener GLOBAL_LISTENER = new Listener() {
         @EventHandler
         public void onEvent(PlayerMoveEvent e) {

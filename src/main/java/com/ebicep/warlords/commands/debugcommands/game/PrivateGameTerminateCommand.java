@@ -68,7 +68,7 @@ public class PrivateGameTerminateCommand extends GameTargetCommand implements Ta
         if (holder.getGame() == null) return;
 
         if (holder.getGame().isFrozen()) {
-            holder.getGame().clearFrozenCause();
+            holder.getGame().clearFrozenCauses();
         }
         Optional<PlayingState> state = game.getState(PlayingState.class);
         if (!state.isPresent()) {

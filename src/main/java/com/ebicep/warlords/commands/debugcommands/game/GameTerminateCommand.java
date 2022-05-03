@@ -32,7 +32,7 @@ public class GameTerminateCommand extends GameTargetCommand implements TabExecut
             }
 
             if (holder.getGame().isFrozen()) {
-                holder.getGame().clearFrozenCause();
+                holder.getGame().clearFrozenCauses();
             }
             Optional<PlayingState> state = game.getState(PlayingState.class);
             if (!state.isPresent()) {

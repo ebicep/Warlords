@@ -166,26 +166,33 @@ public class DebugCommand implements TabExecutor {
                 if (game == null) {
                     return true;
                 }
-                if (game.isFrozen()) {
-                    new GameRunnable(game, true) {
-                        int timer = 0;
-                        @Override
-                        public void run() {
-                            timer++;
-                            if (timer < UNFREEZE_TIME) {
-                                game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-                                    PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (UNFREEZE_TIME - timer), "", 0, 40, 0);
-                                });
-                            } else {
-                                game.clearFrozenCause();
-                                sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been unfrozen!");
-                                this.cancel();
+                if (!game.isUnfreezeCooldown()) {
+                    if (game.isFrozen()) {
+                        game.setUnfreezeCooldown(true);
+                        new GameRunnable(game, true) {
+                            int timer = 0;
+
+                            @Override
+                            public void run() {
+                                timer++;
+                                if (timer < UNFREEZE_TIME) {
+                                    game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
+                                        PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (UNFREEZE_TIME - timer), "", 0, 40, 0);
+                                    });
+                                } else {
+                                    game.clearFrozenCauses();
+                                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been unfrozen!");
+                                    game.setUnfreezeCooldown(false);
+                                    this.cancel();
+                                }
                             }
-                        }
-                    }.runTaskTimer(10, 20);
+                        }.runTaskTimer(10, 20);
+                    } else {
+                        game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + sender.getName());
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
+                    }
                 } else {
-                    game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + sender.getName());
-                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
+                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game is currently unfreezing!");
                 }
                 return true;
             }

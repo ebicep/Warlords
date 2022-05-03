@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -80,6 +81,13 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN);
 //            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_RED);
 
+            new GameRunnable(warlordsPlayer.getGame()) {
+
+                @Override
+                public void run() {
+                    System.out.println("TEST");
+                }
+            }.runTaskLater(100);
         }
 //       // QueueManager.sendNewQueue();
 //        BotManager.getCompGamesServer().upsertCommand("queue", "Join, Leave, or Refresh the queue")
