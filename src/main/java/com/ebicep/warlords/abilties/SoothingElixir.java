@@ -105,7 +105,7 @@ public class SoothingElixir extends AbstractAbility {
                     Matrix4d center = new Matrix4d(newLoc);
                     for (float i = 0; i < 6; i++) {
                         double angle = Math.toRadians(i * 90) + timer * 0.3;
-                        double width = 0.4D;
+                        double width = 0.3D;
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 2,
                                 center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
@@ -130,7 +130,7 @@ public class SoothingElixir extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
+                    Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
                     Utils.playGlobalSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 

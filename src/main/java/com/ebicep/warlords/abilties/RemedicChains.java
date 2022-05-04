@@ -115,8 +115,7 @@ public class RemedicChains extends AbstractAbility {
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
-
-                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.06f, 1.4f);
+                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             ParticleEffect.VILLAGER_HAPPY.display(
                                     0.5f,
                                     0.5f,
@@ -152,7 +151,6 @@ public class RemedicChains extends AbstractAbility {
                             if (counter % 8 == 0) {
                                 if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
                                     EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
-
                                     // Ally is out of range, break link
                                     if (outOfRange) {
                                         numberOfBrokenLinks++;
@@ -168,7 +166,6 @@ public class RemedicChains extends AbstractAbility {
                                                 false,
                                                 false
                                         );
-                                        chainTarget.sendMessage(ChatColor.RED + "You left the Remedic Chains link early!");
                                         chainTarget.getCooldownManager().removeCooldown(cooldown);
                                     }
                                 } else {

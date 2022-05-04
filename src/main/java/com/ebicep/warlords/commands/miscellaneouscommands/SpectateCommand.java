@@ -14,6 +14,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
 public class SpectateCommand implements CommandExecutor {
 
@@ -56,12 +59,12 @@ public class SpectateCommand implements CommandExecutor {
                 menu.setItem(column,
                         row,
                         new ItemBuilder(Material.BOOK)
-                                .name(ChatColor.GREEN + "Game " + game.getGameId())
+                                .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
                                 .lore(
-                                        ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
-                                        ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
-                                        ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
-                                        ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                                        ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
+                                        ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().name,
+                                        ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")),
+                                        ChatColor.GRAY + "Player count: " + ChatColor.RED + game.playersCount()
                                 )
                                 .get(),
                         (m, e) -> {
