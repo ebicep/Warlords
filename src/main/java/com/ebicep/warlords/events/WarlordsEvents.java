@@ -55,7 +55,7 @@ import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
-import static com.ebicep.warlords.pve.DifficultyMenu.openDifficultyMenu;
+import static com.ebicep.warlords.pve.coinshop.CoinshopMenu.openPveShopMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -201,7 +201,7 @@ public class WarlordsEvents implements Listener {
                 player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
             }
 
-            player.getInventory().setItem(5, new ItemBuilder(Material.DIAMOND).name("§aPvE Start Menu").get());
+            player.getInventory().setItem(5, new ItemBuilder(Material.DIAMOND).name("§aPvE Shop").get());
 
             if (fromGame) {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
@@ -361,7 +361,7 @@ public class WarlordsEvents implements Listener {
                             openMapsMenu(player);
                             break;
                         case DIAMOND:
-                            openDifficultyMenu(player);
+                            openPveShopMenu(player);
                             break;
                         case WOOL:
                             if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
