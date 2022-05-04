@@ -65,7 +65,7 @@ public class BotManager {
                     if (jda.getStatus() != JDA.Status.CONNECTED) {
                         return;
                     }
-                    if (Warlords.serverIP.equals("51.81.49.127")) {
+                    if (!Warlords.onCustomServer()) {
                         if (counter == 0) {
                             getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
                                 textChannel.getIterableHistory()
@@ -148,7 +148,7 @@ public class BotManager {
         if (numberOfMessagesSentLast30Sec > 15) {
             return;
         }
-        if (!Warlords.serverIP.equals("51.81.49.127")) {
+        if (Warlords.onCustomServer()) {
             return;
         }
         if (sendToCompServer) {
@@ -160,7 +160,7 @@ public class BotManager {
     }
 
     public static void sendStatusMessage(boolean onQuit) {
-        if (!Warlords.serverIP.equals("51.81.49.127")) {
+        if (Warlords.onCustomServer()) {
             return;
         }
         DateFormat dateFormat = new SimpleDateFormat("hh:mm aa");

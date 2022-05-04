@@ -1034,7 +1034,7 @@ public class Warlords extends JavaPlugin {
             for (int j = i + 1; j < length; j++) {
                 Player p = peeps.get(j);
                 Game game1 = players.get(p.getUniqueId());
-                if(game1 == game) {
+                if (game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
                 } else {
@@ -1043,5 +1043,9 @@ public class Warlords extends JavaPlugin {
                 }
             }
         }
+    }
+
+    public static boolean onCustomServer() {
+        return !serverIP.equals("51.81.49.127");
     }
 }
