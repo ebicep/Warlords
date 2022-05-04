@@ -4,14 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-
-import java.util.Optional;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class LobbyCommand implements CommandExecutor {
 
@@ -26,13 +25,17 @@ public class LobbyCommand implements CommandExecutor {
 
         Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
         if (!currentGame.isPresent()) {
-            player.sendMessage(ChatColor.RED + "You are not in a game");
+            player.sendMessage(ChatColor.RED + "You are not in a game.");
             return true;
         }
         Game game = currentGame.get();
         Team playerTeam = game.getPlayerTeam(player.getUniqueId());
         if (playerTeam != null && !currentGame.get().acceptsPeople()) {
-            player.sendMessage(ChatColor.RED + "The game does not allow people to leave at the moment, you can only leave public games when in the lobby.");
+            player.sendMessage(
+                    ChatColor.RED + "This command is only enabled in public games. Did you mean to end your private game? Use the command: " +
+                    ChatColor.GOLD + "/endprivategame" +
+                    ChatColor.RED + "."
+            );
         } else {
             game.removePlayer(player.getUniqueId());
         }

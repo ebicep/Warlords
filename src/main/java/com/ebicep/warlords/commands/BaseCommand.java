@@ -62,7 +62,7 @@ public class BaseCommand {
         }
         WarlordsPlayer player = Warlords.getPlayer(p);
         if (player == null) {
-            sender.sendMessage(ChatColor.RED + "You are not in an active game!");
+            sender.sendMessage(ChatColor.RED + "You are not in an active game! Please wait until the game has started to use this command.");
         }
         return player;
     }
