@@ -26,6 +26,7 @@ public abstract class GameRunnable implements Runnable {
     private final boolean runInPauseMode;
 
     private long delay = 0;
+    private long period = 0;
     private int ticksElapsed = 0;
     private boolean shouldCancel = false;
 
@@ -99,6 +100,7 @@ public abstract class GameRunnable implements Runnable {
     public synchronized BukkitTask runTaskTimer(long delay, long period) throws IllegalArgumentException, IllegalStateException {
         checkState();
         this.delay = delay;
+        this.period = period;
         return setupId(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), getRunnable(), 0, period));
     }
 
@@ -129,7 +131,8 @@ public abstract class GameRunnable implements Runnable {
             return () -> {
                 if(!game.isFrozen()) {
                     ticksElapsed++;
-                    if (ticksElapsed - 1 < delay) {
+                    long delayCheck = period <= 0 ? delay : delay / period;
+                    if (ticksElapsed - 1 < delayCheck) {
                         return;
                     }
                     run();
