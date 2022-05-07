@@ -73,16 +73,16 @@ public class DrainingMiasma extends AbstractAbility {
                 .entitiesAround(wp, getEnemyHitRadius(), getEnemyHitRadius(), getEnemyHitRadius())
                 .aliveEnemiesOf(wp)
         ) {
-            Runnable cancelSpeed = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
+            Runnable cancelSlowness = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
-                    "Draining Miasma",
+                    name,
                     "MIAS",
                     DrainingMiasma.class,
                     tempDrainingMiasma,
                     wp,
-                    CooldownTypes.ABILITY,
+                    CooldownTypes.DEBUFF,
                     cooldownManager -> {
-                        cancelSpeed.run();
+                        cancelSlowness.run();
                     },
                     duration * 20,
                     (cooldown, ticksLeft, counter) -> {

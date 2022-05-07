@@ -54,7 +54,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                            wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                         }
                     },
                     3 * 20

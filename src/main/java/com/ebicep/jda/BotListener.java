@@ -73,6 +73,7 @@ public class BotListener extends ListenerAdapter implements Listener {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        if (Warlords.onCustomServer()) return;
         Member member = event.getMember();
         Message message = event.getMessage();
         if (event.isFromType(ChannelType.PRIVATE)) {

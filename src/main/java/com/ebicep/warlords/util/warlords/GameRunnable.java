@@ -19,12 +19,16 @@ public abstract class GameRunnable implements Runnable {
      * The amount of ticks in a second. Multiply this constant with the amount of seconds you want an runnable to repeat for
      */
     public static final int SECOND = 20;
-    
+
     private int taskId = -1;
     @Nonnull
     private final Game game;
     private final boolean runInPauseMode;
-    
+
+    private long delay = 0;
+    private int ticksElapsed = 0;
+    private boolean shouldCancel = false;
+
     public GameRunnable(@Nonnull Game game) {
         this(game, DEFAULT_RUN_IN_PAUSE_MODE);
     }
@@ -74,9 +78,11 @@ public abstract class GameRunnable implements Runnable {
      * @throws IllegalStateException if this was already scheduled
      * @see BukkitScheduler#runTaskLater(Plugin, Runnable, long)
      */
-    public synchronized BukkitTask runTaskLater(long delay) throws IllegalArgumentException, IllegalStateException  {
+    public synchronized BukkitTask runTaskLater(long delay) throws IllegalArgumentException, IllegalStateException {
         checkState();
-        return setupId(Bukkit.getScheduler().runTaskLater(Warlords.getInstance(), getRunnable(), delay));
+        this.delay = delay;
+        this.shouldCancel = true;
+        return setupId(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), getRunnable(), 0, 0));
     }
 
     /**
@@ -90,9 +96,10 @@ public abstract class GameRunnable implements Runnable {
      * @throws IllegalStateException if this was already scheduled
      * @see BukkitScheduler#runTaskTimer(Plugin, Runnable, long, long)
      */
-    public synchronized BukkitTask runTaskTimer(long delay, long period) throws IllegalArgumentException, IllegalStateException  {
+    public synchronized BukkitTask runTaskTimer(long delay, long period) throws IllegalArgumentException, IllegalStateException {
         checkState();
-        return setupId(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), getRunnable(), delay, period));
+        this.delay = delay;
+        return setupId(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), getRunnable(), 0, period));
     }
 
     /**
@@ -121,7 +128,14 @@ public abstract class GameRunnable implements Runnable {
         } else {
             return () -> {
                 if(!game.isFrozen()) {
+                    ticksElapsed++;
+                    if (ticksElapsed - 1 < delay) {
+                        return;
+                    }
                     run();
+                    if (shouldCancel) {
+                        cancel();
+                    }
                 }
             };
         }

@@ -21,7 +21,7 @@ public class QueueListener extends ListenerAdapter {
     @Override
     public void onSlashCommand(@Nonnull SlashCommandEvent event) {
         //disable queue on test servers
-        if (!Warlords.serverIP.equals("51.81.49.127")) {
+        if (Warlords.onCustomServer()) {
             return;
         }
         if (event.getMember() == null) return;
