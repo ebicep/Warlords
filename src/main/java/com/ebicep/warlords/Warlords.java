@@ -990,7 +990,7 @@ public class Warlords extends JavaPlugin {
         new ResourcepackCommand().register(this);
         new GetPlayerLastAbilityStatsCommand().register(this);
         new ToggleAFKDetectionCommand().register(this);
-
+        new ServerStatusCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {
