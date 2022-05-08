@@ -3,6 +3,7 @@ package com.ebicep.jda;
 import com.ebicep.jda.queuesystem.QueueListener;
 import com.ebicep.jda.queuesystem.QueueManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.misc.ServerStatusCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.Team;
@@ -80,7 +81,7 @@ public class BotManager {
                                 QueueManager.sendNewQueue();
                             }
                         }
-                        if (counter % 30 == 0) {
+                        if (counter % 30 == 0 && ServerStatusCommand.enabled) {
                             sendStatusMessage(false);
                         }
                     }
