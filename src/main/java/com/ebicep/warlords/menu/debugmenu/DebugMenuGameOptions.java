@@ -445,29 +445,25 @@ public class DebugMenuGameOptions {
                     }
             );
         }
-
-        menu.setItem(4,
-                0,
-                new ItemBuilder(Material.DIAMOND_BLOCK)
-                        .name(ChatColor.GREEN + "Comps Preset")
-                        .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
-                        .get(),
-                (m, e) -> {
-                    if (!player.hasPermission("warlords.game.customtoggle")) {
-                        player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can use this preset!");
-                        return;
-                    }
-                    List<GameAddon> gameAddons = new ArrayList<>();
-                    gameAddons.add(GameAddon.PRIVATE_GAME);
-                    gameAddons.add(GameAddon.FREEZE_GAME);
-                    StringBuilder stringAddons = new StringBuilder();
-                    gameAddons.forEach(gameAddon -> {
-                        stringAddons.append("addon:").append(gameAddon.name()).append(" ");
+        if (player.hasPermission("warlords.game.customtoggle")) {
+            menu.setItem(4,
+                    0,
+                    new ItemBuilder(Material.DIAMOND_BLOCK)
+                            .name(ChatColor.GREEN + "Comps Preset")
+                            .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
+                            .get(),
+                    (m, e) -> {
+                        List<GameAddon> gameAddons = new ArrayList<>();
+                        gameAddons.add(GameAddon.PRIVATE_GAME);
+                        gameAddons.add(GameAddon.FREEZE_GAME);
+                        StringBuilder stringAddons = new StringBuilder();
+                        gameAddons.forEach(gameAddon -> {
+                            stringAddons.append("addon:").append(gameAddon.name()).append(" ");
+                        });
+                        System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
+                        GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "));
                     });
-                    System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-                    GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "));
-                });
-
+        }
         menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapsCategoryMenu(player, selectedGameMap));
         menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
