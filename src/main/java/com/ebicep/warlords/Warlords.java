@@ -332,8 +332,10 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("DorivenBasin-0", GameMap.DORIVEN_BASIN, new LocationFactory(Bukkit.getWorld("DorivenBasin-0")));
         gameManager.addGameHolder("DeathValley-0", GameMap.DEATH_VALLEY, new LocationFactory(Bukkit.getWorld("DeathValley-0")));
 
-        // CURRENTLY DISABLED
+        // DUEL
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven-0")));
+
+        gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

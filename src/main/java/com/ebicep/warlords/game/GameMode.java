@@ -136,6 +136,10 @@ public enum GameMode {
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "First team to reach 1000 points wins!"
             ));
+            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
+                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                    .get(), (g, p) -> openMainMenu(p)));
             return options;
         }
     },
@@ -183,6 +187,10 @@ public enum GameMode {
                     color + "monsters!",
                     ""
             ));
+            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
+                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                    .get(), (g, p) -> openMainMenu(p)));
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
