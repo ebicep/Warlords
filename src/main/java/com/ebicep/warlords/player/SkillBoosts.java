@@ -794,13 +794,13 @@ public enum SkillBoosts {
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 20%",
-            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c20%",
+            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 25%",
+            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c25%",
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 }
             }
     ),
