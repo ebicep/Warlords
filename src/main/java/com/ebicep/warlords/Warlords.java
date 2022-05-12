@@ -991,6 +991,7 @@ public class Warlords extends JavaPlugin {
         new GetPlayerLastAbilityStatsCommand().register(this);
         new ToggleAFKDetectionCommand().register(this);
         new ServerStatusCommand().register(this);
+        new UnstuckCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {
