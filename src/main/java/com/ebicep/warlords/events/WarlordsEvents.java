@@ -53,8 +53,8 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
-import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
+import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openMapPickerMenu;
+import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -359,7 +359,7 @@ public class WarlordsEvents implements Listener {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
                 } else if (itemHeld.getType() == Material.BLAZE_POWDER) {
-                    openMapsMenu(player);
+                    openMapPickerMenu(player);
                 } else if (itemHeld.getType() == Material.WOOL) {
                     if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
                         Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {

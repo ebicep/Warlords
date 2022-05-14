@@ -1,4 +1,4 @@
-package com.ebicep.warlords.menu;
+package com.ebicep.warlords.menu.generalmenu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -30,7 +31,7 @@ import static com.ebicep.warlords.player.Settings.*;
 import static com.ebicep.warlords.player.Specializations.APOTHECARY;
 import static java.lang.Math.round;
 
-public class GameMenu {
+public class WarlordsShopMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
             .name(ChatColor.GREEN + "Back")
             .lore(ChatColor.GRAY + "To Pre-game Menu")

@@ -4,7 +4,9 @@ package com.ebicep.warlords.menu.debugmenu;
 import com.ebicep.warlords.abilties.CripplingStrike;
 import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilties.WoundingStrikeDefender;
-import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
+import com.ebicep.warlords.abilties.internal.DamagePowerup;
+import com.ebicep.warlords.abilties.internal.EnergyPowerup;
+import com.ebicep.warlords.abilties.internal.SpeedPowerup;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,9 +17,9 @@ import static com.ebicep.warlords.player.cooldowns.CooldownTypes.DEBUFF;
 
 public enum StatusEffectCooldowns {
 
-    DAMAGE("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, PowerupType.DAMAGE.getClass(), PowerupType.DAMAGE, "DMG", BUFF),
-    ENERGY("Energy", new ItemStack(Material.WOOL, 1, (byte) 1), ChatColor.GOLD, PowerupType.ENERGY.getClass(), PowerupType.ENERGY, "ENERGY", BUFF),
-    SPEED("Speed", new ItemStack(Material.WOOL, 1, (byte) 4), ChatColor.YELLOW, PowerupType.SPEED.getClass(), PowerupType.SPEED, "SPEED", BUFF),
+    DAMAGE("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, DamagePowerup.class, DamagePowerup.DAMAGE_POWERUP, "DMG", BUFF),
+    ENERGY("Energy", new ItemStack(Material.WOOL, 1, (byte) 1), ChatColor.GOLD, EnergyPowerup.class, EnergyPowerup.ENERGY_POWERUP, "ENERGY", BUFF),
+    SPEED("Speed", new ItemStack(Material.WOOL, 1, (byte) 4), ChatColor.YELLOW, SpeedPowerup.class, SpeedPowerup.SPEED_POWERUP, "SPEED", BUFF),
     RESISTANCE("Resistance", new ItemStack(Material.WOOL, 1, (byte) 8), ChatColor.GRAY, null, null, "RES", BUFF),
     CRIPPLING("Crippling", new ItemStack(Material.WOOD_SWORD), ChatColor.DARK_RED, CripplingStrike.class, new CripplingStrike(), "CRIP", DEBUFF),
     WOUNDING_BERS("Wounding Bers", new ItemStack(Material.IRON_SWORD), ChatColor.DARK_RED, WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), "WND", DEBUFF),

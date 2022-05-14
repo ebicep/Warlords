@@ -113,7 +113,7 @@ public final class WarlordsPlayer {
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
-    private boolean infiniteEnergy;
+    private boolean noEnergyConsumption;
     private boolean disableCooldowns;
     private double energyModifier;
     private double cooldownModifier;
@@ -493,7 +493,6 @@ public final class WarlordsPlayer {
                     cancelHealingPowerUp();
 
                     removeHorse();
-                    regenTimer = 10;
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
@@ -508,8 +507,9 @@ public final class WarlordsPlayer {
                     for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                     }
-
                 }
+
+                regenTimer = 10;
 
                 updateJimmyHealth();
 
@@ -551,8 +551,8 @@ public final class WarlordsPlayer {
 
                     attacker.addKill();
 
-                    sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
+                    sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
 
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
@@ -1538,7 +1538,7 @@ public final class WarlordsPlayer {
 
     public float subtractEnergy(int amount) {
         float amountSubtracted = 0;
-        if (!infiniteEnergy) {
+        if (!noEnergyConsumption) {
             amount *= energyModifier;
             if (energy - amount > maxEnergy) {
                 amountSubtracted = maxEnergy - energy;
@@ -2021,12 +2021,12 @@ public final class WarlordsPlayer {
         return this.entity.getWorld();
     }
 
-    public boolean isInfiniteEnergy() {
-        return infiniteEnergy;
+    public boolean isNoEnergyConsumption() {
+        return noEnergyConsumption;
     }
 
-    public void setInfiniteEnergy(boolean infiniteEnergy) {
-        this.infiniteEnergy = infiniteEnergy;
+    public void setNoEnergyConsumption(boolean noEnergyConsumption) {
+        this.noEnergyConsumption = noEnergyConsumption;
     }
 
     public boolean isDisableCooldowns() {

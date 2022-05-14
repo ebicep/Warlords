@@ -165,6 +165,7 @@ public abstract class DatabaseGameBase {
     public static void addGameToDatabase(DatabaseGameBase databaseGame) {
         if (DatabaseManager.gameService == null) return;
         GamesCollections collection = databaseGame.getGameMode().gamesCollections;
+        databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             //if not counted then update player stats then set counted to true, else do nothing

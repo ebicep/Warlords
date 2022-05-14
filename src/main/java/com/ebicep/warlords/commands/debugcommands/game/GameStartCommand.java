@@ -166,7 +166,7 @@ public class GameStartCommand implements TabExecutor {
                 }
             }
         }
-        if (category != null && map != null && !map.getCategories().contains(category)) {
+        if (category != null && map != null && !map.getGameModes().contains(category)) {
             sender.sendMessage(ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.values()));
             isValid = false;
         }

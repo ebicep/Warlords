@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,6 +17,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.Arrays;
 
 
 public class TestCommand implements CommandExecutor {
@@ -80,22 +82,11 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN);
 //            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_RED);
 
-            new GameRunnable(warlordsPlayer.getGame()) {
 
-                @Override
-                public void run() {
-
-                    System.out.println("TEST");
-                    new GameRunnable(warlordsPlayer.getGame()) {
-
-                        @Override
-                        public void run() {
-                            System.out.println("TEST2");
-                        }
-                    }.runTaskLater(100);
-                }
-            }.runTaskLater(50);
         }
+        SignGUI.open((Player) sender, new String[]{"1", "2", "3"}, (player, lines) -> {
+            System.out.println(Arrays.toString(lines));
+        });
 //       // QueueManager.sendNewQueue();
 //        BotManager.getCompGamesServer().upsertCommand("queue", "Join, Leave, or Refresh the queue")
 //                .addSubcommands(new SubcommandData("refresh", "Refresh the queue"))

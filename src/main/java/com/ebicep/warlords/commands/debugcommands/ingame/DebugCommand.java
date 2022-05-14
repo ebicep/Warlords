@@ -57,11 +57,11 @@ public class DebugCommand implements TabExecutor {
                 }
                 switch (args.length > 1 ? args[1] : "") {
                     case "disable":
-                        wp.setInfiniteEnergy(true);
+                        wp.setNoEnergyConsumption(true);
                         sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been disabled!");
                         return true;
                     case "enable":
-                        wp.setInfiniteEnergy(false);
+                        wp.setNoEnergyConsumption(false);
                         sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been enabled!");
                         return true;
                     default:
@@ -110,16 +110,11 @@ public class DebugCommand implements TabExecutor {
             case "heal":
             case "takedamage": {
                 if (args.length < 2) {
-                    sender.sendMessage("§c" + (input.equals("takedamage") ? "Take Damage" : "Heal") + " requires more arguments, valid arguments: [1000, 2000, 3000, 4000, 5000]");
+                    sender.sendMessage("§c" + (input.equals("takedamage") ? "Take Damage" : "Heal") + " requires more arguments, valid arguments: [number]");
                     return true;
                 }
                 if (NumberUtils.isNumber(args[1])) {
                     int amount = Integer.parseInt(args[1]);
-
-                    if (amount > 5000 || amount % 1000 != 0) {
-                        sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000, 4000, 5000]");
-                        return true;
-                    }
 
                     String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
 
@@ -131,11 +126,10 @@ public class DebugCommand implements TabExecutor {
 
                     if (input.equals("takedamage")) {
                         wp.addDamageInstance(wp, "debug", amount, amount, -1, 100, false);
-                        wp.setRegenTimer(10);
                     } else {
                         wp.addHealingInstance(wp, "debug", amount, amount, -1, 100, false, false);
-                        wp.setRegenTimer(10);
                     }
+                    wp.setRegenTimer(10);
 
                     return true;
                 }
