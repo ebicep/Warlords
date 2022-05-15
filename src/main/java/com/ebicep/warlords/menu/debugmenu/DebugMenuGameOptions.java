@@ -289,7 +289,7 @@ public class DebugMenuGameOptions {
             TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
 
             Menu menu = new Menu("Timer", 9 * 4);
-            menu.setItem(2, 1,
+            /*menu.setItem(2, 1,
                     new ItemBuilder(Material.WOOD_BUTTON)
                             .name(ChatColor.GREEN + "Reset")
                             .get(),
@@ -298,8 +298,8 @@ public class DebugMenuGameOptions {
                         player.sendMessage(ChatColor.RED + "DEV: " + ChatColor.GREEN + "Timer reset");
                         System.out.println("[DEBUG] " + player.getName() + " reset timer of game " + game.getGameId());
                     }
-            );
-            menu.setItem(4, 1,
+            );*/
+            menu.setItem(3, 1,
                     new ItemBuilder(Material.STONE_BUTTON)
                             .name(ChatColor.GREEN + "Skip")
                             .get(),
@@ -309,7 +309,7 @@ public class DebugMenuGameOptions {
                         System.out.println("[DEBUG] " + player.getName() + " skip timer of game " + game.getGameId());
                     }
             );
-            menu.setItem(6, 1,
+            menu.setItem(5, 1,
                     new ItemBuilder(Material.WATCH)
                             .name(ChatColor.GREEN + "Set")
                             .get(),
