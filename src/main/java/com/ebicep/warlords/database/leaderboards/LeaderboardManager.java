@@ -137,8 +137,10 @@ public class LeaderboardManager {
                         });
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
-                            DatabaseGameBase.setGameHologramVisibility(player);
                             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            if (init) {
+                                DatabaseGameBase.setGameHologramVisibility(player);
+                            }
                         });
                         System.out.println("Set Hologram Visibility");
 

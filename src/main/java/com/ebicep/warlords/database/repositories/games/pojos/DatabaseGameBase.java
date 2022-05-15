@@ -18,6 +18,7 @@ import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.beta.hologram.line.ClickableHologramLine;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -145,6 +146,8 @@ public abstract class DatabaseGameBase {
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                 addGameToDatabase(databaseGame);
             }
+
+            Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {

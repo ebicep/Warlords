@@ -85,28 +85,6 @@ public class CustomScoreboard {
         }
     }
 
-    public void giveNewSideBar(boolean forceClear, CustomScoreboardPair... pairs) {
-        //clearing all teams if size doesnt match
-        int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
-        if (forceClear || pairs.length != sideBarTeams) {
-            scoreboard.getTeams().forEach(Team::unregister);
-            clearSideBar();
-
-            //making new sidebar
-            for (int i = 0; i < pairs.length; i++) {
-                Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
-                tempTeam.addEntry(teamEntries[i]);
-                sideBar.getScore(teamEntries[i]).setScore(i + 1);
-            }
-        }
-
-        //giving prefix/suffix from pairs
-        for (int i = pairs.length; i > 0; i--) {
-            CustomScoreboardPair pair = pairs[pairs.length - i];
-            setSideBarTeamPrefixAndSuffix(i, pair.getPrefix(), pair.getSuffix());
-        }
-    }
-
     public void giveNewSideBar(boolean forceClear, List<String> entries) {
         // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
         giveNewSideBar(forceClear, entries.toArray(new String[0]));
@@ -224,11 +202,13 @@ public class CustomScoreboard {
                         "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
                         "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
                 );
+            } else {
+                giveNASidebar(scoreboardSelection);
             }
             return;
         }
         if (DatabaseManager.playerService == null) {
-            clearSideBar();
+            giveNASidebar("Lifetime");
             return;
         }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
@@ -245,6 +225,26 @@ public class CustomScoreboard {
                 "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
                 "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
                 "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
+                "    ",
+                "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+        );
+    }
+
+    private void giveNASidebar(String title) {
+        giveNewSideBar(true,
+                ChatColor.GRAY + title,
+                " ",
+                "Kills: " + ChatColor.GREEN + "N/A",
+                "Assists: " + ChatColor.GREEN + "N/A",
+                "Deaths: " + ChatColor.GREEN + "N/A",
+                " " + "",
+                "Wins: " + ChatColor.GREEN + "N/A",
+                "Losses: " + ChatColor.GREEN + "N/A",
+                "  " + "",
+                "Damage: " + ChatColor.RED + "N/A",
+                "Healing: " + ChatColor.DARK_GREEN + "N/A",
+                "Absorbed: " + ChatColor.GOLD + "N/A",
                 "    ",
                 "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
                 "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
