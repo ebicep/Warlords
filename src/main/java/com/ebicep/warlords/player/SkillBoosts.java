@@ -352,13 +352,13 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\nreduce the cooldown\nby 40%",
-            "§aRemove the energy cost\nof Consecrate and\nreduce the cooldown\nby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\nreduce the cooldown\nby 20%",
+            "§aRemove the energy cost\nof Consecrate and\nreduce the cooldown\nby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
@@ -406,12 +406,12 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\n§7reduce the cooldown\n§7by 40%",
-            "§aRemove the energy cost\nof Consecrate and\n§areduce the cooldown\n§aby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\n§7reduce the cooldown\n§7by 20%",
+            "§aRemove the energy cost\nof Consecrate and\n§areduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                 }
             }
@@ -460,12 +460,12 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 4 blocks and\n§7reduce the cooldown\n§7by 40%",
-            "§aIncreases the range of\n§aConsecrate by §c4 §ablocks and\n§areduce the cooldown\n§aby §c40%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 20%",
+            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(8);
+                    ((Consecrate) abstractAbility).setRadius(6);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
