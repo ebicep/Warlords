@@ -87,24 +87,25 @@ public class FreezingBreath extends AbstractAbility {
 
         Vector viewDirection = playerLoc.getDirection();
 
-        PlayerFilter.entitiesAroundRectangle(player, 7.5, 10, 7.5)
+        for (WarlordsPlayer breathTarget : PlayerFilter
+                .entitiesAroundRectangle(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
-                .forEach(target -> {
-                    playersHit++;
-                    Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
-                    if (viewDirection.dot(direction) > .68) {
-                        target.addDamageInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier,
-                                false
-                        );
-                        target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
-                    }
-                });
+        ) {
+            playersHit++;
+            Vector direction = breathTarget.getLocation().subtract(hitbox).toVector().normalize();
+            if (viewDirection.dot(direction) > .68) {
+                breathTarget.addDamageInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier,
+                        false
+                );
+                breathTarget.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
+            }
+        }
 
         return true;
     }
