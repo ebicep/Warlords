@@ -330,13 +330,13 @@ public enum SkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the duration of Undying\nArmy by 3 seconds and reduce the\n§7cooldown by 20%",
-            "§aIncrease the duration of Undying\nArmy by §c3 §aseconds and reduce the\ncooldown by §c20%",
+            "§7Reduce the cooldown of Undying Army\nby 25% and increase the duration\nby 3 seconds",
+            "§aReduce the cooldown of Undying Army\nby §c25% §aand increase the duration\nby §c3 §aseconds",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
                     ((UndyingArmy) abstractAbility).setDuration(13);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
@@ -439,12 +439,12 @@ public enum SkillBoosts {
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring\n§7Presence by 25%",
-            "§aReduce the cooldown of Inspiring\n§aPresence by §c25%",
+            "§7Reduce the cooldown of Inspiring\n§7Presence by 30%",
+            "§aReduce the cooldown of Inspiring\n§aPresence by §c30%",
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -460,8 +460,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 20%",
-            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c20%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 40%",
+            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
