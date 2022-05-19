@@ -205,7 +205,7 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } //COMPS
-        else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer >= 6000) {
+        else if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer >= 6000) {
             String gameEnd = "[GAME] A game ended with ";
             if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
@@ -215,7 +215,7 @@ public class PlayingState implements State, TimerDebugAble {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }
 
-            DatabaseGameBase.addGame(game, winEvent, true);
+            DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames);
         } //END GAME
         else {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer >= 6000) {

@@ -29,9 +29,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
+import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public enum GameMode {
     CAPTURE_THE_FLAG(

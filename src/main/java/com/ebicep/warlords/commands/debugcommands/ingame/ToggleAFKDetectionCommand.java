@@ -38,5 +38,4 @@ public class ToggleAFKDetectionCommand implements CommandExecutor {
     public void register(Warlords instance) {
         instance.getCommand("afkdetection").setExecutor(this);
     }
-
 }

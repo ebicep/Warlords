@@ -47,6 +47,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
+import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -419,6 +420,7 @@ public class Warlords extends JavaPlugin {
                     }
                 }
         );
+        SignGUI.init(this);
 
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
@@ -486,6 +488,11 @@ public class Warlords extends JavaPlugin {
         try {
             BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SignGUI.destroy();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1004,6 +1011,7 @@ public class Warlords extends JavaPlugin {
         new GetPlayerLastAbilityStatsCommand().register(this);
         new ToggleAFKDetectionCommand().register(this);
         new ServerStatusCommand().register(this);
+        new UnstuckCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {

@@ -53,8 +53,8 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
-import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.openMapsMenu;
+import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openMapPickerMenu;
+import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 import static com.ebicep.warlords.pve.coinshop.CoinshopMenu.openPveShopMenu;
 
 public class WarlordsEvents implements Listener {
@@ -358,7 +358,7 @@ public class WarlordsEvents implements Listener {
                             Bukkit.getServer().dispatchCommand(player, "wl");
                             break;
                         case BLAZE_POWDER:
-                            openMapsMenu(player);
+                            openMapPickerMenu(player);
                             break;
                         case DIAMOND:
                             openPveShopMenu(player);

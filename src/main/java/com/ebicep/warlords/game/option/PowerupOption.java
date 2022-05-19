@@ -230,7 +230,7 @@ public class PowerupOption implements Option {
             }
         },
 
-        HEALING(5, Material.WOOL, (short) 5) {
+        HEALING(5, Material.WOOL, (short) 13) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(HealingPowerup.class);
@@ -254,7 +254,7 @@ public class PowerupOption implements Option {
             }
         },
 
-        ENERGY(30, Material.WOOL, (short) 3) {
+        ENERGY(30, Material.WOOL, (short) 1) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(EnergyPowerup.class);
@@ -278,7 +278,7 @@ public class PowerupOption implements Option {
             }
         },
 
-        DAMAGE(30, Material.WOOL, (short) 4) {
+        DAMAGE(30, Material.WOOL, (short) 14) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
@@ -336,8 +336,8 @@ public class PowerupOption implements Option {
 
         PowerupType(int duration, Material debugMaterial, int debugData) {
             this.duration = duration;
-            this.debugData = debugData;
             this.debugMaterial = debugMaterial;
+            this.debugData = debugData;
         }
 
         public int getDuration() {

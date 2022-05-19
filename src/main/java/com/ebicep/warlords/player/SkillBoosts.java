@@ -330,13 +330,13 @@ public enum SkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the duration of Undying\nArmy by 3 seconds and reduce the\n§7cooldown by 20%",
-            "§aIncrease the duration of Undying\nArmy by §c3 §aseconds and reduce the\ncooldown by §c20%",
+            "§7Reduce the cooldown of Undying Army\nby 25% and increase the duration\nby 3 seconds",
+            "§aReduce the cooldown of Undying Army\nby §c25% §aand increase the duration\nby §c3 §aseconds",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
                     ((UndyingArmy) abstractAbility).setDuration(13);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
@@ -352,13 +352,13 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\nreduce the cooldown\nby 40%",
-            "§aRemove the energy cost\nof Consecrate and\nreduce the cooldown\nby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\nreduce the cooldown\nby 20%",
+            "§aRemove the energy cost\nof Consecrate and\nreduce the cooldown\nby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
@@ -406,12 +406,12 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\n§7reduce the cooldown\n§7by 40%",
-            "§aRemove the energy cost\nof Consecrate and\n§areduce the cooldown\n§aby §c40%",
+            "§7Remove the energy cost\nof Consecrate and\n§7reduce the cooldown\n§7by 20%",
+            "§aRemove the energy cost\nof Consecrate and\n§areduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                 }
             }
@@ -439,12 +439,12 @@ public enum SkillBoosts {
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring\n§7Presence by 25%",
-            "§aReduce the cooldown of Inspiring\n§aPresence by §c25%",
+            "§7Reduce the cooldown of Inspiring\n§7Presence by 30%",
+            "§aReduce the cooldown of Inspiring\n§aPresence by §c30%",
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -460,12 +460,12 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 4 blocks and\n§7reduce the cooldown\n§7by 40%",
-            "§aIncreases the range of\n§aConsecrate by §c4 §ablocks and\n§areduce the cooldown\n§aby §c40%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 40%",
+            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(8);
+                    ((Consecrate) abstractAbility).setRadius(6);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
@@ -794,13 +794,13 @@ public enum SkillBoosts {
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 20%",
-            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c20%",
+            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 25%",
+            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c25%",
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 }
             }
     ),

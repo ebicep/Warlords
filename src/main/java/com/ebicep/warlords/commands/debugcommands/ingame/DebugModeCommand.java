@@ -28,7 +28,7 @@ public class DebugModeCommand implements CommandExecutor {
             return true;
         }
 
-        warlordsPlayer.setInfiniteEnergy(true);
+        warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
         warlordsPlayer.sendMessage(ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");

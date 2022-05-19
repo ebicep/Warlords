@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
+import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openTeamMenu;
 
 public enum GameAddon {
 
