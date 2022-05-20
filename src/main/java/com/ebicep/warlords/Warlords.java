@@ -336,7 +336,9 @@ public class Warlords extends JavaPlugin {
         // DUEL
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven-0")));
 
+        // WAVE DEFENSE
         gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
+        gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

@@ -63,7 +63,7 @@ public class DebugMenuGameOptions {
     public static class StartMenu {
 
         public static void openMapPickerMenu(Player player) {
-            Menu menu = new Menu("Map Picker", 9 * 5);
+            Menu menu = new Menu("Map Picker", 9 * 6);
             GameMap[] values = GameMap.values();
             for (int i = 0; i < values.length; i++) {
                 GameMap map = values[i];
@@ -77,9 +77,9 @@ public class DebugMenuGameOptions {
                 );
             }
             if (player.hasPermission("warlords.game.customtoggle")) {
-                menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
+                menu.setItem(3, 5, MENU_BACK, (m, e) -> openGameMenu(player));
             }
-            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 

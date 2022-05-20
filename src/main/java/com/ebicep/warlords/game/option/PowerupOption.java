@@ -328,6 +328,34 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§b§lCOOLDOWN");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 9));
             }
+        },
+
+        MAX_HEALTH(30, Material.WOOL, (short) 5) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.getCooldownManager().removeCooldown(CooldownPowerup.class);
+                warlordsPlayer.getCooldownManager().addRegularCooldown(
+                        "Max Health",
+                        "MAX",
+                        CooldownPowerup.class,
+                        CooldownPowerup.COOLDOWN_POWERUP,
+                        null,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                            warlordsPlayer.setMaxHealth(warlordsPlayer.getSpec().getMaxHealth());
+                            warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "MAX HEALTH" + ChatColor.GOLD + " powerup has worn off.");
+                        } ,
+                        option.getDuration() * 20
+                );
+                warlordsPlayer.setMaxHealth((int) (warlordsPlayer.getMaxHealth() * 1.25f));
+                warlordsPlayer.sendMessage(String.format("§6You activated the §a§lMAX HEALTH §6powerup! §a+25%% §6Max health for §a%d §6seconds!", option.getDuration()));
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§a§lMAX HEALTH");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 5));
+            }
         };
 
         private final int duration;
