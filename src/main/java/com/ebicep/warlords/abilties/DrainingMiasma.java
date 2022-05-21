@@ -80,7 +80,7 @@ public class DrainingMiasma extends AbstractAbility {
                     DrainingMiasma.class,
                     tempDrainingMiasma,
                     wp,
-                    CooldownTypes.DEBUFF,
+                    CooldownTypes.ABILITY,
                     cooldownManager -> {
                         cancelSlowness.run();
                     },
