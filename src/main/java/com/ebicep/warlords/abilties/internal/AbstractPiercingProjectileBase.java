@@ -336,6 +336,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         public void run() {
             if (!shooter.getGame().isFrozen()) {
                 updateSpeed(this);
+                System.out.print(ticksLived);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
                 if (hasCollided != null) {
                     int hitBySplash = onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
