@@ -1,11 +1,13 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.abilties.internal.*;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -219,7 +221,7 @@ public class PowerupOption implements Option {
                         option.getDuration() * 20
                 );
                 warlordsPlayer.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
-                warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
+                warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, option.getDuration() * 20, "BASE");
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 
@@ -282,16 +284,23 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
                         "Damage",
                         "DMG",
                         DamagePowerup.class,
                         DamagePowerup.DAMAGE_POWERUP,
-                        null,
+                        warlordsPlayer,
                         CooldownTypes.BUFF,
                         cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
-                        option.getDuration() * 20
-                );
+                        option.getDuration() * 20,
+                        (cooldown, ticksLeft, counter) -> {}
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.2f;
+                    }
+                });
+
                 warlordsPlayer.sendMessage(String.format("§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!", option.getDuration()));
             }
 
@@ -330,33 +339,7 @@ public class PowerupOption implements Option {
             }
         },
 
-        MAX_HEALTH(30, Material.WOOL, (short) 5) {
-            @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(CooldownPowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
-                        "Max Health",
-                        "MAX",
-                        CooldownPowerup.class,
-                        CooldownPowerup.COOLDOWN_POWERUP,
-                        null,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                            warlordsPlayer.setMaxHealth(warlordsPlayer.getSpec().getMaxHealth());
-                            warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "MAX HEALTH" + ChatColor.GOLD + " powerup has worn off.");
-                        } ,
-                        option.getDuration() * 20
-                );
-                warlordsPlayer.setMaxHealth((int) (warlordsPlayer.getMaxHealth() * 1.25f));
-                warlordsPlayer.sendMessage(String.format("§6You activated the §a§lMAX HEALTH §6powerup! §a+25%% §6Max health for §a%d §6seconds!", option.getDuration()));
-            }
-
-            @Override
-            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.setCustomName("§a§lMAX HEALTH");
-                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 5));
-            }
-        };
+        ;
 
         private final int duration;
         private final Material debugMaterial;
