@@ -332,6 +332,7 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Neolithic-0", GameMap.NEOLITHIC, new LocationFactory(Bukkit.getWorld("Neolithic-0")));
         gameManager.addGameHolder("DorivenBasin-0", GameMap.DORIVEN_BASIN, new LocationFactory(Bukkit.getWorld("DorivenBasin-0")));
         gameManager.addGameHolder("DeathValley-0", GameMap.DEATH_VALLEY, new LocationFactory(Bukkit.getWorld("DeathValley-0")));
+        gameManager.addGameHolder("TheVale-0", GameMap.THE_VALE, new LocationFactory(Bukkit.getWorld("TheVale-0")));
 
         // DUEL
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven-0")));
@@ -339,6 +340,10 @@ public class Warlords extends JavaPlugin {
         // WAVE DEFENSE
         gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
         gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
+        gameManager.addGameHolder("Enchanted-0", GameMap.ENCHANTED, new LocationFactory(Bukkit.getWorld("Enchanted-0")));
+        gameManager.addGameHolder("Viveric-0", GameMap.VIVERIC, new LocationFactory(Bukkit.getWorld("Viveric-0")));
+
+        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
