@@ -18,7 +18,7 @@ public class UnstuckCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (onCooldown) {
             if (player != null) {
-                player.teleport(player.getLocation().add(0, 1, 0));
+                player.teleport(player.getLocation().add(0, 0.4, 0));
                 sender.sendMessage(ChatColor.GREEN + "You were teleported 1 block upwards.");
                 resetCooldown();
                 return true;
@@ -40,7 +40,7 @@ public class UnstuckCommand implements CommandExecutor {
             public void run() {
                 onCooldown = true;
             }
-        }.runTaskLater(Warlords.getInstance(), 100);
+        }.runTaskLater(Warlords.getInstance(), 200);
     }
 
     public void register(Warlords instance) {
