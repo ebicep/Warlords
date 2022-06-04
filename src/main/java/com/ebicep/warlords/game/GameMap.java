@@ -404,18 +404,31 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(93.5, 50.5, 0.5, 90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 50.5, 0.5, -90, 0), Team.RED).asOption());
 
-            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(-25.5, 32.5, 0.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(26.5, 32.5, 0.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 34.5, -33.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 34.5, 34.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 47.5, 0.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 53.5, 0.5), PowerupType.HEALING));
 
-            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 32.5, 0.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-77.5, 47.5, 19.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-77.5, 47.5, -19.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(77.5, 47.5, 19.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(77.5, 47.5, -19.5), PowerupType.SPEED));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 34.5, 22.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 34.5, -22.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 47.5, -32.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-5.5, 47.5, 32.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 57.5, -40.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 57.5, 40.5), PowerupType.ENERGY));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(93.5, 50.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 50.5, 0.5, -90, 0), Team.RED));
 
             options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
             options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
@@ -453,18 +466,25 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-139.5, 39.5, 0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(144.5, 37.5, 0.5, 90, 0), Team.RED).asOption());
 
-            options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(604.5, 56.5, 465.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(298.5, 56.5, 430.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 38.5, 9.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 38.5, -9.5), PowerupType.DAMAGE));
 
-            options.add(new PowerupOption(loc.addXYZ(449.5, 95.5, 600.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 42.5, -31.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 42.5, 31.5), PowerupType.SPEED));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            options.add(new PowerupOption(loc.addXYZ(13.5, 35.5, -24.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-12.5, 35.5, 25.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(0.5, 24.5, 0.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(121.5, 44.5, -51.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(121.5, 44.5, 52.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-126.5, 44.5, 52.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-126.5, 44.5, -51.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-139.5, 39.5, 0.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(144.5, 37.5, 0.5, 90, 0), Team.RED));
 
             options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
             options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
@@ -1083,11 +1103,11 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
 
             if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(1800));

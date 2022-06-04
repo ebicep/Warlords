@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.coinshop;
+package com.ebicep.warlords.pve.shop;
 
 import javax.annotation.Nonnull;
 

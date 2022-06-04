@@ -55,7 +55,7 @@ import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openMapPickerMenu;
 import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
-import static com.ebicep.warlords.pve.coinshop.CoinshopMenu.openPveShopMenu;
+import static com.ebicep.warlords.pve.shop.Menu.openPveShopMenu;
 
 public class WarlordsEvents implements Listener {
 
