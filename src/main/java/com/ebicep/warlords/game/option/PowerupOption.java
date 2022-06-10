@@ -4,11 +4,13 @@ import com.ebicep.warlords.abilties.internal.DamagePowerup;
 import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.SpeedPowerup;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -285,16 +287,23 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
                         "Damage",
                         "DMG",
                         DamagePowerup.class,
                         DamagePowerup.DAMAGE_POWERUP,
-                        null,
+                        warlordsPlayer,
                         CooldownTypes.BUFF,
                         cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
-                        option.getDuration() * 20
-                );
+                        option.getDuration() * 20,
+                        (cooldown, ticksLeft, counter) -> {}
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.2f;
+                    }
+                });
+
                 warlordsPlayer.sendMessage(String.format("§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!", option.getDuration()));
             }
 
@@ -302,6 +311,32 @@ public class PowerupOption implements Option {
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
                 armorStand.setCustomName("§c§lDAMAGE");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
+            }
+        },
+
+        SELF_DAMAGE(0, Material.WOOL, (short) 15) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.addDamageInstance(warlordsPlayer, "Self Damage Powerup", 5000, 5000, -1, 100, true);
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§c§l5000 SELF DAMAGE");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
+            }
+        },
+
+        SELF_HEAL(0, Material.WOOL, (short) 15) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.addHealingInstance(warlordsPlayer, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§a§l5000 SELF HEAL");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
             }
         };
 

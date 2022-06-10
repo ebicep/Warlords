@@ -35,6 +35,7 @@ public class RespawnProtectionOption implements Option, Listener {
     public RespawnProtectionOption(int protectionTime) {
         this(protectionTime, DEFAULT_RADIUS);
     }
+
     public RespawnProtectionOption(int protectionTime, int radius) {
         this.protectionTime = protectionTime;
         this.radius = radius;
