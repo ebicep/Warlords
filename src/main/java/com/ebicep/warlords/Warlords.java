@@ -343,7 +343,9 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Enchanted-0", GameMap.ENCHANTED, new LocationFactory(Bukkit.getWorld("Enchanted-0")));
         gameManager.addGameHolder("Viveric-0", GameMap.VIVERIC, new LocationFactory(Bukkit.getWorld("Viveric-0")));
 
-        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug")));
+        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));
+        gameManager.addGameHolder("Debug-1", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-1")));
+        gameManager.addGameHolder("Debug-2", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-2")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

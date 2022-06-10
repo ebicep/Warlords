@@ -339,6 +339,32 @@ public class PowerupOption implements Option {
             }
         },
 
+        SELF_DAMAGE(0, Material.WOOL, (short) 15) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.addDamageInstance(warlordsPlayer, "Self Damage Powerup", 5000, 5000, -1, 100, true);
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§c§l5000 SELF DAMAGE");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
+            }
+        },
+
+        SELF_HEAL(0, Material.WOOL, (short) 15) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.addHealingInstance(warlordsPlayer, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.setCustomName("§a§l5000 SELF HEAL");
+                armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
+            }
+        }
+
         ;
 
         private final int duration;
