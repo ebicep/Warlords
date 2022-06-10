@@ -43,7 +43,7 @@ public class SoothingElixir extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a short range elixir bottle, The bottle\n" +
+        description = "§7Throw a short range elixir bottle. The bottle\n" +
                 "§7will shatter upon impact, healing nearby allies\n" +
                 "§7for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and damage nearby\n" +
                 "§7enemies for §c" + puddleMinDamage + " §7- §c" + puddleMaxDamage + " §7damage. The projectile\n" +

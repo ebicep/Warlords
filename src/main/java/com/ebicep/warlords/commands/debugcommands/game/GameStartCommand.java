@@ -239,8 +239,8 @@ public class GameStartCommand implements TabExecutor {
                             ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
                             " a game with the following parameters:"
             );
-            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
-            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap()));
+            sender.sendMessage(ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
+            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap().getMapName()));
             sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
             sender.sendMessage(ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
             sender.sendMessage(ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());

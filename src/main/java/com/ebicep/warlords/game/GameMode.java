@@ -210,7 +210,7 @@ public enum GameMode {
             List<Option> options = super.initMap(map, loc, addons);
 
             options.add(TextOption.Type.TITLE.create(
-                    10,
+                    3,
                     ChatColor.GREEN + "GO!"
             ));
             return options;
