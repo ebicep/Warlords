@@ -1376,7 +1376,7 @@ public final class WarlordsPlayer {
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
         this.weapon = Weapons.getSelected(player, this.specClass);
-        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getAddons().contains(GameAddon.COOLDOWN_MODE) ? 1.5 : 1));
+        this.maxHealth = (this.spec.getMaxHealth() * (gameState.getGame().getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
