@@ -36,7 +36,7 @@ public class RemedicChains extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
                 "§7the damage they deal by §c12% §7as long as the\n" +
-                "§7link is active. Lasts §6" + duration + " §7seconds" +
+                "§7link is active. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7When the link expires you and the allies\n" +
                 "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +

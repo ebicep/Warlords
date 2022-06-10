@@ -319,7 +319,9 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Arathi-1", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-1")));
         gameManager.addGameHolder("Arathi-2", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-2")));
 
-        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug")));
+        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));
+        gameManager.addGameHolder("Debug-1", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-1")));
+        gameManager.addGameHolder("Debug-2", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-2")));
 
         // CURRENTLY DISABLED
 
