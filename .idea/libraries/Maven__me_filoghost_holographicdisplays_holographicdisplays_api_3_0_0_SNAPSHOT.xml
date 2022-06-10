@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220326.225450-29.jar!/" />
+      <root url="jar://$USER_HOME$/.m2/repository/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220604.163328-45.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220326.225450-29-javadoc.jar!/" />
+      <root url="jar://$USER_HOME$/.m2/repository/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220604.163328-45-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220326.225450-29-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.m2/repository/me/filoghost/holographicdisplays/holographicdisplays-api/3.0.0-SNAPSHOT/holographicdisplays-api-3.0.0-20220604.163328-45-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

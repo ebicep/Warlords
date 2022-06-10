@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.leaderboards.Leaderboard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import java.util.ArrayList;
 import java.util.Collection;

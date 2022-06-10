@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.player;
 
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
-import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import java.util.List;
 import java.util.function.Function;
