@@ -30,8 +30,7 @@ public class DummySpawnOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("TestDummy");
-
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(team == Team.RED ? "TestDummy1" : "TestDummy2");
                 WarlordsPlayer testDummy = new WarlordsPlayer(
                         offlinePlayer,
                         (PlayingState) game.getState(),
