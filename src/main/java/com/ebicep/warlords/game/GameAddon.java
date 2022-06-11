@@ -140,7 +140,13 @@ public enum GameAddon {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
         }
 
-    };
+    },
+
+    TOURNAMENT_MODE(
+            "Tournament Mode",
+            null,
+            "Tournament Mode"
+    );
 
     private final String name;
     @Nullable

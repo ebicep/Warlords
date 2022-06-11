@@ -1,42 +1,35 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.achievements.Achievement;
-import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
-import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.*;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Settings;
 import com.ebicep.warlords.player.Specializations;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+public class TournamentStats {
 
-@Document(collection = "Players_Information")
-public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+    @Field("tournament_1_stats")
+    private DatabasePlayerTournamentStats tournament1Stats = new DatabasePlayerTournamentStats();
 
-    @Id
-    private String id;
+    public TournamentStats() {
+    }
 
-    @Indexed(unique = true)
-    private String uuid = "";
-    private String name = "";
-    @Field("discord_id")
-    private Long discordID = null;
+    public DatabasePlayerTournamentStats getCurrentTournamentStats() {
+        return this.tournament1Stats;
+    }
+}
+
+class DatabasePlayerTournamentStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
+
     private DatabaseMage mage = new DatabaseMage();
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();
@@ -50,34 +43,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
     @Field("duel_stats")
     private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
-    @Field("comp_stats")
-    private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
-    @Field("public_queue_stats")
-    private DatabasePlayerPubStats pubStats = new DatabasePlayerPubStats();
-
-    @Field("tournament_stats")
-    private TournamentStats tournamentStats = new TournamentStats();
-    @Field("last_spec")
-    private Specializations lastSpec = Specializations.PYROMANCER;
-    @Field("hotkeymode")
-    private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
-    @Field("particle_quality")
-    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
-
-    private List<Achievement.AbstractAchievementRecord> achievements = new ArrayList<>();
-
-    public DatabasePlayer() {
-    }
-
-    public DatabasePlayer(String uuid, String name) {
-        this.uuid = uuid;
-        this.name = name;
-    }
-
-    public DatabasePlayer(UUID uuid, String name) {
-        this.uuid = uuid.toString();
-        this.name = name;
-    }
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
@@ -86,7 +51,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
-        //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
                 this.ctfStats.updateStats(databaseGame, gamePlayer, add);
@@ -101,20 +65,10 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
                 this.duelStats.updateStats(databaseGame, gamePlayer, add);
                 break;
         }
-        //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
-        if (databaseGame.getGameAddons().contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, add);
-        } else {
-            if (isCompGame) {
-                this.compStats.updateStats(databaseGame, gamePlayer, add);
-            } else {
-                this.pubStats.updateStats(databaseGame, gamePlayer, add);
-            }
-        }
     }
 
     @Override
-    public DatabaseSpecialization getSpec(Specializations specializations) {
+    public AbstractDatabaseStatInformation getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -170,43 +124,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Override
     public AbstractDatabaseStatInformation[] getClasses() {
         return new AbstractDatabaseStatInformation[]{mage, warrior, paladin, shaman, rogue};
-    }
-
-    //    public AbstractDatabaseWarlordsClass getClass(AbstractDatabaseWarlordsClass databaseWarlordsClass) {
-//        for (AbstractDatabaseWarlordsClass aClass : getClasses()) {
-//            if (databaseWarlordsClass.getClass().equals(aClass.getClass())) {
-//                return aClass;
-//            }
-//        }
-//        return null;
-//    }
-
-    @Override
-    public String toString() {
-        return "DatabasePlayer{" +
-                "uuid='" + uuid + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public Long getDiscordID() {
-        return discordID;
-    }
-
-    public void setDiscordID(Long discordID) {
-        this.discordID = discordID;
     }
 
     public DatabaseMage getMage() {
@@ -280,77 +197,4 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     public void setDuelStats(DatabasePlayerDuel duelStats) {
         this.duelStats = duelStats;
     }
-
-    public DatabasePlayerCompStats getCompStats() {
-        return compStats;
-    }
-
-    public void setCompStats(DatabasePlayerCompStats compStats) {
-        this.compStats = compStats;
-    }
-
-    public DatabasePlayerPubStats getPubStats() {
-        return pubStats;
-    }
-
-    public void setPubStats(DatabasePlayerPubStats pubStats) {
-        this.pubStats = pubStats;
-    }
-
-    public TournamentStats getTournamentStats() {
-        return tournamentStats;
-    }
-
-    public void setTournamentStats(TournamentStats tournamentStats) {
-        this.tournamentStats = tournamentStats;
-    }
-
-    public Specializations getLastSpec() {
-        return lastSpec;
-    }
-
-    public void setLastSpec(Specializations lastSpec) {
-        this.lastSpec = lastSpec;
-    }
-
-    public Settings.HotkeyMode getHotkeyMode() {
-        return hotkeyMode;
-    }
-
-    public void setHotkeyMode(Settings.HotkeyMode hotkeyMode) {
-        this.hotkeyMode = hotkeyMode;
-    }
-
-    public Settings.ParticleQuality getParticleQuality() {
-        return particleQuality;
-    }
-
-    public void setParticleQuality(Settings.ParticleQuality particleQuality) {
-        this.particleQuality = particleQuality;
-    }
-
-    public void addAchievement(Achievement.AbstractAchievementRecord achievementRecord) {
-        this.achievements.add(achievementRecord);
-    }
-
-    public void addAchievements(List<Achievement.AbstractAchievementRecord> achievements) {
-        this.achievements.addAll(achievements);
-    }
-
-    public List<Achievement.AbstractAchievementRecord> getAchievements() {
-        return achievements;
-    }
-
-    public boolean hasAchievement(TieredAchievements achievement) {
-        return this.achievements.stream()
-                .anyMatch(achievementRecord -> achievementRecord instanceof TieredAchievements.TieredAchievementRecord &&
-                        ((TieredAchievements.TieredAchievementRecord) achievementRecord).getAchievement() == achievement);
-    }
-
-    public boolean hasAchievement(ChallengeAchievements achievement) {
-        return this.achievements.stream()
-                .anyMatch(achievementRecord -> achievementRecord instanceof ChallengeAchievements.ChallengeAchievementRecord &&
-                        ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
-    }
-
 }
