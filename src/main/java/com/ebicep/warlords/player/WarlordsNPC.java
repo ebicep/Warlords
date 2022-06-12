@@ -4,9 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import java.util.UUID;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -20,10 +17,15 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class WarlordsNPC extends WarlordsEntity {
 
     public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, PlayingState gameState, Team team, Specializations specClass) {
         super(uuid, name, weapon, entity, gameState, team, specClass);
+        updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
     }
     @Override

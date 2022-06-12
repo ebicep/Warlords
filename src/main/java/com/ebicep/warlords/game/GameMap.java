@@ -1158,8 +1158,8 @@ public enum GameMap {
         }
     },
     DEBUG(
-            "Debug",
-            12,
+            "Practice",
+            300,
             1,
             60 * SECOND,
             "WLDebug",
@@ -1173,11 +1173,16 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED).asOption());
 
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 180.5), PowerupType.DAMAGE, 30, 5, 5));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.COOLDOWN, 30, 5, 5));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.ENERGY, 30, 5, 5));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupType.SPEED, 10, 5, 5));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupType.HEALING, 10, 5, 5));
+            options.add(new DummySpawnOption(loc.addXYZ(720.5, 7, 206.5), Team.RED));
+            options.add(new DummySpawnOption(loc.addXYZ(703.5, 7, 206.5), Team.BLUE));
+
+            options.add(new PowerupOption(loc.addXYZ(713.5, 8.5, 209.5), PowerupType.SELF_DAMAGE, 0, 5, 5));
+            options.add(new PowerupOption(loc.addXYZ(710.5, 8.5, 209.5), PowerupType.SELF_HEAL, 0, 5, 5));
+
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.DAMAGE, 30, 5, 5));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupType.ENERGY, 30, 5, 5));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupType.SPEED, 10, 5, 5));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 200.5), PowerupType.HEALING, 10, 5, 5));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.RED));
@@ -1190,12 +1195,12 @@ public enum GameMap {
 
             options.add(new GateOption(loc.addXYZ(713, 7, 195), loc.addXYZ(713, 10, 198)));
 
-            options.add(new WinByPointsOption(5000));
-            options.add(new MercyWinOption(5000));
+            options.add(new WinByPointsOption(3000));
+            options.add(new MercyWinOption(3000, 5));
             if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(7200));
-            } else {
                 options.add(new WinAfterTimeoutOption(3600));
+            } else {
+                options.add(new WinAfterTimeoutOption(1800));
             }
             options.add(new GameOvertimeOption());
             options.add(new AbstractScoreOnEventOption.FlagCapture());

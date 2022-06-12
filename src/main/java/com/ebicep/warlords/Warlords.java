@@ -145,12 +145,12 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
-    public static WarlordsPlayer getPlayer(@Nullable OfflinePlayer player) {
-        return player == null ? null : (WarlordsPlayer)getPlayer(player.getUniqueId());
+    public static WarlordsEntity getPlayer(@Nullable OfflinePlayer player) {
+        return player == null ? null : getPlayer(player.getUniqueId());
     }
 
     @Nullable
-    public static WarlordsPlayer getPlayer(@Nullable Player player) {
+    public static WarlordsEntity getPlayer(@Nullable Player player) {
         return getPlayer((OfflinePlayer) player);
     }
 
