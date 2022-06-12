@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -37,7 +37,7 @@ public class WinByPointsOption implements Option, Listener {
         game.registerEvents(this);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "points") {
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return TeamMarker.getTeams(game).stream()
                         .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getPoints(t) + ChatColor.GOLD + "/" + pointLimit)
                         .collect(Collectors.toList());

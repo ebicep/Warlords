@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
@@ -10,7 +10,7 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
 
     @EventHandler
     public void onDeathEvent(WarlordsDeathEvent e) {
-        for (WarlordsPlayer wp : PlayerFilter
+        for (WarlordsEntity wp : PlayerFilter
                 .playingGame(game)
                 .isAlive()
         ) {

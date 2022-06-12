@@ -11,7 +11,8 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.State;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.apache.commons.lang.Validate;
@@ -348,6 +349,26 @@ public final class Game implements Runnable, AutoCloseable {
         return players;
     }
 
+    public WarlordsNPC addNPC(@Nonnull WarlordsNPC entity) {
+        Validate.notNull(entity, "entity");
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        /*
+        if (!asSpectator && !this.acceptsPlayers) {
+            throw new IllegalStateException("This game does not accepts player at the moment");
+        }
+        if (asSpectator && !this.acceptsSpectators) {
+            throw new IllegalStateException("This game does not accepts spectators at the moment");
+        }
+         */
+        this.players.put(entity.getUuid(), entity.getTeam());
+        Warlords.addPlayer(entity);
+        return entity;
+    }
     /**
      * Adds a player into the game
      *
@@ -451,7 +472,7 @@ public final class Game implements Runnable, AutoCloseable {
         return (int) this.players.values().stream().filter(Objects::isNull).count();
     }
 
-    public Stream<WarlordsPlayer> warlordsPlayers() {
+    public Stream<WarlordsEntity> warlordsPlayers() {
         return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
     }
 
@@ -495,7 +516,7 @@ public final class Game implements Runnable, AutoCloseable {
         offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
+    public void forEachOfflineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
         warlordsPlayers().forEach(consumer);
     }
 
@@ -507,8 +528,8 @@ public final class Game implements Runnable, AutoCloseable {
         onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        warlordsPlayers().filter(WarlordsPlayer::isOnline).forEach(consumer);
+    public void forEachOnlineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
+        warlordsPlayers().filter(WarlordsEntity::isOnline).forEach(consumer);
     }
 
     @Override

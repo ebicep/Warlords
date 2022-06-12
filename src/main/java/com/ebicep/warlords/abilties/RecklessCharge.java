@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -53,7 +53,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
@@ -61,7 +61,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         location.setPitch(0);
         Location chargeLocation = location.clone();
         double chargeDistance;
-        List<WarlordsPlayer> playersHit = new ArrayList<>();
+        List<WarlordsEntity> playersHit = new ArrayList<>();
         boolean inAir = false;
 
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {

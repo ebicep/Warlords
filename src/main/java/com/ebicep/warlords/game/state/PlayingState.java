@@ -18,10 +18,7 @@ import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
-import com.ebicep.warlords.player.CustomScoreboard;
-import com.ebicep.warlords.player.ExperienceManager;
-import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -77,12 +74,10 @@ public class PlayingState implements State, TimerDebugAble {
 
         this.game.forEachOfflinePlayer((player, team) -> {
             if (team != null) {
-                PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                 Warlords.addPlayer(new WarlordsPlayer(
                         player,
                         this,
-                        team,
-                        playerSettings
+                        team
                 ));
             }
         });
@@ -139,7 +134,7 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     public State run() {
         game.players().forEach(uuidTeamEntry -> {
-            WarlordsPlayer wp = Warlords.getPlayer(uuidTeamEntry.getKey());
+            WarlordsEntity wp = Warlords.getPlayer(uuidTeamEntry.getKey());
             ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
             if (wp != null) {
                 byteArrayDataOutput.writeUTF(wp.getName());
@@ -178,7 +173,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Game Addons = " + game.getAddons());
         System.out.println(" ----- GAME END ----- ");
 
-        List<WarlordsPlayer> players = PlayerFilter.playingGame(game).toList();
+        List<WarlordsEntity> players = PlayerFilter.playingGame(game).toList();
         if (players.isEmpty()) {
             return;
         }
@@ -261,7 +256,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         Objective finalHealth = health;
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null) {
                 finalHealth.getScore(warlordsPlayer.getName()).setScore(warlordsPlayer.getHealth());
             }
@@ -271,7 +266,7 @@ public class PlayingState implements State, TimerDebugAble {
     private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null) {
                 if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
                     org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
@@ -294,7 +289,7 @@ public class PlayingState implements State, TimerDebugAble {
      * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
      * @param warlordsPlayer the player changing
      */
-    public void updatePlayerName(@Nonnull WarlordsPlayer warlordsPlayer) {
+    public void updatePlayerName(@Nonnull WarlordsEntity warlordsPlayer) {
         this.getGame().forEachOfflinePlayer((player, team) -> {
             Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
             int level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
@@ -304,7 +299,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
         List<String> scoreboard = new ArrayList<>();
 
         String lastGroup = null;
@@ -329,7 +324,7 @@ public class PlayingState implements State, TimerDebugAble {
         customScoreboard.giveNewSideBar(false, scoreboard);
     }
 
-    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
         this.updateHealth(customScoreboard);
         this.updateNames(customScoreboard);
         this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
@@ -337,7 +332,7 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public void onPlayerReJoinGame(@Nonnull Player player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
+        WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
             // Spectator
             player.setGameMode(GameMode.SPECTATOR);

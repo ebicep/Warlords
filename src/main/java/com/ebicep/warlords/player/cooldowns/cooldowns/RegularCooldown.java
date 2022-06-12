@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.cooldowns.cooldowns;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -27,7 +27,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
      */
     protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers;
 
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
@@ -35,7 +35,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     }
 
     @SafeVarargs
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
+    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;

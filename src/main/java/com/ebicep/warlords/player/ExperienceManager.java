@@ -103,7 +103,7 @@ public class ExperienceManager {
         System.out.println(operations.execute().getModifiedCount() + " players were given weekly experience bonuses");
     }
 
-    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsPlayer warlordsPlayer, boolean recalculate) {
+    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {
         if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }

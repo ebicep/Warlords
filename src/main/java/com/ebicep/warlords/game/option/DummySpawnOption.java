@@ -5,9 +5,10 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.*;
+import static com.ebicep.warlords.player.Specializations.PYROMANCER;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import java.util.UUID;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -19,10 +20,16 @@ public class DummySpawnOption implements Option {
 
     private final Location loc;
     private final Team team;
+    private final String name;
 
     public DummySpawnOption(Location loc, Team team) {
+        this(loc, team, team == Team.RED ? "TestDummy1" : "TestDummy2");
+    }
+
+    public DummySpawnOption(Location loc, Team team, String name) {
         this.loc = loc;
         this.team = team;
+        this.name = name;
     }
 
     @Override
@@ -36,28 +43,26 @@ public class DummySpawnOption implements Option {
                     return;
                 }
 
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(team == Team.RED ? "TestDummy1" : "TestDummy2");
-                WarlordsPlayer testDummy = new WarlordsPlayer(
-                        offlinePlayer,
+                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
+                        UUID.randomUUID(),
+                        name,
+                        Weapons.ABBADON,
+                        WarlordsNPC.spawnZombie(loc, null),
                         (PlayingState) game.getState(),
                         team,
-                        new PlayerSettings()
-                );
-
-                Warlords.addPlayer(testDummy);
-                game.addPlayer(offlinePlayer, false);
+                        Specializations.PYROMANCER
+                ));
                 //SKULL
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-                skullMeta.setOwner(offlinePlayer.getName());
                 playerSkull.setItemMeta(skullMeta);
-                Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
+                Warlords.getPlayerHeads().put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
 
                 testDummy.teleport(loc);
                 testDummy.setTakeDamage(true);
                 testDummy.setMaxHealth(1000000);
                 testDummy.setHealth(1000000);
-                testDummy.updateJimmyHealth();
+                testDummy.updateHealth();
             }
         }.runTaskLater(100);
     }

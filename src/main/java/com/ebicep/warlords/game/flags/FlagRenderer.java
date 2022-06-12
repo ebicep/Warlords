@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -176,7 +176,7 @@ public class FlagRenderer {
         }
         renderedArmorStands.clear();
         for (Player p : affectedPlayers) {
-            WarlordsPlayer wp = Warlords.getPlayer(p);
+            WarlordsEntity wp = Warlords.getPlayer(p);
             if (wp != null) {
                 wp.updateArmor();
             }

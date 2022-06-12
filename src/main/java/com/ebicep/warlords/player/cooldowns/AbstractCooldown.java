@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.cooldowns;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 
 import java.util.function.Consumer;
 
@@ -10,11 +10,11 @@ public abstract class AbstractCooldown<T> implements DamageHealingInstance {
     protected String nameAbbreviation;
     protected Class<T> cooldownClass;
     protected T cooldownObject;
-    protected WarlordsPlayer from;
+    protected WarlordsEntity from;
     protected CooldownTypes cooldownType;
     protected Consumer<CooldownManager> onRemove;
 
-    public AbstractCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove) {
+    public AbstractCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove) {
         this.name = name;
         this.nameAbbreviation = nameAbbreviation;
         this.cooldownClass = cooldownClass;
@@ -54,7 +54,7 @@ public abstract class AbstractCooldown<T> implements DamageHealingInstance {
         this.nameAbbreviation = nameAbbreviation;
     }
 
-    public WarlordsPlayer getFrom() {
+    public WarlordsEntity getFrom() {
         return from;
     }
 

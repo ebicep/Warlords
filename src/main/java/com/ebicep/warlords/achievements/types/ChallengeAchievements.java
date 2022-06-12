@@ -5,7 +5,7 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.Specializations;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
@@ -30,7 +30,7 @@ public enum ChallengeAchievements implements Achievement {
             null,
             warlordsPlayer -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(3);
-                WarlordsPlayer carrier = null;
+                WarlordsEntity carrier = null;
                 int below1000Index = -1;
                 int fullHealthIndex = -1;
                 for (int i = 0; i < events.size(); i++) {
@@ -258,7 +258,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.AVENGER,
             warlordsPlayer -> {
                 boolean carrierDeadLast5Seconds = false;
-                for (WarlordsPlayer player : PlayerFilter.playingGame(warlordsPlayer.getGame())
+                for (WarlordsEntity player : PlayerFilter.playingGame(warlordsPlayer.getGame())
                         .teammatesOf(warlordsPlayer)
                         .excluding(warlordsPlayer)
                         .stream()
@@ -303,7 +303,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.PROTECTOR,
             warlordsPlayer -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(3);
-                WarlordsPlayer carrier = null;
+                WarlordsEntity carrier = null;
                 int index = -1;
                 for (int i = 0; i < events.size(); i++) {
                     WarlordsDamageHealingFinalEvent event = events.get(i);
@@ -384,7 +384,7 @@ public enum ChallengeAchievements implements Achievement {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsPlayer.getSecondStats().getEventsAsAttackerFromLastSecond(10);
                 int indexCarrier = -1;
                 int indexCarrierKilled = -1;
-                WarlordsPlayer carrier = null;
+                WarlordsEntity carrier = null;
                 for (int i = 0; i < events.size(); i++) {
                     if (events.get(i).isHasFlag()) {
                         indexCarrier = i;
@@ -406,7 +406,7 @@ public enum ChallengeAchievements implements Achievement {
                 }
 
                 if (indexCarrierKilled != -1) {
-                    WarlordsPlayer finalCarrier = carrier;
+                    WarlordsEntity finalCarrier = carrier;
                     int numberOfAbilityAttackers = (int) events.subList(indexCarrier, indexCarrierKilled).stream()
                             .filter(warlordsDamageHealingFinalEvent -> warlordsDamageHealingFinalEvent.getPlayer().equals(finalCarrier))
                             .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getAbility().isEmpty())
@@ -424,10 +424,10 @@ public enum ChallengeAchievements implements Achievement {
     public String description;
     public GameMode gameMode;
     public Specializations spec;
-    public Predicate<WarlordsPlayer> warlordsPlayerPredicate;
+    public Predicate<WarlordsEntity> warlordsPlayerPredicate;
     public boolean checkTeammates;
 
-    ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsPlayer> warlordsPlayerPredicate, boolean checkTeammates) {
+    ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsEntity> warlordsPlayerPredicate, boolean checkTeammates) {
         this.name = name;
         this.description = description;
         this.gameMode = gameMode;
@@ -436,7 +436,7 @@ public enum ChallengeAchievements implements Achievement {
         this.checkTeammates = checkTeammates;
     }
 
-    public static void checkForAchievement(WarlordsPlayer player, ChallengeAchievements achievement) {
+    public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
         if (achievement.warlordsPlayerPredicate.test(player)) {
             if (achievement.checkTeammates) {
                 ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
@@ -448,7 +448,7 @@ public enum ChallengeAchievements implements Achievement {
         }
     }
 
-    public static void checkTeammatesForSameAchievement(WarlordsPlayer player, ChallengeAchievements achievement) {
+    public static void checkTeammatesForSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
         player.getGame().warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
                 //.filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(achievement))
@@ -464,7 +464,7 @@ public enum ChallengeAchievements implements Achievement {
     }
 
     @Override
-    public void sendAchievementUnlockMessageToOthers(WarlordsPlayer warlordsPlayer) {
+    public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
         warlordsPlayer.getGame().warlordsPlayers()

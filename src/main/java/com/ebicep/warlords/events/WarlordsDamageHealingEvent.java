@@ -1,7 +1,7 @@
 
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -11,7 +11,7 @@ import org.bukkit.event.HandlerList;
 public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
-    private WarlordsPlayer attacker;
+    private WarlordsEntity attacker;
     private String ability;
     private float min;
     private float max;
@@ -24,8 +24,8 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
-            WarlordsPlayer player,
-            WarlordsPlayer attacker,
+            WarlordsEntity player,
+            WarlordsEntity attacker,
             String ability,
             float min,
             float max,
@@ -47,11 +47,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
         this.isDamageInstance = isDamageInstance;
     }
 
-    public WarlordsPlayer getAttacker() {
+    public WarlordsEntity getAttacker() {
         return attacker;
     }
 
-    public void setAttacker(WarlordsPlayer attacker) {
+    public void setAttacker(WarlordsEntity attacker) {
         this.attacker = attacker;
     }
 

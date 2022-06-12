@@ -85,7 +85,7 @@ public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
     public static final PartyManager partyManager = new PartyManager();
-    private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
+    private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
     private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
     private static final HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
     public static String VERSION = "";
@@ -110,7 +110,7 @@ public class Warlords extends JavaPlugin {
         return instance;
     }
 
-//    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+//    public static HashMap<UUID, WarlordsEntity> getPlayers() {
 //        return players;
 //    }
 
@@ -122,11 +122,11 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newSharedChain(name);
     }
 
-    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+    public static HashMap<UUID, WarlordsEntity> getPlayers() {
         return players;
     }
 
-    public static void addPlayer(@Nonnull WarlordsPlayer warlordsPlayer) {
+    public static void addPlayer(@Nonnull WarlordsEntity warlordsPlayer) {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);
         for (GameAddon addon : warlordsPlayer.getGame().getAddons()) {
             addon.warlordsPlayerCreated(warlordsPlayer.getGame(), warlordsPlayer);
@@ -134,11 +134,11 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
-    public static WarlordsPlayer getPlayer(@Nullable Entity entity) {
+    public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsPlayer).findAny();
+            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsEntity).findAny();
             if (metadata.isPresent()) {
-                return (WarlordsPlayer) metadata.get().value();
+                return (WarlordsEntity) metadata.get().value();
             }
         }
         return null;
@@ -146,7 +146,7 @@ public class Warlords extends JavaPlugin {
 
     @Nullable
     public static WarlordsPlayer getPlayer(@Nullable OfflinePlayer player) {
-        return player == null ? null : getPlayer(player.getUniqueId());
+        return player == null ? null : (WarlordsPlayer)getPlayer(player.getUniqueId());
     }
 
     @Nullable
@@ -155,8 +155,8 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
-    public static WarlordsPlayer getPlayer(@Nonnull UUID player) {
-        return players.get(player);
+    public static WarlordsEntity getPlayer(@Nonnull UUID uuid) {
+        return players.get(uuid);
     }
 
     public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
@@ -168,13 +168,9 @@ public class Warlords extends JavaPlugin {
     }
 
     public static void removePlayer(@Nonnull UUID player) {
-        WarlordsPlayer wp = players.remove(player);
+        WarlordsEntity wp = players.remove(player);
         if (wp != null) {
-            if (!(wp.getEntity() instanceof Player)) {
-                wp.getEntity().remove();
-            }
-            FlagHolder.dropFlagForPlayer(wp);
-            wp.getCooldownManager().clearAllCooldowns();
+            wp.onRemove();
         }
         Location loc = spawnPoints.remove(player);
         Player p = Bukkit.getPlayer(player);
@@ -519,7 +515,7 @@ public class Warlords extends JavaPlugin {
 
                 // Every 1 tick - 0.05 seconds.
                 {
-                    for (WarlordsPlayer wp : players.values()) {
+                    for (WarlordsEntity wp : players.values()) {
                         Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
                         if (player != null) {
                             //ACTION BAR
@@ -535,7 +531,7 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
 
-                        wp.updateJimmyHealth();
+                        wp.updateHealth();
                         // Updating all player speed.
                         wp.getSpeed().updateSpeed();
 
@@ -845,7 +841,7 @@ public class Warlords extends JavaPlugin {
                                     Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
 
-                                for (WarlordsPlayer nearPlayer : PlayerFilter
+                                for (WarlordsEntity nearPlayer : PlayerFilter
                                         .entitiesAround(wp, 6, 6, 6)
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
@@ -872,7 +868,7 @@ public class Warlords extends JavaPlugin {
 
                     // Loops every 10 ticks - .5 second.
                     if (counter % 10 == 0) {
-                        for (WarlordsPlayer wps : players.values()) {
+                        for (WarlordsEntity wps : players.values()) {
                             // Soulbinding Weapon - decrementing time left on the ability.
                             new CooldownFilter<>(wps, PersistentCooldown.class)
                                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
@@ -891,7 +887,7 @@ public class Warlords extends JavaPlugin {
                         // Removes leftover horses if there are any.
                         RemoveEntities.removeHorsesInGame();
 
-                        for (WarlordsPlayer wps : players.values()) {
+                        for (WarlordsEntity wps : players.values()) {
                             // Checks whether the game is paused.
                             if (wps.getGame().isFrozen()) {
                                 continue;
@@ -933,7 +929,7 @@ public class Warlords extends JavaPlugin {
 
                                 if (heal != 0) {
                                     wps.setHealth(wps.getHealth() + heal);
-                                    wps.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + " §7Healed §a" + heal + " §7health.");
+                                    wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + heal + " §7health.");
                                 }
                             }
 
@@ -954,7 +950,7 @@ public class Warlords extends JavaPlugin {
 
                     // Loops every 50 ticks - 2.5 seconds.
                     if (counter % 50 == 0) {
-                        for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        for (WarlordsEntity warlordsPlayer : players.values()) {
 
                             if (warlordsPlayer.getGame().isFrozen()) {
                                 continue;

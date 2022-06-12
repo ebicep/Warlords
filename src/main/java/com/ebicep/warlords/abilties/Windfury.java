@@ -5,7 +5,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.SkillBoosts;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -48,7 +48,7 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
@@ -80,8 +80,8 @@ public class Windfury extends AbstractAbility {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().isEmpty()) {
-                    WarlordsPlayer victim = event.getPlayer();
-                    WarlordsPlayer attacker = event.getAttacker();
+                    WarlordsEntity victim = event.getPlayer();
+                    WarlordsEntity attacker = event.getAttacker();
                     float min = event.getMin();
                     float max = event.getMax();
 

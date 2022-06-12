@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -47,9 +47,9 @@ public class ChainHeal extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player p) {
+    protected int getHitCounterAndActivate(WarlordsEntity wp, Player p) {
         int hitCounter = 0;
-        for (WarlordsPlayer chainTarget : PlayerFilter
+        for (WarlordsEntity chainTarget : PlayerFilter
                 .entitiesAround(p, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
@@ -79,7 +79,7 @@ public class ChainHeal extends AbstractChainBase {
                 chain(p.getLocation(), chainTarget.getLocation());
                 hitCounter++;
 
-                for (WarlordsPlayer bounceTarget : PlayerFilter
+                for (WarlordsEntity bounceTarget : PlayerFilter
                         .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
                         .aliveTeammatesOf(wp)
                         .excluding(wp, chainTarget)
@@ -108,7 +108,7 @@ public class ChainHeal extends AbstractChainBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
+    protected void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter) {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
 
         if ((hitCounter + 1) * 2.5f > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {

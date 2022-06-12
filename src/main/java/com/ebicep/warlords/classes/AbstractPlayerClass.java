@@ -6,7 +6,7 @@ import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -74,7 +74,7 @@ public abstract class AbstractPlayerClass {
         return textComponentList;
     }
 
-    public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
+    public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
         if (wp.getGameState() != wp.getGame().getState()) {
             return;
@@ -132,7 +132,7 @@ public abstract class AbstractPlayerClass {
 
     }
 
-    private void onRightClickAbility(AbstractAbility ability, WarlordsPlayer wp, Player player) {
+    private void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
                 ability.runSecondAbilities();

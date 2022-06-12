@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -86,7 +86,7 @@ public enum GameAddon {
             "Reduces energy costs and cooldowns by 75%"
     ) {
         @Override
-        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setEnergyModifier(player.getEnergyModifier() * 0.25);
             player.setCooldownModifier(player.getCooldownModifier() * 0.25);
         }
@@ -97,7 +97,7 @@ public enum GameAddon {
             "Triples all players' health."
     ) {
         @Override
-        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setMaxHealth(player.getMaxHealth() * 3);
             player.setHealth(player.getHealth() * 3);
         }
@@ -108,7 +108,7 @@ public enum GameAddon {
             "Prevents all players from hitting critical hits."
     ) {
         @Override
-        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setCanCrit(false);
         }
     },
@@ -189,7 +189,7 @@ public enum GameAddon {
     public void stateHasChanged(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
     }
 
-    public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+    public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
     }
 
     public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {

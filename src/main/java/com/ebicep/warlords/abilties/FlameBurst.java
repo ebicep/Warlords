@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -75,8 +75,8 @@ public class FlameBurst extends AbstractProjectileBase {
     }
 
     @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit) {
-        WarlordsPlayer shooter = projectile.getShooter();
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
@@ -87,7 +87,7 @@ public class FlameBurst extends AbstractProjectileBase {
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1, 3, currentLocation, 500);
 
         int playersHit = 0;
-        for (WarlordsPlayer nearEntity : PlayerFilter
+        for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)
         ) {

@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -208,7 +208,7 @@ public class PowerupOption implements Option {
     public enum PowerupType {
         SPEED(10, Material.WOOL, (short) 4) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(SpeedPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Speed",
@@ -234,7 +234,7 @@ public class PowerupOption implements Option {
 
         HEALING(5, Material.WOOL, (short) 13) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(HealingPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Healing",
@@ -258,7 +258,7 @@ public class PowerupOption implements Option {
 
         ENERGY(30, Material.WOOL, (short) 1) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(EnergyPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Energy",
@@ -282,7 +282,7 @@ public class PowerupOption implements Option {
 
         DAMAGE(30, Material.WOOL, (short) 14) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
                 warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
                         "Damage",
@@ -313,7 +313,7 @@ public class PowerupOption implements Option {
 
         COOLDOWN(30, Material.WOOL, (short) 9) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(CooldownPowerup.class);
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Cooldown",
@@ -341,7 +341,7 @@ public class PowerupOption implements Option {
 
         SELF_DAMAGE(0, Material.WOOL, (short) 15) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.addDamageInstance(warlordsPlayer, "Self Damage Powerup", 5000, 5000, -1, 100, true);
             }
 
@@ -354,7 +354,7 @@ public class PowerupOption implements Option {
 
         SELF_HEAL(0, Material.WOOL, (short) 15) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
+            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.addHealingInstance(warlordsPlayer, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
             }
 
@@ -389,7 +389,7 @@ public class PowerupOption implements Option {
             return debugData;
         }
 
-        public abstract void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer);
+        public abstract void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer);
 
         public abstract void setNameAndItem(PowerupOption option, ArmorStand armorStand);
 

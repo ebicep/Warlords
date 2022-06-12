@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
@@ -57,7 +57,7 @@ public class VitalityLiquor extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), Sound.GLASS, 2, 0.1f);
         Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.7f);
@@ -76,7 +76,7 @@ public class VitalityLiquor extends AbstractAbility {
         );
 
 
-        for (WarlordsPlayer acuTarget : PlayerFilter
+        for (WarlordsEntity acuTarget : PlayerFilter
                 .entitiesAround(player, acuRange, acuRange, acuRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
@@ -92,7 +92,7 @@ public class VitalityLiquor extends AbstractAbility {
             );
         }
 
-        for (WarlordsPlayer enemyTarget : PlayerFilter
+        for (WarlordsEntity enemyTarget : PlayerFilter
                 .entitiesAround(player, acuRange, acuRange, acuRange)
                 .aliveEnemiesOf(wp)
         ) {
@@ -110,7 +110,7 @@ public class VitalityLiquor extends AbstractAbility {
                         new GameRunnable(wp.getGame()) {
                             @Override
                             public void run() {
-                                for (WarlordsPlayer allyTarget : PlayerFilter
+                                for (WarlordsEntity allyTarget : PlayerFilter
                                         .entitiesAround(enemyTarget, 6, 6, 6)
                                         .aliveTeammatesOf(wp)
                                         .closestFirst(enemyTarget)

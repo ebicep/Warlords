@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.cooldowns.cooldowns;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.TriConsumer;
@@ -18,12 +18,12 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
     protected Predicate<T> objectCheck;
     protected boolean hidden = false;
 
-    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck) {
+    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft);
         this.objectCheck = objectCheck;
     }
 
-    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
+    public PersistentCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, Predicate<T> objectCheck, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, triConsumers);
         this.objectCheck = objectCheck;
     }

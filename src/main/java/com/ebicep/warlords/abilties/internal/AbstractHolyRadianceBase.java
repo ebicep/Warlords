@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -24,10 +24,10 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         this.radius = radius;
     }
 
-    public abstract boolean chain(WarlordsPlayer wp, Player player);
+    public abstract boolean chain(WarlordsEntity wp, Player player);
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
         wp.subtractEnergy(energyCost);
 
@@ -35,7 +35,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
             playersMarked++;
         }
 
-        for (WarlordsPlayer radianceTarget : PlayerFilter
+        for (WarlordsEntity radianceTarget : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
@@ -63,14 +63,14 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
     public class FlyingArmorStand extends BukkitRunnable {
 
-        private final WarlordsPlayer target;
-        private final WarlordsPlayer owner;
+        private final WarlordsEntity target;
+        private final WarlordsEntity owner;
         private final double speed;
         private final ArmorStand armorStand;
         private final float minHeal;
         private final float maxHeal;
 
-        public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed, float minHeal, float maxHeal) {
+        public FlyingArmorStand(Location location, WarlordsEntity target, WarlordsEntity owner, double speed, float minHeal, float maxHeal) {
             this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
             armorStand.setGravity(false);
             armorStand.setVisible(false);

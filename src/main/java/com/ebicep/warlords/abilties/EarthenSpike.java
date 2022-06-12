@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -65,9 +65,9 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Location location = player.getLocation();
-        for (WarlordsPlayer spikeTarget : PlayerFilter
+        for (WarlordsEntity spikeTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
@@ -93,8 +93,8 @@ public class EarthenSpike extends AbstractAbility {
                         earthenSpikeBlock.addDuration();
 
                         List<CustomFallingBlock> customFallingBlocks = earthenSpikeBlock.getFallingBlocks();
-                        WarlordsPlayer target = earthenSpikeBlock.getTarget();
-                        WarlordsPlayer user = earthenSpikeBlock.getUser();
+                        WarlordsEntity target = earthenSpikeBlock.getTarget();
+                        WarlordsEntity user = earthenSpikeBlock.getUser();
 
                         if (earthenSpikeBlock.getDuration() % 5 == 1) {
                             Utils.playGlobalSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
@@ -146,7 +146,7 @@ public class EarthenSpike extends AbstractAbility {
                         } else {
                             //impact
                             Location targetLocation = target.getLocation();
-                            for (WarlordsPlayer spikeTarget : PlayerFilter
+                            for (WarlordsEntity spikeTarget : PlayerFilter
                                     .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                     .aliveEnemiesOf(wp)
                             ) {
@@ -249,12 +249,12 @@ public class EarthenSpike extends AbstractAbility {
     public class EarthenSpikeBlock {
 
         private List<CustomFallingBlock> fallingBlocks = new ArrayList<>();
-        private final WarlordsPlayer target;
-        private final WarlordsPlayer user;
+        private final WarlordsEntity target;
+        private final WarlordsEntity user;
         private int duration;
         private int removed;
 
-        public EarthenSpikeBlock(CustomFallingBlock block, WarlordsPlayer target, WarlordsPlayer user) {
+        public EarthenSpikeBlock(CustomFallingBlock block, WarlordsEntity target, WarlordsEntity user) {
             fallingBlocks.add(block);
             this.target = target;
             this.user = user;
@@ -262,11 +262,11 @@ public class EarthenSpike extends AbstractAbility {
             this.removed = 0;
         }
 
-        public WarlordsPlayer getTarget() {
+        public WarlordsEntity getTarget() {
             return target;
         }
 
-        public WarlordsPlayer getUser() {
+        public WarlordsEntity getUser() {
             return user;
         }
 

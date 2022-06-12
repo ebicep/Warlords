@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
@@ -61,7 +61,7 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
 
@@ -83,7 +83,7 @@ public class LastStand extends AbstractAbility {
             }
         });
 
-        for (WarlordsPlayer standTarget : PlayerFilter
+        for (WarlordsEntity standTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
@@ -137,15 +137,13 @@ public class LastStand extends AbstractAbility {
                 }
             });
 
-            wp.sendMessage(
-                    WarlordsPlayer.GIVE_ARROW_GREEN +
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                             ChatColor.GRAY + " Your Last Stand is now protecting " +
                             ChatColor.YELLOW + standTarget.getName() +
                             ChatColor.GRAY + "!"
             );
 
-            standTarget.sendMessage(
-                    WarlordsPlayer.RECEIVE_ARROW_GREEN +
+            standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
                             ChatColor.GRAY + " " + wp.getName() + "'s " +
                             ChatColor.YELLOW + "Last Stand" +
                             ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"

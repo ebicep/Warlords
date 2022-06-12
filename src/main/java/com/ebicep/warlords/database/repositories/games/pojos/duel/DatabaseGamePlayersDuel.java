@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.duel;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class DatabaseGamePlayersDuel {
         public DatabaseGamePlayerDuel() {
         }
 
-        public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer) {
+        public DatabaseGamePlayerDuel(WarlordsEntity warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
             //TODO abstract warlordsplayer per gamemode

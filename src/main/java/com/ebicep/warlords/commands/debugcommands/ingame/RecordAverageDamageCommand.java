@@ -2,7 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +12,7 @@ public class RecordAverageDamageCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
 
         if (!sender.hasPermission("warlords.game.recordaverage")) {
             sender.sendMessage("§cYou do not have permission to do that.");

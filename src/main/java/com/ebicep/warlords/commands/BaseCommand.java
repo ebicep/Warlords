@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,16 +51,16 @@ public class BaseCommand {
     }
 
     @Nullable
-    public static WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender) {
+    public static WarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender) {
         return requireWarlordsPlayer(sender, null);
     }
     @Nullable
-    public static WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender, @Nullable String name) {
+    public static WarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender, @Nullable String name) {
         Player p = requirePlayer(sender, name);
         if (p == null) {
             return null;
         }
-        WarlordsPlayer player = Warlords.getPlayer(p);
+        WarlordsEntity player = Warlords.getPlayer(p);
         if (player == null) {
             sender.sendMessage(ChatColor.RED + "You are not in an active game! Please wait until the game has started to use this command.");
         }
@@ -68,12 +68,12 @@ public class BaseCommand {
     }
 
     @Nullable
-    public static WarlordsPlayer requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender) {
+    public static WarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender) {
         return requireWarlordsPlayerInPrivateGame(sender, null);
     }
     @Nullable
-    public static WarlordsPlayer requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender, @Nullable String name) {
-        WarlordsPlayer player = requireWarlordsPlayer(sender, name);
+    public static WarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender, @Nullable String name) {
+        WarlordsEntity player = requireWarlordsPlayer(sender, name);
         if(player == null) {
             return null;
         }

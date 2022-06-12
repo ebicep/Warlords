@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option.marker;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -47,12 +47,12 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     }
 
     @Override
-    public default int getCompassTargetPriority(WarlordsPlayer player) {
+    public default int getCompassTargetPriority(WarlordsEntity player) {
         return player.getTeam() == getTeam() ? 20 : 0;
     }
     
     @Override
-    default String getToolbarName(WarlordsPlayer player) {
+    default String getToolbarName(WarlordsEntity player) {
         FlagLocation flag = getFlag();
         Team team = getTeam();
         Team playerTeam = player.getTeam();
@@ -91,7 +91,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return newLocations;
     }
 
-    static boolean dropFlagForPlayer(WarlordsPlayer player) {
+    static boolean dropFlagForPlayer(WarlordsEntity player) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
             if (holder.update(i -> i.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player)
                     ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag())
@@ -102,7 +102,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return false;
     }
 
-    static boolean isPlayerHolderFlag(WarlordsPlayer player) {
+    static boolean isPlayerHolderFlag(WarlordsEntity player) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagLocation flag = holder.getFlag();
             if (flag instanceof PlayerFlagLocation && ((PlayerFlagLocation) flag).getPlayer().equals(player)) {
@@ -112,7 +112,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return false;
     }
 
-    static boolean playerTryingToPick(WarlordsPlayer player) {
+    static boolean playerTryingToPick(WarlordsEntity player) {
         for (FlagHolder flagHolder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagInfo flagInfo = flagHolder.getInfo();
             if (flagInfo.getFlag() instanceof SpawnFlagLocation && flagInfo.getTeam() != player.getTeam()) {

@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,20 +27,20 @@ public class GraveOption implements Option, Listener {
 
     public static final Material DEFAULT_GRAVE_MATERIAL = Material.SAPLING;
     public static final byte DEFAULT_GRAVE_MATERIAL_DATA = (byte) 5;
-    public static final Function<WarlordsPlayer, String> DEFAULT_GRAVE_TEXT = wp
+    public static final Function<WarlordsEntity, String> DEFAULT_GRAVE_TEXT = wp
             -> wp.getTeam().teamColor() + wp.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD";
 
     private final List<Grave> graves = new LinkedList<>();
     private Material material;
     private byte data;
-    private Function<WarlordsPlayer, String> graveName;
+    private Function<WarlordsEntity, String> graveName;
     private boolean activated = true;
 
     public GraveOption() {
         this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_MATERIAL_DATA, DEFAULT_GRAVE_TEXT);
     }
 
-    public GraveOption(Function<WarlordsPlayer, String> graveName) {
+    public GraveOption(Function<WarlordsEntity, String> graveName) {
         this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_MATERIAL_DATA, graveName);
     }
 
@@ -52,7 +52,7 @@ public class GraveOption implements Option, Listener {
         this(material, data, DEFAULT_GRAVE_TEXT);
     }
 
-    public GraveOption(Material material, byte data, Function<WarlordsPlayer, String> graveName) {
+    public GraveOption(Material material, byte data, Function<WarlordsEntity, String> graveName) {
         this.material = Objects.requireNonNull(material, "material");
         this.data = data;
         this.graveName = Objects.requireNonNull(graveName, "graveName");
@@ -74,11 +74,11 @@ public class GraveOption implements Option, Listener {
         this.data = data;
     }
 
-    public Function<WarlordsPlayer, String> getGraveName() {
+    public Function<WarlordsEntity, String> getGraveName() {
         return graveName;
     }
 
-    public void setGraveName(Function<WarlordsPlayer, String> graveName) {
+    public void setGraveName(Function<WarlordsEntity, String> graveName) {
         this.graveName = Objects.requireNonNull(graveName, "graveName");
     }
 
@@ -120,7 +120,7 @@ public class GraveOption implements Option, Listener {
         }
     }
 
-    public void addGrave(WarlordsPlayer player) {
+    public void addGrave(WarlordsEntity player) {
         if (!this.activated) {
             return;
         }
@@ -185,13 +185,13 @@ public class GraveOption implements Option, Listener {
 
     private static class Grave {
 
-        private final WarlordsPlayer owner;
+        private final WarlordsEntity owner;
         private final ArmorStand armorStand;
         private final Block block;
         private final Material material;
         private final byte data;
 
-        public Grave(WarlordsPlayer owner, ArmorStand armorStand, Block location, Material material, byte data) {
+        public Grave(WarlordsEntity owner, ArmorStand armorStand, Block location, Material material, byte data) {
             this.owner = owner;
             this.armorStand = armorStand;
             this.block = location;
@@ -199,7 +199,7 @@ public class GraveOption implements Option, Listener {
             this.data = data;
         }
 
-        public WarlordsPlayer getOwner() {
+        public WarlordsEntity getOwner() {
             return owner;
         }
 

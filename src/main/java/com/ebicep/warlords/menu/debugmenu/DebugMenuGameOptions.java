@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
@@ -253,7 +253,7 @@ public class DebugMenuGameOptions {
                     });
 
             //PLAYER
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
                 menu.setItem(1, 2,
                         new ItemBuilder(Warlords.getHead(player))

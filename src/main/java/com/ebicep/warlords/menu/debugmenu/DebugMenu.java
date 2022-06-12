@@ -3,7 +3,7 @@ package com.ebicep.warlords.menu.debugmenu;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,7 +32,7 @@ public class DebugMenu {
                 (m, e) -> DebugMenuGameOptions.openGameMenu(player)
         );
 
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
         if (warlordsPlayer != null) {
             Game game = warlordsPlayer.getGame();
             items.put(new ItemBuilder(Material.BOOK)

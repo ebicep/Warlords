@@ -4,7 +4,7 @@ import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -44,13 +44,13 @@ public class GroundSlam extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
-        List<WarlordsPlayer> currentPlayersHit = new ArrayList<>();
+        List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
         Location location = player.getLocation();
 
         for (int i = 0; i < 6; i++) {
@@ -71,7 +71,7 @@ public class GroundSlam extends AbstractAbility {
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
                         // Damage
-                        for (WarlordsPlayer slamTarget : PlayerFilter
+                        for (WarlordsEntity slamTarget : PlayerFilter
                                 .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)

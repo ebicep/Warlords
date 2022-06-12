@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.flags;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -8,10 +8,10 @@ import org.bukkit.Location;
 
 public class PlayerFlagLocation implements FlagLocation {
 	
-    private final WarlordsPlayer player;
+    private final WarlordsEntity player;
     private int pickUpTicks;
 
-    public PlayerFlagLocation(WarlordsPlayer player, int pickUpTicks) {
+    public PlayerFlagLocation(WarlordsEntity player, int pickUpTicks) {
         this.player = player;
         this.pickUpTicks = pickUpTicks;
     }
@@ -21,7 +21,7 @@ public class PlayerFlagLocation implements FlagLocation {
         return player.getLocation();
     }
 
-    public WarlordsPlayer getPlayer() {
+    public WarlordsEntity getPlayer() {
         return player;
     }
 
@@ -62,7 +62,7 @@ public class PlayerFlagLocation implements FlagLocation {
         );
     }
 
-    public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsPlayer player) {
+    public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
         return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getDamageTimer())
                 : new PlayerFlagLocation(player, 0);
     }

@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -51,7 +51,7 @@ public class FallenSouls extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
 
@@ -121,8 +121,8 @@ public class FallenSouls extends AbstractAbility {
         return true;
     }
 
-    public void damageNearByPlayers(List<Entity> near, WarlordsPlayer wp, FallenSoul fallenSoul) {
-        for (WarlordsPlayer warlordsPlayer : PlayerFilter.entities(near)
+    public void damageNearByPlayers(List<Entity> near, WarlordsEntity wp, FallenSoul fallenSoul) {
+        for (WarlordsEntity warlordsPlayer : PlayerFilter.entities(near)
                 .filter(p -> !fallenSoul.getPlayersHit().contains(p))
                 .aliveEnemiesOf(wp)
         ) {
@@ -150,7 +150,7 @@ public class FallenSouls extends AbstractAbility {
                         fallenSoul.getShooter().updateBlueItem();
                         fallenSoul.getShooter().updateOrangeItem();
 
-                        for (WarlordsPlayer warlordsPlayer1 : PlayerFilter
+                        for (WarlordsEntity warlordsPlayer1 : PlayerFilter
                                 .entitiesAround(wp.getLocation(), 8, 8, 8)
                                 .aliveTeammatesOfExcludingSelf(wp)
                                 .closestFirst(wp.getLocation())
@@ -175,7 +175,7 @@ public class FallenSouls extends AbstractAbility {
 
     public static class FallenSoul {
 
-        private WarlordsPlayer shooter;
+        private WarlordsEntity shooter;
         private ArmorStand fallenSoulLeft;
         private ArmorStand fallenSoulMiddle;
         private ArmorStand fallenSoulRight;
@@ -189,9 +189,9 @@ public class FallenSouls extends AbstractAbility {
         private boolean middleRemoved;
         private boolean rightRemoved;
         private FallenSouls fallenSouls;
-        private List<WarlordsPlayer> playersHit;
+        private List<WarlordsEntity> playersHit;
 
-        public FallenSoul(WarlordsPlayer shooter, ArmorStand fallenSoulLeft, ArmorStand fallenSoulMiddle, ArmorStand fallenSoulRight, Location locationLeft, Location locationMiddle, Location locationRight, Vector directionLeft, Vector directionMiddle, Vector directionRight, FallenSouls fallenSouls) {
+        public FallenSoul(WarlordsEntity shooter, ArmorStand fallenSoulLeft, ArmorStand fallenSoulMiddle, ArmorStand fallenSoulRight, Location locationLeft, Location locationMiddle, Location locationRight, Vector directionLeft, Vector directionMiddle, Vector directionRight, FallenSouls fallenSouls) {
             this.shooter = shooter;
             this.fallenSoulLeft = fallenSoulLeft;
             fallenSoulLeft.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
@@ -225,11 +225,11 @@ public class FallenSouls extends AbstractAbility {
             playersHit.add(shooter);
         }
 
-        public WarlordsPlayer getShooter() {
+        public WarlordsEntity getShooter() {
             return shooter;
         }
 
-        public void setShooter(WarlordsPlayer shooter) {
+        public void setShooter(WarlordsEntity shooter) {
             this.shooter = shooter;
         }
 
@@ -337,11 +337,11 @@ public class FallenSouls extends AbstractAbility {
             this.rightRemoved = rightRemoved;
         }
 
-        public List<WarlordsPlayer> getPlayersHit() {
+        public List<WarlordsEntity> getPlayersHit() {
             return playersHit;
         }
 
-        public void setPlayersHit(List<WarlordsPlayer> playersHit) {
+        public void setPlayersHit(List<WarlordsEntity> playersHit) {
             this.playersHit = playersHit;
         }
 

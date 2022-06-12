@@ -2,11 +2,13 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.player.*;
+import static com.ebicep.warlords.player.Specializations.PYROMANCER;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,12 +21,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class SpawnTestDummyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsEntity player = BaseCommand.requireWarlordsPlayer(sender);
 
         if (!sender.hasPermission("warlords.game.spawndummy")) {
             sender.sendMessage("§cYou do not have permission to do that.");
@@ -43,11 +46,28 @@ public class SpawnTestDummyCommand implements CommandExecutor {
             Optional<Team> teamOpt = TeamMarker.getTeams(player.getGame()).stream().filter(e -> e.name().equalsIgnoreCase(teamString)).findAny();
             if (teamOpt.isPresent()) {
                 Team team = teamOpt.get();
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
-                WarlordsPlayer testDummy = new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings());
-                testDummy.setHealth(testDummy.getMaxHealth() / 2);
-                Warlords.addPlayer(testDummy);
-                player.getGame().addPlayer(offlinePlayer, false);
+                
+                
+                Game game = player.getGame();
+                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
+                        UUID.randomUUID(),
+                        "testdummy",
+                        Weapons.BLUDGEON,
+                        WarlordsNPC.spawnZombie(player.getLocation(), null),
+                        (PlayingState) game.getState(),
+                        team,
+                        Specializations.PYROMANCER
+                ));
+                //SKULL
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
+                SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+                playerSkull.setItemMeta(skullMeta);
+                Warlords.getPlayerHeads().put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
+
+                testDummy.setTakeDamage(true);
+                testDummy.setMaxHealth(1000000);
+                testDummy.setHealth(1000000);
+                testDummy.updateHealth();
                 if (args.length >= 2 && args[1].equalsIgnoreCase("false")) {
                     testDummy.setTakeDamage(false);
                 } else if (args.length >= 2 && args[1].equalsIgnoreCase("true")) {
@@ -55,13 +75,6 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 } else {
                     sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
                 }
-                testDummy.teleport(player.getLocation());
-                //SKULL
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-                SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-                skullMeta.setOwner(offlinePlayer.getName());
-                playerSkull.setItemMeta(skullMeta);
-                Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
             } else {
                 sender.sendMessage("§cUnable to find team named " + teamString + ", valid options: " + TeamMarker.getTeams(player.getGame()));
                 return true;

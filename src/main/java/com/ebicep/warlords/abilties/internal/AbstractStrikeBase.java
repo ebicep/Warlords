@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties.internal;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -21,10 +21,10 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    protected abstract void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer);
+    protected abstract void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         PlayerFilter.entitiesAround(wp, 4.8, 4.8, 4.8)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
@@ -77,7 +77,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         return true;
     }
 
-    private void randomHitEffect(WarlordsPlayer player, int particleAmount, int red, int green, int blue) {
+    private void randomHitEffect(WarlordsEntity player, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
             ParticleEffect.REDSTONE.display(
                     new ParticleEffect.OrdinaryColor(red, green, blue),
@@ -87,7 +87,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         }
     }
 
-    protected boolean standingOnConsecrate(WarlordsPlayer owner, WarlordsPlayer standing) {
+    protected boolean standingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
                 .anyMatch(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius());

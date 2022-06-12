@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -72,15 +72,15 @@ public class TestCommand implements CommandExecutor {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
-        WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
 
-//            warlordsPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW_RED);
-//            warlordsPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW_GREEN);
-//            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN);
-//            warlordsPlayer.sendMessage(WarlordsPlayer.GIVE_ARROW_RED);
+//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED);
+//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
 
 
         }
@@ -153,7 +153,7 @@ public class TestCommand implements CommandExecutor {
 //        System.out.println("Apothecary Losses: " + apothecaryLosses);
 //        System.out.println(((double) apothecaryWins / (apothecaryWins + apothecaryLosses) * 10) / 10 + "%");
 
-//        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
+//        for (Map.Entry<UUID, WarlordsEntity> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
 //            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
 //        }
 //

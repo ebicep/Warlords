@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +19,7 @@ public class DebugModeCommand implements CommandExecutor {
             return true;
         }
 
-        WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer == null) {
             sender.sendMessage("§cYou are not in a game");
         }

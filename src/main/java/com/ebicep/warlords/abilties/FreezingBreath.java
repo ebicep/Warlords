@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -43,7 +43,7 @@ public class FreezingBreath extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
 
@@ -87,7 +87,7 @@ public class FreezingBreath extends AbstractAbility {
 
         Vector viewDirection = playerLoc.getDirection();
 
-        for (WarlordsPlayer breathTarget : PlayerFilter
+        for (WarlordsEntity breathTarget : PlayerFilter
                 .entitiesAroundRectangle(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
         ) {

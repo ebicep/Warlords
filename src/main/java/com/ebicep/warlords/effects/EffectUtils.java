@@ -1,7 +1,7 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -301,7 +301,7 @@ public class EffectUtils {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
 
-    public static void playChainAnimation(WarlordsPlayer player1, WarlordsPlayer player2, ItemStack item, int ticksLived) {
+    public static void playChainAnimation(WarlordsEntity player1, WarlordsEntity player2, ItemStack item, int ticksLived) {
         playChainAnimation(player1.getLocation(), player2.getLocation(), item, ticksLived);
     }
 

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.event.HandlerList;
@@ -8,9 +8,9 @@ import org.bukkit.event.HandlerList;
 public class WarlordsDeathEvent extends AbstractWarlordsPlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     @Nullable
-    private final WarlordsPlayer killer;
+    private final WarlordsEntity killer;
 
-    public WarlordsDeathEvent(@Nonnull WarlordsPlayer player, @Nullable WarlordsPlayer killer) {
+    public WarlordsDeathEvent(@Nonnull WarlordsEntity player, @Nullable WarlordsEntity killer) {
         super(player);
         this.killer = killer;
         if (killer != null && player.getGame() != killer.getGame()) {
@@ -19,7 +19,7 @@ public class WarlordsDeathEvent extends AbstractWarlordsPlayerEvent {
     }
 
     @Nullable
-    public WarlordsPlayer getKiller() {
+    public WarlordsEntity getKiller() {
         return killer;
     }
 

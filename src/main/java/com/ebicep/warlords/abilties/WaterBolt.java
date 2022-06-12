@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -87,8 +87,8 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsPlayer hit) {
-        WarlordsPlayer shooter = projectile.getShooter();
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
@@ -134,7 +134,7 @@ public class WaterBolt extends AbstractProjectileBase {
         }
 
         int playersHit = 0;
-        for (WarlordsPlayer nearEntity : PlayerFilter
+        for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .excluding(hit)
                 .isAlive()

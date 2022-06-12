@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -51,7 +51,7 @@ public class Vindicate extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
@@ -68,21 +68,19 @@ public class Vindicate extends AbstractAbility {
 
         Vindicate tempVindicate = new Vindicate();
 
-        for (WarlordsPlayer vindicateTarget : PlayerFilter
+        for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
                 .closestFirst(wp)
         ) {
             if (vindicateTarget != wp) {
-                wp.sendMessage(
-                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                 ChatColor.GRAY + " Your Vindicate is now protecting " +
                                 ChatColor.YELLOW + vindicateTarget.getName() +
                                 ChatColor.GRAY + "!"
                 );
 
-                vindicateTarget.sendMessage(
-                        WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
                                 ChatColor.GRAY + wp.getName() + "'s" +
                                 ChatColor.YELLOW + " Vindicate" +
                                 ChatColor.GRAY + " is now protecting you from de-buffs for " +

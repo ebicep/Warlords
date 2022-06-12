@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.bukkit.Location;
@@ -13,7 +13,7 @@ public class WarlordsRespawnEvent extends AbstractWarlordsPlayerEvent implements
     protected Location respawnLocation;
     protected boolean cancelled = false;
 
-    public WarlordsRespawnEvent(@Nonnull WarlordsPlayer player, @Nonnull Location respawnLocation) {
+    public WarlordsRespawnEvent(@Nonnull WarlordsEntity player, @Nonnull Location respawnLocation) {
         super(player);
         this.respawnLocation = Objects.requireNonNull(respawnLocation, "respawnLocation");
     }

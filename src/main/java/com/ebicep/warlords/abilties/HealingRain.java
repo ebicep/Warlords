@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -57,7 +57,7 @@ public class HealingRain extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
@@ -90,7 +90,7 @@ public class HealingRain extends AbstractAbility {
                 duration * 20,
                 (cooldown, ticksLeft, counter) -> {
                     if (counter % 10 == 0) {
-                        for (WarlordsPlayer teammateInRain : PlayerFilter
+                        for (WarlordsEntity teammateInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
                         ) {
@@ -120,7 +120,7 @@ public class HealingRain extends AbstractAbility {
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
                         wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsPlayer.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
                         location.setX(wp.getLocation().getX());
                         location.setY(wp.getLocation().getY());
                         location.setZ(wp.getLocation().getZ());

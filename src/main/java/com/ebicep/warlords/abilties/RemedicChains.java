@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -59,8 +59,8 @@ public class RemedicChains extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        List<WarlordsPlayer> teammatesNear = PlayerFilter
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        List<WarlordsEntity> teammatesNear = PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
@@ -101,7 +101,7 @@ public class RemedicChains extends AbstractAbility {
                 }
             });
 
-            for (WarlordsPlayer chainTarget : teammatesNear) {
+            for (WarlordsEntity chainTarget : teammatesNear) {
                 playersLinked++;
 
                 AtomicInteger timeLinked = new AtomicInteger();
@@ -180,15 +180,13 @@ public class RemedicChains extends AbstractAbility {
                     }
                 });
 
-                wp.sendMessage(
-                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                 ChatColor.GRAY + " Your Remedic Chains is now protecting " +
                                 ChatColor.YELLOW + chainTarget.getName() +
                                 ChatColor.GRAY + "!"
                 );
 
-                chainTarget.sendMessage(
-                        WarlordsPlayer.RECEIVE_ARROW_GREEN + " " +
+                chainTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
                                 ChatColor.GRAY + wp.getName() + "'s" +
                                 ChatColor.YELLOW + " Remedic Chains" +
                                 ChatColor.GRAY + " is now increasing your §cdamage §7for " +

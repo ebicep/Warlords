@@ -99,7 +99,7 @@ public class InterchangeModeOption implements Option {
     //the player BEFORE becomes the player AFTER
     //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
-        List<WarlordsPlayer> teamPlayers = game.warlordsPlayers()
+        List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) return;
@@ -112,7 +112,7 @@ public class InterchangeModeOption implements Option {
         HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets = new HashMap<>();
         HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets = new HashMap<>();
         HashMap<UUID, Boolean> playerOnHorse = new HashMap<>();
-        for (WarlordsPlayer teamPlayer : teamPlayers) {
+        for (WarlordsEntity teamPlayer : teamPlayers) {
             UUID uuid = teamPlayer.getUuid();
             playerLocations.put(uuid, teamPlayer.getLocation());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
@@ -125,7 +125,7 @@ public class InterchangeModeOption implements Option {
         }
 
         //take beginning player to swap with end
-        WarlordsPlayer secondPlayer = teamPlayers.get(0);
+        WarlordsEntity secondPlayer = teamPlayers.get(0);
         String secondPlayerName = secondPlayer.getName();
         UUID secondPlayerUuid = secondPlayer.getUuid();
         LivingEntity secondPlayerEntity = secondPlayer.getEntity();
@@ -145,7 +145,7 @@ public class InterchangeModeOption implements Option {
         }
 
         //give last player first players old stats
-        WarlordsPlayer firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
+        WarlordsEntity firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
         System.out.println("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
 
         UUID firstPlayerUuid = firstPlayer.getUuid();
@@ -170,9 +170,7 @@ public class InterchangeModeOption implements Option {
         playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
         playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
 
-        if (firstPlayer.getEntity() instanceof Player) {
-            firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
-        }
+        firstPlayer.updateEntity();
         Warlords.getPlayers().put(secondPlayerUuid, firstPlayer);
 
 
@@ -184,7 +182,7 @@ public class InterchangeModeOption implements Option {
     }
 
     //firstplayer gets the stats of the second
-    private void transferPlayerStats(WarlordsPlayer firstPlayer, WarlordsPlayer secondPlayer,
+    private void transferPlayerStats(WarlordsEntity firstPlayer, WarlordsEntity secondPlayer,
                                      HashMap<UUID, Location> playerLocations,
                                      HashMap<UUID, Specializations> playerClasses,
                                      HashMap<UUID, HashMap<Specializations, SkillBoosts>> playerBoosts,
@@ -217,9 +215,7 @@ public class InterchangeModeOption implements Option {
         playerSettings.setSpecsSkillBoosts(playerBoosts.get(firstPlayerUuid));
         playerSettings.setHelmets(playerHelmets.get(firstPlayerUuid));
         playerSettings.setArmorSets(playerArmorSets.get(firstPlayerUuid));
-        if (firstPlayer.getEntity() instanceof Player) {
-            firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
-        }
+        firstPlayer.updateEntity();
         Warlords.getPlayers().put(secondPlayer.getUuid(), firstPlayer);
 
 

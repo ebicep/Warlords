@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -48,7 +48,7 @@ public class ShadowStep extends AbstractAbility {
 
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Location playerLoc = wp.getLocation();
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
@@ -73,8 +73,8 @@ public class ShadowStep extends AbstractAbility {
             wp.removeHorse();
         }
 
-        List<WarlordsPlayer> playersHit = new ArrayList<>();
-        for (WarlordsPlayer assaultTarget : PlayerFilter
+        List<WarlordsEntity> playersHit = new ArrayList<>();
+        for (WarlordsEntity assaultTarget : PlayerFilter
                 .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
@@ -107,7 +107,7 @@ public class ShadowStep extends AbstractAbility {
                 if (!wasOnGround && hitGround) {
                     wasOnGround = true;
 
-                    for (WarlordsPlayer landingTarget : PlayerFilter
+                    for (WarlordsEntity landingTarget : PlayerFilter
                             .entitiesAround(player, 5, 5, 5)
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)

@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -52,8 +52,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
     }
 
     @Override
-    public boolean chain(WarlordsPlayer wp, Player player) {
-        for (WarlordsPlayer markTarget : PlayerFilter
+    public boolean chain(WarlordsEntity wp, Player player) {
+        for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
@@ -74,8 +74,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                         critMultiplier
                 );
 
-                markTarget.getCooldownManager().addRegularCooldown(
-                        name,
+                markTarget.getCooldownManager().addRegularCooldown(name,
                         "PROT MARK",
                         HolyRadianceProtector.class,
                         tempMark,
@@ -86,7 +85,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
                             ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, markTarget.getLocation(), 500);
                             Utils.playGlobalSound(markTarget.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
-                            for (WarlordsPlayer waveTarget : PlayerFilter
+                            for (WarlordsEntity waveTarget : PlayerFilter
                                     .entitiesAround(markTarget, 6, 6, 6)
                                     .aliveTeammatesOf(markTarget)
                             ) {
@@ -122,15 +121,13 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                         }
                 );
 
-                wp.sendMessage(
-                        WarlordsPlayer.GIVE_ARROW_GREEN +
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                 ChatColor.GRAY + " You have marked " +
                                 ChatColor.GREEN + markTarget.getName() +
                                 ChatColor.GRAY + "!"
                 );
 
-                markTarget.sendMessage(
-                        WarlordsPlayer.RECEIVE_ARROW_GREEN +
+                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
                                 ChatColor.GRAY + " You have been granted " +
                                 ChatColor.GREEN + "Protector's Mark" +
                                 ChatColor.GRAY + " by " + wp.getName() + "!"

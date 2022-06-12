@@ -4,7 +4,7 @@ import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -49,7 +49,7 @@ public class SeismicWave extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
@@ -62,10 +62,10 @@ public class SeismicWave extends AbstractAbility {
         }
 
 
-        List<WarlordsPlayer> playersHit = new ArrayList<>();
+        List<WarlordsEntity> playersHit = new ArrayList<>();
         for (List<Location> fallingBlockLocation : fallingBlockLocations) {
             for (Location loc : fallingBlockLocation) {
-                for (WarlordsPlayer waveTarget : PlayerFilter
+                for (WarlordsEntity waveTarget : PlayerFilter
                         .entitiesAroundRectangle(loc, .6, 4, .6)
                         .aliveEnemiesOf(wp)
                         .excluding(playersHit)

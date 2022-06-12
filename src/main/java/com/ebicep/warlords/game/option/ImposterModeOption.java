@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.poll.polls.GamePoll;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 public class ImposterModeOption implements Option {
 
     private final int numberOfImpostersPerTeam = 1;
-    private final HashMap<Team, List<WarlordsPlayer>> imposters = new HashMap<>();
-    private final HashMap<Team, List<WarlordsPlayer>> voters = new HashMap<>();
+    private final HashMap<Team, List<WarlordsEntity>> imposters = new HashMap<>();
+    private final HashMap<Team, List<WarlordsEntity>> voters = new HashMap<>();
     private Game game;
     private GamePoll poll;
 
@@ -40,7 +40,7 @@ public class ImposterModeOption implements Option {
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(30, "imposter") {
                     @Override
-                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
+                    public List<String> computeLines(@Nullable WarlordsEntity warlordsPlayer) {
                         if (warlordsPlayer == null) {
                             return Collections.emptyList();
                         }
@@ -108,7 +108,7 @@ public class ImposterModeOption implements Option {
 
     private void assignImposters(Game game) {
         for (Team team : TeamMarker.getTeams(game)) {
-            List<WarlordsPlayer> teamPlayers = game.warlordsPlayers().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
+            List<WarlordsEntity> teamPlayers = game.warlordsPlayers().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
             if (teamPlayers.size() == 0) {
                 continue;
             }
@@ -118,7 +118,7 @@ public class ImposterModeOption implements Option {
         }
         System.out.println(" --- Assigned Imposters --- ");
         for (Team team : TeamMarker.getTeams(game)) {
-            System.out.println(team.name + " - " + imposters.get(team).stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")));
+            System.out.println(team.name + " - " + imposters.get(team).stream().map(WarlordsEntity::getName).collect(Collectors.joining(", ")));
         }
     }
 
@@ -136,7 +136,7 @@ public class ImposterModeOption implements Option {
                         .collect(Collectors.toList()))
                 .setRunnableAfterPollEnded(p -> {
                     int mostVotes = Collections.max(p.getOptionsWithVotes().entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
-                    List<WarlordsPlayer> votedOut = p.getOptionsWithVotes().entrySet().stream()
+                    List<WarlordsEntity> votedOut = p.getOptionsWithVotes().entrySet().stream()
                             .filter(stringIntegerEntry -> stringIntegerEntry.getValue() == mostVotes)
                             .map(Map.Entry::getKey)
                             .map(s -> game.warlordsPlayers()
@@ -231,11 +231,11 @@ public class ImposterModeOption implements Option {
             //other team votes wrong imposter
             //or other team votes the right imposter then the imposter wins
             boolean isAnImposterOnOtherTeam = false;
-            for (Map.Entry<Team, List<WarlordsPlayer>> teamListEntry : imposters.entrySet().stream()
+            for (Map.Entry<Team, List<WarlordsEntity>> teamListEntry : imposters.entrySet().stream()
                     .filter(teamListEntry -> teamListEntry.getKey() != team)
                     .collect(Collectors.toList())
             ) {
-                for (WarlordsPlayer warlordsPlayer : teamListEntry.getValue()) {
+                for (WarlordsEntity warlordsPlayer : teamListEntry.getValue()) {
                     if (warlordsPlayer.getName().equalsIgnoreCase(player.getName())) {
                         isAnImposterOnOtherTeam = true;
                         break;
@@ -259,13 +259,13 @@ public class ImposterModeOption implements Option {
                 message.append(ChatColor.GREEN).append("The ")
                         .append(team.teamColor).append(team.name)
                         .append(ChatColor.GREEN).append(" imposter was ")
-                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
+                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsEntity::getName).collect(Collectors.joining(", ")))
                         .append("\n");
             } else if (warlordsPlayers.size() > 1) {
                 message.append(ChatColor.GREEN).append("The ")
                         .append(team.teamColor).append(team.name)
                         .append(ChatColor.GREEN).append(" imposters were ")
-                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
+                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsEntity::getName).collect(Collectors.joining(", ")))
                         .append("\n");
             }
         });
@@ -285,11 +285,11 @@ public class ImposterModeOption implements Option {
         return numberOfImpostersPerTeam;
     }
 
-    public HashMap<Team, List<WarlordsPlayer>> getImposters() {
+    public HashMap<Team, List<WarlordsEntity>> getImposters() {
         return imposters;
     }
 
-    public HashMap<Team, List<WarlordsPlayer>> getVoters() {
+    public HashMap<Team, List<WarlordsEntity>> getVoters() {
         return voters;
     }
 
