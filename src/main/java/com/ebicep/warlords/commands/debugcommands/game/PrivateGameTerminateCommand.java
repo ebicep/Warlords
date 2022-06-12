@@ -48,9 +48,16 @@ public class PrivateGameTerminateCommand extends GameTargetCommand implements Ta
                     }
                 } else {
                     int gamePlayers = 0;
+                    // Remove dummies in case of Practice map
+                    Warlords.removePlayer(UUID.fromString("8b41f2a4-4a0e-3012-b77b-c2dede582103"));
+                    Warlords.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
+                    game.removePlayer(UUID.fromString("8b41f2a4-4a0e-3012-b77b-c2dede582103"));
+                    game.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
+
                     for (UUID uuid : game.getPlayers().keySet()) {
                         gamePlayers++;
                     }
+
                     if (gamePlayers > 1) {
                         sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " You are not the only player in the game, unable to terminate game.");
                     } else {
