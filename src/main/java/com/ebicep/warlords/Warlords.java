@@ -535,6 +535,7 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
 
+                        wp.updateJimmyHealth();
                         // Updating all player speed.
                         wp.getSpeed().updateSpeed();
 
