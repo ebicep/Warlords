@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -30,6 +31,11 @@ public class DummySpawnOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
+                if (getGame().getState() instanceof EndState) {
+                    System.out.print(ChatColor.RED + "[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
+                    return;
+                }
+
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(team == Team.RED ? "TestDummy1" : "TestDummy2");
                 WarlordsPlayer testDummy = new WarlordsPlayer(
                         offlinePlayer,
@@ -49,7 +55,6 @@ public class DummySpawnOption implements Option {
 
                 testDummy.teleport(loc);
                 testDummy.setTakeDamage(true);
-                testDummy.setRegenTimer(999999);
                 testDummy.setMaxHealth(1000000);
                 testDummy.setHealth(1000000);
                 testDummy.updateJimmyHealth();

@@ -2147,7 +2147,6 @@ public final class WarlordsPlayer {
 
     public void runEverySecond() {
         this.spec.runEverySecond();
-
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
     }
