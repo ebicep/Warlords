@@ -15,10 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class SimpleWave implements Wave {
 
-    private double totalWeight;
-    private final List<Pair<Double, Function<Location, PartialMonster>>> entries = new ArrayList<>();
-    private final int count;
-    private final String message;
     public static final Function<Location, PartialMonster> ZOMBIE = loc -> PartialMonster.fromEntity(
             Zombie.class,
             "Zombie",
@@ -79,9 +75,16 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
+    
+    private int delay;
+    private double totalWeight;
+    private final List<Pair<Double, Function<Location, PartialMonster>>> entries = new ArrayList<>();
+    private final int count;
+    private final String message;
 
-    public SimpleWave(int count, @Nullable String message) {
+    public SimpleWave(int count, int delay, @Nullable String message) {
         this.count = count;
+        this.delay = delay;
         this.message = message;
     }
 
@@ -110,6 +113,11 @@ public class SimpleWave implements Wave {
     @Override
     public int getMonsterCount() {
         return count;
+    }
+
+    @Override
+    public int getDelay() {
+        return delay;
     }
 
     @Override

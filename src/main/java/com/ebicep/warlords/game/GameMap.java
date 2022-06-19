@@ -1118,23 +1118,23 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
             
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(10, null)
+                    .add(1, new SimpleWave(1, 2 * SECOND, null)
                             .add(SimpleWave.ZOMBIE::apply)
                     )
-                    .add(5, new SimpleWave(10, null)
+                    .add(5, new SimpleWave(1, 2 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE::apply)
                             .add(0.5, SimpleWave.SKELETON::apply)
                     )
-                    .add(10, new SimpleWave(10, null)
+                    .add(10, new SimpleWave(1, 2 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE::apply)
                             .add(1, SimpleWave.SKELETON::apply)
                     )
-                    .add(15, new SimpleWave(10, null)
+                    .add(15, new SimpleWave(1, 2 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE::apply)
                             .add(1, SimpleWave.SKELETON::apply)
                             .add(1, SimpleWave.PIGZOMBIE::apply)
                     )
-                    .add(20, new SimpleWave(10, null)
+                    .add(20, new SimpleWave(1, 2 * SECOND, null)
                             .add(0.1, SimpleWave.ZOMBIE::apply)
                             .add(1, SimpleWave.SKELETON::apply)
                             .add(2, SimpleWave.PIGZOMBIE::apply)
@@ -1150,7 +1150,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / (waveCounter + 1) * 60));
+                            return (int) (super.getMonsterCount() + (waveCounter / 2.0 / (waveCounter / 2.0 + 1.0) * 100));
                         }
                         
                     })

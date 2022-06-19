@@ -26,4 +26,9 @@ public class DelegatingWave implements Wave {
         return w.getMessage();
     }
 
+    @Override
+    public int getDelay() {
+        return w.getDelay();
+    }
+
 }

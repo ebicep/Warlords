@@ -99,10 +99,22 @@ public class WaveDefenseOption implements Option {
                 }
             }
             
-        }.runTaskTimer(1, 1);
+        }.runTaskTimer(currentWave.getDelay(), 1);
     }
 
     public void newWave() {
+        if(currentWave != null) {
+        String message;
+            if (currentWave.getMessage() != null) {
+                message = "Wave done! (" + currentWave.getMessage() + ")";
+            } else {
+                message = "Wave done!";
+            }
+
+            for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+                sendMessage(entry.getKey(), false, message);
+            }
+        }
         waveCounter++;
         currentWave = waves.getWave(waveCounter, random);
         spawnCount = currentWave.getMonsterCount();
@@ -115,6 +127,7 @@ public class WaveDefenseOption implements Option {
             
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             sendMessage(entry.getKey(), false, message);
+            sendMessage(entry.getKey(), false, "Starting in " + currentWave.getDelay() / 20 + " seconds");
             sendMessage(entry.getKey(), false, "Spawning " + spawnCount + " enemies...");
         }
         startSpawnTask();
