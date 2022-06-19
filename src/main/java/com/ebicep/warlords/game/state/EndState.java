@@ -254,4 +254,9 @@ public class EndState implements State, TimerDebugAble {
         });
     }
 
+    @Override
+    public int getTicksElapsed() {
+        return 0;
+    }
+
 }

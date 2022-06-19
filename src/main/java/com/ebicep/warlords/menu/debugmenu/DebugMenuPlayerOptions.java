@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
 import com.ebicep.warlords.player.*;
@@ -128,7 +129,7 @@ public class DebugMenuPlayerOptions {
                     game.setPlayerTeam(player, otherTeam);
                     target.setTeam(otherTeam);
 
-                    target.getGameState().updatePlayerName(target);
+                    target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                     Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                     if (randomLobbyLocation != null) {
@@ -618,7 +619,8 @@ public class DebugMenuPlayerOptions {
                         (m, e) -> {
                             Warlords.getPlayerSettings(target.getUuid()).setSkillBoostForSelectedSpec(skillBoost);
                             target.setSpec(selectedSpec.create.get(), skillBoost);
-                            target.getGameState().updatePlayerName(target);
+
+                            target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedSpec.name);
                             openSpecMenu(player, target);
                             System.out.println("[DEBUG] " + player.getName() + " changed " + target.getColoredName() + "'s spec to " + selectedSpec.name);

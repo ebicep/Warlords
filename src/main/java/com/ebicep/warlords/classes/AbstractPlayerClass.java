@@ -76,7 +76,7 @@ public abstract class AbstractPlayerClass {
 
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
         // Makes it so abilities cannot be used when the game is over
-        if (wp.getGameState() != wp.getGame().getState()) {
+        if (!wp.isActive()) {
             return;
         }
 

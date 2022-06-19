@@ -30,4 +30,9 @@ public class SyncTimerState implements State {
     public void end() {
 
     }
+
+    @Override
+    public int getTicksElapsed() {
+        return 0;
+    }
 }

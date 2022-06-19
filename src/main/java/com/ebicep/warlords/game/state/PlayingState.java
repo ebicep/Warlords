@@ -76,7 +76,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (team != null) {
                 Warlords.addPlayer(new WarlordsPlayer(
                         player,
-                        this,
+                        this.getGame(),
                         team
                 ));
             }
@@ -161,6 +161,7 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void end() {
 
+        this.getGame().forEachOfflineWarlordsPlayer(e -> e.setActive(false));
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Force End = " + (winEvent == null));
@@ -346,6 +347,7 @@ public class PlayingState implements State, TimerDebugAble {
         updateBasedOnGameState(sb, wp);
     }
 
+    @Override
     public int getTicksElapsed() {
         return this.timer;
     }

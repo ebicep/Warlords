@@ -4,8 +4,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.PlayingState;
+import static com.ebicep.warlords.player.Weapons.FELFLAME_BLADE;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import java.util.List;
@@ -30,27 +32,27 @@ public final class WarlordsPlayer extends WarlordsEntity {
     
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
-            @Nonnull PlayingState gameState,
+            @Nonnull Game game,
             @Nonnull Team team
     ) {
-        this(Warlords.getRejoinPoint(player.getUniqueId()), player, gameState, team);
+        this(Warlords.getRejoinPoint(player.getUniqueId()), player, game, team);
     }
     public WarlordsPlayer(
             @Nonnull Location location,
             @Nonnull OfflinePlayer player,
-            @Nonnull PlayingState gameState,
+            @Nonnull Game game,
             @Nonnull Team team
     ) {
-        this(location, player, gameState, team, Warlords.getPlayerSettings(player.getUniqueId()));
+        this(location, player, game, team, Warlords.getPlayerSettings(player.getUniqueId()));
     }
     private WarlordsPlayer(
             @Nonnull Location location,
             @Nonnull OfflinePlayer player,
-            @Nonnull PlayingState gameState,
+            @Nonnull Game game,
             @Nonnull Team team,
             @Nonnull PlayerSettings settings
     ) {
-        super(player.getUniqueId(), player.getName(), Weapons.getSelected(player, settings.getSelectedSpec()), spawnSimpleJimmy(location, null), gameState, team, settings.getSelectedSpec());
+        super(player.getUniqueId(), player.getName(), settings.getWeaponSkin(), spawnSimpleJimmy(location, null), game, team, settings.getSelectedSpec());
         updatePlayerReference(player.getPlayer());
     }
     

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 
 import javax.annotation.Nonnull;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.ebicep.warlords.player.ArmorManager.Helmets.*;
+import static com.ebicep.warlords.player.Weapons.FELFLAME_BLADE;
 
 public class PlayerSettings {
 
@@ -119,6 +121,10 @@ public class PlayerSettings {
 
     public HashMap<Specializations, Weapons> getWeaponSkins() {
         return weaponSkins;
+    }
+    
+    public Weapons getWeaponSkin() {
+        return this.getWeaponSkins().getOrDefault(this.getSelectedSpec(), FELFLAME_BLADE);
     }
 
     public void setWeaponSkins(HashMap<Specializations, Weapons> weaponSkins) {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -22,8 +23,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class WarlordsNPC extends WarlordsEntity {
 
-    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, PlayingState gameState, Team team, Specializations specClass) {
-        super(uuid, name, weapon, entity, gameState, team, specClass);
+    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass) {
+        super(uuid, name, weapon, entity, game, team, specClass);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
     }
     @Override

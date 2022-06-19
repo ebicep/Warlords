@@ -2,8 +2,6 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,12 +11,10 @@ import java.util.stream.Collectors;
 
 public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.Entry> {
 
-    private final PlayingState playingState;
     private final List<Entry> entries = new ArrayList<>();
     private Entry current = new Entry();
 
-    public PlayerStatisticsSecond(PlayingState playingState) {
-        this.playingState = playingState;
+    public PlayerStatisticsSecond() {
         entries.add(current);
     }
 
@@ -53,16 +49,18 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
     }
 
     public List<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecond(int seconds) {
-        int timeLimit = playingState.getTicksElapsed() - (seconds * 20);
-        return getAllEventsAsSelf().stream()
-                .filter(event -> timeLimit <= event.getInGameTick())
+        return entries
+                .subList(Math.max(0, seconds * 20 - 20), Math.min(entries.size(), seconds * 20))
+                .stream()
+                .flatMap(entry -> entry.getEventsAsSelf().stream())
                 .collect(Collectors.toList());
     }
 
     public List<WarlordsDamageHealingFinalEvent> getEventsAsAttackerFromLastSecond(int seconds) {
-        int timeLimit = playingState.getTicksElapsed() - (seconds * 20);
-        return getAllEventsAsAttacker().stream()
-                .filter(event -> timeLimit <= event.getInGameTick())
+        return entries
+                .subList(Math.max(0, seconds * 20 - 20), Math.min(entries.size(), seconds * 20))
+                .stream()
+                .flatMap(entry -> entry.getEventsAsAttacker().stream())
                 .collect(Collectors.toList());
     }
 

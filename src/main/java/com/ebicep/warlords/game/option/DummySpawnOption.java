@@ -48,7 +48,7 @@ public class DummySpawnOption implements Option {
                         name,
                         Weapons.ABBADON,
                         WarlordsNPC.spawnZombie(loc, null),
-                        (PlayingState) game.getState(),
+                        game,
                         team,
                         Specializations.PYROMANCER
                 ));
