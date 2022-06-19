@@ -3,23 +3,22 @@ package com.ebicep.warlords.game.option.wavedefense;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
-import static org.bukkit.entity.EntityType.BLAZE;
 import org.bukkit.inventory.ItemStack;
 
 public class SimpleWave implements Wave {
 
-    double totalWeight;
-    List<Pair<Double, Function<Location, PartialMonster>>> entries;
-    final int count;
-    final String message;
+    private double totalWeight;
+    private final List<Pair<Double, Function<Location, PartialMonster>>> entries = new ArrayList<>();
+    private final int count;
+    private final String message;
     public static final Function<Location, PartialMonster> ZOMBIE = loc -> PartialMonster.fromEntity(
             Zombie.class,
             "Zombie",
