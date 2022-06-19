@@ -51,8 +51,8 @@ public class SpectateCommand implements CommandExecutor {
     public static void openSpectateMenu(Player player) {
         Menu menu = new Menu("Current Games", 9 * 3);
 
-        int column = 0;
-        int row = 0;
+        int column = 1;
+        int row = 1;
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
             if (game != null && game.acceptsSpectators()) {
@@ -92,8 +92,8 @@ public class SpectateCommand implements CommandExecutor {
                         }
                 );
                 column++;
-                if(column > 8) {
-                    column = 0;
+                if (column == 7) {
+                    column = 1;
                     row++;
                 }
             }
