@@ -75,7 +75,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
 
         this.isDamageInstance = isDamageInstance;
 
-        this.inGameTick = player.getGameState().getTicksElapsed();
+        this.inGameTick = player.getGame().getState().getTicksElapsed();
     }
 
     public List<CooldownRecord> getPlayerCooldowns() {

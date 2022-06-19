@@ -648,4 +648,9 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
 
     }
+
+    @Override
+    public int getTicksElapsed() {
+        return 0;
+    }
 }

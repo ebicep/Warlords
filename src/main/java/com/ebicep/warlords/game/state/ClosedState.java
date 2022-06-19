@@ -26,4 +26,9 @@ public class ClosedState implements State {
     public void end() {
     }
 
+    @Override
+    public int getTicksElapsed() {
+        return 0;
+    }
+
 }

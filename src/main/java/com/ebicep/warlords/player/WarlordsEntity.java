@@ -71,8 +71,6 @@ public abstract class WarlordsEntity {
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
     public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
 
-    @Deprecated
-    private final PlayingState gameState;
     protected final Game game;
     protected boolean spawnGrave = true;
     private final List<Float> recordDamage = new ArrayList<>();
@@ -122,11 +120,12 @@ public abstract class WarlordsEntity {
     private FlagInfo carriedFlag = null;
     @Nullable
     private CompassTargetMarker compassTarget;
+    private boolean active = true;
 
     /**
      * @param uuid
      * @param name
-     * @param gameState what gamestate should the WarlordsPlayer be assigned to.
+     * @param game what game should the WarlordsPlayer be assigned to.
      * @param team      optional team parameter to assign the WarlordsPlayer to a team.
      * @param weapon
      * @param specClass
@@ -137,16 +136,15 @@ public abstract class WarlordsEntity {
             @Nonnull String name,
             @Nonnull Weapons weapon,
             @Nonnull LivingEntity entity,
-            @Nonnull PlayingState gameState,
+            @Nonnull Game game,
             @Nonnull Team team,
             @Nonnull Specializations specClass
     ) {
         this.name = name;
         this.uuid = uuid;
-        this.gameState = gameState;
-        this.game = gameState.getGame();
+        this.game = game;
         this.minuteStats = new PlayerStatisticsMinute();
-        this.secondStats = new PlayerStatisticsSecond(gameState);
+        this.secondStats = new PlayerStatisticsSecond();
         this.team = team;
         this.specClass = specClass;
         this.spec = specClass.create.get();
@@ -164,7 +162,7 @@ public abstract class WarlordsEntity {
         this.entity = entity;
         this.weapon = weapon;
         this.deathLocation = this.entity.getLocation();
-        this.compassTarget = gameState.getGame()
+        this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)
                 .stream().filter(c -> c.isEnabled())
                 .sorted(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)).reversed())
@@ -235,7 +233,7 @@ public abstract class WarlordsEntity {
         WarlordsDamageHealingFinalEvent finalEvent = null;
 
         // Spawn Protection / Undying Army / Game State
-        if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
+        if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
         }
 
@@ -554,7 +552,7 @@ public abstract class WarlordsEntity {
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
 
-                    gameState.getGame().forEachOnlinePlayer((p, t) -> {
+                    game.forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
@@ -635,7 +633,7 @@ public abstract class WarlordsEntity {
         WarlordsDamageHealingFinalEvent finalEvent = null;
 
         // Spawn Protection / Undying Army / Game State
-        if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
+        if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
         }
 
@@ -1324,6 +1322,14 @@ public abstract class WarlordsEntity {
         this.uuid = uuid;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public AbstractPlayerClass getSpec() {
         return spec;
     }
@@ -1335,7 +1341,7 @@ public abstract class WarlordsEntity {
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
         this.weapon = Weapons.getSelected(player, this.specClass);
-        this.maxHealth = (this.spec.getMaxHealth() * (gameState.getGame().getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
+        this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
@@ -1822,10 +1828,6 @@ public abstract class WarlordsEntity {
             location1.setZ(location.getZ());
             this.entity.teleport(location);
         }
-    }
-
-    public PlayingState getGameState() {
-        return this.gameState;
     }
 
     /**

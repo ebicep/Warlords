@@ -5,6 +5,7 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.ImposterModeOption;
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -50,7 +51,7 @@ public class ImposterCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (warlordsPlayer.getGameState().getTicksElapsed() < 60 * 20 * 5) {
+                if (warlordsPlayer.getGame().getState(PlayingState.class).map(e -> e.getTicksElapsed()).orElse(0) < 60 * 20 * 5) {
                     sender.sendMessage(ChatColor.RED + "You cannot request to vote before 5 minutes have past!");
                     return true;
                 }
