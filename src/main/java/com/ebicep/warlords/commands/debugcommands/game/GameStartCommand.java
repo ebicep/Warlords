@@ -206,12 +206,15 @@ public class GameStartCommand implements TabExecutor {
                 .setRequestedGameAddons(addon);
     }
 
-    public static void startGame(Player sender, String[] args) {
+    public static void startGame(Player sender, String[] args, boolean excludeStarter) {
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(sender.getUniqueId());
 
-        List<Player> people = party
+        List<Player> people = new ArrayList<>(party
                 .map(Party::getAllPartyPeoplePlayerOnline)
-                .orElseGet(() -> Collections.singletonList(sender));
+                .orElseGet(() -> Collections.singletonList(sender)));
+        if (excludeStarter) {
+            people.removeIf(player -> player.getUniqueId().equals(sender.getUniqueId()));
+        }
         if (party.isPresent()) {
             if (!party.get().getPartyLeader().getUuid().equals(sender.getUniqueId())) {
                 sender.sendMessage(ChatColor.RED + "You are not the party leader");

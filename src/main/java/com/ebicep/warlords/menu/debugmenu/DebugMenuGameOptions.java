@@ -118,6 +118,10 @@ public class DebugMenuGameOptions {
             for (int i = 0; i < GameAddon.values().length; i++) {
                 GameAddon gameAddon = GameAddon.values()[i];
 
+                if (!player.isOp() && gameAddon == GameAddon.TOURNAMENT_MODE) {
+                    continue;
+                }
+
                 boolean isASelectedAddon = addons.contains(gameAddon);
                 ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
                         .name(ChatColor.GREEN + gameAddon.getName())
@@ -165,7 +169,7 @@ public class DebugMenuGameOptions {
                                 stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                             });
                             System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-                            GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "));
+                            GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "), false);
                         });
             }
             menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapGameModesMenu(player, selectedGameMap));
@@ -175,12 +179,20 @@ public class DebugMenuGameOptions {
                 if (addons.isEmpty()) {
                     stringAddons.append("addon:NULL");
                 } else {
+                    //safe guard
+                    if (!player.isOp()) {
+                        addons.remove(GameAddon.TOURNAMENT_MODE);
+                    }
                     addons.forEach(gameAddon -> {
                         stringAddons.append("addon:").append(gameAddon.name()).append(" ");
                     });
                 }
                 System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-                GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "));
+                GameStartCommand.startGame(
+                        player,
+                        ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "),
+                        player.isOp() && addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick()
+                );
                 //Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
             });
             menu.openForPlayer(player);

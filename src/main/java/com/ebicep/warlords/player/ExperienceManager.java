@@ -163,30 +163,34 @@ public class ExperienceManager {
 
         try {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
-            if (isCompGame) {
-                switch (databasePlayer.getCompStats().getPlays()) {
-                    case 0:
-                        expGain.put("First Game of the Day", 500L);
-                        break;
-                    case 1:
-                        expGain.put("Second Game of the Day", 250L);
-                        break;
-                    case 2:
-                        expGain.put("Third Game of the Day", 100L);
-                        break;
+            if (databasePlayer != null) {
+                if (isCompGame) {
+                    switch (databasePlayer.getCompStats().getPlays()) {
+                        case 0:
+                            expGain.put("First Game of the Day", 500L);
+                            break;
+                        case 1:
+                            expGain.put("Second Game of the Day", 250L);
+                            break;
+                        case 2:
+                            expGain.put("Third Game of the Day", 100L);
+                            break;
+                    }
+                } else {
+                    switch (databasePlayer.getPubStats().getPlays()) {
+                        case 0:
+                            expGain.put("First Game of the Day", 50L);
+                            break;
+                        case 1:
+                            expGain.put("Second Game of the Day", 25L);
+                            break;
+                        case 2:
+                            expGain.put("Third Game of the Day", 10L);
+                            break;
+                    }
                 }
             } else {
-                switch (databasePlayer.getPubStats().getPlays()) {
-                    case 0:
-                        expGain.put("First Game of the Day", 50L);
-                        break;
-                    case 1:
-                        expGain.put("Second Game of the Day", 25L);
-                        break;
-                    case 2:
-                        expGain.put("Third Game of the Day", 10L);
-                        break;
-                }
+                System.out.println("Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -171,14 +171,16 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            try {
-                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview").get());
-                player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
-            } catch (Exception e) {
-                System.out.println("ERROR: WEAPON THINGY - " + player.getName());
-                e.printStackTrace();
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview").get());
+
+            if (player.hasPermission("warlords.game.debug")) {
+                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
+            } else {
+                player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
             }
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            player.getInventory().setItem(5, new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get());
 
             if (!fromGame) {
                 Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
@@ -189,7 +191,7 @@ public class WarlordsEvents implements Listener {
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
                                         // TODO: Fix team item
-                                                // @see Team.java
+                                        // @see Team.java
                                                 new ItemBuilder(Material.WOOL).name("§aTeam Builder")
                                                         .get()
                                         )
@@ -197,14 +199,6 @@ public class WarlordsEvents implements Listener {
                     }
                 });
             }
-
-            if (player.hasPermission("warlords.game.debug")) {
-                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
-            } else {
-                player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
-            }
-
-            player.getInventory().setItem(5, new ItemBuilder(Material.DIAMOND).name("§aPvE Shop").get());
 
             if (fromGame) {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
@@ -392,6 +386,9 @@ public class WarlordsEvents implements Listener {
                                     }
                                 });
                             }
+                            break;
+                        case EYE_OF_ENDER:
+                            Bukkit.getServer().dispatchCommand(player, "spectate");
                             break;
                     }
                 }
