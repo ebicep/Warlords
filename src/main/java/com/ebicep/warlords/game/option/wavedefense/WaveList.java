@@ -11,7 +11,7 @@ public interface WaveList {
     Wave getWave(int wave, Random random);
 
     default WaveList prependMapper(BiFunction<Wave, Integer, Wave> mapper) {
-        return (wave, random) -> mapper.apply(this.getWave(0, random), wave);
+        return (wave, random) -> mapper.apply(this.getWave(wave, random), wave);
     }
 
     default WaveList prependEntityMapper(BiFunction<WarlordsEntity, Integer, WarlordsEntity> mapper) {
