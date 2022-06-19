@@ -241,7 +241,7 @@ public enum GameMode {
 
             return new ItemBuilder(apc.getWeapon()
                     .getItem(playerSettings.getWeaponSkins()
-                            .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item))
+                            .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
                     .name("§aWeapon Skin Preview")
                     .lore("")
                     .get();

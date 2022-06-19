@@ -11,6 +11,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -426,6 +427,154 @@ public class Utils {
     public static void playGlobalSound(@Nonnull Location location, String soundString, float volume, float pitch) {
         for (Player p : location.getWorld().getPlayers()) {
             p.playSound(location, soundString, volume, pitch);
+        }
+    }
+
+    public static class SimpleEntityEquipment implements EntityEquipment {
+
+        private ItemStack helmet;
+        private ItemStack chestplate;
+        private ItemStack leggings;
+        private ItemStack boots;
+        private ItemStack hand;
+
+        public SimpleEntityEquipment(ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack hand) {
+            this.helmet = helmet;
+            this.chestplate = chestplate;
+            this.leggings = leggings;
+            this.boots = boots;
+            this.hand = hand;
+        }
+
+        public SimpleEntityEquipment(ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
+            this.helmet = helmet;
+            this.chestplate = chestplate;
+            this.leggings = leggings;
+            this.boots = boots;
+        }
+
+        @Override
+        public ItemStack getItemInHand() {
+            return hand;
+        }
+
+        @Override
+        public void setItemInHand(ItemStack stack) {
+            this.hand = stack;
+        }
+
+        @Override
+        public ItemStack getHelmet() {
+            return helmet;
+        }
+
+        @Override
+        public void setHelmet(ItemStack helmet) {
+            this.helmet = helmet;
+        }
+
+        @Override
+        public ItemStack getChestplate() {
+            return chestplate;
+        }
+
+        @Override
+        public void setChestplate(ItemStack chestplate) {
+            this.chestplate = chestplate;
+        }
+
+        @Override
+        public ItemStack getLeggings() {
+            return leggings;
+        }
+
+        @Override
+        public void setLeggings(ItemStack leggings) {
+            this.leggings = leggings;
+        }
+
+        @Override
+        public ItemStack getBoots() {
+            return boots;
+        }
+
+        @Override
+        public void setBoots(ItemStack boots) {
+            this.boots = boots;
+        }
+
+        @Override
+        public ItemStack[] getArmorContents() {
+            return new ItemStack[0];
+        }
+
+        @Override
+        public void setArmorContents(ItemStack[] items) {
+
+        }
+
+        @Override
+        public void clear() {
+            helmet = null;
+            chestplate = null;
+            leggings = null;
+            boots = null;
+            hand = null;
+        }
+
+        @Override
+        public float getItemInHandDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setItemInHandDropChance(float chance) {
+
+        }
+
+        @Override
+        public float getHelmetDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setHelmetDropChance(float chance) {
+
+        }
+
+        @Override
+        public float getChestplateDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setChestplateDropChance(float chance) {
+
+        }
+
+        @Override
+        public float getLeggingsDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setLeggingsDropChance(float chance) {
+
+        }
+
+        @Override
+        public float getBootsDropChance() {
+            return 0;
+        }
+
+        @Override
+        public void setBootsDropChance(float chance) {
+
+        }
+
+        @Override
+        public Entity getHolder() {
+            return null;
         }
     }
 }

@@ -92,8 +92,8 @@ public enum Weapons {
 
     ;
 
-    public final String name;
-    public final ItemStack item;
+    private final String name;
+    private final ItemStack item;
     public final WeaponsRarity rarity;
     public boolean isUnlocked;
 
@@ -135,5 +135,9 @@ public enum Weapons {
             }
         }
         return FELFLAME_BLADE;
+    }
+
+    public ItemStack getItem() {
+        return item;
     }
 }

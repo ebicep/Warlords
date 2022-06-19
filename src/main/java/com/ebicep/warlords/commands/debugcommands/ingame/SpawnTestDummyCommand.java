@@ -7,11 +7,11 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.*;
-import static com.ebicep.warlords.player.Specializations.PYROMANCER;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsNPC;
+import com.ebicep.warlords.player.Weapons;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.SkullType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,7 +53,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                         UUID.randomUUID(),
                         "testdummy",
                         Weapons.BLUDGEON,
-                        WarlordsNPC.spawnZombie(player.getLocation(), null),
+                        WarlordsNPC.spawnZombieNoAI(player.getLocation(), null),
                         (PlayingState) game.getState(),
                         team,
                         Specializations.PYROMANCER

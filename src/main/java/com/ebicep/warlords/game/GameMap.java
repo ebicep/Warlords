@@ -1109,15 +1109,10 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
 
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new AbstractScoreOnEventOption.OnKill(5));
             options.add(new RespawnWaveOption());
             options.add(new GraveOption());
 
+            options.add(new SpawnMobOption(loc.addXYZ(7.5, 22, 0.5)));
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 

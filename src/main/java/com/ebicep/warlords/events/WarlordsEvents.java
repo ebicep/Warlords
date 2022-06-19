@@ -29,7 +29,10 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -170,7 +173,7 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             try {
                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview").get());
+                        .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview").get());
                 player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
             } catch (Exception e) {
                 System.out.println("ERROR: WEAPON THINGY - " + player.getName());
@@ -256,52 +259,57 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-        if ((e.getEntity() instanceof Player || e.getEntity() instanceof Zombie) && e.getDamager() instanceof Player) {
-            Player attacker = (Player) e.getDamager();
-            WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
-            WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
-            if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
+        Entity attacker = e.getDamager();
+        WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
+        WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
+        if (wpAttacker != null && wpVictim != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
+            if ((!(attacker instanceof Player) || ((Player) attacker).getInventory().getHeldItemSlot() == 0) && wpAttacker.getHitCooldown() == 0) {
+                wpAttacker.setHitCooldown(12);
+                wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
 
-                if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
+                if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
+                    Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
+                    new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
+                        .filter(PersistentCooldown::isShown)
+                        .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                        .forEachOrdered(soulbinding -> {
+                            wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
 
-                    wpAttacker.setHitCooldown(12);
-                    wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
-
-                    if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
-
-                        Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
-                        new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
-                            .filter(PersistentCooldown::isShown)
-                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                            .forEachOrdered(soulbinding -> {
-                                wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
-
-                                if (soulbinding.hasBoundPlayer(wpVictim)) {
-                                    soulbinding.getSoulBindedPlayers().stream()
-                                            .filter(p -> p.getBoundPlayer() == wpVictim)
-                                            .forEach(boundPlayer -> {
-                                                boundPlayer.setHitWithSoul(false);
-                                                boundPlayer.setHitWithLink(false);
-                                                boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
-                                            });
-                                } else {
-                                    wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                    wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
-                                    soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
-                                    Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                                }
-                            });
-                    }
-                    wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);
-                    wpVictim.updateHealth();
+                            if (soulbinding.hasBoundPlayer(wpVictim)) {
+                                soulbinding.getSoulBindedPlayers().stream()
+                                        .filter(p -> p.getBoundPlayer() == wpVictim)
+                                        .forEach(boundPlayer -> {
+                                            boundPlayer.setHitWithSoul(false);
+                                            boundPlayer.setHitWithLink(false);
+                                            boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
+                                        });
+                            } else {
+                                wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
+                                wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
+                                soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
+                                Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+                            }
+                        });
                 }
 
-                if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
-                    wpAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
-                }
+                wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);
+                wpVictim.updateHealth();
+            }
+
+            if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
+                wpAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
             }
         }
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent e) {
+        e.setCancelled(true);
+        WarlordsEntity entity = Warlords.getPlayer((Entity) e.getEntity().getShooter());
+        if (entity != null) {
+            entity.getSpec().getWeapon().onActivate(entity, null);
+        }
     }
 
     @EventHandler

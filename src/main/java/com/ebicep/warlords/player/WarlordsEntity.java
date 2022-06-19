@@ -36,25 +36,20 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -79,6 +74,7 @@ public abstract class WarlordsEntity {
     @Deprecated
     private final PlayingState gameState;
     protected final Game game;
+    protected boolean spawnGrave = true;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats;
     private final PlayerStatisticsSecond secondStats;
@@ -1032,7 +1028,6 @@ public abstract class WarlordsEntity {
 
     public abstract void updateHealth();
 
-
     /**
      * Performs consumer action on WarlordsPlayers static (not the temp ones made on onActivate()) spec abilities that matches the given class.
      * Player specs and their abilities are unknown at this point.
@@ -1141,7 +1136,7 @@ public abstract class WarlordsEntity {
 
     public void assignItemLore(Player player) {
         //§
-        ItemStack weapon = new ItemStack(this.weapon.item);
+        ItemStack weapon = new ItemStack(this.weapon.getItem());
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName("§cWarlord's Felflame of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
@@ -1187,8 +1182,8 @@ public abstract class WarlordsEntity {
     public void weaponLeftClick(Player player) {
         player.getInventory().setItem(
                 0,
-                new ItemBuilder(weapon.item)
-                        .name(ChatColor.GOLD + "Warlord's " + weapon.name + " of the " + spec.getClass().getSimpleName())
+                new ItemBuilder(weapon.getItem())
+                        .name(ChatColor.GOLD + "Warlord's " + weapon.getName() + " of the " + spec.getClass().getSimpleName())
                         .lore(
                                 ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
@@ -1218,7 +1213,7 @@ public abstract class WarlordsEntity {
     public void weaponRightClick(Player player) {
         player.getInventory().setItem(
                 0,
-                new ItemBuilder(weapon.item)
+                new ItemBuilder(weapon.getItem())
                         .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
                         .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
@@ -1762,6 +1757,11 @@ public abstract class WarlordsEntity {
         return this.entity.getLocation(copyInto);
     }
 
+    @Nonnull
+    public Location getEyeLocation() {
+        return this.entity.getEyeLocation();
+    }
+
     public boolean isSneaking() {
         return this.entity instanceof Player && ((Player) this.entity).isSneaking();
     }
@@ -2032,26 +2032,6 @@ public abstract class WarlordsEntity {
         this.decrementRespawnTimer();
     }
 
-//    @Override
-//    public int hashCode() {
-//        return this.uuid.hashCode();
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        final WarlordsEntity other = (WarlordsEntity) obj;
-//        return Objects.equals(this.uuid, other.uuid);
-//    }
-
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();
@@ -2059,5 +2039,13 @@ public abstract class WarlordsEntity {
         getEntity().removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
         FlagHolder.dropFlagForPlayer(this);
         getCooldownManager().clearAllCooldowns();
+    }
+
+    public boolean shouldSpawnGrave() {
+        return spawnGrave;
+    }
+
+    public void setSpawnGrave(boolean spawnGrave) {
+        this.spawnGrave = spawnGrave;
     }
 }

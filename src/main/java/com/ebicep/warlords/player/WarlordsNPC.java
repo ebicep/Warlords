@@ -27,7 +27,9 @@ public class WarlordsNPC extends WarlordsEntity {
         super(uuid, name, weapon, entity, gameState, team, specClass);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
     }
+
     @Override
     public void updateHealth() {
         if (isDead()) {
@@ -46,9 +48,9 @@ public class WarlordsNPC extends WarlordsEntity {
     
     @Override
     public void updateEntity() {
-        entity.setCustomName(this.getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + this.getHealth() + "❤"); // TODO add level and class into the name of this jimmy
+        entity.setCustomName(ChatColor.RED.toString() + this.getHealth() + "❤"); // TODO add level and class into the name of this jimmy
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
+        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed / 4);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class WarlordsNPC extends WarlordsEntity {
         return true;
     }
     
-    public static Zombie spawnZombie(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+    public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
         jimmy.setBaby(false);
         jimmy.setCustomNameVisible(true);
@@ -82,4 +84,24 @@ public class WarlordsNPC extends WarlordsEntity {
         
     }
 
+    public static <T extends LivingEntity> T spawnEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
+        T entity = loc.getWorld().spawn(loc, clazz);
+        if (entity instanceof Zombie) {
+            ((Zombie)entity).setBaby(false);
+        }
+
+        entity.setCustomNameVisible(true);
+
+        if (inv != null) {
+            entity.getEquipment().setBoots(inv.getBoots());
+            entity.getEquipment().setLeggings(inv.getLeggings());
+            entity.getEquipment().setChestplate(inv.getChestplate());
+            entity.getEquipment().setHelmet(inv.getHelmet());
+            entity.getEquipment().setItemInHand(inv.getItemInHand());
+        } else {
+            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
+        }
+
+        return entity;
+    }
 }

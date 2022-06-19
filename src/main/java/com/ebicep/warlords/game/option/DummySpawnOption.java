@@ -5,16 +5,21 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.*;
-import static com.ebicep.warlords.player.Specializations.PYROMANCER;
+import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsNPC;
+import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import java.util.UUID;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.SkullType;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
+import java.util.UUID;
 
 public class DummySpawnOption implements Option {
 
@@ -47,7 +52,7 @@ public class DummySpawnOption implements Option {
                         UUID.randomUUID(),
                         name,
                         Weapons.ABBADON,
-                        WarlordsNPC.spawnZombie(loc, null),
+                        WarlordsNPC.spawnZombieNoAI(loc, null),
                         (PlayingState) game.getState(),
                         team,
                         Specializations.PYROMANCER

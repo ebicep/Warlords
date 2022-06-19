@@ -150,7 +150,7 @@ public class WarlordsShopMenu {
 
                         AbstractPlayerClass apc = subClass.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
                                 .lore("")
                                 .get());
 
@@ -212,8 +212,8 @@ public class WarlordsShopMenu {
             apc2.getWeapon().boostSkill(selectedBoost, apc2);
             apc.getWeapon().updateDescription(player);
             apc2.getWeapon().updateDescription(player);
-            menu.setItem(3, 1, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
+            menu.setItem(3, 1, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()), ACTION_DO_NOTHING);
         } else if (apc2.getRed().getClass() == selectedBoost.ability) {
             apc2.getRed().boostSkill(selectedBoost, apc2);
             apc.getRed().updateDescription(player);
@@ -254,8 +254,8 @@ public class WarlordsShopMenu {
 
             if (weapon.isUnlocked) {
 
-                builder = new ItemBuilder(weapon.item)
-                        .name(ChatColor.GREEN + weapon.name)
+                builder = new ItemBuilder(weapon.getItem())
+                        .name(ChatColor.GREEN + weapon.getName())
                         .flags(ItemFlag.HIDE_ENCHANTS);
                 List<String> lore = new ArrayList<>();
 
@@ -277,13 +277,13 @@ public class WarlordsShopMenu {
                     builder.get(),
                     (m, e) -> {
                         if (weapon.isUnlocked) {
-                            player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
+                            player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.getName() + "!");
                             Weapons.setSelected(player, selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
 
@@ -676,7 +676,7 @@ public class WarlordsShopMenu {
         apc.getOrange().updateDescription(player);
 
         menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-        menu.setItem(2, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
+        menu.setItem(2, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()), ACTION_DO_NOTHING);
         menu.setItem(3, apc.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
         menu.setItem(4, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
         menu.setItem(5, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
@@ -748,7 +748,7 @@ public class WarlordsShopMenu {
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
-            ItemStack weapon = new ItemStack(Weapons.FELFLAME_BLADE.item);
+            ItemStack weapon = new ItemStack(Weapons.FELFLAME_BLADE.getItem());
             ItemMeta weaponMeta = weapon.getItemMeta();
             weaponMeta.setDisplayName("§6Warlord's Felflame of the " + apc.getWeapon().getName());
             ArrayList<String> weaponLore = new ArrayList<>();
