@@ -18,7 +18,10 @@ import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.CustomScoreboard;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -288,15 +291,17 @@ public class PlayingState implements State, TimerDebugAble {
 
     /**
      * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
-     * @param warlordsPlayer the player changing
+     * @param we the player changing
      */
-    public void updatePlayerName(@Nonnull WarlordsEntity warlordsPlayer) {
+    public void updatePlayerName(@Nonnull WarlordsEntity we) {
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
-            int level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
-            //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
-            scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
-            scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+            if (Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+                Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
+                int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
+                //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
+                scoreboard.getTeam(we.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
+                scoreboard.getTeam(we.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+            }
         });
     }
 

@@ -2,24 +2,29 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class SpawnMobOption implements Option {
 
     private final Location spawnPoint;
+    private List<Class<? extends Monster>> possibleMobs = Arrays.asList(Zombie.class, Spider.class, Skeleton.class, PigZombie.class);
+    private int waveCounter = 0;
+    private int spawnCount = 1;
 
     public SpawnMobOption(Location spawnPoint) {
         this.spawnPoint = spawnPoint;
@@ -31,21 +36,32 @@ public class SpawnMobOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
-                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
-                        UUID.randomUUID(),
-                        "Test",
-                        Weapons.ABBADON,
-                        WarlordsNPC.spawnEntity(Skeleton.class, spawnPoint, new Utils.SimpleEntityEquipment(
-                                new ItemStack(Material.BARRIER),
-                                new ItemStack(Material.DIAMOND_CHESTPLATE),
-                                new ItemStack(Material.DIAMOND_LEGGINGS),
-                                new ItemStack(Material.DIAMOND_BOOTS),
-                                new ItemStack(Material.BOW))),
-                        (PlayingState) game.getState(),
-                        Team.RED,
-                        Specializations.PYROMANCER
-                ));
+                waveCounter++;
+                spawnCount = (int) (waveCounter * 1.1f);
+                for (int i = 0; i < spawnCount; i++) {
+                    WarlordsEntity entity = game.addNPC(new WarlordsNPC(
+                            UUID.randomUUID(),
+                            "Zombie",
+                            Weapons.ABBADON,
+                            WarlordsNPC.spawnEntity(possibleMobs.get((int) (Math.random() * possibleMobs.size())), spawnPoint, new Utils.SimpleEntityEquipment(
+                                    new ItemStack(Material.CARPET),
+                                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                                    new ItemStack(Material.DIAMOND_BOOTS),
+                                    new ItemStack(Material.PRISMARINE_SHARD))),
+                            game,
+                            Team.RED,
+                            Specializations.PYROMANCER
+                    ));
+
+                    int health = (int) Math.pow(1000, waveCounter / 50.0 + 1);
+                    entity.setMaxHealth(health);
+                    entity.setHealth(health);
+                }
+
+                Bukkit.broadcastMessage("Wave: " + waveCounter);
+                Bukkit.broadcastMessage("Entities spawned: " + spawnCount);
             }
-        }.runTaskTimer(100, 50);
+        }.runTaskTimer(200, 200);
     }
 }

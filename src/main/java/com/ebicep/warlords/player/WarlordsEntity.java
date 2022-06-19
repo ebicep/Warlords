@@ -23,7 +23,6 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
@@ -1377,7 +1376,7 @@ public abstract class WarlordsEntity {
     }
 
     public void showDeathAnimation() {
-        if (this.entity instanceof Zombie) {
+        if (!(this.entity instanceof Player)) {
             this.entity.damage(200);
         } else {
             Player player = (Player) this.entity;
