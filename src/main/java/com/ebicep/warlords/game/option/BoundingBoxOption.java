@@ -42,5 +42,13 @@ public class BoundingBoxOption extends AbstractCuboidOption implements Option {
         }.runTaskTimer(0, GameRunnable.SECOND);
     }
 
+    public Location getCenter() {
+        return new Location(min.getWorld(),
+                (min.getX() + max.getX()) / 2,
+                (min.getY() + max.getY()) / 2,
+                (min.getZ() + max.getZ()) / 2
+        );
+    }
+
     
 }

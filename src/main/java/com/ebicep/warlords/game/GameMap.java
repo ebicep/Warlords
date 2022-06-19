@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.wavedefense.*;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -16,6 +17,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
+import com.ebicep.warlords.util.warlords.Utils;
 
 // MAPS:
 // "Crossfire"
@@ -1112,9 +1114,47 @@ public enum GameMap {
             options.add(new RespawnWaveOption());
             options.add(new GraveOption());
 
-            options.add(new SpawnMobOption(loc.addXYZ(7.5, 22, 0.5)));
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
+            
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(10, null)
+                            .add(SimpleWave.ZOMBIE::apply)
+                    )
+                    .add(5, new SimpleWave(10, null)
+                            .add(1, SimpleWave.ZOMBIE::apply)
+                            .add(0.5, SimpleWave.SKELETON::apply)
+                    )
+                    .add(10, new SimpleWave(10, null)
+                            .add(1, SimpleWave.ZOMBIE::apply)
+                            .add(1, SimpleWave.SKELETON::apply)
+                    )
+                    .add(15, new SimpleWave(10, null)
+                            .add(1, SimpleWave.ZOMBIE::apply)
+                            .add(1, SimpleWave.SKELETON::apply)
+                            .add(1, SimpleWave.PIGZOMBIE::apply)
+                    )
+                    .add(20, new SimpleWave(10, null)
+                            .add(0.1, SimpleWave.ZOMBIE::apply)
+                            .add(1, SimpleWave.SKELETON::apply)
+                            .add(2, SimpleWave.PIGZOMBIE::apply)
+                            .add(1, SimpleWave.SPIDER::apply)
+                            .add(0.1, SimpleWave.BLAZE::apply)
+                    )
+                    .prependEntityMapper((entity, waveCounter) -> {
+                        int health = (int) Math.pow(1000, waveCounter / 50.0 + 1);
+                        entity.setMaxHealth(health);
+                        entity.setHealth(health);
+                        return entity;
+                    })
+                    .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
+                        @Override
+                        public int getMonsterCount() {
+                            return (int) (super.getMonsterCount() + (waveCounter / (waveCounter + 1) * 60));
+                        }
+                        
+                    })
+            ));
 
             return options;
         }
