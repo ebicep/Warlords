@@ -3,15 +3,16 @@ package com.ebicep.warlords.game.option.wavedefense;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
-import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
 
 public class SimpleWave implements Wave {
 
@@ -36,7 +37,7 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_CHESTPLATE),
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
+                    new ItemStack(Material.BOW)
             )
     );
     public static final Function<Location, PartialMonster> PIGZOMBIE = loc -> PartialMonster.fromEntity(

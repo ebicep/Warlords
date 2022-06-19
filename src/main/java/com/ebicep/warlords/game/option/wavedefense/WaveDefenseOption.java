@@ -6,23 +6,23 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsEntity;
-import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import static com.ebicep.warlords.util.warlords.Utils.iterable;
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+
+import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
+import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 
 public class WaveDefenseOption implements Option {
@@ -159,7 +159,7 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave " + waveCounter + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        "Wave " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
         });
