@@ -1150,7 +1150,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 2.0 / (waveCounter / 2.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 20 / (waveCounter / 20 + 1.0) * 100));
                         }
                         
                     })

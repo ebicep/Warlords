@@ -89,7 +89,7 @@ public class SimpleWave implements Wave {
     }
 
     public SimpleWave add(Function<Location, PartialMonster> factory) {
-        return add(entries.isEmpty() ? 0 : totalWeight / entries.size(), factory);
+        return add(entries.isEmpty() ? 1 : totalWeight / entries.size(), factory);
     }
 
     public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory) {
@@ -107,7 +107,7 @@ public class SimpleWave implements Wave {
             }
             index -= entry.getA();
         }
-        return PartialMonster.fromEntity("No monsters in wave!", WarlordsNPC.spawnZombieNoAI(loc, null));
+        return PartialMonster.fromEntity("No monsters", WarlordsNPC.spawnZombieNoAI(loc, null));
     }
 
     @Override

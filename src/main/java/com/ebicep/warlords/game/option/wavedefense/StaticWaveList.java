@@ -7,7 +7,7 @@ import java.util.Random;
 public class StaticWaveList implements WaveList {
 
     private final Map<Integer, Wave> waves = new HashMap<>();
-    private static final Wave EMPTY_WAVE_LIST = new SimpleWave(0, 20, "No wave objects in wave list");
+    private static final Wave EMPTY_WAVE_LIST = new SimpleWave(0, 20, "No wave objects");
     private Wave lastWave = EMPTY_WAVE_LIST;
 
     public StaticWaveList add(int w, Wave wave) {
