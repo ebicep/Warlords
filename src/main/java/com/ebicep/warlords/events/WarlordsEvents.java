@@ -211,7 +211,8 @@ public class WarlordsEvents implements Listener {
             player.getActivePotionEffects().clear();
         }
 
-        WarlordsPlayer p = Warlords.getPlayer(player);
+        WarlordsEntity wp1 = Warlords.getPlayer(player);
+        WarlordsPlayer p = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (p != null) {
             player.teleport(p.getLocation());
             p.updatePlayerReference(player);
@@ -224,7 +225,8 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent e) {
-        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
+        WarlordsEntity wp1 = Warlords.getPlayer(e.getPlayer());
+        WarlordsPlayer wp = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (wp != null) {
             wp.updatePlayerReference(null);
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
