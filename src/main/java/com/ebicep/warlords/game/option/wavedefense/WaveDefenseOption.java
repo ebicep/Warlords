@@ -6,13 +6,18 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsEntity;
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -21,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 
 public class WaveDefenseOption implements Option {
+    private static final int SCOREBOARD_PRIORITY = 5;
     private final Set<WarlordsEntity> entities = new HashSet<>();
     private int waveCounter = 0;
     private int spawnCount = 0;
@@ -31,8 +37,9 @@ public class WaveDefenseOption implements Option {
     @Nonnull
     private Game game;
     private Location lastLocation = new Location(null, 0, 0, 0);
-
-    @Nullable BukkitTask spawner;
+    SimpleScoreboardHandler scoreboard;
+    @Nullable
+    private  BukkitTask spawner;
 
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
@@ -146,6 +153,14 @@ public class WaveDefenseOption implements Option {
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
                 entities.remove(event.getPlayer());
+            }
+        });
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+            @Override
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
+                return Collections.singletonList(
+                        "Wave " + waveCounter + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                );
             }
         });
     }
