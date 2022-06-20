@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.ingame;
 
 import com.ebicep.warlords.Warlords;
+import net.citizensnpcs.npc.ai.speech.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,8 +19,9 @@ public class UnstuckCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (onCooldown) {
             if (player != null) {
-                player.teleport(player.getLocation().add(0, 0.4, 0));
+                player.teleport(player.getLocation().add(0, 1, 0));
                 sender.sendMessage(ChatColor.GREEN + "You were teleported 1 block upwards.");
+                System.out.println(ChatColor.RED + "[DEBUG] " + sender.getName() + " used unstuck command.");
                 resetCooldown();
                 return true;
             } else {
@@ -35,12 +37,11 @@ public class UnstuckCommand implements CommandExecutor {
     private void resetCooldown() {
         onCooldown = false;
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 onCooldown = true;
             }
-        }.runTaskLater(Warlords.getInstance(), 200);
+        }.runTaskLater(Warlords.getInstance(), 100);
     }
 
     public void register(Warlords instance) {
