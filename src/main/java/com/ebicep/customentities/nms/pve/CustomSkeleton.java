@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
 
-    private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 5);
+    private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 20);
 
     public CustomSkeleton(World world) {
         super(world);

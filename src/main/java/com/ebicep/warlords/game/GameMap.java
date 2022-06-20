@@ -1112,6 +1112,8 @@ public enum GameMap {
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 22, 16.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
 
             options.add(new RespawnWaveOption());
             options.add(new GraveOption());
@@ -1120,31 +1122,30 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
             
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(1, 2 * SECOND, null)
+                    .add(1, new SimpleWave(1, 10 * SECOND, null)
                             .add(SimpleWave.ZOMBIE)
                     )
-                    .add(5, new SimpleWave(1, 2 * SECOND, null)
+                    .add(5, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
                             .add(0.5, SimpleWave.SKELETON)
                     )
-                    .add(10, new SimpleWave(1, 2 * SECOND, null)
+                    .add(10, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
-                            .add(1, SimpleWave.SKELETON)
+                            .add(0.7, SimpleWave.SKELETON)
                     )
-                    .add(15, new SimpleWave(1, 2 * SECOND, null)
+                    .add(15, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
                             .add(1, SimpleWave.SKELETON)
                             .add(1, SimpleWave.PIGZOMBIE)
                     )
-                    .add(20, new SimpleWave(1, 2 * SECOND, null)
+                    .add(20, new SimpleWave(1, 10 * SECOND, null)
                             .add(0.1, SimpleWave.ZOMBIE)
                             .add(1, SimpleWave.SKELETON)
                             .add(2, SimpleWave.PIGZOMBIE)
-                            .add(1, SimpleWave.SPIDER)
                             .add(0.1, SimpleWave.BLAZE)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
-                        int health = (int) Math.pow(1000, waveCounter / 50.0 + 1);
+                        int health = (int) Math.pow(1000, waveCounter / 90.0 + 1);
                         entity.setMaxHealth(health);
                         entity.setHealth(health);
                         return entity;
@@ -1152,7 +1153,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 20.0 / (waveCounter / 20.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 40.0 / (waveCounter / 40.0 + 1.0) * 100));
                         }
                         
                     })

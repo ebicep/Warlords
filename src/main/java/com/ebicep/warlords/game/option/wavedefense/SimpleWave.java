@@ -37,7 +37,7 @@ public class SimpleWave implements Wave {
             "Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.CARPET, 1, (short) 3),
                     new ItemStack(Material.DIAMOND_CHESTPLATE),
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),

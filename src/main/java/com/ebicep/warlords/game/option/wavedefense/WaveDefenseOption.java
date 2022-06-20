@@ -9,9 +9,11 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,13 +49,15 @@ public class WaveDefenseOption implements Option {
     }
     
     public void startSpawnTask() {
-        if(spawner != null) {
+        if (spawner != null) {
             spawner.cancel();
             spawner = null;
         }
-        if(spawnCount == 0) {
+
+        if (spawnCount == 0) {
             return;
         }
+
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
             
@@ -110,32 +114,28 @@ public class WaveDefenseOption implements Option {
     }
 
     public void newWave() {
-        if(currentWave != null) {
+        if (currentWave != null) {
         String message;
             if (currentWave.getMessage() != null) {
-                message = "Wave done! (" + currentWave.getMessage() + ")";
+                message = ChatColor.GREEN + "Wave complete! (" + currentWave.getMessage() + ")";
             } else {
-                message = "Wave done!";
+                message = ChatColor.GREEN + "Wave complete!";
             }
 
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
                 sendMessage(entry.getKey(), false, message);
+                entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 1, 2);
             }
         }
         waveCounter++;
         currentWave = waves.getWave(waveCounter, random);
         spawnCount = currentWave.getMonsterCount();
-        String message;
-        if (currentWave.getMessage() != null) {
-            message = "Wave: " + waveCounter + " (" + currentWave.getMessage() + ")";
-        } else {
-            message = "Wave: " + waveCounter;
-        }
             
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-            sendMessage(entry.getKey(), false, message);
-            sendMessage(entry.getKey(), false, "Starting in " + currentWave.getDelay() / 20 + " seconds");
-            sendMessage(entry.getKey(), false, "Spawning " + spawnCount + " enemies...");
+            sendMessage(entry.getKey(), false, ChatColor.YELLOW + "Starting next wave in " + currentWave.getDelay() / 20 + " seconds");
+            sendMessage(entry.getKey(), false, ChatColor.YELLOW + "Spawning " + ChatColor.RED + spawnCount + ChatColor.YELLOW + " enemies...");
+            entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, 0.8f);
+            PacketUtils.sendTitle(entry.getKey(), "§eWave §c" + waveCounter + "§e!", "", 0, 60, 0);
         }
         startSpawnTask();
     }
@@ -149,6 +149,7 @@ public class WaveDefenseOption implements Option {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
+
         game.registerEvents(new Listener() {
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
@@ -159,7 +160,7 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
         });
