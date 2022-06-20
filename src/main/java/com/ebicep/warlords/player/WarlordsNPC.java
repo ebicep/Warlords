@@ -1,15 +1,15 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
@@ -103,5 +103,33 @@ public class WarlordsNPC extends WarlordsEntity {
         }
 
         return entity;
+    }
+
+    public static <T extends CustomEntity> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
+        try {
+            //TODO UGLY find another way, supplier?
+            T customEntity = clazz.getConstructor(World.class).newInstance(((CraftWorld) loc.getWorld()).getHandle());
+            customEntity.spawn(loc);
+
+            EntityInsentient entityInsentient = customEntity.get();
+            entityInsentient.persistent = true;
+
+            LivingEntity entity = (LivingEntity) entityInsentient.getBukkitEntity();
+            if (inv != null) {
+                entity.getEquipment().setBoots(inv.getBoots());
+                entity.getEquipment().setLeggings(inv.getLeggings());
+                entity.getEquipment().setChestplate(inv.getChestplate());
+                entity.getEquipment().setHelmet(inv.getHelmet());
+                entity.getEquipment().setItemInHand(inv.getItemInHand());
+            } else {
+                entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
+            }
+
+
+            return entity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -302,7 +302,7 @@ public class WarlordsEvents implements Listener {
         e.setCancelled(true);
         WarlordsEntity entity = Warlords.getPlayer((Entity) e.getEntity().getShooter());
         if (entity != null) {
-            entity.getSpec().getWeapon().onActivate(entity, null);
+            //entity.getSpec().getWeapon().onActivate(entity, null);
         }
     }
 
@@ -506,6 +506,12 @@ public class WarlordsEvents implements Listener {
             if (!Utils.isMountableZone(location)) {
                 e.getPlayer().getVehicle().remove();
             }
+        }
+
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(e.getPlayer());
+        if (warlordsEntity != null) {
+            warlordsEntity.setCurrentVector(e.getTo().toVector().subtract(e.getFrom().toVector()).normalize().clone());
+            //System.out.println(warlordsEntity.getCurrentVector());
         }
     }
 

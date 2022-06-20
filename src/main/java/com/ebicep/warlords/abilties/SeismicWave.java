@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.customentities.CustomFallingBlock;
+import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;

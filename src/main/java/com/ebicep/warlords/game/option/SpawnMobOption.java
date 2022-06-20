@@ -1,5 +1,8 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.customentities.nms.pve.CustomSkeleton;
+import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.Specializations;
@@ -11,18 +14,19 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SpawnMobOption implements Option {
 
     private final Location spawnPoint;
-    private List<Class<? extends Monster>> possibleMobs = Arrays.asList(Zombie.class, Spider.class, Skeleton.class, PigZombie.class);
+    //private List<Class<? extends Monster>> possibleMobs = Arrays.asList(Zombie.class, Spider.class, Skeleton.class, PigZombie.class);
+    private List<Class<? extends CustomEntity>> possibleMobs = Arrays.asList(CustomZombie.class, CustomSkeleton.class);
     private int waveCounter = 0;
     private int spawnCount = 1;
 
@@ -43,12 +47,12 @@ public class SpawnMobOption implements Option {
                             UUID.randomUUID(),
                             "Zombie",
                             Weapons.ABBADON,
-                            WarlordsNPC.spawnEntity(possibleMobs.get((int) (Math.random() * possibleMobs.size())), spawnPoint, new Utils.SimpleEntityEquipment(
+                            Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(possibleMobs.get((int) (Math.random() * possibleMobs.size())), spawnPoint, new Utils.SimpleEntityEquipment(
                                     new ItemStack(Material.CARPET),
                                     new ItemStack(Material.DIAMOND_CHESTPLATE),
                                     new ItemStack(Material.DIAMOND_LEGGINGS),
                                     new ItemStack(Material.DIAMOND_BOOTS),
-                                    new ItemStack(Material.PRISMARINE_SHARD))),
+                                    new ItemStack(Material.PRISMARINE_SHARD)))),
                             game,
                             Team.RED,
                             Specializations.PYROMANCER

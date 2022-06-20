@@ -1,4 +1,4 @@
-package com.ebicep.customentities;
+package com.ebicep.customentities.nms;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsEntity;

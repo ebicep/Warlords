@@ -1,4 +1,4 @@
-package com.ebicep.customentities;
+package com.ebicep.customentities.nms;
 
 import com.ebicep.warlords.player.WarlordsEntity;
 import net.minecraft.server.v1_8_R3.EntityHorse;

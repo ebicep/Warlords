@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.customentities.CustomHorse;
+import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
@@ -80,6 +80,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
+    private Vector currentVector;
     private final CalculateSpeed speed;
     private final Location deathLocation;
     private final CooldownManager cooldownManager = new CooldownManager(this);
@@ -2048,5 +2049,13 @@ public abstract class WarlordsEntity {
 
     public void setSpawnGrave(boolean spawnGrave) {
         this.spawnGrave = spawnGrave;
+    }
+
+    public void setCurrentVector(Vector currentVector) {
+        this.currentVector = currentVector;
+    }
+
+    public Vector getCurrentVector() {
+        return currentVector;
     }
 }

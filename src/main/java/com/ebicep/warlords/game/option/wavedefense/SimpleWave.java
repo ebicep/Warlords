@@ -1,11 +1,15 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.customentities.nms.pve.CustomSkeleton;
+import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Spider;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -16,8 +20,8 @@ import java.util.function.Function;
 
 public class SimpleWave implements Wave {
 
-    public static final Function<Location, PartialMonster> ZOMBIE = loc -> PartialMonster.fromEntity(
-            Zombie.class,
+    public static final Function<Location, PartialMonster> ZOMBIE = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
             "Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -28,8 +32,8 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
-    public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromEntity(
-            Skeleton.class,
+    public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
+            CustomSkeleton.class,
             "Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
