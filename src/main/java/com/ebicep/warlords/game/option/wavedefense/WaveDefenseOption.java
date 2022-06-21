@@ -9,8 +9,10 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -22,6 +24,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
@@ -132,8 +135,13 @@ public class WaveDefenseOption implements Option {
         spawnCount = currentWave.getMonsterCount();
             
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-            sendMessage(entry.getKey(), false, ChatColor.YELLOW + "Starting next wave in " + currentWave.getDelay() / 20 + " seconds");
-            sendMessage(entry.getKey(), false, ChatColor.YELLOW + "Spawning " + ChatColor.RED + spawnCount + ChatColor.YELLOW + " enemies...");
+            sendMessage(
+                    entry.getKey(),
+                    false,
+                    ChatColor.YELLOW + "A wave of §c§l" +
+                    spawnCount + "§e monsters will commence in §c" +
+                    currentWave.getDelay() / 20 + " §eseconds!"
+            );
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, 0.8f);
             PacketUtils.sendTitle(entry.getKey(), "§eWave §c" + waveCounter + "§e!", "", 0, 60, 0);
         }
@@ -149,7 +157,6 @@ public class WaveDefenseOption implements Option {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
-
         game.registerEvents(new Listener() {
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
@@ -164,6 +171,24 @@ public class WaveDefenseOption implements Option {
                 );
             }
         });
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+            @Override
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
+                return Collections.singletonList(
+                        "Monsters left: " + ChatColor.GREEN + entities.size()
+                );
+            }
+        });
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
+            @Override
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
+                return PlayerFilter.playingGame(game)
+                        .filter(e -> e instanceof WarlordsPlayer)
+                        .stream()
+                        .map(e -> e.getName() + ": " + ChatColor.RED + e.getMinuteStats().total().getKills())
+                        .collect(Collectors.toList());
+                }
+            });
     }
     
     @Override
