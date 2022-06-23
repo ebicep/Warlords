@@ -50,7 +50,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -511,10 +510,8 @@ public class WarlordsEvents implements Listener {
 
         WarlordsEntity warlordsEntity = Warlords.getPlayer(e.getPlayer());
         if (warlordsEntity != null) {
-            Vector vector = e.getTo().toVector().subtract(e.getFrom().toVector()).normalize().clone();
-            if (!Double.isNaN(vector.getX())) {
-                warlordsEntity.setCurrentVector(vector);
-            }
+            warlordsEntity.setCurrentVector(e.getTo().toVector().subtract(e.getFrom().toVector()).normalize().clone());
+            //System.out.println(warlordsEntity.getCurrentVector());
         }
     }
 
