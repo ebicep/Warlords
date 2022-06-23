@@ -74,8 +74,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
-            projectile.getHit().add(hit);
-            getOtherProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
             if (hit.onHorse()) {
                 numberOfDismounts++;
@@ -107,6 +106,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
         ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
             playersHit++;
             if (enemy.onHorse()) {
                 numberOfDismounts++;

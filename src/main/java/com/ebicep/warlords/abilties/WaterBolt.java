@@ -101,7 +101,8 @@ public class WaterBolt extends AbstractProjectileBase {
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :
                 1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
-        if (hit != null) {
+        if (hit != null && !projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.isTeammate(shooter)) {
                 teammatesHit++;
                 hit.addHealingInstance(shooter,
@@ -136,9 +137,10 @@ public class WaterBolt extends AbstractProjectileBase {
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
-                .excluding(hit)
                 .isAlive()
+                .excluding(projectile.getHit())
         ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
             if (nearEntity.isTeammate(shooter)) {
                 teammatesHit++;

@@ -90,7 +90,9 @@ public class FlameBurst extends AbstractProjectileBase {
         for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())
         ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;

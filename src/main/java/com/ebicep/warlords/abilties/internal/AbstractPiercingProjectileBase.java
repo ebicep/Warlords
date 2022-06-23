@@ -342,6 +342,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         return otherProjectiles;
     }
 
+    public List<InternalProjectile> getProjectiles(InternalProjectile internalProjectile) {
+        return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
+    }
+
     public class InternalProjectile extends BukkitRunnable {
         private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
