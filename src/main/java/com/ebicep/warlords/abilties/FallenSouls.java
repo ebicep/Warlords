@@ -1,35 +1,34 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FallenSouls extends AbstractAbility {
+public class FallenSouls extends AbstractPiercingProjectileBase {
     protected int playersHit = 0;
     protected int numberOfDismounts = 0;
 
-    private static final float fallenSoulHitBox = 1.25f;
-    private static final float fallenSoulSpeed = 2;
-
     public FallenSouls() {
-        super("Fallen Souls", 164f, 212f, 0, 55, 20, 180);
+        super("Fallen Souls", 164f, 212f, 0, 55, 20, 180, 2, 35, false);
+        this.maxAngleOfShots = 54;
+        this.forwardTeleportAmount = 1.6f;
     }
 
     @Override
@@ -51,299 +50,162 @@ public class FallenSouls extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsEntity wp, Player player) {
-        wp.subtractEnergy(energyCost);
-        Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
+    protected String getActivationSound() {
+        return "shaman.lightningbolt.impact";
+    }
 
-        Location location = player.getLocation();
-        ArmorStand fallenSoulLeft = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getLeftDirection(location).multiply(.5)), ArmorStand.class);
-        Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
-        locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
-        ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.clone().subtract(0, .5, 0), ArmorStand.class);
-        Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
-        locationMiddle.setYaw(location.getYaw() - 0);
-        ArmorStand fallenSoulRight = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getRightDirection(location).multiply(.5)), ArmorStand.class);
-        Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
-        locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
+    @Override
+    protected float getSoundPitch() {
+        return 1.5f;
+    }
 
-        FallenSoul fallenSoul = new FallenSoul(wp, fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
 
-        new GameRunnable(wp.getGame()) {
-
-            @Override
-            public void run() {
-                if ((fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved())) {
-                    this.cancel();
-                }
-
-                ArmorStand leftSoul = fallenSoul.getFallenSoulLeft();
-                ArmorStand middleSoul = fallenSoul.getFallenSoulMiddle();
-                ArmorStand rightSoul = fallenSoul.getFallenSoulRight();
-
-                leftSoul.teleport(leftSoul.getLocation().add(fallenSoul.getDirectionLeft().clone().multiply(fallenSoulSpeed)));
-                middleSoul.teleport(middleSoul.getLocation().add(fallenSoul.getDirectionMiddle().clone().multiply(fallenSoulSpeed)));
-                rightSoul.teleport(rightSoul.getLocation().add(fallenSoul.getDirectionRight().clone().multiply(fallenSoulSpeed)));
-
-                List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
-                List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
-                List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
-
-                damageNearByPlayers(nearLeft, wp, fallenSoul);
-                damageNearByPlayers(nearMiddle, wp, fallenSoul);
-                damageNearByPlayers(nearRight, wp, fallenSoul);
-
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, leftSoul.getLocation().add(0, 1.5, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, middleSoul.getLocation().add(0, 1.5, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, rightSoul.getLocation().add(0, 1.5, 0), 500);
-
-                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
-                    fallenSoul.getFallenSoulLeft().remove();
-                    fallenSoul.setLeftRemoved(true);
-                }
-
-                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
-                    fallenSoul.getFallenSoulMiddle().remove();
-                    fallenSoul.setMiddleRemoved(true);
-                }
-
-                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
-                    fallenSoul.getFallenSoulRight().remove();
-                    fallenSoul.setRightRemoved(true);
-                }
-
-            }
-
-        }.runTaskTimer(0, 0);
-
+    @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
         return true;
     }
 
-    public void damageNearByPlayers(List<Entity> near, WarlordsEntity wp, FallenSoul fallenSoul) {
-        for (WarlordsEntity warlordsPlayer : PlayerFilter.entities(near)
-                .filter(p -> !fallenSoul.getPlayersHit().contains(p))
-                .aliveEnemiesOf(wp)
-        ) {
+    @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+        return false;
+    }
+
+    @Override
+    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
-            if (warlordsPlayer.onHorse()) {
+            if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            warlordsPlayer.addDamageInstance(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
-            fallenSoul.getPlayersHit().add(warlordsPlayer);
-            fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
-            fallenSoul.getShooter().updateRedItem();
-            new CooldownFilter<>(fallenSoul.getShooter(), PersistentCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                    .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(warlordsPlayer))
-                    .forEachOrdered(soulbinding -> {
-                        fallenSoul.getShooter().doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
+            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
-                        fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
+            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-                        fallenSoul.getShooter().updateRedItem();
-                        fallenSoul.getShooter().updatePurpleItem();
-                        fallenSoul.getShooter().updateBlueItem();
-                        fallenSoul.getShooter().updateOrangeItem();
+            wp.getSpec().getRed().subtractCooldown(2);
+            if (wp.getEntity() instanceof Player) {
+                wp.updateRedItem((Player) wp.getEntity());
+            }
 
-                        for (WarlordsEntity warlordsPlayer1 : PlayerFilter
-                                .entitiesAround(wp.getLocation(), 8, 8, 8)
-                                .aliveTeammatesOfExcludingSelf(wp)
-                                .closestFirst(wp.getLocation())
-                                .limit(2)
-                        ) {
-                            fallenSoul.getShooter().doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
-
-                            warlordsPlayer1.getSpec().getRed().subtractCooldown(1);
-                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(1);
-                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(1);
-                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(1);
-
-                            warlordsPlayer1.updateRedItem();
-                            warlordsPlayer1.updatePurpleItem();
-                            warlordsPlayer1.updateBlueItem();
-                            warlordsPlayer1.updateOrangeItem();
-                        }
-                    });
+            reduceCooldowns(wp, hit);
         }
     }
 
+    @Override
+    protected int onHit(InternalProjectile projectile, WarlordsEntity hit) {
+        WarlordsEntity wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
 
-    public static class FallenSoul {
+        Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
-        private WarlordsEntity shooter;
-        private ArmorStand fallenSoulLeft;
-        private ArmorStand fallenSoulMiddle;
-        private ArmorStand fallenSoulRight;
-        private Location locationLeft;
-        private Location locationMiddle;
-        private Location locationRight;
-        private Vector directionLeft;
-        private Vector directionMiddle;
-        private Vector directionRight;
-        private boolean leftRemoved;
-        private boolean middleRemoved;
-        private boolean rightRemoved;
-        private FallenSouls fallenSouls;
-        private List<WarlordsEntity> playersHit;
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(currentLocation, 3, 3, 3)
+                .aliveEnemiesOf(wp)
+                .excluding(projectile.getHit())
+        ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
+            playersHit++;
+            if (enemy.onHorse()) {
+                numberOfDismounts++;
+            }
+            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-        public FallenSoul(WarlordsEntity shooter, ArmorStand fallenSoulLeft, ArmorStand fallenSoulMiddle, ArmorStand fallenSoulRight, Location locationLeft, Location locationMiddle, Location locationRight, Vector directionLeft, Vector directionMiddle, Vector directionRight, FallenSouls fallenSouls) {
-            this.shooter = shooter;
-            this.fallenSoulLeft = fallenSoulLeft;
-            fallenSoulLeft.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
-            fallenSoulLeft.setGravity(false);
-            fallenSoulLeft.setVisible(false);
-            fallenSoulLeft.setMarker(true);
-            fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, -.2, 0));
-            this.fallenSoulMiddle = fallenSoulMiddle;
-            fallenSoulMiddle.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
-            fallenSoulMiddle.setGravity(false);
-            fallenSoulMiddle.setVisible(false);
-            fallenSoulMiddle.setMarker(true);
-            fallenSoulMiddle.setHeadPose(new EulerAngle(directionMiddle.getY() * -fallenSoulSpeed, 0, 0));
-            this.fallenSoulRight = fallenSoulRight;
-            fallenSoulRight.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
-            fallenSoulRight.setGravity(false);
-            fallenSoulRight.setVisible(false);
-            fallenSoulRight.setMarker(true);
-            fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, .2, 0));
-            this.locationLeft = locationLeft;
-            this.locationMiddle = locationMiddle;
-            this.locationRight = locationRight;
-            this.directionLeft = directionLeft;
-            this.directionMiddle = directionMiddle;
-            this.directionRight = directionRight;
-            this.fallenSouls = fallenSouls;
-            leftRemoved = false;
-            middleRemoved = false;
-            rightRemoved = false;
-            playersHit = new ArrayList<>();
-            playersHit.add(shooter);
+            wp.getSpec().getRed().subtractCooldown(2);
+            if (wp.getEntity() instanceof Player) {
+                wp.updateRedItem((Player) wp.getEntity());
+            }
         }
 
-        public WarlordsEntity getShooter() {
-            return shooter;
-        }
-
-        public void setShooter(WarlordsEntity shooter) {
-            this.shooter = shooter;
-        }
-
-        public ArmorStand getFallenSoulLeft() {
-            return fallenSoulLeft;
-        }
-
-        public void setFallenSoulLeft(ArmorStand fallenSoulLeft) {
-            this.fallenSoulLeft = fallenSoulLeft;
-        }
-
-        public ArmorStand getFallenSoulMiddle() {
-            return fallenSoulMiddle;
-        }
-
-        public void setFallenSoulMiddle(ArmorStand fallenSoulMiddle) {
-            this.fallenSoulMiddle = fallenSoulMiddle;
-        }
-
-        public ArmorStand getFallenSoulRight() {
-            return fallenSoulRight;
-        }
-
-        public void setFallenSoulRight(ArmorStand fallenSoulRight) {
-            this.fallenSoulRight = fallenSoulRight;
-        }
-
-        public Location getLocationLeft() {
-            return locationLeft;
-        }
-
-        public void setLocationLeft(Location locationLeft) {
-            this.locationLeft = locationLeft;
-        }
-
-        public Location getLocationMiddle() {
-            return locationMiddle;
-        }
-
-        public void setLocationMiddle(Location locationMiddle) {
-            this.locationMiddle = locationMiddle;
-        }
-
-        public Location getLocationRight() {
-            return locationRight;
-        }
-
-        public void setLocationRight(Location locationRight) {
-            this.locationRight = locationRight;
-        }
-
-        public Vector getDirectionLeft() {
-            return directionLeft;
-        }
-
-        public void setDirectionLeft(Vector directionLeft) {
-            this.directionLeft = directionLeft;
-        }
-
-        public Vector getDirectionMiddle() {
-            return directionMiddle;
-        }
-
-        public void setDirectionMiddle(Vector directionMiddle) {
-            this.directionMiddle = directionMiddle;
-        }
-
-        public Vector getDirectionRight() {
-            return directionRight;
-        }
-
-        public void setDirectionRight(Vector directionRight) {
-            this.directionRight = directionRight;
-        }
-
-        public FallenSouls getFallenSouls() {
-            return fallenSouls;
-        }
-
-        public void setFallenSouls(FallenSouls fallenSouls) {
-            this.fallenSouls = fallenSouls;
-        }
-
-        public boolean isLeftRemoved() {
-            return leftRemoved;
-        }
-
-        public void setLeftRemoved(boolean leftRemoved) {
-            this.leftRemoved = leftRemoved;
-        }
-
-        public boolean isMiddleRemoved() {
-            return middleRemoved;
-        }
-
-        public void setMiddleRemoved(boolean middleRemoved) {
-            this.middleRemoved = middleRemoved;
-        }
-
-        public boolean isRightRemoved() {
-            return rightRemoved;
-        }
-
-        public void setRightRemoved(boolean rightRemoved) {
-            this.rightRemoved = rightRemoved;
-        }
-
-        public List<WarlordsEntity> getPlayersHit() {
-            return playersHit;
-        }
-
-        public void setPlayersHit(List<WarlordsEntity> playersHit) {
-            this.playersHit = playersHit;
-        }
-
+        return playersHit;
     }
+
+    private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
+        new CooldownFilter<>(wp, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
+                .forEachOrdered(soulbinding -> {
+                    wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
+
+                    wp.getSpec().getRed().subtractCooldown(1.5F);
+                    wp.getSpec().getPurple().subtractCooldown(1.5F);
+                    wp.getSpec().getBlue().subtractCooldown(1.5F);
+                    wp.getSpec().getOrange().subtractCooldown(1.5F);
+
+                    wp.updateRedItem();
+                    wp.updatePurpleItem();
+                    wp.updateBlueItem();
+                    wp.updateOrangeItem();
+
+                    for (WarlordsEntity teammate : PlayerFilter
+                            .entitiesAround(wp.getLocation(), 8, 8, 8)
+                            .aliveTeammatesOfExcludingSelf(wp)
+                            .closestFirst(wp.getLocation())
+                            .limit(2)
+                    ) {
+                        wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
+
+                        teammate.getSpec().getRed().subtractCooldown(1);
+                        teammate.getSpec().getPurple().subtractCooldown(1);
+                        teammate.getSpec().getBlue().subtractCooldown(1);
+                        teammate.getSpec().getOrange().subtractCooldown(1);
+
+                        teammate.updateRedItem();
+                        teammate.updatePurpleItem();
+                        teammate.updateBlueItem();
+                        teammate.updateOrangeItem();
+                    }
+                });
+    }
+
+    @Override
+    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+    }
+
+    @Override
+    protected void onSpawn(InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        ArmorStand fallenSoul = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.7, 0), ArmorStand.class);
+        fallenSoul.setGravity(false);
+        fallenSoul.setVisible(false);
+        fallenSoul.setMarker(true);
+        fallenSoul.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+        fallenSoul.setHeadPose(new EulerAngle(-Math.atan2(
+                projectile.getSpeed().getY(),
+                Math.sqrt(
+                        Math.pow(projectile.getSpeed().getX(), 2) +
+                                Math.pow(projectile.getSpeed().getZ(), 2)
+                )
+        ), 0, 0));
+        projectile.addTask(new InternalProjectileTask() {
+            @Override
+            public void run(InternalProjectile projectile) {
+                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, projectile.getCurrentLocation().clone().add(0, 0, 0), 500);
+            }
+
+            @Override
+            public void onDestroy(InternalProjectile projectile) {
+                fallenSoul.remove();
+                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, projectile.getCurrentLocation(), 500);
+            }
+        });
+    }
+
+    @Override
+    protected void playEffect(InternalProjectile projectile) {
+        super.playEffect(projectile);
+    }
+
+    @Override
+    @Deprecated
+    protected void playEffect(Location currentLocation, int ticksLived) {
+    }
+
 }

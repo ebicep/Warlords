@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.*;
@@ -31,7 +32,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected int playersHitBySplash = 0;
     protected int directHits = 0;
     protected int numberOfDismounts = 0;
-    protected int shotsFiredAtATime = 5;
+
+    protected float forwardTeleportAmount = 0;
+    protected int maxAngleOfShots = 90;
+    protected int shotsFiredAtATime = 3;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
 
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
@@ -300,24 +304,20 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
 
-    public List<Location> getLocationsToFireShots(LivingEntity player) {
-        return getLocationsToFireShots(player, 90);
-    }
-
     /**
-     * @param player   Player that fires the shots
-     * @param maxAngle How wide the cone should be, centered around where the player is currently facing
+     * @param player Player that fires the shots
      * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
      */
-    private List<Location> getLocationsToFireShots(LivingEntity player, int maxAngle) {
+    public List<Location> getLocationsToFireShots(LivingEntity player) {
         List<Location> locations = new ArrayList<>();
 
-        Location playerLocation = player.getEyeLocation();
-        double beginningYaw = playerLocation.getYaw() - (maxAngle / 2d);
-        double angleBetweenShots = (double) maxAngle / (shotsFiredAtATime + 1);
+        Location playerLocation = new LocationBuilder(player.getEyeLocation().clone()).backward(forwardTeleportAmount);
+        double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
+        double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
         for (int i = 1; i <= shotsFiredAtATime; i++) {
-            Location locationToAdd = playerLocation.clone();
-            locationToAdd.setYaw((float) (beginningYaw + (angleBetweenShots * i)));
+            Location locationToAdd = new LocationBuilder(playerLocation.clone())
+                    .yaw((float) (beginningYaw + (angleBetweenShots * i)))
+                    .forward(forwardTeleportAmount);
             locations.add(locationToAdd);
         }
 
