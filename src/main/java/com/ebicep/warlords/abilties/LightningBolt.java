@@ -75,6 +75,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             projectile.getHit().add(hit);
+            getOtherProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
             if (hit.onHorse()) {
                 numberOfDismounts++;

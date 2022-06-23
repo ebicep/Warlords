@@ -13,6 +13,7 @@ public class CustomZombie extends EntityZombie implements CustomEntity {
         setBaby(false);
     }
 
+
     @Override
     public void spawn(Location location) {
         setPosition(location.getX(), location.getY(), location.getZ());

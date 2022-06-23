@@ -1,6 +1,6 @@
 package com.ebicep.warlords.effects;
 
-import com.ebicep.warlords.util.bukkit.ReflectionUtils;
+import com.ebicep.warlords.util.bukkit.ReflectionUtilsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -1398,15 +1398,15 @@ public enum ParticleEffect {
                 return;
             }
             try {
-                version = Integer.parseInt(Character.toString(ReflectionUtils.PackageType.getServerVersion().charAt(3)));
+                version = Integer.parseInt(Character.toString(ReflectionUtilsBukkit.PackageType.getServerVersion().charAt(3)));
                 if (version > 7) {
-                    enumParticle = ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass("EnumParticle");
+                    enumParticle = ReflectionUtilsBukkit.PackageType.MINECRAFT_SERVER.getClass("EnumParticle");
                 }
-                Class<?> packetClass = ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass(version < 7 ? "Packet63WorldParticles" : "PacketPlayOutWorldParticles");
-                packetConstructor = ReflectionUtils.getConstructor(packetClass);
-                getHandle = ReflectionUtils.getMethod("CraftPlayer", ReflectionUtils.PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
-                playerConnection = ReflectionUtils.getField("EntityPlayer", ReflectionUtils.PackageType.MINECRAFT_SERVER, false, "playerConnection");
-                sendPacket = ReflectionUtils.getMethod(playerConnection.getType(), "sendPacket", ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass("Packet"));
+                Class<?> packetClass = ReflectionUtilsBukkit.PackageType.MINECRAFT_SERVER.getClass(version < 7 ? "Packet63WorldParticles" : "PacketPlayOutWorldParticles");
+                packetConstructor = ReflectionUtilsBukkit.getConstructor(packetClass);
+                getHandle = ReflectionUtilsBukkit.getMethod("CraftPlayer", ReflectionUtilsBukkit.PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
+                playerConnection = ReflectionUtilsBukkit.getField("EntityPlayer", ReflectionUtilsBukkit.PackageType.MINECRAFT_SERVER, false, "playerConnection");
+                sendPacket = ReflectionUtilsBukkit.getMethod(playerConnection.getType(), "sendPacket", ReflectionUtilsBukkit.PackageType.MINECRAFT_SERVER.getClass("Packet"));
             } catch (Exception exception) {
                 throw new VersionIncompatibleException("Your current bukkit version seems to be incompatible with this library", exception);
             }
@@ -1452,23 +1452,23 @@ public enum ParticleEffect {
                     if (data != null) {
                         name += data.getPacketDataString();
                     }
-                    ReflectionUtils.setValue(packet, true, "a", name);
+                    ReflectionUtilsBukkit.setValue(packet, true, "a", name);
                 } else {
-                    ReflectionUtils.setValue(packet, true, "a", enumParticle.getEnumConstants()[effect.getId()]);
-                    ReflectionUtils.setValue(packet, true, "j", longDistance);
+                    ReflectionUtilsBukkit.setValue(packet, true, "a", enumParticle.getEnumConstants()[effect.getId()]);
+                    ReflectionUtilsBukkit.setValue(packet, true, "j", longDistance);
                     if (data != null) {
                         int[] packetData = data.getPacketData();
-                        ReflectionUtils.setValue(packet, true, "k", effect == ParticleEffect.ITEM_CRACK ? packetData : new int[]{packetData[0] | (packetData[1] << 12)});
+                        ReflectionUtilsBukkit.setValue(packet, true, "k", effect == ParticleEffect.ITEM_CRACK ? packetData : new int[]{packetData[0] | (packetData[1] << 12)});
                     }
                 }
-                ReflectionUtils.setValue(packet, true, "b", (float) center.getX());
-                ReflectionUtils.setValue(packet, true, "c", (float) center.getY());
-                ReflectionUtils.setValue(packet, true, "d", (float) center.getZ());
-                ReflectionUtils.setValue(packet, true, "e", offsetX);
-                ReflectionUtils.setValue(packet, true, "f", offsetY);
-                ReflectionUtils.setValue(packet, true, "g", offsetZ);
-                ReflectionUtils.setValue(packet, true, "h", speed);
-                ReflectionUtils.setValue(packet, true, "i", amount);
+                ReflectionUtilsBukkit.setValue(packet, true, "b", (float) center.getX());
+                ReflectionUtilsBukkit.setValue(packet, true, "c", (float) center.getY());
+                ReflectionUtilsBukkit.setValue(packet, true, "d", (float) center.getZ());
+                ReflectionUtilsBukkit.setValue(packet, true, "e", offsetX);
+                ReflectionUtilsBukkit.setValue(packet, true, "f", offsetY);
+                ReflectionUtilsBukkit.setValue(packet, true, "g", offsetZ);
+                ReflectionUtilsBukkit.setValue(packet, true, "h", speed);
+                ReflectionUtilsBukkit.setValue(packet, true, "i", amount);
             } catch (Exception exception) {
                 throw new PacketInstantiationException("Packet instantiation failed", exception);
             }

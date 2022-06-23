@@ -18,7 +18,6 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
         this.goalSelector.a(7, pathfinderGoalFireAtPlayer);
     }
 
-
     @Override
     public void spawn(Location location) {
         setPosition(location.getX(), location.getY(), location.getZ());

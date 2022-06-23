@@ -12,6 +12,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -21,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
@@ -29,6 +31,8 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected int playersHitBySplash = 0;
     protected int directHits = 0;
     protected int numberOfDismounts = 0;
+    protected int shotsFiredAtATime = 5;
+    protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
 
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
@@ -106,15 +110,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             @Nonnull WarlordsEntity hit,
             @Nonnull Location impactLocation
     );
-
-//    @Deprecated
-//    protected abstract int onHit(
-//            @Nonnull WarlordsEntity shooter,
-//            @Nonnull Location currentLocation,
-//            @Nonnull Location startingLocation,
-//            @Nullable WarlordsEntity hit
-//    );
-
 
     /**
      * Called when the projectile is destroyed by an collision
@@ -283,16 +278,68 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsEntity shooter, Player player) {
         shooter.subtractEnergy(energyCost);
-        Location startingLocation = shooter.getEyeLocation();
-        InternalProjectile projectile = new InternalProjectile(shooter, startingLocation);
-        onSpawn(projectile);
-        projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+
+
+        List<Location> projectileLocations = getLocationsToFireShots(shooter.getEntity());
+        List<InternalProjectile> internalProjectiles = new ArrayList<>();
+        for (Location projectileLocation : projectileLocations) {
+            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
+            internalProjectiles.add(projectile);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            internalProjectileGroup.put(projectile, internalProjectiles);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            onSpawn(projectile);
+            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }
 
         return true;
     }
 
+
+    public List<Location> getLocationsToFireShots(LivingEntity player) {
+        return getLocationsToFireShots(player, 90);
+    }
+
+    /**
+     * @param player   Player that fires the shots
+     * @param maxAngle How wide the cone should be, centered around where the player is currently facing
+     * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
+     */
+    private List<Location> getLocationsToFireShots(LivingEntity player, int maxAngle) {
+        List<Location> locations = new ArrayList<>();
+
+        Location playerLocation = player.getEyeLocation();
+        double beginningYaw = playerLocation.getYaw() - (maxAngle / 2d);
+        double angleBetweenShots = (double) maxAngle / (shotsFiredAtATime + 1);
+        for (int i = 1; i <= shotsFiredAtATime; i++) {
+            Location locationToAdd = playerLocation.clone();
+            locationToAdd.setYaw((float) (beginningYaw + (angleBetweenShots * i)));
+            locations.add(locationToAdd);
+        }
+
+        return locations;
+    }
+
     public int getDirectHits() {
         return directHits;
+    }
+
+    public void setShotsFiredAtATime(int shotsFiredAtATime) {
+        this.shotsFiredAtATime = shotsFiredAtATime;
+    }
+
+    public List<InternalProjectile> getOtherProjectiles(InternalProjectile internalProjectile) {
+        List<InternalProjectile> otherProjectiles = new ArrayList<>();
+        for (InternalProjectile projectile : internalProjectileGroup.get(internalProjectile)) {
+            if (projectile != internalProjectile) {
+                otherProjectiles.add(projectile);
+            }
+        }
+        return otherProjectiles;
     }
 
     public class InternalProjectile extends BukkitRunnable {
