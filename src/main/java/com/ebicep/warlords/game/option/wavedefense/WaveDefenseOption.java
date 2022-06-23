@@ -139,7 +139,7 @@ public class WaveDefenseOption implements Option {
                     entry.getKey(),
                     false,
                     ChatColor.YELLOW + "A wave of §c§l" +
-                    spawnCount + "§e monsters will commence in §c" +
+                    spawnCount + "§e monsters will spawn in §c" +
                     currentWave.getDelay() / 20 + " §eseconds!"
             );
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, 0.8f);

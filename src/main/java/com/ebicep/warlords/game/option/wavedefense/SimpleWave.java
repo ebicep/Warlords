@@ -7,9 +7,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Spider;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -71,6 +69,78 @@ public class SimpleWave implements Wave {
     public static final Function<Location, PartialMonster> BLAZE = loc -> PartialMonster.fromEntity(
             Blaze.class,
             "BLAZE",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromEntity(
+            Creeper.class,
+            "Creeper",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> SLIME = loc -> PartialMonster.fromEntity(
+            Slime.class,
+            "Chessking",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> MAGMA_SLIME = loc -> PartialMonster.fromEntity(
+            MagmaCube.class,
+            "Angry Chessking",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> GHAST = loc -> PartialMonster.fromEntity(
+            Ghast.class,
+            "Ghast",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> ENDERMAN = loc -> PartialMonster.fromEntity(
+            Enderman.class,
+            "Enderman",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            )
+    );
+    public static final Function<Location, PartialMonster> GUARDIAN = loc -> PartialMonster.fromEntity(
+            Guardian.class,
+            "Guardian",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),

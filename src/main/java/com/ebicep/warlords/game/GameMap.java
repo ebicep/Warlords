@@ -1125,25 +1125,27 @@ public enum GameMap {
                     .add(1, new SimpleWave(1, 10 * SECOND, null)
                             .add(SimpleWave.ZOMBIE)
                     )
+                    /*.add(2, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.SKELETON)
+                    )
+                    .add(3, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.GUARDIAN)
+                    )
+                    .add(4, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.ENDERMAN)
+                    )
                     .add(5, new SimpleWave(1, 10 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(0.5, SimpleWave.SKELETON)
+                            .add(1, SimpleWave.GHAST)
                     )
-                    .add(10, new SimpleWave(1, 10 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(0.7, SimpleWave.SKELETON)
+                    .add(6, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.SLIME)
                     )
-                    .add(15, new SimpleWave(1, 10 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(1, SimpleWave.SKELETON)
-                            .add(1, SimpleWave.PIGZOMBIE)
+                    .add(7, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.MAGMA_SLIME)
                     )
-                    .add(20, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.1, SimpleWave.ZOMBIE)
-                            .add(1, SimpleWave.SKELETON)
-                            .add(2, SimpleWave.PIGZOMBIE)
-                            .add(0.1, SimpleWave.BLAZE)
-                    )
+                    .add(8, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.CREEPER)
+                    )*/
                     .prependEntityMapper((entity, waveCounter) -> {
                         int health = (int) Math.pow(1000, waveCounter / 90.0 + 1);
                         entity.setMaxHealth(health);
@@ -1153,7 +1155,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 40.0 / (waveCounter / 40.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 10.0 / (waveCounter / 10.0 + 1.0) * 100));
                         }
                         
                     })
