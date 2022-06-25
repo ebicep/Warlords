@@ -8,8 +8,10 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import org.bson.Document;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,27 +23,10 @@ import java.util.*;
 
 public class ExperienceManager {
 
-    public static final Map<Integer, Long> levelExperience;
-    public static final Map<Long, Integer> experienceLevel;
-    public static final DecimalFormat currentExperienceDecimalFormat = new DecimalFormat("#,###.#");
-    public static final HashMap<UUID, LinkedHashMap<String, Long>> cachedPlayerExpSummary = new HashMap<>();
-
-    static {
-        //caching all levels/experience
-        Map<Integer, Long> levelExperienceNew = new HashMap<>();
-        Map<Long, Integer> experienceLevelNew = new HashMap<>();
-        for (int i = 0; i < 201; i++) {
-            long exp = (long) calculateExpFromLevel(i);
-            levelExperienceNew.put(i, exp);
-            experienceLevelNew.put(exp, i);
-        }
-
-        levelExperience = Collections.unmodifiableMap(levelExperienceNew);
-        experienceLevel = Collections.unmodifiableMap(experienceLevelNew);
-
-        currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
-    }
-
+    public static final Map<Integer, Long> LEVEL_TO_EXPERIENCE;
+    public static final Map<Long, Integer> EXPERIENCE_TO_LEVEL;
+    public static final DecimalFormat EXPERIENCE_DECIMAL_FORMAT = new DecimalFormat("#,###.#");
+    public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     private static final Map<String, int[]> awardOrder = new LinkedHashMap<String, int[]>() {{
         put("wins", new int[]{1000, 750, 500});
         put("losses", new int[]{200, 150, 100});
@@ -56,6 +41,34 @@ public class ExperienceManager {
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
     }};
+    public static final int LEVEL_TO_PRESTIGE = 100;
+    public static final List<Pair<ChatColor, Color>> PRESTIGE_COLORS = Arrays.asList(
+            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY),//0
+            new Pair<>(ChatColor.RED, Color.RED),//1
+            new Pair<>(ChatColor.GOLD, Color.ORANGE),//2
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW),//3
+            new Pair<>(ChatColor.GREEN, Color.GREEN),//4
+            new Pair<>(ChatColor.AQUA, Color.AQUA), //5
+            new Pair<>(ChatColor.BLUE, Color.BLUE), //6
+            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //7
+            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //8
+    );
+
+    static {
+        //caching all levels/experience
+        Map<Integer, Long> levelExperienceNew = new HashMap<>();
+        Map<Long, Integer> experienceLevelNew = new HashMap<>();
+        for (int i = 0; i < 201; i++) {
+            long exp = (long) calculateExpFromLevel(i);
+            levelExperienceNew.put(i, exp);
+            experienceLevelNew.put(exp, i);
+        }
+
+        LEVEL_TO_EXPERIENCE = Collections.unmodifiableMap(levelExperienceNew);
+        EXPERIENCE_TO_LEVEL = Collections.unmodifiableMap(experienceLevelNew);
+
+        EXPERIENCE_DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
+    }
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
         if (DatabaseManager.playerService == null) {
@@ -96,7 +109,7 @@ public class ExperienceManager {
             Update update = new Update().inc("experience", expGain);
             operations.updateOne(query, update);
             document.getList("messages", String.class).add(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + expGain);
-            document.getList("messages", String.class).addAll(Collections.singletonList(ChatColor.BLUE + "---------------------------------------------------"));
+            document.getList("messages", String.class).add(ChatColor.BLUE + "---------------------------------------------------");
         });
 
         FutureMessageManager.addNewFutureMessageDocuments(new ArrayList<>(futureMessageDocuments.values()));
@@ -104,8 +117,8 @@ public class ExperienceManager {
     }
 
     public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {
-        if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
-            return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
+        if (!recalculate && CACHED_PLAYER_EXP_SUMMARY.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid()) != null) {
+            return CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid());
         }
 
         boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
@@ -196,7 +209,7 @@ public class ExperienceManager {
             e.printStackTrace();
         }
 
-        cachedPlayerExpSummary.put(warlordsPlayer.getUuid(), expGain);
+        CACHED_PLAYER_EXP_SUMMARY.put(warlordsPlayer.getUuid(), expGain);
         return expGain;
     }
 
@@ -206,6 +219,94 @@ public class ExperienceManager {
                 - expSummary.getOrDefault("Second Game of the Day", 0L)
                 - expSummary.getOrDefault("Third Game of the Day", 0L);
     }
+
+    public static long getExperienceForClass(UUID uuid, Classes classes) {
+        if (DatabaseManager.playerService == null) return 0;
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
+    }
+
+    public static int getLevelForClass(UUID uuid, Classes classes) {
+        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classes));
+    }
+
+    public static long getExperienceForSpec(UUID uuid, Specializations spec) {
+        return getExperienceFromSpec(uuid, spec);
+    }
+
+    public static int getLevelForSpec(UUID uuid, Specializations spec) {
+        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
+    }
+
+    public static long getUniversalLevel(UUID uuid) {
+        if (DatabaseManager.playerService == null) return 0;
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getExperience();
+    }
+
+    private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
+        if (DatabaseManager.playerService == null) return 0;
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
+    }
+
+    public static String getLevelString(int level) {
+        return level < 10 ? "0" + level : String.valueOf(level);
+    }
+
+    public static String getProgressString(long currentExperience, int nextLevel) {
+        String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+
+        long experience = currentExperience - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
+        long experienceNeeded = LEVEL_TO_EXPERIENCE.get(nextLevel) - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
+        double progressPercentage = (double) experience / experienceNeeded * 100;
+
+        progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
+        int greenBars = (int) Math.round(progressPercentage * 20 / 100);
+        for (int i = 0; i < greenBars; i++) {
+            progress += "-";
+        }
+        progress += ChatColor.WHITE;
+        for (int i = greenBars; i < 20; i++) {
+            progress += "-";
+        }
+        progress += " " + ChatColor.YELLOW + EXPERIENCE_DECIMAL_FORMAT.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(experienceNeeded);
+
+        return progress;
+    }
+
+    public static String getPrestigeLevelString(UUID uuid, Specializations spec) {
+        if (DatabaseManager.playerService == null) return PRESTIGE_COLORS.get(0).getA() + "[-]";
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        if (databasePlayer == null) return PRESTIGE_COLORS.get(0).getA() + "[-]";
+        int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
+        return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel).getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+    }
+
+    public static double calculateLevelFromExp(long exp) {
+        return Math.sqrt(exp / 25.0);
+    }
+
+    public static double calculateExpFromLevel(int level) {
+        return Math.pow(level, 2) * 25;
+    }
+
+    public static void giveExperienceBar(Player player) {
+        //long experience = warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", player.getUniqueId().toString())).first().getLong("experience");
+        long experience = getUniversalLevel(player.getUniqueId());
+        int level = (int) calculateLevelFromExp(experience);
+        player.setLevel(level);
+        player.setExp((float) (experience - LEVEL_TO_EXPERIENCE.get(level)) / (LEVEL_TO_EXPERIENCE.get(level + 1) - LEVEL_TO_EXPERIENCE.get(level)));
+    }
+
+    public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {
+        int levelBefore = (int) calculateLevelFromExp(expBefore);
+        int levelAfter = (int) calculateLevelFromExp(expAfter);
+        if (levelBefore != levelAfter) {
+            ChatUtils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
+        }
+    }
+}
 
 //    private int getTotalAverageDHP(String classSpec) {
 //        long totalAverageDHP = 0;
@@ -295,169 +396,3 @@ public class ExperienceManager {
 //
 //        return exp;
 //    }
-
-    public static long getExperienceForClass(UUID uuid, Classes classes) {
-        if (DatabaseManager.playerService == null) return 0;
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
-    }
-
-    public static int getLevelForClass(UUID uuid, Classes classes) {
-        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classes));
-    }
-
-    public static long getExperienceForSpec(UUID uuid, Specializations spec) {
-        return getExperienceFromSpec(uuid, spec);
-    }
-
-    public static int getLevelForSpec(UUID uuid, Specializations spec) {
-        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
-    }
-
-    public static long getUniversalLevel(UUID uuid) {
-        if (DatabaseManager.playerService == null) return 0;
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getExperience();
-    }
-
-    private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
-        if (DatabaseManager.playerService == null) return 0;
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
-    }
-
-    public static String getLevelString(int level) {
-        return level < 10 ? "0" + level : String.valueOf(level);
-    }
-
-    public static String getProgressString(long currentExperience, int nextLevel) {
-        String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
-
-        long experience = currentExperience - levelExperience.get(nextLevel - 1);
-        long experienceNeeded = levelExperience.get(nextLevel) - levelExperience.get(nextLevel - 1);
-        double progressPercentage = (double) experience / experienceNeeded * 100;
-
-        progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
-        int greenBars = (int) Math.round(progressPercentage * 20 / 100);
-        for (int i = 0; i < greenBars; i++) {
-            progress += "-";
-        }
-        progress += ChatColor.WHITE;
-        for (int i = greenBars; i < 20; i++) {
-            progress += "-";
-        }
-        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(experienceNeeded);
-
-        return progress;
-    }
-
-    public static double calculateLevelFromExp(long exp) {
-        return Math.sqrt(exp / 25.0);
-    }
-
-    public static double calculateExpFromLevel(int level) {
-        return Math.pow(level, 2) * 25;
-    }
-
-    public static void giveExperienceBar(Player player) {
-        //long experience = warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", player.getUniqueId().toString())).first().getLong("experience");
-        long experience = getUniversalLevel(player.getUniqueId());
-        int level = (int) calculateLevelFromExp(experience);
-        player.setLevel(level);
-        player.setExp((float) (experience - levelExperience.get(level)) / (levelExperience.get(level + 1) - levelExperience.get(level)));
-    }
-
-    public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {
-        int levelBefore = (int) calculateLevelFromExp(expBefore);
-        int levelAfter = (int) calculateLevelFromExp(expAfter);
-        if (levelBefore != levelAfter) {
-            ChatUtils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
-        }
-    }
-}
-
-//Pyromancer
-//Average DHP: 181046
-//Average Damage: 136237
-//Average Healing: 10815
-//Average Absorbed: 33992
-//Cryomancer
-//Average DHP: 178083
-//Average Damage: 73422
-//Average Healing: 10124
-//Average Absorbed: 94534
-//Aquamancer
-//Average DHP: 236444
-//Average Damage: 33120
-//Average Healing: 168925
-//Average Absorbed: 34397
-//Berserker
-//Average DHP: 189292
-//Average Damage: 131381
-//Average Healing: 39767
-//Average Absorbed: 18142
-//Defender
-//Average DHP: 150763
-//Average Damage: 106301
-//Average Healing: 8983
-//Average Absorbed: 35477
-//Revenant
-//Average DHP: 230796
-//Average Damage: 93791
-//Average Healing: 121953
-//Average Absorbed: 15050
-//Avenger
-//Average DHP: 209579
-//Average Damage: 164426
-//Average Healing: 29768
-//Average Absorbed: 15384
-//Crusader
-//Average DHP: 177555
-//Average Damage: 105825
-//Average Healing: 30094
-//Average Absorbed: 41634
-//Protector
-//Average DHP: 274068
-//Average Damage: 106314
-//Average Healing: 156904
-//Average Absorbed: 10849
-//Thunderlord
-//Average DHP: 204834
-//Average Damage: 156515
-//Average Healing: 18486
-//Average Absorbed: 29832
-//Spiritguard
-//Average DHP: 286025
-//Average Damage: 170642
-//Average Healing: 51879
-//Average Absorbed: 63503
-//Earthwarden
-//Average DHP: 228875
-//Average Damage: 96707
-//Average Healing: 111221
-//Average Absorbed: 20945
-//DPS
-//Average DHP: 196187
-//Average Damage: 147139
-//Average Healing: 24709
-//Average Absorbed: 24337
-//Damage Ratio: 0.7499945842694052
-//Healing Ratio: 0.1259456821335685
-//Absorbed Ratio: 0.12405208785971601
-//TANK
-//Average DHP: 198106
-//Average Damage: 114047
-//Average Healing: 25270
-//Average Absorbed: 58787
-//Damage Ratio: 0.5756878244782478
-//Healing Ratio: 0.12755765207098202
-//Absorbed Ratio: 0.2967444278708674
-//HEALER
-//Average DHP: 242545
-//Average Damage: 82483
-//Average Healing: 139750
-//Average Absorbed: 20310
-//Damage Ratio: 0.3400719245750544
-//Healing Ratio: 0.5761830500019068
-//Absorbed Ratio: 0.08373781028939901
-//

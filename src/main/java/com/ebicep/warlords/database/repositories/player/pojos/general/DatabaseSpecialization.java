@@ -9,11 +9,18 @@ import com.ebicep.warlords.player.SkillBoosts;
 import com.ebicep.warlords.player.Weapons;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
 
     protected Weapons weapon = Weapons.FELFLAME_BLADE;
     @Field("skill_boost")
     protected SkillBoosts skillBoost;
+    protected int prestige;
+    @Field("prestige_dates")
+    protected List<Date> prestigeDates = new ArrayList<>();
 
     public DatabaseSpecialization() {
 
@@ -44,4 +51,19 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
     public void setSkillBoost(SkillBoosts skillBoost) {
         this.skillBoost = skillBoost;
     }
+
+    public int getPrestige() {
+        return prestige;
+    }
+
+    public void setPrestige(int prestige) {
+        this.prestige = prestige;
+    }
+
+    public void addPrestige() {
+        this.prestige++;
+        this.prestigeDates.add(new Date());
+        this.experience = 0;
+    }
+
 }

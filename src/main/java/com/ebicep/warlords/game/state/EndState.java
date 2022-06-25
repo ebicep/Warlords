@@ -204,7 +204,7 @@ public class EndState implements State, TimerDebugAble {
                         .getTextComponent())
                 );
                 ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
-                ExperienceManager.cachedPlayerExpSummary.remove(wp.getUuid());
+                ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);

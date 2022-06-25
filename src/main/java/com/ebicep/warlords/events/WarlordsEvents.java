@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
@@ -136,7 +137,8 @@ public class WarlordsEvents implements Listener {
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
-        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
         boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
         if (isSpawnWorld || playerIsInWrongWorld) {
@@ -166,7 +168,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "We highly recommend you to download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn");
             ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
 
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
@@ -184,17 +186,17 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setItem(5, new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get());
 
             if (!fromGame) {
-                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
                     List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
                     if (!playerList.isEmpty()) {
                         playerList.stream()
-                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
+                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
                                         // TODO: Fix team item
                                         // @see Team.java
-                                                new ItemBuilder(Material.WOOL).name("§aTeam Builder")
-                                                        .get()
+                                        new ItemBuilder(Material.WOOL).name("§aTeam Builder")
+                                                .get()
                                         )
                                 );
                     }
@@ -202,11 +204,32 @@ public class WarlordsEvents implements Listener {
             }
 
             if (fromGame) {
-                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                Warlords.playerScoreboards.get(uuid).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
+                //check all spec prestige
+                Warlords.newChain()
+                        .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                        .abortIfNull()
+                        .syncLast(databasePlayer -> {
+                            for (Specializations value : Specializations.values()) {
+                                int level = ExperienceManager.getLevelForSpec(uuid, value);
+                                if (level >= ExperienceManager.LEVEL_TO_PRESTIGE) {
+                                    databasePlayer.getSpec(value).addPrestige();
+                                    int prestige = databasePlayer.getSpec(value).getPrestige();
+                                    FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
+                                            .with(FireworkEffect.Type.BALL)
+                                            .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
+                                            .build()
+                                    );
+                                    PacketUtils.sendTitle(player, ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + Specializations.CRYOMANCER.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###", ExperienceManager.PRESTIGE_COLORS.get(prestige - 1).getA().toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige, 20, 140, 20);
+                                    //sumSmash is now prestige level 5 in Pyromancer!
+                                    Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
+                                }
+                            }
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        })
+                        .execute();
             }
-
-            player.getActivePotionEffects().clear();
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
@@ -454,9 +477,9 @@ public class WarlordsEvents implements Listener {
             WarlordsEntity wp = Warlords.getPlayer(player);
             if (wp != null) {
                 if (e.isLeftClick()) {
-                    wp.weaponLeftClick(player);
+                    wp.weaponLeftClick();
                 } else if (e.isRightClick()) {
-                    wp.weaponRightClick(player);
+                    wp.weaponRightClick();
                 }
             }
         }
@@ -629,7 +652,9 @@ public class WarlordsEvents implements Listener {
                                     ChatColor.GOLD + Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3) +
                                     ChatColor.DARK_GRAY + "][" +
                                     ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                                    ChatColor.DARK_GRAY + "][" +
+                                    ChatColor.DARK_GRAY + "]" +
+                                    ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
+                                    ChatColor.DARK_GRAY + "[" +
                                     playerSettings.getSelectedSpec().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
 

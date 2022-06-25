@@ -1161,7 +1161,7 @@ public abstract class WarlordsEntity {
         weapon.setItemMeta(weaponMeta);
         weaponMeta.spigot().setUnbreakable(true);
         player.getInventory().setItem(0, weapon);
-        weaponLeftClick(player);
+        weaponLeftClick();
 
         updateRedItem(player);
         updatePurpleItem(player);
@@ -1177,52 +1177,59 @@ public abstract class WarlordsEntity {
         player.getInventory().setItem(8, compass);
     }
 
-    public void weaponLeftClick(Player player) {
-        player.getInventory().setItem(
-                0,
-                new ItemBuilder(weapon.getItem())
-                        .name(ChatColor.GOLD + "Warlord's " + weapon.getName() + " of the " + spec.getClass().getSimpleName())
-                        .lore(
-                                ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
-                                "",
-                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass().selectedDescription,
-                                "",
-                                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
-                                ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
-                                ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
-                                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
-                                "",
-                                ChatColor.GOLD + "Skill Boost Unlocked",
-                                ChatColor.DARK_AQUA + "Crafted",
-                                ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
-                                ChatColor.GREEN + "EQUIPPED",
-                                ChatColor.AQUA + "BOUND",
-                                "",
-                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
-                                ChatColor.GREEN + "stats!")
-                        .unbreakable()
-                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                        .get());
+    public void weaponLeftClick() {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            player.getInventory().setItem(
+                    0,
+                    new ItemBuilder(weapon.getItem())
+                            .name(ChatColor.GOLD + "Warlord's " + weapon.getName() + " of the " + spec.getClass().getSimpleName())
+                            .lore(
+                                    ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
+                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
+                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
+                                    "",
+                                    ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
+                                    Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass().selectedDescription,
+                                    "",
+                                    ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
+                                    ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
+                                    ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
+                                    ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
+                                    "",
+                                    ChatColor.GOLD + "Skill Boost Unlocked",
+                                    ChatColor.DARK_AQUA + "Crafted",
+                                    ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
+                                    ChatColor.GREEN + "EQUIPPED",
+                                    ChatColor.AQUA + "BOUND",
+                                    "",
+                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
+                                    ChatColor.GREEN + "stats!")
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
+        }
+
     }
 
-    public void weaponRightClick(Player player) {
-        player.getInventory().setItem(
-                0,
-                new ItemBuilder(weapon.getItem())
-                        .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
-                        .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getWeapon().getCritMultiplier() + "%",
-                                "",
-                                spec.getWeapon().getDescription(),
-                                "",
-                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!")
-                        .unbreakable()
-                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                        .get());
+    public void weaponRightClick() {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            player.getInventory().setItem(
+                    0,
+                    new ItemBuilder(weapon.getItem())
+                            .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                            .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
+                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
+                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getWeapon().getCritMultiplier() + "%",
+                                    "",
+                                    spec.getWeapon().getDescription(),
+                                    "",
+                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!")
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
+        }
     }
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
@@ -1239,6 +1246,21 @@ public abstract class WarlordsEntity {
                     ability.getItem(item)
             );
         }
+    }
+
+    public ItemStack getItemStackForAbility(AbstractAbility ability) {
+        if (ability == spec.getWeapon()) {
+            return weapon.getItem();
+        } else if (ability == spec.getRed()) {
+            return new ItemStack(Material.INK_SACK, 1, (byte) 1);
+        } else if (ability == spec.getPurple()) {
+            return new ItemStack(Material.GLOWSTONE_DUST);
+        } else if (ability == spec.getBlue()) {
+            return new ItemStack(Material.INK_SACK, 1, (byte) 10);
+        } else if (ability == spec.getOrange()) {
+            return new ItemStack(Material.INK_SACK, 1, (byte) 14);
+        }
+        return null;
     }
 
     public void updateRedItem() {

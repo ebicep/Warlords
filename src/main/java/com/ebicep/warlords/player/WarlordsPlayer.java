@@ -6,14 +6,9 @@ import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.state.PlayingState;
-import static com.ebicep.warlords.player.Weapons.FELFLAME_BLADE;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -28,8 +23,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public final class WarlordsPlayer extends WarlordsEntity {
-    
+
+    private AbilityTree abilityTree = new AbilityTree(this);
+
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
             @Nonnull Game game,
@@ -37,6 +39,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
     ) {
         this(Warlords.getRejoinPoint(player.getUniqueId()), player, game, team);
     }
+
     public WarlordsPlayer(
             @Nonnull Location location,
             @Nonnull OfflinePlayer player,
@@ -54,6 +57,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
     ) {
         super(player.getUniqueId(), player.getName(), settings.getWeaponSkin(), spawnSimpleJimmy(location, null), game, team, settings.getSelectedSpec());
         updatePlayerReference(player.getPlayer());
+        this.spec.setUpgradeBranches(this);
     }
     
     @Override
@@ -192,5 +196,9 @@ public final class WarlordsPlayer extends WarlordsEntity {
         } else {
             this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
         }
+    }
+
+    public AbilityTree getAbilityTree() {
+        return abilityTree;
     }
 }

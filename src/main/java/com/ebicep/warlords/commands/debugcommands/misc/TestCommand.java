@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,8 +17,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
-
-import java.util.Arrays;
 
 
 public class TestCommand implements CommandExecutor {
@@ -82,11 +80,11 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN);
 //            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
 
+            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
 
         }
-        SignGUI.open((Player) sender, new String[]{"1", "2", "3"}, (player, lines) -> {
-            System.out.println(Arrays.toString(lines));
-        });
+
+
 //       // QueueManager.sendNewQueue();
 //        BotManager.getCompGamesServer().upsertCommand("queue", "Join, Leave, or Refresh the queue")
 //                .addSubcommands(new SubcommandData("refresh", "Refresh the queue"))

@@ -119,18 +119,18 @@ public class WarlordsShopMenu {
         Menu menu = new Menu(selectedGroup.name, 9 * 4);
         List<Specializations> values = selectedGroup.subclasses;
         for (int i = 0; i < values.size(); i++) {
-            Specializations subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(subClass.specType.itemStack)
-                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
+            Specializations spec = values.get(i);
+            ItemBuilder builder = new ItemBuilder(spec.specType.itemStack)
+                    .name(ChatColor.GREEN + "Specialization: " + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), spec)) + ChatColor.DARK_GRAY + "] " + ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(subClass.description);
+            lore.add(spec.description);
             lore.add("");
-            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
+            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), spec);
             int level = (int) ExperienceManager.calculateLevelFromExp(experience);
             lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
-            if (subClass == selectedSpec) {
+            if (spec == selectedSpec) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
@@ -142,15 +142,15 @@ public class WarlordsShopMenu {
                     1,
                     builder.get(),
                     (m, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + subClass.name);
+                        player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                        ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
+                        ArmorManager.resetArmor(player, spec, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-                        playerSettings.setSelectedSpec(subClass);
+                        playerSettings.setSelectedSpec(spec);
 
-                        AbstractPlayerClass apc = subClass.create.get();
+                        AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
+                                .getOrDefault(spec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
                                 .lore("")
                                 .get());
 
@@ -158,7 +158,7 @@ public class WarlordsShopMenu {
 
                         if (DatabaseManager.playerService == null) return;
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.setLastSpec(subClass);
+                        databasePlayer.setLastSpec(spec);
                         DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );

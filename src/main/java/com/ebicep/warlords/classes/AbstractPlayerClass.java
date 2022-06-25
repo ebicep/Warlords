@@ -7,6 +7,7 @@ import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -56,6 +57,10 @@ public abstract class AbstractPlayerClass {
             arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
             blue.updateDescription(null); // Arcaneshield does not use the player in its description
         }
+    }
+
+    public void setUpgradeBranches(WarlordsPlayer warlordsPlayer) {
+
     }
 
     public List<TextComponent> getFormattedData() {
