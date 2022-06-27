@@ -85,8 +85,8 @@ public enum Weapons {
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
     // mythic
-    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), MYTHIC),
-    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), MYTHIC),
+    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), ASCENDANT),
+    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), ASCENDANT),
     FABLED_HEROICS_SWORD_2("Bumbleblade", new ItemStack(Material.NETHER_BRICK_ITEM), LEGENDARY),
     FABLED_HEROICS_DRUMSTICK("Cornelius", new ItemStack(Material.SUGAR_CANE), LEGENDARY),
 
@@ -101,7 +101,7 @@ public enum Weapons {
         this.name = name;
         this.item = item;
         this.rarity = rarity;
-        this.isUnlocked = rarity != MYTHIC;
+        this.isUnlocked = rarity != ASCENDANT;
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);

@@ -430,6 +430,10 @@ public class Utils {
         }
     }
 
+    public static double map(double value, double min, double max) {
+        return value * (max - min) + min;
+    }
+
     public static class SimpleEntityEquipment implements EntityEquipment {
 
         private ItemStack helmet;
