@@ -11,14 +11,11 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +26,6 @@ import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Settings.*;
 import static com.ebicep.warlords.player.Specializations.APOTHECARY;
-import static java.lang.Math.round;
 
 public class WarlordsShopMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -110,7 +106,6 @@ public class WarlordsShopMenu {
         menu.setItem(7, 3, MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
-        menu.setItem(4, 4, MENU_ARCADE, (m, e) -> openArcadeMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -683,212 +678,6 @@ public class WarlordsShopMenu {
         menu.setItem(6, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
         menu.setItem(8, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
-        menu.openForPlayer(player);
-    }
-
-    private static double map(double value, double min, double max) {
-        return value * (max - min) + min;
-    }
-
-    public static void openArcadeMenu(Player player) {
-        Menu menu = new Menu("Mini Games", 9 * 4);
-
-        ItemBuilder icon = new ItemBuilder(Material.GOLD_INGOT);
-        icon.name(ChatColor.GREEN + "Weapon Roller");
-        icon.lore(
-                "§7Is RNG with you today?"
-        );
-
-        menu.setItem(3, 1, icon.get(), (m, e) -> {
-            double difficulty = 1;
-            double base = random.nextDouble() * (1 - difficulty);
-
-            double meleeDamageMin = random.nextDouble() * difficulty + base;
-            double meleeDamageMax = random.nextDouble() * difficulty + base;
-            double critChance = random.nextDouble() * difficulty + base;
-            double critMultiplier = random.nextDouble() * difficulty + base;
-            double skillBoost = random.nextDouble() * difficulty + base;
-            double health = random.nextDouble() * difficulty + base;
-            double energy = random.nextDouble() * difficulty + base;
-            double cooldown = random.nextDouble() * difficulty + base;
-            double speed = random.nextDouble() * difficulty + base;
-
-            double score =
-                    (
-                        meleeDamageMin +
-                        meleeDamageMax +
-                        critChance +
-                        critMultiplier +
-                        skillBoost +
-                        health +
-                        energy +
-                        cooldown +
-                        speed
-                    ) / 9;
-
-            meleeDamageMin = map(meleeDamageMin, 122, 132);
-            meleeDamageMax = map(meleeDamageMax, 166, 179);
-            critChance = map(critChance, 15, 25);
-            critMultiplier = map(critMultiplier, 180, 200);
-            skillBoost = map(skillBoost, 13, 20);
-            health = map(health, 500, 800);
-            energy = map(energy, 30, 35);
-            cooldown = map(cooldown, 7, 13);
-            speed = map(speed, 7, 13);
-
-            if (meleeDamageMin > meleeDamageMax) {
-                double temp = meleeDamageMin;
-                meleeDamageMin = meleeDamageMax;
-                meleeDamageMax = temp;
-            }
-
-            String displayScore = "§7Your weapon score is §a" + NumberFormat.formatOptionalTenths(score * 100);
-
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
-
-            ItemStack weapon = new ItemStack(Weapons.FELFLAME_BLADE.getItem());
-            ItemMeta weaponMeta = weapon.getItemMeta();
-            weaponMeta.setDisplayName("§6Warlord's Felflame of the " + apc.getWeapon().getName());
-            ArrayList<String> weaponLore = new ArrayList<>();
-            weaponLore.add("§7Damage: §c" + round(meleeDamageMin) + "§7-§c" + round(meleeDamageMax));
-            weaponLore.add("§7Crit Chance: §c" + round(critChance) + "%");
-            weaponLore.add("§7Crit Multiplier: §c" + round(critMultiplier) + "%");
-            weaponLore.add("");
-            String classNamePath = apc.getClass().getGenericSuperclass().getTypeName();
-            weaponLore.add("§a" + classNamePath.substring(classNamePath.indexOf("Abstract") + 8) + " (" + apc.getClass().getSimpleName() + "):");
-            weaponLore.add("§aIncreases the damage you");
-            weaponLore.add("§adeal with " + apc.getWeapon().getName() + " by §c" + round(skillBoost) + "%");
-            weaponLore.add("");
-            weaponLore.add("§7Health: §a+" + round(health));
-            weaponLore.add("§7Max Energy: §a+" + round(energy));
-            weaponLore.add("§7Cooldown Reduction: §a+" + round(cooldown) + "%");
-            weaponLore.add("§7Speed: §a+" + round(speed) + "%");
-            weaponLore.add("");
-            weaponLore.add("§3CRAFTED");
-            weaponLore.add("");
-            weaponLore.add(displayScore);
-            weaponLore.add("");
-            weaponLore.add("§7Left-click to roll again!");
-            weaponMeta.setLore(weaponLore);
-            weapon.setItemMeta(weaponMeta);
-            m.getInventory().setItem(e.getRawSlot(), weapon);
-
-            if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
-            }
-
-            if (score < 0.15) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
-            }
-        });
-
-        ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
-        icon2.name(ChatColor.GREEN + "Skin Shard Roller");
-        icon2.lore(
-                "§7Is RNG with you to give everyone a new awesome skin?",
-                "",
-                "§7Left-click to roll 10 skin shards!"
-        );
-
-        menu.setItem(5, 1, icon2.get(), (m, e) -> {
-
-            Long weaponCooldown = openWeaponCooldown.get(player.getUniqueId());
-
-            Map<WeaponsRarity, Integer> foundWeaponCount = new EnumMap<>(WeaponsRarity.class);
-
-            for(WeaponsRarity rarity : WeaponsRarity.values()) {
-                foundWeaponCount.put(rarity, 0);
-            }
-
-            if (Bukkit.getOnlinePlayers().size() >= 16) {
-
-                if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
-                    openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    for (int i = 0; i < 10; i++) {
-                        String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
-                        String mythicName = mythicNames[random.nextInt(mythicNames.length)];
-
-                        double chance = random.nextDouble() * 100;
-
-                        WeaponsRarity rarity;
-
-                        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-                        Specializations selectedSpec = playerSettings.getSelectedSpec();
-
-                        if (chance < 96.3) {
-                            rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.3 + 3) {
-                            rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.3 + 3 + 0.6) {
-                            rarity = WeaponsRarity.LEGENDARY;
-                        } else {
-                            rarity = WeaponsRarity.MYTHIC;
-                        }
-
-                        foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
-                        List<Weapons> weapons = weaponByRarity.get(rarity);
-
-                        Weapons weapon = weapons.get(random.nextInt(weapons.size()));
-                        String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapon.getName() + " of the " + selectedSpec.name;
-                        String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapon.getName() + " of the " + selectedSpec.name;
-
-                        if (rarity == WeaponsRarity.EPIC) {
-                            Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
-                        }
-
-                        if (rarity == WeaponsRarity.LEGENDARY) {
-                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 1, 1);
-
-                            Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
-                            player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
-                        }
-
-                        if (rarity == WeaponsRarity.MYTHIC) {
-                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 500, 0.8f);
-                            Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
-
-                            Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + mythicMessage);
-
-                            for (int j = 0; j < 10; j++) {
-                                player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
-                            }
-                        }
-
-                        if (!weapon.isUnlocked) {
-                            weapon.isUnlocked = true;
-                            Warlords.getInstance().saveWeaponConfig();
-                            //Bukkit.broadcastMessage("");
-                            //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
-                            //Bukkit.broadcastMessage("");
-                        } else {
-                            if (rarity == WeaponsRarity.MYTHIC) {
-                                //Bukkit.broadcastMessage("");
-                                //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
-                                //Bukkit.broadcastMessage("");
-                            }
-                        }
-                    }
-
-                    player.sendMessage("");
-                    player.sendMessage("§7You found:");
-                    player.sendMessage("§7Rare: §9" + foundWeaponCount.get(WeaponsRarity.RARE));
-                    player.sendMessage("§7Epic: §5" + foundWeaponCount.get(WeaponsRarity.EPIC));
-                    player.sendMessage("§7Legendary: §6" + foundWeaponCount.get(WeaponsRarity.LEGENDARY));
-                    player.sendMessage("§7Mythic: §c" + foundWeaponCount.get(WeaponsRarity.MYTHIC));
-                } else {
-                    long remainingTime = (weaponCooldown - System.currentTimeMillis()) / 1000;
-                    long remainingTimeinMinutes = remainingTime / 60;
-                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening skin shards again!");
-                }
-            } else {
-                player.sendMessage(ChatColor.RED + "There must be at least 16 players online to roll skin shards!");
-            }
-        });
-
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 }

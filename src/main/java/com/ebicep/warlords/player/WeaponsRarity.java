@@ -7,7 +7,7 @@ public enum WeaponsRarity {
     RARE(ChatColor.BLUE),
     EPIC(ChatColor.DARK_PURPLE),
     LEGENDARY(ChatColor.GOLD),
-    MYTHIC(ChatColor.RED)
+    ASCENDANT(ChatColor.RED)
 
     ;
 
