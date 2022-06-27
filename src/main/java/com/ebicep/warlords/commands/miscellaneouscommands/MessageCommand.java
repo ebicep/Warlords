@@ -40,7 +40,7 @@ public class MessageCommand implements CommandExecutor {
                 Player otherPlayer = Bukkit.getPlayer(targetPlayer);
                 if (otherPlayer != null) {
                     if (otherPlayer.equals(player)) {
-                        sender.sendMessage(ChatColor.RED + "You cannot message yourself");
+                        sender.sendMessage(ChatColor.RED + "You cannot message yourself.");
                         return true;
                     }
                     StringBuilder message = new StringBuilder();
@@ -54,7 +54,7 @@ public class MessageCommand implements CommandExecutor {
                     lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "Cannot find that player");
+                sender.sendMessage(ChatColor.RED + "Cannot find that player.");
                 return true;
             }
             case "r": {
@@ -80,10 +80,10 @@ public class MessageCommand implements CommandExecutor {
                         lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
                         return true;
                     }
-                    sender.sendMessage(ChatColor.RED + "That player is no longer online");
+                    sender.sendMessage(ChatColor.RED + "That player is no longer online!");
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes");
+                sender.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes.");
                 return true;
             }
         }
