@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 
 public class UnstuckCommand implements CommandExecutor {
 
-    private boolean onCooldown = true;
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
