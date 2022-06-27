@@ -18,7 +18,7 @@ import java.util.List;
 
 public class FlameBurst extends AbstractProjectileBase {
 
-    private static final float HITBOX = 5;
+    private float hitbox = 5;
 
     public FlameBurst() {
         super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
@@ -88,7 +88,7 @@ public class FlameBurst extends AbstractProjectileBase {
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -110,5 +110,13 @@ public class FlameBurst extends AbstractProjectileBase {
         }
 
         return playersHit;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
     }
 }

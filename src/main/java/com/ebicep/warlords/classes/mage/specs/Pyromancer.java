@@ -3,9 +3,7 @@ package com.ebicep.warlords.classes.mage.specs;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.FireballUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.*;
 
 import java.util.List;
 
@@ -32,5 +30,9 @@ public class Pyromancer extends AbstractMage {
         AbilityTree abilityTree = warlordsPlayer.getAbilityTree();
         List<UpgradeBranch<?>> upgradeBranches = abilityTree.getUpgradeBranches();
         upgradeBranches.add(new FireballUpgradeBranch(abilityTree, (Fireball) weapon, warlordsPlayer.getItemStackForAbility(weapon)));
+        upgradeBranches.add(new FlameburstUpgradeBranch(abilityTree, (FlameBurst) red, warlordsPlayer.getItemStackForAbility(red)));
+        upgradeBranches.add(new TimewarpUpgradeBranch(abilityTree, (TimeWarp) purple, warlordsPlayer.getItemStackForAbility(purple)));
+        upgradeBranches.add(new ArcaneShieldUpgradeBranch(abilityTree, (ArcaneShield) blue, warlordsPlayer.getItemStackForAbility(blue)));
+        upgradeBranches.add(new InfernoUpgradeBranch(abilityTree, (Inferno) orange, warlordsPlayer.getItemStackForAbility(orange)));
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class ArcaneShield extends AbstractAbility {
     private int timesBroken = 0;
 
-    private final int duration = 6;
+    private int duration = 6;
     public int maxShieldHealth;
     public int shieldPercentage = 50;
     private float shieldHealth = 0;
@@ -112,5 +112,13 @@ public class ArcaneShield extends AbstractAbility {
 
     public void setShieldPercentage(int shieldPercentage) {
         this.shieldPercentage = shieldPercentage;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

@@ -57,23 +57,28 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                         switch (finalI) {
                             case 0:
                                 tierOneUpgrade();
-                                player.weaponRightClick(); //todo fix not updating after first upgrade unless manually do it
+                                player.weaponRightClick();
+                                ability.updateDescription((Player) player.getEntity());
                                 break;
                             case 1:
                                 tierTwoUpgrade();
                                 player.updateRedItem();
+                                ability.updateDescription((Player) player.getEntity());
                                 break;
                             case 2:
                                 tierThreeUpgrade();
                                 player.updatePurpleItem();
+                                ability.updateDescription((Player) player.getEntity());
                                 break;
                             case 3:
                                 tierFourUpgrade();
                                 player.updateBlueItem();
+                                ability.updateDescription((Player) player.getEntity());
                                 break;
                             case 4:
                                 tierFiveUpgrade();
                                 player.updateOrangeItem();
+                                ability.updateDescription((Player) player.getEntity());
                                 break;
                         }
                         upgrade.setUnlocked(true);
