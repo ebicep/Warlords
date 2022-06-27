@@ -12,17 +12,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Supports actually freezing the internalPlayers in the game
  */
 public class GameFreezeOption implements Option, Listener {
+
+    public static final int RESUME_TIME = 5;
 
     private static Listener GLOBAL_LISTENER = new Listener() {
         @EventHandler
@@ -40,8 +44,15 @@ public class GameFreezeOption implements Option, Listener {
         }
     };
 
+    public static void resumeGame(Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof GameFreezeOption) {
+                ((GameFreezeOption) option).resume();
+            }
+        }
+    }
+
     private Game game;
-    private boolean isFrozen = false;
 
     @Override
     public void register(Game game) {
@@ -58,26 +69,51 @@ public class GameFreezeOption implements Option, Listener {
         if (game.getFrozenCauses().isEmpty()) {
             throw new IllegalStateException("Game is not marked as frozen");
         }
-        isFrozen = true;
         String message = game.getFrozenCauses().get(0);
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            if (p.getVehicle() instanceof Horse) {
-                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-            }
-            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
-        });
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
+    }
+
+    private void freezePlayer(Player p, String message) {
+        if (p.getVehicle() instanceof Horse) {
+            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
+        }
+        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", message, 0, 9999999, 0);
     }
 
     private void unfreeze() {
-        isFrozen = false;
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            if (p.getVehicle() instanceof Horse) {
-                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
+    }
+
+    private void unfreezePlayer(Player p) {
+        if (p.getVehicle() instanceof Horse) {
+            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+        }
+        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+        p.removePotionEffect(PotionEffectType.BLINDNESS);
+    }
+
+    private void resume() {
+        //Do nothing while the game is being resumed
+        if (game.isUnfreezeCooldown()) {
+            return;
+        }
+        game.setUnfreezeCooldown(true);
+        new BukkitRunnable() {
+
+            int timer = RESUME_TIME;
+
+            @Override
+            public void run() {
+                game.forEachOnlinePlayerWithoutSpectators((p, team) -> PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + timer, "", 0, 40, 0));
+                if (timer == 0) {
+                    game.clearFrozenCauses();
+                    game.setUnfreezeCooldown(false);
+                    this.cancel();
+                }
+                timer--;
             }
-            PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-            p.removePotionEffect(PotionEffectType.BLINDNESS);
-        });
+        }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
 
     @EventHandler
@@ -87,10 +123,10 @@ public class GameFreezeOption implements Option, Listener {
         }
         switch (evt.getKey()) {
             case Game.KEY_UPDATED_FROZEN:
-                if (game.isFrozen() && !isFrozen) {
+                if (game.isFrozen()) {
                     freeze();
                 }
-                if (!game.isFrozen() && isFrozen) {
+                if (!game.isFrozen()) {
                     unfreeze();
                 }
                 break;
@@ -99,8 +135,13 @@ public class GameFreezeOption implements Option, Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
-        if (game.getPlayerTeam(evt.getPlayer().getUniqueId()) != null && isFrozen) {
-            freeze();
+        Player p = evt.getPlayer();
+        if (game.getPlayerTeam(evt.getPlayer().getUniqueId()) != null) {
+            if (game.isFrozen()) {
+                freezePlayer(p, game.getFrozenCauses().get(0));
+            } else {
+                unfreezePlayer(p);
+            }
         }
     }
 

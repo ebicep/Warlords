@@ -219,6 +219,7 @@ public class BotManager {
             try {
                 textChannel.getLatestMessageId();
             } catch (Exception e) {
+                e.printStackTrace();
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
                 return;
             }

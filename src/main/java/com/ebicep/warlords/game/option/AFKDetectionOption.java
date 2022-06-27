@@ -8,7 +8,6 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,12 +26,10 @@ public class AFKDetectionOption implements Option, Listener {
     public static boolean enabled = true;
 
     private final HashMap<WarlordsPlayer, List<Location>> playerLocations = new HashMap<>();
-    private boolean canFreeze = false;
 
     @Override
     public void register(@Nonnull Game game) {
         game.registerEvents(this);
-        this.canFreeze = Utils.collectionHasItem(game.getOptions(), o -> o instanceof GameFreezeOption);
     }
 
     @Override
@@ -68,19 +65,29 @@ public class AFKDetectionOption implements Option, Listener {
                                 Location thirdLastLocation = locations.get(locations.size() - 3);
                                 if (locations.size() >= 4) {
                                     Location fourthLastLocation = locations.get(locations.size() - 4);
-                                    if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation)) {
+                                    if (locations.size() >= 5) {
+                                        Location fifthLastLocation = locations.get(locations.size() - 5);
+                                        if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
+                                            //hasnt moved for 12.5 seconds
+                                            for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
+                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)");
+                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                            }
+                                            game.addFrozenCause(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " has been detected as AFK.");
+                                            wasFrozen = true;
+                                            continue;
+                                        }
+                                    }
+                                    if (thirdLastLocation.equals(fourthLastLocation)) {
                                         //hasnt moved for 10 seconds
                                         for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 10 seconds)");
+                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)");
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                         }
-                                        if (canFreeze) {
-                                            warlordsPlayer.getGame().addFrozenCause(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.RED + " has been detected as AFK.");
-                                            wasFrozen = true;
-                                        }
-                                        continue;
                                     }
+                                    continue;
                                 }
                                 if (secondLastLocation.equals(thirdLastLocation)) {
                                     //hasnt moved for 7.5 seconds
@@ -104,7 +111,7 @@ public class AFKDetectionOption implements Option, Listener {
                     }
                 });
             }
-        }.runTaskTimer(20 * 15, 50); //5 seconds after gates fall - every 2.5 seconds
+        }.runTaskTimer(20 * 15 + 5, 50); //5 seconds after gates fall - every 2.5 seconds
     }
 
     @EventHandler

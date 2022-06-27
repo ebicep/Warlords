@@ -3,11 +3,10 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.GameFreezeOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +22,6 @@ import java.util.stream.Stream;
 
 import static com.ebicep.warlords.commands.BaseCommand.requireGame;
 import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPrivateGame;
-import static com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption.UNFREEZE_TIME;
 
 public class DebugCommand implements TabExecutor {
 
@@ -162,25 +160,7 @@ public class DebugCommand implements TabExecutor {
                 }
                 if (!game.isUnfreezeCooldown()) {
                     if (game.isFrozen()) {
-                        game.setUnfreezeCooldown(true);
-                        new GameRunnable(game, true) {
-                            int timer = 0;
-
-                            @Override
-                            public void run() {
-                                timer++;
-                                if (timer < UNFREEZE_TIME) {
-                                    game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-                                        PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (UNFREEZE_TIME - timer), "", 0, 40, 0);
-                                    });
-                                } else {
-                                    game.clearFrozenCauses();
-                                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been unfrozen!");
-                                    game.setUnfreezeCooldown(false);
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(10, 20);
+                        GameFreezeOption.resumeGame(game);
                     } else {
                         game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + sender.getName());
                         sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
