@@ -511,11 +511,13 @@ public class Warlords extends JavaPlugin {
     }
 
     private int counter = 0;
+
     private void startMainLoop() {
         new BukkitRunnable() {
 
             @Override
             public void run() {
+
 
                 // Every 1 tick - 0.05 seconds.
                 {
