@@ -10,7 +10,7 @@ public class Vindicator extends AbstractRogue {
                 "Vindicator",
                 6000,
                 305,
-                20,
+                15,
                 new RighteousStrike(),
                 new SoulShackle(),
                 new HeartToHeart(),

@@ -30,7 +30,7 @@ public class ExperienceManager {
         //caching all levels/experience
         Map<Integer, Long> levelExperienceNew = new HashMap<>();
         Map<Long, Integer> experienceLevelNew = new HashMap<>();
-        for (int i = 0; i < 201; i++) {
+        for (int i = 0; i < 500; i++) {
             long exp = (long) calculateExpFromLevel(i);
             levelExperienceNew.put(i, exp);
             experienceLevelNew.put(exp, i);

@@ -54,7 +54,6 @@ public class RemedicChains extends AbstractAbility {
         info.add(new Pair<>("Players Linked", "" + playersLinked));
         info.add(new Pair<>("Times Link Broke", "" + numberOfBrokenLinks));
 
-
         return info;
     }
 
