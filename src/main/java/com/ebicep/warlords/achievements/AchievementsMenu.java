@@ -43,12 +43,12 @@ public class AchievementsMenu {
         );
         for (int i = 0; i < GameMode.values().length; i++) {
             GameMode gameMode = GameMode.values()[i];
-            if (gameMode.itemStack == null) continue;
+            if (gameMode.getItemStack() == null) continue;
             menu.setItem(
                     i + 1,
                     1,
-                    new ItemBuilder(gameMode.itemStack)
-                            .name(ChatColor.GREEN + gameMode.name)
+                    new ItemBuilder(gameMode.getItemStack())
+                            .name(ChatColor.GREEN + gameMode.getName())
                             .get(),
                     (m, e) -> openAchievementTypeMenu(player, gameMode)
             );
@@ -59,7 +59,7 @@ public class AchievementsMenu {
     }
 
     public static void openAchievementTypeMenu(Player player, GameMode gameMode) {
-        Menu menu = new Menu("Achievements - " + (gameMode == null ? "General" : gameMode.name), 9 * 4);
+        Menu menu = new Menu("Achievements - " + (gameMode == null ? "General" : gameMode.getName()), 9 * 4);
 
         menu.setItem(
                 2,
@@ -179,7 +179,7 @@ public class AchievementsMenu {
                 .filter(achievements -> achievements.gameMode == gameMode)
                 .collect(Collectors.toList());
 
-        Menu menu = new Menu("Challenge Achievements - " + gameMode.name, 9 * 6);
+        Menu menu = new Menu("Challenge Achievements - " + gameMode.getName(), 9 * 6);
 
         int x = 0;
         int y = 0;

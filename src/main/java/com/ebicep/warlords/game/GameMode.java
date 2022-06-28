@@ -90,30 +90,6 @@ public enum GameMode {
             return options;
         }
     },
-    DUEL(
-            "Duel",
-            new ItemStack(Material.DIAMOND_SWORD),
-            DatabaseGameDuel::new,
-            GamesCollections.DUEL
-    ) {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = super.initMap(map, loc, addons);
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
-            options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "First player to kill their opponent",
-                    color + "5 times wins the duel!",
-                    ""
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    ChatColor.GREEN + "GO!"
-            ));
-            return options;
-        }
-    },
     TEAM_DEATHMATCH(
             "Team Deathmatch",
             new ItemStack(Material.DIAMOND_BARDING),
@@ -143,8 +119,32 @@ public enum GameMode {
             return options;
         }
     },
+    DUEL(
+            "[WIP] Duel",
+            new ItemStack(Material.DIAMOND_SWORD),
+            DatabaseGameDuel::new,
+            GamesCollections.DUEL
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "First player to kill their opponent",
+                    color + "5 times wins the duel!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!"
+            ));
+            return options;
+        }
+    },
     SIMULATION_TRIAL(
-            "Simulation Trial",
+            "[WIP] Simulation Trial",
             null,
             null,
             null
@@ -171,7 +171,7 @@ public enum GameMode {
         }
     },
     WAVE_DEFENSE(
-            "[PH] Wave Defense",
+            "[WIP] Wave Defense",
             null,
             null,
             null
@@ -219,8 +219,8 @@ public enum GameMode {
 
     ;
 
-    public final String name;
-    public final ItemStack itemStack;
+    private final String name;
+    private final ItemStack itemStack;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
 
@@ -319,5 +319,13 @@ public enum GameMode {
         }
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ItemStack getItemStack() {
+        return itemStack;
     }
 }

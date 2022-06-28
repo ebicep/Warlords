@@ -46,7 +46,7 @@ public class DebugMenuGameOptions {
                     (m, e) -> {
                         switch (index) {
                             case 1:
-                                StartMenu.openMapPickerMenu(player);
+                                StartMenu.openGamemodeMenu(player);
                                 break;
                             case 2:
                                 GamesMenu.openGameSelectorMenu(player);
@@ -62,38 +62,35 @@ public class DebugMenuGameOptions {
 
     public static class StartMenu {
 
-        public static void openMapPickerMenu(Player player) {
-            Menu menu = new Menu("Map Picker", 9 * 6);
-            GameMap[] values = GameMap.values();
+        public static void openGamemodeMenu(Player player) {
+            Menu menu = new Menu("Gamemode Picker", 9 * 4);
+            GameMode[] values = GameMode.values();
             for (int i = 0; i < values.length; i++) {
-                GameMap map = values[i];
-                String mapName = map.getMapName();
-                menu.setItem(i % 7 + 1, 1 + i / 7,
-                        new ItemBuilder(woolSortedByColor[i + 5])
-                                .name(ChatColor.GREEN + mapName)
-                                .lore(ChatColor.GRAY + "Available Gamemodes: " + ChatColor.GOLD + map.getGameModes().stream().map(gameMode -> gameMode.name).collect(Collectors.joining(", ")))
+                GameMode gm = values[i];
+                menu.setItem(9 / 2 - values.length / 2 + i, 1,
+                        new ItemBuilder(Material.WOOL, 1, (short) 15)
+                                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + gm.getName())
                                 .get(),
-                        (m, e) -> openMapGameModesMenu(player, map)
+                        (m, e) -> openMapMenu(player, gm)
                 );
             }
 
             if (player.hasPermission("warlords.game.customtoggle")) {
-                menu.setItem(3, 5, MENU_BACK, (m, e) -> openGameMenu(player));
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameMenu(player));
             }
 
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
-        public static void openMapGameModesMenu(Player player, GameMap selectedGameMap) {
-            int menuHeight = (4 + selectedGameMap.getGameModes().size() / 7);
-            Menu menu = new Menu(selectedGameMap.getMapName(), 9 * menuHeight);
-
-            for (int i = 0; i < selectedGameMap.getGameModes().size(); i++) {
-                GameMode gameMode = selectedGameMap.getGameModes().get(i);
+        public static void openMapMenu(Player player, GameMode gm) {
+            Menu menu = new Menu(gm.getName(), 9 * 6);
+            GameMap[] values = GameMap.values();
+            for (int i = 0; i < values.length; i++) {
+                GameMap map = values[i];
                 menu.setItem(i % 7 + 1, 1 + i / 7,
                         new ItemBuilder(woolSortedByColor[i + 5])
-                                .name(ChatColor.GREEN + gameMode.name)
+                                .name(ChatColor.GREEN + map.getMapName())
                                 .get(),
                         (m, e) -> {
                             List<GameAddon> addons = new ArrayList<>();
@@ -101,19 +98,19 @@ public class DebugMenuGameOptions {
                             if (!player.isOp()) {
                                 addons.add(GameAddon.CUSTOM_GAME);
                             }
-                            openMapsAddonsMenu(player, selectedGameMap, gameMode, addons);
+                            openMapsAddonsMenu(player, map, gm, addons);
                         }
                 );
             }
 
-            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapPickerMenu(player));
-            menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(3, 5, MENU_BACK, (m, e) -> openGamemodeMenu(player));
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
         public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, List<GameAddon> addons) {
             int menuHeight = (4 + GameAddon.values().length / 7);
-            Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.name, 9 * menuHeight);
+            Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.getName(), 9 * menuHeight);
 
             for (int i = 0; i < GameAddon.values().length; i++) {
                 GameAddon gameAddon = GameAddon.values()[i];
@@ -172,7 +169,7 @@ public class DebugMenuGameOptions {
                             GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "), false);
                         });
             }
-            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapGameModesMenu(player, selectedGameMap));
+            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
             menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
                 StringBuilder stringAddons = new StringBuilder();
@@ -239,8 +236,6 @@ public class DebugMenuGameOptions {
 
         public static void openGameEditorMenu(Player player, Game game) {
             Menu menu = new Menu("Game Editor", 9 * 5);
-
-            //GAME
             menu.setItem(1, 1,
                     new ItemBuilder(Material.DIODE)
                             .name(ChatColor.GREEN + "Timer")
@@ -263,8 +258,6 @@ public class DebugMenuGameOptions {
                         }
                         System.out.println("[DEBUG] " + player.getName() + " froze game " + game.getGameId());
                     });
-
-            //PLAYER
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
                 menu.setItem(1, 2,
@@ -274,7 +267,6 @@ public class DebugMenuGameOptions {
                         (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
                 );
             }
-
             menu.setItem(2, 2,
                     new ItemBuilder(Material.NOTE_BLOCK)
                             .name(ChatColor.GREEN + "Team Options")
@@ -301,18 +293,7 @@ public class DebugMenuGameOptions {
 
         public static void openTimerMenu(Player player, Game game) {
             TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
-
             Menu menu = new Menu("Timer", 9 * 4);
-            /*menu.setItem(2, 1,
-                    new ItemBuilder(Material.WOOD_BUTTON)
-                            .name(ChatColor.GREEN + "Reset")
-                            .get(),
-                    (m, e) -> {
-                        timerDebugAble.resetTimer();
-                        player.sendMessage(ChatColor.RED + "DEV: " + ChatColor.GREEN + "Timer reset");
-                        System.out.println("[DEBUG] " + player.getName() + " reset timer of game " + game.getGameId());
-                    }
-            );*/
             menu.setItem(3, 1,
                     new ItemBuilder(Material.STONE_BUTTON)
                             .name(ChatColor.GREEN + "Skip")
@@ -389,7 +370,6 @@ public class DebugMenuGameOptions {
                 );
                 x++;
             }
-
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);

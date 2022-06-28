@@ -62,7 +62,7 @@ public class SpectateCommand implements CommandExecutor {
                                 .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
                                 .lore(
                                         ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
-                                        ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().name,
+                                        ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
                                         ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")),
                                         ChatColor.GRAY + "Player count: " + ChatColor.RED + game.playersCount()
                                 )
