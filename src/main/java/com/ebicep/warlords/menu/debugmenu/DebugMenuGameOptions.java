@@ -86,6 +86,7 @@ public class DebugMenuGameOptions {
         public static void openMapMenu(Player player, GameMode gm) {
             Menu menu = new Menu(gm.getName(), 9 * 6);
             GameMap[] values = GameMap.values();
+            // TODO: filter maps per gamemode
             for (int i = 0; i < values.length; i++) {
                 GameMap map = values[i];
                 menu.setItem(i % 7 + 1, 1 + i / 7,
