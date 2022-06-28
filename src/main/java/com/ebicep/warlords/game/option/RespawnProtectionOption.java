@@ -22,7 +22,7 @@ import java.util.Map;
 public class RespawnProtectionOption implements Option, Listener {
 
     private static final int DEFAULT_PROTECTION_TIME = 4;
-    private static final int DEFAULT_RADIUS = 5;
+    private static final int DEFAULT_RADIUS = 4;
     private final Map<WarlordsEntity, Pair<Location, Integer>> spawnProtection = new HashMap<>();
     private int protectionTime;
     private int radius;
@@ -91,7 +91,9 @@ public class RespawnProtectionOption implements Option, Listener {
     @EventHandler()
     public void onEvent(WarlordsDamageHealingEvent event) {
         if (spawnProtection.containsKey(event.getPlayer())) {
-            event.getPlayer().removeHorse();
+            if (event.getAttacker().getTeam() != event.getPlayer().getTeam()) {
+                event.getPlayer().removeHorse();
+            }
             event.setCancelled(true);
         }
     }
