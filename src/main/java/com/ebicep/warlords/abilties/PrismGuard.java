@@ -26,7 +26,7 @@ public class PrismGuard extends AbstractAbility {
 
     private final int bubbleRadius = 4;
     private final int duration = 4;
-    private int bubbleHealing = 600;
+    private int bubbleHealing = 400;
     private int projectileDamageReduction = 60;
     private int damageReduction = 25;
 
@@ -43,7 +43,7 @@ public class PrismGuard extends AbstractAbility {
                 "§7the bubble is reduced by §c" + damageReduction + "%§7." +
                 "\n\n" +
                 "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
-                "§7you for §a" + bubbleHealing + " §7+ §a20% §7missing health and\n" +
+                "§7you for §a" + bubbleHealing + " §7+ §a15% §7missing health and\n" +
                 "§7allies for half the amount based on how long\n" +
                 "§7they've been in the bubble.\n";
     }
@@ -100,7 +100,7 @@ public class PrismGuard extends AbstractAbility {
                             new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2)
                     ).playEffects();
 
-                    float healingValue = bubbleHealing + (wp.getMaxHealth() - wp.getHealth()) * 0.2f;
+                    float healingValue = bubbleHealing + (wp.getMaxHealth() - wp.getHealth()) * 0.15f;
                     wp.addHealingInstance(
                             wp,
                             name,
@@ -114,7 +114,7 @@ public class PrismGuard extends AbstractAbility {
 
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // Divide by 8 = half healing for allies, 600 / 4 = 150
-                        float teammateHealingValue = (bubbleHealing / 8f) + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
+                        float teammateHealingValue = (bubbleHealing / 8f) + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.0375f;
                         int timeInSeconds = entry.getValue() * 3 / 20;
                         float totalHealing = (timeInSeconds * teammateHealingValue);
                         entry.getKey().addHealingInstance(
