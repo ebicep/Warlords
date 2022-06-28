@@ -12,8 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
-import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
+import static com.ebicep.warlords.menu.Menu.*;
 
 public abstract class UpgradeBranch<T extends AbstractAbility> {
 
@@ -82,11 +81,13 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 break;
                         }
                         upgrade.setUnlocked(true);
+                        ability.updateDescription((Player) player.getEntity());
                         openUpgradeBranchMenu();
                     }
             );
         }
 
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> abilityTree.openAbilityTree());
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());

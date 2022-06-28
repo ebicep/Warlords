@@ -11,7 +11,7 @@ public class ArcaneShieldUpgradeBranch extends UpgradeBranch<ArcaneShield> {
         upgrades.add(new Upgrade("Tier 2", "+5% Damage resistance while shield is active."));
         upgrades.add(new Upgrade("Tier 3", "+10% Damage absorbed"));
         upgrades.add(new Upgrade("Tier 4", "+5% Damage resistance while shield is active."));
-        upgrades.add(new Upgrade("Tier 5", "-50% Cooldown, +30% Damage absorbed and +50% Duration."));
+        upgrades.add(new Upgrade("Tier 5", "-50% Cooldown\n+30% Damage absorbed\n+50% Duration."));
     }
 
     @Override
@@ -38,5 +38,4 @@ public class ArcaneShieldUpgradeBranch extends UpgradeBranch<ArcaneShield> {
         ability.setShieldPercentage(100);
         ability.setCooldown(ability.getCooldown() * .5f);
     }
-
 }

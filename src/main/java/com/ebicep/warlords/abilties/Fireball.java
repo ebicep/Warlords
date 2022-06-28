@@ -16,9 +16,9 @@ import java.util.List;
 
 public class Fireball extends AbstractProjectileBase {
 
-    private static final int MAX_FULL_DAMAGE_DISTANCE = 50;
-    private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 4;
+    private int maxFullDistance = 50;
+    private double directHitMultiplier = 1.15;
+    private float hitbox = 4;
 
     public Fireball() {
         super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
@@ -32,7 +32,7 @@ public class Fireball extends AbstractProjectileBase {
                 "§7to take an additional §c15% §7extra\n" +
                 "§7damage." +
                 "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
+                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
     }
 
     @Override
@@ -87,8 +87,8 @@ public class Fireball extends AbstractProjectileBase {
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
@@ -98,8 +98,8 @@ public class Fireball extends AbstractProjectileBase {
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
-                    (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                    (float) (minDamageHeal * directHitMultiplier * toReduceBy),
+                    (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                     critChance,
                     critMultiplier,
                     false);
@@ -107,7 +107,7 @@ public class Fireball extends AbstractProjectileBase {
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -127,5 +127,29 @@ public class Fireball extends AbstractProjectileBase {
         }
 
         return playersHit;
+    }
+
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
+    }
+
+    public double getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(double directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
     }
 }
