@@ -31,8 +31,8 @@ public class AbilityTree {
                     (n, e) -> upgradeBranch.openUpgradeBranchMenu()
             );
         }
-
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }

@@ -1,11 +1,14 @@
-package com.ebicep.warlords.pve.upgrades;
+package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.Inferno;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
 import org.bukkit.inventory.ItemStack;
 
-public class InfernoUpgradeBranch extends UpgradeBranch<Inferno> {
+public class InfernoBranch extends UpgradeBranch<Inferno> {
 
-    public InfernoUpgradeBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack) {
+    public InfernoBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack) {
         super(abilityTree, ability, itemStack);
         upgrades.add(new Upgrade("Tier 1", "+10% Critical Chance"));
         upgrades.add(new Upgrade("Tier 2", "+20% Critical Damage"));

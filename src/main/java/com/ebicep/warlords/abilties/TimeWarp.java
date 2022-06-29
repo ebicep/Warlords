@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int timesSuccessful = 0;
 
     private final int duration = 5;
     private int warpHealPercentage = 30;
+    private int pveSpeed = 0;
 
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
@@ -92,6 +94,10 @@ public class TimeWarp extends AbstractAbility {
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                         }
+
+                        if (pveUpgrade) {
+                            wp.getSpeed().addSpeedModifier("Time Warp Speed", pveSpeed, ticksLeft);
+                        }
                     }
                 }
         );
@@ -105,5 +111,21 @@ public class TimeWarp extends AbstractAbility {
 
     public int getTimesSuccessful() {
         return timesSuccessful;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getPveSpeed() {
+        return pveSpeed;
+    }
+
+    public void setPveSpeed(int pveSpeed) {
+        this.pveSpeed = pveSpeed;
     }
 }

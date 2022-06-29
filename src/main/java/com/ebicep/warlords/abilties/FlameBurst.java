@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlameBurst extends AbstractProjectileBase {
+    private boolean pveUpgrade = false;
 
     private float hitbox = 5;
 
@@ -98,15 +99,27 @@ public class FlameBurst extends AbstractProjectileBase {
                 numberOfDismounts++;
             }
 
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.5),
-                    critMultiplier,
-                    false
-            );
+            if (pveUpgrade) {
+                nearEntity.addDamageInstance(
+                        shooter,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.6),
+                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.5),
+                        false
+                );
+            } else {
+                nearEntity.addDamageInstance(
+                        shooter,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.5),
+                        critMultiplier,
+                        false
+                );
+            }
         }
 
         return playersHit;
@@ -118,5 +131,13 @@ public class FlameBurst extends AbstractProjectileBase {
 
     public void setHitbox(float hitbox) {
         this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

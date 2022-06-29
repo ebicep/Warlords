@@ -34,7 +34,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected int numberOfDismounts = 0;
 
     protected float forwardTeleportAmount = 0;
-    protected int maxAngleOfShots = 75;
+    protected int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
 

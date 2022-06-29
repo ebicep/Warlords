@@ -1,17 +1,20 @@
-package com.ebicep.warlords.pve.upgrades;
+package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.Fireball;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
 import org.bukkit.inventory.ItemStack;
 
-public class FireballUpgradeBranch extends UpgradeBranch<Fireball> {
+public class FireballBranch extends UpgradeBranch<Fireball> {
 
-    public FireballUpgradeBranch(AbilityTree abilityTree, Fireball ability, ItemStack itemStack) {
+    public FireballBranch(AbilityTree abilityTree, Fireball ability, ItemStack itemStack) {
         super(abilityTree, ability, itemStack);
         upgrades.add(new Upgrade("Tier 1", "-5 Energy Cost"));
         upgrades.add(new Upgrade("Tier 2", "+10% Critical Chance\n+20% Critical Multiplier"));
         upgrades.add(new Upgrade("Tier 3", "-5 Energy Cost"));
         upgrades.add(new Upgrade("Tier 4", "+10% Critical Chance\n+20% Critical Multiplier"));
-        upgrades.add(new Upgrade("Tier 5", "-15 Energy cost, +20 Blocks max distance\n\nApplies BURN status to directly-hit enemies for 5 seconds."));
+        upgrades.add(new Upgrade("Tier 5", "-15 Energy cost\n+20 Blocks fall-off distance\n\nApplies BURN status to directly-hit enemies for 5 seconds."));
     }
 
     @Override
@@ -40,6 +43,7 @@ public class FireballUpgradeBranch extends UpgradeBranch<Fireball> {
     public void tierFiveUpgrade() {
         ability.setMaxFullDistance(ability.getMaxFullDistance() + 20);
         ability.setEnergyCost(ability.getEnergyCost() - 15);
+        ability.setPveUpgrade(true);
     }
 
 }

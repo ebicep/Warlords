@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArcaneShield extends AbstractAbility {
+    private boolean pveUpgrade = false;
+    private float pveDamageReduction;
     private int timesBroken = 0;
 
     private int duration = 6;
@@ -55,8 +59,28 @@ public class ArcaneShield extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
-
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
+
+        if (pveUpgrade) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<ArcaneShield>(
+                     name,
+                     "ARCA RES",
+                     ArcaneShield.class,
+                     tempArcaneShield,
+                     wp,
+                     CooldownTypes.ABILITY,
+                     cooldownManager -> {
+                     },
+                     duration * 20
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * getPveDamageReduction();
+                }
+            });
+            Bukkit.broadcastMessage("damage res: " + getPveDamageReduction());
+        }
+
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "ARCA",
@@ -121,5 +145,21 @@ public class ArcaneShield extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public float getPveDamageReduction() {
+        return (100 - pveDamageReduction) / 100f;
+    }
+
+    public void setPveDamageReduction(int pveDamageReduction) {
+        this.pveDamageReduction = pveDamageReduction;
     }
 }

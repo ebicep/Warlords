@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Fireball extends AbstractProjectileBase {
+    private boolean pveUpgrade = false;
 
     private int maxFullDistance = 50;
     private double directHitMultiplier = 1.15;
@@ -103,6 +105,33 @@ public class Fireball extends AbstractProjectileBase {
                     critChance,
                     critMultiplier,
                     false);
+
+            if (pveUpgrade) {
+                hit.getCooldownManager().addRegularCooldown(
+                        name,
+                        "BRN",
+                        Fireball.class,
+                        new Fireball(),
+                        shooter,
+                        CooldownTypes.DEBUFF,
+                        cooldownManager -> {},
+                        5 * 20,
+                        (cooldown, ticksLeft, counter) -> {
+                            if (ticksLeft % 20 == 0) {
+                                float healthDamage = hit.getMaxHealth() * 0.01f;
+                                hit.addDamageInstance(
+                                        shooter,
+                                        "Burn",
+                                        healthDamage,
+                                        healthDamage,
+                                        -1,
+                                        100,
+                                        false
+                                );
+                            }
+                        }
+                );
+            }
         }
 
         int playersHit = 0;
@@ -151,5 +180,13 @@ public class Fireball extends AbstractProjectileBase {
 
     public void setHitbox(float hitbox) {
         this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

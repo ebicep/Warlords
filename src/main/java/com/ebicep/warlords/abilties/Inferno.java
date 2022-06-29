@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inferno extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int hitsAmplified = 0;
 
     private final int duration = 18;
@@ -109,5 +110,13 @@ public class Inferno extends AbstractAbility {
 
     public void setCritMultiplierIncrease(int critMultiplierIncrease) {
         this.critMultiplierIncrease = critMultiplierIncrease;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -29,7 +29,6 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
 
     public void openUpgradeBranchMenu() {
         WarlordsPlayer player = abilityTree.getPlayer();
-
         Menu menu = new Menu("Upgrades", 9 * 4);
 
         for (int i = 0; i < upgrades.size(); i++) {

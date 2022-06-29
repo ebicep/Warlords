@@ -23,6 +23,8 @@ public class WaterBreath extends AbstractAbility {
     protected int playersHealed = 0;
     protected int debuffsRemoved = 0;
 
+    private double velocity = 1.1;
+
     public WaterBreath() {
         super("Water Breath", 528, 723, 6.3f, 60, 25, 175);
     }
@@ -123,12 +125,16 @@ public class WaterBreath extends AbstractAbility {
                     );
                 } else {
                     final Location loc = breathTarget.getLocation();
-                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);
+                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
                     breathTarget.setVelocity(v, false);
                 }
             }
         }
 
         return true;
+    }
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 }

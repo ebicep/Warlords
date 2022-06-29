@@ -59,7 +59,7 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public void setUpgradeBranches(WarlordsPlayer warlordsPlayer) {
+    public void setUpgradeBranches(WarlordsPlayer wp) {
 
     }
 
