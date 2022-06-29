@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class InfernoBranch extends UpgradeBranch<Inferno> {
 
-    public InfernoBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public InfernoBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "+10% Critical Chance"));
         upgrades.add(new Upgrade("Tier 2", "+20% Critical Damage"));
         upgrades.add(new Upgrade("Tier 3", "+10% Critical Chance"));

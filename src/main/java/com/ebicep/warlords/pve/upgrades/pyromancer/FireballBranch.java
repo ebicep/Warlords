@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class FireballBranch extends UpgradeBranch<Fireball> {
 
-    public FireballBranch(AbilityTree abilityTree, Fireball ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public FireballBranch(AbilityTree abilityTree, Fireball ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "-5 Energy Cost"));
         upgrades.add(new Upgrade("Tier 2", "+10% Critical Chance\n+20% Critical Multiplier"));
         upgrades.add(new Upgrade("Tier 3", "-5 Energy Cost"));

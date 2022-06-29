@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class TimewarpBranch extends UpgradeBranch<TimeWarp> {
 
-    public TimewarpBranch(AbilityTree abilityTree, TimeWarp ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public TimewarpBranch(AbilityTree abilityTree, TimeWarp ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "+10% Healing, +10% Speed while warping"));
         upgrades.add(new Upgrade("Tier 2", "-20% Cooldown"));
         upgrades.add(new Upgrade("Tier 3", "+10% Healing, +10 Speed while warping"));

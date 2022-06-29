@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class ArcaneShieldBranch extends UpgradeBranch<ArcaneShield> {
 
-    public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "+10% Damage absorbed"));
         upgrades.add(new Upgrade("Tier 2", "+5% Damage resistance while shield is active"));
         upgrades.add(new Upgrade("Tier 3", "+10% Damage absorbed"));

@@ -1090,8 +1090,8 @@ public enum GameMap {
         }
     },
     ILLUSION_RIFT(
-            "Illusion Rift",
-            6,
+            "The Corrupted Rift",
+            4,
             1,
             60 * SECOND,
             "",
@@ -1125,9 +1125,9 @@ public enum GameMap {
                     )
                     .add(5, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
-                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.05, SimpleWave.SKELETON)
                     )
-                    .add(10, new SimpleWave(1, 30 * SECOND, null)
+                    .add(10, new SimpleWave(1, 20 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
                             .add(0.1, SimpleWave.SKELETON)
                             .add(0.1, SimpleWave.MAGMA_CUBE)
@@ -1159,7 +1159,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 50.0 / (waveCounter / 50.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 60.0 / (waveCounter / 60.0 + 1.0) * 100));
                         }
                         
                     })

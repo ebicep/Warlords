@@ -1,6 +1,9 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.customentities.nms.pve.*;
+import com.ebicep.customentities.nms.pve.CustomCreeper;
+import com.ebicep.customentities.nms.pve.CustomSkeleton;
+import com.ebicep.customentities.nms.pve.CustomSpider;
+import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -101,8 +104,8 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
-    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
-            CustomMagmaCube.class,
+    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromEntity(
+            MagmaCube.class,
             "Magma Cube",
             loc,
             new Utils.SimpleEntityEquipment(

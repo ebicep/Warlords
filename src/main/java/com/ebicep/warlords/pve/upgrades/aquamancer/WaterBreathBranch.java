@@ -7,8 +7,8 @@ import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
 import org.bukkit.inventory.ItemStack;
 
 public class WaterBreathBranch extends UpgradeBranch<WaterBreath> {
-    public WaterBreathBranch(AbilityTree abilityTree, WaterBreath ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public WaterBreathBranch(AbilityTree abilityTree, WaterBreath ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "-30% Cooldown"));
         upgrades.add(new Upgrade("Tier 2", "+15% Knockback"));
         upgrades.add(new Upgrade("Tier 3", "+50% Healing"));

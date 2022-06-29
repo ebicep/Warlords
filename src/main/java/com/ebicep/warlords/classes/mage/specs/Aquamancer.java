@@ -32,7 +32,7 @@ public class Aquamancer extends AbstractMage {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<UpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new WaterboltBranch(abilityTree, (WaterBolt) weapon, wp.getItemStackForAbility(weapon)));
-        branch.add(new WaterBreathBranch(abilityTree, (WaterBreath) red, wp.getItemStackForAbility(red)));
+        branch.add(new WaterboltBranch(abilityTree, (WaterBolt) weapon, wp.getItemStackForAbility(weapon), weapon.getName()));
+        branch.add(new WaterBreathBranch(abilityTree, (WaterBreath) red, wp.getItemStackForAbility(red), red.getName()));
     }
 }

@@ -8,13 +8,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class FlameburstBranch extends UpgradeBranch<FlameBurst> {
 
-    public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "-30% Cooldown"));
         upgrades.add(new Upgrade("Tier 2", "+1 block hit radius"));
         upgrades.add(new Upgrade("Tier 3", "+50% Crit Multiplier"));
         upgrades.add(new Upgrade("Tier 4", "+1 block hit radius"));
-        upgrades.add(new Upgrade("Tier 5", "Remove energy cost\n\nFlameburst gains +0.5% Crit chance and +1% Crit Multiplier per block travelled."));
+        upgrades.add(new Upgrade("Tier 5", "Remove energy cost\n\nFlameburst gains +0.5% Crit chance and\n+1% Crit Multiplier per blocktravelled."));
     }
 
     @Override

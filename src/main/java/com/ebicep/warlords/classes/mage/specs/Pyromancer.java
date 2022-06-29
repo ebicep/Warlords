@@ -31,10 +31,10 @@ public class Pyromancer extends AbstractMage {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<UpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new FireballBranch(abilityTree, (Fireball) weapon, wp.getItemStackForAbility(weapon)));
-        branch.add(new FlameburstBranch(abilityTree, (FlameBurst) red, wp.getItemStackForAbility(red)));
-        branch.add(new TimewarpBranch(abilityTree, (TimeWarp) purple, wp.getItemStackForAbility(purple)));
-        branch.add(new ArcaneShieldBranch(abilityTree, (ArcaneShield) blue, wp.getItemStackForAbility(blue)));
-        branch.add(new InfernoBranch(abilityTree, (Inferno) orange, wp.getItemStackForAbility(orange)));
+        branch.add(new FireballBranch(abilityTree, (Fireball) weapon, wp.getItemStackForAbility(weapon), weapon.getName()));
+        branch.add(new FlameburstBranch(abilityTree, (FlameBurst) red, wp.getItemStackForAbility(red), red.getName()));
+        branch.add(new TimewarpBranch(abilityTree, (TimeWarp) purple, wp.getItemStackForAbility(purple), purple.getName()));
+        branch.add(new ArcaneShieldBranch(abilityTree, (ArcaneShield) blue, wp.getItemStackForAbility(blue), blue.getName()));
+        branch.add(new InfernoBranch(abilityTree, (Inferno) orange, wp.getItemStackForAbility(orange), orange.getName()));
     }
 }

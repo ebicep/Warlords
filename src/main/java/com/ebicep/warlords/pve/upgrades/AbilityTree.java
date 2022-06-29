@@ -2,6 +2,8 @@ package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -27,7 +29,9 @@ public class AbilityTree {
             menu.setItem(
                     i + 2,
                     1,
-                    upgradeBranch.getItemStack(),
+                    new ItemBuilder(upgradeBranch.getItemStack())
+                            .name(ChatColor.GREEN + upgradeBranch.getItemName())
+                            .get(),
                     (n, e) -> upgradeBranch.openUpgradeBranchMenu()
             );
         }

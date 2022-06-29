@@ -20,11 +20,13 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
     protected T ability;
     protected List<Upgrade> upgrades = new ArrayList<>();
     protected ItemStack itemStack;
+    protected String itemName;
 
-    public UpgradeBranch(AbilityTree abilityTree, T ability, ItemStack itemStack) {
+    public UpgradeBranch(AbilityTree abilityTree, T ability, ItemStack itemStack, String itemName) {
         this.abilityTree = abilityTree;
         this.ability = ability;
         this.itemStack = itemStack;
+        this.itemName = itemName;
     }
 
     public void openUpgradeBranchMenu() {
@@ -105,5 +107,9 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
 
     public ItemStack getItemStack() {
         return itemStack;
+    }
+
+    public String getItemName() {
+        return itemName;
     }
 }

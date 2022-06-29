@@ -8,8 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class WaterboltBranch extends UpgradeBranch<WaterBolt> {
 
-    public WaterboltBranch(AbilityTree abilityTree, WaterBolt ability, ItemStack itemStack) {
-        super(abilityTree, ability, itemStack);
+    public WaterboltBranch(AbilityTree abilityTree, WaterBolt ability, ItemStack itemStack, String itemName) {
+        super(abilityTree, ability, itemStack, itemName);
         upgrades.add(new Upgrade("Tier 1", "-10 Energy cost"));
         upgrades.add(new Upgrade("Tier 2", "+20% Healing"));
         upgrades.add(new Upgrade("Tier 3", "-10 Energy cost"));

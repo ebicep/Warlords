@@ -192,7 +192,7 @@ public enum GameMode {
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                     .get(), (g, p) -> openMainMenu(p)));
             options.add(TextOption.Type.TITLE.create(
-                    10,
+                    5,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Let the wave defense commence."
             ));
