@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsEntity wp, Player p) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 
@@ -81,7 +82,7 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 }
         );
-        ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
+        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
 
         return true;
     }
