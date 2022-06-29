@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.customentities.nms.pve.CustomSkeleton;
-import com.ebicep.customentities.nms.pve.CustomZombie;
+import com.ebicep.customentities.nms.pve.*;
 import com.ebicep.warlords.player.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -54,8 +53,8 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
-    public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromEntity(
-            Spider.class,
+    public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(
+            CustomSpider.class,
             "Spider",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -78,8 +77,8 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
-    public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromEntity(
-            Creeper.class,
+    public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromCustomEntity(
+            CustomCreeper.class,
             "Creeper",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -102,9 +101,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
-    public static final Function<Location, PartialMonster> MAGMA_SLIME = loc -> PartialMonster.fromEntity(
-            MagmaCube.class,
-            "Angry Chessking",
+    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
+            CustomMagmaCube.class,
+            "Magma Cube",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -168,6 +167,12 @@ public class SimpleWave implements Wave {
     }
 
     public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory) {
+        totalWeight += baseWeight;
+        entries.add(new Pair<>(baseWeight, factory));
+        return this;
+    }
+
+    public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory, int baseHealth) {
         totalWeight += baseWeight;
         entries.add(new Pair<>(baseWeight, factory));
         return this;

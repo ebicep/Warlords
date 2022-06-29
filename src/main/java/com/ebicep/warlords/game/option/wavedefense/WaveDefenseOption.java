@@ -127,7 +127,8 @@ public class WaveDefenseOption implements Option {
 
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
                 sendMessage(entry.getKey(), false, message);
-                entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 1, 2);
+                entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
+                entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
             }
         }
         waveCounter++;
@@ -199,6 +200,15 @@ public class WaveDefenseOption implements Option {
             public void run() {
                 if (entities.isEmpty() && spawnCount == 0) {
                     newWave();
+
+                    if (waveCounter % 10 == 0) {
+                        PlayerFilter.playingGame(getGame())
+                            .filter(warlordsEntity -> warlordsEntity instanceof WarlordsPlayer)
+                            .forEach(we -> {
+                                we.playSound(we.getLocation(), Sound.CHEST_OPEN, 500, 0.7f);
+                                ((WarlordsPlayer) we).getAbilityTree().openAbilityTree();
+                            });
+                    }
                 }
             }
         }.runTaskTimer(20, 0);

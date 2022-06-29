@@ -35,8 +35,8 @@ public class WaterboltBranch extends UpgradeBranch<WaterBolt> {
 
     @Override
     public void tierFourUpgrade() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.4f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.4f);
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.2f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.2f);
     }
 
     @Override

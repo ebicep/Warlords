@@ -21,13 +21,6 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-// MAPS:
-// "Crossfire"
-// "Rift"
-// "Valley"
-// "Warsong"
-// "Gorge"
-// "Debug"
 public enum GameMap {
     RIFT(
             "The Rift",
@@ -1112,9 +1105,13 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 22, 16.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
             options.add(new RespawnWaveOption());
             options.add(new GraveOption());
@@ -1123,12 +1120,35 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
 
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(1, 10 * SECOND, null)
+                    .add(1, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
                     )
-                    .add(5, new SimpleWave(1, 10 * SECOND, null)
+                    .add(5, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
                             .add(0.1, SimpleWave.SKELETON)
+                    )
+                    .add(10, new SimpleWave(1, 30 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    )
+                    .add(11, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    )
+                    .add(15, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.2, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.PIGZOMBIE)
+                    )
+                    .add(20, new SimpleWave(1, 30 * SECOND, null)
+                            .add(0.7, SimpleWave.ZOMBIE)
+                            .add(0.3, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.PIGZOMBIE)
+                            .add(0.05, SimpleWave.SLIME)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
                         int health = (int) Math.pow(1000, waveCounter / 90.0 + 1);
@@ -1139,7 +1159,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 20.0 / (waveCounter / 20.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 50.0 / (waveCounter / 50.0 + 1.0) * 100));
                         }
                         
                     })

@@ -84,11 +84,12 @@ public class DebugMenuGameOptions {
         }
 
         public static void openMapMenu(Player player, GameMode gm) {
-            Menu menu = new Menu(gm.getName(), 9 * 6);
+            Menu menu = new Menu(gm.getName(), 9 * 5);
             GameMap[] values = GameMap.values();
-            // TODO: filter maps per gamemode
-            for (int i = 0; i < values.length; i++) {
-                GameMap map = values[i];
+            int i = -1;
+            for (GameMap map : values) {
+                if (!map.getGameModes().contains(gm)) continue;
+                i++;
                 menu.setItem(i % 7 + 1, 1 + i / 7,
                         new ItemBuilder(woolSortedByColor[i + 5])
                                 .name(ChatColor.GREEN + map.getMapName())
@@ -96,7 +97,7 @@ public class DebugMenuGameOptions {
                         (m, e) -> {
                             List<GameAddon> addons = new ArrayList<>();
                             addons.add(GameAddon.PRIVATE_GAME);
-                            if (!player.isOp()) {
+                            if (!player.hasPermission("warlords.game.customtoggle")) {
                                 addons.add(GameAddon.CUSTOM_GAME);
                             }
                             openMapsAddonsMenu(player, map, gm, addons);
@@ -104,8 +105,8 @@ public class DebugMenuGameOptions {
                 );
             }
 
-            menu.setItem(3, 5, MENU_BACK, (m, e) -> openGamemodeMenu(player));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(3, 4, MENU_BACK, (m, e) -> openGamemodeMenu(player));
+            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 

@@ -10,6 +10,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity {
 
     public CustomMagmaCube(World world) {
         super(world);
+        setSize(7);
     }
 
     @Override
