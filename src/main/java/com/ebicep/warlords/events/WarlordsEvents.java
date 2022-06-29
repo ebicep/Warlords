@@ -57,7 +57,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openMapPickerMenu;
+import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openGamemodeMenu;
 import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public class WarlordsEvents implements Listener {
@@ -384,7 +384,7 @@ public class WarlordsEvents implements Listener {
                             Bukkit.getServer().dispatchCommand(player, "wl");
                             break;
                         case BLAZE_POWDER:
-                            openMapPickerMenu(player);
+                            openGamemodeMenu(player);
                             break;
                         case WOOL:
                             if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {

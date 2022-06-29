@@ -753,7 +753,7 @@ public enum SkillBoosts {
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(900);
+                    ((HeartToHeart) abstractAbility).setHealthRestore(((HeartToHeart) abstractAbility).getHealthRestore() + 300);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
@@ -766,7 +766,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof PrismGuard) {
                     ((PrismGuard) abstractAbility).setDamageReduction(40);
                     ((PrismGuard) abstractAbility).setProjectileDamageReduction(75);
-                    ((PrismGuard) abstractAbility).setBubbleHealing(900);
+                    ((PrismGuard) abstractAbility).setBubbleHealing(((PrismGuard) abstractAbility).getBubbleHealing() + 300);
                 }
             }
     ),

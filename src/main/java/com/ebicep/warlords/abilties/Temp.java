@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class Temp extends AbstractAbility {
@@ -24,7 +25,7 @@ public class Temp extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         return true;
     }
 

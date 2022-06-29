@@ -21,8 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
-import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
+import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Settings.*;
 import static com.ebicep.warlords.player.Specializations.APOTHECARY;
@@ -104,7 +103,7 @@ public class WarlordsShopMenu {
         menu.setItem(3, 3, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
         menu.setItem(5, 3, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
         menu.setItem(7, 3, MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
-        menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
         menu.openForPlayer(player);
     }
@@ -625,7 +624,7 @@ public class WarlordsShopMenu {
             );
         }
 
-        menu.setItem(4, 3, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 

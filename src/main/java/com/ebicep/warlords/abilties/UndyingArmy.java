@@ -18,6 +18,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
         Utils.playGlobalSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
