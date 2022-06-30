@@ -25,8 +25,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private int damageReduction = 0;
 
-    private final int radius = 20;
-    private final int bounceRange = 10;
+    private int radius = 20;
+    private int bounceRange = 10;
+    private int maxBounces = 3;
 
     public int getDamageReduction() {
         return damageReduction;
@@ -46,7 +47,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
                 "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
-                "§e3 §7additional targets within §e" + bounceRange + "\n" +
+                "§e" + maxBounces  + " §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
                 "§7You gain §e10% §7damage resistance for\n" +
@@ -103,13 +104,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         return new ItemStack(Material.STAINED_GLASS, 1, (byte) 7);
     }
 
-    private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 3;
-    private final int LIGHTING_MAX_PLAYERS_WITH_TOTEM = 3;
-
     private int partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
-        if (playersSize >= (hasHitTotem ? LIGHTING_MAX_PLAYERS_WITH_TOTEM : LIGHTING_MAX_PLAYERS_NO_TOTEM)) {
-
+        if (playersSize >= (hasHitTotem ? maxBounces - 1 : maxBounces)) {
             return playersSize + (hasHitTotem ? 1 : 0);
         }
         /**
@@ -204,5 +201,17 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     @Override
     public int compareTo(ChainLightning chainLightning) {
         return Integer.compare(this.damageReduction, chainLightning.damageReduction);
+    }
+
+    public void setMaxBounces(int maxBounces) {
+        this.maxBounces = maxBounces;
+    }
+
+    public void setBounceRange(int bounceRange) {
+        this.bounceRange = bounceRange;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

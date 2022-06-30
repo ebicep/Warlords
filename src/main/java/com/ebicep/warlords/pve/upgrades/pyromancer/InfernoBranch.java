@@ -10,11 +10,11 @@ public class InfernoBranch extends UpgradeBranch<Inferno> {
 
     public InfernoBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack, String itemName) {
         super(abilityTree, ability, itemStack, itemName);
-        upgrades.add(new Upgrade("Tier 1", "+10% Critical Chance"));
-        upgrades.add(new Upgrade("Tier 2", "+20% Critical Damage"));
-        upgrades.add(new Upgrade("Tier 3", "+10% Critical Chance"));
-        upgrades.add(new Upgrade("Tier 4", "+20% Critical Damage"));
-        upgrades.add(new Upgrade("Tier 5", "infERNo"));
+        upgrades.add(new Upgrade("Tier I", "+10% Crit Chance bonus"));
+        upgrades.add(new Upgrade("Tier II", "+20% Crit Multiplier bonus"));
+        upgrades.add(new Upgrade("Tier III", "+10% Crit Chance bonus"));
+        upgrades.add(new Upgrade("Tier IV", "+20% Crit Multiplier bonus"));
+        upgrades.add(new Upgrade("Tier V", "infERNo"));
     }
 
     @Override

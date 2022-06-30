@@ -22,6 +22,8 @@ public class Windfury extends AbstractAbility {
 
     private int procChance = 35;
     private final int duration = 8;
+    private int maxHits = 2;
+    private float weaponDamage = 135;
 
     public Windfury() {
         super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 200);
@@ -29,11 +31,10 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        int weaponDamage = procChance == 35 ? 135 : 155;
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
                 "§7melee attacks to have a §e" + procChance + "% §7chance\n" +
-                "§7to hit §e2 §7additional times for §c" + weaponDamage + "%\n" +
+                "§7to hit §e" + maxHits + " §7additional times for §c" + weaponDamage + "%\n" +
                 "§7weapon damage. The first melee hit is\n" +
                 "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +
                 "§7seconds.";
@@ -104,8 +105,8 @@ public class Windfury extends AbstractAbility {
                                     victim.addDamageInstance(
                                             attacker,
                                             name,
-                                            min * 1.35f * 1.2f,
-                                            max * 1.35f * 1.2f,
+                                            min * getWeaponDamage() * 1.2f,
+                                            max * getWeaponDamage() * 1.2f,
                                             critChance,
                                             critMultiplier,
                                             false
@@ -114,8 +115,8 @@ public class Windfury extends AbstractAbility {
                                     victim.addDamageInstance(
                                             attacker,
                                             name,
-                                            min * 1.35f,
-                                            max * 1.35f,
+                                            min * getWeaponDamage(),
+                                            max * getWeaponDamage(),
                                             critChance,
                                             critMultiplier,
                                             false
@@ -123,7 +124,7 @@ public class Windfury extends AbstractAbility {
                                 }
 
                                 counter++;
-                                if (counter == 2) {
+                                if (counter == maxHits) {
                                     this.cancel();
                                 }
                             }
@@ -142,5 +143,21 @@ public class Windfury extends AbstractAbility {
 
     public void setProcChance(int procChance) {
         this.procChance = procChance;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
+    }
+
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
+
+    public float getWeaponDamage() {
+        return weaponDamage / 100f;
+    }
+
+    public void setWeaponDamage(float weaponDamage) {
+        this.weaponDamage = weaponDamage;
     }
 }

@@ -32,7 +32,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 "§7passes through. Each target hit reduces the\n" +
                 "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
                 "\n" +
-                "§7Has a maximum range of §e60 §7blocks.";
+                "§7Has a maximum range of §e" + maxDistance + " §7blocks.";
     }
 
     @Override
