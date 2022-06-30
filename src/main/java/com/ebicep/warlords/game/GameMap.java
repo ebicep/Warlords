@@ -4,10 +4,7 @@ import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.wavedefense.DelegatingWave;
-import com.ebicep.warlords.game.option.wavedefense.SimpleWave;
-import com.ebicep.warlords.game.option.wavedefense.StaticWaveList;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.*;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -1119,6 +1116,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
+            options.add(new CurrencyOnEventOption(100));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)

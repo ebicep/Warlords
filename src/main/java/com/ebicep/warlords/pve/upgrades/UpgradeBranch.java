@@ -42,10 +42,11 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
             int finalI = i;
             menu.setItem(
                     2,
-                    i,
+                    4 - i,
                     new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
                             .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
+                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
                         if (upgrade.isUnlocked()) {
@@ -81,10 +82,11 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
             int finalI = i;
             menu.setItem(
                     4,
-                    i,
+                    4 - i,
                     new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
                             .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
+                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
                         if (upgrade.isUnlocked()) {
@@ -99,6 +101,11 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                         }
                         switch (finalI) {
                             case 0:
+                                if (player.getCurrency() <= upgrade.getCurrencyCost()) {
+                                    player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
+                                    return;
+                                }
+
                                 b1();
                                 break;
                             case 1:
@@ -120,10 +127,11 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
             int finalI = i;
             menu.setItem(
                     6,
-                    i,
+                    4 - i,
                     new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
                             .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
+                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
                         if (upgrade.isUnlocked()) {
@@ -154,10 +162,13 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
             );
         }
 
-        menu.setItem(4, 4, new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
-                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
-                .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription())
-                .get(), (m, e) -> {
+        menu.setItem(
+                4,
+                0,
+                new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
+                        .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
+                        .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription() + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + masterUpgrade.getCurrencyCost())
+                        .get(), (m, e) -> {
                     master();
                     masterUpgrade.setUnlocked(true);
                     ability.updateDescription((Player) player.getEntity());

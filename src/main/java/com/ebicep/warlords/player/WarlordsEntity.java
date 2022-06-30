@@ -103,6 +103,7 @@ public abstract class WarlordsEntity {
     private int flagDropCooldown;
     private int flagPickCooldown;
     private int hitCooldown;
+    private int currency;
     private boolean wasSneaking = false;
     // We have to store these in here as the new player might logout midgame
     protected float walkspeed = 1;
@@ -2079,5 +2080,17 @@ public abstract class WarlordsEntity {
 
     public Vector getCurrentVector() {
         return currentVector;
+    }
+
+    public int getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(int currency) {
+        this.currency = currency;
+    }
+
+    public void addCurrency(int currency) {
+        this.currency += currency;
     }
 }

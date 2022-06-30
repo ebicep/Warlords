@@ -4,11 +4,13 @@ public class Upgrade {
 
     private String name;
     private String description;
+    private int currencyCost;
     private boolean isUnlocked = false;
 
-    public Upgrade(String name, String description) {
+    public Upgrade(String name, String description, int currencyCost) {
         this.name = name;
         this.description = description;
+        this.currencyCost = currencyCost;
     }
 
     public String getName() {
@@ -33,5 +35,13 @@ public class Upgrade {
 
     public void setUnlocked(boolean unlocked) {
         isUnlocked = unlocked;
+    }
+
+    public int getCurrencyCost() {
+        return currencyCost;
+    }
+
+    public void setCurrencyCost(int currencyCost) {
+        this.currencyCost = currencyCost;
     }
 }

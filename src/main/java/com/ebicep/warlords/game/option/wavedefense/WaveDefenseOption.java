@@ -144,7 +144,7 @@ public class WaveDefenseOption implements Option {
                     currentWave.getDelay() / 20 + " §eseconds!"
             );
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, 0.8f);
-            PacketUtils.sendTitle(entry.getKey(), "§e§lWave §c§l" + waveCounter, "", 30, 75, 30);
+            PacketUtils.sendTitle(entry.getKey(), "§e§lWave §c§l" + waveCounter, "", 20, 60, 20);
         }
         startSpawnTask();
     }
@@ -168,7 +168,7 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave: " + ChatColor.BOLD + ChatColor.GOLD + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        "Wave: " + ChatColor.GREEN + ChatColor.BOLD + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
         });
