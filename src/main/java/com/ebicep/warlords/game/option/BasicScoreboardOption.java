@@ -16,13 +16,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class BasicScoreboardOption implements Option{
+public class BasicScoreboardOption implements Option {
 
     @Override
     public void register(Game game) {
         game.registerGameMarker(ScoreboardHandler.class, getDateScoreboard(game));
         game.registerGameMarker(ScoreboardHandler.class, getVersionScoreboard(game));
-        game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+        //game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
         game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));
     }
 
