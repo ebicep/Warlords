@@ -8,8 +8,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.classes.*;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerTDM extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {

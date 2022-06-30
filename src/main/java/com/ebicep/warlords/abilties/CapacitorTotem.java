@@ -2,8 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,7 +30,7 @@ public class CapacitorTotem extends AbstractTotemBase {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
     }
 
-    public CapacitorTotem(ArmorStand totem, WarlordsEntity owner, Runnable pulseDamage) {
+    public CapacitorTotem(ArmorStand totem, AbstractWarlordsEntity owner, Runnable pulseDamage) {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200, totem, owner);
         this.pulseDamage = pulseDamage;
     }
@@ -64,7 +64,7 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
     @Override
-    protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
+    protected void onActivation(AbstractWarlordsEntity wp, Player player, ArmorStand totemStand) {
         Location totemLocation = wp.getLocation().clone();
 
         CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp, () -> {
@@ -97,8 +97,8 @@ public class CapacitorTotem extends AbstractTotemBase {
                         if (PlayerFilter.playingGame(wp.getGame())
                                 .teammatesOfExcludingSelf(wp)
                                 .stream()
-                                .filter(WarlordsEntity::hasFlag)
-                                .map(WarlordsEntity::getLocation)
+                                .filter(AbstractWarlordsEntity::hasFlag)
+                                .map(AbstractWarlordsEntity::getLocation)
                                 .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
                             tempCapacitorTotem.setTeamCarrierPassedThrough(true);
                         }

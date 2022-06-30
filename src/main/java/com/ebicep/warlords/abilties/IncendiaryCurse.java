@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -53,7 +53,7 @@ public class IncendiaryCurse extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
@@ -104,7 +104,7 @@ public class IncendiaryCurse extends AbstractAbility {
                     );
                 }
 
-                WarlordsEntity directHit;
+                AbstractWarlordsEntity directHit;
                 if (
                     !newLoc.getBlock().isEmpty()
                     && newLoc.getBlock().getType() != Material.GRASS
@@ -134,7 +134,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
                     ParticleEffect.SMOKE_NORMAL.display(0.4f, 0.05f, 0.4f, 0.2f, 100, newLoc, 500);
 
-                    for (WarlordsEntity nearEntity : PlayerFilter
+                    for (AbstractWarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                             .aliveEnemiesOf(wp)
                     ) {

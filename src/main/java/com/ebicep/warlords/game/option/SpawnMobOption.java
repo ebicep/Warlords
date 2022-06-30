@@ -5,10 +5,10 @@ import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.Specializations;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.WarlordsNPC;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -43,7 +43,7 @@ public class SpawnMobOption implements Option {
                 waveCounter++;
                 spawnCount = (int) (waveCounter * 1.1f);
                 for (int i = 0; i < spawnCount; i++) {
-                    WarlordsEntity entity = game.addNPC(new WarlordsNPC(
+                    AbstractWarlordsEntity entity = game.addNPC(new WarlordsNPC(
                             UUID.randomUUID(),
                             "Zombie",
                             Weapons.ABBADON,

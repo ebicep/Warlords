@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;

@@ -3,10 +3,10 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.SkillBoosts;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.DamageHealCompleteCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -49,7 +49,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected void onHit(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player, @Nonnull AbstractWarlordsEntity nearPlayer) {
         wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<ProtectorsStrike>(
                 "Protectors Strike",
                 "",
@@ -88,11 +88,11 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             false
                     );
                     // Ally Heal
-                    for (WarlordsEntity ally : PlayerFilter
+                    for (AbstractWarlordsEntity ally : PlayerFilter
                             .entitiesAround(wp, 10, 10, 10)
                             .aliveTeammatesOfExcludingSelf(wp)
-                            .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                            .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                            .sorted(Comparator.comparing((AbstractWarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+                                    .thenComparing(Utils.sortClosestBy(AbstractWarlordsEntity::getLocation, wp.getLocation())))
                             .limit(2)
                     ) {
                         if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {

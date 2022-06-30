@@ -11,8 +11,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.classescom
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation implements DatabasePlayer {

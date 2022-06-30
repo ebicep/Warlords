@@ -4,8 +4,8 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -52,10 +52,10 @@ public class SoulShackle extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         SoulShackle tempSoulShackle = new SoulShackle();
 
-        for (WarlordsEntity shackleTarget : PlayerFilter
+        for (AbstractWarlordsEntity shackleTarget : PlayerFilter
                 .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
@@ -74,10 +74,10 @@ public class SoulShackle extends AbstractAbility {
                     .build());
 
             wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                            ChatColor.GRAY + " You shackled " +
-                            ChatColor.YELLOW + shackleTarget.getName() +
-                            ChatColor.GRAY + "!"
+            wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " You shackled " +
+                    ChatColor.YELLOW + shackleTarget.getName() +
+                    ChatColor.GRAY + "!"
             );
 
             int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;

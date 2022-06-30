@@ -1,7 +1,7 @@
 package com.ebicep.customentities.nms.pve;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -74,8 +74,8 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
             EntityLiving target = self.getGoalTarget();
 
             //Location targetLocation = target.getBukkitEntity().getLocation();
-            WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
-            WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
+            AbstractWarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
+            AbstractWarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
             if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
                 Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
                 self.getBukkitEntity().teleport(lookAtLocation);
@@ -84,7 +84,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
         }
 
         //should just use arrow mechanic - https://gist.github.com/Minikloon/4f53ea780350c7b86761318ca313a9ed
-        public static Location predictFutureLocation(WarlordsEntity self, WarlordsEntity target) {
+        public static Location predictFutureLocation(AbstractWarlordsEntity self, AbstractWarlordsEntity target) {
             Location location = target.getLocation().clone();
             Vector oldVectorToSubtract = target.getCurrentVector().clone();
             Vector vector = target.getCurrentVector().clone();

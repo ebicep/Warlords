@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.marker.scoreboard;
 
 import com.ebicep.warlords.game.option.marker.GameMarker;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,7 +17,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @param player The player to compute it for
      * @return The priority for this player
      */
-    int getPriority(@Nullable WarlordsEntity player);
+    int getPriority(@Nullable AbstractWarlordsEntity player);
 
     /**
      * Computes the list of lines for the scoreboard
@@ -26,7 +26,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @return The new scoreboard lines
      */
     @Nonnull
-    List<String> computeLines(@Nullable WarlordsEntity player);
+    List<String> computeLines(@Nullable AbstractWarlordsEntity player);
 
     /**
      * Registers an onchange handler for the scoreboard, scoreboard should call

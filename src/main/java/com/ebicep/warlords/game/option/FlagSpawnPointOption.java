@@ -9,9 +9,9 @@ import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
@@ -86,7 +86,7 @@ public class FlagSpawnPointOption implements Option {
         }
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 String flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {
@@ -107,7 +107,7 @@ public class FlagSpawnPointOption implements Option {
             @EventHandler(priority = EventPriority.LOW)
             public void onArmorStandBreak(EntityDamageByEntityEvent event) {
                 boolean isOurArmorStand = renderer.getRenderedArmorStands().contains(event.getEntity());
-                WarlordsEntity wp = Warlords.getPlayer(event.getDamager());
+                AbstractWarlordsEntity wp = Warlords.getPlayer(event.getDamager());
                 if (wp != null && wp.getGame() == game && isOurArmorStand) {
                     onFlagInteract(wp);
                     event.setCancelled(true);
@@ -125,7 +125,7 @@ public class FlagSpawnPointOption implements Option {
             }
 
             private void onPotentialFlagInteract(PlayerEvent event) {
-                WarlordsEntity wp = Warlords.getPlayer(event.getPlayer());
+                AbstractWarlordsEntity wp = Warlords.getPlayer(event.getPlayer());
                 if (wp != null && wp.getGame() == game) {
                     Location playerLocation = wp.getEntity().getEyeLocation();
                     Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
@@ -143,9 +143,9 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-            private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3D from, Vec3D to, FlagRenderer render) {
+            private void checkFlagInteract(Location playerLocation, AbstractWarlordsEntity wp, Vec3D from, Vec3D to, FlagRenderer render) {
                 Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
-                for(Entity stand : render.getRenderedArmorStands()) {
+                for (Entity stand : render.getRenderedArmorStands()) {
                     stand.getLocation(entityLoc);
                     if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
                         AxisAlignedBB aabb = new AxisAlignedBB(
@@ -165,7 +165,7 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-            private void onFlagInteract(WarlordsEntity wp) {
+            private void onFlagInteract(AbstractWarlordsEntity wp) {
                 Team team = wp.getTeam();
                 if (wp.isDead()) {
                     return;

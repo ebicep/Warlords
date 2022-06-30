@@ -13,9 +13,13 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
-import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.Bukkit;
@@ -38,7 +42,7 @@ import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class DebugMenuPlayerOptions {
 
-    public static void openPlayerMenu(Player player, WarlordsEntity target) {
+    public static void openPlayerMenu(Player player, AbstractWarlordsEntity target) {
         if (target == null) return;
         String targetName = target.getName();
         Menu menu = new Menu("Player Options: " + targetName, 9 * 5);
@@ -233,7 +237,7 @@ public class DebugMenuPlayerOptions {
 
     static class PlayerOptionMenus {
 
-        public static void openCooldownsMenu(Player player, WarlordsEntity target) {
+        public static void openCooldownsMenu(Player player, AbstractWarlordsEntity target) {
             int menuY = Math.min(5 + StatusEffectCooldowns.values().length / 7, 6);
             Menu menu = new Menu("Cooldowns: " + target.getName(), 9 * menuY);
 
@@ -341,7 +345,7 @@ public class DebugMenuPlayerOptions {
 
         static class CooldownOptionMenus {
 
-            public static void openCooldownManagerMenu(Player player, WarlordsEntity target) {
+            public static void openCooldownManagerMenu(Player player, AbstractWarlordsEntity target) {
                 //int menuY = Math.min(4 + target.getCooldownManager().getCooldowns().size() / 7, 6); Menu shift annoying
                 Menu menu = new Menu("CD Manager: " + target.getName(), 9 * 6);
                 //general info
@@ -383,7 +387,7 @@ public class DebugMenuPlayerOptions {
                 menu.openForPlayer(player);
             }
 
-            public static void openCooldownEditorMenu(Player player, WarlordsEntity target, AbstractCooldown<?> abstractCooldown) {
+            public static void openCooldownEditorMenu(Player player, AbstractWarlordsEntity target, AbstractCooldown<?> abstractCooldown) {
                 Menu menu = new Menu(abstractCooldown.getName() + ": " + target.getName(), 9 * 4);
 
                 MenuItemPairList menuItemPairList = new MenuItemPairList();
@@ -457,7 +461,7 @@ public class DebugMenuPlayerOptions {
             }
         }
 
-        public static void openTeleportLocations(Player player, WarlordsEntity target) {
+        public static void openTeleportLocations(Player player, AbstractWarlordsEntity target) {
             Menu menu = new Menu("Teleport To: " + target.getName(), 9 * 5);
 
             Game game = target.getGame();
@@ -482,7 +486,7 @@ public class DebugMenuPlayerOptions {
             menu.openForPlayer(player);
         }
 
-        public static void openFlagOptionMenu(Player player, WarlordsEntity target) {
+        public static void openFlagOptionMenu(Player player, AbstractWarlordsEntity target) {
             Menu menu = new Menu("Flag Options: " + target.getName(), 9 * 4);
             int row = 0;
             for (FlagHolder holder : target.getGame().getMarkers(FlagHolder.class)) {
@@ -572,7 +576,7 @@ public class DebugMenuPlayerOptions {
             menu.openForPlayer(player);
         }
 
-        public static void openSpecMenu(Player player, WarlordsEntity target) {
+        public static void openSpecMenu(Player player, AbstractWarlordsEntity target) {
             Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 6);
             Classes[] values = Classes.values();
             for (int i = 0; i < values.length; i++) {
@@ -602,7 +606,7 @@ public class DebugMenuPlayerOptions {
             menu.openForPlayer(player);
         }
 
-        public static void openSkillBoostMenu(Player player, WarlordsEntity target, Specializations selectedSpec) {
+        public static void openSkillBoostMenu(Player player, AbstractWarlordsEntity target, Specializations selectedSpec) {
             Menu menu = new Menu("Skill Boost: " + target.getName(), 9 * 4);
             List<SkillBoosts> values = selectedSpec.skillBoosts;
             for (int i = 0; i < values.size(); i++) {

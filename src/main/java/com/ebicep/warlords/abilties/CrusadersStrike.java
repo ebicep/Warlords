@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -43,7 +43,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected void onHit(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player, @Nonnull AbstractWarlordsEntity nearPlayer) {
         if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
@@ -68,11 +68,11 @@ public class CrusadersStrike extends AbstractStrikeBase {
         }
 
         // Give energy to nearby allies and check if they have mark active
-        for (WarlordsEntity energyTarget : PlayerFilter
+        for (AbstractWarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
-                .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
-                    .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation()))
+                .sorted(Comparator.comparing((AbstractWarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
+                        .thenComparing(Utils.sortClosestBy(AbstractWarlordsEntity::getLocation, wp.getLocation()))
                 )
                 .limit(2)
         ) {

@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -107,9 +107,9 @@ public class WinAfterTimeoutOption implements Option {
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
-                
+
                 Team winner = null;
                 if (teams.size() > 1) {
                     List<PointPredicterMarker> predictionMarkers = game
@@ -117,7 +117,7 @@ public class WinAfterTimeoutOption implements Option {
                     int scoreNeededToEndGame = game.getOptions()
                             .stream()
                             .filter(e -> e instanceof WinByPointsOption)
-                            .mapToInt(e -> ((WinByPointsOption)e).getPointLimit())
+                            .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
                             .sorted()
                             .findFirst()
                             .orElse(Integer.MAX_VALUE);

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties.internal;
 
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -16,12 +16,12 @@ public abstract class AbstractProjectileBase extends AbstractPiercingProjectileB
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, AbstractWarlordsEntity wp) {
         return true;
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+    protected void onNonCancellingHit(InternalProjectile projectile, AbstractWarlordsEntity hit, Location impactLocation) {
         projectile.getHit().add(hit);
     }
 

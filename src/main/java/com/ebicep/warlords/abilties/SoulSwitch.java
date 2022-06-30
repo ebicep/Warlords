@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -43,9 +43,9 @@ public class SoulSwitch extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
 
-        for (WarlordsEntity swapTarget : PlayerFilter
+        for (AbstractWarlordsEntity swapTarget : PlayerFilter
                 .entitiesAround(wp.getLocation(), radius, 6.5, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
@@ -66,7 +66,7 @@ public class SoulSwitch extends AbstractAbility {
                 EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
 
                 swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
-                swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
+                swapTarget.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + ChatColor.GRAY + " You've been Soul Swapped by " + ChatColor.YELLOW + wp.getName() + "!");
                 swapTarget.teleport(new Location(
                         wp.getWorld(),
                         ownLocation.getX(),
@@ -75,7 +75,7 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getYaw(),
                         swapLocation.getPitch()));
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
+                wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
                 wp.teleport(new Location(
                         swapLocation.getWorld(),
                         swapLocation.getX(),

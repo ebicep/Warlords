@@ -4,10 +4,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.SkillBoosts;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
@@ -82,8 +82,8 @@ public class Windfury extends AbstractAbility {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getPlayer();
-                    WarlordsEntity attacker = event.getAttacker();
+                    AbstractWarlordsEntity victim = event.getPlayer();
+                    AbstractWarlordsEntity attacker = event.getAttacker();
                     float min = event.getMin();
                     float max = event.getMax();
 

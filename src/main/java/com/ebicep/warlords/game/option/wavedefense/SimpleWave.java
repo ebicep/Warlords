@@ -4,7 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomCreeper;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomSpider;
 import com.ebicep.customentities.nms.pve.CustomZombie;
-import com.ebicep.warlords.player.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;

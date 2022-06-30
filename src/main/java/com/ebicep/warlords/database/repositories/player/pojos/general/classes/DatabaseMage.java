@@ -7,8 +7,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.SkillBoosts;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabaseMage extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 

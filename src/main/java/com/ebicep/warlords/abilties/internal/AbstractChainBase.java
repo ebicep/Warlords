@@ -2,10 +2,8 @@ package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.player.WarlordsEntity;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,14 +22,14 @@ public abstract class AbstractChainBase extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    protected abstract int getHitCounterAndActivate(WarlordsEntity warlordsPlayer, Player player);
+    protected abstract int getHitCounterAndActivate(AbstractWarlordsEntity warlordsPlayer, Player player);
 
-    protected abstract void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter);
+    protected abstract void onHit(AbstractWarlordsEntity warlordsPlayer, Player player, int hitCounter);
 
     protected abstract ItemStack getChainItem();
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity warlordsPlayer, @Nonnull Player player) {
         int hitCounter = getHitCounterAndActivate(warlordsPlayer, player);
         if (hitCounter != 0) {
             playersHit += hitCounter;

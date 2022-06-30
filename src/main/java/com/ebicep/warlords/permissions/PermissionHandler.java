@@ -1,6 +1,6 @@
 package com.ebicep.warlords.permissions;
 
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.entity.Player;
 
 public class PermissionHandler {
@@ -37,7 +37,7 @@ public class PermissionHandler {
         }
     }
 
-    public static void sendMessageToDebug(WarlordsEntity player, String message) {
+    public static void sendMessageToDebug(AbstractWarlordsEntity player, String message) {
         if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
             player.sendMessage(message);
         }

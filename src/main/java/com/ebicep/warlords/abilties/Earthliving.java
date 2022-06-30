@@ -3,9 +3,9 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -47,7 +47,7 @@ public class Earthliving extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
@@ -80,8 +80,8 @@ public class Earthliving extends AbstractAbility {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getPlayer();
-                    WarlordsEntity attacker = event.getAttacker();
+                    AbstractWarlordsEntity victim = event.getPlayer();
+                    AbstractWarlordsEntity attacker = event.getAttacker();
 
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (firstProc[0]) {
@@ -103,7 +103,7 @@ public class Earthliving extends AbstractAbility {
                                 false
                         );
 
-                        for (WarlordsEntity nearPlayer : PlayerFilter
+                        for (AbstractWarlordsEntity nearPlayer : PlayerFilter
                                 .entitiesAround(attacker, 6, 6, 6)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)

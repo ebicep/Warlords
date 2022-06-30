@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -30,8 +30,8 @@ public class DebugMenuTeamOptions {
             });
         }
         //team info = color - other shit
-        List<WarlordsEntity> bluePlayers = new ArrayList<>();
-        List<WarlordsEntity> redPlayers = new ArrayList<>();
+        List<AbstractWarlordsEntity> bluePlayers = new ArrayList<>();
+        List<AbstractWarlordsEntity> redPlayers = new ArrayList<>();
         PlayerFilter.playingGame(game).forEach((wp) -> {
             if (wp.getTeam() == Team.BLUE) {
                 bluePlayers.add(wp);
@@ -73,7 +73,7 @@ public class DebugMenuTeamOptions {
 
     static class TeamOptionsUtil {
 
-        public static void addPlayersToMenu(Menu menu, Player player, List<WarlordsEntity> warlordsPlayers, boolean blueTeam) {
+        public static void addPlayersToMenu(Menu menu, Player player, List<AbstractWarlordsEntity> warlordsPlayers, boolean blueTeam) {
             //flag player first
             warlordsPlayers.sort((wp1, wp2) -> {
                 int wp1Flag = wp1.getCarriedFlag() != null ? 1 : 0;
@@ -85,7 +85,7 @@ public class DebugMenuTeamOptions {
                 if (i % 4 == 0) {
                     y++;
                 }
-                WarlordsEntity wp = warlordsPlayers.get(i);
+                AbstractWarlordsEntity wp = warlordsPlayers.get(i);
                 List<String> lore = new ArrayList<>(Arrays.asList(getPlayerStatLore(wp)));
                 lore.add("");
                 if (player.getUniqueId() != wp.getUuid()) {
@@ -110,7 +110,7 @@ public class DebugMenuTeamOptions {
             }
         }
 
-        public static String[] getTeamStatLore(List<WarlordsEntity> warlordsPlayers) {
+        public static String[] getTeamStatLore(List<AbstractWarlordsEntity> warlordsPlayers) {
             return new String[]{
                     ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(e -> e.getMinuteStats().total().getKills()).sum(),
                     ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(e -> e.getMinuteStats().total().getAssists()).sum(),
@@ -121,7 +121,7 @@ public class DebugMenuTeamOptions {
             };
         }
 
-        private static String[] getPlayerStatLore(WarlordsEntity wp) {
+        private static String[] getPlayerStatLore(AbstractWarlordsEntity wp) {
             return new String[]{
                     ChatColor.GREEN + "Spec" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getSpec().getClass().getSimpleName(),
                     ChatColor.GREEN + "Health" + ChatColor.GRAY + ": " + ChatColor.RED + wp.getHealth(),

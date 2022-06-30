@@ -5,7 +5,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Bukkit;
@@ -99,7 +100,7 @@ public class InterchangeModeOption implements Option {
     //the player BEFORE becomes the player AFTER
     //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
-        List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
+        List<AbstractWarlordsEntity> teamPlayers = game.warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) return;
@@ -112,7 +113,7 @@ public class InterchangeModeOption implements Option {
         HashMap<UUID, List<ArmorManager.Helmets>> playerHelmets = new HashMap<>();
         HashMap<UUID, List<ArmorManager.ArmorSets>> playerArmorSets = new HashMap<>();
         HashMap<UUID, Boolean> playerOnHorse = new HashMap<>();
-        for (WarlordsEntity teamPlayer : teamPlayers) {
+        for (AbstractWarlordsEntity teamPlayer : teamPlayers) {
             UUID uuid = teamPlayer.getUuid();
             playerLocations.put(uuid, teamPlayer.getLocation());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
@@ -125,7 +126,7 @@ public class InterchangeModeOption implements Option {
         }
 
         //take beginning player to swap with end
-        WarlordsEntity secondPlayer = teamPlayers.get(0);
+        AbstractWarlordsEntity secondPlayer = teamPlayers.get(0);
         String secondPlayerName = secondPlayer.getName();
         UUID secondPlayerUuid = secondPlayer.getUuid();
         LivingEntity secondPlayerEntity = secondPlayer.getEntity();
@@ -145,7 +146,7 @@ public class InterchangeModeOption implements Option {
         }
 
         //give last player first players old stats
-        WarlordsEntity firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
+        AbstractWarlordsEntity firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
         System.out.println("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
 
         UUID firstPlayerUuid = firstPlayer.getUuid();
@@ -182,7 +183,7 @@ public class InterchangeModeOption implements Option {
     }
 
     //firstplayer gets the stats of the second
-    private void transferPlayerStats(WarlordsEntity firstPlayer, WarlordsEntity secondPlayer,
+    private void transferPlayerStats(AbstractWarlordsEntity firstPlayer, AbstractWarlordsEntity secondPlayer,
                                      HashMap<UUID, Location> playerLocations,
                                      HashMap<UUID, Specializations> playerClasses,
                                      HashMap<UUID, HashMap<Specializations, SkillBoosts>> playerBoosts,

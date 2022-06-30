@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,16 +51,17 @@ public class BaseCommand {
     }
 
     @Nullable
-    public static WarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender) {
+    public static AbstractWarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender) {
         return requireWarlordsPlayer(sender, null);
     }
+
     @Nullable
-    public static WarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender, @Nullable String name) {
+    public static AbstractWarlordsEntity requireWarlordsPlayer(@Nonnull CommandSender sender, @Nullable String name) {
         Player p = requirePlayer(sender, name);
         if (p == null) {
             return null;
         }
-        WarlordsEntity player = Warlords.getPlayer(p);
+        AbstractWarlordsEntity player = Warlords.getPlayer(p);
         if (player == null) {
             sender.sendMessage(ChatColor.RED + "You are not in an active game! Please wait until the game has started to use this command.");
         }
@@ -68,17 +69,18 @@ public class BaseCommand {
     }
 
     @Nullable
-    public static WarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender) {
+    public static AbstractWarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender) {
         return requireWarlordsPlayerInPrivateGame(sender, null);
     }
+
     @Nullable
-    public static WarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender, @Nullable String name) {
-        WarlordsEntity player = requireWarlordsPlayer(sender, name);
-        if(player == null) {
+    public static AbstractWarlordsEntity requireWarlordsPlayerInPrivateGame(@Nonnull CommandSender sender, @Nullable String name) {
+        AbstractWarlordsEntity player = requireWarlordsPlayer(sender, name);
+        if (player == null) {
             return null;
         }
 
-        if(!player.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
+        if (!player.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
             sender.sendMessage(ChatColor.RED + "This command can only be used in a private game!");
             return null;
         }

@@ -5,8 +5,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.SkillBoosts;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Weapons;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;

@@ -3,8 +3,8 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -51,8 +51,8 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
     }
 
     @Override
-    public boolean chain(WarlordsEntity wp, Player player) {
-        for (WarlordsEntity markTarget : PlayerFilter
+    public boolean chain(AbstractWarlordsEntity wp, Player player) {
+        for (AbstractWarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
@@ -102,16 +102,16 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         }
                 );
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " You have marked " +
-                                ChatColor.YELLOW + markTarget.getName() +
-                                ChatColor.GRAY + "!"
+                wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " You have marked " +
+                        ChatColor.YELLOW + markTarget.getName() +
+                        ChatColor.GRAY + "!"
                 );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " You have been granted " +
-                                ChatColor.YELLOW + "Crusader's Mark" +
-                                ChatColor.GRAY + " by " + wp.getName() + "!"
+                markTarget.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " You have been granted " +
+                        ChatColor.YELLOW + "Crusader's Mark" +
+                        ChatColor.GRAY + " by " + wp.getName() + "!"
                 );
 
                 return true;

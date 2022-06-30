@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.tdm;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -46,7 +46,7 @@ public class DatabaseGamePlayersTDM {
         public DatabaseGamePlayerTDM() {
         }
 
-        public DatabaseGamePlayerTDM(WarlordsEntity warlordsPlayer) {
+        public DatabaseGamePlayerTDM(AbstractWarlordsEntity warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
             this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());

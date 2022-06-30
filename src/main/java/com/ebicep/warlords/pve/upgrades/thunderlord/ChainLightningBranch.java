@@ -2,13 +2,12 @@ package com.ebicep.warlords.pve.upgrades.thunderlord;
 
 import com.ebicep.warlords.abilties.ChainLightning;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class ChainLightningBranch extends UpgradeBranch<ChainLightning> {
-    public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
+    public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-15% Cooldown reduction", 5000));
         treeA.add(new Upgrade("Cooldown - Tier II", "-30% Cooldown reduction", 10000));
         treeA.add(new Upgrade("Cooldown - Tier III", "-60% Cooldown reduction", 20000));

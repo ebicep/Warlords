@@ -4,7 +4,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
@@ -23,7 +23,7 @@ public class RespawnProtectionOption implements Option, Listener {
 
     private static final int DEFAULT_PROTECTION_TIME = 4;
     private static final int DEFAULT_RADIUS = 4;
-    private final Map<WarlordsEntity, Pair<Location, Integer>> spawnProtection = new HashMap<>();
+    private final Map<AbstractWarlordsEntity, Pair<Location, Integer>> spawnProtection = new HashMap<>();
     private int protectionTime;
     private int radius;
     private int radiusSquared;
@@ -67,9 +67,9 @@ public class RespawnProtectionOption implements Option, Listener {
             
             @Override
             public void run() {
-                Iterator<Map.Entry<WarlordsEntity, Pair<Location, Integer>>> itr = spawnProtection.entrySet().iterator();
+                Iterator<Map.Entry<AbstractWarlordsEntity, Pair<Location, Integer>>> itr = spawnProtection.entrySet().iterator();
                 while (itr.hasNext()) {
-                    Map.Entry<WarlordsEntity, Pair<Location, Integer>> next = itr.next();
+                    Map.Entry<AbstractWarlordsEntity, Pair<Location, Integer>> next = itr.next();
                     int newVal = next.getValue().getB() - 1;
                     if (newVal <= 0 || (next.getKey().getLocation().getWorld() == next.getValue().getA().getWorld() && next.getKey().getLocation(location).distanceSquared(next.getValue().getA()) > radiusSquared)) {
                         itr.remove();
@@ -83,7 +83,7 @@ public class RespawnProtectionOption implements Option, Listener {
     
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onEvent(WarlordsRespawnEvent event) {
-        WarlordsEntity player = event.getPlayer();
+        AbstractWarlordsEntity player = event.getPlayer();
         Location respawnPoint = event.getRespawnLocation();
         spawnProtection.put(player, new Pair<>(respawnPoint, protectionTime * 4));
     }

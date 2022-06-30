@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -34,7 +34,7 @@ public abstract class GameTargetCommand implements TabExecutor {
         
         Collection<GameManager.GameHolder> gameInstances;
         if (args.length == 0) {
-            WarlordsEntity wp = BaseCommand.requireWarlordsPlayer(sender);
+            AbstractWarlordsEntity wp = BaseCommand.requireWarlordsPlayer(sender);
             if (wp == null) {
                 return true;
             }

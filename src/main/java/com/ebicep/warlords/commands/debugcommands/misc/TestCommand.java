@@ -7,9 +7,9 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.general.SpecType;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -70,7 +70,7 @@ public class TestCommand implements CommandExecutor {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
-        WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+        AbstractWarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));

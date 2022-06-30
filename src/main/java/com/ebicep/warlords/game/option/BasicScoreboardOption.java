@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 
@@ -32,7 +32,7 @@ public class BasicScoreboardOption implements Option {
         SimpleScoreboardHandler simpleScoreboardHandler = new SimpleScoreboardHandler(0, "date") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 return Collections.singletonList(ChatColor.GRAY + format.format(new Date()));
             }
         };
@@ -49,7 +49,7 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 return Collections.singletonList(ChatColor.YELLOW + Warlords.VERSION);
             }
         };
@@ -60,7 +60,7 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 1, "player-stats") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 return player == null ? Collections.singletonList("")
                         : Collections.singletonList(ChatColor.GREEN.toString()
                         + player.getMinuteStats().total().getKills() + ChatColor.RESET + " Kills "
@@ -73,7 +73,7 @@ public class BasicScoreboardOption implements Option {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 2, "spec") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
                 return player == null ? Collections.singletonList("")
                         : Collections.singletonList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
             }

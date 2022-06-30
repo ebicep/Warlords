@@ -4,8 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -54,7 +54,7 @@ public class HeartToHeart extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         if (wp.hasFlag()) {
             radius = 10;
             verticalRadius = 2;
@@ -64,7 +64,7 @@ public class HeartToHeart extends AbstractAbility {
             verticalRadius = 15;
         }
 
-        for (WarlordsEntity heartTarget : PlayerFilter
+        for (AbstractWarlordsEntity heartTarget : PlayerFilter
                 .entitiesAround(wp, radius, verticalRadius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSight(wp)

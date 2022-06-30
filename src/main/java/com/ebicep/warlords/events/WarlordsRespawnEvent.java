@@ -1,11 +1,12 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.WarlordsEntity;
-import java.util.Objects;
-import javax.annotation.Nonnull;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class WarlordsRespawnEvent extends AbstractWarlordsPlayerEvent implements Cancellable {
 
@@ -13,7 +14,7 @@ public class WarlordsRespawnEvent extends AbstractWarlordsPlayerEvent implements
     protected Location respawnLocation;
     protected boolean cancelled = false;
 
-    public WarlordsRespawnEvent(@Nonnull WarlordsEntity player, @Nonnull Location respawnLocation) {
+    public WarlordsRespawnEvent(@Nonnull AbstractWarlordsEntity player, @Nonnull Location respawnLocation) {
         super(player);
         this.respawnLocation = Objects.requireNonNull(respawnLocation, "respawnLocation");
     }

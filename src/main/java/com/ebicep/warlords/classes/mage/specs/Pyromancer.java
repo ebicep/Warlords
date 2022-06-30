@@ -2,9 +2,9 @@ package com.ebicep.warlords.classes.mage.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 
 import java.util.List;
 
@@ -29,6 +29,6 @@ public class Pyromancer extends AbstractMage {
     @Override
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
-        List<UpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
     }
 }

@@ -2,8 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -77,8 +77,8 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        WarlordsEntity shooter = projectile.getShooter();
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable AbstractWarlordsEntity hit) {
+        AbstractWarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
@@ -135,7 +135,7 @@ public class Fireball extends AbstractProjectileBase {
         }
 
         int playersHit = 0;
-        for (WarlordsEntity nearEntity : PlayerFilter
+        for (AbstractWarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())

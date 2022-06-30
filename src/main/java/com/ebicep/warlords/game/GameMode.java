@@ -11,10 +11,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.player.Specializations;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.SpecType;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;

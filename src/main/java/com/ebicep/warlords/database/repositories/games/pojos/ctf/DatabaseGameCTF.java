@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -238,29 +238,29 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         int bluePoints = game.getPoints(Team.BLUE);
         int redPoints = game.getPoints(Team.RED);
         if (bluePoints > redPoints) {
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         } else if (redPoints > bluePoints) {
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         } else {
             output.setLength(0);
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
             }
         }

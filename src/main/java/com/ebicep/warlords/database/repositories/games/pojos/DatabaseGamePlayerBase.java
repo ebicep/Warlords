@@ -1,9 +1,9 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
-import com.ebicep.warlords.player.ExperienceManager;
-import com.ebicep.warlords.player.PlayerStatisticsMinute;
-import com.ebicep.warlords.player.Specializations;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -49,7 +49,7 @@ public class DatabaseGamePlayerBase {
     public DatabaseGamePlayerBase() {
     }
 
-    public DatabaseGamePlayerBase(WarlordsEntity warlordsPlayer) {
+    public DatabaseGamePlayerBase(AbstractWarlordsEntity warlordsPlayer) {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
         long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);

@@ -2,8 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,7 +22,7 @@ public class InspiringPresence extends AbstractAbility {
     private int duration = 12;
     private final int speedBuff = 30;
     private final int radius = 10;
-    private List<WarlordsEntity> playersEffected = new ArrayList<>();
+    private List<AbstractWarlordsEntity> playersEffected = new ArrayList<>();
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
@@ -49,7 +49,7 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
@@ -76,17 +76,17 @@ public class InspiringPresence extends AbstractAbility {
                 }
         );
 
-        for (WarlordsEntity presenceTarget : PlayerFilter
+        for (AbstractWarlordsEntity presenceTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             playersHit++;
             tempPresence.getPlayersEffected().add(presenceTarget);
 
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                ChatColor.GRAY + " Your Inspiring Presence inspired " +
-                ChatColor.YELLOW + presenceTarget.getName() +
-                ChatColor.GRAY + "!"
+            wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " Your Inspiring Presence inspired " +
+                    ChatColor.YELLOW + presenceTarget.getName() +
+                    ChatColor.GRAY + "!"
             );
 
             Runnable cancelAllySpeed = presenceTarget.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
@@ -115,7 +115,7 @@ public class InspiringPresence extends AbstractAbility {
         this.duration -= .05;
     }
 
-    public List<WarlordsEntity> getPlayersEffected() {
+    public List<AbstractWarlordsEntity> getPlayersEffected() {
         return playersEffected;
     }
 }

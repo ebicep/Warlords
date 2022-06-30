@@ -3,9 +3,9 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -26,14 +26,14 @@ public class Intervene extends AbstractAbility {
     private float maxDamagePrevented = 3600;
     private int radius = 10;
     private int breakRadius = 15;
-    private WarlordsEntity caster;
-    private WarlordsEntity target;
+    private AbstractWarlordsEntity caster;
+    private AbstractWarlordsEntity target;
 
     public Intervene() {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
     }
 
-    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target) {
+    public Intervene(float maxDamagePrevented, AbstractWarlordsEntity caster, AbstractWarlordsEntity target) {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
         this.maxDamagePrevented = maxDamagePrevented;
         this.caster = caster;
@@ -64,10 +64,10 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         setDamagePrevented(0);
 
-        for (WarlordsEntity veneTarget : PlayerFilter
+        for (AbstractWarlordsEntity veneTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp)
@@ -93,15 +93,15 @@ public class Intervene extends AbstractAbility {
 
             veneTarget.getCooldownManager().getCooldowns().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
-                    cd.getFrom().sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                    ChatColor.GRAY + cd.getFrom().getName() + "'s " +
-                                    ChatColor.YELLOW + "Intervene " +
-                                    ChatColor.GRAY + "has expired!"
+                    cd.getFrom().sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + " " +
+                            ChatColor.GRAY + cd.getFrom().getName() + "'s " +
+                            ChatColor.YELLOW + "Intervene " +
+                            ChatColor.GRAY + "has expired!"
                     );
-                    veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                    ChatColor.GRAY + cd.getFrom().getName() + "'s " +
-                                    ChatColor.YELLOW + "Intervene " +
-                                    ChatColor.GRAY + "has expired!"
+                    veneTarget.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + " " +
+                            ChatColor.GRAY + cd.getFrom().getName() + "'s " +
+                            ChatColor.YELLOW + "Intervene " +
+                            ChatColor.GRAY + "has expired!"
                     );
 
                     return true;
@@ -110,14 +110,14 @@ public class Intervene extends AbstractAbility {
                 }
             });
 
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + "§7 You are now protecting " +
-                            veneTarget.getName() + " with your §eIntervene!"
+            wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + "§7 You are now protecting " +
+                    veneTarget.getName() + " with your §eIntervene!"
             );
 
-            veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + "§7 " +
-                            wp.getName() + " is shielding you with their " +
-                            ChatColor.YELLOW + "Intervene" +
-                            ChatColor.GRAY + "!"
+            veneTarget.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + "§7 " +
+                    wp.getName() + " is shielding you with their " +
+                    ChatColor.YELLOW + "Intervene" +
+                    ChatColor.GRAY + "!"
             );
 
             RegularCooldown<Intervene> interveneCooldownVeneTarget = new RegularCooldown<>(
@@ -128,10 +128,10 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
-                        veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s " +
-                                        ChatColor.YELLOW + "Intervene " +
-                                        ChatColor.GRAY + "has expired!"
+                        veneTarget.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + " " +
+                                ChatColor.GRAY + wp.getName() + "'s " +
+                                ChatColor.YELLOW + "Intervene " +
+                                ChatColor.GRAY + "has expired!"
                         );
                     },
                     duration * 20,
@@ -139,12 +139,12 @@ public class Intervene extends AbstractAbility {
                         if (counter % 20 == 0 && ticksLeft > 0) {
                             int timeLeft = Math.round(ticksLeft / 20f);
                             if (timeLeft == 1) {
-                                veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
+                                veneTarget.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + " " +
                                         ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
                                         timeLeft + "§7 second!"
                                 );
                             } else {
-                                veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
+                                veneTarget.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + " " +
                                         ChatColor.GRAY + wp.getName() + "'s §eIntervene §7will expire in §6" +
                                         timeLeft + "§7 seconds!"
                                 );
@@ -161,10 +161,10 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
-                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                        ChatColor.GRAY + wp.getName() + "'s " +
-                                        ChatColor.YELLOW + "Intervene " +
-                                        ChatColor.GRAY + "has expired!"
+                        wp.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + " " +
+                                ChatColor.GRAY + wp.getName() + "'s " +
+                                ChatColor.YELLOW + "Intervene " +
+                                ChatColor.GRAY + "has expired!"
                         );
                     },
                     duration * 20,
@@ -224,11 +224,11 @@ public class Intervene extends AbstractAbility {
         this.maxDamagePrevented = maxDamagePrevented;
     }
 
-    public WarlordsEntity getCaster() {
+    public AbstractWarlordsEntity getCaster() {
         return caster;
     }
 
-    public WarlordsEntity getTarget() {
+    public AbstractWarlordsEntity getTarget() {
         return target;
     }
 }

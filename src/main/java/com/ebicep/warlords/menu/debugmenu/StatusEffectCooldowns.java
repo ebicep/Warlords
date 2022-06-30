@@ -7,13 +7,13 @@ import com.ebicep.warlords.abilties.WoundingStrikeDefender;
 import com.ebicep.warlords.abilties.internal.DamagePowerup;
 import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.SpeedPowerup;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import static com.ebicep.warlords.player.cooldowns.CooldownTypes.BUFF;
-import static com.ebicep.warlords.player.cooldowns.CooldownTypes.DEBUFF;
+import static com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes.BUFF;
+import static com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes.DEBUFF;
 
 public enum StatusEffectCooldowns {
 

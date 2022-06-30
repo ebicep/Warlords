@@ -2,9 +2,9 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -70,13 +70,13 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, AbstractWarlordsEntity wp) {
         return false;
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
+    protected void onNonCancellingHit(InternalProjectile projectile, AbstractWarlordsEntity hit, Location impactLocation) {
+        AbstractWarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
@@ -97,14 +97,14 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected int onHit(InternalProjectile projectile, WarlordsEntity hit) {
-        WarlordsEntity wp = projectile.getShooter();
+    protected int onHit(InternalProjectile projectile, AbstractWarlordsEntity hit) {
+        AbstractWarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
         int playersHit = 0;
-        for (WarlordsEntity enemy : PlayerFilter
+        for (AbstractWarlordsEntity enemy : PlayerFilter
                 .entitiesAround(currentLocation, 3, 3, 3)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
@@ -125,7 +125,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
         return playersHit;
     }
 
-    private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
+    private void reduceCooldowns(AbstractWarlordsEntity wp, AbstractWarlordsEntity enemy) {
         new CooldownFilter<>(wp, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
@@ -142,7 +142,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     wp.updateBlueItem();
                     wp.updateOrangeItem();
 
-                    for (WarlordsEntity teammate : PlayerFilter
+                    for (AbstractWarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
                             .aliveTeammatesOfExcludingSelf(wp)
                             .closestFirst(wp.getLocation())
@@ -164,7 +164,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+    protected Location getProjectileStartingLocation(AbstractWarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
     }
 

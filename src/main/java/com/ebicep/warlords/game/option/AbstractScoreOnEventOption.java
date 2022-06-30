@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.flags.SpawnFlagLocation;
 import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
@@ -75,7 +75,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
                     if (event.getNew() instanceof WaitingFlagLocation) {
                         WaitingFlagLocation waitingFlagLocation = (WaitingFlagLocation) event.getNew();
-                        WarlordsEntity scorer = waitingFlagLocation.getScorer();
+                        AbstractWarlordsEntity scorer = waitingFlagLocation.getScorer();
                         if (scorer != null) {
                             giveScore(event, scorer.getTeam(), scoreIncrease);
                         }
@@ -105,7 +105,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
                     if (event.getNew() instanceof SpawnFlagLocation) {
                         SpawnFlagLocation spawnFlagLocation = (SpawnFlagLocation) event.getNew();
-                        WarlordsEntity scorer = spawnFlagLocation.getFlagReturner();
+                        AbstractWarlordsEntity scorer = spawnFlagLocation.getFlagReturner();
                         if (scorer != null) {
                             giveScore(event, scorer.getTeam(), scoreIncrease);
                         }
@@ -134,7 +134,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
                     if (event.getOld() instanceof PlayerFlagLocation && event.getNew() instanceof PlayerFlagLocation) {
                         PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) event.getNew();
-                        WarlordsEntity scorer = playerFlagLocation.getPlayer();
+                        AbstractWarlordsEntity scorer = playerFlagLocation.getPlayer();
                         giveScore(event, scorer.getTeam(), scoreIncrease);
                     }
                 }

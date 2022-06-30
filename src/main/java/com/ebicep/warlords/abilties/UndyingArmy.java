@@ -4,8 +4,8 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -30,7 +30,7 @@ public class UndyingArmy extends AbstractAbility {
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
     private final int radius = 15;
-    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
+    private final HashMap<AbstractWarlordsEntity, Boolean> playersPopped = new HashMap<>();
     protected int playersArmied = 0;
     private int duration = 10;
     private int maxArmyAllies = 6;
@@ -63,7 +63,7 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
         Utils.playGlobalSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
@@ -103,7 +103,7 @@ public class UndyingArmy extends AbstractAbility {
 
         UndyingArmy tempUndyingArmy = new UndyingArmy();
         int numberOfPlayersWithArmy = 0;
-        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
+        for (AbstractWarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
                 .closestFirst(wp)
         ) {
@@ -111,21 +111,21 @@ public class UndyingArmy extends AbstractAbility {
             if (teammate != wp) {
                 playersArmied++;
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " Your " +
-                                ChatColor.YELLOW + "Undying Army" +
-                                ChatColor.GRAY + " is now protecting " +
-                                teammate.getName() +
-                                ChatColor.GRAY + "."
+                wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " Your " +
+                        ChatColor.YELLOW + "Undying Army" +
+                        ChatColor.GRAY + " is now protecting " +
+                        teammate.getName() +
+                        ChatColor.GRAY + "."
                 );
 
-                teammate.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN +
-                                ChatColor.GRAY + " " +
-                                ChatColor.GRAY + wp.getName() + "'s " +
-                                ChatColor.YELLOW + "Undying Army" +
-                                ChatColor.GRAY + " is now protecting you for " +
-                                ChatColor.GOLD + duration +
-                                ChatColor.GRAY + " seconds."
+                teammate.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " " +
+                        ChatColor.GRAY + wp.getName() + "'s " +
+                        ChatColor.YELLOW + "Undying Army" +
+                        ChatColor.GRAY + " is now protecting you for " +
+                        ChatColor.GOLD + duration +
+                        ChatColor.GRAY + " seconds."
                 );
             }
             teammate.getCooldownManager().addRegularCooldown(
@@ -174,15 +174,15 @@ public class UndyingArmy extends AbstractAbility {
         return true;
     }
 
-    public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
+    public HashMap<AbstractWarlordsEntity, Boolean> getPlayersPopped() {
         return playersPopped;
     }
 
-    public boolean isArmyDead(WarlordsEntity warlordsPlayer) {
+    public boolean isArmyDead(AbstractWarlordsEntity warlordsPlayer) {
         return playersPopped.get(warlordsPlayer);
     }
 
-    public void pop(WarlordsEntity warlordsPlayer) {
+    public void pop(AbstractWarlordsEntity warlordsPlayer) {
         playersPopped.put(warlordsPlayer, true);
     }
 

@@ -3,10 +3,10 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -73,7 +73,7 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
@@ -144,7 +144,7 @@ public class OrbsOfLife extends AbstractAbility {
                             @Override
                             public void run() {
                                 tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
-                                    WarlordsEntity target = targetOrb.getPlayerToMoveTowards();
+                                    AbstractWarlordsEntity target = targetOrb.getPlayerToMoveTowards();
                                     ArmorStand orbArmorStand = targetOrb.getArmorStand();
                                     Location orbLocation = orbArmorStand.getLocation();
                                     Entity orb = orbArmorStand.getPassenger();
@@ -173,10 +173,10 @@ public class OrbsOfLife extends AbstractAbility {
                             }
                         }.runTaskTimer(0, 1);
 
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                        ChatColor.GRAY + " Your current " +
-                                        ChatColor.GREEN + name +
-                                        ChatColor.GRAY + " will now levitate towards you or a teammate!"
+                        wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                                ChatColor.GRAY + " Your current " +
+                                ChatColor.GREEN + name +
+                                ChatColor.GRAY + " will now levitate towards you or a teammate!"
                         );
 
                     }
@@ -192,7 +192,7 @@ public class OrbsOfLife extends AbstractAbility {
         this.orbsProduced += 2;
     }
 
-    public void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+    public void spawnOrbs(AbstractWarlordsEntity owner, AbstractWarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
         if (ability.isEmpty() || ability.equals("Intervene")) return;
         if (cooldown.isHidden()) return;
         owner.doOnStaticAbility(OrbsOfLife.class, OrbsOfLife::add2OrbsProduced);
@@ -240,18 +240,18 @@ public class OrbsOfLife extends AbstractAbility {
     public static class Orb extends EntityExperienceOrb {
 
         private final ArmorStand armorStand;
-        private final WarlordsEntity owner;
+        private final AbstractWarlordsEntity owner;
         private int ticksLived = 0;
-        private WarlordsEntity playerToMoveTowards = null;
+        private AbstractWarlordsEntity playerToMoveTowards = null;
 
-        public Orb(World world, Location location, WarlordsEntity owner) {
+        public Orb(World world, Location location, AbstractWarlordsEntity owner) {
             super(world, location.getX(), location.getY() + 2, location.getZ(), 2500);
             this.owner = owner;
             ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
             orbStand.setVisible(false);
             orbStand.setGravity(true);
             orbStand.setPassenger(spawn(location).getBukkitEntity());
-            for (WarlordsEntity player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
+            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
                 if (player.getEntity() instanceof Player) {
                     ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
                 }
@@ -304,7 +304,7 @@ public class OrbsOfLife extends AbstractAbility {
             return armorStand;
         }
 
-        public WarlordsEntity getOwner() {
+        public AbstractWarlordsEntity getOwner() {
             return owner;
         }
 
@@ -312,11 +312,11 @@ public class OrbsOfLife extends AbstractAbility {
             return ticksLived;
         }
 
-        public WarlordsEntity getPlayerToMoveTowards() {
+        public AbstractWarlordsEntity getPlayerToMoveTowards() {
             return playerToMoveTowards;
         }
 
-        public void setPlayerToMoveTowards(WarlordsEntity playerToMoveTowards) {
+        public void setPlayerToMoveTowards(AbstractWarlordsEntity playerToMoveTowards) {
             this.playerToMoveTowards = playerToMoveTowards;
         }
     }

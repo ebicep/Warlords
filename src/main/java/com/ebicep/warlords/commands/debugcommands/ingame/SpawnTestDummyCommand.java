@@ -6,12 +6,10 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.Specializations;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.WarlordsNPC;
-import com.ebicep.warlords.player.Weapons;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.command.Command;
@@ -28,7 +26,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        WarlordsEntity player = BaseCommand.requireWarlordsPlayer(sender);
+        AbstractWarlordsEntity player = BaseCommand.requireWarlordsPlayer(sender);
 
         if (!sender.hasPermission("warlords.game.spawndummy")) {
             sender.sendMessage("§cYou do not have permission to do that.");
@@ -47,10 +45,10 @@ public class SpawnTestDummyCommand implements CommandExecutor {
             Optional<Team> teamOpt = TeamMarker.getTeams(player.getGame()).stream().filter(e -> e.name().equalsIgnoreCase(teamString)).findAny();
             if (teamOpt.isPresent()) {
                 Team team = teamOpt.get();
-                
-                
+
+
                 Game game = player.getGame();
-                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
+                AbstractWarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                         UUID.randomUUID(),
                         "testdummy",
                         Weapons.BLUDGEON,

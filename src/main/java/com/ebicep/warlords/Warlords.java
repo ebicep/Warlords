@@ -38,11 +38,15 @@ import com.ebicep.warlords.party.PartyCommand;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.StreamCommand;
-import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.CooldownManager;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -86,7 +90,7 @@ public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
     public static final PartyManager partyManager = new PartyManager();
-    private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
+    private static final HashMap<UUID, AbstractWarlordsEntity> players = new HashMap<>();
     private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
     private static final HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
     public static String VERSION = "";
@@ -123,11 +127,11 @@ public class Warlords extends JavaPlugin {
         return taskChainFactory.newSharedChain(name);
     }
 
-    public static HashMap<UUID, WarlordsEntity> getPlayers() {
+    public static HashMap<UUID, AbstractWarlordsEntity> getPlayers() {
         return players;
     }
 
-    public static void addPlayer(@Nonnull WarlordsEntity warlordsPlayer) {
+    public static void addPlayer(@Nonnull AbstractWarlordsEntity warlordsPlayer) {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);
         for (GameAddon addon : warlordsPlayer.getGame().getAddons()) {
             addon.warlordsPlayerCreated(warlordsPlayer.getGame(), warlordsPlayer);
@@ -135,28 +139,28 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
-    public static WarlordsEntity getPlayer(@Nullable Entity entity) {
+    public static AbstractWarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsEntity).findAny();
+            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof AbstractWarlordsEntity).findAny();
             if (metadata.isPresent()) {
-                return (WarlordsEntity) metadata.get().value();
+                return (AbstractWarlordsEntity) metadata.get().value();
             }
         }
         return null;
     }
 
     @Nullable
-    public static WarlordsEntity getPlayer(@Nullable OfflinePlayer player) {
+    public static AbstractWarlordsEntity getPlayer(@Nullable OfflinePlayer player) {
         return player == null ? null : getPlayer(player.getUniqueId());
     }
 
     @Nullable
-    public static WarlordsEntity getPlayer(@Nullable Player player) {
+    public static AbstractWarlordsEntity getPlayer(@Nullable Player player) {
         return getPlayer((OfflinePlayer) player);
     }
 
     @Nullable
-    public static WarlordsEntity getPlayer(@Nonnull UUID uuid) {
+    public static AbstractWarlordsEntity getPlayer(@Nonnull UUID uuid) {
         return players.get(uuid);
     }
 
@@ -169,7 +173,7 @@ public class Warlords extends JavaPlugin {
     }
 
     public static void removePlayer(@Nonnull UUID player) {
-        WarlordsEntity wp = players.remove(player);
+        AbstractWarlordsEntity wp = players.remove(player);
         if (wp != null) {
             wp.onRemove();
         }
@@ -521,7 +525,7 @@ public class Warlords extends JavaPlugin {
 
                 // Every 1 tick - 0.05 seconds.
                 {
-                    for (WarlordsEntity wp : players.values()) {
+                    for (AbstractWarlordsEntity wp : players.values()) {
                         Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
                         if (player != null) {
                             //ACTION BAR
@@ -847,7 +851,7 @@ public class Warlords extends JavaPlugin {
                                     Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
 
-                                for (WarlordsEntity nearPlayer : PlayerFilter
+                                for (AbstractWarlordsEntity nearPlayer : PlayerFilter
                                         .entitiesAround(wp, 6, 6, 6)
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
@@ -874,7 +878,7 @@ public class Warlords extends JavaPlugin {
 
                     // Loops every 10 ticks - .5 second.
                     if (counter % 10 == 0) {
-                        for (WarlordsEntity wps : players.values()) {
+                        for (AbstractWarlordsEntity wps : players.values()) {
                             // Soulbinding Weapon - decrementing time left on the ability.
                             new CooldownFilter<>(wps, PersistentCooldown.class)
                                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
@@ -893,7 +897,7 @@ public class Warlords extends JavaPlugin {
                         // Removes leftover horses if there are any.
                         RemoveEntities.removeHorsesInGame();
 
-                        for (WarlordsEntity wps : players.values()) {
+                        for (AbstractWarlordsEntity wps : players.values()) {
                             // Checks whether the game is paused.
                             if (wps.getGame().isFrozen()) {
                                 continue;
@@ -935,7 +939,7 @@ public class Warlords extends JavaPlugin {
 
                                 if (heal != 0) {
                                     wps.setHealth(wps.getHealth() + heal);
-                                    wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + heal + " §7health.");
+                                    wps.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + heal + " §7health.");
                                 }
                             }
 
@@ -956,7 +960,7 @@ public class Warlords extends JavaPlugin {
 
                     // Loops every 50 ticks - 2.5 seconds.
                     if (counter % 50 == 0) {
-                        for (WarlordsEntity warlordsPlayer : players.values()) {
+                        for (AbstractWarlordsEntity warlordsPlayer : players.values()) {
 
                             if (warlordsPlayer.getGame().isFrozen()) {
                                 continue;

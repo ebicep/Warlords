@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.ebicep.warlords.menu.Menu.*;
-import static com.ebicep.warlords.player.ArmorManager.*;
-import static com.ebicep.warlords.player.Settings.*;
-import static com.ebicep.warlords.player.Specializations.APOTHECARY;
+import static com.ebicep.warlords.player.general.ArmorManager.*;
+import static com.ebicep.warlords.player.general.Settings.*;
+import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 
 public class WarlordsShopMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)

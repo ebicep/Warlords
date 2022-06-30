@@ -20,9 +20,11 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.permissions.PermissionHandler;
-import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -87,7 +89,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        WarlordsEntity wp = Warlords.getPlayer(player);
+        AbstractWarlordsEntity wp = Warlords.getPlayer(player);
         if (wp != null) {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
@@ -230,7 +232,7 @@ public class WarlordsEvents implements Listener {
             }
         }
 
-        WarlordsEntity wp1 = Warlords.getPlayer(player);
+        AbstractWarlordsEntity wp1 = Warlords.getPlayer(player);
         WarlordsPlayer p = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (p != null) {
             player.teleport(p.getLocation());
@@ -244,7 +246,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent e) {
-        WarlordsEntity wp1 = Warlords.getPlayer(e.getPlayer());
+        AbstractWarlordsEntity wp1 = Warlords.getPlayer(e.getPlayer());
         WarlordsPlayer wp = wp1 instanceof WarlordsPlayer ? (WarlordsPlayer) wp1 : null;
         if (wp != null) {
             wp.updatePlayerReference(null);
@@ -276,8 +278,8 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         Entity attacker = e.getDamager();
-        WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
-        WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
+        AbstractWarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
+        AbstractWarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
         if (wpAttacker != null && wpVictim != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
             if ((!(attacker instanceof Player) || ((Player) attacker).getInventory().getHeldItemSlot() == 0) && wpAttacker.getHitCooldown() == 0) {
                 wpAttacker.setHitCooldown(12);
@@ -286,8 +288,8 @@ public class WarlordsEvents implements Listener {
                 if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
                     Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
                     new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
-                        .filter(PersistentCooldown::isShown)
-                        .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                            .filter(PersistentCooldown::isShown)
+                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                         .forEachOrdered(soulbinding -> {
                             wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
 
@@ -322,7 +324,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent e) {
         e.setCancelled(true);
-        WarlordsEntity entity = Warlords.getPlayer((Entity) e.getEntity().getShooter());
+        AbstractWarlordsEntity entity = Warlords.getPlayer((Entity) e.getEntity().getShooter());
         if (entity != null) {
             //entity.getSpec().getWeapon().onActivate(entity, null);
         }
@@ -333,7 +335,7 @@ public class WarlordsEvents implements Listener {
         Player player = e.getPlayer();
         Action action = e.getAction();
         Location location = player.getLocation();
-        WarlordsEntity wp = Warlords.getPlayer(player);
+        AbstractWarlordsEntity wp = Warlords.getPlayer(player);
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
@@ -432,7 +434,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
-            WarlordsEntity warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
+            AbstractWarlordsEntity warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
             if (warlordsPlayer == null) {
                 return;
             }
@@ -456,7 +458,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
-        WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+        AbstractWarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
             if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
                 wp.getSpec().onRightClick(wp, e.getPlayer(), slot, true);
@@ -469,7 +471,7 @@ public class WarlordsEvents implements Listener {
     public void onInvClick(InventoryClickEvent e) {
         if (e.getSlot() == 0) {
             Player player = (Player) e.getWhoClicked();
-            WarlordsEntity wp = Warlords.getPlayer(player);
+            AbstractWarlordsEntity wp = Warlords.getPlayer(player);
             if (wp != null) {
                 if (e.isLeftClick()) {
                     wp.weaponLeftClick();
@@ -527,7 +529,7 @@ public class WarlordsEvents implements Listener {
             }
         }
 
-        WarlordsEntity warlordsEntity = Warlords.getPlayer(e.getPlayer());
+        AbstractWarlordsEntity warlordsEntity = Warlords.getPlayer(e.getPlayer());
         if (warlordsEntity != null) {
             warlordsEntity.setCurrentVector(e.getTo().toVector().subtract(e.getFrom().toVector()).normalize().clone());
             //System.out.println(warlordsEntity.getCurrentVector());
@@ -539,7 +541,7 @@ public class WarlordsEvents implements Listener {
         if (e.getEntity() instanceof Player) {
             if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
-                WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
+                AbstractWarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                 if (wp != null) {
                     if (wp.isDead()) {
                         wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
@@ -559,7 +561,7 @@ public class WarlordsEvents implements Listener {
                 //18 - 160
                 //HEIGHT x 40 - 200
                 if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
+                    AbstractWarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null) {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
@@ -571,7 +573,7 @@ public class WarlordsEvents implements Listener {
             } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
                 //100 flat
                 if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
+                    AbstractWarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null && !wp.getGame().isFrozen()) {
                         wp.addDamageInstance(wp, "Fall", 100, 100, -1, 100, false);
                         wp.setRegenTimer(10);
@@ -636,7 +638,7 @@ public class WarlordsEvents implements Listener {
 
                 switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
-                        WarlordsEntity wp = Warlords.getPlayer(player);
+                        AbstractWarlordsEntity wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
                         int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
 
@@ -748,7 +750,7 @@ public class WarlordsEvents implements Listener {
 
         if (event.getNew() instanceof PlayerFlagLocation) {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
-            WarlordsEntity player = pfl.getPlayer();
+            AbstractWarlordsEntity player = pfl.getPlayer();
             player.setCarriedFlag(event.getInfo());
             //removing invis for assassins
             OrderOfEviscerate.removeCloak(player, false);
@@ -787,7 +789,7 @@ public class WarlordsEvents implements Listener {
                 });
             }
         } else if (event.getNew() instanceof SpawnFlagLocation) {
-            WarlordsEntity toucher = ((SpawnFlagLocation) event.getNew()).getFlagReturner();
+            AbstractWarlordsEntity toucher = ((SpawnFlagLocation) event.getNew()).getFlagReturner();
             if (event.getOld() instanceof GroundFlagLocation) {
                 if (toucher != null) {
                     toucher.addFlagReturn();
@@ -817,7 +819,7 @@ public class WarlordsEvents implements Listener {
                 });
             }
         } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).getScorer() != null) {
-            WarlordsEntity player = ((WaitingFlagLocation) event.getNew()).getScorer();
+            AbstractWarlordsEntity player = ((WaitingFlagLocation) event.getNew()).getScorer();
             player.addFlagCap();
             event.getGame().forEachOnlinePlayer((p, t) -> {
                 String message = player.getColoredName() + " §ecaptured the " + event.getInfo().getTeam().coloredPrefix() + " §eflag!";
@@ -849,7 +851,7 @@ public class WarlordsEvents implements Listener {
         return dropFlag(Warlords.getPlayer(player));
     }
 
-    public boolean dropFlag(@Nullable WarlordsEntity player) {
+    public boolean dropFlag(@Nullable AbstractWarlordsEntity player) {
         if (player == null) {
             return false;
         }

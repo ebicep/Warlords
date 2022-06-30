@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 
 public interface DatabasePlayer {
 

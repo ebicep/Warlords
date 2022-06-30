@@ -6,9 +6,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.PermissionHandler;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.SpecType;
-import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.SpecType;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

@@ -2,10 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -28,8 +28,8 @@ public class Soulbinding extends AbstractAbility {
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private int bindDuration = 2;
 
-    private List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
-    private List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+    private List<AbstractWarlordsEntity> playersProcedBySouls = new ArrayList<>();
+    private List<AbstractWarlordsEntity> playersProcedByLink = new ArrayList<>();
 
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
@@ -67,7 +67,7 @@ public class Soulbinding extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
@@ -128,7 +128,7 @@ public class Soulbinding extends AbstractAbility {
         return soulBindedPlayers;
     }
 
-    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
+    public boolean hasBoundPlayer(AbstractWarlordsEntity warlordsPlayer) {
         for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
                 return true;
@@ -137,7 +137,7 @@ public class Soulbinding extends AbstractAbility {
         return false;
     }
 
-    public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
+    public boolean hasBoundPlayerSoul(AbstractWarlordsEntity warlordsPlayer) {
         for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
                 if (!soulBindedPlayer.isHitWithSoul()) {
@@ -151,7 +151,7 @@ public class Soulbinding extends AbstractAbility {
         return false;
     }
 
-    public boolean hasBoundPlayerLink(WarlordsEntity warlordsPlayer) {
+    public boolean hasBoundPlayerLink(AbstractWarlordsEntity warlordsPlayer) {
         for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
                 if (!soulBindedPlayer.isHitWithLink()) {
@@ -173,8 +173,8 @@ public class Soulbinding extends AbstractAbility {
         this.bindDuration = bindDuration;
     }
 
-    public List<WarlordsEntity> getAllProcedPlayers() {
-        List<WarlordsEntity> procedPlayers = new ArrayList<>();
+    public List<AbstractWarlordsEntity> getAllProcedPlayers() {
+        List<AbstractWarlordsEntity> procedPlayers = new ArrayList<>();
         procedPlayers.addAll(playersProcedBySouls);
         procedPlayers.addAll(playersProcedByLink);
         return procedPlayers;
@@ -182,23 +182,23 @@ public class Soulbinding extends AbstractAbility {
     }
 
     public static class SoulBoundPlayer {
-        private WarlordsEntity boundPlayer;
+        private AbstractWarlordsEntity boundPlayer;
         private float timeLeft;
         private boolean hitWithLink;
         private boolean hitWithSoul;
 
-        public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft) {
+        public SoulBoundPlayer(AbstractWarlordsEntity boundPlayer, int timeLeft) {
             this.boundPlayer = boundPlayer;
             this.timeLeft = timeLeft;
             hitWithLink = false;
             hitWithSoul = false;
         }
 
-        public WarlordsEntity getBoundPlayer() {
+        public AbstractWarlordsEntity getBoundPlayer() {
             return boundPlayer;
         }
 
-        public void setBoundPlayer(WarlordsEntity boundPlayer) {
+        public void setBoundPlayer(AbstractWarlordsEntity boundPlayer) {
             this.boundPlayer = boundPlayer;
         }
 

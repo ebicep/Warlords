@@ -1,6 +1,6 @@
 package com.ebicep.warlords.util.warlords;
 
-import com.ebicep.warlords.player.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
@@ -170,11 +170,11 @@ public class Utils {
         }
     }
 
-    public static Predicate<WarlordsEntity> filterOnlyEnemies(@Nullable WarlordsEntity wp) {
+    public static Predicate<AbstractWarlordsEntity> filterOnlyEnemies(@Nullable AbstractWarlordsEntity wp) {
         return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
 
-    public static Predicate<WarlordsEntity> filterOnlyTeammates(@Nullable WarlordsEntity wp) {
+    public static Predicate<AbstractWarlordsEntity> filterOnlyTeammates(@Nullable AbstractWarlordsEntity wp) {
         return wp == null ? (player) -> false : wp::isTeammateAlive;
     }
 
@@ -225,7 +225,7 @@ public class Utils {
         return new Vector(direction.getZ(), 0.0, -direction.getX()).normalize();
     }
 
-    public static double getDistance(WarlordsEntity e, double accuracy) {
+    public static double getDistance(AbstractWarlordsEntity e, double accuracy) {
         return getDistance(e.getLocation(), accuracy);
     }
 

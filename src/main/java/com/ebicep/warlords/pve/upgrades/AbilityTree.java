@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,7 +15,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 public class AbilityTree {
 
     private final WarlordsPlayer player;
-    private final List<UpgradeBranch<?>> upgradeBranches = new ArrayList<>();
+    private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
 
     public AbilityTree(WarlordsPlayer player) {
         this.player = player;
@@ -25,7 +25,7 @@ public class AbilityTree {
         Menu menu = new Menu("Upgrades", 9 * 4);
 
         for (int i = 0; i < upgradeBranches.size(); i++) {
-            UpgradeBranch<?> upgradeBranch = upgradeBranches.get(i);
+            AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(i);
             menu.setItem(
                     i + 2,
                     1,
@@ -47,7 +47,7 @@ public class AbilityTree {
         return player;
     }
 
-    public List<UpgradeBranch<?>> getUpgradeBranches() {
+    public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
         return upgradeBranches;
     }
 }

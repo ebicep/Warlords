@@ -5,8 +5,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.permissions.PermissionHandler;
-import com.ebicep.warlords.player.WarlordsEntity;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
@@ -51,7 +51,7 @@ public class AFKDetectionOption implements Option, Listener {
                 }
 
                 game.getState(PlayingState.class).ifPresent(state -> {
-                    for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
+                    for (AbstractWarlordsEntity we : PlayerFilter.playingGame(game)) {
                         if (we.isDead()) continue;
                         if (!(we.getEntity() instanceof Player)) continue;
                         if (we.isSneaking())
@@ -70,7 +70,7 @@ public class AFKDetectionOption implements Option, Listener {
                                         Location fifthLastLocation = locations.get(locations.size() - 5);
                                         if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
                                             //hasnt moved for 12.5 seconds
-                                            for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+                                            for (AbstractWarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                                 PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                                 PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)");
                                                 PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
@@ -82,7 +82,7 @@ public class AFKDetectionOption implements Option, Listener {
                                     }
                                     if (thirdLastLocation.equals(fourthLastLocation)) {
                                         //hasnt moved for 10 seconds
-                                        for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+                                        for (AbstractWarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)");
                                             PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
@@ -92,7 +92,7 @@ public class AFKDetectionOption implements Option, Listener {
                                 }
                                 if (secondLastLocation.equals(thirdLastLocation)) {
                                     //hasnt moved for 7.5 seconds
-                                    for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+                                    for (AbstractWarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                         PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                         PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)");
                                         PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
@@ -102,7 +102,7 @@ public class AFKDetectionOption implements Option, Listener {
                             }
                             if (lastLocation.equals(secondLastLocation)) {
                                 //hasnt moved for 5 seconds
-                                for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+                                for (AbstractWarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                     PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                     PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
                                     PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
@@ -118,7 +118,7 @@ public class AFKDetectionOption implements Option, Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+        AbstractWarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
         if (warlordsPlayer != null) {
             //clearing player location list for clicking while standing still
             playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
@@ -128,7 +128,7 @@ public class AFKDetectionOption implements Option, Listener {
     @EventHandler
     public void onPlayerSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+        AbstractWarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
         if (warlordsPlayer != null) {
             //clearing player location list for sneaking while standing still
             playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();

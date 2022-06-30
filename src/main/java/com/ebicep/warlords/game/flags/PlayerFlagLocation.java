@@ -1,17 +1,18 @@
 package com.ebicep.warlords.game.flags;
 
-import com.ebicep.warlords.player.WarlordsEntity;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Nonnull;
+import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
+
 public class PlayerFlagLocation implements FlagLocation {
-	
-    private final WarlordsEntity player;
+
+    private final AbstractWarlordsEntity player;
     private int pickUpTicks;
 
-    public PlayerFlagLocation(WarlordsEntity player, int pickUpTicks) {
+    public PlayerFlagLocation(AbstractWarlordsEntity player, int pickUpTicks) {
         this.player = player;
         this.pickUpTicks = pickUpTicks;
     }
@@ -21,7 +22,7 @@ public class PlayerFlagLocation implements FlagLocation {
         return player.getLocation();
     }
 
-    public WarlordsEntity getPlayer() {
+    public AbstractWarlordsEntity getPlayer() {
         return player;
     }
 
@@ -62,7 +63,7 @@ public class PlayerFlagLocation implements FlagLocation {
         );
     }
 
-    public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
+    public static PlayerFlagLocation of(@Nonnull FlagLocation flag, AbstractWarlordsEntity player) {
         return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getDamageTimer())
                 : new PlayerFlagLocation(player, 0);
     }

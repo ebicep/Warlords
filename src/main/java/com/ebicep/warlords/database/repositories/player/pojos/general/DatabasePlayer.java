@@ -14,9 +14,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.interception.Datab
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Settings;
-import com.ebicep.warlords.player.Specializations;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.Specializations;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
