@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -96,8 +95,6 @@ public class TimeWarp extends AbstractAbility {
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                         }
-
-                        Bukkit.broadcastMessage("trail size " + warpTrail.size());
 
                         if (pveUpgrade) {
                             wp.getSpeed().addSpeedModifier("Time Warp Speed", 20, ticksLeft);

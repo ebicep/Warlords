@@ -84,6 +84,7 @@ public class FlameburstBranch extends UpgradeBranch<FlameBurst> {
 
     @Override
     public void master() {
+        ability.setEnergyCost(0);
         ability.setPveUpgrade(true);
     }
 }
