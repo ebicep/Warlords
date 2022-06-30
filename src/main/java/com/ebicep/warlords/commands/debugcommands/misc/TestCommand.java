@@ -81,6 +81,7 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
 
             ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
+            warlordsPlayer.addCurrency(10000000);
 
         }
 

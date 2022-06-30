@@ -19,7 +19,7 @@ public class Inferno extends AbstractAbility {
     private boolean pveUpgrade = false;
     protected int hitsAmplified = 0;
 
-    private final int duration = 18;
+    private int duration = 18;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
 
@@ -87,6 +87,16 @@ public class Inferno extends AbstractAbility {
                     return currentCritMultiplier;
                 return currentCritMultiplier + critMultiplierIncrease;
             }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (pveUpgrade) {
+                    if (isKiller) {
+                        wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() - 1);
+                        wp.updateOrangeItem();
+                    }
+                }
+            }
         });
 
         return true;
@@ -118,5 +128,13 @@ public class Inferno extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
