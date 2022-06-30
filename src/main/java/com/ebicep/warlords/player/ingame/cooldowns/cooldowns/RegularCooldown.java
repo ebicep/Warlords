@@ -47,6 +47,9 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         if (ticksLeft <= 0) {
             return "";
         }
+        if (nameAbbreviation == null) {
+            return null;
+        }
 
         return (nameAbbreviation.equals("WND") ||
                 nameAbbreviation.equals("CRIP") ||

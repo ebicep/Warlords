@@ -2,9 +2,11 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -20,7 +22,6 @@ public class TimeWarp extends AbstractAbility {
 
     private final int duration = 5;
     private int warpHealPercentage = 30;
-    private int pveSpeed = 0;
 
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
@@ -96,7 +97,37 @@ public class TimeWarp extends AbstractAbility {
                         }
 
                         if (pveUpgrade) {
-                            wp.getSpeed().addSpeedModifier("Time Warp Speed", pveSpeed, ticksLeft);
+                            wp.getSpeed().addSpeedModifier("Time Warp Speed", 20, ticksLeft);
+                            wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarp>(
+                                    name,
+                                    null,
+                                    TimeWarp.class,
+                                    new TimeWarp(),
+                                    wp,
+                                    CooldownTypes.ABILITY,
+                                    cooldownManager -> {
+                                    },
+                                    duration * 20
+                            ) {
+                                @Override
+                                public boolean distinct() {
+                                    return true;
+                                }
+
+                                @Override
+                                public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+                                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                                        return currentCritChance;
+                                    return currentCritChance + (warpTrail.size());
+                                }
+
+                                @Override
+                                public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
+                                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                                        return currentCritMultiplier;
+                                    return currentCritMultiplier + (warpTrail.size() * 2);
+                                }
+                            });
                         }
                     }
                 }
@@ -119,13 +150,5 @@ public class TimeWarp extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
-    }
-
-    public int getPveSpeed() {
-        return pveSpeed;
-    }
-
-    public void setPveSpeed(int pveSpeed) {
-        this.pveSpeed = pveSpeed;
     }
 }

@@ -1073,7 +1073,9 @@ public abstract class AbstractWarlordsEntity {
         actionBarMessage.append("§l").append(health).append(ChatColor.GOLD).append("§l/§l").append(maxHealth).append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
-            actionBarMessage.append(abstractCooldown.getNameAbbreviation());
+            if (abstractCooldown.getNameAbbreviation() != null) {
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation());
+            }
         }
         if (entity instanceof Player) {
             PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());

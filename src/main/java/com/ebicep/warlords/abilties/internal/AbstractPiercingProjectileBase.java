@@ -40,7 +40,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
-    protected final double projectileSpeed;
+    protected double projectileSpeed;
     protected final int maxTicks;
     protected final double maxDistance;
     protected final boolean hitTeammates;
@@ -344,6 +344,14 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     public List<InternalProjectile> getProjectiles(InternalProjectile internalProjectile) {
         return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
+    }
+
+    public double getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public void setProjectileSpeed(double projectileSpeed) {
+        this.projectileSpeed = projectileSpeed;
     }
 
     public class InternalProjectile extends BukkitRunnable {
