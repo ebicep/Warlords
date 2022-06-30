@@ -9,37 +9,69 @@ import org.bukkit.inventory.ItemStack;
 public class ChainLightningBranch extends UpgradeBranch<ChainLightning> {
     public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability, ItemStack itemStack, String itemName) {
         super(abilityTree, ability, itemStack, itemName);
-        upgrades.add(new Upgrade("Tier I", "-30% Cooldown"));
-        upgrades.add(new Upgrade("Tier II", "+2 Chain bounces"));
-        upgrades.add(new Upgrade("Tier III", "+50% Damage"));
-        upgrades.add(new Upgrade("Tier IV", "+10 blocks bounce and cast range"));
-        upgrades.add(new Upgrade("Tier V", "+2 Chain bounces"));
+        treeA.add(new Upgrade("Tier I", "-10 Energy cost"));
+        treeA.add(new Upgrade("Tier II", "-20 Energy cost"));
+        treeA.add(new Upgrade("Tier III", "-30 Energy cost"));
+
+        treeB.add(new Upgrade("Tier I", "+10 Blocks bounce and cast range"));
+        treeB.add(new Upgrade("Tier II", "+2 Chain bounces"));
+        treeB.add(new Upgrade("Tier III", "+2 Chain bounces"));
+
+        treeC.add(new Upgrade("Tier I", "+10 blocks bounce and cast range"));
+        treeC.add(new Upgrade("Tier II", "+2 Chain bounces"));
+        treeC.add(new Upgrade("Tier III", "+2 Chain bounces"));
+
+        masterUpgrade = new Upgrade("Master Upgrade", "master");
     }
 
     @Override
-    public void tierOneUpgrade() {
-        ability.setCooldown(ability.getCooldown() * 0.7f);
+    public void a1() {
+        ability.setEnergyCost(ability.getEnergyCost() - 10);
     }
 
     @Override
-    public void tierTwoUpgrade() {
-        ability.setMaxBounces(5);
+    public void a2() {
+        ability.setEnergyCost(ability.getEnergyCost() - 10);
     }
 
     @Override
-    public void tierThreeUpgrade() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.5f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.5f);
+    public void a3() {
+        ability.setEnergyCost(ability.getEnergyCost() - 10);
     }
 
     @Override
-    public void tierFourUpgrade() {
+    public void b1() {
         ability.setBounceRange(20);
         ability.setRadius(30);
     }
 
     @Override
-    public void tierFiveUpgrade() {
+    public void b2() {
         ability.setMaxBounces(7);
+    }
+
+    @Override
+    public void b3() {
+
+    }
+
+    @Override
+    public void c1() {
+
+    }
+
+    @Override
+    public void c2() {
+
+    }
+
+    @Override
+    public void c3() {
+
+    }
+
+    @Override
+    public void master() {
+
     }
 }

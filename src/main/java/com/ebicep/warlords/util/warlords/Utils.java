@@ -44,6 +44,8 @@ public class Utils {
             "Apothecary"
     };
 
+    // Sorted wool id color
+    // https://prnt.sc/UN80GeSpeyly
     public static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),
             new ItemStack(Material.WOOL, 1, (byte) 8),

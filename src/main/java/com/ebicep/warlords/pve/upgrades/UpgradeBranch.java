@@ -18,9 +18,13 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
 
     protected AbilityTree abilityTree;
     protected T ability;
-    protected List<Upgrade> upgrades = new ArrayList<>();
     protected ItemStack itemStack;
     protected String itemName;
+
+    protected List<Upgrade> treeA = new ArrayList<>();
+    protected List<Upgrade> treeB = new ArrayList<>();
+    protected List<Upgrade> treeC = new ArrayList<>();
+    protected Upgrade masterUpgrade;
 
     public UpgradeBranch(AbilityTree abilityTree, T ability, ItemStack itemStack, String itemName) {
         this.abilityTree = abilityTree;
@@ -31,14 +35,14 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
 
     public void openUpgradeBranchMenu() {
         WarlordsPlayer player = abilityTree.getPlayer();
-        Menu menu = new Menu("Upgrades", 9 * 4);
+        Menu menu = new Menu("Upgrades", 9 * 6);
 
-        for (int i = 0; i < upgrades.size(); i++) {
-            Upgrade upgrade = upgrades.get(i);
+        for (int i = 0; i < treeA.size(); i++) {
+            Upgrade upgrade = treeA.get(i);
             int finalI = i;
             menu.setItem(
-                    i + 2,
-                    1,
+                    2,
+                    i,
                     new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
                             .name(ChatColor.GOLD + upgrade.getName())
                             .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
@@ -49,61 +53,143 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                             return;
                         }
                         if (finalI != 0) {
-                            if (!upgrades.get(finalI - 1).isUnlocked()) {
+                            if (!treeA.get(finalI - 1).isUnlocked()) {
                                 player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
                                 return;
                             }
                         }
                         switch (finalI) {
                             case 0:
-                                tierOneUpgrade();
-                                player.weaponRightClick();
-                                ability.updateDescription((Player) player.getEntity());
+                                a1();
                                 break;
                             case 1:
-                                tierTwoUpgrade();
-                                player.updateRedItem();
-                                ability.updateDescription((Player) player.getEntity());
+                                a2();
                                 break;
                             case 2:
-                                tierThreeUpgrade();
-                                player.updatePurpleItem();
-                                ability.updateDescription((Player) player.getEntity());
-                                break;
-                            case 3:
-                                tierFourUpgrade();
-                                player.updateBlueItem();
-                                ability.updateDescription((Player) player.getEntity());
-                                break;
-                            case 4:
-                                tierFiveUpgrade();
-                                player.updateOrangeItem();
-                                ability.updateDescription((Player) player.getEntity());
+                                a3();
                                 break;
                         }
                         upgrade.setUnlocked(true);
-                        ability.updateDescription((Player) player.getEntity());
+                        updateInventory(player);
                         openUpgradeBranchMenu();
                     }
             );
         }
 
-        menu.setItem(3, 3, MENU_BACK, (m, e) -> abilityTree.openAbilityTree());
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        for (int i = 0; i < treeB.size(); i++) {
+            Upgrade upgrade = treeB.get(i);
+            int finalI = i;
+            menu.setItem(
+                    4,
+                    i,
+                    new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
+                            .name(ChatColor.GOLD + upgrade.getName())
+                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
+                            .get(),
+                    (n, e) -> {
+                        if (upgrade.isUnlocked()) {
+                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+                            return;
+                        }
+                        if (finalI != 0) {
+                            if (!treeB.get(finalI - 1).isUnlocked()) {
+                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
+                                return;
+                            }
+                        }
+                        switch (finalI) {
+                            case 0:
+                                b1();
+                                break;
+                            case 1:
+                                b2();
+                                break;
+                            case 2:
+                                b3();
+                                break;
+                        }
+                        upgrade.setUnlocked(true);
+                        updateInventory(player);
+                        openUpgradeBranchMenu();
+                    }
+            );
+        }
+
+        for (int i = 0; i < treeC.size(); i++) {
+            Upgrade upgrade = treeC.get(i);
+            int finalI = i;
+            menu.setItem(
+                    6,
+                    i,
+                    new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
+                            .name(ChatColor.GOLD + upgrade.getName())
+                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription())
+                            .get(),
+                    (n, e) -> {
+                        if (upgrade.isUnlocked()) {
+                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+                            return;
+                        }
+                        if (finalI != 0) {
+                            if (!treeC.get(finalI - 1).isUnlocked()) {
+                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
+                                return;
+                            }
+                        }
+                        switch (finalI) {
+                            case 0:
+                                c1();
+                                break;
+                            case 1:
+                                c2();
+                                break;
+                            case 2:
+                                c3();
+                                break;
+                        }
+                        upgrade.setUnlocked(true);
+                        updateInventory(player);
+                        openUpgradeBranchMenu();
+                    }
+            );
+        }
+
+        menu.setItem(4, 4, new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
+                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
+                .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription())
+                .get(), (m, e) -> {
+                    master();
+                    masterUpgrade.setUnlocked(true);
+                    ability.updateDescription((Player) player.getEntity());
+                    openUpgradeBranchMenu();
+                });
+
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> abilityTree.openAbilityTree());
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }
     }
 
-    public abstract void tierOneUpgrade();
+    public abstract void a1();
 
-    public abstract void tierTwoUpgrade();
+    public abstract void a2();
 
-    public abstract void tierThreeUpgrade();
+    public abstract void a3();
 
-    public abstract void tierFourUpgrade();
+    public abstract void b1();
 
-    public abstract void tierFiveUpgrade();
+    public abstract void b2();
+
+    public abstract void b3();
+
+    public abstract void c1();
+
+    public abstract void c2();
+
+    public abstract void c3();
+
+    public abstract void master();
 
     public ItemStack getItemStack() {
         return itemStack;
@@ -111,5 +197,14 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
 
     public String getItemName() {
         return itemName;
+    }
+
+    public void updateInventory(WarlordsPlayer wp) {
+        wp.weaponRightClick();
+        wp.updateRedItem();
+        wp.updatePurpleItem();
+        wp.updateBlueItem();
+        wp.updateOrangeItem();
+        ability.updateDescription((Player) wp.getEntity());
     }
 }
