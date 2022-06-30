@@ -49,6 +49,7 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                     "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
+                        updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
                             return;
@@ -78,7 +79,6 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 break;
                         }
                         upgrade.setUnlocked(true);
-                        updateInventory(player);
                         openUpgradeBranchMenu();
                     }
             );
@@ -96,6 +96,7 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                     "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
+                        updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
                             return;
@@ -125,7 +126,6 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 break;
                         }
                         upgrade.setUnlocked(true);
-                        updateInventory(player);
                         openUpgradeBranchMenu();
                     }
             );
@@ -143,6 +143,7 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                     "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                             .get(),
                     (n, e) -> {
+                        updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
                             return;
@@ -172,7 +173,6 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 break;
                         }
                         upgrade.setUnlocked(true);
-                        updateInventory(player);
                         openUpgradeBranchMenu();
                     }
             );
