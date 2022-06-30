@@ -186,7 +186,8 @@ public class WaveDefenseOption implements Option {
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
-                        .map(e -> e.getName() + ": " + ChatColor.RED + e.getMinuteStats().total().getKills())
+                        .map(e -> e.getName() + ": " + ChatColor.RED + e.getMinuteStats().total().getKills()
+                                + ChatColor.RESET + " / " + ChatColor.GOLD + e.getCurrency())
                         .collect(Collectors.toList());
                 }
             });

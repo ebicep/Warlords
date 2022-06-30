@@ -1116,7 +1116,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
-            options.add(new CurrencyOnEventOption(100));
+            options.add(new CurrencyOnEventOption(1000));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)

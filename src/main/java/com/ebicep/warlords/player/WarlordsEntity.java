@@ -2093,4 +2093,11 @@ public abstract class WarlordsEntity {
     public void addCurrency(int currency) {
         this.currency += currency;
     }
+
+    public void subtractCurrency(int currency) {
+        if (currency < 0) {
+            currency = 0;
+        }
+        this.currency -= currency;
+    }
 }

@@ -59,15 +59,22 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 return;
                             }
                         }
+                        if (player.getCurrency() <= upgrade.getCurrencyCost()) {
+                            player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
+                            return;
+                        }
                         switch (finalI) {
                             case 0:
                                 a1();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 1:
                                 a2();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 2:
                                 a3();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
                         upgrade.setUnlocked(true);
@@ -99,20 +106,22 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 return;
                             }
                         }
+                        if (player.getCurrency() <= upgrade.getCurrencyCost()) {
+                            player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
+                            return;
+                        }
                         switch (finalI) {
                             case 0:
-                                if (player.getCurrency() <= upgrade.getCurrencyCost()) {
-                                    player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
-                                    return;
-                                }
-
                                 b1();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 1:
                                 b2();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 2:
                                 b3();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
                         upgrade.setUnlocked(true);
@@ -144,15 +153,22 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                                 return;
                             }
                         }
+                        if (player.getCurrency() <= upgrade.getCurrencyCost()) {
+                            player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
+                            return;
+                        }
                         switch (finalI) {
                             case 0:
                                 c1();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 1:
                                 c2();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 2:
                                 c3();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
                         upgrade.setUnlocked(true);
@@ -169,7 +185,13 @@ public abstract class UpgradeBranch<T extends AbstractAbility> {
                         .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
                         .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription() + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + masterUpgrade.getCurrencyCost())
                         .get(), (m, e) -> {
+                    if (player.getCurrency() <= masterUpgrade.getCurrencyCost()) {
+                        player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
+                        return;
+                    }
+
                     master();
+                    player.subtractCurrency(masterUpgrade.getCurrencyCost());
                     masterUpgrade.setUnlocked(true);
                     ability.updateDescription((Player) player.getEntity());
                     openUpgradeBranchMenu();
