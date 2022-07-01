@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -47,9 +47,9 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(AbstractWarlordsEntity wp, Player player) {
+    protected int getHitCounterAndActivate(WarlordsEntity wp, Player player) {
         int hitCounter = 0;
-        for (AbstractWarlordsEntity nearPlayer : PlayerFilter
+        for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(player, 20, 18, 20)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
@@ -69,7 +69,7 @@ public class SpiritLink extends AbstractChainBase {
                     healNearPlayers(wp);
                 }
 
-                for (AbstractWarlordsEntity chainPlayerOne : PlayerFilter
+                for (WarlordsEntity chainPlayerOne : PlayerFilter
                         .entitiesAround(nearPlayer, bounceRange, bounceRange, bounceRange)
                         .aliveEnemiesOf(wp)
                         .excluding(nearPlayer)
@@ -88,7 +88,7 @@ public class SpiritLink extends AbstractChainBase {
                         healNearPlayers(wp);
                     }
 
-                    for (AbstractWarlordsEntity chainPlayerTwo : PlayerFilter
+                    for (WarlordsEntity chainPlayerTwo : PlayerFilter
                             .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
                             .aliveEnemiesOf(wp)
                             .excluding(nearPlayer, chainPlayerOne)
@@ -118,7 +118,7 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     @Override
-    protected void onHit(AbstractWarlordsEntity warlordsPlayer, Player player, int hitCounter) {
+    protected void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter) {
         player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
 
         // speed buff
@@ -149,7 +149,7 @@ public class SpiritLink extends AbstractChainBase {
         return new ItemStack(Material.SPRUCE_FENCE_GATE);
     }
 
-    private void healNearPlayers(AbstractWarlordsEntity warlordsPlayer) {
+    private void healNearPlayers(WarlordsEntity warlordsPlayer) {
         //adding .25 to totem, cap 6 sec
         new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterName("Spirits Respite")
@@ -158,7 +158,7 @@ public class SpiritLink extends AbstractChainBase {
                     regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
                 });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
-        for (AbstractWarlordsEntity nearPlayer : PlayerFilter
+        for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)

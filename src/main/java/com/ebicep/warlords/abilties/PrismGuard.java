@@ -5,7 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -59,7 +59,7 @@ public class PrismGuard extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
         Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
@@ -76,8 +76,8 @@ public class PrismGuard extends AbstractAbility {
             }
         }.runTaskLater(3);
 
-        Set<AbstractWarlordsEntity> isInsideBubble = new HashSet<>();
-        HashMap<AbstractWarlordsEntity, Integer> timeInBubble = new HashMap<>();
+        Set<WarlordsEntity> isInsideBubble = new HashSet<>();
+        HashMap<WarlordsEntity, Integer> timeInBubble = new HashMap<>();
 
         PrismGuard tempWideGuard = new PrismGuard();
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
@@ -112,7 +112,7 @@ public class PrismGuard extends AbstractAbility {
                             false
                     );
 
-                    for (Map.Entry<AbstractWarlordsEntity, Integer> entry : timeInBubble.entrySet()) {
+                    for (Map.Entry<WarlordsEntity, Integer> entry : timeInBubble.entrySet()) {
                         // Divide by 8 = half healing for allies, 600 / 4 = 150
                         float teammateHealingValue = (bubbleHealing / 8f) + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.0375f;
                         int timeInSeconds = entry.getValue() * 3 / 20;
@@ -138,14 +138,14 @@ public class PrismGuard extends AbstractAbility {
                         Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
 
                         isInsideBubble.clear();
-                        for (AbstractWarlordsEntity enemyInsideBubble : PlayerFilter
+                        for (WarlordsEntity enemyInsideBubble : PlayerFilter
                                 .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
                                 .aliveEnemiesOf(wp)
                         ) {
                             isInsideBubble.add(enemyInsideBubble);
                         }
 
-                        for (AbstractWarlordsEntity bubblePlayer : PlayerFilter
+                        for (WarlordsEntity bubblePlayer : PlayerFilter
                                 .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
                                 .aliveTeammatesOfExcludingSelf(wp)
                         ) {

@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -18,10 +18,10 @@ public class SpawnpointOption extends MarkerOption {
 
     public static final int BAD_TEAM_PENALTY = -10000;
 
-    public SpawnpointOption(Location location, ToDoubleFunction<AbstractWarlordsEntity> teamCheck, List<String> debugExtra) {
+    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<String> debugExtra) {
         super(new SpawnLocationMarker() {
                   @Override
-                  public double getPriority(AbstractWarlordsEntity player) {
+                  public double getPriority(WarlordsEntity player) {
                       return teamCheck.applyAsDouble(player);
                   }
 

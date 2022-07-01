@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 public class CooldownManager {
 
-    private final AbstractWarlordsEntity warlordsPlayer;
+    private final WarlordsEntity warlordsPlayer;
     private final List<AbstractCooldown<?>> abstractCooldowns;
     private int totalCooldowns = 0;
 
-    public CooldownManager(AbstractWarlordsEntity warlordsPlayer) {
+    public CooldownManager(WarlordsEntity warlordsPlayer) {
         this.warlordsPlayer = warlordsPlayer;
         abstractCooldowns = new ArrayList<>();
     }
@@ -173,7 +173,7 @@ public class CooldownManager {
                                              String actionBarName,
                                              Class<T> cooldownClass,
                                              T cooldownObject,
-                                             AbstractWarlordsEntity from,
+                                             WarlordsEntity from,
                                              CooldownTypes cooldownType,
                                              Consumer<CooldownManager> onRemove,
                                              int timeLeft,
@@ -187,7 +187,7 @@ public class CooldownManager {
                                                 String actionBarName,
                                                 Class<T> cooldownClass,
                                                 T cooldownObject,
-                                                AbstractWarlordsEntity from,
+                                                WarlordsEntity from,
                                                 CooldownTypes cooldownType,
                                                 Consumer<CooldownManager> onRemove,
                                                 int timeLeft,
@@ -263,7 +263,7 @@ public class CooldownManager {
                 });
     }
 
-    public boolean hasBoundPlayer(AbstractWarlordsEntity warlordsPlayer) {
+    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
         for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .collect(Collectors.toList())
@@ -275,7 +275,7 @@ public class CooldownManager {
         return false;
     }
 
-    public int getNumberOfBoundPlayersLink(AbstractWarlordsEntity warlordsPlayer) {
+    public int getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
         int counter = 0;
         for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)

@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -19,7 +19,7 @@ public class WinByAllDeathOption implements Option {
             @Override
             public void run() {
                 Team winner = null;
-                for (AbstractWarlordsEntity player : Utils.iterable(game.warlordsPlayers())) {
+                for (WarlordsEntity player : Utils.iterable(game.warlordsPlayers())) {
                     if (!player.isAlive()) {
                         continue;
                     }

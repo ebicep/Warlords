@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 
 import javax.annotation.Nonnull;
 
@@ -10,15 +10,15 @@ import javax.annotation.Nonnull;
 public abstract class AbstractWarlordsPlayerEvent extends AbstractWarlordsGameEvent {
 
     @Nonnull
-    protected final AbstractWarlordsEntity player;
+    protected final WarlordsEntity player;
 
-    public AbstractWarlordsPlayerEvent(@Nonnull AbstractWarlordsEntity player) {
+    public AbstractWarlordsPlayerEvent(@Nonnull WarlordsEntity player) {
         super(player.getGame());
         this.player = player;
     }
 
     @Nonnull
-    public AbstractWarlordsEntity getPlayer() {
+    public WarlordsEntity getPlayer() {
         return player;
     }
 

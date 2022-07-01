@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
@@ -117,7 +117,7 @@ public class ExperienceManager {
         System.out.println(operations.execute().getModifiedCount() + " players were given weekly experience bonuses");
     }
 
-    public static LinkedHashMap<String, Long> getExpFromGameStats(AbstractWarlordsEntity warlordsPlayer, boolean recalculate) {
+    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {
         if (!recalculate && CACHED_PLAYER_EXP_SUMMARY.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid()) != null) {
             return CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid());
         }

@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -31,7 +31,7 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     private int duration = 8;
     private float damageThreshold = 0;
-    private AbstractWarlordsEntity markedPlayer;
+    private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
         super("Order of Eviscerate", 0, 0, 50, 60, -1, 100);
@@ -67,7 +67,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
@@ -96,10 +96,10 @@ public class OrderOfEviscerate extends AbstractAbility {
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
-                AbstractWarlordsEntity victim = event.getPlayer();
+                WarlordsEntity victim = event.getPlayer();
                 if (victim != wp) {
                     if (!Objects.equals(this.getCooldownObject().getMarkedPlayer(), victim)) {
-                        wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
                     }
                     this.getCooldownObject().setMarkedPlayer(victim);
                 }
@@ -136,7 +136,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                     ChatColor.GRAY + " You killed your mark," +
                                     ChatColor.YELLOW + " your cooldowns have been reset" +
                                     ChatColor.GRAY + "!"
@@ -155,7 +155,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                     ChatColor.GRAY + " You assisted in killing your mark," +
                                     ChatColor.YELLOW + " your cooldowns have been reduced by half" +
                                     ChatColor.GRAY + "!"
@@ -189,7 +189,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         if (wpEntity instanceof Player) {
                             PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
-                                    .stream().map(AbstractWarlordsEntity::getEntity)
+                                    .stream().map(WarlordsEntity::getEntity)
                                     .filter(Player.class::isInstance)
                                     .map(Player.class::cast)
                                     .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
@@ -205,7 +205,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                 ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                                 PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
-                                        .stream().map(AbstractWarlordsEntity::getEntity)
+                                        .stream().map(WarlordsEntity::getEntity)
                                         .filter(Player.class::isInstance)
                                         .map(Player.class::cast)
                                         .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
@@ -218,14 +218,14 @@ public class OrderOfEviscerate extends AbstractAbility {
         return true;
     }
 
-    public void addAndCheckDamageThreshold(float damageValue, AbstractWarlordsEntity warlordsPlayer) {
+    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
         addToDamageThreshold(damageValue);
         if (getDamageThreshold() >= 600) {
             OrderOfEviscerate.removeCloak(warlordsPlayer, false);
         }
     }
 
-    public static void removeCloak(AbstractWarlordsEntity warlordsPlayer, boolean forceRemove) {
+    public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
         if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
             warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
             warlordsPlayer.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -241,11 +241,11 @@ public class OrderOfEviscerate extends AbstractAbility {
         this.duration = duration;
     }
 
-    public AbstractWarlordsEntity getMarkedPlayer() {
+    public WarlordsEntity getMarkedPlayer() {
         return markedPlayer;
     }
 
-    public void setMarkedPlayer(AbstractWarlordsEntity markedPlayer) {
+    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
         this.markedPlayer = markedPlayer;
     }
 

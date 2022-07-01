@@ -63,7 +63,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class AbstractWarlordsEntity {
+public abstract class WarlordsEntity {
 
     //RED << (Receiving from enemy / Negative from team?)
     public static final String RECEIVE_ARROW_RED = ChatColor.RED + "\u00AB";
@@ -81,8 +81,8 @@ public abstract class AbstractWarlordsEntity {
     private final PlayerStatisticsSecond secondStats;
     private final List<Achievement.AbstractAchievementRecord<?>> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
-    private final LinkedHashMap<AbstractWarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
-    private final LinkedHashMap<AbstractWarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
+    private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
+    private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
     private Vector currentVector;
     private final CalculateSpeed speed;
@@ -136,7 +136,7 @@ public abstract class AbstractWarlordsEntity {
      * @param specClass
      * @param entity
      */
-    public AbstractWarlordsEntity(
+    public WarlordsEntity(
             @Nonnull UUID uuid,
             @Nonnull String name,
             @Nonnull Weapons weapon,
@@ -212,7 +212,7 @@ public abstract class AbstractWarlordsEntity {
      * @param ignoreReduction Whether the instance has to ignore damage reductions.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
-            AbstractWarlordsEntity attacker,
+            WarlordsEntity attacker,
             String ability,
             float min,
             float max,
@@ -224,7 +224,7 @@ public abstract class AbstractWarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(WarlordsDamageHealingEvent event) {
-        AbstractWarlordsEntity attacker = event.getAttacker();
+        WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
@@ -351,7 +351,7 @@ public abstract class AbstractWarlordsEntity {
                 isEnemy(attacker)
         ) {
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
-            AbstractWarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
+            WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
 
             damageValue *= .5;
             intervenedBy.addAbsorbed(damageValue);
@@ -564,7 +564,7 @@ public abstract class AbstractWarlordsEntity {
                         }
                     });
 
-                    for (AbstractWarlordsEntity enemy : PlayerFilter.playingGame(game)
+                    for (WarlordsEntity enemy : PlayerFilter.playingGame(game)
                             .enemiesOf(this)
                             .stream().collect(Collectors.toList())
                     ) {
@@ -613,7 +613,7 @@ public abstract class AbstractWarlordsEntity {
      * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
      */
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
-            AbstractWarlordsEntity attacker,
+            WarlordsEntity attacker,
             String ability,
             float min,
             float max,
@@ -626,7 +626,7 @@ public abstract class AbstractWarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(WarlordsDamageHealingEvent event) {
-        AbstractWarlordsEntity attacker = event.getAttacker();
+        WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
@@ -743,7 +743,7 @@ public abstract class AbstractWarlordsEntity {
      * @param isCrit                whether if it's a critical hit message.
      * @param isLastStandFromShield whether the message is last stand healing.
      */
-    private void sendHealingMessage(@Nonnull AbstractWarlordsEntity player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
+    private void sendHealingMessage(@Nonnull WarlordsEntity player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
@@ -774,8 +774,8 @@ public abstract class AbstractWarlordsEntity {
      * @param isOverHeal            whether the message is overhealing.
      */
     private void sendHealingMessage(
-            @Nonnull AbstractWarlordsEntity sender,
-            @Nonnull AbstractWarlordsEntity receiver,
+            @Nonnull WarlordsEntity sender,
+            @Nonnull WarlordsEntity receiver,
             float healValue, String ability,
             boolean isCrit,
             boolean isLastStandFromShield,
@@ -851,8 +851,8 @@ public abstract class AbstractWarlordsEntity {
      * @param isMeleeHit  whether if it's a melee hit.
      */
     private void sendDamageMessage(
-            @Nonnull AbstractWarlordsEntity sender,
-            @Nonnull AbstractWarlordsEntity receiver,
+            @Nonnull WarlordsEntity sender,
+            @Nonnull WarlordsEntity receiver,
             String ability,
             float damageValue,
             boolean isCrit,
@@ -907,7 +907,7 @@ public abstract class AbstractWarlordsEntity {
     /**
      * @param attacker which player should hear the hitsound?
      */
-    private void playHitSound(AbstractWarlordsEntity attacker) {
+    private void playHitSound(WarlordsEntity attacker) {
         if (attacker.entity instanceof Player) {
             ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
         }
@@ -917,7 +917,7 @@ public abstract class AbstractWarlordsEntity {
      * @param entity     which entity is assigned to the hurt animation?
      * @param hurtPlayer what warlords player should play the hurt animation?
      */
-    private void playHurtAnimation(LivingEntity entity, AbstractWarlordsEntity hurtPlayer) {
+    private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
         entity.playEffect(EntityEffect.HURT);
         for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
             player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
@@ -937,7 +937,7 @@ public abstract class AbstractWarlordsEntity {
         }
     }
 
-    public void die(@Nullable AbstractWarlordsEntity attacker) {
+    public void die(@Nullable WarlordsEntity attacker) {
         dead = true;
 
         removeHorse();
@@ -999,7 +999,7 @@ public abstract class AbstractWarlordsEntity {
         heal();
     }
 
-    private void checkForAchievementsDamage(AbstractWarlordsEntity attacker) {
+    private void checkForAchievementsDamage(WarlordsEntity attacker) {
         ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.BLITZKRIEG);
         ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SNIPE_SHOT);
         ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.DUCK_TANK);
@@ -1021,7 +1021,7 @@ public abstract class AbstractWarlordsEntity {
 
     }
 
-    private void checkForAchievementsHealing(AbstractWarlordsEntity attacker) {
+    private void checkForAchievementsHealing(WarlordsEntity attacker) {
         ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.LYCHEESIS);
 
         if (hasFlag()) {
@@ -1504,7 +1504,7 @@ public abstract class AbstractWarlordsEntity {
         this.energy = energy;
     }
 
-    public float addEnergy(AbstractWarlordsEntity giver, String ability, float amount) {
+    public float addEnergy(WarlordsEntity giver, String ability, float amount) {
         float energyGiven = 0;
         if (energy + amount > maxEnergy) {
             energyGiven = maxEnergy - energy;
@@ -1623,11 +1623,11 @@ public abstract class AbstractWarlordsEntity {
         this.minuteStats.addAssist();
     }
 
-    public LinkedHashMap<AbstractWarlordsEntity, Integer> getHitBy() {
+    public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
         return hitBy;
     }
 
-    public LinkedHashMap<AbstractWarlordsEntity, Integer> getHealedBy() {
+    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
         return healedBy;
     }
 
@@ -1818,14 +1818,14 @@ public abstract class AbstractWarlordsEntity {
         return isEnemyAlive(Warlords.getPlayer(other));
     }
 
-    public boolean isEnemyAlive(@Nullable AbstractWarlordsEntity p) {
+    public boolean isEnemyAlive(@Nullable WarlordsEntity p) {
         return p != null &&
                 p.getGame() == getGame() &&
                 !p.isDead() &&
                 p.getTeam() != getTeam();
     }
 
-    public boolean isEnemy(@Nullable AbstractWarlordsEntity p) {
+    public boolean isEnemy(@Nullable WarlordsEntity p) {
         return p != null &&
                 p.getGame() == getGame() &&
                 p.getTeam() != getTeam();
@@ -1835,14 +1835,14 @@ public abstract class AbstractWarlordsEntity {
         return isEnemyAlive(Warlords.getPlayer(other));
     }
 
-    public boolean isTeammateAlive(@Nullable AbstractWarlordsEntity p) {
+    public boolean isTeammateAlive(@Nullable WarlordsEntity p) {
         return p != null &&
                 p.getGame() == getGame() &&
                 !p.isDead() &&
                 p.getTeam() == getTeam();
     }
 
-    public boolean isTeammate(@Nullable AbstractWarlordsEntity p) {
+    public boolean isTeammate(@Nullable WarlordsEntity p) {
         return p != null &&
                 p.getGame() == getGame() &&
                 p.getTeam() == getTeam();

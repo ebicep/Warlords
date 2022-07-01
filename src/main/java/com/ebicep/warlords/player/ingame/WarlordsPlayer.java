@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class WarlordsPlayer extends AbstractWarlordsEntity {
+public final class WarlordsPlayer extends WarlordsEntity {
 
     private final AbilityTree abilityTree = new AbilityTree(this);
     private final int level;

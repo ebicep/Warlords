@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class WarlordsNPC extends AbstractWarlordsEntity {
+public class WarlordsNPC extends WarlordsEntity {
 
     public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass) {
         super(uuid, name, weapon, entity, game, team, specClass);
@@ -137,7 +137,7 @@ public class WarlordsNPC extends AbstractWarlordsEntity {
     }
 
     @Override
-    public void die(@Nullable AbstractWarlordsEntity attacker) {
+    public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
 
         //TODO Dropping weapons

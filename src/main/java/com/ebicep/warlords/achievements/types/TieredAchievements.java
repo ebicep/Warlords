@@ -3,7 +3,7 @@ package com.ebicep.warlords.achievements.types;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -127,7 +127,7 @@ public enum TieredAchievements implements Achievement {
     }
 
     @Override
-    public void sendAchievementUnlockMessageToOthers(AbstractWarlordsEntity warlordsPlayer) {
+    public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
         warlordsPlayer.getGame().warlordsPlayers()

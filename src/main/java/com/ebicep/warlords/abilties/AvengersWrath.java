@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -42,7 +42,7 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         AvengersWrath tempAvengersWrath = new AvengersWrath();

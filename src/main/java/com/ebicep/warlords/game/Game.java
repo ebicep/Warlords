@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.State;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -472,7 +472,7 @@ public final class Game implements Runnable, AutoCloseable {
         return (int) this.players.values().stream().filter(Objects::isNull).count();
     }
 
-    public Stream<AbstractWarlordsEntity> warlordsPlayers() {
+    public Stream<WarlordsEntity> warlordsPlayers() {
         return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
     }
 
@@ -516,7 +516,7 @@ public final class Game implements Runnable, AutoCloseable {
         offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    public void forEachOfflineWarlordsPlayer(Consumer<AbstractWarlordsEntity> consumer) {
+    public void forEachOfflineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
         warlordsPlayers().forEach(consumer);
     }
 
@@ -528,8 +528,8 @@ public final class Game implements Runnable, AutoCloseable {
         onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    public void forEachOnlineWarlordsPlayer(Consumer<AbstractWarlordsEntity> consumer) {
-        warlordsPlayers().filter(AbstractWarlordsEntity::isOnline).forEach(consumer);
+    public void forEachOnlineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
+        warlordsPlayers().filter(WarlordsEntity::isOnline).forEach(consumer);
     }
 
     @Override

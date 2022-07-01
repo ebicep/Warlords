@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -66,13 +66,13 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, AbstractWarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
         return false;
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, AbstractWarlordsEntity hit, Location impactLocation) {
-        AbstractWarlordsEntity wp = projectile.getShooter();
+    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             playersHit++;
@@ -92,8 +92,8 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected int onHit(InternalProjectile projectile, AbstractWarlordsEntity hit) {
-        AbstractWarlordsEntity wp = projectile.getShooter();
+    protected int onHit(InternalProjectile projectile, WarlordsEntity hit) {
+        WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
@@ -101,7 +101,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
 
         int playersHit = 0;
-        for (AbstractWarlordsEntity enemy : PlayerFilter
+        for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(currentLocation, 3, 3, 3)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
@@ -127,7 +127,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected Location getProjectileStartingLocation(AbstractWarlordsEntity shooter, Location startingLocation) {
+    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.1).get();
     }
 

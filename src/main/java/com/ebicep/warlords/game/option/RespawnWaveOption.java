@@ -4,7 +4,7 @@ import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
@@ -68,7 +68,7 @@ public class RespawnWaveOption implements Option, Listener {
         game.registerEvents(this);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
             currentTimer += delayInTicks / 20;
-            for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game)) {
+            for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
                 if (player.getRespawnTimer() >= 0) {
                     player.setRespawnTimer(Math.max(player.getRespawnTimer() - delayInTicks * 20, 0));
                 }
@@ -83,7 +83,7 @@ public class RespawnWaveOption implements Option, Listener {
             @Override
             public void run() {
                 currentTimer++;
-                for (AbstractWarlordsEntity player : PlayerFilter.playingGame(game)) {
+                for (WarlordsEntity player : PlayerFilter.playingGame(game)) {
                     if (player.isDead() && player.isOnline() && player.getRespawnTimer() == -1) {
                         giveRespawnTimer(player);
                     }
@@ -110,7 +110,7 @@ public class RespawnWaveOption implements Option, Listener {
         }
     }
 
-    public void giveRespawnTimer(AbstractWarlordsEntity player) {
+    public void giveRespawnTimer(WarlordsEntity player) {
         int respawn = -currentTimer % this.taskPeriod;
         while (respawn < minRespawnTimer) {
             respawn += this.taskPeriod;

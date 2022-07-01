@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.ai;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
@@ -31,7 +31,7 @@ public abstract class AbstractMob {
         this.mobArmor = mobArmor;
     }
 
-    public abstract void onAttack(AbstractWarlordsEntity hxp, Player player, AbstractMob mob);
+    public abstract void onAttack(WarlordsEntity hxp, Player player, AbstractMob mob);
 
     public void spawn() {
     }

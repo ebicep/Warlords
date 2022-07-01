@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.GameFreezeOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,7 +41,7 @@ public class DebugCommand implements TabExecutor {
         String input = args[0];
         switch (input.toLowerCase(Locale.ROOT)) {
             case "respawn": {
-                AbstractWarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 1 ? args[1] : null);
+                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 1 ? args[1] : null);
                 if (wp == null) {
                     return true;
                 }
@@ -49,7 +49,7 @@ public class DebugCommand implements TabExecutor {
                 return true;
             }
             case "energy": {
-                AbstractWarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
+                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
                 if (wp == null) {
                     return true;
                 }
@@ -68,7 +68,7 @@ public class DebugCommand implements TabExecutor {
                 }
             }
             case "cooldown": {
-                AbstractWarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
+                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
                 if (wp == null) {
                     return true;
                 }
@@ -87,7 +87,7 @@ public class DebugCommand implements TabExecutor {
                 }
             }
             case "damage": {
-                AbstractWarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
+                WarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
                 if (wp == null) {
                     return true;
                 }
@@ -116,7 +116,7 @@ public class DebugCommand implements TabExecutor {
 
                     String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
 
-                    AbstractWarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
+                    WarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
                     if (wp == null) {
                         return true;
                     }
@@ -135,7 +135,7 @@ public class DebugCommand implements TabExecutor {
                 return true;
             }
             case "crits": {
-                AbstractWarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
+                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
                 if (wp == null) {
                     return true;
                 }

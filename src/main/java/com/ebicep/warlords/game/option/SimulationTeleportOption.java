@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
@@ -14,7 +14,7 @@ public class SimulationTeleportOption extends TeleportOnEventOption {
         if (e.getNew() instanceof SpawnFlagLocation) {
             preventPlayerMovement = true;
 
-            for (AbstractWarlordsEntity wp : PlayerFilter
+            for (WarlordsEntity wp : PlayerFilter
                     .playingGame(game)
                     .isAlive()
             ) {

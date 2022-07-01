@@ -1,6 +1,6 @@
 package com.ebicep.customentities.nms;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.minecraft.server.v1_8_R3.EntityHorse;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CustomHorse extends EntityHorse {
 
-    private AbstractWarlordsEntity owner;
+    private WarlordsEntity owner;
     private Horse horse;
     private int cooldown = 15;
 
@@ -33,7 +33,7 @@ public class CustomHorse extends EntityHorse {
 //    private float maxHealth = 0;
 //    private float shield = 0;
 
-    public CustomHorse(World world, AbstractWarlordsEntity owner) {
+    public CustomHorse(World world, WarlordsEntity owner) {
         super(world);
         this.owner = owner;
     }
@@ -78,7 +78,7 @@ public class CustomHorse extends EntityHorse {
 //        }
     }
 
-    public AbstractWarlordsEntity getOwner() {
+    public WarlordsEntity getOwner() {
         return owner;
     }
 

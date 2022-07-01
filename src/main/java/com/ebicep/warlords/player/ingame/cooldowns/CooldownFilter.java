@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -30,7 +30,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
         this.clazz = clazz;
     }
 
-    public CooldownFilter(AbstractWarlordsEntity warlordsPlayer, Class<T> clazz) {
+    public CooldownFilter(WarlordsEntity warlordsPlayer, Class<T> clazz) {
         this.stream = warlordsPlayer.getCooldownManager().getCooldowns().stream().filter(clazz::isInstance).map(clazz::cast);
         this.clazz = clazz;
     }
@@ -51,7 +51,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
         return new CooldownFilter<>(stream.filter(cd -> Objects.equals(object, cd.getCooldownObject())));
     }
 
-    public CooldownFilter<T> filterCooldownFrom(AbstractWarlordsEntity warlordsPlayer) {
+    public CooldownFilter<T> filterCooldownFrom(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(stream.filter(cd -> Objects.equals(warlordsPlayer, cd.getFrom())));
     }
 

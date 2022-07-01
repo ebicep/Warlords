@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -31,7 +31,7 @@ public class GameFreezeOption implements Option, Listener {
     private static Listener GLOBAL_LISTENER = new Listener() {
         @EventHandler
         public void onEvent(PlayerMoveEvent e) {
-            AbstractWarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+            WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
             if (wp != null && wp.getGame().isFrozen() && Utils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
                 if (wp.isDead()) {
                     e.getPlayer().teleport(e.getPlayer().getLocation());

@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -39,7 +39,7 @@ public class BloodLust extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player p) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player p) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
@@ -74,7 +74,7 @@ public class BloodLust extends AbstractAbility {
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                AbstractWarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getAttacker();
                 BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
                 attacker.addHealingInstance(
                         attacker,

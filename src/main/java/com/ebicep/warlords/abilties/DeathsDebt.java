@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -42,7 +42,7 @@ public class DeathsDebt extends AbstractTotemBase {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
     }
 
-    public DeathsDebt(ArmorStand totem, AbstractWarlordsEntity owner) {
+    public DeathsDebt(ArmorStand totem, WarlordsEntity owner) {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100, totem, owner);
     }
 
@@ -86,7 +86,7 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     @Override
-    protected void onActivation(AbstractWarlordsEntity wp, Player player, ArmorStand totemStand) {
+    protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
         final int duration = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
 
         CircleEffect circle = new CircleEffect(
@@ -118,7 +118,7 @@ public class DeathsDebt extends AbstractTotemBase {
                     if (!tempDeathsDebt.isPlayerInRadius()) {
                         wp.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                     } else {
-                        wp.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED + " §2Spirit's Respite §7delayed §c" +
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " §2Spirit's Respite §7delayed §c" +
                                 Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid."
                         );
                     }
@@ -138,7 +138,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
                                 wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                 // Final enemy damage tick
-                                for (AbstractWarlordsEntity totemTarget : PlayerFilter
+                                for (WarlordsEntity totemTarget : PlayerFilter
                                         .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                         .aliveEnemiesOf(wp)
                                 ) {
@@ -184,7 +184,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
                     if (counter % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                        wp.sendMessage(ChatColor.GREEN + AbstractWarlordsEntity.GIVE_ARROW_GREEN + " §2Spirit's Respite §7delayed §c" +
+                        wp.sendMessage(ChatColor.GREEN + WarlordsEntity.GIVE_ARROW_GREEN + " §2Spirit's Respite §7delayed §c" +
                                 Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" +
                                 Math.round(ticksLeft / 20f) + " §7seconds left."
                         );
@@ -198,7 +198,7 @@ public class DeathsDebt extends AbstractTotemBase {
         });
     }
 
-    public void onDebtTick(AbstractWarlordsEntity wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
+    public void onDebtTick(WarlordsEntity wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
         Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
 
         // 100% of damage over 6 seconds
@@ -215,7 +215,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 false
         );
         // Teammate heal
-        for (AbstractWarlordsEntity allyTarget : PlayerFilter
+        for (WarlordsEntity allyTarget : PlayerFilter
                 .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
         ) {

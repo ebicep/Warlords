@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -100,7 +100,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param wp
      * @return true if it should destroy itself
      */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, AbstractWarlordsEntity wp);
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
 
     /**
      * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
@@ -111,7 +111,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      */
     protected abstract void onNonCancellingHit(
             @Nonnull InternalProjectile projectile,
-            @Nonnull AbstractWarlordsEntity hit,
+            @Nonnull WarlordsEntity hit,
             @Nonnull Location impactLocation
     );
 
@@ -121,10 +121,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param projectile The projectile
      * @param hit        The player that this projectile impacted on, if any
      */
-    protected abstract int onHit(@Nonnull InternalProjectile projectile, @Nullable AbstractWarlordsEntity hit);
+    protected abstract int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit);
 
     @Nullable
-    protected AbstractWarlordsEntity getFromEntity(Entity e) {
+    protected WarlordsEntity getFromEntity(Entity e) {
         if (e instanceof Horse) {
             return Warlords.getPlayer(e.getPassenger());
         }
@@ -150,7 +150,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
     @Nullable
-    protected MovingObjectPosition checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, AbstractWarlordsEntity shooter) {
+    protected MovingObjectPosition checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         currentLocation.add(speed);
         Vec3D after = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
@@ -165,7 +165,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         MovingObjectPosition hit = null;
         double hitDistance = 0;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
-            AbstractWarlordsEntity wp = getFromEntity(entity);
+            WarlordsEntity wp = getFromEntity(entity);
             if (wp != null && (hitTeammates || shooter.isEnemyAlive(wp)) && wp.isAlive() && wp != shooter) {
                 // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
                 assert entity instanceof CraftEntity;
@@ -255,7 +255,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param startingLocation
      * @return
      */
-    protected Location getProjectileStartingLocation(AbstractWarlordsEntity shooter, Location startingLocation) {
+    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
     }
 
@@ -266,7 +266,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param startingLocation
      * @return
      */
-    protected Vector getProjectileStartingSpeed(AbstractWarlordsEntity shooter, Location startingLocation) {
+    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
         return startingLocation.getDirection().multiply(projectileSpeed);
     }
 
@@ -280,7 +280,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity shooter, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.subtractEnergy(energyCost);
 
 
@@ -355,15 +355,15 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
     public class InternalProjectile extends BukkitRunnable {
-        private final List<AbstractWarlordsEntity> hit = new ArrayList<>();
+        private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
         private final Location startingLocation;
         private final Location currentLocation;
         private final Vector speed;
         private int ticksLived = 0;
-        private final AbstractWarlordsEntity shooter;
+        private final WarlordsEntity shooter;
 
-        private InternalProjectile(AbstractWarlordsEntity shooter, Location startingLocation) {
+        private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = getProjectileStartingLocation(shooter, startingLocation);
             this.speed = getProjectileStartingSpeed(shooter, startingLocation);
             this.shooter = shooter;
@@ -427,7 +427,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             this.ticksLived = ticksLived;
         }
 
-        public List<AbstractWarlordsEntity> getHit() {
+        public List<WarlordsEntity> getHit() {
             return hit;
         }
 
@@ -443,7 +443,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             return speed;
         }
 
-        public AbstractWarlordsEntity getShooter() {
+        public WarlordsEntity getShooter() {
             return shooter;
         }
 
@@ -471,9 +471,9 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     private final class PendingHit implements Comparable<PendingHit> {
         final Location loc;
         final double distance;
-        final AbstractWarlordsEntity hit;
+        final WarlordsEntity hit;
 
-        public PendingHit(Location loc, double distance, AbstractWarlordsEntity hit) {
+        public PendingHit(Location loc, double distance, WarlordsEntity hit) {
             this.loc = loc;
             this.distance = distance;
             this.hit = hit;

@@ -5,7 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -64,21 +64,21 @@ public class HammerOfLight extends AbstractAbility {
                 "§7back down after you converted it.";
     }
 
-    public static boolean isStandingInHammer(AbstractWarlordsEntity owner, AbstractWarlordsEntity standing) {
+    public static boolean isStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                 .filter(HammerOfLight::isHammer)
                 .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < radius * radius);
     }
 
-    public static List<AbstractWarlordsEntity> getStandingInHammer(AbstractWarlordsEntity owner) {
-        Set<AbstractWarlordsEntity> playersInHammer = new HashSet<>();
+    public static List<WarlordsEntity> getStandingInHammer(WarlordsEntity owner) {
+        Set<WarlordsEntity> playersInHammer = new HashSet<>();
         new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                 .filter(HammerOfLight::isHammer)
                 .map(HammerOfLight::getLocation)
                 .forEach(loc -> {
-                    for (AbstractWarlordsEntity enemy : PlayerFilter
+                    for (WarlordsEntity enemy : PlayerFilter
                             .entitiesAround(loc, radius, 4, radius)
                             .enemiesOf(owner)
                             .isAlive()) {
@@ -99,7 +99,7 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
@@ -149,7 +149,7 @@ public class HammerOfLight extends AbstractAbility {
                     if (counter % 20 == 0) {
                         if (tempHammerOfLight.isCrownOfLight()) {
                             if (wp.isAlive()) {
-                                for (AbstractWarlordsEntity allyTarget : PlayerFilter
+                                for (WarlordsEntity allyTarget : PlayerFilter
                                         .entitiesAround(wp.getLocation(), radius, radius, radius)
                                         .aliveTeammatesOf(wp)
                                 ) {
@@ -167,7 +167,7 @@ public class HammerOfLight extends AbstractAbility {
                                 }
                             }
                         } else {
-                            for (AbstractWarlordsEntity hammerTarget : PlayerFilter
+                            for (WarlordsEntity hammerTarget : PlayerFilter
                                     .entitiesAround(location, radius, radius, radius)
                                     .isAlive()
                             ) {

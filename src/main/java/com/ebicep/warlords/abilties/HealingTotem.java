@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -36,7 +36,7 @@ public class HealingTotem extends AbstractTotemBase {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
     }
 
-    public HealingTotem(ArmorStand totem, AbstractWarlordsEntity owner) {
+    public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175, totem, owner);
     }
 
@@ -77,7 +77,7 @@ public class HealingTotem extends AbstractTotemBase {
     }
 
     @Override
-    protected void onActivation(AbstractWarlordsEntity wp, Player player, ArmorStand totemStand) {
+    protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
         HealingTotem tempHealingTotem = new HealingTotem(totemStand, wp);
         AtomicInteger cooldownCounter = new AtomicInteger();
         RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
@@ -177,7 +177,7 @@ public class HealingTotem extends AbstractTotemBase {
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
                                 playersCrippled++;
-                                wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
                                 p.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
                                         "Totem Crippling",
                                         "CRIP",

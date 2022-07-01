@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,7 +34,7 @@ public class ImposterCommand implements CommandExecutor {
 
         switch (input.toLowerCase()) {
             case "assign": {
-                AbstractWarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+                WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
                 if (warlordsPlayer == null) return true;
                 if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                     sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
@@ -44,7 +44,7 @@ public class ImposterCommand implements CommandExecutor {
                 break;
             }
             case "vote": {
-                AbstractWarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+                WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
                 if (warlordsPlayer == null) return true;
                 if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                     sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");

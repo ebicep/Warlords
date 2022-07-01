@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player p, @Nonnull AbstractWarlordsEntity nearPlayer) {
+    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player p, @Nonnull WarlordsEntity nearPlayer) {
         if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
@@ -63,7 +63,7 @@ public class AvengersStrike extends AbstractStrikeBase {
         energyStole += nearPlayer.subtractEnergy(energySteal);
 
         if (wp.getCooldownManager().hasCooldown(AvengersWrath.class)) {
-            for (AbstractWarlordsEntity wrathTarget : PlayerFilter
+            for (WarlordsEntity wrathTarget : PlayerFilter
                     .entitiesAround(nearPlayer, 5, 4, 5)
                     .aliveEnemiesOf(wp)
                     .closestFirst(nearPlayer)

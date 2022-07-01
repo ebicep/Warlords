@@ -3,7 +3,7 @@ package com.ebicep.warlords.util.warlords;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -25,18 +25,18 @@ import static com.ebicep.warlords.util.warlords.Utils.sortClosestBy;
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
 // Replace: $1PlayerFilter.entitiesAround($2, $3, $4, $5)$1    .enemiesOf($6)$1
 
-public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
+public class PlayerFilter implements Iterable<WarlordsEntity> {
     private static final Location LOCATION_CACHE_ENTITIES_AROUND = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_CLOSEST = new Location(null, 0, 0, 0);
 
-    private final Stream<AbstractWarlordsEntity> stream;
+    private final Stream<WarlordsEntity> stream;
 
-    protected PlayerFilter(@Nonnull Stream<AbstractWarlordsEntity> stream) {
+    protected PlayerFilter(@Nonnull Stream<WarlordsEntity> stream) {
         this.stream = stream;
     }
 
     @Nonnull
-    public Stream<AbstractWarlordsEntity> stream() {
+    public Stream<WarlordsEntity> stream() {
         return stream;
     }
 
@@ -47,7 +47,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
      * @return The new {@code PlayerFilter}
      */
     @Nonnull
-    public PlayerFilter concat(@Nonnull AbstractWarlordsEntity... player) {
+    public PlayerFilter concat(@Nonnull WarlordsEntity... player) {
         return new PlayerFilter(Stream.concat(stream, Stream.of(player)));
     }
 
@@ -70,7 +70,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
      * @return
      */
     @Nonnull
-    public PlayerFilter filter(@Nonnull Predicate<? super AbstractWarlordsEntity> filter) {
+    public PlayerFilter filter(@Nonnull Predicate<? super WarlordsEntity> filter) {
         return new PlayerFilter(stream.filter(filter));
     }
 
@@ -80,25 +80,25 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter sorted(@Nonnull Comparator<? super AbstractWarlordsEntity> comparator) {
+    public PlayerFilter sorted(@Nonnull Comparator<? super WarlordsEntity> comparator) {
         return new PlayerFilter(stream.sorted(comparator));
     }
 
     @Nonnull
     public PlayerFilter closestFirst(@Nonnull Location loc) {
-        return sorted(sortClosestBy(AbstractWarlordsEntity::getLocation, loc));
+        return sorted(sortClosestBy(WarlordsEntity::getLocation, loc));
     }
 
     @Nonnull
-    public PlayerFilter closestFirst(@Nonnull AbstractWarlordsEntity loc) {
+    public PlayerFilter closestFirst(@Nonnull WarlordsEntity loc) {
         loc.getLocation(LOCATION_CACHE_CLOSEST);
-        return sorted(sortClosestBy(AbstractWarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
+        return sorted(sortClosestBy(WarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
     }
 
     @Nonnull
     public PlayerFilter closestFirst(@Nonnull Entity loc) {
         loc.getLocation(LOCATION_CACHE_CLOSEST);
-        return sorted(sortClosestBy(AbstractWarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
+        return sorted(sortClosestBy(WarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
     }
 
     @Nonnull
@@ -108,7 +108,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
 
     @Nonnull
     public PlayerFilter mostAliveFirst() {
-        return sorted(Comparator.<AbstractWarlordsEntity, Double>comparing(wp -> wp.getHealth() / (double) wp.getMaxHealth()).reversed());
+        return sorted(Comparator.<WarlordsEntity, Double>comparing(wp -> wp.getHealth() / (double) wp.getMaxHealth()).reversed());
     }
 
     @Nonnull
@@ -118,16 +118,16 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
 
     @Nonnull
     public PlayerFilter mostEnergeticFirst() {
-        return sorted(Comparator.<AbstractWarlordsEntity, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()).reversed());
+        return sorted(Comparator.<WarlordsEntity, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()).reversed());
     }
 
     @Nonnull
-    public PlayerFilter soulBindedFirst(AbstractWarlordsEntity owner) {
+    public PlayerFilter soulBindedFirst(WarlordsEntity owner) {
         return sorted(Comparator.comparing(wp -> !owner.getCooldownManager().hasBoundPlayer(wp)));
     }
 
     @Nonnull
-    public PlayerFilter lookingAtFirst(AbstractWarlordsEntity user) {
+    public PlayerFilter lookingAtFirst(WarlordsEntity user) {
         return sorted((wp1, wp2) -> {
             int output;
             double wp1Dot = -Utils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
@@ -145,41 +145,41 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
 
     @Nonnull
     public PlayerFilter isAlive() {
-        return filter(AbstractWarlordsEntity::isAlive);
+        return filter(WarlordsEntity::isAlive);
     }
 
     @Nonnull
     public PlayerFilter isDead() {
-        return filter(AbstractWarlordsEntity::isAlive);
+        return filter(WarlordsEntity::isAlive);
     }
 
     @Nonnull
-    public PlayerFilter enemiesOf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter enemiesOf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player.isEnemy(wp));
     }
 
     @Nonnull
-    public PlayerFilter aliveEnemiesOf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter aliveEnemiesOf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player.isEnemyAlive(wp));
     }
 
     @Nonnull
-    public PlayerFilter teammatesOf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter teammatesOf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player.isTeammate(wp));
     }
 
     @Nonnull
-    public PlayerFilter aliveTeammatesOf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter aliveTeammatesOf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player.isTeammateAlive(wp));
     }
 
     @Nonnull
-    public PlayerFilter teammatesOfExcludingSelf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter teammatesOfExcludingSelf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player != wp && player.isTeammate(wp));
     }
 
     @Nonnull
-    public PlayerFilter aliveTeammatesOfExcludingSelf(@Nonnull AbstractWarlordsEntity player) {
+    public PlayerFilter aliveTeammatesOfExcludingSelf(@Nonnull WarlordsEntity player) {
         return filter(wp -> player != wp && player.isTeammateAlive(wp));
     }
 
@@ -194,28 +194,28 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter excluding(@Nonnull AbstractWarlordsEntity... exclude) {
+    public PlayerFilter excluding(@Nonnull WarlordsEntity... exclude) {
         return exclude.length == 0 ? this : excluding0(new HashSet<>(Arrays.asList(exclude)));
     }
 
     @Nonnull
-    public PlayerFilter excluding(@Nonnull Collection<AbstractWarlordsEntity> exclude) {
-        return exclude.isEmpty() ? this : excluding0(exclude instanceof Set ? (Set<AbstractWarlordsEntity>) exclude : new HashSet<>(exclude));
+    public PlayerFilter excluding(@Nonnull Collection<WarlordsEntity> exclude) {
+        return exclude.isEmpty() ? this : excluding0(exclude instanceof Set ? (Set<WarlordsEntity>) exclude : new HashSet<>(exclude));
     }
 
     @Nonnull
-    protected PlayerFilter excluding0(@Nonnull Set<AbstractWarlordsEntity> exclude) {
+    protected PlayerFilter excluding0(@Nonnull Set<WarlordsEntity> exclude) {
         return filter(p -> !exclude.contains(p));
     }
 
     @Override
-    public void forEach(@Nonnull Consumer<? super AbstractWarlordsEntity> action) {
+    public void forEach(@Nonnull Consumer<? super WarlordsEntity> action) {
         stream.forEach(action);
         stream.close();
     }
 
-    public boolean first(@Nonnull Consumer<? super AbstractWarlordsEntity> action) {
-        Optional<AbstractWarlordsEntity> findAny = this.findAny();
+    public boolean first(@Nonnull Consumer<? super WarlordsEntity> action) {
+        Optional<WarlordsEntity> findAny = this.findAny();
         if (!findAny.isPresent()) {
             return false;
         }
@@ -225,12 +225,12 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
 
     @Nonnull
     @Override
-    public Iterator<AbstractWarlordsEntity> iterator() {
+    public Iterator<WarlordsEntity> iterator() {
         return stream.iterator();
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAround(@Nonnull AbstractWarlordsEntity entity, double x, double y, double z) {
+    public static PlayerFilter entitiesAround(@Nonnull WarlordsEntity entity, double x, double y, double z) {
         return entitiesAround(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
@@ -245,13 +245,13 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    protected static Stream<AbstractWarlordsEntity> entitiesAround0(@Nonnull Location location, double x, double y, double z) {
+    protected static Stream<WarlordsEntity> entitiesAround0(@Nonnull Location location, double x, double y, double z) {
         return entitiesAroundRectangle0(location, x, y, z)
-                .filter(radiusAround(AbstractWarlordsEntity::getLocation, location, x, y, z));
+                .filter(radiusAround(WarlordsEntity::getLocation, location, x, y, z));
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAroundRectangle(@Nonnull AbstractWarlordsEntity entity, double x, double y, double z) {
+    public static PlayerFilter entitiesAroundRectangle(@Nonnull WarlordsEntity entity, double x, double y, double z) {
         return entitiesAroundRectangle(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
@@ -265,7 +265,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    protected static Stream<AbstractWarlordsEntity> entitiesAroundRectangle0(@Nonnull Location location, double x, double y, double z) {
+    protected static Stream<WarlordsEntity> entitiesAroundRectangle0(@Nonnull Location location, double x, double y, double z) {
         return entities0(location
                 .getWorld()
                 .getNearbyEntities(location, x, y, z)
@@ -326,34 +326,34 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    protected static Stream<AbstractWarlordsEntity> entities0(@Nonnull Stream<Entity> entities) {
+    protected static Stream<WarlordsEntity> entities0(@Nonnull Stream<Entity> entities) {
         return entities
                 .map(e -> Warlords.getPlayer(e))
                 .filter(Objects::nonNull);
     }
 
     @Nonnull
-    public Optional<AbstractWarlordsEntity> findAny() {
+    public Optional<WarlordsEntity> findAny() {
         return stream.findAny();
     }
 
     @Nonnull
-    public Optional<AbstractWarlordsEntity> findFirst() {
+    public Optional<WarlordsEntity> findFirst() {
         return stream.findFirst();
     }
 
     @Nullable
-    public AbstractWarlordsEntity findAnyOrNull() {
+    public WarlordsEntity findAnyOrNull() {
         return findAny().orElse(null);
     }
 
     @Nullable
-    public AbstractWarlordsEntity findFirstOrNull() {
+    public WarlordsEntity findFirstOrNull() {
         return findFirst().orElse(null);
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSight(@Nonnull AbstractWarlordsEntity warlordsPlayer) {
+    public PlayerFilter requireLineOfSight(@Nonnull WarlordsEntity warlordsPlayer) {
         return requireLineOfSight(warlordsPlayer.getEntity());
     }
 
@@ -363,7 +363,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSightIntervene(@Nonnull AbstractWarlordsEntity warlordsPlayer) {
+    public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsEntity warlordsPlayer) {
         return requireLineOfSightIntervene(warlordsPlayer.getEntity());
     }
 
@@ -373,7 +373,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter lookingAtWave(@Nonnull AbstractWarlordsEntity warlordsPlayer) {
+    public PlayerFilter lookingAtWave(@Nonnull WarlordsEntity warlordsPlayer) {
         return lookingAtWave(warlordsPlayer.getEntity());
     }
 
@@ -382,7 +382,7 @@ public class PlayerFilter implements Iterable<AbstractWarlordsEntity> {
         return filter(wp -> Utils.isLookingAtWave(entity, wp.getEntity()));
     }
 
-    public List<AbstractWarlordsEntity> toList() {
+    public List<WarlordsEntity> toList() {
         return this.stream.collect(Collectors.toCollection(ArrayList::new));
     }
 

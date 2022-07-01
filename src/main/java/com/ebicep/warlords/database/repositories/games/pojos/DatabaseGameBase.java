@@ -12,7 +12,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.permissions.PermissionHandler;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -83,8 +83,8 @@ public abstract class DatabaseGameBase {
 
     public static void addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            float highestDamage = game.warlordsPlayers().max(Comparator.comparing((AbstractWarlordsEntity wp) -> wp.getMinuteStats().total().getDamage())).get().getMinuteStats().total().getDamage();
-            float highestHealing = game.warlordsPlayers().max(Comparator.comparing((AbstractWarlordsEntity wp) -> wp.getMinuteStats().total().getHealing())).get().getMinuteStats().total().getHealing();
+            float highestDamage = game.warlordsPlayers().max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage())).get().getMinuteStats().total().getDamage();
+            float highestHealing = game.warlordsPlayers().max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing())).get().getMinuteStats().total().getHealing();
             //checking for inflated stats
             if (highestDamage > 750000 || highestHealing > 750000) {
                 updatePlayerStats = false;
@@ -150,7 +150,7 @@ public abstract class DatabaseGameBase {
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
 
             //sending message if player information remained the same
-            for (AbstractWarlordsEntity value : PlayerFilter.playingGame(game)) {
+            for (WarlordsEntity value : PlayerFilter.playingGame(game)) {
                 if (updatePlayerStats) {
                     PermissionHandler.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
                 } else {

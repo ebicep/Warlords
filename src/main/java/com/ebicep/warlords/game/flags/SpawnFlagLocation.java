@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.flags;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -11,9 +11,9 @@ import java.util.List;
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
     @Nullable
-    private final AbstractWarlordsEntity flagReturner;
+    private final WarlordsEntity flagReturner;
 
-    public SpawnFlagLocation(@Nonnull Location location, @Nullable AbstractWarlordsEntity flagReturner) {
+    public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner) {
         super(location);
         this.flagReturner = flagReturner;
     }
@@ -24,7 +24,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
      * @return the flag returner, or null is the flag automatically moved back
      */
     @Nullable
-    public AbstractWarlordsEntity getFlagReturner() {
+    public WarlordsEntity getFlagReturner() {
         return flagReturner;
     }
 

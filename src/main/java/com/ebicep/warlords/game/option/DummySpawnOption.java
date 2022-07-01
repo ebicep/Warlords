@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
@@ -47,7 +47,7 @@ public class DummySpawnOption implements Option {
                     return;
                 }
 
-                AbstractWarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
+                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                         UUID.randomUUID(),
                         name,
                         Weapons.ABBADON,

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.achievements;
 
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Date;
@@ -10,7 +10,7 @@ public interface Achievement {
 
     void sendAchievementUnlockMessage(Player player);
 
-    void sendAchievementUnlockMessageToOthers(AbstractWarlordsEntity warlordsPlayer);
+    void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
 
     abstract class AbstractAchievementRecord<T extends Enum<T>> {
 

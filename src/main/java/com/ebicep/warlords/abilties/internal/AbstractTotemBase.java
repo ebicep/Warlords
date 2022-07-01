@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.DeathsDebt;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractTotemBase extends AbstractAbility {
 
-    protected AbstractWarlordsEntity owner;
+    protected WarlordsEntity owner;
     protected ArmorStand totem;
 
     public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, ArmorStand totem, AbstractWarlordsEntity owner) {
+    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, ArmorStand totem, WarlordsEntity owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.totem = totem;
         this.owner = owner;
@@ -36,10 +36,10 @@ public abstract class AbstractTotemBase extends AbstractAbility {
 
     protected abstract void playSound(Player player, Location location);
 
-    protected abstract void onActivation(AbstractWarlordsEntity wp, Player player, ArmorStand totemStand);
+    protected abstract void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand);
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
         Location standLocation = player.getLocation();
@@ -59,7 +59,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     }
 
 
-    public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(AbstractWarlordsEntity warlordsPlayer, Entity searchNearby) {
+    public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(AbstractTotemBase.class)
@@ -67,7 +67,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
                 .findFirst();
     }
 
-    public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(AbstractWarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
@@ -75,7 +75,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
                 .findFirst();
     }
 
-    public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(AbstractWarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
@@ -97,7 +97,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         return location.getY();
     }
 
-    public boolean isPlayerLookingAtTotem(AbstractWarlordsEntity warlordsPlayer) {
+    public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
         if (!(warlordsPlayer.getEntity() instanceof Player)) {
             return false;
         }

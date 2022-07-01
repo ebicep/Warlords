@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.flags;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
@@ -10,9 +10,9 @@ import java.util.List;
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
     private int despawnTimer;
-    private final AbstractWarlordsEntity scorer;
+    private final WarlordsEntity scorer;
 
-    public WaitingFlagLocation(Location location, AbstractWarlordsEntity scorer) {
+    public WaitingFlagLocation(Location location, WarlordsEntity scorer) {
         super(location);
         this.despawnTimer = 15 * 20;
         this.scorer = scorer;
@@ -28,7 +28,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Nullable
-    public AbstractWarlordsEntity getScorer() {
+    public WarlordsEntity getScorer() {
         return scorer;
     }
 

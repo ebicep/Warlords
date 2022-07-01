@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -26,7 +26,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        AbstractWarlordsEntity player = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsEntity player = BaseCommand.requireWarlordsPlayer(sender);
 
         if (!sender.hasPermission("warlords.game.spawndummy")) {
             sender.sendMessage("§cYou do not have permission to do that.");
@@ -48,7 +48,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
 
 
                 Game game = player.getGame();
-                AbstractWarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
+                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                         UUID.randomUUID(),
                         "testdummy",
                         Weapons.BLUDGEON,

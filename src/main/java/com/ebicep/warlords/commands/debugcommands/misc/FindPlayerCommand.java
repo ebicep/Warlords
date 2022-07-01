@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -32,7 +32,7 @@ public class FindPlayerCommand implements CommandExecutor {
             return true;
         }
 
-        AbstractWarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
 
         if (warlordsPlayer == null) {
             sender.sendMessage(ChatColor.RED + "That player is not in a game!");

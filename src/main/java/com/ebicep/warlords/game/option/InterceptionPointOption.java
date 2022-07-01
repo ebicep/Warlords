@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -76,12 +76,12 @@ public class InterceptionPointOption implements Option {
 		this.game = game;
 		game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
             @Override
-            public int getCompassTargetPriority(AbstractWarlordsEntity player) {
+            public int getCompassTargetPriority(WarlordsEntity player) {
                 return (int) player.getDeathLocation().distanceSquared(location) / -100;
             }
 
             @Override
-            public String getToolbarName(AbstractWarlordsEntity player) {
+            public String getToolbarName(WarlordsEntity player) {
                 StringBuilder status = new StringBuilder();
                 if (teamAttacking == null) {
                     status.append(ChatColor.GRAY);
@@ -133,7 +133,7 @@ public class InterceptionPointOption implements Option {
 		)));
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
             @Override
-            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 StringBuilder status = new StringBuilder();
                 if (teamAttacking == null) {
                     status.append(ChatColor.GRAY);
@@ -197,7 +197,7 @@ public class InterceptionPointOption implements Option {
 		new GameRunnable(game) {
 			@Override
 			public void run() {
-                Stream<AbstractWarlordsEntity> computePlayers = computePlayers();
+                Stream<WarlordsEntity> computePlayers = computePlayers();
                 double speed = updateTeamInCircle(computePlayers);
 				updateTeamHackProcess(speed);
                 if (effectPlayer != null) {
@@ -267,19 +267,19 @@ public class InterceptionPointOption implements Option {
         return minCaptureRadius + captureProgress * (maxCaptureRadius - minCaptureRadius);
     }
 
-    protected Stream<AbstractWarlordsEntity> computePlayers() {
+    protected Stream<WarlordsEntity> computePlayers() {
         double radius = computeCurrentRadius();
         return PlayerFilter.entitiesAround(location, radius, radius, radius).stream().filter(wp -> wp.getGame() == game && wp.isAlive());
     }
 
-    protected double updateTeamInCircle(Stream<AbstractWarlordsEntity> players) {
-        Map<Team, List<AbstractWarlordsEntity>> perTeam = players.collect(Collectors.groupingBy(AbstractWarlordsEntity::getTeam, Collectors.toList()));
+    protected double updateTeamInCircle(Stream<WarlordsEntity> players) {
+        Map<Team, List<WarlordsEntity>> perTeam = players.collect(Collectors.groupingBy(WarlordsEntity::getTeam, Collectors.toList()));
         if (perTeam.isEmpty()) {
             teamInCircle = teamOwning;
             inConflict = false;
             return captureSpeed * 0.2;
         }
-        Map.Entry<Team, List<AbstractWarlordsEntity>> highest = perTeam.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Team, List<AbstractWarlordsEntity>> e) -> e.getValue().size()).reversed()).findFirst().get();
+        Map.Entry<Team, List<WarlordsEntity>> highest = perTeam.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Team, List<WarlordsEntity>> e) -> e.getValue().size()).reversed()).findFirst().get();
         int highestValue = highest.getValue().size();
         int otherTeamPresence = perTeam.values().stream().mapToInt(Collection::size).sum() - highestValue;
         int currentTeamPresence = highestValue - otherTeamPresence;
@@ -309,7 +309,7 @@ public class InterceptionPointOption implements Option {
 				teamAttacking = teamInCircle;
 				Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
                 if (previousOwning != null) {
-                    AbstractWarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamInCircle).collect(Utils.randomElement());
+                    WarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamInCircle).collect(Utils.randomElement());
                     String message = teamAttacking.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §eis capturing the " + ChatColor.GRAY + name + ChatColor.WHITE + "!";
 
                     game.forEachOnlinePlayer((p, t) -> {
@@ -334,7 +334,7 @@ public class InterceptionPointOption implements Option {
 					if (teamAttacking != teamOwning) {
 						teamOwning = teamAttacking;
 						Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
-                        AbstractWarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
+                        WarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
                         String message = teamOwning.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §ehas captured " + teamOwning.teamColor() + name + ChatColor.WHITE + "!";
                         
                         game.forEachOnlinePlayer((p, t) -> {

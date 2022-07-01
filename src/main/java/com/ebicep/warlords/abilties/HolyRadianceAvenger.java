@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -48,8 +48,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
     }
 
     @Override
-    public boolean chain(AbstractWarlordsEntity wp, Player player) {
-        for (AbstractWarlordsEntity markTarget : PlayerFilter
+    public boolean chain(WarlordsEntity wp, Player player) {
+        for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
@@ -88,13 +88,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         }
                 );
 
-                wp.sendMessage(AbstractWarlordsEntity.GIVE_ARROW_GREEN +
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                         ChatColor.GRAY + " You have marked " +
                         ChatColor.GOLD + markTarget.getName() +
                         ChatColor.GRAY + "!"
                 );
 
-                markTarget.sendMessage(AbstractWarlordsEntity.RECEIVE_ARROW_RED +
+                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED +
                         ChatColor.GRAY + " You have been cursed with " +
                         ChatColor.GOLD + "Avenger's Mark" +
                         ChatColor.GRAY + " by " + wp.getName() + "!"

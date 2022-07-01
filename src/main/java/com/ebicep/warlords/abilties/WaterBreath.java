@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
@@ -52,7 +52,7 @@ public class WaterBreath extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
         ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 2, player.getLocation().add(0, 0.7, 0), 500);
@@ -100,7 +100,7 @@ public class WaterBreath extends AbstractAbility {
                 .pitch(0)
                 .backward(1);
         Vector viewDirection = playerLoc.getDirection();
-        for (AbstractWarlordsEntity breathTarget : PlayerFilter
+        for (WarlordsEntity breathTarget : PlayerFilter
                 .entitiesAroundRectangle(playerLoc, 7.5, 10, 7.5)
                 .excluding(wp)
         ) {

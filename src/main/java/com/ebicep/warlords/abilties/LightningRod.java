@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -44,7 +44,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
@@ -62,7 +62,7 @@ public class LightningRod extends AbstractAbility {
                 false
         );
 
-        for (AbstractWarlordsEntity knockbackTarget : PlayerFilter
+        for (WarlordsEntity knockbackTarget : PlayerFilter
                 .entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
         ) {

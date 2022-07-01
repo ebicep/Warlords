@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.ingame.cooldowns.cooldowns;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,7 +16,7 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
     protected boolean remove = false;
     protected String text = "";
 
-    public TextCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, AbstractWarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, String text) {
+    public TextCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, String text) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.text = text;
     }

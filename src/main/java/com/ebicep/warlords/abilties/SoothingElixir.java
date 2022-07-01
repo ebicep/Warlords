@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -62,7 +62,7 @@ public class SoothingElixir extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
         Location location = player.getLocation();
@@ -112,7 +112,7 @@ public class SoothingElixir extends AbstractAbility {
                     }
                 }
 
-                AbstractWarlordsEntity directHit;
+                WarlordsEntity directHit;
                 if (
                     !newLoc.getBlock().isEmpty()
                     && newLoc.getBlock().getType() != Material.GRASS
@@ -151,7 +151,7 @@ public class SoothingElixir extends AbstractAbility {
                             .with(FireworkEffect.Type.BURST)
                             .build());
 
-                    for (AbstractWarlordsEntity nearEntity : PlayerFilter
+                    for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                             .aliveTeammatesOf(wp)
                     ) {
@@ -193,7 +193,7 @@ public class SoothingElixir extends AbstractAbility {
 
                     }.runTaskTimer(20, 20);
 
-                    for (AbstractWarlordsEntity nearEntity : PlayerFilter
+                    for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                             .aliveEnemiesOf(wp)
                     ) {

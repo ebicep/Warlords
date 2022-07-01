@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -107,7 +107,7 @@ public class WinAfterTimeoutOption implements Option {
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
             @Override
-            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
                 Team winner = null;

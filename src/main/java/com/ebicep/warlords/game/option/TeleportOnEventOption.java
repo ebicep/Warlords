@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +23,7 @@ public class TeleportOnEventOption implements Option, Listener {
         game.registerEvents(new Listener() {
             @EventHandler
             public void cancelMovement(PlayerMoveEvent e) {
-                AbstractWarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+                WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
                 if (
                     wp != null &&
                     wp.getGame() == game &&

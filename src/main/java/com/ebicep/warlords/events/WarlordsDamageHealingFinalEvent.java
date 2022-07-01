@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.HandlerList;
@@ -14,7 +14,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
 
     private final List<CooldownRecord> playerCooldowns = new ArrayList<>();
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
-    private final AbstractWarlordsEntity attacker;
+    private final WarlordsEntity attacker;
     private final String ability;
     private final int initialHealth;
     private final int finalHealth;
@@ -35,8 +35,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private int inGameTick;
 
     public WarlordsDamageHealingFinalEvent(
-            AbstractWarlordsEntity player,
-            AbstractWarlordsEntity attacker,
+            WarlordsEntity player,
+            WarlordsEntity attacker,
             String ability,
             int initialHealth,
             float valueBeforeAllReduction,
@@ -86,7 +86,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return attackerCooldowns;
     }
 
-    public AbstractWarlordsEntity getAttacker() {
+    public WarlordsEntity getAttacker() {
         return attacker;
     }
 

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
 import java.util.Random;
@@ -14,7 +14,7 @@ public interface WaveList {
         return (wave, random) -> mapper.apply(this.getWave(wave, random), wave);
     }
 
-    default WaveList prependEntityMapper(BiFunction<AbstractWarlordsEntity, Integer, AbstractWarlordsEntity> mapper) {
+    default WaveList prependEntityMapper(BiFunction<WarlordsEntity, Integer, WarlordsEntity> mapper) {
         return prependMapper((w, counter) -> new DelegatingWave(w) {
             @Override
             public PartialMonster spawnRandomMonster(Location loc, Random random) {

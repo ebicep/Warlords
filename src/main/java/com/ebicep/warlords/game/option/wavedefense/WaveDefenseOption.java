@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -32,7 +32,7 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
-    private final Set<AbstractWarlordsEntity> entities = new HashSet<>();
+    private final Set<WarlordsEntity> entities = new HashSet<>();
     private int waveCounter = 0;
     private int spawnCount = 0;
     private Wave currentWave;
@@ -62,9 +62,9 @@ public class WaveDefenseOption implements Option {
         }
 
         spawner = new GameRunnable(game) {
-            AbstractWarlordsEntity lastSpawn = null;
+            WarlordsEntity lastSpawn = null;
 
-            private Location getSpawnLocation(AbstractWarlordsEntity entity) {
+            private Location getSpawnLocation(WarlordsEntity entity) {
                 List<Location> candidates = new ArrayList<>();
                 double priority = Double.NEGATIVE_INFINITY;
                 for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
@@ -88,8 +88,8 @@ public class WaveDefenseOption implements Option {
                 return lastLocation;
             }
 
-            public AbstractWarlordsEntity spawn(Location loc) {
-                AbstractWarlordsEntity we = currentWave.spawnRandomMonster(loc, random).toNPC(game, team, UUID.randomUUID());
+            public WarlordsEntity spawn(Location loc) {
+                WarlordsEntity we = currentWave.spawnRandomMonster(loc, random).toNPC(game, team, UUID.randomUUID());
                 entities.add(we);
                 return we;
             }
@@ -167,7 +167,7 @@ public class WaveDefenseOption implements Option {
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Override
-            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
                         "Wave: " + ChatColor.GREEN + ChatColor.BOLD + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
@@ -175,7 +175,7 @@ public class WaveDefenseOption implements Option {
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Override
-            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
                         "Monsters left: " + ChatColor.GREEN + entities.size()
                 );
@@ -183,7 +183,7 @@ public class WaveDefenseOption implements Option {
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Override
-            public List<String> computeLines(@Nullable AbstractWarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()

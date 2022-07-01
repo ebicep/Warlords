@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -68,12 +68,12 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     @Override
-    protected int getHitCounterAndActivate(AbstractWarlordsEntity wp, Player player) {
+    protected int getHitCounterAndActivate(WarlordsEntity wp, Player player) {
         return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
     }
 
     @Override
-    protected void onHit(AbstractWarlordsEntity wp, Player player, int hitCounter) {
+    protected void onHit(WarlordsEntity wp, Player player, int hitCounter) {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
@@ -104,7 +104,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         return new ItemStack(Material.STAINED_GLASS, 1, (byte) 7);
     }
 
-    private int partOfChainLightning(AbstractWarlordsEntity wp, Set<AbstractWarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
+    private int partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? maxBounces - 1 : maxBounces)) {
             return playersSize + (hasHitTotem ? 1 : 0);
@@ -140,9 +140,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                                         Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
                         ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange).lookingAtFirst(wp);
 
-        Optional<AbstractWarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
+        Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
-            AbstractWarlordsEntity hit = foundPlayer.get();
+            WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier;
 
@@ -181,7 +181,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         }
     }
 
-    private void partOfChainLightningPulseDamage(AbstractWarlordsEntity wp, CapacitorTotem capacitorTotem) {
+    private void partOfChainLightningPulseDamage(WarlordsEntity wp, CapacitorTotem capacitorTotem) {
         ArmorStand totem = capacitorTotem.getTotem();
         capacitorTotem.pulseDamage();
 
@@ -191,7 +191,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         capacitorTotem.addProc();
     }
 
-    private Optional<CapacitorTotem> getLookingAtTotem(AbstractWarlordsEntity warlordsPlayer) {
+    private Optional<CapacitorTotem> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
                 .filter(abstractTotemBase -> abstractTotemBase.isPlayerLookingAtTotem(warlordsPlayer))

@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties.internal;
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
@@ -62,7 +62,7 @@ public abstract class AbstractAbility {
      * @param player
      * @return whether the ability has to go on cooldown after activation.
      */
-    public abstract boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player);
+    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player);
 
     public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {

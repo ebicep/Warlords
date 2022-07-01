@@ -3,8 +3,8 @@ package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute.Entry;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -67,7 +67,7 @@ public class DatabaseGamePlayersCTF {
         public DatabaseGamePlayerCTF() {
         }
 
-        public DatabaseGamePlayerCTF(AbstractWarlordsEntity warlordsPlayer) {
+        public DatabaseGamePlayerCTF(WarlordsEntity warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
             this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());

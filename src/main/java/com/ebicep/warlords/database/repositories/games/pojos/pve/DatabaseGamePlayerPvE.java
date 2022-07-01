@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -17,7 +17,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     @Field("upgrade_log")
     private List<AbilityTree.UpgradeLog> upgradeLog;
 
-    public DatabaseGamePlayerPvE(AbstractWarlordsEntity warlordsEntity) {
+    public DatabaseGamePlayerPvE(WarlordsEntity warlordsEntity) {
         super(warlordsEntity);
         if (warlordsEntity instanceof WarlordsPlayer) {
             WarlordsPlayer warlordsPlayer = (WarlordsPlayer) warlordsEntity;

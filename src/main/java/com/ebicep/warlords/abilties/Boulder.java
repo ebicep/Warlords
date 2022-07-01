@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.ingame.AbstractWarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -55,7 +55,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull AbstractWarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
@@ -112,7 +112,7 @@ public class Boulder extends AbstractAbility {
                     );
                 }
 
-                AbstractWarlordsEntity directHit = null;
+                WarlordsEntity directHit = null;
                 if (
                     !newLoc.getBlock().isEmpty()
                     && newLoc.getBlock().getType() != Material.GRASS
@@ -133,12 +133,12 @@ public class Boulder extends AbstractAbility {
                     stand.remove();
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
 
-                    AbstractWarlordsEntity directHitFinal = directHit;
+                    WarlordsEntity directHitFinal = directHit;
 
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            for (AbstractWarlordsEntity p : PlayerFilter
+                            for (WarlordsEntity p : PlayerFilter
                                     .entitiesAround(newLoc, 5.5, 5.5, 5.5)
                                     .aliveEnemiesOf(wp)
                             ) {
