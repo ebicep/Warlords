@@ -10,11 +10,13 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -130,6 +132,7 @@ public class WaveDefenseOption implements Option {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
+                entry.getKey().getInventory().setItem(6, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Open Upgrade Menu").get());
             }
         }
         waveCounter++;

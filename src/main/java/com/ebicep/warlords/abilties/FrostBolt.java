@@ -1,12 +1,16 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FrostBolt extends AbstractProjectileBase {
+    private boolean pveUpgrade = false;
 
-    private static final int MAX_FULL_DAMAGE_DISTANCE = 30;
-    private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 4;
+    private int maxFullDistance = 30;
+    private double directHitMultiplier = 1.15;
+    private float hitbox = 4;
+    private int slowness = 25;
 
     public FrostBolt() {
         super("Frostbolt", 268.8f, 345.45f, 0, 70, 20, 175, 2, 300, false);
@@ -28,12 +34,12 @@ public class FrostBolt extends AbstractProjectileBase {
     public void updateDescription(Player player) {
         description = "§7Shoot a frostbolt that will shatter\n" +
                 "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and slow\n" +
-                "§7by §e25% §7for §62 §7seconds. A\n" +
+                "§7by §e" + slowness + "% §7for §62 §7seconds. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +
                 "§7damage." +
                 "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
+                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
     }
 
     @Override
@@ -85,28 +91,31 @@ public class FrostBolt extends AbstractProjectileBase {
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
-        double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
+            hit.getSpeed().addSpeedModifier("Frostbolt", -slowness, 2 * 20);
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
-                    (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                    (float) (minDamageHeal * directHitMultiplier * toReduceBy),
+                    (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                     critChance,
                     critMultiplier,
                     false);
+            if (pveUpgrade) {
+                freezeExplodeOnHit(shooter, hit);
+            }
         }
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -115,7 +124,7 @@ public class FrostBolt extends AbstractProjectileBase {
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            nearEntity.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
+            nearEntity.getSpeed().addSpeedModifier("Frostbolt", -slowness, 2 * 20);
             nearEntity.addDamageInstance(
                     shooter,
                     name,
@@ -127,5 +136,63 @@ public class FrostBolt extends AbstractProjectileBase {
         }
 
         return playersHit;
+    }
+
+    private void freezeExplodeOnHit(WarlordsEntity giver, WarlordsEntity hit) {
+        new GameRunnable(giver.getGame()) {
+            @Override
+            public void run() {
+                for (WarlordsEntity freezeTarget : PlayerFilter
+                        .entitiesAround(hit, 4, 4, 4)
+                        .aliveEnemiesOf(giver)
+                ) {
+                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 5, 1.1, Material.PACKED_ICE, (byte) 0).play();
+                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
+                    Utils.playGlobalSound(freezeTarget.getLocation(), Sound.GLASS, 2, 0.1f);
+                    freezeTarget.getSpeed().addSpeedModifier(name, -slowness, 2 * 20, "BASE");
+                    freezeTarget.addDamageInstance(giver, name, 309, 454, critChance, critMultiplier, false);
+                }
+            }
+        }.runTaskLater(30);
+    }
+
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
+    }
+
+    public double getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(double directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public int getSlowness() {
+        return slowness;
+    }
+
+    public void setSlowness(int slowness) {
+        this.slowness = slowness;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

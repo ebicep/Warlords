@@ -17,7 +17,7 @@ import java.util.List;
 
 public class IceBarrier extends AbstractAbility {
 
-    private final int duration = 6;
+    private int duration = 6;
     private int damageReductionPercent = 50;
 
     public float getDamageReduction() {
@@ -107,5 +107,13 @@ public class IceBarrier extends AbstractAbility {
 
     public void setDamageReductionPercent(int damageReductionPercent) {
         this.damageReductionPercent = damageReductionPercent;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

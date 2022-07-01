@@ -370,6 +370,9 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.COMPASS) {
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     wp.toggleTeamFlagCompass();
+                } else if (itemHeld.getType() == Material.GOLD_NUGGET) {
+                    player.playSound(player.getLocation(), Sound.CHEST_OPEN, 500, 2);
+                    ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player, player.getInventory().getHeldItemSlot(), false);
                 }

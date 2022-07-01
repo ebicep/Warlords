@@ -19,7 +19,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+8s Duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 288 - 406 damage every 1.5 seconds.",
+                "+8s Duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 288 - 406 damage every 2 seconds.",
                 500000
         );
     }

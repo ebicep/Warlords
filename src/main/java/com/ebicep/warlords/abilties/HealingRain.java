@@ -122,6 +122,7 @@ public class HealingRain extends AbstractAbility {
                             for (WarlordsEntity enemyInRain : PlayerFilter
                                     .entitiesAround(location, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
+                                    .limit(5)
                             ) {
                                 strikeInRain(wp, enemyInRain);
                             }
@@ -151,7 +152,6 @@ public class HealingRain extends AbstractAbility {
         for (WarlordsEntity strikeTarget : PlayerFilter
                 .entitiesAround(hit, 2, 3, 2)
                 .aliveEnemiesOf(giver)
-                .limit(5)
         ) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             Utils.playGlobalSound(strikeTarget.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);

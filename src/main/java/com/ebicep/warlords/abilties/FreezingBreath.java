@@ -18,8 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FreezingBreath extends AbstractAbility {
-    private final int slowDuration = 4;
+    private boolean pveUpgrade = false;
     protected int playersHit = 0;
+
+    private final int slowDuration = 4;
+    private int slowness = 35;
+
+    private float hitbox = 10;
+    private int maxAnimationTime = 12;
 
     public FreezingBreath() {
         super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175);
@@ -39,7 +45,7 @@ public class FreezingBreath extends AbstractAbility {
         description = "§7Breathe cold air in a cone in front\n" +
                 "§7of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
-                "§e35% §7for §6" + slowDuration + " §7seconds.";
+                "§e" + slowness + "% §7for §6" + slowDuration + " §7seconds.";
     }
 
     @Override
@@ -63,7 +69,7 @@ public class FreezingBreath extends AbstractAbility {
             }
 
             public void playEffect() {
-                if (animationTimer > 12) {
+                if (animationTimer > maxAnimationTime) {
                     this.cancel();
                 }
 
@@ -81,18 +87,18 @@ public class FreezingBreath extends AbstractAbility {
             }
         }.runTaskTimer(0, 1);
 
-        Location hitbox = new LocationBuilder(player.getLocation())
+        Location playerEyeLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
                 .backward(1);
 
         Vector viewDirection = playerLoc.getDirection();
 
         for (WarlordsEntity breathTarget : PlayerFilter
-                .entitiesAroundRectangle(player, 7.5, 10, 7.5)
+                .entitiesAroundRectangle(player, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .aliveEnemiesOf(wp)
         ) {
             playersHit++;
-            Vector direction = breathTarget.getLocation().subtract(hitbox).toVector().normalize();
+            Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (viewDirection.dot(direction) > .68) {
                 breathTarget.addDamageInstance(
                         wp,
@@ -103,10 +109,42 @@ public class FreezingBreath extends AbstractAbility {
                         critMultiplier,
                         false
                 );
-                breathTarget.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
+                breathTarget.getSpeed().addSpeedModifier("Freezing Breath", -slowness, slowDuration * 20);
             }
         }
 
         return true;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getMaxAnimationTime() {
+        return maxAnimationTime;
+    }
+
+    public void setMaxAnimationTime(int maxAnimationTime) {
+        this.maxAnimationTime = maxAnimationTime;
+    }
+
+    public int getSlowness() {
+        return slowness;
+    }
+
+    public void setSlowness(int slowness) {
+        this.slowness = slowness;
     }
 }
