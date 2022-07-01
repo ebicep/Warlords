@@ -5,6 +5,11 @@ import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.aquamancer.HealingRainBranch;
+import com.ebicep.warlords.pve.upgrades.aquamancer.WaterBoltBranch;
+import com.ebicep.warlords.pve.upgrades.aquamancer.WaterBreathBranch;
+import com.ebicep.warlords.pve.upgrades.pyromancer.ArcaneShieldBranch;
+import com.ebicep.warlords.pve.upgrades.pyromancer.TimeWarpBranch;
 
 import java.util.List;
 
@@ -30,5 +35,10 @@ public class Aquamancer extends AbstractMage {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new WaterBoltBranch(abilityTree, (WaterBolt) weapon));
+        branch.add(new WaterBreathBranch(abilityTree, (WaterBreath) red));
+        branch.add(new TimeWarpBranch(abilityTree, (TimeWarp) purple));
+        branch.add(new ArcaneShieldBranch(abilityTree, (ArcaneShield) blue));
+        branch.add(new HealingRainBranch(abilityTree, (HealingRain) orange));
     }
 }

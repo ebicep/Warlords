@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -24,6 +25,7 @@ import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
 
     private int duration = 12;
@@ -114,6 +116,17 @@ public class HealingRain extends AbstractAbility {
                             }
                         }
                     }
+
+                    if (counter % 40 == 0) {
+                        if (pveUpgrade) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter
+                                    .entitiesAround(location, radius, radius, radius)
+                                    .aliveEnemiesOf(wp)
+                            ) {
+                                strikeInRain(wp, enemyInRain);
+                            }
+                        }
+                    }
                 }
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
@@ -134,6 +147,19 @@ public class HealingRain extends AbstractAbility {
         return true;
     }
 
+    private void strikeInRain(WarlordsEntity giver, WarlordsEntity hit) {
+        for (WarlordsEntity strikeTarget : PlayerFilter
+                .entitiesAround(hit, 2, 3, 2)
+                .aliveEnemiesOf(giver)
+                .limit(5)
+        ) {
+            strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
+            Utils.playGlobalSound(strikeTarget.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
+            strikeTarget.addDamageInstance(giver, name, 288, 406, critChance, critMultiplier, false);
+        }
+
+    }
+
     public void setRadius(int radius) {
         this.radius = radius;
     }
@@ -144,5 +170,13 @@ public class HealingRain extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

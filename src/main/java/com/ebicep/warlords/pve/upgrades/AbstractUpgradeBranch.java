@@ -44,11 +44,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             menu.setItem(
                     2,
                     4 - i,
-                    new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
-                            .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
-                            .get(),
+                    branchItem(upgrade),
                     (n, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
@@ -79,6 +75,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
@@ -93,11 +90,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             menu.setItem(
                     4,
                     4 - i,
-                    new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
-                            .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
-                            .get(),
+                    branchItem(upgrade),
                     (n, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
@@ -128,6 +121,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
@@ -142,11 +136,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             menu.setItem(
                     6,
                     4 - i,
-                    new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
-                            .name(ChatColor.GOLD + upgrade.getName())
-                            .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                                    "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
-                            .get(),
+                    branchItem(upgrade),
                     (n, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
@@ -177,6 +167,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
@@ -188,7 +179,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         menu.setItem(
                 4,
                 0,
-                new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 5) : new ItemStack(Material.WOOL))
+                new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
                         .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
                         .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription() + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + masterUpgrade.getCurrencyCost())
                         .get(), (m, e) -> {
@@ -209,6 +200,14 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }
+    }
+
+    private ItemStack branchItem(Upgrade upgrade) {
+        return new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL, 1, (short) 8))
+                .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
+                .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
+                .get();
     }
 
     public abstract void a1();

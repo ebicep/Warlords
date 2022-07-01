@@ -32,7 +32,7 @@ public class AbilityTree {
                     i + 2,
                     1,
                     new ItemBuilder(upgradeBranch.getItemStack())
-                            .name(ChatColor.GREEN + upgradeBranch.getItemName())
+                            .name(ChatColor.GOLD + upgradeBranch.getItemName())
                             .get(),
                     (n, e) -> upgradeBranch.openUpgradeBranchMenu()
             );

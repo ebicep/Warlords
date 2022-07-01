@@ -3,8 +3,10 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,13 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WaterBolt extends AbstractProjectileBase {
-
+    private boolean pveUpgrade = false;
     private int teammatesHit = 0;
     private int enemiesHit = 0;
 
-    private static final int MAX_FULL_DAMAGE_DISTANCE = 40;
-    private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 4;
+    private int maxFullDistance = 40;
+    private double directHitMultiplier = 1.15;
+    private  float hitbox = 4;
+
+    private float minDamage = 231;
+    private float maxDamage = 299;
 
     public WaterBolt() {
         super("Water Bolt", 315, 434, 0, 80, 20, 175, 2, 300, true);
@@ -32,12 +37,12 @@ public class WaterBolt extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a bolt of water that will burst\n" +
-                "§7for §c231 §7- §c299 §7damage and restore\n" +
+                "§7for §c" + format(minDamage) + " §7- §c" + format(maxDamage) + " §7damage and restore\n" +
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to allies. A\n" +
                 "§7direct hit will cause §a15% §7increased\n" +
                 "§7damage or healing for the target hit." +
                 "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks." +
+                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks." +
                 "\n\n" +
                 "§7Water Bolt can overheal allies for up to\n" +
                 "§a10% §7of their max health as bonus health\n" +
@@ -98,8 +103,8 @@ public class WaterBolt extends AbstractProjectileBase {
         Utils.playGlobalSound(currentLocation, "mage.waterbolt.impact", 2, 1);
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
-        double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 :
-                1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
@@ -107,8 +112,8 @@ public class WaterBolt extends AbstractProjectileBase {
                 teammatesHit++;
                 hit.addHealingInstance(shooter,
                         name,
-                        (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
-                        (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                        (float) (minDamageHeal * directHitMultiplier * toReduceBy),
+                        (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                         critChance,
                         critMultiplier,
                         false, false);
@@ -117,7 +122,9 @@ public class WaterBolt extends AbstractProjectileBase {
                     hit.getCooldownManager().addRegularCooldown("Overheal",
                             "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
                             }, Overheal.OVERHEAL_DURATION * 20);
-                    ;
+                }
+                if (pveUpgrade) {
+                    increaseDamageOnHit(shooter, hit);
                 }
             } else {
                 enemiesHit++;
@@ -126,8 +133,8 @@ public class WaterBolt extends AbstractProjectileBase {
                 }
                 hit.addDamageInstance(shooter,
                         name,
-                        (float) (231 * DIRECT_HIT_MULTIPLIER * toReduceBy),
-                        (float) (299 * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                        (float) (minDamage * directHitMultiplier * toReduceBy),
+                        (float) (maxDamage * directHitMultiplier * toReduceBy),
                         critChance,
                         critMultiplier,
                         false);
@@ -136,7 +143,7 @@ public class WaterBolt extends AbstractProjectileBase {
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .isAlive()
                 .excluding(projectile.getHit())
         ) {
@@ -159,6 +166,9 @@ public class WaterBolt extends AbstractProjectileBase {
                             }, Overheal.OVERHEAL_DURATION * 20);
                     ;
                 }
+                if (pveUpgrade) {
+                    increaseDamageOnHit(shooter, nearEntity);
+                }
             } else {
                 enemiesHit++;
                 if (nearEntity.onHorse()) {
@@ -167,8 +177,8 @@ public class WaterBolt extends AbstractProjectileBase {
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
-                        (float) (231 * toReduceBy),
-                        (float) (299 * toReduceBy),
+                        (float) (minDamage * toReduceBy),
+                        (float) (maxDamage * toReduceBy),
                         critChance,
                         critMultiplier,
                         false);
@@ -178,4 +188,71 @@ public class WaterBolt extends AbstractProjectileBase {
         return playersHit;
     }
 
+    private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
+        hit.getCooldownManager().removeCooldown(WaterBolt.class);
+        hit.getCooldownManager().addCooldown(new RegularCooldown<WaterBolt>(
+                name,
+                "BOLT DMG",
+                WaterBolt.class,
+                new WaterBolt(),
+                giver,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                10 * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.15f;
+            }
+        });
+    }
+
+    public int getMaxFullDistance() {
+        return maxFullDistance;
+    }
+
+    public void setMaxFullDistance(int maxFullDistance) {
+        this.maxFullDistance = maxFullDistance;
+    }
+
+    public double getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(double directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public float getMinDamage() {
+        return minDamage;
+    }
+
+    public void setMinDamage(float minDamage) {
+        this.minDamage = minDamage;
+    }
+
+    public float getMaxDamage() {
+        return maxDamage;
+    }
+
+    public void setMaxDamage(float maxDamage) {
+        this.maxDamage = maxDamage;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
 }

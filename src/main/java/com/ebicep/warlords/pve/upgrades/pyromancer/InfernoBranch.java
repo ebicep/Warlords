@@ -19,7 +19,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Reduce the cooldown of Inferno by 1 second\nfor each enemy killed. (0.5s on assists)",
+                "+40% Crit Multiplier bonus\n\nReduce the cooldown of Inferno by 1 second\nfor each enemy killed. (0.5s on assists)",
                 500000
         );
     }
@@ -71,6 +71,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
     @Override
     public void master() {
+        ability.setCritMultiplierIncrease(70);
         ability.setPveUpgrade(true);
     }
 }

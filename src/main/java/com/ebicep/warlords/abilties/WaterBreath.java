@@ -20,9 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
     protected int debuffsRemoved = 0;
 
+    private int maxAnimationTime = 12;
+    private float hitbox = 10;
     private double velocity = 1.1;
 
     public WaterBreath() {
@@ -73,7 +76,7 @@ public class WaterBreath extends AbstractAbility {
 
             public void playEffect() {
 
-                if (animationTimer > 12) {
+                if (animationTimer > maxAnimationTime) {
                     this.cancel();
                 }
 
@@ -95,16 +98,19 @@ public class WaterBreath extends AbstractAbility {
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        if (pveUpgrade) {
+            regenOnHit(wp, wp);
+        }
 
-        Location hitbox = new LocationBuilder(player.getLocation())
+        Location playerEyeLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
                 .backward(1);
         Vector viewDirection = playerLoc.getDirection();
         for (WarlordsEntity breathTarget : PlayerFilter
-                .entitiesAroundRectangle(playerLoc, 7.5, 10, 7.5)
+                .entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .excluding(wp)
         ) {
-            Vector direction = breathTarget.getLocation().subtract(hitbox).toVector().normalize();
+            Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (viewDirection.dot(direction) > .68) {
                 if (wp.isTeammateAlive(breathTarget)) {
                     playersHealed++;
@@ -123,6 +129,9 @@ public class WaterBreath extends AbstractAbility {
                             },
                             Overheal.OVERHEAL_DURATION * 20
                     );
+                    if (pveUpgrade) {
+                        regenOnHit(wp, breathTarget);
+                    }
                 } else {
                     final Location loc = breathTarget.getLocation();
                     final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
@@ -134,7 +143,60 @@ public class WaterBreath extends AbstractAbility {
         return true;
     }
 
+    private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
+        hit.getCooldownManager().addRegularCooldown(
+                name,
+                "BREATH RGN",
+                WaterBreath.class,
+                new WaterBreath(),
+                giver,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                5 * 20,
+                (cooldown, ticksLeft, counter) -> {
+                    if (ticksLeft % 20 == 0) {
+                        float healing = hit.getMaxHealth() * 0.01f;
+                        hit.addHealingInstance(
+                                giver,
+                                name,
+                                healing,
+                                healing,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
+                    }
+                }
+        );
+    }
+
     public void setVelocity(double velocity) {
         this.velocity = velocity;
+    }
+
+    public int getMaxAnimationTime() {
+        return maxAnimationTime;
+    }
+
+    public void setMaxAnimationTime(int maxAnimationTime) {
+        this.maxAnimationTime = maxAnimationTime;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

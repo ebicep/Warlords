@@ -13,17 +13,17 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         treeA.add(new Upgrade("Energy - Tier II", "-20 Energy cost", 10000));
         treeA.add(new Upgrade("Energy - Tier III", "-30 Energy cost", 20000));
 
-        treeB.add(new Upgrade("Utility - Tier I", "+1 Projectile", 5000));
-        treeB.add(new Upgrade("Utility - Tier II", "+2 Projectiles", 10000));
-        treeB.add(new Upgrade("Utility - Tier III", "+3 Projectiles", 20000));
+        treeB.add(new Upgrade("Speed - Tier I", "+20% Projectile speed", 5000));
+        treeB.add(new Upgrade("Speed - Tier II", "+40% Projectile speed", 10000));
+        treeB.add(new Upgrade("Speed - Tier III", "+80% Projectile speed", 20000));
 
-        treeC.add(new Upgrade("Speed - Tier I", "+20% Projectile speed", 5000));
-        treeC.add(new Upgrade("Speed - Tier II", "+40% Projectile speed", 10000));
-        treeC.add(new Upgrade("Speed - Tier III", "+80% Projectile speed", 20000));
+        treeC.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
+        treeC.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
+        treeC.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Direct hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources\nand burn for 1% of their max health every second",
+                "+30 Blocks fall-off distance\n\nDirect hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources\nand burn for 1% of their max health every second",
                 500000
         );
     }
@@ -43,39 +43,47 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         ability.setEnergyCost(ability.getEnergyCost() - 10);
     }
 
+    double projectileSpeed = ability.getProjectileSpeed();
+
     @Override
     public void b1() {
-        ability.setShotsFiredAtATime(2);
-    }
-
-    @Override
-    public void b2() {
-        ability.setShotsFiredAtATime(3);
-    }
-
-    @Override
-    public void b3() {
-        ability.setShotsFiredAtATime(4);
-    }
-
-    double projectileSpeed = ability.getProjectileSpeed();
-    @Override
-    public void c1() {
         ability.setProjectileSpeed(projectileSpeed * 1.2);
     }
 
     @Override
-    public void c2() {
+    public void b2() {
         ability.setProjectileSpeed(projectileSpeed * 1.4);
     }
 
     @Override
-    public void c3() {
+    public void b3() {
         ability.setProjectileSpeed(projectileSpeed * 1.8);
+    }
+
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
+
+    @Override
+    public void c1() {
+        ability.setMinDamageHeal(minDamage * 1.1f);
+        ability.setMaxDamageHeal(maxDamage * 1.1f);
+    }
+
+    @Override
+    public void c2() {
+        ability.setMinDamageHeal(minDamage * 1.2f);
+        ability.setMaxDamageHeal(maxDamage * 1.2f);
+    }
+
+    @Override
+    public void c3() {
+        ability.setMinDamageHeal(minDamage * 1.4f);
+        ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
     @Override
     public void master() {
+        ability.setMaxFullDistance(80);
         ability.setPveUpgrade(true);
     }
 }
