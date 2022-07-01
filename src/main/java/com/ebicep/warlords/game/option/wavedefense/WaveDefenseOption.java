@@ -44,7 +44,7 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     SimpleScoreboardHandler scoreboard;
     @Nullable
-    private  BukkitTask spawner;
+    private BukkitTask spawner;
 
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
@@ -119,7 +119,7 @@ public class WaveDefenseOption implements Option {
 
     public void newWave() {
         if (currentWave != null) {
-        String message;
+            String message;
             if (currentWave.getMessage() != null) {
                 message = ChatColor.GREEN + "Wave complete! (" + currentWave.getMessage() + ")";
             } else {
@@ -205,18 +205,26 @@ public class WaveDefenseOption implements Option {
 
                     if (waveCounter % 10 == 0) {
                         PlayerFilter.playingGame(getGame())
-                            .filter(warlordsEntity -> warlordsEntity instanceof WarlordsPlayer)
-                            .forEach(we -> {
-                                we.playSound(we.getLocation(), Sound.CHEST_OPEN, 500, 0.7f);
-                                ((WarlordsPlayer) we).getAbilityTree().openAbilityTree();
-                            });
+                                .filter(warlordsEntity -> warlordsEntity instanceof WarlordsPlayer)
+                                .forEach(we -> {
+                                    we.playSound(we.getLocation(), Sound.CHEST_OPEN, 500, 0.7f);
+                                    ((WarlordsPlayer) we).getAbilityTree().openAbilityTree();
+                                });
                     }
                 }
             }
         }.runTaskTimer(20, 0);
     }
-    
-    
-    
-    
+
+    public int getWaveCounter() {
+        return waveCounter;
+    }
+
+    public Wave getCurrentWave() {
+        return currentWave;
+    }
+
+    public WaveList getWaves() {
+        return waves;
+    }
 }

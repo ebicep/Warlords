@@ -2,14 +2,13 @@ package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.FlameBurst;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class FlameburstBranch extends UpgradeBranch<FlameBurst> {
+public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
-    public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+    public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
         treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));

@@ -196,6 +196,7 @@ public enum GameMode {
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Let the wave defense commence."
             ));
+            options.add(new RecordTimeElapsedOption());
             return options;
         }
     },

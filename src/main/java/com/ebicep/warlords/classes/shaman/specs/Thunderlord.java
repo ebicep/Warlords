@@ -30,7 +30,7 @@ public class Thunderlord extends AbstractShaman {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new LightningBoltBranch(abilityTree, (LightningBolt) weapon, wp.getItemStackForAbility(weapon), weapon.getName()));
+        branch.add(new LightningBoltBranch(abilityTree, (LightningBolt) weapon));
         branch.add(new ChainLightningBranch(abilityTree, (ChainLightning) red));
     }
 }

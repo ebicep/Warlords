@@ -27,7 +27,7 @@ public class DatabasePlayerInterception extends AbstractDatabaseStatInformation 
     private DatabaseRogueInterception rogue = new DatabaseRogueInterception();
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
+    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
         assert databaseGame instanceof DatabaseGameInterception;
         assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
 

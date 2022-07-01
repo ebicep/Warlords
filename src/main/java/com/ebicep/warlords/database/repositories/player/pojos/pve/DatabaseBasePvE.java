@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub;
+package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -6,12 +6,11 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 
-public class DatabaseBaseSpec extends AbstractDatabaseStatInformation {
+public class DatabaseBasePvE extends AbstractDatabaseStatInformation {
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        //UPDATE SPEC EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
+
     }
 
 }

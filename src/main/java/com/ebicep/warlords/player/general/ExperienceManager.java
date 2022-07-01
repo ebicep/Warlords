@@ -239,6 +239,10 @@ public class ExperienceManager {
         return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
     }
 
+    public static int getLevelFromExp(long experience) {
+        return (int) calculateLevelFromExp(experience);
+    }
+
     public static long getUniversalLevel(UUID uuid) {
         if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);

@@ -128,6 +128,14 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             this.total.respawnTimeSpent++;
         }
     }
+
+    public void addDamageTaken(long damageTaken) {
+        current.damageTaken += damageTaken;
+        if (this.total != null) {
+            this.total.damageTaken += damageTaken;
+        }
+    }
+
     public Entry recomputeTotal() {
         return entries.stream().reduce(new Entry(), Entry::merge);
     }
@@ -193,6 +201,8 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         private int timeInCombat;
         @Nonnegative
         private int respawnTimeSpent;
+        @Nonnegative
+        private long damageTaken;
 
         public Entry merge(Entry other) {
             kills += other.kills;
@@ -207,6 +217,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             flagsReturned += other.flagsReturned;
             timeInCombat += other.timeInCombat;
             respawnTimeSpent += other.respawnTimeSpent;
+            damageTaken += other.damageTaken;
             return this;
         }
 
@@ -270,6 +281,11 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             return respawnTimeSpent;
         }
 
+        @Nonnegative
+        public long getDamageTaken() {
+            return damageTaken;
+        }
+
         @Override
         public String toString() {
             return "{"
@@ -303,6 +319,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             hash = 13 * hash + this.flagsReturned;
             hash = 13 * hash + this.timeInCombat;
             hash = 13 * hash + this.respawnTimeSpent;
+            hash = 13 * hash + (int) (this.damageTaken ^ (this.damageTaken >>> 32));
             return hash;
         }
 
@@ -329,7 +346,9 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
                     && this.flagsCaptured == other.flagsCaptured
                     && this.flagsReturned == other.flagsReturned
                     && this.timeInCombat == other.timeInCombat
-                    && this.respawnTimeSpent == other.respawnTimeSpent;
+                    && this.respawnTimeSpent == other.respawnTimeSpent
+                    && this.damageTaken == other.damageTaken
+                    ;
         }
     }
 }

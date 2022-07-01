@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWeapon {
 
+    protected String title; //TODO
     protected int meleeDamage;
     protected int critChance;
     protected int critMultiplier;

@@ -524,6 +524,7 @@ public abstract class AbstractWarlordsEntity {
                 }
 
                 attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
+                this.addDamageTaken(damageValue);
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
 
@@ -1646,6 +1647,10 @@ public abstract class AbstractWarlordsEntity {
         if (onCarrier) {
             this.minuteStats.addHealingOnCarrier((long) amount);
         }
+    }
+
+    public void addDamageTaken(float amount) {
+        this.minuteStats.addDamageTaken((long) amount);
     }
 
     public void addAbsorbed(float amount) {

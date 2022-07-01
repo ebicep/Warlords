@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.player.pojos;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 
 public abstract class AbstractDatabaseStatInformation {
@@ -51,7 +50,6 @@ public abstract class AbstractDatabaseStatInformation {
                 databaseGame.getGameMode(),
                 gamePlayer,
                 result,
-                databaseGame.getGameAddons().contains(GameAddon.PRIVATE_GAME),
                 add
         );
     }
@@ -61,7 +59,6 @@ public abstract class AbstractDatabaseStatInformation {
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            boolean isCompGame,
             boolean add
     );
 

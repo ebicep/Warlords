@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AbilityTree {
 
     private final WarlordsPlayer player;
     private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
+    private final List<UpgradeLog> upgradeLog = new ArrayList<>();
 
     public AbilityTree(WarlordsPlayer player) {
         this.player = player;
@@ -49,5 +51,24 @@ public class AbilityTree {
 
     public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
         return upgradeBranches;
+    }
+
+    public List<UpgradeLog> getUpgradeLog() {
+        return upgradeLog;
+    }
+
+    public static class UpgradeLog {
+        @Field("time_elapsed")
+        private final int gameTimeLeft;
+        @Field("name")
+        private final String upgradeName;
+        @Field("description")
+        private final String upgradeDescription;
+
+        public UpgradeLog(int gameTimeLeft, String upgradeName, String upgradeDescription) {
+            this.gameTimeLeft = gameTimeLeft;
+            this.upgradeName = upgradeName;
+            this.upgradeDescription = upgradeDescription;
+        }
     }
 }

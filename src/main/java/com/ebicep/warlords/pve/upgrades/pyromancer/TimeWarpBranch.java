@@ -2,14 +2,13 @@ package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.TimeWarp;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class TimeWarpBranch extends UpgradeBranch<TimeWarp> {
+public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
 
-    public TimeWarpBranch(AbilityTree abilityTree, TimeWarp ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+    public TimeWarpBranch(AbilityTree abilityTree, TimeWarp ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
         treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));

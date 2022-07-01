@@ -55,6 +55,9 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Field("public_queue_stats")
     private DatabasePlayerPubStats pubStats = new DatabasePlayerPubStats();
 
+    @Field("pve_stats")
+    private DatabasePlayerPvEStats pveStats = new DatabasePlayerPvEStats();
+
     @Field("tournament_stats")
     private TournamentStats tournamentStats = new TournamentStats();
     @Field("last_spec")
@@ -80,9 +83,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
+    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+        //PvE outside all base stats besides universal experience
+        if (gameMode == GameMode.WAVE_DEFENSE) {
+            this.pveStats.updateStats(databaseGame, gamePlayer, add);
+            return;
+        }
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
@@ -102,13 +110,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
                 break;
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
-        if (databaseGame.getGameAddons().contains(GameAddon.TOURNAMENT_MODE)) {
+        List<GameAddon> gameAddons = databaseGame.getGameAddons();
+        if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
             this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, add);
         } else {
-            if (isCompGame) {
-                this.compStats.updateStats(databaseGame, gamePlayer, add);
-            } else {
+            if (gameAddons.isEmpty()) {
                 this.pubStats.updateStats(databaseGame, gamePlayer, add);
+            } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
+                this.compStats.updateStats(databaseGame, gamePlayer, add);
             }
         }
     }
@@ -295,6 +304,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setPubStats(DatabasePlayerPubStats pubStats) {
         this.pubStats = pubStats;
+    }
+
+    public DatabasePlayerPvEStats getPveStats() {
+        return pveStats;
+    }
+
+    public void setPveStats(DatabasePlayerPvEStats pveStats) {
+        this.pveStats = pveStats;
     }
 
     public TournamentStats getTournamentStats() {

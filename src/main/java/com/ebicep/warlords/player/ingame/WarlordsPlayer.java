@@ -4,12 +4,16 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.Soulbinding;
 import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -31,7 +35,11 @@ import java.util.stream.Collectors;
 
 public final class WarlordsPlayer extends AbstractWarlordsEntity {
 
-    private AbilityTree abilityTree = new AbilityTree(this);
+    private final AbilityTree abilityTree = new AbilityTree(this);
+    private final int level;
+    private final int prestige;
+    private AbstractWeapon weapon;
+
 
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
@@ -59,6 +67,10 @@ public final class WarlordsPlayer extends AbstractWarlordsEntity {
         super(player.getUniqueId(), player.getName(), settings.getWeaponSkin(), spawnSimpleJimmy(location, null), game, team, settings.getSelectedSpec());
         updatePlayerReference(player.getPlayer());
         this.spec.setUpgradeBranches(this);
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        this.prestige = databasePlayer.getSpec(getSpecClass()).getPrestige();
+        this.level = ExperienceManager.getLevelFromExp(databasePlayer.getSpec(getSpecClass()).getExperience());
+        //this.weapon =
     }
     
     @Override
@@ -201,5 +213,17 @@ public final class WarlordsPlayer extends AbstractWarlordsEntity {
 
     public AbilityTree getAbilityTree() {
         return abilityTree;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getPrestige() {
+        return prestige;
+    }
+
+    public AbstractWeapon getAbstractWeapon() {
+        return weapon;
     }
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -80,6 +81,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
+
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
                     }
             );
         }
@@ -127,6 +130,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
+
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
                     }
             );
         }
@@ -174,6 +179,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
+
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
                     }
             );
         }

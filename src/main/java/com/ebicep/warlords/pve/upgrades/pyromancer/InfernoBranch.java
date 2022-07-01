@@ -2,14 +2,13 @@ package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.Inferno;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class InfernoBranch extends UpgradeBranch<Inferno> {
+public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
-    public InfernoBranch(AbilityTree abilityTree, Inferno ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+    public InfernoBranch(AbilityTree abilityTree, Inferno ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Crit Chance - Tier I", "+10% Crit Chance bonus", 5000));
         treeA.add(new Upgrade("Crit Chance - Tier II", "+20% Crit Chance bonus", 10000));
         treeA.add(new Upgrade("Crit Chance - Tier III", "+40% Crit Chance bonus", 20000));

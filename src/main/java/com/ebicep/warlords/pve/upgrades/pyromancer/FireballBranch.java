@@ -2,14 +2,13 @@ package com.ebicep.warlords.pve.upgrades.pyromancer;
 
 import com.ebicep.warlords.abilties.Fireball;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class FireballBranch extends UpgradeBranch<Fireball> {
+public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
 
-    public FireballBranch(AbilityTree abilityTree, Fireball ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+    public FireballBranch(AbilityTree abilityTree, Fireball ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Energy - Tier I", "-10 Energy cost", 5000));
         treeA.add(new Upgrade("Energy - Tier II", "-20 Energy cost", 10000));
         treeA.add(new Upgrade("Energy - Tier III", "-30 Energy cost", 20000));

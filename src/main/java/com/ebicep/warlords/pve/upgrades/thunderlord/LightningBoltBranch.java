@@ -2,14 +2,13 @@ package com.ebicep.warlords.pve.upgrades.thunderlord;
 
 import com.ebicep.warlords.abilties.LightningBolt;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeBranch;
-import org.bukkit.inventory.ItemStack;
 
-public class LightningBoltBranch extends UpgradeBranch<LightningBolt> {
+public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
-    public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability, ItemStack itemStack, String itemName) {
-        super(abilityTree, ability, itemStack, itemName);
+    public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
+        super(abilityTree, ability);
         treeA.add(new Upgrade("Energy - Tier I", "-10 Energy cost", 5000));
         treeA.add(new Upgrade("Energy - Tier II", "-20 Energy cost", 10000));
         treeA.add(new Upgrade("Energy - Tier III", "-30 Energy cost", 20000));

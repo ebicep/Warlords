@@ -15,7 +15,7 @@ public class DatabaseBaseInterception extends AbstractDatabaseStatInformation {
     private long totalTimePlayed = 0;
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean isCompGame, boolean add) {
+    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
         assert databaseGame instanceof DatabaseGameInterception;
         assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
 

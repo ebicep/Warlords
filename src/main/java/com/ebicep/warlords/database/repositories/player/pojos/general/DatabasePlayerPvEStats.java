@@ -1,42 +1,47 @@
-package com.ebicep.warlords.database.repositories.player.pojos.duel;
+package com.ebicep.warlords.database.repositories.player.pojos.general;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
-import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGamePlayersDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.duel.classes.*;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+import java.util.List;
 
-    @Field("total_time_played")
-    private long totalTimePlayed = 0;
-    private DatabaseMageDuel mage = new DatabaseMageDuel();
-    private DatabaseWarriorDuel warrior = new DatabaseWarriorDuel();
-    private DatabasePaladinDuel paladin = new DatabasePaladinDuel();
-    private DatabaseShamanDuel shaman = new DatabaseShamanDuel();
-    private DatabaseRogueDuel rogue = new DatabaseRogueDuel();
+public class DatabasePlayerPvEStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
+
+    @Field("highest_wave")
+    private int highestWave;
+    @Field("longest_time_in_combat")
+    private int longestTimeInCombat;
+    @Field("most_damage_in_round")
+    private long mostDamageInRound;
+    @Field("most_damage_in_wave")
+    private long mostDamageInWave;
+    //TODO KILLS ASSISTS DEATH PER MOB
+    private DatabaseMagePvE mage = new DatabaseMagePvE();
+    private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
+    private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
+    private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
+    private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
+    @Field("weapon_inventory")
+    private List<AbstractWeapon> weaponInventory;
+
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        assert databaseGame instanceof DatabaseGameDuel;
-        assert gamePlayer instanceof DatabaseGamePlayersDuel.DatabaseGamePlayerDuel;
 
-        //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
-        this.totalTimePlayed += 900 - ((DatabaseGameDuel) databaseGame).getTimeLeft();
-        //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
     }
 
     @Override
-    public DatabaseBaseDuel getSpec(Specializations specializations) {
+    public AbstractDatabaseStatInformation getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -73,7 +78,7 @@ public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implemen
     }
 
     @Override
-    public DatabaseBaseDuel getClass(Classes classes) {
+    public AbstractDatabaseStatInformation getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -90,7 +95,8 @@ public class DatabasePlayerDuel extends AbstractDatabaseStatInformation implemen
     }
 
     @Override
-    public DatabaseBaseDuel[] getClasses() {
-        return new DatabaseBaseDuel[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBasePvE[] getClasses() {
+        return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
+
 }
