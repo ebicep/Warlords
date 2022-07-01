@@ -2,6 +2,12 @@ package com.ebicep.warlords.classes.paladin.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.avenger.LightInfusionBranch;
+
+import java.util.List;
 
 public class Avenger extends AbstractPaladin {
 
@@ -17,5 +23,12 @@ public class Avenger extends AbstractPaladin {
                 new HolyRadianceAvenger(582, 760, 19.57f, 20, 15, 175),
                 new AvengersWrath()
         );
+    }
+
+    @Override
+    public void setUpgradeBranches(WarlordsPlayer wp) {
+        AbilityTree abilityTree = wp.getAbilityTree();
+        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new LightInfusionBranch(abilityTree, (LightInfusion) purple));
     }
 }

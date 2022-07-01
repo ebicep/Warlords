@@ -15,7 +15,7 @@ import java.util.List;
 public class LightInfusion extends AbstractAbility {
 
     private int duration = 3;
-    private final int speedBuff = 40;
+    private int speedBuff = 40;
 
     public LightInfusion(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
@@ -88,5 +88,13 @@ public class LightInfusion extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 }

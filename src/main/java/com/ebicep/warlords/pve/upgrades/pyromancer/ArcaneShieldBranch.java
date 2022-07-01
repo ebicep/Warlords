@@ -9,9 +9,9 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
     public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Cooldown - Tier I", "-15% Cooldown reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-30% Cooldown reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-60% Cooldown reduction", 20000));
+        treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
+        treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
+        treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
 
         treeC.add(new Upgrade("Absorption - Tier I", "+15% Max shield health", 5000));
         treeC.add(new Upgrade("Absorption - Tier II", "+30% Max shield health", 10000));
@@ -28,17 +28,17 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
     @Override
     public void a1() {
-        ability.setCooldown(cooldown * 0.85f);
+        ability.setCooldown(cooldown * 0.9f);
     }
 
     @Override
     public void a2() {
-        ability.setCooldown(cooldown * 0.7f);
+        ability.setCooldown(cooldown * 0.8f);
     }
 
     @Override
     public void a3() {
-        ability.setCooldown(cooldown * 0.4f);
+        ability.setCooldown(cooldown * 0.6f);
     }
 
     @Override

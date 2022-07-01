@@ -126,6 +126,7 @@ public abstract class WarlordsEntity {
     @Nullable
     private CompassTargetMarker compassTarget;
     private boolean active = true;
+    private boolean isInPve = false;
 
     /**
      * @param uuid
@@ -163,7 +164,7 @@ public abstract class WarlordsEntity {
         this.flagPickCooldown = 0;
         this.cooldownModifier = 1;
         this.hitCooldown = 20;
-        this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
+        this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed, 13, true) : new CalculateSpeed(this::setWalkSpeed, 13);
         this.entity = entity;
         this.weapon = weapon;
         this.deathLocation = this.entity.getLocation();
@@ -1910,20 +1911,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-//    public void setVelocity(Location from, double multipliedBy, double y, boolean kbAfterHorse) {
-//        this.setVelocity(from, getLocation(), multipliedBy, y, kbAfterHorse);
-//    }
-//
-//    public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
-//        if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
-//            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-//                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
-//            } else {
-//                this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
-//            }
-//        }
-//    }
-
     public void addPotionEffect(PotionEffect potionEffect) {
         if (this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
             if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
@@ -2110,5 +2097,13 @@ public abstract class WarlordsEntity {
             currency = 0;
         }
         this.currency -= currency;
+    }
+
+    public boolean isInPve() {
+        return isInPve;
+    }
+
+    public void setInPve(boolean inPve) {
+        isInPve = inPve;
     }
 }

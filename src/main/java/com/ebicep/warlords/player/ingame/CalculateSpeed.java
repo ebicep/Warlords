@@ -24,6 +24,14 @@ public class CalculateSpeed {
         this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
 
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier, boolean isPve) {
+        // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
+        this.minspeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
+        this.maxspeed = BASE_SPEED * 2;
+        this.updateWalkingSpeed = updateWalkingSpeed;
+        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
+    }
+
     /**
      * Called every tick. This function calculates the new speed and updates the player
      */
