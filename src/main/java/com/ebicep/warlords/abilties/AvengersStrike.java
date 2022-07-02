@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AvengersStrike extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
 
     protected float energyStole = 0;
-    private final int energySteal = 10;
+    private int energySteal = 10;
 
     public AvengersStrike() {
         super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
@@ -36,7 +37,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player p, @Nonnull WarlordsEntity nearPlayer) {
+    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         if (standingOnConsecrate(wp, nearPlayer)) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
@@ -61,6 +62,10 @@ public class AvengersStrike extends AbstractStrikeBase {
         }
 
         energyStole += nearPlayer.subtractEnergy(energySteal);
+
+        if (pveUpgrade) {
+            tripleHit(wp, nearPlayer);
+        }
 
         if (wp.getCooldownManager().hasCooldown(AvengersWrath.class)) {
             for (WarlordsEntity wrathTarget : PlayerFilter
@@ -98,5 +103,17 @@ public class AvengersStrike extends AbstractStrikeBase {
                 energyStole += wrathTarget.subtractEnergy(energySteal);
             }
         }
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public void setEnergySteal(int energySteal) {
+        this.energySteal = energySteal;
     }
 }

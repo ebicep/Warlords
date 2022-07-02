@@ -5,6 +5,8 @@ import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.avenger.AvengerStrikeBranch;
+import com.ebicep.warlords.pve.upgrades.avenger.ConsecrateBranch;
 import com.ebicep.warlords.pve.upgrades.avenger.LightInfusionBranch;
 
 import java.util.List;
@@ -29,6 +31,8 @@ public class Avenger extends AbstractPaladin {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new AvengerStrikeBranch(abilityTree, (AvengersStrike) weapon));
+        branch.add(new ConsecrateBranch(abilityTree, (Consecrate) red));
         branch.add(new LightInfusionBranch(abilityTree, (LightInfusion) purple));
     }
 }

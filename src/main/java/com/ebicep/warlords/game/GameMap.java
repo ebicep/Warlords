@@ -953,7 +953,7 @@ public enum GameMap {
         }
 
     },
-    THE_VALE(
+    /*THE_VALE(
             "The Vale",
             30,
             1,
@@ -984,7 +984,7 @@ public enum GameMap {
 
             return options;
         }
-    },
+    },*/
     HEAVEN_WILL(
             "Heaven's Will",
             2,
@@ -1022,7 +1022,7 @@ public enum GameMap {
         }
 
     },
-    ENCHANTED(
+    /*ENCHANTED(
             "Enchanted",
             6,
             1,
@@ -1085,7 +1085,7 @@ public enum GameMap {
 
             return options;
         }
-    },
+    },*/
     ILLUSION_RIFT(
             "The Corrupted Rift",
             4,

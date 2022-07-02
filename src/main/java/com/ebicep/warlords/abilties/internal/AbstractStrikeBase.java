@@ -75,6 +75,25 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         return true;
     }
 
+    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget) {
+        for (WarlordsEntity we : PlayerFilter
+                .entitiesAround(initialTarget, 4, 4, 4)
+                .aliveEnemiesOf(giver)
+                .closestFirst(initialTarget)
+                .limit(2)
+        ) {
+            we.addDamageInstance(
+                    giver,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
+        }
+    }
+
     private void randomHitEffect(WarlordsEntity player, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
             ParticleEffect.REDSTONE.display(
