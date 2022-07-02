@@ -58,7 +58,8 @@ public class DeathsDebt extends AbstractTotemBase {
                 "§dDeath’s Debt§7: Take §c" + selfDamagePercent + "% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
-                "§7that you take. If you survive, deal §c15% §7of the" +
+                "§7that you take. If you survive, deal §c15% §7of the\n" +
+                "§7to nearby enemies." +
                 "\n\n" +
                 "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
                 "§7to your totem duration. (cap of §66 §7seconds)";
