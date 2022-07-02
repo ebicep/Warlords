@@ -766,7 +766,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof PrismGuard) {
                     ((PrismGuard) abstractAbility).setDamageReduction(40);
                     ((PrismGuard) abstractAbility).setProjectileDamageReduction(75);
-                    ((PrismGuard) abstractAbility).setBubbleHealing(900);
+                    ((PrismGuard) abstractAbility).setBubbleHealing(((PrismGuard) abstractAbility).getBubbleHealing() + 300);
                 }
             }
     ),
