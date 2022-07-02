@@ -20,7 +20,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Increase duration by 100%",
-                500000
+                50000
         );
     }
 

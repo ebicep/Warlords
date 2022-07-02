@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -132,7 +133,7 @@ public class WaveDefenseOption implements Option {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
-                entry.getKey().getInventory().setItem(6, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Open Upgrade Menu").get());
+                entry.getKey().getInventory().setItem(6, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get());
             }
         }
         waveCounter++;
@@ -147,8 +148,43 @@ public class WaveDefenseOption implements Option {
                     spawnCount + "§e monsters will spawn in §c" +
                     currentWave.getDelay() / 20 + " §eseconds!"
             );
-            entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, 0.8f);
-            PacketUtils.sendTitle(entry.getKey(), "§e§lWave §c§l" + waveCounter, "", 20, 60, 20);
+
+            float soundPitch = 0.8f;
+            String wavePrefix = "§eWave ";
+            if (waveCounter >= 1) {
+                soundPitch = 0.75f;
+                wavePrefix = "§eWave ";
+            }
+            if (waveCounter >= 2) {
+                soundPitch = 0.7f;
+                wavePrefix = "§6Wave ";
+            }
+            if (waveCounter >= 3) {
+                soundPitch = 0.65f;
+                wavePrefix = "§cWave ";
+            }
+            if (waveCounter >= 4) {
+                soundPitch = 0.5f;
+                wavePrefix = "§8§lWave ";
+            }
+            if (waveCounter >= 5) {
+                soundPitch = 0.4f;
+                wavePrefix = "§4§lWave ";
+            }
+            if (waveCounter >= 6) {
+                soundPitch = 0.3f;
+                wavePrefix = "§0Wave ";
+            }
+            if (waveCounter >= 7) {
+                soundPitch = 0.2f;
+            }
+            if (waveCounter >= 8) {
+                soundPitch = 0.1f;
+                wavePrefix = "§0§k§lWave ";
+            }
+
+            entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
+            PacketUtils.sendTitle(entry.getKey(),wavePrefix + waveCounter, "", 20, 60, 20);
         }
         startSpawnTask();
     }
@@ -205,15 +241,10 @@ public class WaveDefenseOption implements Option {
             public void run() {
                 if (entities.isEmpty() && spawnCount == 0) {
                     newWave();
+                }
 
-                    if (waveCounter % 10 == 0) {
-                        PlayerFilter.playingGame(getGame())
-                                .filter(warlordsEntity -> warlordsEntity instanceof WarlordsPlayer)
-                                .forEach(we -> {
-                                    we.playSound(we.getLocation(), Sound.CHEST_OPEN, 500, 0.7f);
-                                    ((WarlordsPlayer) we).getAbilityTree().openAbilityTree();
-                                });
-                    }
+                if (waveCounter == 101) {
+                    game.setNextState(new EndState(game, null));
                 }
             }
         }.runTaskTimer(20, 0);

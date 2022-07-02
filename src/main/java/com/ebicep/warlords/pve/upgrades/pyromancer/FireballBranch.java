@@ -24,7 +24,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "+30 Blocks fall-off distance\n\nDirect hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources\nand burn for 1% of their max health every second.",
-                500000
+                50000
         );
     }
 

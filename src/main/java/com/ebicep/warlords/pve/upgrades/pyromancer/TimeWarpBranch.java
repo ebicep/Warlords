@@ -20,7 +20,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Gain 20% speed while Time Warp is active. Additionally, for\neach block traveled during Time Warp temporarily gain\n1% Crit Chance and 2% Crit Multiplier on all abilities.",
-                500000
+                50000
         );
     }
 

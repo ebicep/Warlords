@@ -20,7 +20,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "+100% Projectile speed\n\nWater Bolt increases the damage dealt\nof all allies it hits by 15% for 10 seconds.",
-                500000
+                50000
         );
     }
 

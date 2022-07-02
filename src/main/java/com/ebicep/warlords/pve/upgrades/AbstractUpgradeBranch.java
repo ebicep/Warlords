@@ -1,12 +1,14 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,7 +59,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 return;
                             }
                         }
-                        if (player.getCurrency() <= upgrade.getCurrencyCost()) {
+                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
                             player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
                             return;
                         }
@@ -75,11 +77,17 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+                        globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                upgrade.getName(),
+                                upgrade.getDescription())
+                        );
                     }
             );
         }
@@ -121,11 +129,17 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+                        globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                upgrade.getName(),
+                                upgrade.getDescription())
+                        );
                     }
             );
         }
@@ -167,11 +181,17 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
+                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+                        globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
                         upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(RecordTimeElapsedOption.getTimeElapsed(player.getGame()), upgrade.getName(), upgrade.getDescription()));
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                upgrade.getName(),
+                                upgrade.getDescription())
+                        );
                     }
             );
         }
@@ -181,7 +201,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 0,
                 new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
                         .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
-                        .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription() + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + masterUpgrade.getCurrencyCost())
+                        .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription()
+                                + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + masterUpgrade.getCurrencyCost())
                         .get(), (m, e) -> {
                     if (player.getCurrency() <= masterUpgrade.getCurrencyCost()) {
                         player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
@@ -190,6 +211,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
                     master();
                     player.subtractCurrency(masterUpgrade.getCurrencyCost());
+                    globalAnnouncement(player.getGame(), masterUpgrade, ability);
                     masterUpgrade.setUnlocked(true);
                     ability.updateDescription((Player) player.getEntity());
                     openUpgradeBranchMenu();
@@ -208,6 +230,12 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                         "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + upgrade.getCurrencyCost())
                 .get();
+    }
+
+    private void globalAnnouncement(Game game, Upgrade upgrade, T ability) {
+        game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
+            p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - " + upgrade.getName() + "§e!");
+        });
     }
 
     public abstract void a1();

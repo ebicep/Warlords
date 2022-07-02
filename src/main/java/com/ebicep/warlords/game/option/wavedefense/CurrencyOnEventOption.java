@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +33,11 @@ public class CurrencyOnEventOption implements Option, Listener {
         if (event.getKiller() != null) {
             event.getKiller().sendMessage(ChatColor.GOLD + "+" + currencyToAdd + " Currency");
             event.getKiller().addCurrency(currencyToAdd);
+        }
+
+        for (WarlordsEntity we : event.getPlayer().getHitBy().keySet()) {
+            we.sendMessage(ChatColor.GOLD + "+" + (currencyToAdd / 2) + " Currency");
+            we.addCurrency(currencyToAdd / 2);
         }
     }
 }

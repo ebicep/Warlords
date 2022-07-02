@@ -24,7 +24,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "+30% Cone Range\n\nAll allies hit by Water Breath gain\n1% max health per second for 5 seconds.",
-                500000
+                50000
         );
     }
 

@@ -20,7 +20,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Reduce the cooldown of Inferno by 1 second\nfor each enemy killed. (0.5s on assists.)",
-                2400
+                50000
         );
     }
 

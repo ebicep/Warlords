@@ -24,7 +24,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Remove energy cost\n\nFlame Burst gains 0.5% Crit Chance and\n1% Crit Multiplier for each block it travels.",
-                500000
+                50000
         );
     }
 
