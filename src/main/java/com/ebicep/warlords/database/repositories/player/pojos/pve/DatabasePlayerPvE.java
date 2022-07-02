@@ -1,11 +1,10 @@
-package com.ebicep.warlords.database.repositories.player.pojos.general;
+package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -15,17 +14,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-public class DatabasePlayerPvEStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
 
-    @Field("highest_wave")
-    private int highestWave;
-    @Field("longest_time_in_combat")
-    private int longestTimeInCombat;
-    @Field("most_damage_in_round")
-    private long mostDamageInRound;
-    @Field("most_damage_in_wave")
-    private long mostDamageInWave;
-    //TODO KILLS ASSISTS DEATH PER MOB
     private DatabaseMagePvE mage = new DatabaseMagePvE();
     private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
     private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
@@ -33,11 +23,24 @@ public class DatabasePlayerPvEStats extends AbstractDatabaseStatInformation impl
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory;
+    @Field("synthetic_alloy")
+    private int amountOfSyntheticAlloy;
+    @Field("legend_fragments")
+    private int amountOfLegendFragments;
+    @Field("fairy_essence")
+    private int amountOfFairyEssence;
 
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, add);
 
+        //UPDATE UNIVERSAL EXPERIENCE
+        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+
+        //UPDATE CLASS, SPEC
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
     }
 
     @Override

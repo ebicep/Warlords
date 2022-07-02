@@ -11,6 +11,12 @@ import java.util.List;
 
 public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
+    @Field("longest_time_in_combat")
+    private int longestTimeInCombat;
+    @Field("most_damage_in_round")
+    private long mostDamageInRound;
+    @Field("most_damage_in_wave")
+    private long mostDamageInWave;
     private int prestige;
     private int level;
     private AbstractWeapon weapon;
@@ -26,6 +32,18 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
             this.weapon = warlordsPlayer.getAbstractWeapon();
             this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
         }
+    }
+
+    public int getLongestTimeInCombat() {
+        return longestTimeInCombat;
+    }
+
+    public long getMostDamageInRound() {
+        return mostDamageInRound;
+    }
+
+    public long getMostDamageInWave() {
+        return mostDamageInWave;
     }
 
     public int getPrestige() {

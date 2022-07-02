@@ -3,19 +3,13 @@ package com.ebicep.warlords.database.repositories.player.pojos.tdm;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayersTDM;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerTDM extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
 
-    @Field("total_time_played")
-    private long totalTimePlayed = 0;
     private DatabaseMageTDM mage = new DatabaseMageTDM();
     private DatabaseWarriorTDM warrior = new DatabaseWarriorTDM();
     private DatabasePaladinTDM paladin = new DatabasePaladinTDM();
@@ -24,12 +18,11 @@ public class DatabasePlayerTDM extends AbstractDatabaseStatInformation implement
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        assert databaseGame instanceof DatabaseGameTDM;
-        assert gamePlayer instanceof DatabaseGamePlayersTDM.DatabaseGamePlayerTDM;
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, add);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
-        this.totalTimePlayed += 900 - ((DatabaseGameTDM) databaseGame).getTimeLeft();
+
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
