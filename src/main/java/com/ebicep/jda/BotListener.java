@@ -5,6 +5,7 @@ import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -232,22 +233,22 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                     DatabaseManager.updatePlayerAsync(databasePlayer);
                                                 }
                                                 // TODO: fix
-                                                /*if (!isExperimental) {
+                                                if (!isExperimental) {
                                                     Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
                                                         party.getRegularGamesMenu().getRegularGamePlayers().add(
-                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Classes.getClass(spec))
+                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Specializations.getSpecFromName(spec))
                                                         );
                                                     });
-                                                }*/
+                                                }
                                             } else {
                                                 // TODO: fix
-                                                /*if (!isExperimental) {
+                                                if (!isExperimental) {
                                                     Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
                                                         party.getRegularGamesMenu().getRegularGamePlayers().add(
-                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Classes.PYROMANCER)
+                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Specializations.PYROMANCER)
                                                         );
                                                     });
-                                                }*/
+                                                }
                                             }
                                             if (!isExperimental) {
                                                 Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
