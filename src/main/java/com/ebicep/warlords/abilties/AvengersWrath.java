@@ -85,8 +85,11 @@ public class AvengersWrath extends AbstractAbility {
                             .aliveEnemiesOf(wp)
                             .closestFirst(event.getPlayer())
                             .excluding(event.getPlayer())
-                            .limit(2)
+                            .limit(maxTargets)
                     ) {
+                        if (pveUpgrade) {
+                            wp.addEnergy(wp, name, 2);
+                        }
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
                         //checking if player is in consecrate
                         if (standingOnConsecrate(wp, wrathTarget)) {

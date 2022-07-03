@@ -16,6 +16,7 @@ public class LightInfusion extends AbstractAbility {
 
     private int duration = 3;
     private int speedBuff = 40;
+    private int energyGiven = 120;
 
     public LightInfusion(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
@@ -24,7 +25,7 @@ public class LightInfusion extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You become infused with light,\n" +
-                "§7restoring §a120 §7energy and\n" +
+                "§7restoring §a" + energyGiven + " §7energy and\n" +
                 "§7increasing your movement speed by\n" +
                 "§e" + speedBuff + "% §7for §6" + duration + " §7seconds";
     }
@@ -39,7 +40,7 @@ public class LightInfusion extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.addEnergy(wp, name, 120);
+        wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
@@ -86,6 +87,10 @@ public class LightInfusion extends AbstractAbility {
         return true;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     public void setDuration(int duration) {
         this.duration = duration;
     }
@@ -96,5 +101,13 @@ public class LightInfusion extends AbstractAbility {
 
     public void setSpeedBuff(int speedBuff) {
         this.speedBuff = speedBuff;
+    }
+
+    public int getEnergyGiven() {
+        return energyGiven;
+    }
+
+    public void setEnergyGiven(int energyGiven) {
+        this.energyGiven = energyGiven;
     }
 }

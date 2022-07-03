@@ -17,7 +17,7 @@ import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
-    private final int markRadius = 15;
+    private int markRadius = 15;
     private int markDuration = 8;
 
     public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
@@ -106,5 +106,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
             }
         }
         return false;
+    }
+
+    public int getMarkRadius() {
+        return markRadius;
+    }
+
+    public void setMarkRadius(int markRadius) {
+        this.markRadius = markRadius;
     }
 }

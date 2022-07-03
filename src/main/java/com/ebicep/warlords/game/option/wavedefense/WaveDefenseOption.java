@@ -151,36 +151,36 @@ public class WaveDefenseOption implements Option {
 
             float soundPitch = 0.8f;
             String wavePrefix = "§eWave ";
-            if (waveCounter >= 1) {
+            if (waveCounter >= 20) {
                 soundPitch = 0.75f;
                 wavePrefix = "§eWave ";
             }
-            if (waveCounter >= 2) {
+            if (waveCounter >= 40) {
                 soundPitch = 0.7f;
                 wavePrefix = "§6Wave ";
             }
-            if (waveCounter >= 3) {
+            if (waveCounter >= 60) {
                 soundPitch = 0.65f;
-                wavePrefix = "§cWave ";
+                wavePrefix = "§7Wave ";
             }
-            if (waveCounter >= 4) {
+            if (waveCounter >= 80) {
                 soundPitch = 0.5f;
                 wavePrefix = "§8§lWave ";
             }
-            if (waveCounter >= 5) {
+            if (waveCounter >= 100) {
                 soundPitch = 0.4f;
-                wavePrefix = "§4§lWave ";
+                wavePrefix = "§d§lWave ";
             }
-            if (waveCounter >= 6) {
+            if (waveCounter >= 150) {
                 soundPitch = 0.3f;
-                wavePrefix = "§0Wave ";
+                wavePrefix = "§5§lWave ";
             }
-            if (waveCounter >= 7) {
+            if (waveCounter >= 200) {
                 soundPitch = 0.2f;
             }
-            if (waveCounter >= 8) {
+            if (waveCounter >= 250) {
                 soundPitch = 0.1f;
-                wavePrefix = "§0§k§lWave ";
+                wavePrefix = "§4W§4§k§la§4§lve ";
             }
 
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
@@ -243,7 +243,7 @@ public class WaveDefenseOption implements Option {
                     newWave();
                 }
 
-                if (waveCounter == 101) {
+                if (waveCounter == 251) {
                     game.setNextState(new EndState(game, null));
                 }
             }

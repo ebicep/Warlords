@@ -1,17 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.avenger;
 
-import com.ebicep.warlords.abilties.LightInfusion;
+import com.ebicep.warlords.abilties.AvengersWrath;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
+public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
 
-    public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
+    public AvengersWrathBranch(AbilityTree abilityTree, AvengersWrath ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Speed - Tier I", "+10% Speed", 5000));
-        treeA.add(new Upgrade("Speed - Tier II", "+20% Speed", 10000));
-        treeA.add(new Upgrade("Speed - Tier III", "+30% Speed", 20000));
+        treeA.add(new Upgrade("Energy - Tier I", "+10 Energy per second", 5000));
+        treeA.add(new Upgrade("Energy - Tier II", "+20 Energy per second", 10000));
+        treeA.add(new Upgrade("Energy - Tier III", "+30 Energy per second", 20000));
 
         treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
@@ -19,24 +19,24 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+50% Energy given\n+100% Duration\n\nReduce all knockback by 20% while Light Infusion is active.",
-                500000
+                "-20% Cooldown reduction\n\nAvenger's Strike now hits 2 additional enemies and\ngain 2 energy per Avenger's Strike succesfully landed\non an enemy.",
+                50000
         );
     }
 
     @Override
     public void a1() {
-        ability.setSpeedBuff(50);
+        ability.setEnergyPerSecond(30);
     }
 
     @Override
     public void a2() {
-        ability.setSpeedBuff(60);
+        ability.setEnergyPerSecond(40);
     }
 
     @Override
     public void a3() {
-        ability.setSpeedBuff(70);
+        ability.setEnergyPerSecond(50);
     }
 
     @Override
@@ -73,7 +73,8 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
     @Override
     public void master() {
-        ability.setEnergyGiven((int) (ability.getEnergyGiven() * 1.5f));
-        ability.setDuration(ability.getDuration() * 2);
+        ability.setCooldown(cooldown * 0.4f);
+        ability.setMaxTargets(ability.getMaxTargets() + 2);
+        ability.setPveUpgrade(true);
     }
 }

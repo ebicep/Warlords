@@ -738,12 +738,9 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Energy
-
                         if (wp.getEnergy() < wp.getMaxEnergy()) {
-
                             // Standard energy value per second.
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
-
                             // Checks whether the player has Avenger's Wrath active.
                             for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(AvengersWrath.class)
@@ -751,7 +748,6 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 energyGainPerTick += 1;
                             }
-
                             // Checks whether the player has Inspiring Presence active.
                             for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(InspiringPresence.class)
@@ -759,7 +755,6 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 energyGainPerTick += .5;
                             }
-
                             // Checks whether the player has been marked by an Avenger.
                             for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(HolyRadianceAvenger.class)
@@ -767,7 +762,6 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 energyGainPerTick -= .4;
                             }
-
                             // Checks whether the player has been marked by a Crusader.
                             for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(HolyRadianceCrusader.class)
@@ -775,7 +769,6 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 energyGainPerTick += .3;
                             }
-
                             // Checks whether the player has Acupressure active.
                             for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(VitalityLiquor.class)
@@ -783,12 +776,10 @@ public class Warlords extends JavaPlugin {
                             ) {
                                 energyGainPerTick += .75;
                             }
-
                             // Checks whether the player has the Energy Powerup active.
                             if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
                                 energyGainPerTick *= 1.4;
                             }
-
                             // Setting energy gain to the value after all ability instance multipliers have been applied.
                             float newEnergy = wp.getEnergy() + energyGainPerTick;
                             if (newEnergy > wp.getMaxEnergy()) {
