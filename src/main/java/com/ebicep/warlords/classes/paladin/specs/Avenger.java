@@ -32,7 +32,7 @@ public class Avenger extends AbstractPaladin {
         branch.add(new AvengerStrikeBranch(abilityTree, (AvengersStrike) weapon));
         branch.add(new ConsecrateBranch(abilityTree, (Consecrate) red));
         branch.add(new LightInfusionBranch(abilityTree, (LightInfusion) purple));
-        branch.add(new HolyRadianceBranch(abilityTree, (HolyRadianceAvenger) blue));
+        branch.add(new HolyRadianceBranchAvenger(abilityTree, (HolyRadianceAvenger) blue));
         branch.add(new AvengersWrathBranch(abilityTree, (AvengersWrath) orange));
     }
 }

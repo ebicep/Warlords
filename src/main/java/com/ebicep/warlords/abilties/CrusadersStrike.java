@@ -13,10 +13,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CrusadersStrike extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
     protected int energyGivenToPlayers = 0;
 
-    private final int energyGiven = 24;
-    private final int energyRadius = 10;
+    private int energyGiven = 24;
+    private int energyRadius = 10;
+    private int energyMaxAllies = 2;
 
     public CrusadersStrike() {
         super("Crusader's Strike", 326, 441, 0, 90, 25, 175);
@@ -26,7 +28,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and\n" +
-                "§7restoring §e" + energyGiven + " §7energy to two nearby\n" +
+                "§7restoring §e" + energyGiven + " §7energy to " + energyMaxAllies + " nearby\n" +
                 "§7allies within §e" + energyRadius + " §7blocks." +
                 "\n\n" +
                 "§7MARKED allies get priority in restoring energy and\n" +
@@ -74,7 +76,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
                         .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation()))
                 )
-                .limit(2)
+                .limit(energyMaxAllies)
         ) {
             if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
                 energyTarget.getSpeed().addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
@@ -82,5 +84,37 @@ public class CrusadersStrike extends AbstractStrikeBase {
 
             energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven);
         }
+    }
+
+    public int getEnergyGiven() {
+        return energyGiven;
+    }
+
+    public void setEnergyGiven(int energyGiven) {
+        this.energyGiven = energyGiven;
+    }
+
+    public int getEnergyRadius() {
+        return energyRadius;
+    }
+
+    public void setEnergyRadius(int energyRadius) {
+        this.energyRadius = energyRadius;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getEnergyMaxAllies() {
+        return energyMaxAllies;
+    }
+
+    public void setEnergyMaxAllies(int energyMaxAllies) {
+        this.energyMaxAllies = energyMaxAllies;
     }
 }

@@ -7,6 +7,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.avenger.ConsecrateBranch;
 import com.ebicep.warlords.pve.upgrades.avenger.LightInfusionBranch;
+import com.ebicep.warlords.pve.upgrades.crusader.CrusadersStrikeBranch;
+import com.ebicep.warlords.pve.upgrades.crusader.HolyRadianceBranchCrusader;
+import com.ebicep.warlords.pve.upgrades.crusader.InspiringPresenceBranch;
 
 import java.util.List;
 
@@ -30,7 +33,10 @@ public class Crusader extends AbstractPaladin {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new CrusadersStrikeBranch(abilityTree, (CrusadersStrike) weapon));
         branch.add(new ConsecrateBranch(abilityTree, (Consecrate) red));
         branch.add(new LightInfusionBranch(abilityTree, (LightInfusion) purple));
+        branch.add(new HolyRadianceBranchCrusader(abilityTree, (HolyRadianceCrusader) blue));
+        branch.add(new InspiringPresenceBranch(abilityTree, (InspiringPresence) orange));
     }
 }

@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.avenger;
+package com.ebicep.warlords.pve.upgrades.crusader;
 
-import com.ebicep.warlords.abilties.HolyRadianceAvenger;
+import com.ebicep.warlords.abilties.HolyRadianceCrusader;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class HolyRadianceBranch extends AbstractUpgradeBranch<HolyRadianceAvenger> {
+public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadianceCrusader> {
 
-    public HolyRadianceBranch(AbilityTree abilityTree, HolyRadianceAvenger ability) {
+    public HolyRadianceBranchCrusader(AbilityTree abilityTree, HolyRadianceCrusader ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
         treeA.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
@@ -19,8 +19,8 @@ public class HolyRadianceBranch extends AbstractUpgradeBranch<HolyRadianceAvenge
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n\nIncrease Avenger's Mark cast range by 4 blocks and energy drain by 100%",
-                500000
+                "Remove energy cost\n\nIncrease Crusader's Mark's duration by 4 seconds and energy regeneration by 100%",
+                50000
         );
     }
 
@@ -80,6 +80,7 @@ public class HolyRadianceBranch extends AbstractUpgradeBranch<HolyRadianceAvenge
     @Override
     public void master() {
         ability.setEnergyCost(0);
-        ability.setMarkRadius(20);
+        ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 2);
+        ability.setMarkDuration(12);
     }
 }

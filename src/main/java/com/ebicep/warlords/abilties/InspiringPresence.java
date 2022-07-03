@@ -17,9 +17,11 @@ import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int playersHit = 0;
 
     private int duration = 12;
+    private int energyPerSecond = 10;
     private final int speedBuff = 30;
     private final int radius = 10;
     private List<WarlordsEntity> playersEffected = new ArrayList<>();
@@ -32,7 +34,7 @@ public class InspiringPresence extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Your presence on the battlefield\n" +
                 "§7inspires your allies, increasing\n" +
-                "§7their energy regeneration by §e10\n" +
+                "§7their energy regeneration by §e" + energyPerSecond + "\n" +
                 "§7per second and their movement\n" +
                 "§7by §e" + speedBuff + "% §7for §6" + duration + " §7seconds." +
                 "\n\n" +
@@ -76,13 +78,19 @@ public class InspiringPresence extends AbstractAbility {
                 }
         );
 
+        if (pveUpgrade) {
+            resetCooldowns(wp);
+        }
+
         for (WarlordsEntity presenceTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             playersHit++;
             tempPresence.getPlayersEffected().add(presenceTarget);
-
+            if (pveUpgrade) {
+                resetCooldowns(presenceTarget);
+            }
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                     ChatColor.GRAY + " Your Inspiring Presence inspired " +
                     ChatColor.YELLOW + presenceTarget.getName() +
@@ -107,15 +115,45 @@ public class InspiringPresence extends AbstractAbility {
         return true;
     }
 
-    public float getDuration() {
+    private void resetCooldowns(WarlordsEntity we) {
+        we.getSpec().getRed().setCurrentCooldown(0);
+        we.getSpec().getPurple().setCurrentCooldown(0);
+        we.getSpec().getBlue().setCurrentCooldown(0);
+        if (!we.getSpec().getOrange().getName().equals("Inspiring Presence")) {
+            we.getSpec().getOrange().setCurrentCooldown(0);
+        }
+
+        we.updateRedItem();
+        we.updatePurpleItem();
+        we.updateBlueItem();
+        we.updateOrangeItem();
+    }
+
+    public int getDuration() {
         return duration;
     }
 
-    public void decrementDuration() {
-        this.duration -= .05;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public List<WarlordsEntity> getPlayersEffected() {
         return playersEffected;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

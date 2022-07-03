@@ -21,6 +21,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
     private final int markRadius = 15;
     private int markDuration = 8;
+    private int energyPerSecond = 6;
 
     public HolyRadianceCrusader(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
@@ -34,7 +35,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
-                "§7their EPS by §e6 §7and speed by §e25%\n" +
+                "§7their EPS by §e" + energyPerSecond + " §7and speed by §e25%\n" +
                 "§7§7for the duration. Mark has an optimal\n" +
                 "§7range of §e" + markRadius + " §7blocks.";
 
@@ -125,5 +126,13 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
     public void setMarkDuration(int markDuration) {
         this.markDuration = markDuration;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
     }
 }
