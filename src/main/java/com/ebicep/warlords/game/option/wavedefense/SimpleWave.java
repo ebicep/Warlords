@@ -32,6 +32,18 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.PRISMARINE_SHARD)
             )
     );
+    public static final Function<Location, PartialMonster> ELITE_ZOMBIE = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            "Elite Zombie",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.DEAD_BUSH),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_CRYSTALS)
+            )
+    );
     public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
             "Skeleton",
@@ -50,10 +62,10 @@ public class SimpleWave implements Wave {
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
+                    new ItemStack(Material.GOLD_CHESTPLATE),
+                    new ItemStack(Material.GOLD_CHESTPLATE),
+                    new ItemStack(Material.GOLD_CHESTPLATE),
+                    new ItemStack(Material.COOKIE)
             )
     );
     public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(

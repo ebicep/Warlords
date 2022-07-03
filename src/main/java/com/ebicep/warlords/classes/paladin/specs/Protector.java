@@ -7,6 +7,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.avenger.ConsecrateBranch;
 import com.ebicep.warlords.pve.upgrades.avenger.LightInfusionBranch;
+import com.ebicep.warlords.pve.upgrades.protector.HammerOfLightBranch;
+import com.ebicep.warlords.pve.upgrades.protector.HolyRadianceBranchProtector;
+import com.ebicep.warlords.pve.upgrades.protector.ProtectorStrikeBranch;
 
 import java.util.List;
 
@@ -30,7 +33,10 @@ public class Protector extends AbstractPaladin {
     public void setUpgradeBranches(WarlordsPlayer wp) {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new ProtectorStrikeBranch(abilityTree, (ProtectorsStrike) weapon));
         branch.add(new ConsecrateBranch(abilityTree, (Consecrate) red));
         branch.add(new LightInfusionBranch(abilityTree, (LightInfusion) purple));
+        branch.add(new HolyRadianceBranchProtector(abilityTree, (HolyRadianceProtector) blue));
+        branch.add(new HammerOfLightBranch(abilityTree, (HammerOfLight) orange));
     }
 }

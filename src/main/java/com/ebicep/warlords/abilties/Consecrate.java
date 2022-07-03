@@ -80,7 +80,7 @@ public class Consecrate extends AbstractAbility {
 
         wp.getCooldownManager().addRegularCooldown(
                 name,
-                "CONS",
+                null,
                 Consecrate.class,
                 new Consecrate(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location),
                 wp,

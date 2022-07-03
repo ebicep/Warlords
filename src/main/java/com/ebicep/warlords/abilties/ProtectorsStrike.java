@@ -20,10 +20,11 @@ import java.util.List;
 import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
-
+    private boolean pveUpgrade = false;
     // Percentage
     private int minConvert = 75;
     private int maxConvert = 100;
+    private int maxAllies = 2;
 
     public ProtectorsStrike() {
         super("Protector's Strike", 261, 352, 0, 90, 20, 175);
@@ -32,7 +33,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c261 §7- §c352 §7damage\n" +
+                "§7causing §c" + minDamageHeal + " §7- " + maxDamageHeal + " §7damage\n" +
                 "§7and healing two nearby allies for\n" +
                 "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
                 "§7heals yourself by §a50-75% §7of the\n" +
@@ -50,6 +51,9 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        if (pveUpgrade) {
+            tripleHit(wp, nearPlayer);
+        }
         wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<ProtectorsStrike>(
                 "Protectors Strike",
                 "",
@@ -93,7 +97,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             .aliveTeammatesOfExcludingSelf(wp)
                             .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
                                     .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                            .limit(2)
+                            .limit(maxAllies)
                     ) {
                         if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
                             ally.addHealingInstance(
@@ -137,5 +141,21 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     public void setMaxConvert(int selfConvertPercent) {
         this.maxConvert = selfConvertPercent;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getMaxAllies() {
+        return maxAllies;
+    }
+
+    public void setMaxAllies(int maxAllies) {
+        this.maxAllies = maxAllies;
     }
 }

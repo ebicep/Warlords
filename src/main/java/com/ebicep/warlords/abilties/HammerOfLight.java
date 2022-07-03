@@ -30,11 +30,14 @@ import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
     private static final int radius = 6;
-    private final int duration = 10;
+    private int duration = 10;
     protected int playersHealed = 0;
     protected int playersDamaged = 0;
     private boolean isCrownOfLight = false;
     private Location location;
+
+    private float minDamage = 178;
+    private float maxDamage = 244;
 
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
@@ -48,7 +51,7 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c178 §7- §c244 §7damage\n" +
+                "§7the ground, dealing §c" + format(minDamage) + " §7- §c" + format(maxDamage) + "§7damage\n" +
                 "§7damage every second to nearby enemies and\n" +
                 "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
                 "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
@@ -296,5 +299,29 @@ public class HammerOfLight extends AbstractAbility {
 
     public Location getLocation() {
         return location;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public float getMinDamage() {
+        return minDamage;
+    }
+
+    public void setMinDamage(float minDamage) {
+        this.minDamage = minDamage;
+    }
+
+    public float getMaxDamage() {
+        return maxDamage;
+    }
+
+    public void setMaxDamage(float maxDamage) {
+        this.maxDamage = maxDamage;
     }
 }

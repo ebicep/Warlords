@@ -124,6 +124,7 @@ public class HealingRain extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .limit(5)
                             ) {
+                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
                                 strikeInRain(wp, enemyInRain);
                             }
                         }
@@ -154,8 +155,8 @@ public class HealingRain extends AbstractAbility {
                 .aliveEnemiesOf(giver)
         ) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
-            Utils.playGlobalSound(strikeTarget.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
-            strikeTarget.addDamageInstance(giver, name, 288, 406, critChance, critMultiplier, false);
+            float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
+            strikeTarget.addDamageInstance(giver, name, healthDamage, healthDamage, critChance, critMultiplier, false);
         }
 
     }

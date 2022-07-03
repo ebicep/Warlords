@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.avenger;
+package com.ebicep.warlords.pve.upgrades.protector;
 
-import com.ebicep.warlords.abilties.AvengersStrike;
+import com.ebicep.warlords.abilties.ProtectorsStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
+public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrike> {
 
-    public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
+    public ProtectorStrikeBranch(AbilityTree abilityTree, ProtectorsStrike ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
         treeA.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
@@ -17,13 +17,13 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
         treeB.add(new Upgrade("Energy - Tier III", "-15 Energy cost", 20000));
 
-        treeC.add(new Upgrade("Drain - Tier I", "+5 Energy drain", 5000));
-        treeC.add(new Upgrade("Drain - Tier II", "+10 Energy drain", 10000));
-        treeC.add(new Upgrade("Drain - Tier III", "+20 Energy drain", 20000));
+        treeC.add(new Upgrade("Healing - Tier I", "+20% Healing conversion", 5000));
+        treeC.add(new Upgrade("Healing - Tier II", "+40% Healing conversion", 10000));
+        treeC.add(new Upgrade("Healing - Tier III", "+80% Healing conversion", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Avenger's Strike hits 2 additional targets.",
+                "Protector's Strike hits 2 additional targets and\n heals 2 additional allies. Protector's Strike deals\n20% of it's damage as true damage.",
                 50000
         );
     }
@@ -66,21 +66,25 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     @Override
     public void c1() {
-        ability.setEnergySteal(15);
+        ability.setMinConvert(120);
+        ability.setMaxConvert(95);
     }
 
     @Override
     public void c2() {
-        ability.setEnergySteal(20);
+        ability.setMinConvert(140);
+        ability.setMaxConvert(115);
     }
 
     @Override
     public void c3() {
-        ability.setEnergySteal(30);
+        ability.setMinConvert(180);
+        ability.setMaxConvert(155);
     }
 
     @Override
     public void master() {
+        ability.setMaxAllies(ability.getMaxAllies() + 2);
         ability.setPveUpgrade(true);
     }
 }

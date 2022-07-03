@@ -14,7 +14,10 @@ import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
 
-    int attacksDone = 0;
+    private int attacksDone = 0;
+    private int speedOnCrit = 25;
+    private int speedOnCritDuration = 2;
+    private int strikeCritInterval = 4;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -25,7 +28,7 @@ public class JudgementStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Every fourth attack is a §cguaranteed §7critical strike.\n" +
                 "§7Critical strikes temporarily increase your movement\n" +
-                "§7speed by §e25% §7for §e2 §7seconds.";
+                "§7speed by §e" + speedOnCrit + "% §7for §e" + speedOnCritDuration + " §7seconds.";
     }
 
     @Override
@@ -41,7 +44,7 @@ public class JudgementStrike extends AbstractStrikeBase {
 
         attacksDone++;
         int critChance = this.critChance;
-        if (attacksDone == 4) {
+        if (attacksDone == strikeCritInterval) {
             attacksDone = 0;
             critChance = 100;
         }
@@ -59,10 +62,34 @@ public class JudgementStrike extends AbstractStrikeBase {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().equals("Judgement Strike") && isCrit) {
-                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", 25, 2 * 20, "BASE");
+                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
             }
         });
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+    }
+
+    public int getSpeedOnCrit() {
+        return speedOnCrit;
+    }
+
+    public void setSpeedOnCrit(int speedOnCrit) {
+        this.speedOnCrit = speedOnCrit;
+    }
+
+    public int getStrikeCritInterval() {
+        return strikeCritInterval;
+    }
+
+    public void setStrikeCritInterval(int strikeCritInterval) {
+        this.strikeCritInterval = strikeCritInterval;
+    }
+
+    public int getSpeedOnCritDuration() {
+        return speedOnCritDuration;
+    }
+
+    public void setSpeedOnCritDuration(int speedOnCritDuration) {
+        this.speedOnCritDuration = speedOnCritDuration;
     }
 }

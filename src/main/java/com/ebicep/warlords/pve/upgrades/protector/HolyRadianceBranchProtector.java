@@ -1,17 +1,17 @@
-package com.ebicep.warlords.pve.upgrades.avenger;
+package com.ebicep.warlords.pve.upgrades.protector;
 
-import com.ebicep.warlords.abilties.LightInfusion;
+import com.ebicep.warlords.abilties.HolyRadianceProtector;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
+public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadianceProtector> {
 
-    public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
+    public HolyRadianceBranchProtector(AbilityTree abilityTree, HolyRadianceProtector ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Speed - Tier I", "+10% Speed", 5000));
-        treeA.add(new Upgrade("Speed - Tier II", "+20% Speed", 10000));
-        treeA.add(new Upgrade("Speed - Tier III", "+30% Speed", 20000));
+        treeA.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
+        treeA.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
+        treeA.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
 
         treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
@@ -19,24 +19,30 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+50% Energy given\n+100% Duration\n\nReduce all knockback by 20% while Light Infusion is active.",
+                "Remove energy cost\n\nAll players healed by Holy Radiance\nwill be marked by Protector's Mark",
                 50000
         );
     }
 
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
+
     @Override
     public void a1() {
-        ability.setSpeedBuff(50);
+        ability.setMinDamageHeal(minDamage * 1.1f);
+        ability.setMaxDamageHeal(maxDamage * 1.1f);
     }
 
     @Override
     public void a2() {
-        ability.setSpeedBuff(60);
+        ability.setMinDamageHeal(minDamage * 1.2f);
+        ability.setMaxDamageHeal(maxDamage * 1.2f);
     }
 
     @Override
     public void a3() {
-        ability.setSpeedBuff(70);
+        ability.setMinDamageHeal(minDamage * 1.4f);
+        ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
     @Override
@@ -73,7 +79,7 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
     @Override
     public void master() {
-        ability.setEnergyGiven((int) (ability.getEnergyGiven() * 1.5f));
-        ability.setDuration(ability.getDuration() * 2);
+        ability.setEnergyCost(0);
+        ability.setPveUpgrade(true);
     }
 }

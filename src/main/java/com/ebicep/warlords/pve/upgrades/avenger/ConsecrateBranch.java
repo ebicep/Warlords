@@ -24,7 +24,7 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Remove energy cost\n\nIncrease the damage dealt by Avenger's\nStrike by 20% when within the Consecrate.",
-                500000
+                50000
         );
     }
 

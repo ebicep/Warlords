@@ -1166,11 +1166,21 @@ public enum GameMap {
                             .add(0.4, SimpleWave.ZOMBIE)
                             .add(0.1, SimpleWave.SKELETON)
                             .add(0.6, SimpleWave.MAGMA_CUBE)
-                            .add(0.3, SimpleWave.PIGZOMBIE)
+                            .add(0.1, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .add(40, new SimpleWave(1, 20 * SECOND, null)
+                            .add(0.9, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.1, SimpleWave.ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .add(41, new SimpleWave(1, 10 * SECOND, null)
+                            .add(0.9, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.1, SimpleWave.ZOMBIE)
                             .add(0.3, SimpleWave.SLIME)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
-                        int health = (int) Math.pow(2000, waveCounter / 480.0 + 1);
+                        int health = (int) Math.pow(2000, waveCounter / 400.0 + 1);
                         entity.setMaxHealth(health);
                         entity.setHealth(health);
                         return entity;
@@ -1178,7 +1188,7 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 120.0 / (waveCounter / 120.0 + 1.0) * 100));
+                            return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
                         }
                         
                     })

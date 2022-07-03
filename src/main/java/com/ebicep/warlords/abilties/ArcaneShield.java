@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,7 +11,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -64,7 +64,7 @@ public class ArcaneShield extends AbstractAbility {
         if (pveUpgrade) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<ArcaneShield>(
                     name,
-                    "ARCA RES",
+                    null,
                     ArcaneShield.class,
                     tempArcaneShield,
                      wp,
@@ -78,7 +78,6 @@ public class ArcaneShield extends AbstractAbility {
                     return currentDamageValue * getPveDamageReduction();
                 }
             });
-            Bukkit.broadcastMessage("damage res: " + getPveDamageReduction());
         }
 
         wp.getCooldownManager().addRegularCooldown(
@@ -109,6 +108,13 @@ public class ArcaneShield extends AbstractAbility {
         ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
 
         return true;
+    }
+
+    public void updateShieldHealth(AbstractPlayerClass apc) {
+        if (apc != null) {
+            ArcaneShield arcaneShield = (this);
+            arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
+        }
     }
 
     public void addTimesBroken() {

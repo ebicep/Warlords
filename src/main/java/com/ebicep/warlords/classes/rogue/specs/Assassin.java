@@ -2,6 +2,12 @@ package com.ebicep.warlords.classes.rogue.specs;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.rogue.AbstractRogue;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.assassin.JudgementStrikeBranch;
+
+import java.util.List;
 
 public class Assassin extends AbstractRogue {
 
@@ -17,5 +23,12 @@ public class Assassin extends AbstractRogue {
                 new SoulSwitch(),
                 new OrderOfEviscerate()
         );
+    }
+
+    @Override
+    public void setUpgradeBranches(WarlordsPlayer wp) {
+        AbilityTree abilityTree = wp.getAbilityTree();
+        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        branch.add(new JudgementStrikeBranch(abilityTree, (JudgementStrike) weapon));
     }
 }

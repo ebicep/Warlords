@@ -11,7 +11,7 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
         super(abilityTree, ability);
         treeA.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
         treeA.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
-        treeA.add(new Upgrade("Healing - Tier III", "+30% Healing", 20000));
+        treeA.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
 
         treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
