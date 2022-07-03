@@ -3,23 +3,13 @@ package com.ebicep.warlords.database.repositories.player.pojos.interception;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayersInterception;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerInterception extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
+public class DatabasePlayerInterception extends InterceptionDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
 
-    @Field("points_captured")
-    private int pointsCaptured;
-    @Field("points_defended")
-    private int pointsDefended;
-    @Field("total_time_played")
-    private long totalTimePlayed = 0;
     private DatabaseMageInterception mage = new DatabaseMageInterception();
     private DatabaseWarriorInterception warrior = new DatabaseWarriorInterception();
     private DatabasePaladinInterception paladin = new DatabasePaladinInterception();
@@ -28,15 +18,11 @@ public class DatabasePlayerInterception extends AbstractDatabaseStatInformation 
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        assert databaseGame instanceof DatabaseGameInterception;
-        assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, add);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
 
-        this.pointsCaptured += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured();
-        this.pointsDefended += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsDefended();
-        this.totalTimePlayed += 900 - ((DatabaseGameInterception) databaseGame).getTimeLeft();
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);

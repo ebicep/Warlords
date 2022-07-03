@@ -20,12 +20,9 @@ public class DatabaseGamePvE extends DatabaseGameBase {
 
     private DifficultyIndex difficulty;
     private int wavesCleared;
-
     private int timeElapsed;
     private int totalMobsKilled;
-
     private List<DatabaseGamePlayerPvE> players;
-
 
     public DatabaseGamePvE() {
 
@@ -64,5 +61,25 @@ public class DatabaseGamePvE extends DatabaseGameBase {
     @Override
     public String getGameLabel() {
         return null;
+    }
+
+    public DifficultyIndex getDifficulty() {
+        return difficulty;
+    }
+
+    public int getWavesCleared() {
+        return wavesCleared;
+    }
+
+    public int getTimeElapsed() {
+        return timeElapsed;
+    }
+
+    public int getTotalMobsKilled() {
+        return totalMobsKilled;
+    }
+
+    public List<DatabaseGamePlayerPvE> getPlayers() {
+        return players;
     }
 }

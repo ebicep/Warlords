@@ -47,7 +47,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     2,
                     4 - i,
                     branchItem(upgrade),
-                    (n, e) -> {
+                    (m, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
@@ -99,7 +99,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     4,
                     4 - i,
                     branchItem(upgrade),
-                    (n, e) -> {
+                    (m, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
@@ -151,7 +151,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     6,
                     4 - i,
                     branchItem(upgrade),
-                    (n, e) -> {
+                    (m, e) -> {
                         updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");

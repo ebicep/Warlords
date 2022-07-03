@@ -34,7 +34,7 @@ public class AbilityTree {
                     new ItemBuilder(upgradeBranch.getItemStack())
                             .name(ChatColor.GOLD + upgradeBranch.getItemName())
                             .get(),
-                    (n, e) -> upgradeBranch.openUpgradeBranchMenu()
+                    (m, e) -> upgradeBranch.openUpgradeBranchMenu()
             );
         }
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -59,11 +59,11 @@ public class AbilityTree {
 
     public static class UpgradeLog {
         @Field("time_elapsed")
-        private final int gameTimeLeft;
+        private int gameTimeLeft;
         @Field("name")
-        private final String upgradeName;
+        private String upgradeName;
         @Field("description")
-        private final String upgradeDescription;
+        private String upgradeDescription;
 
         public UpgradeLog(int gameTimeLeft, String upgradeName, String upgradeDescription) {
             this.gameTimeLeft = gameTimeLeft;

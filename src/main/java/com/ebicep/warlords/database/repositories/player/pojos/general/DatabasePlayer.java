@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -56,7 +57,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private DatabasePlayerPubStats pubStats = new DatabasePlayerPubStats();
 
     @Field("pve_stats")
-    private DatabasePlayerPvEStats pveStats = new DatabasePlayerPvEStats();
+    private DatabasePlayerPvE pveStats = new DatabasePlayerPvE();
 
     @Field("tournament_stats")
     private TournamentStats tournamentStats = new TournamentStats();
@@ -306,11 +307,11 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         this.pubStats = pubStats;
     }
 
-    public DatabasePlayerPvEStats getPveStats() {
+    public DatabasePlayerPvE getPveStats() {
         return pveStats;
     }
 
-    public void setPveStats(DatabasePlayerPvEStats pveStats) {
+    public void setPveStats(DatabasePlayerPvE pveStats) {
         this.pveStats = pveStats;
     }
 

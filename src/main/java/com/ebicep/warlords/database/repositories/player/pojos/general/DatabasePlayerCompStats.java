@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerCompStats extends AbstractDatabaseStatInformation implements DatabasePlayer {
 
-
     private DatabaseMage mage = new DatabaseMage();
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();

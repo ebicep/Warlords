@@ -1,18 +1,23 @@
 package com.ebicep.warlords.player.general;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,6 +26,8 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.*;
+
+import static com.ebicep.warlords.menu.Menu.*;
 
 public class ExperienceManager {
 
@@ -44,22 +51,28 @@ public class ExperienceManager {
     }};
     public static final int LEVEL_TO_PRESTIGE = 100;
     public static final List<Pair<ChatColor, Color>> PRESTIGE_COLORS = Arrays.asList(
-            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY),//0
+            new Pair<>(ChatColor.GRAY, Color.GRAY),//0
             new Pair<>(ChatColor.RED, Color.RED),//1
-            new Pair<>(ChatColor.GOLD, Color.ORANGE),//2
-            new Pair<>(ChatColor.YELLOW, Color.YELLOW),//3
-            new Pair<>(ChatColor.GREEN, Color.GREEN),//4
-            new Pair<>(ChatColor.AQUA, Color.AQUA), //5
-            new Pair<>(ChatColor.BLUE, Color.BLUE), //6
-            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //7
-            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //8
+            new Pair<>(ChatColor.YELLOW, Color.YELLOW),//2
+            new Pair<>(ChatColor.GREEN, Color.GREEN),//3
+            new Pair<>(ChatColor.AQUA, Color.AQUA), //4
+            new Pair<>(ChatColor.BLUE, Color.BLUE), //5
+            new Pair<>(ChatColor.LIGHT_PURPLE, Color.FUCHSIA), //6
+            new Pair<>(ChatColor.BLACK, Color.BLACK), //7
+            new Pair<>(ChatColor.WHITE, Color.WHITE), //8
+            new Pair<>(ChatColor.DARK_GRAY, Color.GRAY), //9
+            new Pair<>(ChatColor.DARK_RED, Color.RED), //10
+            new Pair<>(ChatColor.GOLD, Color.ORANGE), //11
+            new Pair<>(ChatColor.DARK_AQUA, Color.AQUA), //12
+            new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
+            new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //13
     );
 
     static {
         //caching all levels/experience
         Map<Integer, Long> levelExperienceNew = new HashMap<>();
         Map<Long, Integer> experienceLevelNew = new HashMap<>();
-        for (int i = 0; i < 201; i++) {
+        for (int i = 0; i < 501; i++) {
             long exp = (long) calculateExpFromLevel(i);
             levelExperienceNew.put(i, exp);
             experienceLevelNew.put(exp, i);
@@ -69,6 +82,153 @@ public class ExperienceManager {
         EXPERIENCE_TO_LEVEL = Collections.unmodifiableMap(experienceLevelNew);
 
         EXPERIENCE_DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<Classes, Pair<Integer, Integer>>() {{
+        put(Classes.MAGE, new Pair<>(2, 1));
+        put(Classes.WARRIOR, new Pair<>(4, 1));
+        put(Classes.PALADIN, new Pair<>(6, 1));
+        put(Classes.SHAMAN, new Pair<>(3, 3));
+        put(Classes.ROGUE, new Pair<>(5, 3));
+    }};
+
+    public static void openLevelingRewardsMenu(Player player) {
+        Menu menu = new Menu("Rewards Menu", 9 * 6);
+
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+
+        for (Classes value : Classes.values()) {
+            Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
+
+            List<String> specLore = new ArrayList<>();
+            for (Specializations spec : value.subclasses) {
+                int prestige = databasePlayer.getSpec(spec).getPrestige();
+                int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
+                long experience = databasePlayer.getSpec(spec).getExperience();
+
+                specLore.add(ChatColor.GOLD + spec.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige) + "\n" +
+                        getProgressStringWithPrestige(experience, level + 1, prestige) + "\n ");
+            }
+
+            menu.setItem(
+                    menuLocation.getA(),
+                    menuLocation.getB(),
+                    new ItemBuilder(value.item)
+                            .name(ChatColor.GREEN + value.name)
+                            .lore(specLore)
+                            .get(),
+                    (m, e) -> openLevelingRewardsMenuForClass(player, value)
+            );
+        }
+
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openLevelingRewardsMenuForClass(Player player, Classes classes) {
+        Menu menu = new Menu(classes.name, 9 * 4);
+
+        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+
+        List<Specializations> values = classes.subclasses;
+        for (int i = 0; i < values.size(); i++) {
+            Specializations spec = values.get(i);
+            int prestige = databasePlayer.getSpec(spec).getPrestige();
+            int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
+            long experience = databasePlayer.getSpec(spec).getExperience();
+
+            menu.setItem(
+                    9 / 2 - values.size() / 2 + i * 2 - 1,
+                    1,
+                    new ItemBuilder(spec.specType.itemStack)
+                            .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige))
+                            .lore(getProgressStringWithPrestige(experience, level + 1, prestige))
+                            .get(),
+                    (m, e) -> openLevelingRewardsMenuForSpec(player, spec, 1)
+            );
+        }
+
+        menu.setItem(3, 3, MENU_BACK, (m, e) -> openLevelingRewardsMenu(player));
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    private static final int LEVELS_PER_PAGE = 25;
+
+    public static void openLevelingRewardsMenuForSpec(Player player, Specializations spec, int page) {
+        Menu menu = new Menu(spec.name, 9 * 6);
+
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        int prestige = databasePlayer.getSpec(spec).getPrestige();
+        int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
+        long experience = databasePlayer.getSpec(spec).getExperience();
+
+        menu.setItem(
+                4,
+                0,
+                new ItemBuilder(spec.specType.itemStack)
+                        .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige))
+                        .lore(getProgressStringWithPrestige(experience, level + 1, prestige))
+                        .get(),
+                (m, e) -> {
+                }
+        );
+
+        for (int i = 0; i <= LEVELS_PER_PAGE; i++) {
+            int section = i * page;
+            if (section == 0) {
+                continue;
+            }
+            int column = (i - 1) % 9;
+            int row = (i - 1) / 9 + 1;
+
+            if (i >= 19) {
+                column++;
+            }
+
+            int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
+            menu.setItem(
+                    column,
+                    row,
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, menuLevel <= level ? (short) 5 : (short) 15)
+                            .name((menuLevel <= level ? ChatColor.GREEN : ChatColor.RED) + "Level Reward " + menuLevel)
+                            .lore(ChatColor.GRAY + "PLACEHOLDER" + "\n\n" + (menuLevel <= level ? ChatColor.GREEN + "Claimed!" : ""))
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+
+        if (page - 1 > 0) {
+            menu.setItem(
+                    0,
+                    3,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .get(),
+                    (m, e) -> openLevelingRewardsMenuForSpec(player, spec, page - 1)
+            );
+        }
+        if (page + 1 < 5) {
+            menu.setItem(
+                    8,
+                    3,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .get(),
+                    (m, e) -> openLevelingRewardsMenuForSpec(player, spec, page + 1)
+            );
+
+        }
+
+
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openLevelingRewardsMenuForClass(player, Specializations.getClass(spec)));
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
@@ -261,7 +421,17 @@ public class ExperienceManager {
 
     public static String getProgressString(long currentExperience, int nextLevel) {
         String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+        return getProgressString(currentExperience, nextLevel, progress);
+    }
 
+    public static String getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
+        String progress = nextLevel == 100 ?
+                ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1).getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
+                ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+        return getProgressString(currentExperience, nextLevel, progress);
+    }
+
+    private static String getProgressString(long currentExperience, int nextLevel, String progress) {
         long experience = currentExperience - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
         long experienceNeeded = LEVEL_TO_EXPERIENCE.get(nextLevel) - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
         double progressPercentage = (double) experience / experienceNeeded * 100;
@@ -285,6 +455,10 @@ public class ExperienceManager {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         if (databasePlayer == null) return PRESTIGE_COLORS.get(0).getA() + "[-]";
         int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
+        return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel).getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
+    }
+
+    public static String getPrestigeLevelString(int prestigeLevel) {
         return ChatColor.DARK_GRAY + "[" + PRESTIGE_COLORS.get(prestigeLevel).getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
     }
 
@@ -312,92 +486,3 @@ public class ExperienceManager {
         }
     }
 }
-
-//    private int getTotalAverageDHP(String classSpec) {
-//        long totalAverageDHP = 0;
-//        int totalPlayers = 0;
-//        for (Document document1 : playersInformation.find()) {
-//            long averageDHP = getAverageDHP(document1, classSpec);
-//            totalAverageDHP += averageDHP;
-//            if (averageDHP != 0) {
-//                totalPlayers++;
-//            }
-//        }
-//        return (int) (totalAverageDHP / totalPlayers);
-//    }
-//
-//    private int getTotalAverageDHPSelected(String classSpec, String selected) {
-//        long totalAverageDHP = 0;
-//        int totalPlayers = 0;
-//        for (Document document1 : playersInformation.find()) {
-//            long averageDHP = getAverageSelectedDHP(document1, classSpec, selected);
-//            totalAverageDHP += averageDHP;
-//            if (averageDHP != 0) {
-//                totalPlayers++;
-//            }
-//        }
-//        return (int) (totalAverageDHP / totalPlayers);
-//    }
-//
-//    private long getAverageDHP(Document document, String classSpec) {
-//        long dhp = (long) getDocumentInfoWithDotNotation(document, classSpec + ".damage") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".healing") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".absorbed");
-//        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
-//        return plays == 0 ? 0 : dhp / plays;
-//    }
-//
-//    private long getAverageSelectedDHP(Document document, String classSpec, String selected) {
-//        long selectedDHP = (long) getDocumentInfoWithDotNotation(document, classSpec + "." + selected);
-//        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
-//        return plays == 0 ? 0 : selectedDHP / plays;
-//    }
-//
-//    public static long getCalculatedExp(Document document, String key) {
-//        //500 per win
-//        //250 per loss
-//        //5 per kills/assist
-//        //1 per 500 dhp based on multiplier
-//        //150 per cap
-//        //50 per ret
-//
-//        long exp = 0;
-//
-//        double damageMultiplier;
-//        double healingMultiplier;
-//        double absorbedMultiplier;
-//
-//        Classes classes = Classes.getClass(key.substring(key.indexOf(".") + 1));
-//        if (classes.specType == SpecType.DAMAGE) {
-//            damageMultiplier = .80;
-//            healingMultiplier = .10;
-//            absorbedMultiplier = .10;
-//        } else if (classes.specType == SpecType.HEALER) {
-//            damageMultiplier = .275;
-//            healingMultiplier = .65;
-//            absorbedMultiplier = .75;
-//        } else { //tank
-//            damageMultiplier = .575;
-//            healingMultiplier = .1;
-//            absorbedMultiplier = .325;
-//        }
-//
-//        int wins = (int) getDocumentInfoWithDotNotation(document, key + ".wins");
-//        int losses = (int) getDocumentInfoWithDotNotation(document, key + ".losses");
-//        int kills = (int) getDocumentInfoWithDotNotation(document, key + ".kills");
-//        int assists = (int) getDocumentInfoWithDotNotation(document, key + ".assists");
-//        long damage = (long) getDocumentInfoWithDotNotation(document, key + ".damage");
-//        long healing = (long) getDocumentInfoWithDotNotation(document, key + ".healing");
-//        long absorbed = (long) getDocumentInfoWithDotNotation(document, key + ".absorbed");
-//        int caps = (int) getDocumentInfoWithDotNotation(document, key + ".flags_captured");
-//        int rets = (int) getDocumentInfoWithDotNotation(document, key + ".flags_returned");
-//
-//        double calculatedDHP = damage * damageMultiplier + healing * healingMultiplier + absorbed * absorbedMultiplier;
-//
-//        exp += wins * 500L;
-//        exp += losses * 250L;
-//        exp += (kills + assists) * 5L;
-//        exp += calculatedDHP / 500;
-//        exp += caps * 150L;
-//        exp += rets * 50L;
-//
-//        return exp;
-//    }
