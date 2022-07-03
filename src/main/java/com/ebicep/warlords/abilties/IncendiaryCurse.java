@@ -27,7 +27,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
-    private static final float HITBOX = 5;
+    private float hitbox = 5;
 
     private int blindDurationInTicks = 40;
 
@@ -135,7 +135,7 @@ public class IncendiaryCurse extends AbstractAbility {
                     ParticleEffect.SMOKE_NORMAL.display(0.4f, 0.05f, 0.4f, 0.2f, 100, newLoc, 500);
 
                     for (WarlordsEntity nearEntity : PlayerFilter
-                            .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
+                            .entitiesAround(newLoc, hitbox, hitbox, hitbox)
                             .aliveEnemiesOf(wp)
                     ) {
                         playersHit++;
@@ -168,5 +168,13 @@ public class IncendiaryCurse extends AbstractAbility {
 
     public void setBlindDurationInTicks(int blindDurationInTicks) {
         this.blindDurationInTicks = blindDurationInTicks;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
     }
 }

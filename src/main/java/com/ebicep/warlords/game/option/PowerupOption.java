@@ -48,6 +48,13 @@ public class PowerupOption implements Option {
         this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
     }
 
+    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
+        this.location = Objects.requireNonNull(location, "location");
+        this.type = Objects.requireNonNull(type, "type");
+        this.maxCooldown = maxCooldown;
+        this.cooldown = timeToSpawn * 4;
+    }
+
     public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int duration, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
         this.location = Objects.requireNonNull(location, "location");
         this.type = Objects.requireNonNull(type, "type");
