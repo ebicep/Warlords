@@ -52,6 +52,18 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
+    public static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+        return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
+                uuid,
+                name,
+                Weapons.ABBADON,
+                WarlordsNPC.spawnEntity(clazz, loc, ee),
+                game,
+                team,
+                spec,
+                maxHealth
+        ));
+    }
 
     public static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
@@ -62,6 +74,19 @@ public interface PartialMonster {
                 game,
                 team,
                 Specializations.PYROMANCER
+        ));
+    }
+
+    public static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+        return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
+                uuid,
+                name,
+                Weapons.ABBADON,
+                Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(clazz, loc, ee)),
+                game,
+                team,
+                spec,
+                maxHealth
         ));
     }
 

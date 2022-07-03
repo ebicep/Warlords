@@ -32,6 +32,14 @@ public class WarlordsNPC extends WarlordsEntity {
         setSpawnGrave(false);
     }
 
+    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass, int maxHealth) {
+        super(uuid, name, weapon, entity, game, team, specClass);
+        updateEntity();
+        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
+        setMaxHealth(maxHealth);
+    }
+
     @Override
     public void updateHealth() {
         if (isDead()) {

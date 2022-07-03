@@ -1119,7 +1119,8 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.5, SimpleWave.ZOMBIE)
+                            .add(0.5, SimpleWave.ELITE_ZOMBIE)
                     )
                     .add(5, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
@@ -1180,7 +1181,7 @@ public enum GameMap {
                             .add(0.3, SimpleWave.SLIME)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
-                        int health = (int) Math.pow(2000, waveCounter / 400.0 + 1);
+                        int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / 400.0 + 1);
                         entity.setMaxHealth(health);
                         entity.setHealth(health);
                         return entity;
@@ -1200,7 +1201,7 @@ public enum GameMap {
     },
     ILLUSION_CROSSFIRE(
             "Illusion Crossfire",
-            6,
+            4,
             1,
             60 * SECOND,
             "",
@@ -1209,23 +1210,101 @@ public enum GameMap {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 0, 65.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new AbstractScoreOnEventOption.OnKill(5));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 0, 65.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(126.5, 8, 74.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(96.5, 9, 50.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(90, 5, 75), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(135.5, 5, 50.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(125.5, 9, 60.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(101.5, 9, 67.5), Team.RED));
+
             options.add(new RespawnWaveOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
+
+            options.add(new CurrencyOnEventOption(250));
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(1, 5 * SECOND, null)
+                            .add(0.5, SimpleWave.ZOMBIE)
+                            .add(0.5, SimpleWave.ELITE_ZOMBIE)
+                    )
+                    .add(5, new SimpleWave(1, 5 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.05, SimpleWave.SKELETON)
+                    )
+                    .add(10, new SimpleWave(1, 20 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    )
+                    .add(11, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    )
+                    .add(15, new SimpleWave(1, 10 * SECOND, null)
+                            .add(1, SimpleWave.ZOMBIE)
+                            .add(0.2, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.PIGZOMBIE)
+                    )
+                    .add(20, new SimpleWave(1, 20 * SECOND, null)
+                            .add(0.7, SimpleWave.ZOMBIE)
+                            .add(0.2, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.PIGZOMBIE)
+                            .add(0.05, SimpleWave.SLIME)
+                    )
+                    .add(21, new SimpleWave(1, 10 * SECOND, null)
+                            .add(0.7, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.PIGZOMBIE)
+                            .add(0.05, SimpleWave.SLIME)
+                    )
+                    .add(30, new SimpleWave(1, 20 * SECOND, null)
+                            .add(0.5, SimpleWave.ZOMBIE)
+                            .add(0.2, SimpleWave.SKELETON)
+                            .add(0.3, SimpleWave.MAGMA_CUBE)
+                            .add(0.3, SimpleWave.PIGZOMBIE)
+                            .add(0.05, SimpleWave.SLIME)
+                    )
+                    .add(31, new SimpleWave(1, 10 * SECOND, null)
+                            .add(0.4, SimpleWave.ZOMBIE)
+                            .add(0.1, SimpleWave.SKELETON)
+                            .add(0.6, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .add(40, new SimpleWave(1, 20 * SECOND, null)
+                            .add(0.9, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.1, SimpleWave.ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .add(41, new SimpleWave(1, 10 * SECOND, null)
+                            .add(0.9, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.1, SimpleWave.ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .prependEntityMapper((entity, waveCounter) -> {
+                        int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / 400.0 + 1);
+                        entity.setMaxHealth(health);
+                        entity.setHealth(health);
+                        return entity;
+                    })
+                    .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
+                        @Override
+                        public int getMonsterCount() {
+                            return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                        }
+
+                    })
+            ));
 
             return options;
         }

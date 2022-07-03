@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomCreeper;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomSpider;
 import com.ebicep.customentities.nms.pve.CustomZombie;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,7 +31,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
-            )
+            ),
+            2000,
+            Specializations.AVENGER
     );
     public static final Function<Location, PartialMonster> ELITE_ZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
@@ -42,7 +45,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_CRYSTALS)
-            )
+            ),
+            4000,
+            Specializations.CRUSADER
     );
     public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
@@ -54,7 +59,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.BOW)
-            )
+            ),
+            1000,
+            Specializations.PYROMANCER
     );
     public static final Function<Location, PartialMonster> PIGZOMBIE = loc -> PartialMonster.fromEntity(
             PigZombie.class,
@@ -66,7 +73,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.GOLD_CHESTPLATE),
                     new ItemStack(Material.GOLD_CHESTPLATE),
                     new ItemStack(Material.COOKIE)
-            )
+            ),
+            2500,
+            Specializations.AVENGER
     );
     public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(
             CustomSpider.class,
@@ -78,7 +87,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
-            )
+            ),
+            1500,
+            Specializations.ASSASSIN
     );
     public static final Function<Location, PartialMonster> BLAZE = loc -> PartialMonster.fromEntity(
             Blaze.class,
@@ -114,7 +125,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
-            )
+            ),
+            3000,
+            Specializations.CRYOMANCER
     );
     public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromEntity(
             MagmaCube.class,
@@ -126,7 +139,9 @@ public class SimpleWave implements Wave {
                     new ItemStack(Material.DIAMOND_LEGGINGS),
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
-            )
+            ),
+            3000,
+            Specializations.PYROMANCER
     );
     public static final Function<Location, PartialMonster> GHAST = loc -> PartialMonster.fromEntity(
             Ghast.class,
@@ -182,12 +197,6 @@ public class SimpleWave implements Wave {
     }
 
     public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory) {
-        totalWeight += baseWeight;
-        entries.add(new Pair<>(baseWeight, factory));
-        return this;
-    }
-
-    public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory, int baseHealth) {
         totalWeight += baseWeight;
         entries.add(new Pair<>(baseWeight, factory));
         return this;
