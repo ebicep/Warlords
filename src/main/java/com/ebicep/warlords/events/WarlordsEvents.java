@@ -177,6 +177,8 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                     .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview").get());
 
+            player.getInventory().setItem(2, new ItemBuilder(Warlords.getHead(uuid)).name("§aLevel Rewards").get());
+
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             } else {
@@ -382,6 +384,10 @@ public class WarlordsEvents implements Listener {
                 if (state != null) {
                     state.interactEvent(player, player.getInventory().getHeldItemSlot());
                 } else {
+                    if (itemHeld.getType().equals(Material.SKULL_ITEM) && itemHeld.getItemMeta().getDisplayName().contains("Level Rewards")) {
+                        ExperienceManager.openLevelingRewardsMenu(player);
+                        return;
+                    }
                     switch (itemHeld.getType()) {
                         case NETHER_STAR:
                             openMainMenu(player);
