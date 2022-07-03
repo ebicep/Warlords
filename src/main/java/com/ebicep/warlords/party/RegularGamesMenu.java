@@ -59,10 +59,10 @@ public class RegularGamesMenu {
 
         //two columns of class icons
         for (int i = 0; i < Classes.values().length; i++) {
-            Classes classes = Classes.values()[i];
-            menu.setItem(2, i + 1, new ItemBuilder(classes.item).name(ChatColor.GREEN + classes.name).get(), (m, e) -> {
+            Classes spec = Classes.values()[i];
+            menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
             });
-            menu.setItem(6, i + 1, new ItemBuilder(classes.item).name(ChatColor.GREEN + classes.name).get(), (m, e) -> {
+            menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
             });
         }
 
@@ -93,9 +93,21 @@ public class RegularGamesMenu {
                 editors.add(ChatColor.GRAY + offlinePlayer.getName());
             }
         }
+
+        //showing general list of spec and respective players
+        List<String> playerOnSpecs = new ArrayList<>();
+        for (Specializations value : Specializations.values()) {
+            Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedSpec() == value).findFirst();
+            if (playerOptional.isPresent()) {
+                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName());
+            } else {
+                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA);
+            }
+        }
+
         menu.setItem(
-                2,
-                5,
+                7,
+                3,
                 new ItemBuilder(Material.BOOK_AND_QUILL)
                         .name(ChatColor.GREEN + "Editors")
                         .lore(editors)
@@ -104,7 +116,17 @@ public class RegularGamesMenu {
                 }
         );
         menu.setItem(
-                3,
+                7,
+                4,
+                new ItemBuilder(Material.SIGN)
+                        .name(ChatColor.GREEN + "General Information")
+                        .lore(playerOnSpecs)
+                        .get(),
+                (m, e) -> {
+                }
+        );
+        menu.setItem(
+                7,
                 5,
                 new ItemBuilder(Material.WOOL, 1, (short) 5)
                         .name(ChatColor.GREEN + "Confirm Team")
@@ -133,28 +155,8 @@ public class RegularGamesMenu {
                     });
                 }
         );
-        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(0, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
 
-        //showing general list of spec and respective players
-        List<String> playerOnSpecs = new ArrayList<>();
-        for (Specializations value : Specializations.values()) {
-            Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedSpec() == value).findFirst();
-            if (playerOptional.isPresent()) {
-                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName());
-            } else {
-                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA);
-            }
-        }
-        menu.setItem(
-                5,
-                5,
-                new ItemBuilder(Material.SIGN)
-                        .name(ChatColor.GREEN + "General Information")
-                        .lore(playerOnSpecs)
-                        .get(),
-                (m, e) -> {
-                }
-        );
 
         if (checkPlayers.get(team)) {
             checkPlayers.put(team, false);
@@ -251,7 +253,7 @@ public class RegularGamesMenu {
                             classes == Classes.WARRIOR ? 2 :
                                     classes == Classes.PALADIN ? 3 :
                                             classes == Classes.SHAMAN ? 4 :
-                                                    -1;
+                                                    classes == Classes.ROGUE ? 5 : -1;
                     menu.setItem(
                             x,
                             y,

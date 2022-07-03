@@ -193,9 +193,10 @@ public class WarlordsEvents implements Listener {
                                 .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
-                                        // TODO: Fix team item
-                                        // @see Team.java
-                                        new ItemBuilder(Material.WOOL).name("§aTeam Builder")
+                                                // TODO: Fix team item
+                                                // @see Team.java
+                                        new ItemBuilder(regularGamePlayer.getTeam().item)
+                                                        .name("§aTeam Builder")
                                                 .get()
                                         )
                                 );
