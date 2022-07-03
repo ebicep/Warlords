@@ -2,9 +2,13 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -13,9 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AvengersWrath extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int extraPlayersStruck = 0;
 
     private int duration = 12;
+    private int energyPerSecond = 20;
+    private int maxTargets = 2;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
@@ -25,10 +32,10 @@ public class AvengersWrath extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Burst with incredible holy power,\n" +
                 "§7causing your Avenger's Strikes to\n" +
-                "§7hit up to §e2 §7additional enemies\n" +
+                "§7hit up to §e" + maxTargets + " §7additional enemies\n" +
                 "§7that are within §e5 §7blocks of your\n" +
                 "§7target. Your energy per second is\n" +
-                "§7increased by §e20 §7for the duration\n" +
+                "§7increased by §e" + energyPerSecond + " §7for the duration\n" +
                 "§7of the effect. Lasts §6" + duration + " §7seconds.";
     }
 
@@ -46,7 +53,7 @@ public class AvengersWrath extends AbstractAbility {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         AvengersWrath tempAvengersWrath = new AvengersWrath();
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<AvengersWrath>(
                 name,
                 "WRATH",
                 AvengersWrath.class,
@@ -69,9 +76,54 @@ public class AvengersWrath extends AbstractAbility {
                         );
                     }
                 }
-        );
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().equals("Avenger's Strike")) {
+                    for (WarlordsEntity wrathTarget : PlayerFilter
+                            .entitiesAround(event.getPlayer(), 5, 4, 5)
+                            .aliveEnemiesOf(wp)
+                            .closestFirst(event.getPlayer())
+                            .excluding(event.getPlayer())
+                            .limit(2)
+                    ) {
+                        wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
+                        //checking if player is in consecrate
+                        if (standingOnConsecrate(wp, wrathTarget)) {
+                            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
+                            wrathTarget.addDamageInstance(
+                                    wp,
+                                    event.getAbility(),
+                                    event.getMin(),
+                                    event.getMax(),
+                                    event.getCritChance(),
+                                    event.getCritMultiplier(),
+                                    false
+                            );
+                        } else {
+                            wrathTarget.addDamageInstance(
+                                    wp,
+                                    event.getAbility(),
+                                    event.getMin(),
+                                    event.getMax(),
+                                    event.getCritChance(),
+                                    event.getCritMultiplier(),
+                                    false
+                            );
+                        }
+                        wrathTarget.subtractEnergy(10);
+                    }
+                }
+            }
+        });
 
         return true;
+    }
+
+    private boolean standingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
+        return new CooldownFilter<>(owner, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
+                .anyMatch(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius());
     }
 
     public void addExtraPlayersStruck() {
@@ -84,5 +136,29 @@ public class AvengersWrath extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond / 20;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getMaxTargets() {
+        return maxTargets;
+    }
+
+    public void setMaxTargets(int maxTargets) {
+        this.maxTargets = maxTargets;
     }
 }

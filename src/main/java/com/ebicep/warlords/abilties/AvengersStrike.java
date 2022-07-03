@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -65,43 +64,6 @@ public class AvengersStrike extends AbstractStrikeBase {
 
         if (pveUpgrade) {
             tripleHit(wp, nearPlayer);
-        }
-
-        if (wp.getCooldownManager().hasCooldown(AvengersWrath.class)) {
-            for (WarlordsEntity wrathTarget : PlayerFilter
-                    .entitiesAround(nearPlayer, 5, 4, 5)
-                    .aliveEnemiesOf(wp)
-                    .closestFirst(nearPlayer)
-                    .excluding(nearPlayer)
-                    .limit(2)
-            ) {
-                wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
-                //checking if player is in consecrate
-                if (standingOnConsecrate(wp, wrathTarget)) {
-                    wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-                    wrathTarget.addDamageInstance(
-                            wp,
-                            name,
-                            minDamageHeal * 1.2f,
-                            maxDamageHeal * 1.2f,
-                            critChance,
-                            critMultiplier,
-                            false
-                    );
-                } else {
-                    wrathTarget.addDamageInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            false
-                    );
-                }
-
-                energyStole += wrathTarget.subtractEnergy(energySteal);
-            }
         }
     }
 
