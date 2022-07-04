@@ -19,6 +19,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     private int markRadius = 15;
     private int markDuration = 8;
+    private int energyPerSecond = 8;
 
     public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
@@ -34,7 +35,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
                 "§7optimal range of §e" + markRadius + " §7blocks. Reducing\n" +
                 "§7their energy per second by\n" +
-                "§e8 §7for the duration.";
+                "§e" + energyPerSecond + " §7for the duration.";
     }
 
     @Override
@@ -114,5 +115,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     public void setMarkRadius(int markRadius) {
         this.markRadius = markRadius;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
     }
 }

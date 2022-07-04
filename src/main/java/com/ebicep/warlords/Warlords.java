@@ -742,39 +742,39 @@ public class Warlords extends JavaPlugin {
                             // Standard energy value per second.
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
                             // Checks whether the player has Avenger's Wrath active.
-                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            for (RegularCooldown rc : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(AvengersWrath.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += 1;
+                                energyGainPerTick += ((AvengersWrath) rc.getCooldownObject()).getEnergyPerSecond() / 20f;
                             }
                             // Checks whether the player has Inspiring Presence active.
-                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            for (RegularCooldown rc : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(InspiringPresence.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += .5;
+                                energyGainPerTick += ((InspiringPresence) rc.getCooldownObject()).getEnergyPerSecond() / 20f;
                             }
                             // Checks whether the player has been marked by an Avenger.
-                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            for (RegularCooldown rc : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(HolyRadianceAvenger.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick -= .4;
+                                energyGainPerTick -= ((HolyRadianceAvenger) rc.getCooldownObject()).getEnergyPerSecond() / 20f;
                             }
                             // Checks whether the player has been marked by a Crusader.
-                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            for (RegularCooldown rc : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(HolyRadianceCrusader.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += .3;
+                                energyGainPerTick += ((HolyRadianceCrusader) rc.getCooldownObject()).getEnergyPerSecond() / 20f;
                             }
-                            // Checks whether the player has Acupressure active.
-                            for (RegularCooldown regularCooldown : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
+                            // Checks whether the player has Vitality Liquor active.
+                            for (RegularCooldown rc : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClass(VitalityLiquor.class)
                                     .stream().collect(Collectors.toList())
                             ) {
-                                energyGainPerTick += .75;
+                                energyGainPerTick += ((VitalityLiquor) rc.getCooldownObject()).getEnergyPerSecond() / 20f;
                             }
                             // Checks whether the player has the Energy Powerup active.
                             if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
@@ -804,7 +804,6 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Orbs of Life
-
                         Location playerPosition = wp.getLocation();
                         List<OrbsOfLife.Orb> orbs = new ArrayList<>();
                         PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(p -> {

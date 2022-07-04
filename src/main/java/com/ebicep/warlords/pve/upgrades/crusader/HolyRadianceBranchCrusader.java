@@ -19,7 +19,7 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n\nIncrease Crusader's Mark's duration by 4 seconds and energy regeneration by 100%",
+                "Remove energy cost\n\nIncrease Crusader's Mark's duration by 4 seconds\nand energy regeneration by 100%",
                 50000
         );
     }

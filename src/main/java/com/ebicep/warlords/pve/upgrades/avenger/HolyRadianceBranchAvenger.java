@@ -81,5 +81,6 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
     public void master() {
         ability.setEnergyCost(0);
         ability.setMarkRadius(20);
+        ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 2);
     }
 }

@@ -26,6 +26,7 @@ public class VitalityLiquor extends AbstractAbility {
 
     private final int acuRange = 8;
     private final int duration = 3;
+    private int energyPerSecond = 15;
     private float minWaveHealing = 268;
     private float maxWaveHealing = 324;
 
@@ -44,7 +45,7 @@ public class VitalityLiquor extends AbstractAbility {
                 "§7discharge an additional shockwave of vitality\n" +
                 "§7that heals §e2 §7nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
                 "§7and increase their energy regeneration by\n" +
-                "§e15 §7for §6" + duration + " §7seconds.";
+                "§e" + energyPerSecond + " §7for §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -162,5 +163,13 @@ public class VitalityLiquor extends AbstractAbility {
 
     public void setMaxWaveHealing(float maxWaveHealing) {
         this.maxWaveHealing = maxWaveHealing;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
     }
 }

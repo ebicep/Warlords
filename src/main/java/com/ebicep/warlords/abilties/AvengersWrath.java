@@ -146,7 +146,7 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     public int getEnergyPerSecond() {
-        return energyPerSecond / 20;
+        return energyPerSecond;
     }
 
     public void setEnergyPerSecond(int energyPerSecond) {
