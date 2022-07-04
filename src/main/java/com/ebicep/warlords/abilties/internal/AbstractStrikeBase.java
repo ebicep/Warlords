@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.Optional;
 
 public abstract class AbstractStrikeBase extends AbstractAbility {
@@ -109,10 +110,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         }
     }
 
-    protected boolean standingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
+    protected Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                .anyMatch(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius());
+                .filter(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius())
+                .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
     }
 
 }

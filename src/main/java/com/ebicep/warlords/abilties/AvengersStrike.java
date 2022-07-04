@@ -2,8 +2,6 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
@@ -40,17 +38,14 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-
-        Optional<Consecrate> oc = new CooldownFilter<>(wp, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                .findAny();
-        if (standingOnConsecrate(wp, nearPlayer) && oc.isPresent()) {
+        Optional<Consecrate> optionalConsecrate = getStandingOnConsecrate(wp, nearPlayer);
+        if (optionalConsecrate.isPresent()) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal * (1 + oc.get().getStrikeDamageBoost() / 100f),
-                    maxDamageHeal * (1 + oc.get().getStrikeDamageBoost() / 100f),
+                    minDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
+                    maxDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
                     critChance,
                     critMultiplier,
                     false
