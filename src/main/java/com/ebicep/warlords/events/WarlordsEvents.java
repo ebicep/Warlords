@@ -390,6 +390,11 @@ public class WarlordsEvents implements Listener {
                         player.playSound(player.getLocation(), Sound.DIG_SNOW, 500, 2);
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                         break;
+                    default:
+                        if (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode()) {
+                            wp.getSpec().onRightClick(wp, player, player.getInventory().getHeldItemSlot(), false);
+                        }
+                        break;
                 }
             } else {
                 PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
