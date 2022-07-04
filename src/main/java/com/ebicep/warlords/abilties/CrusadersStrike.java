@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -11,6 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class CrusadersStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
@@ -46,13 +49,16 @@ public class CrusadersStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        if (standingOnConsecrate(wp, nearPlayer)) {
+        Optional<Consecrate> oc = new CooldownFilter<>(wp, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
+                .findAny();
+        if (standingOnConsecrate(wp, nearPlayer) && oc.isPresent()) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal * 1.15f,
-                    maxDamageHeal * 1.15f,
+                    minDamageHeal * (1 + oc.get().getStrikeDamageBoost() / 100f),
+                    maxDamageHeal * (1 + oc.get().getStrikeDamageBoost() / 100f),
                     critChance,
                     critMultiplier,
                     false

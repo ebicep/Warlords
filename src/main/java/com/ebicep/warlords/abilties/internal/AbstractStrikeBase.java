@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -33,15 +34,19 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         addTimesUsed();
                         AbstractPlayerClass.sendRightClickPacket(player);
 
-                        Optional<HammerOfLight> optionalHammer = new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class).findAny();
+                        Optional<HammerOfLight> optionalHammer = new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .findAny();
+
                         if (optionalHammer.isPresent()) {
                             wp.subtractEnergy(energyCost - (optionalHammer.get().isCrownOfLight() ? 10 : 0));
                         } else {
                             wp.subtractEnergy(energyCost);
                         }
 
+                        Location loc = nearPlayer.getLocation();
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
+                            Utils.playGlobalSound(loc, "paladin.paladinstrike.activation", 2, 1);
                             randomHitEffect(nearPlayer, 5, 255, 0, 0);
                             ParticleEffect.SPELL.display(
                                     (float) ((Math.random() * 2) - 1),
@@ -52,19 +57,19 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                                     nearPlayer.getLocation().clone().add(0, 1, 0),
                                     500);
                         } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
+                            Utils.playGlobalSound(loc, "warrior.mortalstrike.impact", 2, 1);
                             randomHitEffect(nearPlayer, 7, 255, 0, 0);
                         } else if (this instanceof JudgementStrike) {
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 1.7f);
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
+                            Utils.playGlobalSound(loc, "warrior.revenant.orbsoflife", 2, 1.7f);
+                            Utils.playGlobalSound(loc, "mage.frostbolt.activation", 2, 2);
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof RighteousStrike) {
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
+                            Utils.playGlobalSound(loc, "rogue.vindicatorstrike.activation", 2, 0.7f);
+                            Utils.playGlobalSound(loc, "shaman.earthenspike.impact", 2, 2);
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof ImpalingStrike) {
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.5f);
-                            Utils.playGlobalSound(nearPlayer.getLocation(), "mage.fireball.activation", 2, 1.8f);
+                            Utils.playGlobalSound(loc, "rogue.apothecarystrike.activation", 2, 0.5f);
+                            Utils.playGlobalSound(loc, "mage.fireball.activation", 2, 1.8f);
                             randomHitEffect(nearPlayer, 7, 100, 255, 100);
                         }
 

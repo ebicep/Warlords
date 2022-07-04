@@ -126,4 +126,12 @@ public class Consecrate extends AbstractAbility {
     public Location getLocation() {
         return location;
     }
+
+    public int getStrikeDamageBoost() {
+        return strikeDamageBoost;
+    }
+
+    public void setStrikeDamageBoost(int strikeDamageBoost) {
+        this.strikeDamageBoost = strikeDamageBoost;
+    }
 }
