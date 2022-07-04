@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -208,12 +209,18 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         player.sendMessage(ChatColor.RED + "You do not have enough currency to buy this upgrade!");
                         return;
                     }
+                    if (masterUpgrade.isUnlocked()) {
+                        player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+                        return;
+                    }
 
                     master();
                     player.subtractCurrency(masterUpgrade.getCurrencyCost());
                     globalAnnouncement(player.getGame(), masterUpgrade, ability);
+                    Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500f, 0.8f);
                     masterUpgrade.setUnlocked(true);
                     ability.updateDescription((Player) player.getEntity());
+
                     openUpgradeBranchMenu();
                 });
 
@@ -234,7 +241,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability) {
         game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
-            p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - " + upgrade.getName() + "§e!");
+            if (upgrade.getName().equals("Master Upgrade")) {
+                p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - §c§l" + upgrade.getName() + "§e!");
+            } else {
+                p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - " + upgrade.getName() + "§e!");
+            }
         });
     }
 

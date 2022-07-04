@@ -17,9 +17,9 @@ import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 public interface PartialMonster {
-    public WarlordsEntity toNPC(Game game, Team team, UUID uuid);
+    WarlordsEntity toNPC(Game game, Team team, UUID uuid);
 
-    public static PartialMonster fromEntity(LivingEntity entity) {
+    static PartialMonster fromEntity(LivingEntity entity) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 "Enemy",
@@ -30,7 +30,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
-    public static PartialMonster fromEntity(String name, LivingEntity entity) {
+    static PartialMonster fromEntity(String name, LivingEntity entity) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -41,7 +41,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
-    public static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee) {
+    static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -52,7 +52,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
-    public static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+    static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -65,7 +65,7 @@ public interface PartialMonster {
         ));
     }
 
-    public static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -77,7 +77,7 @@ public interface PartialMonster {
         ));
     }
 
-    public static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -90,7 +90,7 @@ public interface PartialMonster {
         ));
     }
 
-    public default PartialMonster prependOperation(UnaryOperator<WarlordsEntity> mapper) {
+    default PartialMonster prependOperation(UnaryOperator<WarlordsEntity> mapper) {
         return (game, team, uuid) -> mapper.apply(this.toNPC(game, team, uuid));
     }
 }

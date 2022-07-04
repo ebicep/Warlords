@@ -1087,7 +1087,7 @@ public enum GameMap {
         }
     },*/
     ILLUSION_RIFT(
-            "The Corrupted Rift",
+            "Illusion Rift",
             4,
             1,
             60 * SECOND,
@@ -1126,10 +1126,8 @@ public enum GameMap {
                             .add(1, SimpleWave.ZOMBIE)
                             .add(0.05, SimpleWave.SKELETON)
                     )
-                    .add(10, new SimpleWave(1, 20 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(0.1, SimpleWave.SKELETON)
-                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    .add(10, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
+                            .add(SimpleWave.ZOMBIE_BOSS)
                     )
                     .add(11, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
@@ -1189,7 +1187,11 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                            if (wave.getMessage() == null) {
+                                return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                            } else {
+                                return super.getMonsterCount();
+                            }
                         }
                         
                     })
@@ -1213,7 +1215,7 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 0, 65.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 0, 65.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 9, 65.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(126.5, 8, 74.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(96.5, 9, 50.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(90, 5, 75), Team.RED));
@@ -1229,18 +1231,8 @@ public enum GameMap {
 
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(1, 5 * SECOND, null)
-                            .add(0.5, SimpleWave.ZOMBIE)
-                            .add(0.5, SimpleWave.ELITE_ZOMBIE)
-                    )
-                    .add(5, new SimpleWave(1, 5 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(0.05, SimpleWave.SKELETON)
-                    )
-                    .add(10, new SimpleWave(1, 20 * SECOND, null)
-                            .add(1, SimpleWave.ZOMBIE)
-                            .add(0.1, SimpleWave.SKELETON)
-                            .add(0.1, SimpleWave.MAGMA_CUBE)
+                    .add(1, new SimpleWave(1, 20 * SECOND, "Boss")
+                            .add(1, SimpleWave.ZOMBIE_BOSS)
                     )
                     .add(11, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, SimpleWave.ZOMBIE)
@@ -1300,7 +1292,11 @@ public enum GameMap {
                     .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
                         @Override
                         public int getMonsterCount() {
-                            return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                            if (!wave.getMessage().equals("Boss")) {
+                                return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                            } else {
+                                return super.getMonsterCount() + 1;
+                            }
                         }
 
                     })

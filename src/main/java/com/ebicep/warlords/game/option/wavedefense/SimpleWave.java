@@ -49,6 +49,20 @@ public class SimpleWave implements Wave {
             4000,
             Specializations.CRUSADER
     );
+    public static final Function<Location, PartialMonster> ZOMBIE_BOSS = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            "Zomboid",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET, 1, (short) 7),
+                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                    new ItemStack(Material.CHAINMAIL_BOOTS),
+                    new ItemStack(Material.STICK)
+            ),
+            10000,
+            Specializations.AVENGER
+    );
     public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
             "Skeleton",
@@ -185,11 +199,19 @@ public class SimpleWave implements Wave {
     private final List<Pair<Double, Function<Location, PartialMonster>>> entries = new ArrayList<>();
     private final int count;
     private final String message;
+    private MobTier mobTier;
 
     public SimpleWave(int count, int delay, @Nullable String message) {
         this.count = count;
         this.delay = delay;
         this.message = message;
+    }
+
+    public SimpleWave(int count, int delay, @Nullable String message, MobTier mobTier) {
+        this.count = count;
+        this.delay = delay;
+        this.message = message;
+        this.mobTier = mobTier;
     }
 
     public SimpleWave add(Function<Location, PartialMonster> factory) {
@@ -206,6 +228,9 @@ public class SimpleWave implements Wave {
     public PartialMonster spawnRandomMonster(Location loc, Random random) {
         double index = random.nextDouble() * totalWeight;
         for (Pair<Double, Function<Location, PartialMonster>> entry : entries) {
+            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
+                loc.getWorld().spigot().strikeLightningEffect(loc, false);
+            }
             if (index < entry.getA()) {
                 return entry.getB().apply(loc);
             }
@@ -229,4 +254,7 @@ public class SimpleWave implements Wave {
         return message;
     }
 
+    public MobTier getMobTier() {
+        return mobTier;
+    }
 }

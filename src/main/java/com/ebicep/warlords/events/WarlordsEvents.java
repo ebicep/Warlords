@@ -195,8 +195,6 @@ public class WarlordsEvents implements Listener {
                                 .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
                                 .findFirst()
                                 .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
-                                                // TODO: Fix team item
-                                                // @see Team.java
                                         new ItemBuilder(regularGamePlayer.getTeam().item)
                                                         .name("§aTeam Builder")
                                                 .get()
@@ -343,41 +341,55 @@ public class WarlordsEvents implements Listener {
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
-                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
-                    if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
-                        player.sendMessage(ChatColor.RED + "You can't mount here!");
-                    } else {
-                        double distance = Utils.getDistance(player, .25);
-                        if (distance >= 2) {
-                            player.sendMessage(ChatColor.RED + "You can't mount in the air!");
-                        } else if (wp.getCarriedFlag() != null) {
-                            player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
-                        } else {
-                            player.playSound(player.getLocation(), "mountup", 1, 1);
-                            wp.getHorse().spawn();
-                            wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
+                switch (itemHeld.getType()) {
+                    case GOLD_BARDING:
+                        if (player.getInventory().getHeldItemSlot() == 7 && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
+                            if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
+                                player.sendMessage(ChatColor.RED + "You can't mount here!");
+                            } else {
+                                double distance = Utils.getDistance(player, .25);
+                                if (distance >= 2) {
+                                    player.sendMessage(ChatColor.RED + "You can't mount in the air!");
+                                } else if (wp.getCarriedFlag() != null) {
+                                    player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
+                                } else {
+                                    player.playSound(player.getLocation(), "mountup", 1, 1);
+                                    wp.getHorse().spawn();
+                                    wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
+                                }
+                            }
                         }
-                    }
-                } else if (itemHeld.getType() == Material.BONE) {
-                    player.getInventory().remove(UndyingArmy.BONE);
-                    wp.addDamageInstance(Warlords.getPlayer(player), "", 100000, 100000, -1, 100, false);
-                } else if (itemHeld.getType() == Material.BANNER) {
-                    if (wp.getFlagDropCooldown() > 0) {
-                        player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
-                    } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
-                        player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
-                    } else {
-                        FlagHolder.dropFlagForPlayer(wp);
-                        wp.setFlagDropCooldown(5);
-                    }
-                } else if (itemHeld.getType() == Material.COMPASS) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    wp.toggleTeamFlagCompass();
-                } else if (itemHeld.getType() == Material.GOLD_NUGGET) {
-                    player.playSound(player.getLocation(), Sound.DIG_SNOW, 500, 2);
-                    ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
-                } else if (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode()) {
-                    wp.getSpec().onRightClick(wp, player, player.getInventory().getHeldItemSlot(), false);
+                        break;
+                    case BONE:
+                        player.getInventory().remove(UndyingArmy.BONE);
+                        wp.addDamageInstance(
+                                Warlords.getPlayer(player),
+                                "",
+                                100000,
+                                100000,
+                                -1,
+                                100,
+                                false
+                        );
+                        break;
+                    case BANNER:
+                        if (wp.getFlagDropCooldown() > 0) {
+                            player.sendMessage("§cYou cannot drop the flag yet, please wait 3 seconds!");
+                        } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
+                            player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
+                        } else {
+                            FlagHolder.dropFlagForPlayer(wp);
+                            wp.setFlagDropCooldown(5);
+                        }
+                        break;
+                    case COMPASS:
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        wp.toggleTeamFlagCompass();
+                        break;
+                    case GOLD_NUGGET:
+                        player.playSound(player.getLocation(), Sound.DIG_SNOW, 500, 2);
+                        ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
+                        break;
                 }
             } else {
                 PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);

@@ -271,4 +271,8 @@ public abstract class AbstractPlayerClass {
         this.purple.runEverySecond();
         this.weapon.runEverySecond();
     }
+
+    public void setRed(AbstractAbility red) {
+        this.red = red;
+    }
 }
