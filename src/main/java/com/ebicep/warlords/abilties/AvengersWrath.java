@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AvengersWrath extends AbstractAbility {
     private boolean pveUpgrade = false;
@@ -91,14 +92,17 @@ public class AvengersWrath extends AbstractAbility {
                             wp.addEnergy(wp, name, 2);
                         }
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
-                        //checking if player is in consecrate
-                        if (standingOnConsecrate(wp, wrathTarget)) {
+
+                        Optional<Consecrate> oc = new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
+                                .findAny();
+                        if (standingOnConsecrate(wp, wrathTarget) && oc.isPresent()) {
                             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                             wrathTarget.addDamageInstance(
                                     wp,
-                                    event.getAbility(),
-                                    event.getMin(),
-                                    event.getMax(),
+                                    "Avenger's Strìke",
+                                    event.getMin() * (1 + oc.get().getStrikeDamageBoost() / 100f),
+                                    event.getMax() * (1 + oc.get().getStrikeDamageBoost() / 100f),
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
                                     false
@@ -106,7 +110,7 @@ public class AvengersWrath extends AbstractAbility {
                         } else {
                             wrathTarget.addDamageInstance(
                                     wp,
-                                    event.getAbility(),
+                                    "Avenger's Strìke",
                                     event.getMin(),
                                     event.getMax(),
                                     event.getCritChance(),

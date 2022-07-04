@@ -199,8 +199,8 @@ public class CustomScoreboard {
                         "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(playerInformation.getHealing()),
                         "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(playerInformation.getAbsorbed()),
                         "    ",
-                        "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                        "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                        "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
+                        "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
                 );
             } else {
                 giveNASidebar(scoreboardSelection);
@@ -226,8 +226,8 @@ public class CustomScoreboard {
                 "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
                 "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
                 "    ",
-                "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
+                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
         );
     }
 
@@ -246,8 +246,8 @@ public class CustomScoreboard {
                 "Healing: " + ChatColor.DARK_GREEN + "N/A",
                 "Absorbed: " + ChatColor.GOLD + "N/A",
                 "    ",
-                "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
+                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
         );
     }
 }

@@ -94,6 +94,9 @@ public class Inferno extends AbstractAbility {
                     if (isKiller) {
                         wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() - 1);
                         wp.updateOrangeItem();
+                    } else {
+                        wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() - 0.5f);
+                        wp.updateOrangeItem();
                     }
                 }
             }
