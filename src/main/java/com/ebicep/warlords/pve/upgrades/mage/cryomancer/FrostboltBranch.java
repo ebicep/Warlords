@@ -28,19 +28,21 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
         );
     }
 
+    int energyCost = ability.getEnergyCost();
+
     @Override
     public void a1() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 10);
     }
 
     @Override
     public void a2() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 20);
     }
 
     @Override
     public void a3() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 30);
     }
 
     double projectileSpeed = ability.getProjectileSpeed();
@@ -83,7 +85,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
     @Override
     public void master() {
-        ability.setSlowness(35);
+        ability.setSlowness(ability.getSlowness() + 10);
         ability.setPveUpgrade(true);
     }
 }

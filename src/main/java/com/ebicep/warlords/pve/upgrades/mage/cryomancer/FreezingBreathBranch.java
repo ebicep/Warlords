@@ -63,19 +63,21 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
         ability.setMaxAnimationTime(24);
     }
 
+    int slowness = ability.getSlowness();
+
     @Override
     public void c1() {
-        ability.setSlowness(45);
+        ability.setSlowness(slowness + 10);
     }
 
     @Override
     public void c2() {
-        ability.setSlowness(55);
+        ability.setSlowness(slowness + 20);
     }
 
     @Override
     public void c3() {
-        ability.setSlowness(75);
+        ability.setSlowness(slowness + 40);
     }
 
     @Override

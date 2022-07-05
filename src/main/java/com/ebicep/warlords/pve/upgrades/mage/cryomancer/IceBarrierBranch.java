@@ -24,19 +24,20 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
         );
     }
 
+    int duration = ability.getDuration();
     @Override
     public void a1() {
-        ability.setDuration(8);
+        ability.setDuration(duration + 2);
     }
 
     @Override
     public void a2() {
-        ability.setDuration(10);
+        ability.setDuration(duration + 4);
     }
 
     @Override
     public void a3() {
-        ability.setDuration(12);
+        ability.setDuration(duration + 6);
     }
 
     @Override
@@ -54,21 +55,22 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
     }
 
+    int damageReductionPercent = ability.getDamageReductionPercent();
+
     @Override
     public void c1() {
-        ability.setDamageReductionPercent(60);
+        ability.setDamageReductionPercent(damageReductionPercent + 10);
     }
 
     @Override
     public void c2() {
-        ability.setDamageReductionPercent(70);
+        ability.setDamageReductionPercent(damageReductionPercent + 20);
     }
 
     @Override
     public void c3() {
-        ability.setDamageReductionPercent(90);
+        ability.setDamageReductionPercent(damageReductionPercent + 40);
     }
-
     @Override
     public void master() {
         ability.setCooldown(ability.getCooldown() * 0.85f);
