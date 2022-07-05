@@ -1,29 +1,29 @@
-package com.ebicep.warlords.pve.upgrades.avenger;
+package com.ebicep.warlords.pve.upgrades.vindicator;
 
-import com.ebicep.warlords.abilties.Consecrate;
+import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
+public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
-    public ConsecrateBranch(AbilityTree abilityTree, Consecrate ability) {
+    public SoulShackleBranch(AbilityTree abilityTree, SoulShackle ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Damage - Tier I", "+20% Damage", 5000));
         treeA.add(new Upgrade("Damage - Tier II", "+40% Damage", 10000));
         treeA.add(new Upgrade("Damage - Tier III", "+80% Damage", 20000));
 
-        treeB.add(new Upgrade("Range - Tier I", "+1 Block radius", 5000));
-        treeB.add(new Upgrade("Range - Tier II", "+2 Block radius", 10000));
-        treeB.add(new Upgrade("Range - Tier III", "+3 Block radius", 20000));
+        treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
+        treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
+        treeB.add(new Upgrade("Energy - Tier III", "-15 Energy cost", 20000));
 
-        treeC.add(new Upgrade("Cooldown - Tier I", "-15% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-30% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-60% Cooldown reduction", 20000));
+        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
+        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
+        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n\nIncrease the damage dealt by Avenger's\nStrike by 20% when within the Consecrate.",
+                "PLACEHOLDER",
                 50000
         );
     }
@@ -51,39 +51,37 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
 
     @Override
     public void b1() {
-        ability.setRadius(6);
+        ability.setMaxShackleTargets(2);
     }
 
     @Override
     public void b2() {
-        ability.setRadius(7);
+        ability.setMaxShackleTargets(3);
     }
 
     @Override
     public void b3() {
-        ability.setRadius(8);
+        ability.setMaxShackleTargets(4);
     }
 
     float cooldown = ability.getCooldown();
 
     @Override
     public void c1() {
-        ability.setCooldown(cooldown * 0.85f);
+        ability.setCooldown(cooldown * 0.9f);
     }
 
     @Override
     public void c2() {
-        ability.setCooldown(cooldown * 0.7f);
+        ability.setCooldown(cooldown * 0.8f);
     }
 
     @Override
     public void c3() {
-        ability.setCooldown(cooldown * 0.4f);
+        ability.setCooldown(cooldown * 0.6f);
     }
 
     @Override
     public void master() {
-        ability.setEnergyCost(0);
-        ability.setStrikeDamageBoost(40);
     }
 }

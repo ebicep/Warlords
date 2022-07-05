@@ -1177,13 +1177,22 @@ public abstract class WarlordsEntity {
         updateBlueItem(player);
         updateOrangeItem(player);
         updateHorseItem(player);
+    }
 
+    public void assignFlagCompass(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
         ItemMeta compassMeta = compass.getItemMeta();
         compassMeta.setDisplayName(ChatColor.GREEN + "Flag Finder");
         compass.setItemMeta(compassMeta);
         compassMeta.spigot().setUnbreakable(true);
-        player.getInventory().setItem(8, compass);
+        switch (this.getGame().getGameMode()) {
+            case CAPTURE_THE_FLAG:
+                player.getInventory().setItem(8, compass);
+                break;
+            default:
+                player.getInventory().setItem(8, null);
+                break;
+        }
     }
 
     public void weaponLeftClick() {
@@ -1333,7 +1342,24 @@ public abstract class WarlordsEntity {
             horseMeta.setLore(horseLore);
             horse.setItemMeta(horseMeta);
             horseMeta.spigot().setUnbreakable(true);
-            player.getInventory().setItem(7, horse);
+            switch (this.getGame().getGameMode()) {
+                case CAPTURE_THE_FLAG:
+                case TEAM_DEATHMATCH:
+                case INTERCEPTION:
+                case SIMULATION_TRIAL:
+                case DEBUG:
+                    player.getInventory().setItem(7, horse);
+                    break;
+                case WAVE_DEFENSE:
+                    player.getInventory().setItem(
+                            7,
+                            new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get()
+                    );
+                    break;
+                default:
+                    player.getInventory().setItem(7, null);
+                    break;
+            }
         }
     }
 
@@ -1384,6 +1410,7 @@ public abstract class WarlordsEntity {
         this.spec.getBlue().updateDescription(player);
         this.spec.getOrange().updateDescription(player);
         assignItemLore(Bukkit.getPlayer(uuid));
+        assignFlagCompass(Bukkit.getPlayer(uuid));
 
         if (DatabaseManager.playerService == null) return;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());

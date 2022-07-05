@@ -8,42 +8,45 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
     public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Cooldown - Tier I", "-15% Cooldown reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-30% Cooldown reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-60% Cooldown reduction", 20000));
+        treeA.add(new Upgrade("Damage Reduction - Tier I", "+5% Damage reduction", 5000));
+        treeA.add(new Upgrade("Damage Reduction - Tier II", "+10% Damage reduction", 10000));
+        treeA.add(new Upgrade("Damage Reduction - Tier III", "+20% Damage reduction", 20000));
 
-        treeB.add(new Upgrade("Utility - Tier I", "+10 Blocks bounce and cast range", 5000));
+        treeB.add(new Upgrade("Utility - Tier I", "+1 Chain bounces", 5000));
         treeB.add(new Upgrade("Utility - Tier II", "+2 Chain bounces", 10000));
         treeB.add(new Upgrade("Utility - Tier III", "+3 Chain bounces", 20000));
 
-        treeC.add(new Upgrade("Damage - Tier I", "+20% Damage", 5000));
-        treeC.add(new Upgrade("Damage - Tier II", "+40% Damage", 10000));
-        treeC.add(new Upgrade("Damage - Tier III", "+80% Damage", 20000));
+        treeC.add(new Upgrade("Damage - Tier I", "+15% Damage", 5000));
+        treeC.add(new Upgrade("Damage - Tier II", "+30% Damage", 10000));
+        treeC.add(new Upgrade("Damage - Tier III", "+60% Damage", 20000));
 
-        masterUpgrade = new Upgrade("Master Upgrade", "master", 500000);
+        masterUpgrade = new Upgrade(
+                "Master Upgrade",
+                "Remove energy cost\n+10 Blocks cast and bounce range\n\nChain Lightning now deals 5% more damage per bounce instead of less.",
+                50000
+        );
     }
 
     float cooldown = ability.getCooldown();
 
     @Override
     public void a1() {
-        ability.setCooldown(cooldown * 0.85f);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
     }
 
     @Override
     public void a2() {
-        ability.setCooldown(cooldown * 0.7f);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
     }
 
     @Override
     public void a3() {
-        ability.setCooldown(cooldown * 0.4f);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
     }
 
     @Override
     public void b1() {
-        ability.setBounceRange(20);
-        ability.setRadius(30);
+        ability.setMaxBounces(4);
     }
 
     @Override
@@ -53,7 +56,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void b3() {
-        ability.setMaxBounces(8);
+        ability.setMaxBounces(6);
     }
 
     float minDamage = ability.getMinDamageHeal();
@@ -79,6 +82,8 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void master() {
-
+        ability.setRadius(30);
+        ability.setBounceRange(20);
+        ability.setPveUpgrade(true);
     }
 }

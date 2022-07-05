@@ -79,7 +79,7 @@ public class SimpleWave implements Wave {
     );
     public static final Function<Location, PartialMonster> PIGZOMBIE = loc -> PartialMonster.fromEntity(
             PigZombie.class,
-            "PigZombie",
+            "Pig Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),

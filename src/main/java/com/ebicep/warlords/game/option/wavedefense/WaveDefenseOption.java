@@ -133,7 +133,7 @@ public class WaveDefenseOption implements Option {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
-                entry.getKey().getInventory().setItem(6, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get());
+                entry.getKey().getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get());
             }
         }
         waveCounter++;

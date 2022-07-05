@@ -71,6 +71,10 @@ public class CrusadersStrike extends AbstractStrikeBase {
             );
         }
 
+        if (pveUpgrade) {
+            tripleHit(wp, nearPlayer);
+        }
+
         // Give energy to nearby allies and check if they have mark active
         for (WarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)

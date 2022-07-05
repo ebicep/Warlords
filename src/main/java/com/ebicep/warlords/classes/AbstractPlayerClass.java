@@ -248,6 +248,26 @@ public abstract class AbstractPlayerClass {
         return orange;
     }
 
+    public void setWeapon(AbstractAbility weapon) {
+        this.weapon = weapon;
+    }
+
+    public void setRed(AbstractAbility red) {
+        this.red = red;
+    }
+
+    public void setPurple(AbstractAbility purple) {
+        this.purple = purple;
+    }
+
+    public void setBlue(AbstractAbility blue) {
+        this.blue = blue;
+    }
+
+    public void setOrange(AbstractAbility orange) {
+        this.orange = orange;
+    }
+
     public String getName() {
         return name;
     }
@@ -270,9 +290,5 @@ public abstract class AbstractPlayerClass {
         this.orange.runEverySecond();
         this.purple.runEverySecond();
         this.weapon.runEverySecond();
-    }
-
-    public void setRed(AbstractAbility red) {
-        this.red = red;
     }
 }

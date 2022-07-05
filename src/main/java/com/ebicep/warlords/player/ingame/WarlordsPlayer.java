@@ -194,6 +194,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
             applySkillBoost(player);
             player.closeInventory();
             this.assignItemLore(player);
+            this.assignFlagCompass(player);
             updateArmor();
 
             resetPlayerAddons();

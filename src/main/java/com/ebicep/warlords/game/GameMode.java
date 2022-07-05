@@ -105,7 +105,7 @@ public enum GameMode {
                     "",
                     color + "Eliminate players from the enemy team to",
                     color + "gain points for your team! The first team",
-                    color + "to reach " + ChatColor.BLUE + "1000 " + color + "points wins the game!"
+                    color + "to reach " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + color + "points wins the game!"
             ));
             options.add(TextOption.Type.TITLE.create(
                     10,

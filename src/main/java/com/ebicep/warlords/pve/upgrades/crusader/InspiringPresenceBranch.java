@@ -13,9 +13,9 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
         treeA.add(new Upgrade("Duration - Tier II", "+2s Duration", 10000));
         treeA.add(new Upgrade("Duration - Tier III", "+4s Duration", 20000));
 
-        treeC.add(new Upgrade("Energy - Tier I", "+10 Energy per second", 5000));
-        treeC.add(new Upgrade("Energy - Tier II", "+20 Energy per second", 10000));
-        treeC.add(new Upgrade("Energy - Tier III", "+30 Energy per second", 20000));
+        treeC.add(new Upgrade("Energy - Tier I", "+5 Energy per second", 5000));
+        treeC.add(new Upgrade("Energy - Tier II", "+10 Energy per second", 10000));
+        treeC.add(new Upgrade("Energy - Tier III", "+15 Energy per second", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
@@ -56,17 +56,17 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
 
     @Override
     public void c1() {
-        ability.setEnergyPerSecond(20);
+        ability.setEnergyPerSecond(15);
     }
 
     @Override
     public void c2() {
-        ability.setEnergyPerSecond(30);
+        ability.setEnergyPerSecond(20);
     }
 
     @Override
     public void c3() {
-        ability.setEnergyPerSecond(40);
+        ability.setEnergyPerSecond(25);
     }
 
     @Override

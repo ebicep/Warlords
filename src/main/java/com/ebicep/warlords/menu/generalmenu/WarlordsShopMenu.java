@@ -17,9 +17,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
@@ -62,9 +63,6 @@ public class WarlordsShopMenu {
 
     private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
     private static final String[] mythicNames = new String[]{"Mythical", "Ascendant", "Brilliant"};
-    private static final Map<WeaponsRarity, List<Weapons>> weaponByRarity = Stream.of(Weapons.values()).collect(Collectors.groupingBy(Weapons::getRarity));
-    private static final Random random = new Random();
-    private static final Map<UUID, Long> openWeaponCooldown = new HashMap<>();
 
     public static void openMainMenu(Player player) {
         Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();

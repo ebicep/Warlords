@@ -1,27 +1,27 @@
 package com.ebicep.warlords.pve.upgrades.thunderlord;
 
-import com.ebicep.warlords.abilties.LightningBolt;
+import com.ebicep.warlords.abilties.CapacitorTotem;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
+public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> {
 
-    public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
+    public CapacitorTotemBranch(AbilityTree abilityTree, CapacitorTotem ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
         treeA.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
         treeA.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
 
-        treeB.add(new Upgrade("Energy - Tier I", "-10 Energy cost", 5000));
-        treeB.add(new Upgrade("Energy - Tier II", "-20 Energy cost", 10000));
-        treeB.add(new Upgrade("Energy - Tier III", "-30 Energy cost", 20000));
+        treeC.add(new Upgrade("Range - Tier I", "+1 Block radius", 5000));
+        treeC.add(new Upgrade("Range - Tier II", "+3 Block radius", 10000));
+        treeC.add(new Upgrade("Range - Tier III", "+3 Block radius", 20000));
 
-        treeC.add(new Upgrade("Crit Multiplier - Tier I", "+10% Crit multiplier", 5000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit multiplier", 10000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier III", "+40% Crit multiplier", 20000));
-
-        masterUpgrade = new Upgrade("Master Upgrade", "Lightning Bolt shoots two additional projectiles.", 50000);
+        masterUpgrade = new Upgrade(
+                "Master Upgrade",
+                "Remove energy cost\n+10 Blocks cast and bounce range\n\nChain Lightning now deals 5% more damage per bounce instead of less.",
+                50000
+        );
     }
 
     float minDamage = ability.getMinDamageHeal();
@@ -47,36 +47,36 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     @Override
     public void b1() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+
     }
 
     @Override
     public void b2() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+
     }
 
     @Override
     public void b3() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+
     }
 
     @Override
     public void c1() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 10);
+        ability.setRadius(ability.getRadius() + 1);
     }
 
     @Override
     public void c2() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 10);
+        ability.setRadius(ability.getRadius() + 1);
     }
 
     @Override
     public void c3() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 20);
+        ability.setRadius(ability.getRadius() + 1);
     }
 
     @Override
     public void master() {
-        ability.setShotsFiredAtATime(3);
+        ability.setDuration((int) (ability.getDuration() * 1.5f));
     }
 }

@@ -529,8 +529,6 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-
-
                 // Every 1 tick - 0.05 seconds.
                 {
                     for (WarlordsEntity wp : players.values()) {

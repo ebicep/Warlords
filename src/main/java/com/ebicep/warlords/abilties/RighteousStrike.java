@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RighteousStrike extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
     protected int silencedTargetStruck = 0;
+
+    private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
         super("Righteous Strike", 412, 523, 0, 90, 20, 175);
@@ -21,10 +24,10 @@ public class RighteousStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Each strike reduces the duration of your struck\n" +
-                "§7target's active ability timers by §60.5 §7seconds." +
+                "§7target's active ability timers by §6" + (abilityReductionInTicks / 20f) + " §7seconds." +
                 "\n\n" +
                 "§7Additionally, if your struck target is silenced,\n" +
-                "§7reduce the cooldown of your Prism Guard by §60.8\n" +
+                "§7reduce the cooldown of your Prism Guard by §6" + ((abilityReductionInTicks * 1.6f) / 20f) + "\n" +
                 "§7seconds and reduce their active ability timers\n" +
                 "§7by §60.8 §7seconds instead.";
     }
@@ -42,12 +45,31 @@ public class RighteousStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 16);
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, (int) (abilityReductionInTicks * 1.6f));
             wp.getSpec().getBlue().subtractCooldown(0.8f);
-            wp.getSpec().getBlue().updateDescription(player);
+            wp.updateBlueItem(player);
         } else {
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 10);
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        if (pveUpgrade) {
+            knockbackOnHit(wp, nearPlayer, 1.1, 0.15);
+        }
+    }
+
+    public int getAbilityReductionInTicks() {
+        return abilityReductionInTicks;
+    }
+
+    public void setAbilityReductionInTicks(int abilityReductionInTicks) {
+        this.abilityReductionInTicks = abilityReductionInTicks;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -9,9 +9,9 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
-        treeA.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
-        treeA.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
+        treeA.add(new Upgrade("Damage - Tier I", "+15% Damage", 5000));
+        treeA.add(new Upgrade("Damage - Tier II", "+30% Damage", 10000));
+        treeA.add(new Upgrade("Damage - Tier III", "+60% Damage", 20000));
 
         treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
         treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
@@ -33,20 +33,20 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     @Override
     public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
+        ability.setMinDamageHeal(minDamage * 1.15f);
+        ability.setMaxDamageHeal(maxDamage * 1.15f);
     }
 
     @Override
     public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
+        ability.setMinDamageHeal(minDamage * 1.3f);
+        ability.setMaxDamageHeal(maxDamage * 1.3f);
     }
 
     @Override
     public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
+        ability.setMinDamageHeal(minDamage * 1.6f);
+        ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
     @Override

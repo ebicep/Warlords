@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -79,6 +80,12 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 });
 
         return true;
+    }
+
+    public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
+        final Location loc = kbTarget.getLocation();
+        final Vector v = giver.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(y);
+        kbTarget.setVelocity(v, false);
     }
 
     public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget) {

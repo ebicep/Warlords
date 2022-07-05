@@ -80,5 +80,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
     @Override
     public void master() {
         ability.setDuration(ability.getDuration() * 2);
+        abilityTree.getPlayer().setMaxHealth((int) (abilityTree.getPlayer().getMaxHealth() * 1.5f));
+        ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
     }
 }

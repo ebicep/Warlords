@@ -572,14 +572,16 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-77, 54.5, 58), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-68, 57.5, 18.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-28, 54.5, 44), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(46.5, 57.5, 3.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(12.5, 61.5, 12.5), PowerupType.DAMAGE));
             options.add(new PowerupOption(loc.addXYZ(3.5, 61.5, 3.5), PowerupType.DAMAGE));
             options.add(new PowerupOption(loc.addXYZ(-28, 54.5, -28), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(44, 54.5, 44), PowerupType.DAMAGE));
 
             options.add(new PowerupOption(loc.addXYZ(60, 54.5, 70), PowerupType.HEALING));
-            options.add(new PowerupOption(loc.addXYZ(-30, 56.5, 12.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-30.5, 56.5, 12.5), PowerupType.HEALING));
             options.add(new PowerupOption(loc.addXYZ(-47.5, 54.5, -16.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(46.5, 56.5, 3.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(63.5, 54.5, 32.5), PowerupType.HEALING));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(8, 59, 109.5, 180, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(8, 59, -94.5, 0, 0), Team.RED));
@@ -1077,15 +1079,19 @@ public enum GameMap {
                             .add(0.1, SimpleWave.ELITE_ZOMBIE)
                             .add(0.3, SimpleWave.SLIME)
                     )
-                    .add(40, new SimpleWave(1, 20 * SECOND, null)
-                            .add(0.9, SimpleWave.ELITE_ZOMBIE)
-                            .add(0.1, SimpleWave.ZOMBIE)
-                            .add(0.3, SimpleWave.SLIME)
+                    .add(40, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
+                            .add(SimpleWave.ZOMBIE_BOSS)
                     )
                     .add(41, new SimpleWave(1, 10 * SECOND, null)
+                            .add(0.6, SimpleWave.ELITE_ZOMBIE)
+                            .add(0.3, SimpleWave.ZOMBIE)
+                            .add(0.3, SimpleWave.SLIME)
+                    )
+                    .add(50, new SimpleWave(1, 10 * SECOND, null)
                             .add(0.9, SimpleWave.ELITE_ZOMBIE)
                             .add(0.1, SimpleWave.ZOMBIE)
-                            .add(0.3, SimpleWave.SLIME)
+                            .add(0.3, SimpleWave.MAGMA_CUBE)
+                            .add(0.1, SimpleWave.SKELETON)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
                         int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / 400.0 + 1);

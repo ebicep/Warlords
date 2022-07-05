@@ -22,7 +22,7 @@ public class SoulShackle extends AbstractAbility {
 
     private final int shackleRange = 15;
     private float shacklePool = 0;
-    private final int maxShackleTargets = 1;
+    private int maxShackleTargets = 1;
     private int minSilenceDurationInTicks = 40;
     private int maxSilenceDurationInTicks = 70;
 
@@ -60,7 +60,6 @@ public class SoulShackle extends AbstractAbility {
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .closestFirst(wp)
-                .lookingAtFirst(wp)
                 .limit(maxShackleTargets)
         ) {
             wp.subtractEnergy(energyCost);
@@ -152,5 +151,13 @@ public class SoulShackle extends AbstractAbility {
 
     public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
+    }
+
+    public int getMaxShackleTargets() {
+        return maxShackleTargets;
+    }
+
+    public void setMaxShackleTargets(int maxShackleTargets) {
+        this.maxShackleTargets = maxShackleTargets;
     }
 }
