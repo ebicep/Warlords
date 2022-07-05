@@ -1,8 +1,10 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.inventory.ItemStack;
 
 public class TextComponentBuilder {
 
@@ -16,13 +18,15 @@ public class TextComponentBuilder {
         this.textComponent = new TextComponent(text);
     }
 
-    public TextComponentBuilder setHover(HoverEvent hoverEvent) {
-        textComponent.setHoverEvent(hoverEvent);
+    public TextComponentBuilder setHoverText(String text) {
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(text).create()));
         return this;
     }
 
-    public TextComponentBuilder setHoverText(String text) {
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(text).create()));
+    public TextComponentBuilder setHoverItem(ItemStack itemStack) {
+        String c = ChatUtils.convertItemStackToJsonRegular(itemStack);
+        c = c.substring(0, c.length() - 1) + ",}";
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(c).create()));
         return this;
     }
 

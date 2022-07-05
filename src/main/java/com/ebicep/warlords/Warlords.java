@@ -34,6 +34,7 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.menu.MenuEventListener;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyCommand;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.party.PartyManager;
@@ -356,6 +357,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
+        getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
 
         registerCommands();
 
@@ -370,11 +372,6 @@ public class Warlords extends JavaPlugin {
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-        });
-
-
         //connects to the database
         Warlords.newChain()
                 .async(DatabaseManager::init)
@@ -385,6 +382,17 @@ public class Warlords extends JavaPlugin {
         } catch (LoginException e) {
             e.printStackTrace();
         }
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+                    PlayerHotBarItemListener.giveLobbyHotBar(player, false);
+                });
+            }
+        }.runTaskLater(this, 60);
 
         ProtocolManager protocolManager;
 

@@ -2,7 +2,6 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -18,14 +17,16 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
-import com.ebicep.warlords.party.RegularGamesMenu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.PermissionHandler;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -52,15 +53,14 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-
-import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openGamemodeMenu;
-import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -168,39 +168,10 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "We highly recommend you to download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn");
             ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
 
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
-
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                    .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview").get());
-            if (player.hasPermission("warlords.game.debug")) {
-                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
-            } else {
-                player.getInventory().setItem(3, new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get());
-            }
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
-            player.getInventory().setItem(5, new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get());
-            player.getInventory().setItem(7, new ItemBuilder(Warlords.getHead(uuid)).name("§aLevel Rewards").get());
 
-            if (!fromGame) {
-                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
-                    if (!playerList.isEmpty()) {
-                        playerList.stream()
-                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                                .findFirst()
-                                .ifPresent(regularGamePlayer -> player.getInventory().setItem(8,
-                                        new ItemBuilder(regularGamePlayer.getTeam().item)
-                                                        .name("§aTeam Builder")
-                                                .get()
-                                        )
-                                );
-                    }
-                });
-            }
+            PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             if (fromGame) {
                 Warlords.playerScoreboards.get(uuid).giveMainLobbyScoreboard();
@@ -395,49 +366,9 @@ public class WarlordsEvents implements Listener {
                         break;
                 }
             } else {
-                PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
-                if (state != null) {
-                    state.interactEvent(player, player.getInventory().getHeldItemSlot());
-                } else {
-                    if (itemHeld.getType().equals(Material.SKULL_ITEM) && itemHeld.getItemMeta().getDisplayName().contains("Level Rewards")) {
-                        ExperienceManager.openLevelingRewardsMenu(player);
-                        return;
-                    }
-                    switch (itemHeld.getType()) {
-                        case NETHER_STAR:
-                            openMainMenu(player);
-                            break;
-                        case EMERALD:
-                            Bukkit.getServer().dispatchCommand(player, "wl");
-                            break;
-                        case BLAZE_POWDER:
-                            openGamemodeMenu(player);
-                            break;
-                        case WOOL:
-                            if (itemHeld.getItemMeta().getDisplayName() != null && itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
-                                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
-                                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
-                                    if (!playerList.isEmpty()) {
-                                        party.getRegularGamesMenu().openMenuForPlayer(player);
-                                        new BukkitRunnable() {
-                                            @Override
-                                            public void run() {
-                                                if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
-                                                    party.getRegularGamesMenu().openMenuForPlayer(player);
-                                                } else {
-                                                    this.cancel();
-                                                }
-                                            }
-                                        }.runTaskTimer(Warlords.getInstance(), 20, 10);
-                                    }
-                                });
-                            }
-                            break;
-                        case EYE_OF_ENDER:
-                            Bukkit.getServer().dispatchCommand(player, "spectate");
-                            break;
-                    }
-                }
+                Warlords.getGameManager().getPlayerGame(player.getUniqueId())
+                        .flatMap(g -> g.getState(PreLobbyState.class))
+                        .ifPresent(state -> state.interactEvent(player, player.getInventory().getHeldItemSlot()));
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {

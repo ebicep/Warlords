@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
@@ -22,13 +23,13 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
     @Field("weapon_inventory")
-    private List<AbstractWeapon> weaponInventory;
+    private List<AbstractWeapon> weaponInventory = new ArrayList<>();
     @Field("synthetic_alloy")
-    private int amountOfSyntheticAlloy;
+    private int amountOfSyntheticAlloy = 0;
     @Field("legend_fragments")
-    private int amountOfLegendFragments;
+    private int amountOfLegendFragments = 0;
     @Field("fairy_essence")
-    private int amountOfFairyEssence;
+    private int amountOfFairyEssence = 0;
 
 
     @Override
@@ -102,4 +103,39 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
 
+    public DatabaseMagePvE getMage() {
+        return mage;
+    }
+
+    public DatabaseWarriorPvE getWarrior() {
+        return warrior;
+    }
+
+    public DatabasePaladinPvE getPaladin() {
+        return paladin;
+    }
+
+    public DatabaseShamanPvE getShaman() {
+        return shaman;
+    }
+
+    public DatabaseRoguePvE getRogue() {
+        return rogue;
+    }
+
+    public List<AbstractWeapon> getWeaponInventory() {
+        return weaponInventory;
+    }
+
+    public int getAmountOfSyntheticAlloy() {
+        return amountOfSyntheticAlloy;
+    }
+
+    public int getAmountOfLegendFragments() {
+        return amountOfLegendFragments;
+    }
+
+    public int getAmountOfFairyEssence() {
+        return amountOfFairyEssence;
+    }
 }

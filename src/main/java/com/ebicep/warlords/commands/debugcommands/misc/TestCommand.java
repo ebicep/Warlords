@@ -7,7 +7,6 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -86,7 +85,9 @@ public class TestCommand implements CommandExecutor {
 
         }
 
-        System.out.println(ExperienceManager.LEVEL_TO_EXPERIENCE.get(99));
+//        for (int i = 0; i < 100; i++) {
+//            AbstractWeapon.giveTestItem((Player) sender);
+//        }
 
 
 //       // QueueManager.sendNewQueue();

@@ -64,7 +64,7 @@ public class LeaderboardManager {
             "Flags Captured",
             "Flags Returned",
     };
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     public static boolean loaded = false;
 
     public static void putLeaderboards() {
