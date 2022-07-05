@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.EndState;
@@ -230,7 +231,19 @@ public class WaveDefenseOption implements Option {
                                 + ChatColor.RESET + " / " + ChatColor.GOLD + e.getCurrency())
                         .collect(Collectors.toList());
             }
-            });
+        });
+        new TimerSkipAbleMarker() {
+            @Override
+            public int getDelay() {
+                return 0;
+            }
+
+            @Override
+            public void skipTimer(int delay) {
+                newWave();
+            }
+
+        }.register(game);
     }
     
     @Override
@@ -249,6 +262,7 @@ public class WaveDefenseOption implements Option {
             }
         }.runTaskTimer(20, 0);
     }
+
 
     public int getWaveCounter() {
         return waveCounter;

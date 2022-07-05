@@ -271,7 +271,7 @@ public class PlayingState implements State, TimerDebugAble {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-            if (warlordsPlayer != null) {
+            if (warlordsPlayer instanceof WarlordsPlayer) {
                 if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
                     org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
                     temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
