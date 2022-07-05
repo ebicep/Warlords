@@ -173,6 +173,10 @@ public class WaterBreath extends AbstractAbility {
         );
     }
 
+    public double getVelocity() {
+        return velocity;
+    }
+
     public void setVelocity(double velocity) {
         this.velocity = velocity;
     }

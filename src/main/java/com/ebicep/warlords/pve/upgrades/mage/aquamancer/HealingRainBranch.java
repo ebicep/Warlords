@@ -24,19 +24,20 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         );
     }
 
+    int radius = ability.getRadius();
     @Override
     public void a1() {
-        ability.setRadius(10);
+        ability.setRadius(radius + 2);
     }
 
     @Override
     public void a2() {
-        ability.setRadius(12);
+        ability.setRadius(radius + 4);
     }
 
     @Override
     public void a3() {
-        ability.setRadius(16);
+        ability.setRadius(radius + 8);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     @Override
     public void master() {
-        ability.setDuration(20);
+        ability.setDuration(ability.getDuration() + 8);
         ability.setPveUpgrade(true);
     }
 }

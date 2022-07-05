@@ -45,19 +45,20 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         ability.setCooldown(cooldown * 0.6f);
     }
 
+    double velocity = ability.getVelocity();
     @Override
     public void b1() {
-        ability.setVelocity(1.2);
+        ability.setVelocity(velocity + .1);
     }
 
     @Override
     public void b2() {
-        ability.setVelocity(1.35);
+        ability.setVelocity(velocity + .25);
     }
 
     @Override
     public void b3() {
-        ability.setVelocity(1.6);
+        ability.setVelocity(velocity + .5);
     }
 
     float minHealing = ability.getMinDamageHeal();
