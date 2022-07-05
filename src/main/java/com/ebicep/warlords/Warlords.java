@@ -9,7 +9,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.ebicep.customentities.nms.pve.CustomEntities;
+import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
@@ -440,7 +440,7 @@ public class Warlords extends JavaPlugin {
         );
         SignGUI.init(this);
 
-        CustomEntities.registerEntities();
+        CustomEntitiesRegistry.registerEntities();
 
 
         startMainLoop();
