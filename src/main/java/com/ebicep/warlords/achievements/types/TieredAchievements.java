@@ -130,7 +130,7 @@ public enum TieredAchievements implements Achievement {
     public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
-        warlordsPlayer.getGame().warlordsPlayers()
+        warlordsPlayer.getGame().warlordsEntities()
                 //.filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
                 .filter(wp -> wp != warlordsPlayer)
                 .filter(wp -> wp.getEntity() instanceof Player)

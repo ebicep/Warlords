@@ -19,7 +19,7 @@ public class WinByAllDeathOption implements Option {
             @Override
             public void run() {
                 Team winner = null;
-                for (WarlordsEntity player : Utils.iterable(game.warlordsPlayers())) {
+                for (WarlordsEntity player : Utils.iterable(game.warlordsEntities())) {
                     if (!player.isAlive()) {
                         continue;
                     }

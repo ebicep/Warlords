@@ -106,7 +106,7 @@ public class EndState implements State, TimerDebugAble {
                         ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum()) + "\n" +
                         ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum()))
                 .getTextComponent()));
-        for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+        for (WarlordsEntity wp : PlayerFilter.playingGameWarlordsPlayers(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 

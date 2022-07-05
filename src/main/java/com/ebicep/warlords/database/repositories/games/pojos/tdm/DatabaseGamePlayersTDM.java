@@ -19,7 +19,7 @@ public class DatabaseGamePlayersTDM {
     }
 
     public DatabaseGamePlayersTDM(@Nonnull Game game) {
-        game.warlordsPlayers().forEach(warlordsPlayer -> {
+        game.warlordsEntities().forEach(warlordsPlayer -> {
             if (warlordsPlayer.getTeam() == Team.BLUE) {
                 blue.add(new DatabaseGamePlayerTDM(warlordsPlayer));
             } else if (warlordsPlayer.getTeam() == Team.RED) {

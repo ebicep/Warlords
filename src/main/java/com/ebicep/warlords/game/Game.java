@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.apache.commons.lang.Validate;
@@ -472,8 +473,12 @@ public final class Game implements Runnable, AutoCloseable {
         return (int) this.players.values().stream().filter(Objects::isNull).count();
     }
 
+    public Stream<WarlordsEntity> warlordsEntities() {
+        return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
+    }
+
     public Stream<WarlordsEntity> warlordsPlayers() {
-        return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
+        return this.players.keySet().stream().map(Warlords::getPlayer).filter(WarlordsPlayer.class::isInstance);
     }
 
     public Stream<Map.Entry<UUID, Team>> players() {
@@ -484,20 +489,34 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.entrySet().stream().filter(e -> e.getValue() != null);
     }
 
+    public Stream<Map.Entry<UUID, Team>> warlordsPlayersWithoutSpectators() {
+        return this.players.entrySet().stream()
+                .filter(e -> e.getValue() != null)
+                .filter(uuidTeamEntry -> Warlords.getPlayer(uuidTeamEntry.getKey()) instanceof WarlordsPlayer);
+    }
+
     public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
         return playersWithoutSpectators()
                 .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getOfflinePlayer(e.getKey()),
-                e.getValue()
-        ));
+                        Bukkit.getOfflinePlayer(e.getKey()),
+                        e.getValue()
+                ));
+    }
+
+    public Stream<Map.Entry<OfflinePlayer, Team>> offlineWarlordsPlayersWithoutSpectators() {
+        return warlordsPlayersWithoutSpectators()
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getOfflinePlayer(e.getKey()),
+                        e.getValue()
+                ));
     }
 
     public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
         return playersWithoutSpectators()
                 .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getPlayer(e.getKey()),
-                e.getValue()
-        )).filter(e -> e.getKey() != null);
+                        Bukkit.getPlayer(e.getKey()),
+                        e.getValue()
+                )).filter(e -> e.getKey() != null);
     }
 
     public Stream<Map.Entry<Player, Team>> onlinePlayers() {
@@ -509,11 +528,19 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public Stream<UUID> spectators() {
-        return this.players.entrySet().stream().filter(e -> e.getValue() == null).map(e -> e.getKey());
+        return this.players.entrySet().stream().filter(e -> e.getValue() == null).map(Map.Entry::getKey);
     }
 
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
         offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
+    public void forEachOfflineWarlordsPlayer(BiConsumer<OfflinePlayer, Team> consumer) {
+        offlineWarlordsPlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
+    public void forEachOfflineWarlordsEntity(Consumer<WarlordsEntity> consumer) {
+        warlordsEntities().forEach(consumer);
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
@@ -528,8 +555,8 @@ public final class Game implements Runnable, AutoCloseable {
         onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    public void forEachOnlineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
-        warlordsPlayers().filter(WarlordsEntity::isOnline).forEach(consumer);
+    public void forEachOnlineWarlordsEntity(Consumer<WarlordsEntity> consumer) {
+        warlordsEntities().filter(WarlordsEntity::isOnline).forEach(consumer);
     }
 
     @Override

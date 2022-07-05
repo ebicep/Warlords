@@ -93,7 +93,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         if (DatabaseManager.playerService != null) {
-            Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
+            Warlords.newChain().async(() -> game.forEachOfflineWarlordsPlayer((player, team) -> {
                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                 DatabaseManager.updatePlayerAsync(databasePlayer);
                 DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_6, () -> {
@@ -121,9 +121,9 @@ public class PlayingState implements State, TimerDebugAble {
                 timer += GameRunnable.SECOND;
                 if (counter >= 60) {
                     counter -= 60;
-                    PlayerFilter.playingGame(game).forEach(wp -> wp.getMinuteStats().advanceMinute());
+                    PlayerFilter.playingGameWarlordsPlayers(game).forEach(wp -> wp.getMinuteStats().advanceMinute());
                 }
-                PlayerFilter.playingGame(game).forEach(wp -> wp.getSecondStats().advanceSecond());
+                PlayerFilter.playingGameWarlordsPlayers(game).forEach(wp -> wp.getSecondStats().advanceSecond());
             }
         }.runTaskTimer(0, GameRunnable.SECOND);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
@@ -139,7 +139,7 @@ public class PlayingState implements State, TimerDebugAble {
         game.players().forEach(uuidTeamEntry -> {
             WarlordsEntity wp = Warlords.getPlayer(uuidTeamEntry.getKey());
             ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-            if (wp != null) {
+            if (wp instanceof WarlordsPlayer) {
                 byteArrayDataOutput.writeUTF(wp.getName());
                 byteArrayDataOutput.writeInt((int) wp.getEnergy());
                 byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
@@ -164,7 +164,7 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void end() {
 
-        this.getGame().forEachOfflineWarlordsPlayer(e -> e.setActive(false));
+        this.getGame().forEachOfflineWarlordsEntity(e -> e.setActive(false));
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Force End = " + (winEvent == null));
@@ -244,7 +244,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private void updateScoreboard() {
-        game.forEachOnlinePlayer((player, team) -> {
+        game.forEachOfflineWarlordsPlayer((player, team) -> {
             updateBasedOnGameState(Warlords.playerScoreboards.get(player.getUniqueId()), Warlords.getPlayer(player));
         });
     }

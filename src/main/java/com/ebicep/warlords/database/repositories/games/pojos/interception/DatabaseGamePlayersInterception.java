@@ -19,7 +19,7 @@ public class DatabaseGamePlayersInterception {
     }
 
     public DatabaseGamePlayersInterception(@Nonnull Game game) {
-        game.warlordsPlayers().forEach(warlordsPlayer -> {
+        game.warlordsEntities().forEach(warlordsPlayer -> {
             if (warlordsPlayer.getTeam() == Team.BLUE) {
                 blue.add(new DatabaseGamePlayerInterception(warlordsPlayer));
             } else if (warlordsPlayer.getTeam() == Team.RED) {

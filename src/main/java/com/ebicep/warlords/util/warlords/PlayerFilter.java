@@ -292,13 +292,18 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
                 
                 return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
             })
-            .map(e -> Warlords.getPlayer(e))
-            .filter(Objects::nonNull)
+                .map(e -> Warlords.getPlayer(e))
+                .filter(Objects::nonNull)
         );
     }
 
     @Nonnull
     public static PlayerFilter playingGame(@Nonnull Game game) {
+        return new PlayerFilter(game.warlordsEntities());
+    }
+
+    @Nonnull
+    public static PlayerFilter playingGameWarlordsPlayers(@Nonnull Game game) {
         return new PlayerFilter(game.warlordsPlayers());
     }
 

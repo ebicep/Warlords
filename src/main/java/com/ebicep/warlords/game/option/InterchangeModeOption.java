@@ -100,7 +100,7 @@ public class InterchangeModeOption implements Option {
     //the player BEFORE becomes the player AFTER
     //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
-        List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
+        List<WarlordsEntity> teamPlayers = game.warlordsEntities()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) return;

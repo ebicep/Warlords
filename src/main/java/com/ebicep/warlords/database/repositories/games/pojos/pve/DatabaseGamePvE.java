@@ -39,7 +39,7 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         }
         this.timeElapsed = RecordTimeElapsedOption.getTimeElapsed(game);
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
-        game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer)));
+        game.warlordsEntities().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer)));
 
     }
 

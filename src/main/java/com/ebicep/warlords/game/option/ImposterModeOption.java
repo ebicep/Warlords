@@ -108,7 +108,7 @@ public class ImposterModeOption implements Option {
 
     private void assignImposters(Game game) {
         for (Team team : TeamMarker.getTeams(game)) {
-            List<WarlordsEntity> teamPlayers = game.warlordsPlayers().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
+            List<WarlordsEntity> teamPlayers = game.warlordsEntities().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
             if (teamPlayers.size() == 0) {
                 continue;
             }
@@ -139,7 +139,7 @@ public class ImposterModeOption implements Option {
                     List<WarlordsEntity> votedOut = p.getOptionsWithVotes().entrySet().stream()
                             .filter(stringIntegerEntry -> stringIntegerEntry.getValue() == mostVotes)
                             .map(Map.Entry::getKey)
-                            .map(s -> game.warlordsPlayers()
+                            .map(s -> game.warlordsEntities()
                                     .filter(warlordsPlayer -> warlordsPlayer.getName().equals(s))
                                     .findFirst()
                                     .get())
