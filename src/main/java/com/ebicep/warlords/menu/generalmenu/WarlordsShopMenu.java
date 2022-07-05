@@ -289,50 +289,8 @@ public class WarlordsShopMenu {
                     }
             );
         }
-        if (pageNumber == 1) {
-            menu.setItem(
-                    8,
-                    5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
-                            .get(),
-                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
-        } else if (pageNumber == 2) {
-            menu.setItem(
-                    0,
-                    5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
-                            .get(),
-                    (m, e) -> openWeaponMenu(player, pageNumber - 1));
-            menu.setItem(
-                    8,
-                    5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
-                            .get(),
-                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
-        } else if (pageNumber == 3) {
-            menu.setItem(
-                    0,
-                    5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
-                            .get(),
-                    (m, e) -> openWeaponMenu(player, pageNumber - 1));
-            menu.setItem(
-                    8,
-                    5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
-                            .get(),
-                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
-        } else if (pageNumber == 4) {
+
+        if (pageNumber > 1) {
             menu.setItem(
                     0,
                     5,
@@ -342,6 +300,17 @@ public class WarlordsShopMenu {
                             .get(),
                     (m, e) -> openWeaponMenu(player, pageNumber - 1));
         }
+        if (values.size() > pageNumber * 21) {
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (m, e) -> openWeaponMenu(player, pageNumber + 1));
+        }
+
 
         menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);

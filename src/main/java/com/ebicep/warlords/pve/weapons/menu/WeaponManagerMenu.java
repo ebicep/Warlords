@@ -229,6 +229,7 @@ public class WeaponManagerMenu {
                         .name(ChatColor.GREEN + "Skin Selector")
                         .get(),
                 (m, e) -> {
+                    WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1);
                 }
         );
 
