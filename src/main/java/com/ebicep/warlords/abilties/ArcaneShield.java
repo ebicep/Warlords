@@ -67,11 +67,11 @@ public class ArcaneShield extends AbstractAbility {
                     null,
                     ArcaneShield.class,
                     tempArcaneShield,
-                     wp,
-                     CooldownTypes.ABILITY,
-                     cooldownManager -> {
-                     },
-                     duration * 20
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    duration * 20
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

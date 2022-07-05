@@ -95,44 +95,46 @@ public class TimeWarp extends AbstractAbility {
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                         }
-
-                        if (pveUpgrade) {
-                            wp.getSpeed().addSpeedModifier("Time Warp Speed", 20, ticksLeft);
-                            wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarp>(
-                                    name,
-                                    null,
-                                    TimeWarp.class,
-                                    new TimeWarp(),
-                                    wp,
-                                    CooldownTypes.ABILITY,
-                                    cooldownManager -> {
-                                    },
-                                    duration * 20
-                            ) {
-                                @Override
-                                public boolean distinct() {
-                                    return true;
-                                }
-
-                                @Override
-                                public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
-                                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
-                                        return currentCritChance;
-                                    return currentCritChance + (warpTrail.size());
-                                }
-
-                                @Override
-                                public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
-                                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
-                                        return currentCritMultiplier;
-                                    return currentCritMultiplier + (warpTrail.size() * 2);
-                                }
-                            });
-                        }
                     }
                 }
         );
 
+        if (pveUpgrade) {
+            int startingBlocksTravelled = wp.getBlocksTravelledCM();
+            wp.getSpeed().addSpeedModifier("Time Warp Speed", 20, duration * 20);
+            wp.getCooldownManager().addCooldown(new RegularCooldown<TimeWarp>(
+                    name,
+                    null,
+                    TimeWarp.class,
+                    new TimeWarp(),
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    duration * 20
+            ) {
+                @Override
+                public boolean distinct() {
+                    return true;
+                }
+
+                @Override
+                public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                        return currentCritChance;
+                    }
+                    return currentCritChance + ((event.getAttacker().getBlocksTravelledCM() - startingBlocksTravelled) / 100);
+                }
+
+                @Override
+                public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
+                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                        return currentCritMultiplier;
+                    }
+                    return currentCritMultiplier + ((event.getAttacker().getBlocksTravelledCM() - startingBlocksTravelled) / 100);
+                }
+            });
+        }
         return true;
     }
 

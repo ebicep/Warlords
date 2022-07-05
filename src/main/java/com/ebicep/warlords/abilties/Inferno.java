@@ -75,16 +75,18 @@ public class Inferno extends AbstractAbility {
 
             @Override
             public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                     return currentCritChance;
+                }
                 hitsAmplified++;
                 return currentCritChance + critChanceIncrease;
             }
 
             @Override
             public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                     return currentCritMultiplier;
+                }
                 return currentCritMultiplier + critMultiplierIncrease;
             }
 
@@ -92,12 +94,11 @@ public class Inferno extends AbstractAbility {
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (pveUpgrade) {
                     if (isKiller) {
-                        wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() - 1);
-                        wp.updateOrangeItem();
+                        subtractCooldown(1);
                     } else {
-                        wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() - 0.5f);
-                        wp.updateOrangeItem();
+                        subtractCooldown(.5f);
                     }
+                    wp.updateOrangeItem();
                 }
             }
         });
