@@ -5,7 +5,7 @@ import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.pyromancer.*;
+import com.ebicep.warlords.pve.upgrades.mage.pyromancer.*;
 
 import java.util.List;
 

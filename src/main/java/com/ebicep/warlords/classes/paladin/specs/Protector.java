@@ -5,11 +5,11 @@ import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.avenger.ConsecrateBranch;
-import com.ebicep.warlords.pve.upgrades.avenger.LightInfusionBranch;
-import com.ebicep.warlords.pve.upgrades.protector.HammerOfLightBranch;
-import com.ebicep.warlords.pve.upgrades.protector.HolyRadianceBranchProtector;
-import com.ebicep.warlords.pve.upgrades.protector.ProtectorStrikeBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.ConsecrateBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.LightInfusionBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.protector.HammerOfLightBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
+import com.ebicep.warlords.pve.upgrades.paladin.protector.ProtectorStrikeBranch;
 
 import java.util.List;
 

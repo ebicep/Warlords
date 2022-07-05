@@ -5,8 +5,8 @@ import com.ebicep.warlords.classes.rogue.AbstractRogue;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.vindicator.RighteousStrikeBranch;
-import com.ebicep.warlords.pve.upgrades.vindicator.SoulShackleBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
 
 import java.util.List;
 

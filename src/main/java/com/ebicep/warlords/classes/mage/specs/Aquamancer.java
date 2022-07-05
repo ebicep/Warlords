@@ -5,11 +5,11 @@ import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.aquamancer.HealingRainBranch;
-import com.ebicep.warlords.pve.upgrades.aquamancer.WaterBoltBranch;
-import com.ebicep.warlords.pve.upgrades.aquamancer.WaterBreathBranch;
-import com.ebicep.warlords.pve.upgrades.pyromancer.ArcaneShieldBranch;
-import com.ebicep.warlords.pve.upgrades.pyromancer.TimeWarpBranch;
+import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
+import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
+import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
+import com.ebicep.warlords.pve.upgrades.mage.pyromancer.ArcaneShieldBranch;
+import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranch;
 
 import java.util.List;
 

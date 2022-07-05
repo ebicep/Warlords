@@ -5,10 +5,10 @@ import com.ebicep.warlords.classes.rogue.AbstractRogue;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.assassin.IncendiaryCureBranch;
-import com.ebicep.warlords.pve.upgrades.assassin.JudgementStrikeBranch;
-import com.ebicep.warlords.pve.upgrades.assassin.ShadowStepBranch;
-import com.ebicep.warlords.pve.upgrades.assassin.SoulSwitchBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCureBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
 
 import java.util.List;
 

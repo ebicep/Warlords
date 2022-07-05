@@ -5,7 +5,7 @@ import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.avenger.*;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.*;
 
 import java.util.List;
 
