@@ -253,8 +253,10 @@ public abstract class WarlordsEntity {
         }
 
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
-            critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
-            critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
+            if (critChance != -1) {
+                critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
+                critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
+            }
         }
 
         //crit
