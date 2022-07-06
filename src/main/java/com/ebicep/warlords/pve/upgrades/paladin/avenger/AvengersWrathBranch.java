@@ -25,6 +25,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
     }
 
     int energyCost = ability.getEnergyCost();
+
     @Override
     public void a1() {
         ability.setEnergyPerSecond(energyCost + 10);

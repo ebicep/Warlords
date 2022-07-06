@@ -50,6 +50,7 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
     }
 
     float hitbox = ability.getHitbox();
+
     @Override
     public void b1() {
         ability.setHitbox(hitbox + 1);

@@ -57,6 +57,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
     }
 
     int energyPerSecond = ability.getEnergyPerSecond();
+
     @Override
     public void c1() {
         ability.setEnergyPerSecond(energyPerSecond + 5);

@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShadowStep extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int totalPlayersHit = 0;
 
     private int fallDamageNegation = 10;
@@ -46,7 +48,6 @@ public class ShadowStep extends AbstractAbility {
         return info;
     }
 
-
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Location playerLoc = wp.getLocation();
@@ -62,7 +63,6 @@ public class ShadowStep extends AbstractAbility {
             player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
             player.setFallDistance(-fallDamageNegation);
         }
-
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                 .withColor(Color.BLACK)
@@ -117,6 +117,10 @@ public class ShadowStep extends AbstractAbility {
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
 
+                    if (pveUpgrade) {
+                        buffOnLanding(wp);
+                    }
+
                     FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                             .withColor(Color.BLACK)
                             .with(FireworkEffect.Type.BALL)
@@ -130,7 +134,30 @@ public class ShadowStep extends AbstractAbility {
         return true;
     }
 
+    private void buffOnLanding(WarlordsEntity we) {
+        we.getSpeed().addSpeedModifier(name, 20, 3 * 20);
+        we.getCooldownManager().addRegularCooldown(
+                "STEP KB",
+                "STEP KB",
+                ShadowStep.class,
+                new ShadowStep(),
+                we,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                3 * 20
+        );
+    }
+
     public void setFallDamageNegation(int fallDamageNegation) {
         this.fallDamageNegation = fallDamageNegation;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -50,6 +50,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     }
 
     int energyCost = ability.getEnergyCost();
+
     @Override
     public void b1() {
         ability.setEnergyCost(energyCost - 5);
@@ -66,6 +67,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     }
 
     int speedOnCrit = ability.getSpeedOnCrit();
+
     @Override
     public void c1() {
         ability.setSpeedOnCrit(speedOnCrit + 5);

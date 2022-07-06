@@ -3,12 +3,12 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
@@ -21,7 +21,6 @@ import java.util.List;
 
 public class ArcaneShield extends AbstractAbility {
     private boolean pveUpgrade = false;
-    private float pveDamageReduction;
     private int timesBroken = 0;
 
     private int duration = 6;
@@ -61,25 +60,6 @@ public class ArcaneShield extends AbstractAbility {
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
 
-        if (pveUpgrade) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<ArcaneShield>(
-                    name,
-                    null,
-                    ArcaneShield.class,
-                    tempArcaneShield,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    duration * 20
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * getPveDamageReduction();
-                }
-            });
-        }
-
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "ARCA",
@@ -91,6 +71,16 @@ public class ArcaneShield extends AbstractAbility {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
+                        }
+                    }
+
+                    if (pveUpgrade) {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, 3, 3, 3)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            // TODO
                         }
                     }
                 },
@@ -159,13 +149,5 @@ public class ArcaneShield extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
-    }
-
-    public float getPveDamageReduction() {
-        return (100 - pveDamageReduction) / 100f;
-    }
-
-    public void setPveDamageReduction(int pveDamageReduction) {
-        this.pveDamageReduction = pveDamageReduction;
     }
 }

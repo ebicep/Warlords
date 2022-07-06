@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.paladin.avenger;
+package com.ebicep.warlords.pve.upgrades.paladin;
 
 import com.ebicep.warlords.abilties.LightInfusion;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -25,6 +25,7 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
     }
 
     int speedBuff = ability.getSpeedBuff();
+
     @Override
     public void a1() {
         ability.setSpeedBuff(speedBuff + 10);

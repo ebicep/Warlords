@@ -25,6 +25,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
     }
 
     int energyCost = ability.getEnergyCost();
+
     @Override
     public void a1() {
         ability.setEnergyCost(energyCost - 10);

@@ -12,13 +12,11 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -134,7 +132,6 @@ public class WaveDefenseOption implements Option {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
-                entry.getKey().getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get());
             }
         }
         waveCounter++;
@@ -178,10 +175,14 @@ public class WaveDefenseOption implements Option {
             }
             if (waveCounter >= 200) {
                 soundPitch = 0.2f;
+                wavePrefix = "§5W§5§k§la§5§lve ";
             }
             if (waveCounter >= 250) {
                 soundPitch = 0.1f;
                 wavePrefix = "§4W§4§k§la§4§lve ";
+            }
+            if (waveCounter >= 300) {
+                wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
@@ -228,10 +229,11 @@ public class WaveDefenseOption implements Option {
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
                         .map(e -> e.getName() + ": " + ChatColor.RED + e.getMinuteStats().total().getKills()
-                                + ChatColor.RESET + " / " + ChatColor.GOLD + e.getCurrency())
+                                + ChatColor.RESET + " / " + ChatColor.AQUA + e.getCurrency())
                         .collect(Collectors.toList());
             }
         });
+
         new TimerSkipAbleMarker() {
             @Override
             public int getDelay() {
@@ -256,7 +258,7 @@ public class WaveDefenseOption implements Option {
                     newWave();
                 }
 
-                if (waveCounter == 251) {
+                if (waveCounter == 1001) {
                     game.setNextState(new EndState(game, null));
                 }
             }

@@ -25,6 +25,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
     }
 
     int duration = ability.getDuration();
+
     @Override
     public void a1() {
         ability.setDuration(duration + 2);

@@ -66,6 +66,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     }
 
     int abilityReductionInTicks = ability.getAbilityReductionInTicks();
+
     @Override
     public void c1() {
         ability.setAbilityReductionInTicks(abilityReductionInTicks + 10);

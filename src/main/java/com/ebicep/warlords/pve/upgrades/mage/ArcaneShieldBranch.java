@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
+package com.ebicep.warlords.pve.upgrades.mage;
 
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -13,13 +13,13 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
         treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
         treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
 
-        treeC.add(new Upgrade("Absorption - Tier I", "+15% Max shield health", 5000));
-        treeC.add(new Upgrade("Absorption - Tier II", "+30% Max shield health", 10000));
-        treeC.add(new Upgrade("Absorption - Tier III", "+60% Max shield health", 20000));
+        treeC.add(new Upgrade("Absorption - Tier I", "+10% Max shield health", 5000));
+        treeC.add(new Upgrade("Absorption - Tier II", "+25% Max shield health", 10000));
+        treeC.add(new Upgrade("Absorption - Tier III", "+50% Max shield health", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Increase duration by 100%",
+                "+100% Duration\n\nWhen Arcane Shield breaks, deal damage equal to\n50% of the damage prevented by the Arcane Shield to\nall enemies within a 3 block radius and stun them\nfor 1s",
                 50000
         );
     }
@@ -58,21 +58,21 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
     @Override
     public void c1() {
-        ability.setShieldPercentage(65);
+        ability.setShieldPercentage(60);
         ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
         ability.updateDescription(null);
     }
 
     @Override
     public void c2() {
-        ability.setShieldPercentage(80);
+        ability.setShieldPercentage(75);
         ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
         ability.updateDescription(null);
     }
 
     @Override
     public void c3() {
-        ability.setShieldPercentage(110);
+        ability.setShieldPercentage(100);
         ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
         ability.updateDescription(null);
     }
@@ -80,7 +80,6 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
     @Override
     public void master() {
         ability.setDuration(ability.getDuration() * 2);
-        abilityTree.getPlayer().setMaxHealth((int) (abilityTree.getPlayer().getMaxHealth() * 1.5f));
-        ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
+        ability.setPveUpgrade(true);
     }
 }

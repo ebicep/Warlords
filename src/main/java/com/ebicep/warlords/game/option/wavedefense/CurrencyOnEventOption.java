@@ -31,12 +31,12 @@ public class CurrencyOnEventOption implements Option, Listener {
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
         if (event.getKiller() != null) {
-            event.getKiller().sendMessage(ChatColor.GOLD + "+" + currencyToAdd + " Currency");
+            event.getKiller().sendMessage(ChatColor.AQUA + "+" + currencyToAdd + " Upgrade Insignia");
             event.getKiller().addCurrency(currencyToAdd);
         }
 
         for (WarlordsEntity we : event.getPlayer().getHitBy().keySet()) {
-            we.sendMessage(ChatColor.GOLD + "+" + (currencyToAdd / 2) + " Currency");
+            we.sendMessage(ChatColor.AQUA + "+" + (currencyToAdd / 2) + " Upgrade Insignia");
             we.addCurrency(currencyToAdd / 2);
         }
     }

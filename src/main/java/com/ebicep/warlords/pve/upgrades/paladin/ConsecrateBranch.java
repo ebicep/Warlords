@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.paladin.avenger;
+package com.ebicep.warlords.pve.upgrades.paladin;
 
 import com.ebicep.warlords.abilties.Consecrate;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -50,6 +50,7 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
     }
 
     float radius = ability.getRadius();
+
     @Override
     public void b1() {
         ability.setRadius(radius + 1);

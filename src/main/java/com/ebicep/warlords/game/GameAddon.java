@@ -25,7 +25,6 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            //game.getOptions().add(new CountGameOption());
             game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")

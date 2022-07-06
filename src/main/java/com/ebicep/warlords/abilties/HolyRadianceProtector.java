@@ -68,6 +68,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
+            if (pveUpgrade) return true;
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 // chain particles

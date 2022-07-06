@@ -50,6 +50,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     }
 
     int energyCost = ability.getEnergyCost();
+
     @Override
     public void b1() {
         ability.setEnergyCost(energyCost - 5);

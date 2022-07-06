@@ -32,8 +32,9 @@ public class WarlordsNPC extends WarlordsEntity {
         setSpawnGrave(false);
     }
 
-    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass, int maxHealth) {
+    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass, int maxHealth, float walkSpeed) {
         super(uuid, name, weapon, entity, game, team, specClass);
+        this.walkspeed = walkSpeed;
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -60,7 +61,7 @@ public class WarlordsNPC extends WarlordsEntity {
     public void updateEntity() {
         entity.setCustomName(ChatColor.RED.toString() + this.getHealth() + "❤"); // TODO add level and class into the name of this jimmy
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed / 2.6);
+        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);
     }
 

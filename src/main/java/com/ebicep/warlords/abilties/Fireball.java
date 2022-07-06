@@ -2,8 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -107,7 +109,8 @@ public class Fireball extends AbstractProjectileBase {
                     false);
 
             if (pveUpgrade) {
-                hit.getCooldownManager().addRegularCooldown(
+                hit.getCooldownManager().removeCooldown(Fireball.class);
+                hit.getCooldownManager().addCooldown(new RegularCooldown<Fireball>(
                         name,
                         "BRN",
                         Fireball.class,
@@ -130,7 +133,12 @@ public class Fireball extends AbstractProjectileBase {
                                 );
                             }
                         }
-                );
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.2f;
+                    }
+                });
             }
         }
 

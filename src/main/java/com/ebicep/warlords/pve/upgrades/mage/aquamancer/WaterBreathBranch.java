@@ -17,13 +17,13 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         treeB.add(new Upgrade("Utility - Tier II", "+25% Knockback", 10000));
         treeB.add(new Upgrade("Utility - Tier III", "+50% Knockback", 20000));
 
-        treeC.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
-        treeC.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
-        treeC.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
+        treeC.add(new Upgrade("Healing - Tier I", "+15% Healing", 5000));
+        treeC.add(new Upgrade("Healing - Tier II", "+30% Healing", 10000));
+        treeC.add(new Upgrade("Healing - Tier III", "+60% Healing", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+30% Cone Range\n\nAll allies hit by Water Breath gain\n1% max health per second for 5 seconds.",
+                "+30% Cone Range\n\nAll allies hit by Water Breath are healed of their\n1% max health per second for 5 seconds.",
                 50000
         );
     }
@@ -46,6 +46,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
     }
 
     double velocity = ability.getVelocity();
+
     @Override
     public void b1() {
         ability.setVelocity(velocity + .1);
@@ -66,20 +67,20 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
     @Override
     public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
+        ability.setMinDamageHeal(minHealing * 1.15f);
+        ability.setMaxDamageHeal(maxHealing * 1.15f);
     }
 
     @Override
     public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
+        ability.setMinDamageHeal(minHealing * 1.3f);
+        ability.setMaxDamageHeal(maxHealing * 1.3f);
     }
 
     @Override
     public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
+        ability.setMinDamageHeal(minHealing * 1.6f);
+        ability.setMaxDamageHeal(maxHealing * 1.6f);
     }
 
     @Override

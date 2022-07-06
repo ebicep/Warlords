@@ -79,6 +79,6 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
 
     @Override
     public void master() {
-
+        ability.setPveUpgrade(true);
     }
 }

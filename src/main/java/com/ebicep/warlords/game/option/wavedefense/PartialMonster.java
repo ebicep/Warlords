@@ -52,7 +52,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
-    static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+    static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -61,7 +61,8 @@ public interface PartialMonster {
                 game,
                 team,
                 spec,
-                maxHealth
+                maxHealth,
+                walkSpeed
         ));
     }
 
@@ -77,7 +78,21 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, Specializations spec) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed) {
+        return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
+                uuid,
+                name,
+                Weapons.ABBADON,
+                Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(clazz, loc, ee)),
+                game,
+                team,
+                Specializations.PYROMANCER,
+                maxHealth,
+                walkSpeed
+        ));
+    }
+
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -86,7 +101,8 @@ public interface PartialMonster {
                 game,
                 team,
                 spec,
-                maxHealth
+                maxHealth,
+                walkSpeed
         ));
     }
 

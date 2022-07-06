@@ -1935,6 +1935,9 @@ public abstract class WarlordsEntity {
                 if (cooldownManager.hasCooldownFromName("KB Increase")) {
                     v.multiply(1.5);
                 }
+                if (cooldownManager.hasCooldownFromName("STEP KB")) {
+                    v.multiply(0.8);
+                }
             }
             this.entity.setVelocity(v);
         }
