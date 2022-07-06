@@ -81,6 +81,6 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
     public void master() {
         ability.setEnergyCost(0);
         ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 2);
-        ability.setMarkDuration(12);
+        ability.setMarkDuration(ability.getMarkDuration() + 4);
     }
 }

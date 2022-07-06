@@ -124,6 +124,10 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
         return false;
     }
 
+    public int getMarkDuration() {
+        return markDuration;
+    }
+
     public void setMarkDuration(int markDuration) {
         this.markDuration = markDuration;
     }
