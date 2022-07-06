@@ -49,19 +49,20 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
+    float hitbox = ability.getHitbox();
     @Override
     public void b1() {
-        ability.setHitbox(6);
+        ability.setHitbox(hitbox + 1);
     }
 
     @Override
     public void b2() {
-        ability.setHitbox(7);
+        ability.setHitbox(hitbox + 2);
     }
 
     @Override
     public void b3() {
-        ability.setHitbox(8);
+        ability.setHitbox(hitbox + 3);
     }
 
     float cooldown = ability.getCooldown();
