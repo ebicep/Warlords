@@ -24,19 +24,20 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
         );
     }
 
+    int duration = ability.getDuration();
     @Override
     public void a1() {
-        ability.setDuration(ability.getDuration() + 1);
+        ability.setDuration(duration + 1);
     }
 
     @Override
     public void a2() {
-        ability.setDuration(ability.getDuration() + 1);
+        ability.setDuration(duration + 2);
     }
 
     @Override
     public void a3() {
-        ability.setDuration(ability.getDuration() + 2);
+        ability.setDuration(duration + 4);
     }
 
     @Override

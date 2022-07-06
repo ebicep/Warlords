@@ -153,8 +153,16 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         }
     }
 
+    public int getMinConvert() {
+        return minConvert;
+    }
+
     public void setMinConvert(int convertPercent) {
         this.minConvert = convertPercent;
+    }
+
+    public int getMaxConvert() {
+        return maxConvert;
     }
 
     public void setMaxConvert(int selfConvertPercent) {
