@@ -24,19 +24,20 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
         );
     }
 
+    int speedBuff = ability.getSpeedBuff();
     @Override
     public void a1() {
-        ability.setSpeedBuff(50);
+        ability.setSpeedBuff(speedBuff + 10);
     }
 
     @Override
     public void a2() {
-        ability.setSpeedBuff(60);
+        ability.setSpeedBuff(speedBuff + 20);
     }
 
     @Override
     public void a3() {
-        ability.setSpeedBuff(70);
+        ability.setSpeedBuff(speedBuff + 30);
     }
 
     @Override

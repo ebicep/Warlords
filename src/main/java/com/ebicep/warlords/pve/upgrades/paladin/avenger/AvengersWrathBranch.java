@@ -19,24 +19,25 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "-20% Cooldown reduction\n\nAvenger's Strike now hits 2 additional enemies and\ngain 2 energy per Avenger's Strike succesfully landed\non an enemy.",
+                "-60% Cooldown reduction\n\nAvenger's Strike now hits 2 additional enemies and\ngain 2 energy per Avenger's Strike succesfully landed\non an enemy.",
                 50000
         );
     }
 
+    int energyCost = ability.getEnergyCost();
     @Override
     public void a1() {
-        ability.setEnergyPerSecond(30);
+        ability.setEnergyPerSecond(energyCost + 10);
     }
 
     @Override
     public void a2() {
-        ability.setEnergyPerSecond(40);
+        ability.setEnergyPerSecond(energyCost + 20);
     }
 
     @Override
     public void a3() {
-        ability.setEnergyPerSecond(50);
+        ability.setEnergyPerSecond(energyCost + 30);
     }
 
     @Override

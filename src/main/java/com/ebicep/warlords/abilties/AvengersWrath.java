@@ -1,10 +1,10 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -78,6 +78,7 @@ public class AvengersWrath extends AbstractAbility {
                     }
                 }
         ) {
+
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().equals("Avenger's Strike")) {
@@ -93,16 +94,14 @@ public class AvengersWrath extends AbstractAbility {
                         }
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
 
-                        Optional<Consecrate> oc = new CooldownFilter<>(wp, RegularCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                                .findAny();
-                        if (standingOnConsecrate(wp, wrathTarget) && oc.isPresent()) {
+                        Optional<Consecrate> standingOnConsecrate = AbstractStrikeBase.getStandingOnConsecrate(wp, wrathTarget);
+                        if (standingOnConsecrate.isPresent()) {
                             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                             wrathTarget.addDamageInstance(
                                     wp,
                                     "Avenger's Strìke",
-                                    event.getMin() * (1 + oc.get().getStrikeDamageBoost() / 100f),
-                                    event.getMax() * (1 + oc.get().getStrikeDamageBoost() / 100f),
+                                    event.getMin() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
+                                    event.getMax() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
                                     false
@@ -125,12 +124,6 @@ public class AvengersWrath extends AbstractAbility {
         });
 
         return true;
-    }
-
-    private boolean standingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
-        return new CooldownFilter<>(owner, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                .anyMatch(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius());
     }
 
     public void addExtraPlayersStruck() {

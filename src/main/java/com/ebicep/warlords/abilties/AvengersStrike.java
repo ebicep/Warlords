@@ -77,6 +77,10 @@ public class AvengersStrike extends AbstractStrikeBase {
         this.pveUpgrade = pveUpgrade;
     }
 
+    public int getEnergySteal() {
+        return energySteal;
+    }
+
     public void setEnergySteal(int energySteal) {
         this.energySteal = energySteal;
     }
