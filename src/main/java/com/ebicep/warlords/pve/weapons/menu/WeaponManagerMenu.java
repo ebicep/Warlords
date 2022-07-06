@@ -49,10 +49,7 @@ public class WeaponManagerMenu {
         public void sort() {
             sortedWeaponInventory = new ArrayList<>(weaponInventory);
             if (filter != WeaponsPvE.NONE) {
-                sortedWeaponInventory.removeIf(weapon -> {
-                    System.out.println(weapon.getClass() + " - " + filter.weaponClass + " - " + weapon.getClass().equals(filter.weaponClass));
-                    return !Objects.equals(weapon.getClass(), filter.weaponClass);
-                });
+                sortedWeaponInventory.removeIf(weapon -> !Objects.equals(weapon.getClass(), filter.weaponClass));
             }
             sortedWeaponInventory.sort(sortOption.comparator);
             if (!ascending) {
