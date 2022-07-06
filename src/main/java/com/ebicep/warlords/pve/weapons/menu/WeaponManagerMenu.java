@@ -18,7 +18,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 public class WeaponManagerMenu {
 
     public enum SortOptions {
-        NONE("None", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
+        DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
         RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
         ;
         public final String name;
@@ -41,13 +41,22 @@ public class WeaponManagerMenu {
     static class PlayerMenuSettings {
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
-        private SortOptions sortOption = SortOptions.NONE;
+        private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
+        private WeaponsPvE filter = WeaponsPvE.NONE;
+        private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
         public void sort() {
-            weaponInventory.sort(sortOption.comparator);
+            sortedWeaponInventory = new ArrayList<>(weaponInventory);
+            if (filter != WeaponsPvE.NONE) {
+                sortedWeaponInventory.removeIf(weapon -> {
+                    System.out.println(weapon.getClass() + " - " + filter.weaponClass + " - " + weapon.getClass().equals(filter.weaponClass));
+                    return !Objects.equals(weapon.getClass(), filter.weaponClass);
+                });
+            }
+            sortedWeaponInventory.sort(sortOption.comparator);
             if (!ascending) {
-                Collections.reverse(weaponInventory);
+                Collections.reverse(sortedWeaponInventory);
             }
         }
 
@@ -59,12 +68,21 @@ public class WeaponManagerMenu {
             this.page = page;
         }
 
-        public List<AbstractWeapon> getWeaponInventory() {
-            return weaponInventory;
+        public List<AbstractWeapon> getSortedWeaponInventory() {
+            return sortedWeaponInventory;
         }
 
         public void setWeaponInventory(List<AbstractWeapon> weaponInventory) {
             this.weaponInventory = weaponInventory;
+            this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
+        }
+
+        public WeaponsPvE getFilter() {
+            return filter;
+        }
+
+        public void setFilter(WeaponsPvE filter) {
+            this.filter = filter;
         }
 
         public SortOptions getSortOption() {
@@ -82,6 +100,8 @@ public class WeaponManagerMenu {
         public void setAscending(boolean ascending) {
             this.ascending = ascending;
         }
+
+
     }
 
     public static void openWeaponInventoryFromExternal(Player player) {
@@ -100,9 +120,10 @@ public class WeaponManagerMenu {
     public static void openWeaponInventoryFromInternal(Player player) {
         PlayerMenuSettings menuSettings = playerMenuSettings.get(player.getUniqueId());
         int page = menuSettings.getPage();
-        List<AbstractWeapon> weaponInventory = menuSettings.getWeaponInventory();
-        SortOptions sortedBy = menuSettings.getSortOption();
         menuSettings.sort();
+        List<AbstractWeapon> weaponInventory = menuSettings.getSortedWeaponInventory();
+        SortOptions sortedBy = menuSettings.getSortOption();
+        WeaponsPvE filterBy = menuSettings.getFilter();
 
         Menu menu = new Menu("Weapon Inventory", 9 * 6);
 
@@ -146,7 +167,30 @@ public class WeaponManagerMenu {
             );
         }
 
+        menu.setItem(3, 5,
+                new ItemBuilder(Material.MILK_BUCKET).name(ChatColor.GREEN + "Reset Settings")
+                        .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .get(),
+                (m, e) -> {
+                    menuSettings.setFilter(WeaponsPvE.NONE);
+                    menuSettings.setSortOption(SortOptions.DATE);
+                    menuSettings.setAscending(true);
+                    openWeaponInventoryFromInternal(player);
+                }
+        );
         menu.setItem(5, 5,
+                new ItemBuilder(Material.HOPPER).name(ChatColor.GREEN + "Filter By")
+                        .lore(Arrays.stream(WeaponsPvE.values())
+                                .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                .collect(Collectors.joining("\n"))
+                        )
+                        .get(),
+                (m, e) -> {
+                    menuSettings.setFilter(filterBy.next());
+                    openWeaponInventoryFromInternal(player);
+                }
+        );
+        menu.setItem(6, 5,
                 new ItemBuilder(Material.REDSTONE_COMPARATOR).name(ChatColor.GREEN + "Sort By")
                         .lore(Arrays.stream(SortOptions.values())
                                 .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
@@ -158,7 +202,7 @@ public class WeaponManagerMenu {
                     openWeaponInventoryFromInternal(player);
                 }
         );
-        menu.setItem(6, 5,
+        menu.setItem(7, 5,
                 new ItemBuilder(Material.LEVER).name(ChatColor.GREEN + "Sort Order")
                         .lore(menuSettings.isAscending() ?
                                 ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :

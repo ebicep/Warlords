@@ -4,34 +4,43 @@ import org.bukkit.ChatColor;
 
 public enum WeaponsPvE {
 
-    COMMON_WEAPON(ChatColor.GREEN, "Common Weapon"),
-    RARE_WEAPON(ChatColor.BLUE, "Rare Weapon"),
-    EPIC_WEAPON(ChatColor.DARK_PURPLE, "Epic Weapon"),
-    LEGENDARY_WEAPON(ChatColor.GOLD, "Legendary Weapon");
+    NONE(null, ChatColor.GRAY, "None"),
+    COMMON(CommonWeapon.class, ChatColor.GREEN, "Common"),
+    RARE(RareWeapon.class, ChatColor.BLUE, "Rare"),
+    EPIC(EpicWeapon.class, ChatColor.DARK_PURPLE, "Epic"),
+    LEGENDARY(LegendaryWeapon.class, ChatColor.GOLD, "Legendary");
 
+    public final Class<?> weaponClass;
     public final ChatColor chatColor;
     public final String name;
 
-    WeaponsPvE(ChatColor chatColor, String name) {
+    WeaponsPvE(Class<?> weaponClass, ChatColor chatColor, String name) {
+        this.weaponClass = weaponClass;
         this.chatColor = chatColor;
         this.name = name;
     }
 
+    private static final WeaponsPvE[] vals = values();
+
+    public WeaponsPvE next() {
+        return vals[(this.ordinal() + 1) % vals.length];
+    }
+
     public String getGeneralName() {
-        return chatColor + name;
+        return chatColor + name + " Weapon";
     }
 
     public static WeaponsPvE getWeapon(AbstractWeapon abstractWeapon) {
         if (abstractWeapon instanceof CommonWeapon) {
-            return COMMON_WEAPON;
+            return COMMON;
         } else if (abstractWeapon instanceof RareWeapon) {
-            return RARE_WEAPON;
+            return RARE;
         } else if (abstractWeapon instanceof EpicWeapon) {
-            return EPIC_WEAPON;
+            return EPIC;
         } else if (abstractWeapon instanceof LegendaryWeapon) {
-            return LEGENDARY_WEAPON;
+            return LEGENDARY;
         } else {
-            return null;
+            return NONE;
         }
     }
 }
