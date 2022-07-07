@@ -1,12 +1,11 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntitySpider;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomSpider extends EntitySpider implements CustomEntity {
+public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpider> {
 
     public CustomSpider(World world) {
         super(world);
@@ -21,7 +20,7 @@ public class CustomSpider extends EntitySpider implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomSpider get() {
         return this;
     }
 

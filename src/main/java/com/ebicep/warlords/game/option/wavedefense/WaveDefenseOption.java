@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -203,7 +205,17 @@ public class WaveDefenseOption implements Option {
         game.registerEvents(new Listener() {
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
-                entities.remove(event.getPlayer());
+                WarlordsEntity warlordsEntity = event.getPlayer();
+                entities.remove(warlordsEntity);
+                if (warlordsEntity.getEntity() instanceof CustomEntity) {
+                    new GameRunnable(game) {
+                        @Override
+                        public void run() {
+                            ((CustomEntity) warlordsEntity.getEntity()).onDeath((EntityInsentient) warlordsEntity.getEntity(), warlordsEntity.getDeathLocation(), WaveDefenseOption.this);
+                            game.removePlayer(warlordsEntity.getUuid());
+                        }
+                    }.runTask();
+                }
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
@@ -272,6 +284,9 @@ public class WaveDefenseOption implements Option {
         }.runTaskTimer(20, 0);
     }
 
+    public Set<WarlordsEntity> getEntities() {
+        return entities;
+    }
 
     public int getWaveCounter() {
         return waveCounter;

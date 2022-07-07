@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
+public class CustomSkeleton extends EntitySkeleton implements CustomEntity<CustomSkeleton> {
 
     private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 20);
 
@@ -29,7 +29,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomSkeleton get() {
         return this;
     }
 

@@ -1,12 +1,11 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityPigZombie;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomPigZombie extends EntityPigZombie implements CustomEntity {
+public class CustomPigZombie extends EntityPigZombie implements CustomEntity<CustomPigZombie> {
 
     public CustomPigZombie(World world) {
         super(world);
@@ -21,7 +20,7 @@ public class CustomPigZombie extends EntityPigZombie implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomPigZombie get() {
         return this;
     }
 

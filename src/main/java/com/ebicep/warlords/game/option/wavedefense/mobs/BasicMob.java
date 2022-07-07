@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Blaze;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Function;
@@ -14,6 +14,9 @@ public class BasicMob {
 
     public static final Function<Location, PartialMonster> ZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -28,6 +31,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
+            () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -42,6 +48,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> PIGZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomPigZombie.class,
+            () -> new CustomPigZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Pig Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -56,6 +65,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(
             CustomSpider.class,
+            () -> new CustomSpider(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Spider",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -68,8 +80,12 @@ public class BasicMob {
             1500,
             0.2f
     );
-    public static final Function<Location, PartialMonster> BLAZE = loc -> PartialMonster.fromEntity(
-            Blaze.class,
+    public static final Function<Location, PartialMonster> BLAZE = loc -> PartialMonster.fromCustomEntity(
+            CustomBlaze.class,
+            () -> new CustomBlaze(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+
+            },
             "BLAZE",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -82,6 +98,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromCustomEntity(
             CustomCreeper.class,
+            () -> new CustomCreeper(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Creeper",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -94,6 +113,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> SLIME = loc -> PartialMonster.fromCustomEntity(
             CustomSlime.class,
+            () -> new CustomSlime(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Chessking",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -108,6 +130,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
             CustomMagmaCube.class,
+            () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Magma Cube",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -122,6 +147,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> GHAST = loc -> PartialMonster.fromCustomEntity(
             CustomGhast.class,
+            () -> new CustomGhast(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Ghast",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -136,6 +164,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> ENDERMAN = loc -> PartialMonster.fromCustomEntity(
             CustomEnderman.class,
+            () -> new CustomEnderman(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Enderman",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -150,6 +181,9 @@ public class BasicMob {
     );
     public static final Function<Location, PartialMonster> GUARDIAN = loc -> PartialMonster.fromCustomEntity(
             CustomGuardian.class,
+            () -> new CustomGuardian(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
             "Guardian",
             loc,
             new Utils.SimpleEntityEquipment(

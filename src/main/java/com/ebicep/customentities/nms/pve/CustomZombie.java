@@ -4,7 +4,7 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomZombie extends EntityZombie implements CustomEntity {
+public class CustomZombie extends EntityZombie implements CustomEntity<CustomZombie> {
 
     public CustomZombie(World world) {
         super(world);
@@ -30,7 +30,7 @@ public class CustomZombie extends EntityZombie implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomZombie get() {
         return this;
     }
 

@@ -1,12 +1,11 @@
 package com.ebicep.customentities.nms.pve;
 
 import net.minecraft.server.v1_8_R3.EntityEnderman;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomEnderman extends EntityEnderman implements CustomEntity {
+public class CustomEnderman extends EntityEnderman implements CustomEntity<CustomEnderman> {
 
     public CustomEnderman(World world) {
         super(world);
@@ -21,7 +20,7 @@ public class CustomEnderman extends EntityEnderman implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomEnderman get() {
         return this;
     }
 

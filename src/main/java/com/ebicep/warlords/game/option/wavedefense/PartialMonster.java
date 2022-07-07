@@ -12,13 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 
-import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public interface PartialMonster {
-    WarlordsEntity toNPC(Game game, Team team, UUID uuid);
-
     static PartialMonster fromEntity(LivingEntity entity) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
@@ -30,6 +29,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
+
     static PartialMonster fromEntity(String name, LivingEntity entity) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
@@ -41,6 +41,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
+
     static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
@@ -52,6 +53,7 @@ public interface PartialMonster {
                 Specializations.PYROMANCER
         ));
     }
+
     static PartialMonster fromEntity(Class<? extends LivingEntity> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
@@ -66,24 +68,24 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
                 Weapons.ABBADON,
-                Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(clazz, loc, ee)),
+                WarlordsNPC.spawnCustomEntity(clazz, create, onCreate, loc, ee),
                 game,
                 team,
                 Specializations.PYROMANCER
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
                 Weapons.ABBADON,
-                Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(clazz, loc, ee)),
+                WarlordsNPC.spawnCustomEntity(clazz, create, onCreate, loc, ee),
                 game,
                 team,
                 Specializations.PYROMANCER,
@@ -92,12 +94,12 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
+    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
                 Weapons.ABBADON,
-                Objects.requireNonNull(WarlordsNPC.spawnCustomEntity(clazz, loc, ee)),
+                WarlordsNPC.spawnCustomEntity(clazz, create, onCreate, loc, ee),
                 game,
                 team,
                 spec,
@@ -105,6 +107,8 @@ public interface PartialMonster {
                 walkSpeed
         ));
     }
+
+    WarlordsEntity toNPC(Game game, Team team, UUID uuid);
 
     default PartialMonster prependOperation(UnaryOperator<WarlordsEntity> mapper) {
         return (game, team, uuid) -> mapper.apply(this.toNPC(game, team, uuid));

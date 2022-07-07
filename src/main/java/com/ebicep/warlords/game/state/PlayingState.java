@@ -244,7 +244,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private void updateScoreboard() {
-        game.forEachOfflineWarlordsPlayer((player, team) -> {
+        game.forEachOnlinePlayer((player, team) -> {
             updateBasedOnGameState(Warlords.playerScoreboards.get(player.getUniqueId()), Warlords.getPlayer(player));
         });
     }

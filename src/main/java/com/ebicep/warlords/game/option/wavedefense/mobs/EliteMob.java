@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Function;
@@ -14,7 +15,8 @@ public class EliteMob {
 
     public static final Function<Location, PartialMonster> ELITE_ZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
-            "Elite Zombie",
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
+            }, "Elite Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -29,7 +31,8 @@ public class EliteMob {
 
     public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
-            "Elite Skeleton",
+            () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
+            }, "Elite Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 1),

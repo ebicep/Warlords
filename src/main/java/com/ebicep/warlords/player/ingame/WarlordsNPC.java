@@ -6,12 +6,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
@@ -22,6 +23,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class WarlordsNPC extends WarlordsEntity {
 
@@ -43,14 +46,7 @@ public class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateHealth() {
-        if (isDead()) {
-            new GameRunnable(game) {
-                @Override
-                public void run() {
-                    game.removePlayer(uuid);
-                }
-            }.runTask();
-        } else {
+        if (!isDead()) {
             String oldName = getEntity().getCustomName();
             String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + getHealth() + "❤";
             getEntity().setCustomName(newName);
@@ -117,32 +113,27 @@ public class WarlordsNPC extends WarlordsEntity {
         return entity;
     }
 
-    public static <T extends CustomEntity> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
-        try {
-            //TODO UGLY find another way, supplier?
-            T customEntity = clazz.getConstructor(World.class).newInstance(((CraftWorld) loc.getWorld()).getHandle());
-            customEntity.spawn(loc);
+    public static <T extends CustomEntity> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, @Nonnull Location loc, @Nullable EntityEquipment inv) {
+        T customEntity = create.get();
+        onCreate.accept(customEntity);
+        customEntity.spawn(loc);
 
-            EntityInsentient entityInsentient = customEntity.get();
-            entityInsentient.persistent = true;
+        EntityInsentient entityInsentient = customEntity.get();
+        entityInsentient.persistent = true;
 
-            LivingEntity entity = (LivingEntity) entityInsentient.getBukkitEntity();
-            if (inv != null) {
-                entity.getEquipment().setBoots(inv.getBoots());
-                entity.getEquipment().setLeggings(inv.getLeggings());
-                entity.getEquipment().setChestplate(inv.getChestplate());
-                entity.getEquipment().setHelmet(inv.getHelmet());
-                entity.getEquipment().setItemInHand(inv.getItemInHand());
-            } else {
-                entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
-            }
-
-
-            return entity;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        LivingEntity entity = (LivingEntity) entityInsentient.getBukkitEntity();
+        if (inv != null) {
+            entity.getEquipment().setBoots(inv.getBoots());
+            entity.getEquipment().setLeggings(inv.getLeggings());
+            entity.getEquipment().setChestplate(inv.getChestplate());
+            entity.getEquipment().setHelmet(inv.getHelmet());
+            entity.getEquipment().setItemInHand(inv.getItemInHand());
+        } else {
+            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
         }
+
+
+        return entity;
     }
 
     @Override

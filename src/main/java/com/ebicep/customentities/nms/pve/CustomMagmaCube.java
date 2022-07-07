@@ -1,12 +1,12 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.EntityInsentient;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import net.minecraft.server.v1_8_R3.EntityMagmaCube;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity {
+public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<CustomMagmaCube> {
 
     public CustomMagmaCube(World world) {
         super(world);
@@ -26,6 +26,18 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity {
     }
 
     @Override
+    public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+        if (customMagmaCube.getSize() <= 1) return;
+        for (int i = 0; i < 2; i++) {
+            CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
+            babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
+            babyMagmaCube.spawn(deathLocation);
+            //TODO add to wave defense option
+            //waveDefenseOption.getEntities().add()
+        }
+    }
+
+    @Override
     public void spawn(Location location) {
         setPosition(location.getX(), location.getY(), location.getZ());
         getBukkitEntity().setCustomNameVisible(true);
@@ -34,7 +46,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomMagmaCube get() {
         return this;
     }
 

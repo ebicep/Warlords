@@ -148,7 +148,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
 
         //EXPERIENCE
-        if (game.playersCount() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
+        if (players.size() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
             showExperienceSummary(game);
         }
         sendGlobalMessage(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);

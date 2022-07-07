@@ -1,12 +1,11 @@
 package com.ebicep.customentities.nms.pve;
 
 import net.minecraft.server.v1_8_R3.EntityGiantZombie;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
-public class CustomGiant extends EntityGiantZombie implements CustomEntity {
+public class CustomGiant extends EntityGiantZombie implements CustomEntity<CustomGiant> {
 
     public CustomGiant(World world) {
         super(world);
@@ -21,7 +20,7 @@ public class CustomGiant extends EntityGiantZombie implements CustomEntity {
     }
 
     @Override
-    public EntityInsentient get() {
+    public CustomGiant get() {
         return this;
     }
 
