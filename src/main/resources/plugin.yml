@@ -132,7 +132,7 @@ commands:
     description: Unstuck yourself
     usage: /unstuck
   setwave:
-    description: Unstuck yourself
+    description: Set the wave counter in Wave Defense
     usage: /unstuck
 
 permissions:
