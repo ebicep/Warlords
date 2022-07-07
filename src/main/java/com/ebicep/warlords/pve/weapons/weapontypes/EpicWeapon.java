@@ -2,7 +2,10 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
 import com.ebicep.warlords.util.java.Utils;
+import org.bukkit.ChatColor;
 import org.springframework.data.annotation.Transient;
+
+import java.util.UUID;
 
 public class EpicWeapon extends AbstractBetterWeapon implements Salvageable {
 
@@ -27,7 +30,15 @@ public class EpicWeapon extends AbstractBetterWeapon implements Salvageable {
     public static final int SPEED_BONUS_MAX = 8;
 
     public EpicWeapon() {
-        super();
+    }
+
+    public EpicWeapon(UUID uuid) {
+        super(uuid);
+    }
+
+    @Override
+    public ChatColor getChatColor() {
+        return ChatColor.DARK_PURPLE;
     }
 
     @Override

@@ -16,7 +16,6 @@ import java.util.UUID;
 public class LegendaryWeapon extends AbstractBetterWeapon {
 
     protected String title;
-    protected Specializations specialization;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
     @Field("unlocked_skill_boosts")
@@ -27,15 +26,19 @@ public class LegendaryWeapon extends AbstractBetterWeapon {
     protected int energyPerHitBonus;
 
     public LegendaryWeapon() {
-
     }
 
     public LegendaryWeapon(UUID uuid) {
+        super(uuid);
         Specializations selectedSpec = Warlords.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
-        this.specialization = selectedSpec;
         this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
+    }
+
+    @Override
+    public ChatColor getChatColor() {
+        return ChatColor.GOLD;
     }
 
     @Override

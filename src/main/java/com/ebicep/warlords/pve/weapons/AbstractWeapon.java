@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
@@ -16,10 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractWeapon {
 
@@ -37,35 +35,51 @@ public abstract class AbstractWeapon {
     protected Weapons selectedWeaponSkin = Weapons.STEEL_SWORD;
     @Field("unlocked_weapon_skins")
     protected List<Weapons> unlockedWeaponSkins = new ArrayList<>();
-    @Field("bound_spec")
-    protected Specializations boundedToSpec;
+    @Field("specialization")
+    protected Specializations specialization;
+    @Field("bound")
+    protected boolean isBound = false;
     @Field("star_piece_bonus")
     protected WeaponStats starPieceBonus;
 
     public AbstractWeapon() {
-        generateStats();
     }
+
+    public AbstractWeapon(UUID uuid) {
+        generateStats();
+        this.specialization = Warlords.getPlayerSettings(uuid).getSelectedSpec();
+    }
+
+    public abstract ChatColor getChatColor();
 
     public abstract List<String> getLore();
 
     public abstract void generateStats();
 
-    public ItemStack generateItemStack() {
-        List<String> lore = new ArrayList<>();
-        lore.addAll(Arrays.asList(
+    public String getTitle() {
+        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    }
+
+    private List<String> getBaseStats() {
+        return Arrays.asList(
                 ChatColor.GRAY + "Damage: " + ChatColor.RED + meleeDamage,
                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + critChance + "%",
                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + critMultiplier + "%",
                 "",
                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + healthBonus
-        ));
+        );
+    }
+
+    public ItemStack generateItemStack() {
+        List<String> lore = new ArrayList<>();
+        lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        if (boundedToSpec != null) {
+        if (isBound) {
             lore.add("");
-            lore.add(ChatColor.AQUA + "Bound - " + boundedToSpec.name);
+            lore.add(ChatColor.AQUA + "BOUND");
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
-                .name(WeaponsPvE.getWeapon(this).getGeneralName())
+                .name(getTitle())
                 .lore(lore)
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
@@ -74,19 +88,13 @@ public abstract class AbstractWeapon {
 
     public ItemStack generateItemStackInLore(String name) {
         List<String> lore = new ArrayList<>();
-        lore.add(WeaponsPvE.getWeapon(this).getGeneralName());
+        lore.add(getTitle());
         lore.add("");
-        lore.addAll(Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + meleeDamage,
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + critChance + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + critMultiplier + "%",
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + healthBonus
-        ));
+        lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        if (boundedToSpec != null) {
+        if (isBound) {
             lore.add("");
-            lore.add(ChatColor.AQUA + "Bound - " + boundedToSpec.name);
+            lore.add(ChatColor.AQUA + "BOUND");
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
@@ -108,9 +116,9 @@ public abstract class AbstractWeapon {
     }
 
     public static void giveTestItem(Player player) {
-        AbstractWeapon abstractWeapon = new CommonWeapon();
-        AbstractWeapon abstractWeapon2 = new RareWeapon();
-        AbstractWeapon abstractWeapon3 = new EpicWeapon();
+        AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
+        AbstractWeapon abstractWeapon2 = new RareWeapon(player.getUniqueId());
+        AbstractWeapon abstractWeapon3 = new EpicWeapon(player.getUniqueId());
         AbstractWeapon abstractWeapon4 = new LegendaryWeapon(player.getUniqueId());
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
@@ -163,11 +171,19 @@ public abstract class AbstractWeapon {
         return unlockedWeaponSkins;
     }
 
-    public Specializations getBoundedToSpec() {
-        return boundedToSpec;
+    public Specializations getSpecializations() {
+        return specialization;
     }
 
-    public void setBoundedToSpec(Specializations boundedToSpec) {
-        this.boundedToSpec = boundedToSpec;
+    public boolean isBound() {
+        return isBound;
+    }
+
+    public void setBound(boolean bound) {
+        isBound = bound;
+    }
+
+    public void setSpecializations(Specializations specializations) {
+        this.specialization = specializations;
     }
 }

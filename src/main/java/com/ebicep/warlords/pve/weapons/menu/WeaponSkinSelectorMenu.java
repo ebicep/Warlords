@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -107,7 +106,7 @@ public class WeaponSkinSelectorMenu {
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for "),
-                    new TextComponentBuilder(WeaponsPvE.getWeapon(weapon).getGeneralName())
+                    new TextComponentBuilder(weapon.getTitle())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
         } else {

@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractBetterWeapon extends AbstractWeapon {
 
@@ -12,7 +13,10 @@ public abstract class AbstractBetterWeapon extends AbstractWeapon {
     protected int speedBonus;
 
     public AbstractBetterWeapon() {
-        super();
+    }
+
+    public AbstractBetterWeapon(UUID uuid) {
+        super(uuid);
     }
 
     @Override

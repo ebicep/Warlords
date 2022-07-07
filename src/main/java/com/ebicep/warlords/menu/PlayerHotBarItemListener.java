@@ -77,10 +77,17 @@ public class PlayerHotBarItemListener implements Listener {
                 e -> WeaponManagerMenu.openWeaponInventoryFromExternal(e.getPlayer())
         ));
 
-        addItem(player, 7, new ItemListener(
-                new ItemBuilder(Warlords.getHead(uuid)).name("§aLevel Rewards").get(),
-                e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer())
-        ));
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                addItem(player, 7, new ItemListener(
+                        new ItemBuilder(Warlords.getHead(uuid)).name("§aLevel Rewards").get(),
+                        e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer())
+                ));
+
+            }
+        }.runTaskLater(Warlords.getInstance(), Warlords.getPlayerHeads().containsKey(uuid) ? 0 : 80);
 
         if (!fromGame) {
             Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {

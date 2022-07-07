@@ -384,16 +384,11 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
 
-        new BukkitRunnable() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+            PlayerHotBarItemListener.giveLobbyHotBar(player, false);
+        });
 
-            @Override
-            public void run() {
-                Bukkit.getOnlinePlayers().forEach(player -> {
-                    playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-                    PlayerHotBarItemListener.giveLobbyHotBar(player, false);
-                });
-            }
-        }.runTaskLater(this, 60);
 
         ProtocolManager protocolManager;
 

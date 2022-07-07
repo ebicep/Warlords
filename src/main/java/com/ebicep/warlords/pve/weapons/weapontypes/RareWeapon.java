@@ -2,10 +2,12 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Utils;
+import org.bukkit.ChatColor;
 import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RareWeapon extends AbstractWeapon implements Salvageable {
 
@@ -26,7 +28,15 @@ public class RareWeapon extends AbstractWeapon implements Salvageable {
     public static final int HEALTH_BONUS_MAX = 180;
 
     public RareWeapon() {
-        super();
+    }
+
+    public RareWeapon(UUID uuid) {
+        super(uuid);
+    }
+
+    @Override
+    public ChatColor getChatColor() {
+        return ChatColor.BLUE;
     }
 
     @Override

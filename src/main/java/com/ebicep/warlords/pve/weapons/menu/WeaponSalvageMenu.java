@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
@@ -65,7 +64,7 @@ public class WeaponSalvageMenu {
 
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You received " + ChatColor.AQUA + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging "),
-                    new TextComponentBuilder(WeaponsPvE.getWeapon(weapon).getGeneralName())
+                    new TextComponentBuilder(weapon.getTitle())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
         }
