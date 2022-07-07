@@ -131,6 +131,9 @@ commands:
   unstuck:
     description: Unstuck yourself
     usage: /unstuck
+  setwave:
+    description: Unstuck yourself
+    usage: /unstuck
 
 permissions:
   group.default:

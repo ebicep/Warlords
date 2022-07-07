@@ -1034,10 +1034,6 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
-                            .add(0.5, BasicMob.ZOMBIE)
-                            .add(0.5, EliteMob.ELITE_ZOMBIE)
-                    )
-                    .add(5, new SimpleWave(1, 5 * SECOND, null)
                             .add(1, BasicMob.ZOMBIE)
                             .add(0.05, BasicMob.SKELETON)
                     )
@@ -1047,20 +1043,15 @@ public enum GameMap {
                     .add(11, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, BasicMob.ZOMBIE)
                             .add(0.1, BasicMob.SKELETON)
-                            .add(0.1, BasicMob.MAGMA_CUBE)
+                            .add(0.08, BasicMob.MAGMA_CUBE)
                     )
-                    .add(15, new SimpleWave(1, 10 * SECOND, null)
+                    .add(20, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
+                            .add(BossMob.SIN)
+                    )
+                    .add(21, new SimpleWave(1, 10 * SECOND, null)
                             .add(1, BasicMob.ZOMBIE)
-                            .add(0.2, BasicMob.SKELETON)
+                            .add(0.1, BasicMob.SKELETON)
                             .add(0.1, BasicMob.MAGMA_CUBE)
-                            .add(0.1, BasicMob.PIGZOMBIE)
-                    )
-                    .add(20, new SimpleWave(1, 20 * SECOND, null)
-                            .add(0.7, BasicMob.ZOMBIE)
-                            .add(0.2, BasicMob.SKELETON)
-                            .add(0.1, BasicMob.MAGMA_CUBE)
-                            .add(0.1, BasicMob.PIGZOMBIE)
-                            .add(0.05, BasicMob.SLIME)
                     )
                     .add(21, new SimpleWave(1, 10 * SECOND, null)
                             .add(0.7, BasicMob.ZOMBIE)
@@ -1069,12 +1060,8 @@ public enum GameMap {
                             .add(0.1, BasicMob.PIGZOMBIE)
                             .add(0.05, BasicMob.SLIME)
                     )
-                    .add(30, new SimpleWave(1, 20 * SECOND, null)
-                            .add(0.5, BasicMob.ZOMBIE)
-                            .add(0.2, BasicMob.SKELETON)
-                            .add(0.3, BasicMob.MAGMA_CUBE)
-                            .add(0.3, BasicMob.PIGZOMBIE)
-                            .add(0.05, BasicMob.SLIME)
+                    .add(30, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
+                            .add(BossMob.ZOMBOID)
                     )
                     .add(31, new SimpleWave(1, 10 * SECOND, null)
                             .add(0.4, BasicMob.ZOMBIE)
@@ -1087,15 +1074,16 @@ public enum GameMap {
                             .add(BossMob.ZOMBOID)
                     )
                     .add(41, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.6, EliteMob.ELITE_ZOMBIE)
+                            .add(0.4, EliteMob.ELITE_ZOMBIE)
                             .add(0.3, BasicMob.ZOMBIE)
                             .add(0.3, BasicMob.SLIME)
                     )
                     .add(50, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.9, EliteMob.ELITE_ZOMBIE)
-                            .add(0.1, BasicMob.ZOMBIE)
-                            .add(0.3, BasicMob.MAGMA_CUBE)
-                            .add(0.1, BasicMob.SKELETON)
+                            .add(0.6, EliteMob.ELITE_ZOMBIE)
+                            .add(0.1, EliteMob.ELITE_SKELETON)
+                            .add(0.3, BasicMob.ZOMBIE)
+                            .add(0.2, BasicMob.GUARDIAN)
+                            .add(0.2, BasicMob.MAGMA_CUBE)
                     )
                     .prependEntityMapper((entity, waveCounter) -> {
                         int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / 400.0 + 1);
@@ -1107,7 +1095,11 @@ public enum GameMap {
                         @Override
                         public int getMonsterCount() {
                             if (wave.getMessage() == null) {
-                                return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                                if (waveCounter >= 50) {
+                                    return (int) (super.getMonsterCount() + (waveCounter / 45.0 / (waveCounter / 45.0 + 1.5) * 100));
+                                } else {
+                                    return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
+                                }
                             } else {
                                 return super.getMonsterCount();
                             }

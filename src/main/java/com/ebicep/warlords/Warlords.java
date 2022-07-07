@@ -33,6 +33,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.option.wavedefense.SkipWaveCommand;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyCommand;
@@ -1024,6 +1025,7 @@ public class Warlords extends JavaPlugin {
         new ToggleAFKDetectionCommand().register(this);
         new ServerStatusCommand().register(this);
         new UnstuckCommand().register(this);
+        new SkipWaveCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {

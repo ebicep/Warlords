@@ -61,7 +61,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -113,7 +113,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -165,7 +165,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -203,10 +203,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
                         .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
                         .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription()
-                                + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + masterUpgrade.getCurrencyCost())
+                                + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + masterUpgrade.getCurrencyCost())
                         .get(), (m, e) -> {
                     if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough Upgrade Insignia's to buy this upgrade!");
+                        player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
                         return;
                     }
                     if (masterUpgrade.isUnlocked()) {
@@ -235,7 +235,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         return new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL, 1, (short) 8))
                 .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
                 .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + upgrade.getCurrencyCost())
+                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + upgrade.getCurrencyCost())
                 .get();
     }
 

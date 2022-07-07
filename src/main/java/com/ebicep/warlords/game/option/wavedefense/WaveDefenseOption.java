@@ -228,8 +228,8 @@ public class WaveDefenseOption implements Option {
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
-                        .map(e -> e.getName() + ": " + ChatColor.RED + e.getMinuteStats().total().getKills()
-                                + ChatColor.RESET + " / " + ChatColor.AQUA + e.getCurrency())
+                        .map(e -> e.getName() + ": " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills()
+                                + ChatColor.RESET + " / " + ChatColor.AQUA + "❂ " + e.getCurrency())
                         .collect(Collectors.toList());
             }
         });
@@ -256,9 +256,16 @@ public class WaveDefenseOption implements Option {
             public void run() {
                 if (entities.isEmpty() && spawnCount == 0) {
                     newWave();
+
+                    if (waveCounter > 1) {
+                        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+                            entry.getKey().sendMessage(ChatColor.AQUA + "+100 ❂ Upgrade Insignia");
+                        }
+                        getGame().forEachOnlineWarlordsEntity(we -> we.addCurrency(100));
+                    }
                 }
 
-                if (waveCounter == 1001) {
+                if (waveCounter == Integer.MAX_VALUE) {
                     game.setNextState(new EndState(game, null));
                 }
             }
@@ -276,5 +283,10 @@ public class WaveDefenseOption implements Option {
 
     public WaveList getWaves() {
         return waves;
+    }
+
+    public void setWaveCounter(int waveCounter) {
+        this.waveCounter = waveCounter;
+        newWave();
     }
 }

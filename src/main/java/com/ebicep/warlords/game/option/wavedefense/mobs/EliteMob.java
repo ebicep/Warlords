@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
+import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -16,13 +17,28 @@ public class EliteMob {
             "Elite Zombie",
             loc,
             new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.DEAD_BUSH),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_CRYSTALS)
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                    new ItemStack(Material.CHAINMAIL_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
             ),
             4000,
-            0.2f
+            0.28f
+    );
+
+    public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
+            CustomSkeleton.class,
+            "Elite Skeleton",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET, 1, (short) 1),
+                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                    new ItemStack(Material.CHAINMAIL_BOOTS),
+                    new ItemStack(Material.BOW)
+            ),
+            1200,
+            0.25f
     );
 }

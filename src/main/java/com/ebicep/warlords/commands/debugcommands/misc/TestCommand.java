@@ -10,7 +10,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -83,7 +82,6 @@ public class TestCommand implements CommandExecutor {
 
             ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
             warlordsPlayer.addCurrency(10000000);
-            AbstractWeapon.giveTestItem((Player) warlordsPlayer.getEntity());
 
         }
 
