@@ -91,7 +91,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                             .syncLast(databasePlayer -> {
                                 Long id = event.getAuthor().getIdLong();
                                 databasePlayer.setDiscordID(id);
-                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 event.getPrivateChannel().sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").").queue();
                                 if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
                                     Bukkit.getOfflinePlayer(uuid).getPlayer().sendMessage(ChatColor.GREEN + "Your account was linked to the discord account " + event.getAuthor().getAsTag() + " (" + id + ").");
@@ -230,7 +230,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
                                                 if (databasePlayer != null) {
                                                     databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
-                                                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                                 }
                                                 // TODO: fix
                                                 if (!isExperimental) {

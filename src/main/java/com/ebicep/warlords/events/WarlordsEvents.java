@@ -196,7 +196,7 @@ public class WarlordsEvents implements Listener {
                                     Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
                                 }
                             }
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         })
                         .execute();
             }

@@ -105,7 +105,7 @@ public class WeaponBindMenu {
                                             new TextComponent(ChatColor.GRAY + "'s binding to " + ChatColor.GREEN + spec.name));
                                 }
 
-                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openWeaponBindMenu(player, weapon);
                             }
                     );
@@ -119,7 +119,7 @@ public class WeaponBindMenu {
                             (m, e) -> {
                                 //bind the new weapon (auto unbind previous)
                                 weapon.setBoundedToSpec(spec);
-                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openWeaponBindMenu(player, weapon);
 
                                 player.spigot().sendMessage(

@@ -36,6 +36,7 @@ public class WeaponSkinSelectorMenu {
 
         List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.values()));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {
             Weapons weaponSkin = weaponSkins.get(i);
             boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
@@ -50,7 +51,7 @@ public class WeaponSkinSelectorMenu {
                         if (isUnlocked) {
                             if (weaponSkin != weapon.getSelectedWeaponSkin()) {
                                 weapon.setSelectedWeaponSkin(weaponSkin);
-                                DatabaseManager.playerService.update(DatabaseManager.playerService.findByUUID(player.getUniqueId()));
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openWeaponSkinSelectorMenu(player, weapon, pageNumber);
                             }
                         } else {
@@ -81,7 +82,7 @@ public class WeaponSkinSelectorMenu {
                     (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber + 1));
         }
 
-        DatabasePlayerPvE databasePlayerPvE = DatabaseManager.playerService.findByUUID(player.getUniqueId()).getPveStats();
+        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
         menu.setItem(
                 4,
                 4,
@@ -102,7 +103,7 @@ public class WeaponSkinSelectorMenu {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
             databasePlayerPvE.setAmountOfFairyEssence(databasePlayerPvE.getAmountOfFairyEssence() - weaponSkin.getCost());
-            DatabaseManager.updatePlayerAsync(databasePlayer);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for "),

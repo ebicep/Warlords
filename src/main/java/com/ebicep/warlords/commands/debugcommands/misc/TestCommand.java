@@ -399,7 +399,7 @@ public class TestCommand implements CommandExecutor {
 //        ctfStats.getShaman().getSpiritguard().setExperience(ctfStats.getShaman().getSpiritguard().getExperience() + tankEXP);
 //        ctfStats.getShaman().getEarthwarden().setExperience(ctfStats.getShaman().getEarthwarden().getExperience() + healerExp);
 
-        DatabaseManager.updatePlayerAsync(databasePlayer, playersCollections);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer, playersCollections);
     }
 
     private long getExp(AbstractDatabaseStatInformation information, SpecType specType, long caps, long rets) {

@@ -36,7 +36,7 @@ public class ParticleQualityCommand implements TabExecutor {
 
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     databasePlayer.setParticleQuality(newParticleQuality);
-                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                     sender.sendMessage(ChatColor.GREEN + "Particle Quality set to " + args[0].toUpperCase());
                     return true;

@@ -77,7 +77,7 @@ public class DiscordCommand implements CommandExecutor {
                 }
                 Long oldID = databasePlayer.getDiscordID();
                 databasePlayer.setDiscordID(null);
-                DatabaseManager.updatePlayerAsync(databasePlayer);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 player.sendMessage(ChatColor.GRAY + "Your account has been unlinked.");
 
                 BotManager.sendDebugMessage(

@@ -140,7 +140,7 @@ public class RegularGamesMenu {
                         Warlords.getPlayerSettings(uuid).setSelectedSpec(spec);
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
                         databasePlayer.setLastSpec(spec);
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         if (offlinePlayer.getPlayer() != null) {
                             offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
                             offlinePlayer.getPlayer().sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec.name + ChatColor.GREEN + "!");

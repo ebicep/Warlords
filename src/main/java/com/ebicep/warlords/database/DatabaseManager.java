@@ -20,6 +20,7 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -50,6 +51,11 @@ public class DatabaseManager {
     public static String lastWarlordsPlusString = "";
 
     public static boolean enabled = true;
+    private static final HashMap<PlayersCollections, Set<DatabasePlayer>> playersToUpdate = new HashMap<PlayersCollections, Set<DatabasePlayer>>() {{
+        for (PlayersCollections value : PlayersCollections.values()) {
+            put(value, new HashSet<>());
+        }
+    }};
 
     public static void init() {
         if (!enabled) {
@@ -89,6 +95,18 @@ public class DatabaseManager {
                 updateName(player.getUniqueId());
             });
         });
+
+        //runnable that updates all player that need updating every 10 seconds (prevents spam update)
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                Warlords.newChain()
+                        .async(() -> playersToUpdate.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer, playersCollections))))
+                        .sync(() -> playersToUpdate.forEach((playersCollections, databasePlayers) -> databasePlayers.clear()))
+                        .execute();
+            }
+        }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
 
         //Loading last 5 games
@@ -161,8 +179,6 @@ public class DatabaseManager {
                         .execute();
             }
         }
-
-
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
@@ -291,14 +307,16 @@ public class DatabaseManager {
         return null;
     }
 
-    public static void updatePlayerAsync(DatabasePlayer databasePlayer) {
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
         if (playerService == null || !enabled) return;
-        Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
+        playersToUpdate.get(PlayersCollections.LIFETIME).add(databasePlayer);
+        //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
     }
 
-    public static void updatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+    public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
         if (playerService == null || !enabled) return;
-        Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
+        playersToUpdate.get(collections).add(databasePlayer);
+        //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void updateGameAsync(DatabaseGameBase databaseGame, GamesCollections collection) {

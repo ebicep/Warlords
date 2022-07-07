@@ -118,7 +118,7 @@ public abstract class AbstractWeapon {
         databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon2);
         databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon3);
         databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon4);
-        DatabaseManager.updatePlayerAsync(databasePlayer);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 1")
                 .setHoverItem(abstractWeapon.generateItemStack())

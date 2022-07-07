@@ -1417,7 +1417,7 @@ public abstract class WarlordsEntity {
         if (DatabaseManager.playerService == null) return;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
-        DatabaseManager.updatePlayerAsync(databasePlayer);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     public int getHealth() {

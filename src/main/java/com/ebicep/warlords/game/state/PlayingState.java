@@ -95,7 +95,7 @@ public class PlayingState implements State, TimerDebugAble {
         if (DatabaseManager.playerService != null) {
             Warlords.newChain().async(() -> game.forEachOfflineWarlordsPlayer((player, team) -> {
                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                DatabaseManager.updatePlayerAsync(databasePlayer);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_6, () -> {
                 });
                 DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {

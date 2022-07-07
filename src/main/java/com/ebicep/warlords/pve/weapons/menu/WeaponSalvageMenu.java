@@ -61,7 +61,7 @@ public class WeaponSalvageMenu {
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
             databasePlayer.getPveStats().addSyntheticAlloy(salvageAmount);
-            DatabaseManager.updatePlayerAsync(databasePlayer);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You received " + ChatColor.AQUA + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging "),

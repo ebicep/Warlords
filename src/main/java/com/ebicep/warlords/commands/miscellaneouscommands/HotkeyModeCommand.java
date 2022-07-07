@@ -28,7 +28,7 @@ public class HotkeyModeCommand implements CommandExecutor {
             settings.setHotKeyMode(!settings.getHotKeyMode());
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
             databasePlayer.setHotkeyMode(settings.getHotKeyMode() ? Settings.HotkeyMode.NEW_MODE : Settings.HotkeyMode.CLASSIC_MODE);
-            DatabaseManager.updatePlayerAsync(databasePlayer);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         }
 

@@ -46,7 +46,7 @@ public class ExperienceCommand implements CommandExecutor {
                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
                         .syncLast(databasePlayer -> {
                             databasePlayer.setExperience(databasePlayer.getExperience() + Integer.parseInt(args[2]));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             sender.sendMessage(ChatColor.GREEN + "Gave " + player.getName() + " " + args[2] + " experience!");
                             if (player.isOnline()) {
                                 player.getPlayer().sendMessage(ChatColor.GREEN + "You received " + args[2] + " experience!");
@@ -78,7 +78,7 @@ public class ExperienceCommand implements CommandExecutor {
                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
                         .syncLast(databasePlayer -> {
                             databasePlayer.setExperience(databasePlayer.getExperience() - Integer.parseInt(args[2]));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             sender.sendMessage(ChatColor.RED + "Took " + args[2] + " experience from " + player.getName());
                             if (player.isOnline()) {
                                 player.getPlayer().sendMessage(ChatColor.RED + "You lost " + args[2] + " experience!");

@@ -151,7 +151,7 @@ public class WarlordsShopMenu {
                         if (DatabaseManager.playerService == null) return;
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         databasePlayer.setLastSpec(spec);
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -191,7 +191,7 @@ public class WarlordsShopMenu {
                         if (DatabaseManager.playerService == null) return;
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost);
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -282,7 +282,7 @@ public class WarlordsShopMenu {
                             if (DatabaseManager.playerService == null) return;
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                             databasePlayer.getSpec(selectedSpec).setWeapon(weapon);
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -391,7 +391,7 @@ public class WarlordsShopMenu {
                         databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
                         databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
                         databasePlayer.getRogue().setHelmet(selectedHelmets.get(4));
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -443,7 +443,7 @@ public class WarlordsShopMenu {
                         databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
                         databasePlayer.getShaman().setArmor(armorSetsList.get(3));
                         databasePlayer.getRogue().setArmor(armorSetsList.get(4));
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
             if (xPosition == 3) {

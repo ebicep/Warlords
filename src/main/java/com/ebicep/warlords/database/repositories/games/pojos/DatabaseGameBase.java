@@ -224,19 +224,19 @@ public abstract class DatabaseGameBase {
         if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
             if (databasePlayerAllTime != null) {
                 databasePlayerAllTime.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerAllTime);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
             if (databasePlayerSeason != null) {
                 databasePlayerSeason.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
             if (databasePlayerWeekly != null) {
                 databasePlayerWeekly.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in WEEKLY");
             if (databasePlayerDaily != null) {
                 databasePlayerDaily.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in DAILY");
         } else {
             if (databasePlayerAllTime != null) {
@@ -248,19 +248,19 @@ public abstract class DatabaseGameBase {
 //                            .map(TieredAchievements.TieredAchievementRecord::new)
 //                            .collect(Collectors.toList())
 //            );
-                DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerAllTime);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
             if (databasePlayerSeason != null) {
                 databasePlayerSeason.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
             if (databasePlayerWeekly != null) {
                 databasePlayerWeekly.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in WEEKLY");
             if (databasePlayerDaily != null) {
                 databasePlayerDaily.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
             } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in DAILY");
         }
     }
