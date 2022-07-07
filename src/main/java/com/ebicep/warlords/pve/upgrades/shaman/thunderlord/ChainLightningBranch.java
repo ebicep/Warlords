@@ -10,7 +10,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         super(abilityTree, ability);
         treeA.add(new Upgrade("Damage Reduction - Tier I", "+5% Damage reduction", 5000));
         treeA.add(new Upgrade("Damage Reduction - Tier II", "+10% Damage reduction", 10000));
-        treeA.add(new Upgrade("Damage Reduction - Tier III", "+20% Damage reduction", 20000));
+        treeA.add(new Upgrade("Damage Reduction - Tier III", "+15% Damage reduction", 20000));
 
         treeB.add(new Upgrade("Utility - Tier I", "+1 Chain bounces", 5000));
         treeB.add(new Upgrade("Utility - Tier II", "+2 Chain bounces", 10000));
@@ -27,8 +27,6 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         );
     }
 
-    float cooldown = ability.getCooldown();
-
     @Override
     public void a1() {
         ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
@@ -41,7 +39,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void a3() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
     }
 
     @Override
@@ -64,20 +62,20 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void c1() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
+        ability.setMinDamageHeal(minDamage * 1.15f);
+        ability.setMaxDamageHeal(maxDamage * 1.15f);
     }
 
     @Override
     public void c2() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
+        ability.setMinDamageHeal(minDamage * 1.3f);
+        ability.setMaxDamageHeal(maxDamage * 1.3f);
     }
 
     @Override
     public void c3() {
-        ability.setMinDamageHeal(minDamage * 1.8f);
-        ability.setMaxDamageHeal(maxDamage * 1.8f);
+        ability.setMinDamageHeal(minDamage * 1.6f);
+        ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
     @Override

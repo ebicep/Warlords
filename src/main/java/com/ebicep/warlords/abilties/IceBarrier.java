@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IceBarrier extends AbstractAbility {
+    private boolean pveUpgrade = false;
 
     private int duration = 6;
     private int damageReductionPercent = 50;
@@ -87,6 +89,16 @@ public class IceBarrier extends AbstractAbility {
                                 particleLoc,
                                 500
                         );
+
+                        if (pveUpgrade) {
+                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 5, 5, 5)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(wp)
+                            ) {
+                                // TODO: Taunt on activation
+                                we.getSpeed().addSpeedModifier("Ice Barrier Taunt", -20, 5, "BASE");
+                            }
+                        }
                     }
                 }
         ) {
@@ -115,5 +127,13 @@ public class IceBarrier extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

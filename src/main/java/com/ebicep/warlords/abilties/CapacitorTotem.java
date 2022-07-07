@@ -18,6 +18,7 @@ import java.util.List;
 
 
 public class CapacitorTotem extends AbstractTotemBase {
+    private boolean pveUpgrade = false;
     private int duration = 8;
     private int radius = 6;
     private Runnable pulseDamage;
@@ -69,20 +70,28 @@ public class CapacitorTotem extends AbstractTotemBase {
 
         CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp, () -> {
             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
-                    .enemiesOf(wp)
-                    .forEach(warlordsPlayer -> warlordsPlayer.addDamageInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            false
-                    ));
+                    .aliveEnemiesOf(wp)
+                    .forEach(warlordsPlayer -> {
+                        warlordsPlayer.addDamageInstance(
+                                wp,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                false
+                        );
+
+                        if (pveUpgrade) {
+                            int damageResistance = warlordsPlayer.getSpec().getDamageResistance();
+                            warlordsPlayer.getSpec().setDamageResistance(damageResistance - 20);
+                        }
+                    });
 
             new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
         });
-        wp.getCooldownManager().addRegularCooldown(name,
+        wp.getCooldownManager().addRegularCooldown(
+                name,
                 "TOTEM",
                 CapacitorTotem.class,
                 tempCapacitorTotem,
@@ -159,5 +168,13 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
         this.teamCarrierPassedThrough = teamCarrierPassedThrough;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -10,6 +10,7 @@ public class CustomGuardian extends EntityGuardian implements CustomEntity {
 
     public CustomGuardian(World world) {
         super(world);
+        setSize(6, 6);
     }
 
     @Override

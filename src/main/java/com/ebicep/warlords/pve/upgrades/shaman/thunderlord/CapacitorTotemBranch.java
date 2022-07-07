@@ -19,7 +19,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n+10 Blocks cast and bounce range\n\nChain Lightning now deals 5% more damage per bounce instead of less.",
+                "+50% Duration\n\nChain Lightning now deals 5% more damage per bounce instead of less.",
                 50000
         );
     }
@@ -78,5 +78,6 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
     @Override
     public void master() {
         ability.setDuration((int) (ability.getDuration() * 1.5f));
+        ability.setPveUpgrade(true);
     }
 }

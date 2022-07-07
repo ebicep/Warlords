@@ -19,7 +19,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+50% Energy given\n\nLightning rod increases damage dealt by 30% for 4 seconds.",
+                "+50% Energy given\n\nLightning Rod increases damage dealt by 30% for 4 seconds.",
                 50000
         );
     }

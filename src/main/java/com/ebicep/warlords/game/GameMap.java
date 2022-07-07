@@ -1034,7 +1034,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
-                            .add(1, BasicMob.ZOMBIE)
+                            .add(1, BasicMob.GUARDIAN)
                             .add(0.05, BasicMob.SKELETON)
                     )
                     .add(10, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
@@ -1071,7 +1071,7 @@ public enum GameMap {
                             .add(0.3, BasicMob.SLIME)
                     )
                     .add(40, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.ZOMBOID)
+                            .add(BossMob.XATAH)
                     )
                     .add(41, new SimpleWave(1, 10 * SECOND, null)
                             .add(0.4, EliteMob.ELITE_ZOMBIE)
@@ -1095,11 +1095,8 @@ public enum GameMap {
                         @Override
                         public int getMonsterCount() {
                             if (wave.getMessage() == null) {
-                                if (waveCounter >= 50) {
-                                    return (int) (super.getMonsterCount() + (waveCounter / 45.0 / (waveCounter / 45.0 + 1.5) * 100));
-                                } else {
-                                    return (int) (super.getMonsterCount() + (waveCounter / 90.0 / (waveCounter / 90.0 + 1.0) * 100));
-                                }
+                                double scale = waveCounter >= 50 ? 45.0 : 90.0;
+                                return (int) (super.getMonsterCount() + (waveCounter / scale / (waveCounter / scale + 1) * 100));
                             } else {
                                 return super.getMonsterCount();
                             }
