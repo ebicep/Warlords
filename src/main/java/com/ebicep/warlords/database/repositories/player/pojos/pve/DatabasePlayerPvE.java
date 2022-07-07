@@ -24,12 +24,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
-    @Field("synthetic_alloy")
-    private int amountOfSyntheticAlloy = 0;
+    @Field("synthetic_shards")
+    private int amountOfSyntheticShards = 0;
     @Field("legend_fragments")
     private int amountOfLegendFragments = 0;
     @Field("fairy_essence")
     private int amountOfFairyEssence = 0;
+    @Field("star_pieces")
+    private int amountOfStarPieces = 0;
 
 
     @Override
@@ -127,15 +129,35 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return weaponInventory;
     }
 
-    public int getAmountOfSyntheticAlloy() {
-        return amountOfSyntheticAlloy;
+    public int getAmountOfSyntheticShards() {
+        return amountOfSyntheticShards;
+    }
+
+    public void addSyntheticAlloy(int amount) {
+        this.amountOfSyntheticShards += amount;
     }
 
     public int getAmountOfLegendFragments() {
         return amountOfLegendFragments;
     }
 
+    public void addLegendFragments(int amount) {
+        this.amountOfLegendFragments += amount;
+    }
+
     public int getAmountOfFairyEssence() {
         return amountOfFairyEssence;
+    }
+
+    public void setAmountOfFairyEssence(int amountOfFairyEssence) {
+        this.amountOfFairyEssence = amountOfFairyEssence;
+    }
+
+    public void addFairyEssence(int amount) {
+        this.amountOfFairyEssence += amount;
+    }
+
+    public int getAmountOfStarPieces() {
+        return amountOfStarPieces;
     }
 }

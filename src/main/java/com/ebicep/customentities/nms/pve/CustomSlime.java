@@ -13,10 +13,11 @@ public class CustomSlime extends EntitySlime implements CustomEntity {
         setSize(8);
     }
 
+    //jump
     @Override
     protected void bF() {
-        this.motY = 0.1;
-        this.ai = true;
+        this.motY = 0.1; //motion y
+        this.ai = true; //isAirBorne
     }
 
     @Override

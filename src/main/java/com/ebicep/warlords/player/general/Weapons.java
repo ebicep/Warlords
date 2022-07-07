@@ -140,4 +140,8 @@ public enum Weapons {
     public ItemStack getItem() {
         return item;
     }
+
+    public int getCost() {
+        return 0;
+    }
 }

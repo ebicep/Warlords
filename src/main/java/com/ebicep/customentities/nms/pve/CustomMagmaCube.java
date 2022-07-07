@@ -13,10 +13,11 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity {
         setSize(6);
     }
 
+    //jump
     @Override
     protected void bF() {
-        this.motY = (0.05F + (float)this.getSize() * 0.05F);
-        this.ai = true;
+        this.motY = (0.05F + (float) this.getSize() * 0.05F); //motion y
+        this.ai = true; //isAirBorne
     }
 
     @Override

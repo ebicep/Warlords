@@ -4,6 +4,10 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import org.bukkit.ChatColor;
@@ -16,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWeapon {
 
@@ -31,8 +34,13 @@ public abstract class AbstractWeapon {
     @Field("health_bonus")
     protected int healthBonus;
     @Field("weapon_skin")
-    protected Weapons weaponSkin = Weapons.STEEL_SWORD;
+    protected Weapons selectedWeaponSkin = Weapons.STEEL_SWORD;
+    @Field("unlocked_weapon_skins")
+    protected List<Weapons> unlockedWeaponSkins = new ArrayList<>();
+    @Field("bound_spec")
     protected Specializations boundedToSpec;
+    @Field("star_piece_bonus")
+    protected WeaponStats starPieceBonus;
 
     public AbstractWeapon() {
         generateStats();
@@ -56,7 +64,7 @@ public abstract class AbstractWeapon {
             lore.add("");
             lore.add(ChatColor.AQUA + "Bound - " + boundedToSpec.name);
         }
-        return new ItemBuilder(weaponSkin.getItem())
+        return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(WeaponsPvE.getWeapon(this).getGeneralName())
                 .lore(lore)
                 .unbreakable()
@@ -80,7 +88,7 @@ public abstract class AbstractWeapon {
             lore.add("");
             lore.add(ChatColor.AQUA + "Bound - " + boundedToSpec.name);
         }
-        return new ItemBuilder(weaponSkin.getItem())
+        return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
                 .lore(lore)
                 .unbreakable()
@@ -88,10 +96,6 @@ public abstract class AbstractWeapon {
                 .get();
     }
 
-
-    protected int generateRandomValueBetween(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
 
     @Override
     public String toString() {
@@ -147,8 +151,16 @@ public abstract class AbstractWeapon {
         return healthBonus;
     }
 
-    public Weapons getWeaponSkin() {
-        return weaponSkin;
+    public Weapons getSelectedWeaponSkin() {
+        return selectedWeaponSkin;
+    }
+
+    public void setSelectedWeaponSkin(Weapons selectedWeaponSkin) {
+        this.selectedWeaponSkin = selectedWeaponSkin;
+    }
+
+    public List<Weapons> getUnlockedWeaponSkins() {
+        return unlockedWeaponSkins;
     }
 
     public Specializations getBoundedToSpec() {

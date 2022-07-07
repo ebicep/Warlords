@@ -1,5 +1,9 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import org.bukkit.ChatColor;
 
 public enum WeaponsPvE {

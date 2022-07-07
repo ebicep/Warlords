@@ -2,14 +2,23 @@ package com.ebicep.warlords.pve.weapons.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.weapons.*;
+import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -17,89 +26,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 
 public class WeaponManagerMenu {
 
-    public enum SortOptions {
-        DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
-        RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
-        ;
-        public final String name;
-        public final Comparator<AbstractWeapon> comparator;
-
-        SortOptions(String name, Comparator<AbstractWeapon> comparator) {
-            this.name = name;
-            this.comparator = comparator;
-        }
-
-        private static final SortOptions[] vals = values();
-
-        public SortOptions next() {
-            return vals[(this.ordinal() + 1) % vals.length];
-        }
-    }
-
     public static HashMap<UUID, PlayerMenuSettings> playerMenuSettings = new HashMap<>();
-
-    static class PlayerMenuSettings {
-        private int page = 1;
-        private List<AbstractWeapon> weaponInventory = new ArrayList<>();
-        private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
-        private WeaponsPvE filter = WeaponsPvE.NONE;
-        private SortOptions sortOption = SortOptions.DATE;
-        private boolean ascending = true; //ascending = smallest -> largest/recent
-
-        public void sort() {
-            sortedWeaponInventory = new ArrayList<>(weaponInventory);
-            if (filter != WeaponsPvE.NONE) {
-                sortedWeaponInventory.removeIf(weapon -> !Objects.equals(weapon.getClass(), filter.weaponClass));
-            }
-            sortedWeaponInventory.sort(sortOption.comparator);
-            if (!ascending) {
-                Collections.reverse(sortedWeaponInventory);
-            }
-        }
-
-        public int getPage() {
-            return page;
-        }
-
-        public void setPage(int page) {
-            this.page = page;
-        }
-
-        public List<AbstractWeapon> getSortedWeaponInventory() {
-            return sortedWeaponInventory;
-        }
-
-        public void setWeaponInventory(List<AbstractWeapon> weaponInventory) {
-            this.weaponInventory = weaponInventory;
-            this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
-        }
-
-        public WeaponsPvE getFilter() {
-            return filter;
-        }
-
-        public void setFilter(WeaponsPvE filter) {
-            this.filter = filter;
-        }
-
-        public SortOptions getSortOption() {
-            return sortOption;
-        }
-
-        public void setSortOption(SortOptions sortOption) {
-            this.sortOption = sortOption;
-        }
-
-        public boolean isAscending() {
-            return ascending;
-        }
-
-        public void setAscending(boolean ascending) {
-            this.ascending = ascending;
-        }
-
-
-    }
 
     public static void openWeaponInventoryFromExternal(Player player) {
         UUID uuid = player.getUniqueId();
@@ -164,8 +91,22 @@ public class WeaponManagerMenu {
             );
         }
 
+        DatabasePlayerPvE databasePlayerPvE = DatabaseManager.playerService.findByUUID(player.getUniqueId()).getPveStats();
+        menu.setItem(1, 5,
+                new ItemBuilder(Material.BOOKSHELF)
+                        .name(ChatColor.GREEN + "Your Drops")
+                        .lore(
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfLegendFragments() + ChatColor.GOLD + " Legend Fragments",
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence"
+                        )
+                        .get(),
+                (m, e) -> {
+                }
+        );
         menu.setItem(3, 5,
-                new ItemBuilder(Material.MILK_BUCKET).name(ChatColor.GREEN + "Reset Settings")
+                new ItemBuilder(Material.MILK_BUCKET)
+                        .name(ChatColor.GREEN + "Reset Settings")
                         .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
@@ -176,7 +117,8 @@ public class WeaponManagerMenu {
                 }
         );
         menu.setItem(5, 5,
-                new ItemBuilder(Material.HOPPER).name(ChatColor.GREEN + "Filter By")
+                new ItemBuilder(Material.HOPPER)
+                        .name(ChatColor.GREEN + "Filter By")
                         .lore(Arrays.stream(WeaponsPvE.values())
                                 .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                 .collect(Collectors.joining("\n"))
@@ -188,7 +130,8 @@ public class WeaponManagerMenu {
                 }
         );
         menu.setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR).name(ChatColor.GREEN + "Sort By")
+                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                        .name(ChatColor.GREEN + "Sort By")
                         .lore(Arrays.stream(SortOptions.values())
                                 .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                 .collect(Collectors.joining("\n"))
@@ -200,7 +143,8 @@ public class WeaponManagerMenu {
                 }
         );
         menu.setItem(7, 5,
-                new ItemBuilder(Material.LEVER).name(ChatColor.GREEN + "Sort Order")
+                new ItemBuilder(Material.LEVER)
+                        .name(ChatColor.GREEN + "Sort Order")
                         .lore(menuSettings.isAscending() ?
                                 ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
                                 ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
@@ -227,75 +171,171 @@ public class WeaponManagerMenu {
                 }
         );
 
-        //salvage common/rare/epic/legendary
-        menu.setItem(2, 0,
-                (weapon instanceof CommonWeapon || weapon instanceof RareWeapon) ?
-                        new ItemBuilder(Material.FURNACE)
-                                .name(ChatColor.GREEN + "Salvage Weapon")
-                                .lore(
-                                        ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
-                                        "",
-                                        ChatColor.YELLOW + "Shift-Click" + ChatColor.GRAY + " to instantly salvage this weapon.",
-                                        "",
-                                        ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
-                                )
-                                .get() :
-                        new ItemBuilder(Material.FURNACE)
-                                .name(ChatColor.GREEN + "Salvage Weapon")
-                                .lore(
-                                        ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
-                                        "",
-                                        ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
-                                )
-                                .get(),
-                (m, e) -> {
-                    if ((weapon instanceof CommonWeapon || weapon instanceof RareWeapon) && e.isShiftClick()) {
-                        WeaponSalvageMenu.salvageWeapon(player, weapon);
-                        openWeaponInventoryFromInternal(player);
-                    } else {
-                        WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, weapon);
-                    }
-                }
-        );
+        List<Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>>> weaponOptions = new ArrayList<>();
         //bind common/rare/epic/legendary
-        menu.setItem(3, 0,
+        weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.SLIME_BALL)
                         .name(ChatColor.GREEN + "Bind Weapon")
                         .get(),
                 (m, e) -> openWeaponBindMenu(player, weapon)
-        );
+        ));
         //fairy essence reskin commmon/rare/epic/legendary
-        menu.setItem(4, 0,
+        weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.PAINTING)
                         .name(ChatColor.GREEN + "Skin Selector")
                         .get(),
-                (m, e) -> {
-                    WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1);
-                }
-        );
-
-        if (weapon instanceof EpicWeapon || weapon instanceof LegendaryWeapon) {
+                (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1)
+        ));
+        //salvage common/rare/epic
+        if (weapon instanceof Salvageable) {
+            weaponOptions.add(new Pair<>(
+                    !(weapon instanceof AbstractBetterWeapon) ?
+                            new ItemBuilder(Material.FURNACE)
+                                    .name(ChatColor.GREEN + "Salvage Weapon")
+                                    .lore(
+                                            ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
+                                            "",
+                                            ChatColor.YELLOW + "Shift-Click" + ChatColor.GRAY + " to instantly salvage this weapon.",
+                                            "",
+                                            ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + ((Salvageable) weapon).getSalvageRewardMessage(),
+                                            "",
+                                            ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                    )
+                                    .get() :
+                            new ItemBuilder(Material.FURNACE)
+                                    .name(ChatColor.GREEN + "Salvage Weapon")
+                                    .lore(
+                                            ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
+                                            "",
+                                            ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + ((Salvageable) weapon).getSalvageRewardMessage(),
+                                            "",
+                                            ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                    )
+                                    .get(),
+                    (m, e) -> {
+                        if (!(weapon instanceof AbstractBetterWeapon) && e.isShiftClick()) {
+                            WeaponSalvageMenu.salvageWeapon(player, weapon);
+                            openWeaponInventoryFromInternal(player);
+                        } else {
+                            WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, weapon);
+                        }
+                    }
+            ));
+        }
+        if (weapon instanceof AbstractBetterWeapon) {
             //synthetic alloy upgrade epic/legendary
-            menu.setItem(5, 0,
+            weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
                             .get(),
                     (m, e) -> {
                     }
-            );
+            ));
             if (weapon instanceof LegendaryWeapon) {
                 //synthetic alloy title legendary
-                menu.setItem(6, 0,
+                weaponOptions.add(new Pair<>(
                         new ItemBuilder(Material.NAME_TAG)
                                 .name(ChatColor.GREEN + "Title Weapon")
                                 .get(),
                         (m, e) -> {
-                        });
+                        }
+                ));
             }
+        }
+
+        for (int i = 0; i < weaponOptions.size(); i++) {
+            Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option = weaponOptions.get(i);
+            menu.setItem(
+                    i + 2,
+                    0,
+                    option.getA(),
+                    option.getB()
+            );
         }
 
         menu.setItem(8, 0, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
         menu.openForPlayer(player);
+    }
+
+    public enum SortOptions {
+        DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
+        RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
+        ;
+        private static final SortOptions[] vals = values();
+        public final String name;
+        public final Comparator<AbstractWeapon> comparator;
+
+        SortOptions(String name, Comparator<AbstractWeapon> comparator) {
+            this.name = name;
+            this.comparator = comparator;
+        }
+
+        public SortOptions next() {
+            return vals[(this.ordinal() + 1) % vals.length];
+        }
+    }
+
+    static class PlayerMenuSettings {
+        private int page = 1;
+        private List<AbstractWeapon> weaponInventory = new ArrayList<>();
+        private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
+        private WeaponsPvE filter = WeaponsPvE.NONE;
+        private SortOptions sortOption = SortOptions.DATE;
+        private boolean ascending = true; //ascending = smallest -> largest/recent
+
+        public void sort() {
+            sortedWeaponInventory = new ArrayList<>(weaponInventory);
+            if (filter != WeaponsPvE.NONE) {
+                sortedWeaponInventory.removeIf(weapon -> !Objects.equals(weapon.getClass(), filter.weaponClass));
+            }
+            sortedWeaponInventory.sort(sortOption.comparator);
+            if (!ascending) {
+                Collections.reverse(sortedWeaponInventory);
+            }
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        public List<AbstractWeapon> getSortedWeaponInventory() {
+            return sortedWeaponInventory;
+        }
+
+        public void setWeaponInventory(List<AbstractWeapon> weaponInventory) {
+            this.weaponInventory = weaponInventory;
+            this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
+        }
+
+        public WeaponsPvE getFilter() {
+            return filter;
+        }
+
+        public void setFilter(WeaponsPvE filter) {
+            this.filter = filter;
+        }
+
+        public SortOptions getSortOption() {
+            return sortOption;
+        }
+
+        public void setSortOption(SortOptions sortOption) {
+            this.sortOption = sortOption;
+        }
+
+        public boolean isAscending() {
+            return ascending;
+        }
+
+        public void setAscending(boolean ascending) {
+            this.ascending = ascending;
+        }
+
+
     }
 
 

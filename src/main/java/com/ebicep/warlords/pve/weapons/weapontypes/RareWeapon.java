@@ -1,11 +1,13 @@
-package com.ebicep.warlords.pve.weapons;
+package com.ebicep.warlords.pve.weapons.weapontypes;
 
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.java.Utils;
 import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RareWeapon extends AbstractWeapon {
+public class RareWeapon extends AbstractWeapon implements Salvageable {
 
     public static final int MELEE_DAMAGE_MIN = 100;
     @Transient
@@ -34,9 +36,19 @@ public class RareWeapon extends AbstractWeapon {
 
     @Override
     public void generateStats() {
-        this.meleeDamage = generateRandomValueBetween(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX);
-        this.critChance = generateRandomValueBetween(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
-        this.critMultiplier = generateRandomValueBetween(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
-        this.healthBonus = generateRandomValueBetween(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
+        this.meleeDamage = Utils.generateRandomValueBetweenInclusive(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX);
+        this.critChance = Utils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
+        this.critMultiplier = Utils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
+        this.healthBonus = Utils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
+    }
+
+    @Override
+    public int getMinSalvageAmount() {
+        return 3;
+    }
+
+    @Override
+    public int getMaxSalvageAmount() {
+        return 6;
     }
 }

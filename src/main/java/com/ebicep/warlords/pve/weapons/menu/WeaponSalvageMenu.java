@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -50,14 +51,20 @@ public class WeaponSalvageMenu {
     }
 
     public static void salvageWeapon(Player player, AbstractWeapon weapon) {
+        if (!(weapon instanceof Salvageable)) {
+            return;
+        }
+        Salvageable salvageable = (Salvageable) weapon;
+        int salvageAmount = salvageable.getSalvageAmount();
+
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
+            databasePlayer.getPveStats().addSyntheticAlloy(salvageAmount);
             DatabaseManager.updatePlayerAsync(databasePlayer);
+
             player.spigot().sendMessage(
-                    new TextComponent(ChatColor.GRAY + "You received "),
-                    new TextComponent(ChatColor.AQUA + "PLACEHOLDER "),
-                    new TextComponent(ChatColor.GRAY + "from salvaging "),
+                    new TextComponent(ChatColor.GRAY + "You received " + ChatColor.AQUA + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging "),
                     new TextComponentBuilder(WeaponsPvE.getWeapon(weapon).getGeneralName())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
