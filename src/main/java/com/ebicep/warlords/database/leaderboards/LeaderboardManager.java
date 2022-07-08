@@ -145,7 +145,7 @@ public class LeaderboardManager {
                         System.out.println("Set Hologram Visibility");
 
                         if (init) {
-                            NPCManager.createGameNPC();
+                            NPCManager.createNPCs();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???

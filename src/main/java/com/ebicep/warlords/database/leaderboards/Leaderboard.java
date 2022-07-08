@@ -119,7 +119,7 @@ public class Leaderboard {
         }
         for (DatabasePlayer databasePlayer : databasePlayers) {
             //must have more than 3 plays to get awarded
-            if (databasePlayer.getPlays() <= 3) continue;
+            //if (databasePlayer.getPlays() <= 3) continue;
 
             Number currentTopValue = valueFunction.apply(databasePlayer);
             if (counter < 2) {
@@ -132,10 +132,12 @@ public class Leaderboard {
                 break;
             }
         }
+
         //adding last two top numbers
         for (int i = 0; i < topThree.size(); i++) {
             output[i + 1] = (T) topThree.get(i);
         }
+
         return output;
     }
 
@@ -158,7 +160,9 @@ public class Leaderboard {
 
         //removing end comma
         for (int i = 0; i < topThreePlayers.length; i++) {
-            topThreePlayers[i] = topThreePlayers[i].substring(0, topThreePlayers[i].length() - 1);
+            if (topThreePlayers[i].length() > 0) {
+                topThreePlayers[i] = topThreePlayers[i].substring(0, topThreePlayers[i].length() - 1);
+            }
         }
         return topThreePlayers;
     }

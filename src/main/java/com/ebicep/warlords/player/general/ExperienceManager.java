@@ -2,9 +2,9 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -19,10 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.springframework.data.mongodb.core.BulkOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -237,44 +233,67 @@ public class ExperienceManager {
             return;
         }
 
-        HashMap<String, Document> futureMessageDocuments = new HashMap<>();
-        BulkOperations operations = DatabaseManager.playerService.bulkOps();
+        HashMap<String, AwardSummary> playerAwardSummary = new HashMap<>();
 
         awardOrder.forEach((key, rewards) -> {
             String name = weeklyDocument.getEmbedded(Arrays.asList(key, "name"), String.class);
             List<Document> top = weeklyDocument.getEmbedded(Arrays.asList(key, "top"), new ArrayList<>());
             for (int i = 0; i < top.size(); i++) {
                 Document topDocument = top.get(i);
-                String[] names = topDocument.getString("names").split(",");
                 String[] uuids = topDocument.getString("uuids").split(",");
-                for (int j = 0; j < uuids.length; j++) {
+                for (String uuid : uuids) {
                     int experienceGain = rewards[i];
-                    if (!futureMessageDocuments.containsKey(uuids[j])) {
-                        futureMessageDocuments.put(uuids[j], new Document("uuid", uuids[j])
-                                .append("name", names[j])
-                                .append("centered", true)
-                                .append("messages", new ArrayList<>(Arrays.asList(ChatColor.BLUE + "---------------------------------------------------",
-                                        ChatColor.GREEN + "Weekly Experience Bonus\n "))
-                                ).append("total_experience_gain", 0L)
-                        );
-                    }
-                    Document previousDocument = futureMessageDocuments.get(uuids[j]);
-                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
-                    previousDocument.put("total_experience_gain", previousDocument.getLong("total_experience_gain") + experienceGain);
+                    playerAwardSummary.putIfAbsent(uuid, new AwardSummary());
+                    AwardSummary awardSummary = playerAwardSummary.get(uuid);
+                    awardSummary.getMessages().add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                    awardSummary.addTotalExperienceGain(experienceGain);
                 }
             }
         });
-        futureMessageDocuments.forEach((s, document) -> {
-            long expGain = document.getLong("total_experience_gain");
-            Query query = new Query().addCriteria(Criteria.where("uuid").is(document.getString("uuid")));
-            Update update = new Update().inc("experience", expGain);
-            operations.updateOne(query, update);
-            document.getList("messages", String.class).add(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + expGain);
-            document.getList("messages", String.class).add(ChatColor.BLUE + "---------------------------------------------------");
-        });
 
-        FutureMessageManager.addNewFutureMessageDocuments(new ArrayList<>(futureMessageDocuments.values()));
-        System.out.println(operations.execute().getModifiedCount() + " players were given weekly experience bonuses");
+        System.out.println("---------------------------------------------------");
+        System.out.println("Giving players weekly experience bonuses");
+        System.out.println("---------------------------------------------------");
+        playerAwardSummary.forEach((s, awardSummary) -> {
+            long totalExperienceGain = awardSummary.getTotalExperienceGain();
+
+            awardSummary.addMessage(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + totalExperienceGain);
+            awardSummary.addMessage(ChatColor.BLUE + "---------------------------------------------------");
+
+            Warlords.newChain()
+                    .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(s)))
+                    .syncLast(databasePlayer -> {
+                        databasePlayer.setExperience(databasePlayer.getExperience() + totalExperienceGain);
+                        databasePlayer.getFutureMessages().add(new FutureMessage(awardSummary.getMessages(), true));
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    }).execute();
+        });
+    }
+
+    static class AwardSummary {
+        List<String> messages = new ArrayList<>();
+        long totalExperienceGain = 0L;
+
+        public AwardSummary() {
+            messages.add(ChatColor.BLUE + "---------------------------------------------------");
+            messages.add(ChatColor.GREEN + "Weekly Experience Bonus\n ");
+        }
+
+        public List<String> getMessages() {
+            return messages;
+        }
+
+        public long getTotalExperienceGain() {
+            return totalExperienceGain;
+        }
+
+        public void addMessage(String message) {
+            messages.add(message);
+        }
+
+        public void addTotalExperienceGain(long amount) {
+            totalExperienceGain += amount;
+        }
     }
 
     public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {

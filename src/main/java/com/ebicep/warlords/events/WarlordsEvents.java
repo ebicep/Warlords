@@ -8,6 +8,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
@@ -55,25 +57,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 public class WarlordsEvents implements Listener {
 
     public static Set<Entity> entityList = new HashSet<>();
-
-    @EventHandler
-    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        if (event.getEntity() instanceof FallingBlock) {
-            if (entityList.remove(event.getEntity())) {
-                event.setCancelled(true);
-            }
-        }
-    }
 
     public static void addEntityUUID(Entity entity) {
         entityList.add(entity);
@@ -109,11 +99,31 @@ public class WarlordsEvents implements Listener {
                             Warlords.updateHead(e.getPlayer());
 
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                            if (LeaderboardManager.loaded && Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
-                                LeaderboardManager.setLeaderboardHologramVisibility(player);
-                                DatabaseGameBase.setGameHologramVisibility(player);
-                                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            if (Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
+                                if (LeaderboardManager.loaded) {
+                                    LeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    DatabaseGameBase.setGameHologramVisibility(player);
+                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+
+                                }
                                 ExperienceManager.giveExperienceBar(player);
+
+                                //future messages
+                                Warlords.newChain()
+                                        .delay(20)
+                                        .async(() -> {
+                                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                                            List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
+                                            futureMessages.forEach(futureMessage -> {
+                                                if (futureMessage.isCentered()) {
+                                                    futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
+                                                } else {
+                                                    futureMessage.getMessages().forEach(player::sendMessage);
+                                                }
+                                            });
+                                            databasePlayer.clearFutureMessages();
+                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        }).execute();
                             }
                         });
                     })
@@ -236,11 +246,20 @@ public class WarlordsEvents implements Listener {
 
         for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
             if (
-                holder.getGame() != null
-                && holder.getGame().hasPlayer(e.getPlayer().getUniqueId())
-                && holder.getGame().getPlayerTeam(e.getPlayer().getUniqueId()) == null
+                    holder.getGame() != null
+                            && holder.getGame().hasPlayer(e.getPlayer().getUniqueId())
+                            && holder.getGame().getPlayerTeam(e.getPlayer().getUniqueId()) == null
             ) {
                 holder.getGame().removePlayer(e.getPlayer().getUniqueId());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        if (event.getEntity() instanceof FallingBlock) {
+            if (entityList.remove(event.getEntity())) {
+                event.setCancelled(true);
             }
         }
     }
@@ -260,24 +279,24 @@ public class WarlordsEvents implements Listener {
                     new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
                             .filter(PersistentCooldown::isShown)
                             .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                        .forEachOrdered(soulbinding -> {
-                            wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
+                            .forEachOrdered(soulbinding -> {
+                                wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
 
-                            if (soulbinding.hasBoundPlayer(wpVictim)) {
-                                soulbinding.getSoulBindedPlayers().stream()
-                                        .filter(p -> p.getBoundPlayer() == wpVictim)
-                                        .forEach(boundPlayer -> {
-                                            boundPlayer.setHitWithSoul(false);
-                                            boundPlayer.setHitWithLink(false);
-                                            boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
-                                        });
-                            } else {
-                                wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
-                                soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
-                                Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                            }
-                        });
+                                if (soulbinding.hasBoundPlayer(wpVictim)) {
+                                    soulbinding.getSoulBindedPlayers().stream()
+                                            .filter(p -> p.getBoundPlayer() == wpVictim)
+                                            .forEach(boundPlayer -> {
+                                                boundPlayer.setHitWithSoul(false);
+                                                boundPlayer.setHitWithLink(false);
+                                                boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
+                                            });
+                                } else {
+                                    wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
+                                    wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
+                                    soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
+                                    Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+                                }
+                            });
                 }
 
                 wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);

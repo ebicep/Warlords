@@ -26,7 +26,6 @@ import com.ebicep.warlords.commands.debugcommands.ingame.*;
 import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -357,7 +356,6 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
-        getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
 
         registerCommands();

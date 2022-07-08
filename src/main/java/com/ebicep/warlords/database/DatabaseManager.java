@@ -59,11 +59,11 @@ public class DatabaseManager {
 
     public static void init() {
         if (!enabled) {
-            NPCManager.createGameNPC();
+            NPCManager.createNPCs();
             return;
         }
         if (!LeaderboardManager.enabled) {
-            NPCManager.createGameNPC();
+            NPCManager.createNPCs();
         }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -74,7 +74,7 @@ public class DatabaseManager {
         } catch (Exception e) {
             playerService = null;
             gameService = null;
-            NPCManager.createGameNPC();
+            NPCManager.createNPCs();
             e.printStackTrace();
             return;
         }

@@ -38,6 +38,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private String name = "";
     @Field("discord_id")
     private Long discordID = null;
+    @Field("future_messages")
+    private List<FutureMessage> futureMessages = new ArrayList<>();
     private DatabaseMage mage = new DatabaseMage();
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();
@@ -217,6 +219,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setDiscordID(Long discordID) {
         this.discordID = discordID;
+    }
+
+    public List<FutureMessage> getFutureMessages() {
+        return futureMessages;
+    }
+
+    public void clearFutureMessages() {
+        futureMessages.clear();
     }
 
     public DatabaseMage getMage() {

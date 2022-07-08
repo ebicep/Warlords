@@ -101,7 +101,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public BulkOperations bulkOps() {
-        return playerRepository.bulkOps();
+        return playerRepository.bulkOps(); //WARNING DO NOT USE IN SCENARIO WITH PLAYERS ONLINE
     }
 
 

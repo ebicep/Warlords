@@ -1,7 +1,6 @@
 package com.ebicep.warlords.database.configuration;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FutureMessageManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,6 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         DatabaseManager.mongoClient = mongoClient;
         DatabaseManager.warlordsDatabase = mongoClient.getDatabase("Warlords");
         DatabaseManager.gamesInformation = DatabaseManager.warlordsDatabase.getCollection("Warlords_Information");
-        FutureMessageManager.futureMessages = DatabaseManager.warlordsDatabase.getCollection("Future_Messages");
 
         return mongoClient;
     }
