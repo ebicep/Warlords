@@ -11,21 +11,18 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.player.general.*;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;
-import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -35,18 +32,16 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
 
 
 public class DatabaseManager {
 
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsDatabase;
-    public static MongoCollection<Document> gamesInformation;
 
     public static PlayerService playerService;
     public static GameService gameService;
+    public static TimingsService timingsService;
 
     public static String lastWarlordsPlusString = "";
 
@@ -71,20 +66,18 @@ public class DatabaseManager {
         try {
             playerService = context.getBean("playerService", PlayerService.class);
             gameService = context.getBean("gameService", GameService.class);
+            timingsService = context.getBean("timingsService", TimingsService.class);
         } catch (Exception e) {
-            playerService = null;
-            gameService = null;
             NPCManager.createNPCs();
             e.printStackTrace();
             return;
         }
 
         try {
-            System.out.println("CACHES");
             for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
-                System.out.println(Objects.requireNonNull(((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(cacheName)).getNativeCache()).asMap());
                 Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
             }
+            System.out.println("Cleared all players cache");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,72 +106,11 @@ public class DatabaseManager {
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
+                    System.out.println("Loaded last games");
                     previousGames.addAll(games);
                     LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true);
                 })
                 .execute();
-
-        MongoCollection<Document> resetTimings = warlordsDatabase.getCollection("Reset_Timings");
-        //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
-        Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
-        Date current = new Date();
-        if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
-            Date lastReset = weeklyDocumentInfo.getDate("last_reset");
-            long timeDiff = current.getTime() - lastReset.getTime();
-
-            System.out.println("Reset Time: " + timeDiff / 60000);
-            if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
-                Warlords.newSharedChain(UUID.randomUUID().toString())
-                        .delay(20 * 10) // to make sure leaderboards are cached
-                        .async(() -> {
-                            //adding new document with top weekly players
-                            Document topPlayers;
-                            try {
-                                topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
-                            } catch (Exception e) {
-                                //updating date to current
-                                resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
-                                        new Document("$set", new Document("time", "weekly").append("last_reset", current))
-                                );
-                                System.out.println("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
-                                return;
-                            }
-
-                            MongoCollection<Document> weeklyLeaderboards = warlordsDatabase.getCollection("Weekly_Leaderboards");
-                            weeklyLeaderboards.insertOne(topPlayers);
-
-                            ExperienceManager.awardWeeklyExperience(topPlayers);
-                            //clearing weekly
-                            playerService.deleteAll(PlayersCollections.WEEKLY);
-                            //reloading boards
-                            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
-                            //updating date to current
-                            resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
-                                    new Document("$set", new Document("time", "weekly").append("last_reset", current))
-                            );
-                        }).sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset"))
-                        .execute();
-            }
-        }
-        //checking daily date, if over 1,400 minutes (1440 == 1 day) reset daily
-        Document dailyDocumentInfo = resetTimings.find().filter(eq("time", "daily")).first();
-        if (dailyDocumentInfo != null && dailyDocumentInfo.get("last_reset") != null) {
-            Date lastReset = dailyDocumentInfo.getDate("last_reset");
-            long timeDiff = current.getTime() - lastReset.getTime();
-
-            if (timeDiff > 0 && timeDiff / (1000 * 60) > 1400) {
-                Warlords.newSharedChain(UUID.randomUUID().toString())
-                        .async(() -> {
-                            //clearing daily
-                            playerService.deleteAll(PlayersCollections.DAILY);
-                            //updating date to current
-                            resetTimings.updateOne(and(eq("time", "daily"), eq("last_reset", lastReset)),
-                                    new Document("$set", new Document("time", "daily").append("last_reset", current))
-                            );
-                        }).sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset"))
-                        .execute();
-            }
-        }
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {

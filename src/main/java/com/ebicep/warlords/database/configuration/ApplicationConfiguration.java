@@ -27,7 +27,6 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         MongoClient mongoClient = MongoClients.create(key);
         DatabaseManager.mongoClient = mongoClient;
         DatabaseManager.warlordsDatabase = mongoClient.getDatabase("Warlords");
-        DatabaseManager.gamesInformation = DatabaseManager.warlordsDatabase.getCollection("Warlords_Information");
 
         return mongoClient;
     }

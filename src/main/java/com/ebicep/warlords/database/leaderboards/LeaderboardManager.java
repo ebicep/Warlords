@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.sections.subsections.Leaderboar
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -64,7 +65,7 @@ public class LeaderboardManager {
             "Flags Captured",
             "Flags Returned",
     };
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void putLeaderboards() {
@@ -145,6 +146,7 @@ public class LeaderboardManager {
                         System.out.println("Set Hologram Visibility");
 
                         if (init) {
+                            DatabaseTiming.checkTimings();
                             NPCManager.createNPCs();
                         }
                         this.cancel();
