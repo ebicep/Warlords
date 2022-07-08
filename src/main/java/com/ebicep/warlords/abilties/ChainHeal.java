@@ -14,9 +14,10 @@ import java.util.List;
 
 
 public class ChainHeal extends AbstractChainBase {
+    private boolean pveUpgrade = false;
 
-    private final int radius = 15;
-    private final int bounceRange = 10;
+    private int radius = 15;
+    private int bounceRange = 10;
 
     public ChainHeal() {
         super("Chain Heal", 533, 719, 7.99f, 40, 20, 175);
@@ -88,8 +89,8 @@ public class ChainHeal extends AbstractChainBase {
                     bounceTarget.addHealingInstance(
                             wp,
                             name,
-                            minDamageHeal * 0.8f,
-                            maxDamageHeal * 0.8f,
+                            minDamageHeal * (pveUpgrade ? 1.15f : 0.8f),
+                            maxDamageHeal * (pveUpgrade ? 1.15f : 0.8f),
                             critChance,
                             critMultiplier,
                             false,
@@ -124,5 +125,29 @@ public class ChainHeal extends AbstractChainBase {
     @Override
     protected ItemStack getChainItem() {
         return new ItemStack(Material.RED_ROSE, 1, (short) 1);
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getBounceRange() {
+        return bounceRange;
+    }
+
+    public void setBounceRange(int bounceRange) {
+        this.bounceRange = bounceRange;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

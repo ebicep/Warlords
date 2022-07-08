@@ -28,8 +28,10 @@ public class Boulder extends AbstractAbility {
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;
 
-    private static final double SPEED = 0.290;
-    private static final double GRAVITY = -0.0059;
+    private double boulderSpeed = 0.290;
+    private double boulderGravity = -0.0059;
+    private double hitbox = 5.5;
+    private double velocity = 1.15;
 
     public Boulder() {
         super("Boulder", 451, 673, 7.05f, 80, 15, 175);
@@ -60,7 +62,7 @@ public class Boulder extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(SPEED);
+        Vector speed = player.getLocation().getDirection().multiply(boulderSpeed);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -90,7 +92,7 @@ public class Boulder extends AbstractAbility {
                     return;
                 }
 
-                speed.add(new Vector(0, GRAVITY * SPEED, 0));
+                speed.add(new Vector(0, boulderGravity * boulderSpeed, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -139,7 +141,7 @@ public class Boulder extends AbstractAbility {
                         @Override
                         public void run() {
                             for (WarlordsEntity p : PlayerFilter
-                                    .entitiesAround(newLoc, 5.5, 5.5, 5.5)
+                                    .entitiesAround(newLoc, hitbox, hitbox, hitbox)
                                     .aliveEnemiesOf(wp)
                             ) {
                                 playersHit++;
@@ -151,9 +153,9 @@ public class Boulder extends AbstractAbility {
                                 }
                                 Vector v;
                                 if (p == directHitFinal) {
-                                    v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
+                                    v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
                                 } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
+                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
                                 }
                                 p.setVelocity(v, false, false);
                                 p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -215,5 +217,29 @@ public class Boulder extends AbstractAbility {
             }
 
         }
+    }
+
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
+
+    public double getBoulderSpeed() {
+        return boulderSpeed;
+    }
+
+    public void setBoulderSpeed(double boulderSpeed) {
+        this.boulderSpeed = boulderSpeed;
+    }
+
+    public double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(double hitbox) {
+        this.hitbox = hitbox;
     }
 }

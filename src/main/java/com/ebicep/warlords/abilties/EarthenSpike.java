@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -24,10 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int playersSpiked = 0;
     protected int carrierSpiked = 0;
 
     private final int radius = 10;
+    private float speed = 1;
+    private double spikeHitbox = 2.5;
+    private double verticalVelocity = .625;
 
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
@@ -79,8 +84,7 @@ public class EarthenSpike extends AbstractAbility {
                 wp.subtractEnergy(energyCost);
 
                 new GameRunnable(wp.getGame()) {
-                    private final float SPEED = 1;
-                    private final float SPEED_SQUARED = SPEED * SPEED;
+                    private final float SPEED_SQUARED = speed * speed;
                     private final Location spikeLoc = location;
                     {
                         spikeLoc.setY(spikeLoc.getBlockY());
@@ -109,7 +113,7 @@ public class EarthenSpike extends AbstractAbility {
                         change.setY(0);
                         double length = change.lengthSquared();
                         if (length > SPEED_SQUARED) {
-                            change.multiply(1 / (Math.sqrt(length) / SPEED));
+                            change.multiply(1 / (Math.sqrt(length) / speed));
                             spikeLoc.add(change);
 
                             //moving vertically
@@ -145,7 +149,7 @@ public class EarthenSpike extends AbstractAbility {
                             //impact
                             Location targetLocation = target.getLocation();
                             for (WarlordsEntity spikeTarget : PlayerFilter
-                                    .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
+                                    .entitiesAround(targetLocation, spikeHitbox, spikeHitbox, spikeHitbox)
                                     .aliveEnemiesOf(wp)
                             ) {
                                 playersSpiked++;
@@ -155,7 +159,21 @@ public class EarthenSpike extends AbstractAbility {
                                 spikeTarget.addDamageInstance(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                 //todo tweak distance to ground where you cant get kbed up (1.82 is max jump blocks, double spike kb might be possible with this)
                                 if (Utils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
-                                    spikeTarget.setVelocity(new Vector(0, .625, 0), false);
+                                    spikeTarget.setVelocity(new Vector(0, verticalVelocity, 0), false);
+                                }
+
+                                if (pveUpgrade) {
+                                    spikeTarget.getCooldownManager().addRegularCooldown(
+                                            "KB Increase",
+                                            "KB INC",
+                                            EarthenSpike.class,
+                                            new EarthenSpike(),
+                                            wp,
+                                            CooldownTypes.DEBUFF,
+                                            cooldownManager -> {
+                                            },
+                                            10 * 20
+                                    );
                                 }
                             }
 
@@ -321,5 +339,37 @@ public class EarthenSpike extends AbstractAbility {
         public void setyLevelToRemove(double yLevelToRemove) {
             this.yLevelToRemove = yLevelToRemove;
         }
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public double getVerticalVelocity() {
+        return verticalVelocity;
+    }
+
+    public void setVerticalVelocity(double verticalVelocity) {
+        this.verticalVelocity = verticalVelocity;
+    }
+
+    public double getSpikeHitbox() {
+        return spikeHitbox;
+    }
+
+    public void setSpikeHitbox(double spikeHitbox) {
+        this.spikeHitbox = spikeHitbox;
     }
 }

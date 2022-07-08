@@ -1034,7 +1034,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(1, 5 * SECOND, null)
-                            .add(1, BasicMob.GUARDIAN)
+                            .add(1, BasicMob.ZOMBIE)
                             .add(0.05, BasicMob.SKELETON)
                     )
                     .add(10, new SimpleWave(1, 20 * SECOND, "Boss", MobTier.BOSS)

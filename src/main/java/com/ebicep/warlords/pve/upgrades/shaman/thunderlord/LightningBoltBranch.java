@@ -21,7 +21,11 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit multiplier", 10000));
         treeC.add(new Upgrade("Crit Multiplier - Tier III", "+40% Crit multiplier", 20000));
 
-        masterUpgrade = new Upgrade("Master Upgrade", "Lightning Bolt shoots two additional projectiles.", 50000);
+        masterUpgrade = new Upgrade(
+                "Master Upgrade",
+                "Lightning Bolt shoots two additional projectiles.",
+                50000
+        );
     }
 
     float minDamage = ability.getMinDamageHeal();

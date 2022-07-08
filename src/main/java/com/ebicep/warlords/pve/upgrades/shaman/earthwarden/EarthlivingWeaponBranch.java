@@ -1,4 +1,79 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-public class EarthlivingWeaponBranch {
+import com.ebicep.warlords.abilties.Earthliving;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+
+public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> {
+    public EarthlivingWeaponBranch(AbilityTree abilityTree, Earthliving ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade("Weapon Damage - Tier I", "+20% Weapon Damage", 5000));
+        treeA.add(new Upgrade("Weapon Damage - Tier II", "+40% Weapon Damage", 10000));
+        treeA.add(new Upgrade("Weapon Damage - Tier III", "+80% Weapon Damage", 20000));
+
+        treeC.add(new Upgrade("Proc Chance - Tier I", "+5% Proc Chance", 5000));
+        treeC.add(new Upgrade("Proc Chance - Tier II", "+10% Proc Chance", 10000));
+        treeC.add(new Upgrade("Proc Chance - Tier III", "+20% Proc Chance", 20000));
+
+        masterUpgrade = new Upgrade(
+                "Master Upgrade",
+                "Earthliving Weapon procs an additional 2 times.",
+                50000
+        );
+    }
+
+    int weaponDamage = ability.getWeaponDamage();
+
+    @Override
+    public void a1() {
+        ability.setWeaponDamage(weaponDamage + 20);
+    }
+
+    @Override
+    public void a2() {
+        ability.setWeaponDamage(weaponDamage + 40);
+    }
+
+    @Override
+    public void a3() {
+        ability.setWeaponDamage(weaponDamage + 80);
+    }
+
+    @Override
+    public void b1() {
+
+    }
+
+    @Override
+    public void b2() {
+
+    }
+
+    @Override
+    public void b3() {
+
+    }
+
+    int procChance = ability.getProcChance();
+
+    @Override
+    public void c1() {
+        ability.setProcChance(procChance + 5);
+    }
+
+    @Override
+    public void c2() {
+        ability.setProcChance(procChance + 10);
+    }
+
+    @Override
+    public void c3() {
+        ability.setProcChance(procChance + 20);
+    }
+
+    @Override
+    public void master() {
+        ability.setMaxHits(ability.getMaxHits() + 2);
+    }
 }

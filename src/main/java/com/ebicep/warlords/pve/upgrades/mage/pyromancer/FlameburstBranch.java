@@ -13,9 +13,9 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
         treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
 
-        treeB.add(new Upgrade("Utility - Tier I", "+1 Block splash radius", 5000));
-        treeB.add(new Upgrade("Utility - Tier II", "+2 Block splash radius", 10000));
-        treeB.add(new Upgrade("Utility - Tier III", "+3 Block splash radius", 20000));
+        treeB.add(new Upgrade("Range - Tier I", "+1 Block splash radius", 5000));
+        treeB.add(new Upgrade("Range - Tier II", "+2 Blocks splash radius", 10000));
+        treeB.add(new Upgrade("Range - Tier III", "+3 Blocks splash radius", 20000));
 
         treeC.add(new Upgrade("Damage - Tier I", "+15% Damage", 5000));
         treeC.add(new Upgrade("Damage - Tier II", "+30% Damage", 10000));
@@ -23,7 +23,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n\nFlame Burst gains 0.5% Crit Chance and\n1% Crit Multiplier for each block it travels.",
+                "Remove energy cost\n\nFlame Burst gains an additional 0.5% Crit Chance and\n1% Crit Multiplier for each block it travels.",
                 50000
         );
     }

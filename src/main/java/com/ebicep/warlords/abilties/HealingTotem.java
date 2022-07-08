@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotemBase {
+    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
     protected int playersCrippled = 0;
 
-    private final int radius = 7;
-    private final int duration = 6;
-    private final int crippleDuration = 6;
+    private int radius = 7;
+    private int duration = 6;
+    private int crippleDuration = 6;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -164,6 +165,29 @@ public class HealingTotem extends AbstractTotemBase {
                                             critMultiplier,
                                             false, false);
                                 });
+
+                        if (pveUpgrade) {
+                            PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> {
+                                        enemy.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
+                                                "Totem Crippling",
+                                                "CRIP",
+                                                HealingTotem.class,
+                                                tempHealingTotem,
+                                                wp,
+                                                CooldownTypes.DEBUFF,
+                                                cooldownManager -> {
+                                                },
+                                                20
+                                        ) {
+                                            @Override
+                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                return currentDamageValue * .75f;
+                                            }
+                                        });
+                                    });
+                        }
                     }
                 }
         );
@@ -202,4 +226,35 @@ public class HealingTotem extends AbstractTotemBase {
     }
 
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getCrippleDuration() {
+        return crippleDuration;
+    }
+
+    public void setCrippleDuration(int crippleDuration) {
+        this.crippleDuration = crippleDuration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
 }

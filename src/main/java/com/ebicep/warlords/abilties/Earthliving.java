@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
@@ -10,16 +11,21 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Earthliving extends AbstractAbility {
-    private final int duration = 8;
     protected int timesProcd = 0;
     protected int playersHealed = 0;
+
+    private final int duration = 8;
     private int procChance = 40;
+    private int maxAllies = 2;
+    private int weaponDamage = 240;
+    private int maxHits = 1;
 
     public Earthliving() {
         super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 200);
@@ -30,7 +36,7 @@ public class Earthliving extends AbstractAbility {
         description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
-                "§7nearby allies for §a240% §7weapon damage.\n" +
+                "§7nearby allies for §a" + weaponDamage + "% §7weapon damage.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";
@@ -89,37 +95,49 @@ public class Earthliving extends AbstractAbility {
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < procChance) {
-                        timesProcd++;
-                        Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+                        new BukkitRunnable() {
+                            int counter = 0;
 
-                        attacker.addHealingInstance(
-                                attacker,
-                                name,
-                                132 * 2.4f,
-                                179 * 2.4f,
-                                critChance,
-                                critMultiplier,
-                                false,
-                                false
-                        );
+                            @Override
+                            public void run() {
+                                timesProcd++;
+                                Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
 
-                        for (WarlordsEntity nearPlayer : PlayerFilter
-                                .entitiesAround(attacker, 6, 6, 6)
-                                .aliveTeammatesOfExcludingSelf(attacker)
-                                .limit(2)
-                        ) {
-                            playersHealed++;
-                            nearPlayer.addHealingInstance(
-                                    attacker,
-                                    name,
-                                    132 * 2.4f,
-                                    179 * 2.4f,
-                                    critChance,
-                                    critMultiplier,
-                                    false,
-                                    false
-                            );
-                        }
+                                attacker.addHealingInstance(
+                                        attacker,
+                                        name,
+                                        132 * (weaponDamage / 100f),
+                                        179 * (weaponDamage / 100f),
+                                        critChance,
+                                        critMultiplier,
+                                        false,
+                                        false
+                                );
+
+                                for (WarlordsEntity nearPlayer : PlayerFilter
+                                        .entitiesAround(attacker, 6, 6, 6)
+                                        .aliveTeammatesOfExcludingSelf(attacker)
+                                        .limit(maxAllies)
+                                ) {
+                                    playersHealed++;
+                                    nearPlayer.addHealingInstance(
+                                            attacker,
+                                            name,
+                                            132 * (weaponDamage / 100f),
+                                            179 * (weaponDamage / 100f),
+                                            critChance,
+                                            critMultiplier,
+                                            false,
+                                            false
+                                    );
+                                }
+
+                                counter++;
+                                if (counter == maxHits) {
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(Warlords.getInstance(), 3, 8);
                     }
                 }
             }
@@ -134,6 +152,30 @@ public class Earthliving extends AbstractAbility {
 
     public void setProcChance(int procChance) {
         this.procChance = procChance;
+    }
+
+    public int getWeaponDamage() {
+        return weaponDamage;
+    }
+
+    public void setWeaponDamage(int weaponDamage) {
+        this.weaponDamage = weaponDamage;
+    }
+
+    public int getMaxAllies() {
+        return maxAllies;
+    }
+
+    public void setMaxAllies(int maxAllies) {
+        this.maxAllies = maxAllies;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
+    }
+
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
     }
 }
 

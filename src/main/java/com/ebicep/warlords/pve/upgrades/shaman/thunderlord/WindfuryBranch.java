@@ -9,9 +9,9 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
 
     public WindfuryBranch(AbilityTree abilityTree, Windfury ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage - Tier I", "+20% Damage", 5000));
-        treeA.add(new Upgrade("Damage - Tier II", "+40% Damage", 10000));
-        treeA.add(new Upgrade("Damage - Tier III", "+80% Damage", 20000));
+        treeA.add(new Upgrade("Weapon Damage - Tier I", "+20% Weapon Damage", 5000));
+        treeA.add(new Upgrade("Weapon Damage - Tier II", "+40% Weapon Damage", 10000));
+        treeA.add(new Upgrade("Weapon Damage - Tier III", "+80% Weapon Damage", 20000));
 
         treeC.add(new Upgrade("Proc Chance - Tier I", "+5% Proc chance", 5000));
         treeC.add(new Upgrade("Proc Chance - Tier II", "+10% Proc chance", 10000));
