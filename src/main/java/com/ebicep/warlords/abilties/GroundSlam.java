@@ -21,9 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroundSlam extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int playersHit = 0;
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;
+
+    private int slamSize = 6;
 
     public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -48,20 +52,33 @@ public class GroundSlam extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
+        activateAbility(wp, player);
 
+        if (pveUpgrade) {
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
+                    activateAbility(wp, player);
+                }
+            }.runTaskLater(16);
+        }
+        return true;
+    }
+
+    private void activateAbility(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
         Location location = player.getLocation();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < slamSize; i++) {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
 
         fallingBlockLocations.get(0).add(player.getLocation());
 
         new GameRunnable(wp.getGame()) {
-
             @Override
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
@@ -115,7 +132,6 @@ public class GroundSlam extends AbstractAbility {
         }.runTaskTimer(0, 2);
 
         new GameRunnable(wp.getGame()) {
-
             @Override
             public void run() {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
@@ -136,8 +152,6 @@ public class GroundSlam extends AbstractAbility {
             }
 
         }.runTaskTimer(0, 0);
-
-        return true;
     }
 
     /**
@@ -190,6 +204,22 @@ public class GroundSlam extends AbstractAbility {
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);
         return fallingBlock;
+    }
+
+    public int getSlamSize() {
+        return slamSize;
+    }
+
+    public void setSlamSize(int slamSize) {
+        this.slamSize = slamSize;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BloodLust extends AbstractAbility {
+    private boolean pveUpgrade = false;
 
     private final int duration = 15;
     private int damageConvertPercent = 65;
@@ -73,14 +74,23 @@ public class BloodLust extends AbstractAbility {
             }
 
             @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveUpgrade) {
+                    if (event.getPlayer().getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
+                        return currentDamageValue * 1.2f;
+                    }
+                }
+                return currentDamageValue;
+            }
+
+            @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getAttacker();
-                BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
                 attacker.addHealingInstance(
                         attacker,
                         name,
-                        currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f),
-                        currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f),
+                        currentDamageValue * (getDamageConvertPercent() / 100f),
+                        currentDamageValue * (getDamageConvertPercent() / 100f),
                         -1,
                         100,
                         false,
@@ -98,5 +108,13 @@ public class BloodLust extends AbstractAbility {
 
     public void setDamageConvertPercent(int damageConvertPercent) {
         this.damageConvertPercent = damageConvertPercent;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

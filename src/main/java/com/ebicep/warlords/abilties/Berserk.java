@@ -15,12 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Berserk extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int hitsDoneAmplified = 0;
     protected int hitsTakenAmplified = 0;
 
     private final int duration = 18;
-    // Percent
-    private final int speedBuff = 30;
+    private int speedBuff = 30;
     private float damageIncrease = 30;
     private float damageTakenIncrease = 10;
 
@@ -79,6 +80,7 @@ public class Berserk extends AbstractAbility {
                     }
                 }
         ) {
+            int multiplier = 0;
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 hitsTakenAmplified++;
@@ -88,7 +90,38 @@ public class Berserk extends AbstractAbility {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 hitsDoneAmplified++;
+                multiplier++;
                 return currentDamageValue * (1 + damageIncrease / 100);
+            }
+
+            int critBoost = (int) (0.2f * multiplier);
+
+            @Override
+            public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+                if (pveUpgrade) {
+                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                        return currentCritChance;
+                    }
+                    if (critBoost > 30) {
+                        critBoost = 30;
+                    }
+                    return currentCritChance + critBoost;
+                }
+                return currentCritChance;
+            }
+
+            @Override
+            public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
+                if (pveUpgrade) {
+                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                        return currentCritMultiplier;
+                    }
+                    if (critBoost > 30) {
+                        critBoost = 30;
+                    }
+                    return currentCritMultiplier + critBoost;
+                }
+                return currentCritMultiplier;
             }
         });
 
@@ -109,5 +142,21 @@ public class Berserk extends AbstractAbility {
 
     public void setDamageTakenIncrease(float damageTakenIncrease) {
         this.damageTakenIncrease = damageTakenIncrease;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

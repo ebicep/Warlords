@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
+
+    private int woundingDuration = 3;
 
     public WoundingStrikeBerserker() {
         super("Wounding Strike", 497, 632, 0, 100, 20, 175);
@@ -24,7 +27,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and §cwounding §7them for §63 §7seconds.\n" +
+                "§7and §cwounding §7them for §6" + woundingDuration + " §7seconds.\n" +
                 "§7A wounded player receives §c40% §7less\n" +
                 "§7healing for the duration of the effect.";
     }
@@ -39,25 +42,73 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeDefender.class))) {
-            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+        if (pveUpgrade) {
+            bleedOnHit(wp, nearPlayer);
+            if (nearPlayer.getCooldownManager().hasCooldownFromName("Bleed") && wp.getCooldownManager().hasCooldown(BloodLust.class)) {
+                nearPlayer.addDamageInstance(wp, name, minDamageHeal * 2, maxDamageHeal * 2, critChance, critMultiplier, false);
+            } else {
+                nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            }
+        } else {
+            nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeDefender.class))) {
+                nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+            }
+            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
+            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+                    name,
+                    "WND",
+                    WoundingStrikeBerserker.class,
+                    new WoundingStrikeBerserker(),
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
+                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                        }
+                    },
+                    woundingDuration * 20
+            ) {
+                @Override
+                public boolean isHealing() {
+                    return true;
+                }
+
+                @Override
+                public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                    return currentHealValue * .6f;
+                }
+            });
         }
-        nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
-        nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
-                name,
-                "WND",
+    }
+
+    private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
+        hit.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
+        hit.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
+                "Bleed",
+                "BLEED",
                 WoundingStrikeBerserker.class,
                 new WoundingStrikeBerserker(),
-                wp,
+                giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
-                    }
                 },
-                3 * 20
+                woundingDuration * 20,
+                (cooldown, ticksLeft, counter) -> {
+                    if (ticksLeft % 20 == 0) {
+                        float healthDamage = hit.getMaxHealth() * 0.01f;
+                        hit.addDamageInstance(
+                                giver,
+                                "Bleed",
+                                healthDamage,
+                                healthDamage,
+                                -1,
+                                100,
+                                false
+                        );
+                    }
+                }
         ) {
             @Override
             public boolean isHealing() {
@@ -66,8 +117,24 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .6f;
+                return currentHealValue * .3f;
             }
         });
+    }
+
+    public int getWoundingDuration() {
+        return woundingDuration;
+    }
+
+    public void setWoundingDuration(int woundingDuration) {
+        this.woundingDuration = woundingDuration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

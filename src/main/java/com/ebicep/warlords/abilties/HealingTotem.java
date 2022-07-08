@@ -47,7 +47,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7pulses constantly, healing nearby\n" +
                 "§7allies in a §e" + radius + " §7block radius for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + "\n" +
                 "§7every second. The healing will gradually\n" +
-                "§7increase by §a35% §7(up to 210%) every\n" +
+                "§7increase by §a35% §7(up to " + (35 * duration) + "%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Pressing SHIFT or re-activating the\n " +

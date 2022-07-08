@@ -1,17 +1,17 @@
-package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
+package com.ebicep.warlords.pve.upgrades.berserker;
 
-import com.ebicep.warlords.abilties.HealingTotem;
+import com.ebicep.warlords.abilties.GroundSlam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
+public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
 
-    public HealingTotemBranch(AbilityTree abilityTree, HealingTotem ability) {
+    public GroundSlamBranch(AbilityTree abilityTree, GroundSlam ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
-        treeA.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
-        treeA.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
+        treeA.add(new Upgrade("Range - Tier I", "+1 Block radius", 5000));
+        treeA.add(new Upgrade("Range - Tier II", "+2 Blocks radius", 10000));
+        treeA.add(new Upgrade("Range - Tier III", "+3 Blocks radius", 20000));
 
         treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
@@ -19,30 +19,26 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+50% Duration\n\nAll enemies within the radius of Healing Totem are\nperpetually crippled, reducing their damage dealt\nby 25%",
+                "A second Ground Slam will follow after the\ninitial cast of Ground Slam after 0.8s",
                 50000
         );
     }
 
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
+    int slamSize = ability.getSlamSize();
 
     @Override
     public void a1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
+        ability.setSlamSize(slamSize + 1);
     }
 
     @Override
     public void a2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
+        ability.setSlamSize(slamSize + 2);
     }
 
     @Override
     public void a3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
+        ability.setSlamSize(slamSize + 3);
     }
 
     @Override
@@ -79,7 +75,6 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
     @Override
     public void master() {
-        ability.setDuration((int) (ability.getDuration() * 1.5f));
         ability.setPveUpgrade(true);
     }
 }

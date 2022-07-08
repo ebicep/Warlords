@@ -1,0 +1,80 @@
+package com.ebicep.warlords.pve.upgrades.berserker;
+
+import com.ebicep.warlords.abilties.BloodLust;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+
+public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
+
+    public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade("Healing Conversion - Tier I", "+5% Healing conversion", 5000));
+        treeA.add(new Upgrade("Healing Conversion - Tier II", "+10% Healing conversion", 10000));
+        treeA.add(new Upgrade("Healing Conversion - Tier III", "+20% Healing conversion", 20000));
+
+        treeC.add(new Upgrade("Cooldown - Tier I", "-5% Cooldown reduction", 5000));
+        treeC.add(new Upgrade("Cooldown - Tier II", "-10% Cooldown reduction", 10000));
+        treeC.add(new Upgrade("Cooldown - Tier III", "-20% Cooldown reduction", 20000));
+
+        masterUpgrade = new Upgrade(
+                "Master Upgrade",
+                "A second Ground Slam will follow after the\ninitial cast of Ground Slam after 0.8s",
+                50000
+        );
+    }
+
+    int conversion = ability.getDamageConvertPercent();
+
+    @Override
+    public void a1() {
+        ability.setDamageConvertPercent(conversion + 5);
+    }
+
+    @Override
+    public void a2() {
+        ability.setDamageConvertPercent(conversion + 10);
+    }
+
+    @Override
+    public void a3() {
+        ability.setDamageConvertPercent(conversion + 20);
+    }
+
+    @Override
+    public void b1() {
+
+    }
+
+    @Override
+    public void b2() {
+
+    }
+
+    @Override
+    public void b3() {
+
+    }
+
+    float cooldown = ability.getCooldown();
+
+    @Override
+    public void c1() {
+        ability.setCooldown(cooldown * 0.95f);
+    }
+
+    @Override
+    public void c2() {
+        ability.setCooldown(cooldown * 0.9f);
+    }
+
+    @Override
+    public void c3() {
+        ability.setCooldown(cooldown * 0.8f);
+    }
+
+    @Override
+    public void master() {
+        ability.setPveUpgrade(true);
+    }
+}

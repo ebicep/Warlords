@@ -25,6 +25,8 @@ public class SeismicWave extends AbstractAbility {
     protected int warpsKnockbacked = 0;
 
     private float velocity = 1.25f;
+    private int waveSize = 8;
+    private int waveWidth = 1;
 
     public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -58,7 +60,7 @@ public class SeismicWave extends AbstractAbility {
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
 
         Location location = player.getLocation();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < waveSize; i++) {
             fallingBlockLocations.add(getWave(location, i));
         }
 
@@ -129,10 +131,10 @@ public class SeismicWave extends AbstractAbility {
         location.setDirection(center.getDirection());
         location.setPitch(0);
         locations.add(location.add(location.getDirection().multiply(distance)));
-        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(1)));
-        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(2)));
-        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(1)));
-        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(2)));
+        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(waveWidth)));
+        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(waveWidth + 1)));
+        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(waveWidth)));
+        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(waveWidth + 1)));
         return locations;
     }
 
@@ -169,5 +171,21 @@ public class SeismicWave extends AbstractAbility {
 
     public void setVelocity(float velocity) {
         this.velocity = velocity;
+    }
+
+    public int getWaveSize() {
+        return waveSize;
+    }
+
+    public void setWaveSize(int waveSize) {
+        this.waveSize = waveSize;
+    }
+
+    public int getWaveWidth() {
+        return waveWidth;
+    }
+
+    public void setWaveWidth(int waveWidth) {
+        this.waveWidth = waveWidth;
     }
 }

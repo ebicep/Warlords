@@ -78,7 +78,6 @@ public class AvengersWrath extends AbstractAbility {
                     }
                 }
         ) {
-
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().equals("Avenger's Strike")) {

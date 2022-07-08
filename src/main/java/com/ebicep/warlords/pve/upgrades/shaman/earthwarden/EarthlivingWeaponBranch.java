@@ -8,9 +8,9 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> {
     public EarthlivingWeaponBranch(AbilityTree abilityTree, Earthliving ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Weapon Damage - Tier I", "+20% Weapon Damage", 5000));
-        treeA.add(new Upgrade("Weapon Damage - Tier II", "+40% Weapon Damage", 10000));
-        treeA.add(new Upgrade("Weapon Damage - Tier III", "+80% Weapon Damage", 20000));
+        treeA.add(new Upgrade("Weapon Damage - Tier I", "+15% Weapon Damage", 5000));
+        treeA.add(new Upgrade("Weapon Damage - Tier II", "+30% Weapon Damage", 10000));
+        treeA.add(new Upgrade("Weapon Damage - Tier III", "+60% Weapon Damage", 20000));
 
         treeC.add(new Upgrade("Proc Chance - Tier I", "+5% Proc Chance", 5000));
         treeC.add(new Upgrade("Proc Chance - Tier II", "+10% Proc Chance", 10000));
@@ -27,17 +27,17 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
 
     @Override
     public void a1() {
-        ability.setWeaponDamage(weaponDamage + 20);
+        ability.setWeaponDamage(weaponDamage + 15);
     }
 
     @Override
     public void a2() {
-        ability.setWeaponDamage(weaponDamage + 40);
+        ability.setWeaponDamage(weaponDamage + 30);
     }
 
     @Override
     public void a3() {
-        ability.setWeaponDamage(weaponDamage + 80);
+        ability.setWeaponDamage(weaponDamage + 60);
     }
 
     @Override
