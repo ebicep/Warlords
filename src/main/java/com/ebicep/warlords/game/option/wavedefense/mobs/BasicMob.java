@@ -128,6 +128,21 @@ public class BasicMob {
             2500,
             0.5f
     );
+    public static final Function<Location, PartialMonster> BABY_MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
+            CustomMagmaCube.class,
+            () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
+            }, "Baby Magma Cube",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET, 1, (short) 7),
+                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                    new ItemStack(Material.CHAINMAIL_BOOTS),
+                    new ItemStack(Material.STICK)
+            ),
+            800,
+            0.3f
+    );
     public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
             CustomMagmaCube.class,
             () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()),

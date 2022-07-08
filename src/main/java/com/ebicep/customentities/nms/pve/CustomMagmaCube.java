@@ -28,13 +28,14 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
     @Override
     public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         if (customMagmaCube.getSize() <= 1) return;
-        for (int i = 0; i < 2; i++) {
+        //TODO Will finish this on saturday -Plikie
+        /*for (int i = 0; i < 2; i++) {
             CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
             babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
             babyMagmaCube.spawn(deathLocation);
-            //TODO add to wave defense option
-            //waveDefenseOption.getEntities().add()
-        }
+
+            waveDefenseOption.spawn(babyMagmaCube);
+        }*/
     }
 
     @Override

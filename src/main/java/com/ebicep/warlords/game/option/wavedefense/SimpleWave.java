@@ -59,6 +59,21 @@ public class SimpleWave implements Wave {
     }
 
     @Override
+    public PartialMonster spawnMonster(Location loc) {
+        double index = totalWeight;
+        for (Pair<Double, Function<Location, PartialMonster>> entry : entries) {
+            if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
+                loc.getWorld().spigot().strikeLightningEffect(loc, false);
+            }
+            if (index < entry.getA()) {
+                return entry.getB().apply(loc);
+            }
+            index -= entry.getA();
+        }
+        return PartialMonster.fromEntity("No monsters", WarlordsNPC.spawnZombieNoAI(loc, null));
+    }
+
+    @Override
     public int getMonsterCount() {
         return count;
     }
