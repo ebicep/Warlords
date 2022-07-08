@@ -37,6 +37,14 @@ public class NPCManager {
 
     }
 
+    public static void destroyNPCs() {
+        if (!Warlords.citizensEnabled) return;
+
+        gameStartNPC.destroy();
+        pveStartNPC.destroy();
+        masterworksFairNPC.destroy();
+    }
+
     private static void registerTrait(Class<? extends Trait> trait, String traitName) {
         if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
             CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));

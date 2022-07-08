@@ -488,7 +488,7 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
         try {
-            NPCManager.gameStartNPC.destroy();
+            NPCManager.destroyNPCs();
         } catch (Exception e) {
             e.printStackTrace();
         }
