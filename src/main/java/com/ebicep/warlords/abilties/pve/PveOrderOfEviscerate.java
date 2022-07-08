@@ -47,8 +47,8 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                 "§7end your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable.\n" +
-                "§7Vulnerable enemies take §c20% §7more damage. Additionally,\n" +
-                "§7enemies hit from behind take an additional §c10% §7more damage." +
+                "§7Vulnerable enemies take §c130% §7more damage. Additionally,\n" +
+                "§7enemies hit from behind take an additional §c140% §7more damage." +
                 "\n\n" +
                 "§7Successfully killing your mark will §ereset §7both your\n" +
                 "§7Shadow Step and Order of Eviscerate's cooldown\n" +
@@ -113,9 +113,9 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                                 !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * 1.3f;
+                    return currentDamageValue * 1.6f;
                 } else {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue * 1.5f;
                 }
             }
 
@@ -143,9 +143,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                                     ChatColor.GRAY + "!"
                             );
 
-                            wp.getSpec().getPurple().setCurrentCooldown(0);
-                            wp.getSpec().getOrange().setCurrentCooldown(0);
-                            wp.updatePurpleItem();
+                            setCurrentCooldown(getCurrentCooldown() / 2);
                             wp.updateOrangeItem();
                             wp.addEnergy(wp, name, energyCost);
                         }

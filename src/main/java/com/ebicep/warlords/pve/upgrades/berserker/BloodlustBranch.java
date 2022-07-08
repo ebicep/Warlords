@@ -19,7 +19,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "A second Ground Slam will follow after the\ninitial cast of Ground Slam after 0.8s",
+                "While Blood Lust is active, increase all damage against bleeding or wounded targets by 20%",
                 50000
         );
     }
