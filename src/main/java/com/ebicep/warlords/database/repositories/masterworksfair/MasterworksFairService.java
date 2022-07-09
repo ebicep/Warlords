@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MasterworksFairService {
 
-    void create(MasterworksFair databaseTiming);
+    void create(MasterworksFair masterworksFair);
 
-    void update(MasterworksFair databaseTiming);
+    void update(MasterworksFair masterworksFair);
 
-    void delete(MasterworksFair databaseTiming);
+    void delete(MasterworksFair masterworksFair);
 
     MasterworksFair findFirstByOrderByStartDateDesc();
 

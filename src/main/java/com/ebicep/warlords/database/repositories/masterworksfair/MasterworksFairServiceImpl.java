@@ -13,21 +13,21 @@ public class MasterworksFairServiceImpl implements MasterworksFairService {
 
 
     @Override
-    public void create(MasterworksFair databaseTiming) {
-        MasterworksFair timing = masterworksFairRepository.insert(databaseTiming);
-        System.out.println("[MasterworksFairService] Created: - " + timing);
+    public void create(MasterworksFair masterworksFair) {
+        MasterworksFair fair = masterworksFairRepository.insert(masterworksFair);
+        System.out.println("[MasterworksFairService] Created: - " + fair);
     }
 
     @Override
-    public void update(MasterworksFair databaseTiming) {
-        MasterworksFair timing = masterworksFairRepository.save(databaseTiming);
-        System.out.println("[MasterworksFairService] Updated: - " + timing);
+    public void update(MasterworksFair masterworksFair) {
+        MasterworksFair fair = masterworksFairRepository.save(masterworksFair);
+        System.out.println("[MasterworksFairService] Updated: - " + fair);
     }
 
     @Override
-    public void delete(MasterworksFair databaseTiming) {
-        masterworksFairRepository.delete(databaseTiming);
-        System.out.println("[MasterworksFairService] Deleted: - " + databaseTiming);
+    public void delete(MasterworksFair masterworksFair) {
+        masterworksFairRepository.delete(masterworksFair);
+        System.out.println("[MasterworksFairService] Deleted: - " + masterworksFair);
     }
 
     @Override
