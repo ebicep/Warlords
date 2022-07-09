@@ -43,7 +43,9 @@ public class MasterworksFairManager {
                         public void run() {
                             if (updateFair) {
                                 updateFair = false;
-                                DatabaseManager.masterworksFairService.update(currentFair);
+                                Warlords.newChain()
+                                        .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
+                                        .execute();
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 20, 20 * 20);
