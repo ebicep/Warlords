@@ -44,7 +44,7 @@ public class DatabaseTiming {
                     long timeDiff = currentDate.getTime() - timing.getLastReset().getTime();
                     long minuteDiff = Timing.millisecondToMinute(timeDiff);
 
-                    System.out.println("Weekly Reset Time Minute: " + minuteDiff);
+                    System.out.println("Weekly Reset Time Minute: " + minuteDiff + " > " + (timing.getTiming().minuteDuration - 30));
                     //30 min buffer
                     if (timeDiff > 0 && minuteDiff > timing.getTiming().minuteDuration - 30) {
                         try {
@@ -64,9 +64,10 @@ public class DatabaseTiming {
                         //updating date to current
                         timing.reset();
                         DatabaseManager.timingsService.update(timing);
+
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
                     }
                 })
-                .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset"))
                 .execute();
         //DAILY
         Warlords.newChain()
@@ -76,7 +77,7 @@ public class DatabaseTiming {
                     long timeDiff = currentDate.getTime() - timing.getLastReset().getTime();
                     long minuteDiff = Timing.millisecondToMinute(timeDiff);
 
-                    System.out.println("Daily Reset Time Minute: " + minuteDiff);
+                    System.out.println("Daily Reset Time Minute: " + minuteDiff + " > " + (timing.getTiming().minuteDuration - 30));
                     //30 min buffer
                     if (timeDiff > 0 && minuteDiff > timing.getTiming().minuteDuration - 30) {
                         //clearing daily
@@ -84,9 +85,10 @@ public class DatabaseTiming {
                         //updating date to current
                         timing.reset();
                         DatabaseManager.timingsService.update(timing);
+
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
                     }
                 })
-                .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset"))
                 .execute();
     }
 

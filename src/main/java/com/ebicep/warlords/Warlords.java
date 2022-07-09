@@ -83,6 +83,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
@@ -376,10 +377,12 @@ public class Warlords extends JavaPlugin {
                 .async(DatabaseManager::init)
                 .execute();
 
-        try {
-            BotManager.connect();
-        } catch (LoginException e) {
-            e.printStackTrace();
+        if (!onCustomServer()) {
+            try {
+                BotManager.connect();
+            } catch (LoginException e) {
+                e.printStackTrace();
+            }
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> {
@@ -455,7 +458,11 @@ public class Warlords extends JavaPlugin {
         if (BotManager.task != null) {
             BotManager.task.cancel();
         }
-
+        try {
+            taskChainFactory.shutdown(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             // Pre-caution
             for (Player player : Bukkit.getOnlinePlayers()) {

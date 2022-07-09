@@ -8,11 +8,13 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.pve.events.MasterworksFairManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;
@@ -42,10 +44,11 @@ public class DatabaseManager {
     public static PlayerService playerService;
     public static GameService gameService;
     public static TimingsService timingsService;
+    public static MasterworksFairService masterworksFairService;
 
     public static String lastWarlordsPlusString = "";
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     private static final HashMap<PlayersCollections, Set<DatabasePlayer>> playersToUpdate = new HashMap<PlayersCollections, Set<DatabasePlayer>>() {{
         for (PlayersCollections value : PlayersCollections.values()) {
             put(value, new HashSet<>());
@@ -54,11 +57,11 @@ public class DatabaseManager {
 
     public static void init() {
         if (!enabled) {
-            NPCManager.createNPCs();
+            NPCManager.createGameNPCs();
             return;
         }
         if (!LeaderboardManager.enabled) {
-            NPCManager.createNPCs();
+            NPCManager.createGameNPCs();
         }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -67,8 +70,9 @@ public class DatabaseManager {
             playerService = context.getBean("playerService", PlayerService.class);
             gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
+            masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
         } catch (Exception e) {
-            NPCManager.createNPCs();
+            NPCManager.createGameNPCs();
             e.printStackTrace();
             return;
         }
@@ -77,7 +81,7 @@ public class DatabaseManager {
             for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
                 Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
             }
-            System.out.println("Cleared all players cache");
+            System.out.println("[Warlords] Cleared all players cache");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,6 +92,8 @@ public class DatabaseManager {
                 updateName(player.getUniqueId());
             });
         });
+
+        MasterworksFairManager.init();
 
         //runnable that updates all player that need updating every 10 seconds (prevents spam update)
         new BukkitRunnable() {
@@ -101,14 +107,21 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
+        System.out.println("[Warlords] Loading Leaderboard Holograms");
+        Warlords.newChain()
+                .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true))
+                .execute();
 
         //Loading last 5 games
+        System.out.println("[Warlords] Loading Last Games");
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
-                    System.out.println("Loaded last games");
+                    System.out.println("Loaded Last Games");
                     previousGames.addAll(games);
-                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true);
+                    LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1));
+                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+                    System.out.println("Set Game Hologram Visibility");
                 })
                 .execute();
     }

@@ -18,10 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -40,36 +37,6 @@ public class BotListener extends ListenerAdapter implements Listener {
         if (onGoingBalance != null) {
             onGoingBalance.cancel();
         }
-    }
-
-    @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-
-        if (BotManager.getCompGamesServer() == null) return;
-//        Warlords.newChain()
-//                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
-//                .asyncLast(members -> {
-//                    if (!members.isEmpty()) {
-//                        Member member = members.get(0);
-//                        BotManager.getCompGamesServer().addRoleToMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
-//                    }
-//                }).execute();
-    }
-
-    @EventHandler
-    public static void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-
-        if (BotManager.getCompGamesServer() == null) return;
-//        Warlords.newChain()
-//                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
-//                .asyncLast(members -> {
-//                    if (!members.isEmpty()) {
-//                        Member member = members.get(0);
-//                        BotManager.getCompGamesServer().removeRoleFromMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
-//                    }
-//                }).execute();
     }
 
     @Override

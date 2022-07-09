@@ -84,12 +84,13 @@ public class TestCommand implements CommandExecutor {
             warlordsPlayer.addCurrency(10000000);
 
         }
-
+       // AbstractWeapon.giveTestItem((Player) sender);
 
 //        for (int i = 0; i < 20; i++) {
 //            AbstractWeapon.giveTestItem((Player) sender);
 //        }
 
+//        DatabaseManager.masterworksFairService.create(new MasterworksFair());
 
 //       // QueueManager.sendNewQueue();
 //        BotManager.getCompGamesServer().upsertCommand("queue", "Join, Leave, or Refresh the queue")

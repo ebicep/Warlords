@@ -133,21 +133,16 @@ public class LeaderboardManager {
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
-                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
-                            LeaderboardManager.playerGameHolograms.put(uuid, DatabaseGameBase.previousGames.size() - 1);
-                        });
+
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                            if (init) {
-                                DatabaseGameBase.setGameHologramVisibility(player);
-                            }
                         });
-                        System.out.println("Set Hologram Visibility");
+                        System.out.println("Set Leaderboard Hologram Visibility");
 
                         if (init) {
                             DatabaseTiming.checkTimings();
-                            NPCManager.createNPCs();
+                            NPCManager.createGameNPCs();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???

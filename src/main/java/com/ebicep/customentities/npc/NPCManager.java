@@ -23,7 +23,7 @@ public class NPCManager {
     public static NPC masterworksFairNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
-    public static void createNPCs() {
+    public static void createGameNPCs() {
         if (!Warlords.citizensEnabled) return;
 
         Warlords.newChain()
@@ -34,7 +34,14 @@ public class NPCManager {
                     createMasterworksFairNPC();
                 })
                 .execute();
+    }
 
+    public static void createIndependentNPCs() {
+        if (!Warlords.citizensEnabled) return;
+
+        Warlords.newChain()
+                .sync(NPCManager::createMasterworksFairNPC)
+                .execute();
     }
 
     public static void destroyNPCs() {
