@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -123,12 +124,13 @@ public class MasterworksFairManager {
     }
 
     public static void openSubmissionMenu(Player player, WeaponsPvE weaponType, int page) {
-        Menu menu = new Menu("Your Weapons", 9 * 6);
+        Menu menu = new Menu("Choose a weapon", 9 * 6);
         UUID uuid = player.getUniqueId();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         List<AbstractWeapon> filteredWeaponInventory = new ArrayList<>(weaponInventory);
         filteredWeaponInventory.removeIf(weapon -> WeaponsPvE.getWeapon(weapon) != weaponType);
+        filteredWeaponInventory.sort(WeaponManagerMenu.SortOptions.WEAPON_SCORE.comparator.reversed());
 
         List<MasterworksFairPlayerEntry> weaponPlayerEntries = weaponType.getPlayerEntries.apply(currentFair);
         Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
@@ -148,6 +150,11 @@ public class MasterworksFairManager {
                         row,
                         abstractWeapon.generateItemStack(),
                         (m, e) -> {
+                            //check bound
+                            if (abstractWeapon.isBound()) {
+                                player.sendMessage(ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
+                                return;
+                            }
                             //submit weapon to fair
                             MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(uuid.toString()));
                             if (playerEntry.isPresent()) {

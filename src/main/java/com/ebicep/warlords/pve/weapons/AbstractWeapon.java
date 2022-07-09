@@ -6,11 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -41,6 +37,8 @@ public abstract class AbstractWeapon {
     protected boolean isBound = false;
     @Field("star_piece_bonus")
     protected WeaponStats starPieceBonus;
+    @Field("upgrade_level")
+    protected int upgradeLevel = 0;
 
     public AbstractWeapon() {
     }
@@ -104,7 +102,6 @@ public abstract class AbstractWeapon {
                 .get();
     }
 
-
     @Override
     public String toString() {
         return "AbstractWeapon{" +
@@ -116,27 +113,34 @@ public abstract class AbstractWeapon {
     }
 
     public static void giveTestItem(Player player) {
-        AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
-        AbstractWeapon abstractWeapon2 = new RareWeapon(player.getUniqueId());
-        AbstractWeapon abstractWeapon3 = new EpicWeapon(player.getUniqueId());
-        AbstractWeapon abstractWeapon4 = new LegendaryWeapon(player.getUniqueId());
+//        AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
+//        AbstractWeapon abstractWeapon2 = new RareWeapon(player.getUniqueId());
+//        AbstractWeapon abstractWeapon3 = new EpicWeapon(player.getUniqueId());
+//        AbstractWeapon abstractWeapon4 = new LegendaryWeapon(player.getUniqueId());
+//
+//        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon2);
+//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon3);
+//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon4);
+//        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//
+//        player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 1")
+//                .setHoverItem(abstractWeapon.generateItemStack())
+//                .getTextComponent()
+//        );
+//
+//        player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 4")
+//                .setHoverItem(abstractWeapon4.generateItemStack())
+//                .getTextComponent()
+//        );
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon2);
-        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon3);
-        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon4);
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
-        player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 1")
-                .setHoverItem(abstractWeapon.generateItemStack())
-                .getTextComponent()
-        );
-
-        player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 4")
-                .setHoverItem(abstractWeapon4.generateItemStack())
-                .getTextComponent()
-        );
+        for (int i = 0; i < 50; i++) {
+            AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+            databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        }
     }
 
     public Date getDate() {

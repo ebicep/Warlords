@@ -58,4 +58,5 @@ public class LegendaryWeapon extends AbstractBetterWeapon {
     public void generateStats() {
 
     }
+
 }

@@ -23,5 +23,4 @@ public abstract class AbstractBetterWeapon extends AbstractWeapon {
     public List<String> getLore() {
         return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + speedBonus + "%");
     }
-
 }

@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
+import com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -260,6 +261,22 @@ public class WeaponManagerMenu {
     public enum SortOptions {
         DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
         RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
+        WEAPON_SCORE("Weapon Score", (o1, o2) -> {
+            //first check if implements WeaponScore
+            if (o1 instanceof WeaponScore && o2 instanceof WeaponScore) {
+                return Double.compare(((WeaponScore) o1).getWeaponScore(), ((WeaponScore) o2).getWeaponScore());
+            } else {
+                //check whether one of them implements WeaponScore
+                if (o1 instanceof WeaponScore) {
+                    return 1;
+                } else if (o2 instanceof WeaponScore) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }),
+
         ;
         private static final SortOptions[] vals = values();
         public final String name;
