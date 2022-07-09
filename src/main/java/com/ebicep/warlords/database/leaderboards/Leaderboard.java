@@ -119,7 +119,7 @@ public class Leaderboard {
         }
         for (DatabasePlayer databasePlayer : databasePlayers) {
             //must have more than 3 plays to get awarded
-            //if (databasePlayer.getPlays() <= 3) continue;
+            if (databasePlayer.getPlays() <= 3) continue;
 
             Number currentTopValue = valueFunction.apply(databasePlayer);
             if (counter < 2) {
