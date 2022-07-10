@@ -200,11 +200,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         menu.setItem(
                 4,
                 0,
-                new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
-                        .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
-                        .lore((masterUpgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + masterUpgrade.getDescription()
-                                + "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + masterUpgrade.getCurrencyCost())
-                        .get(), (m, e) -> {
+                masterBranchItem(masterUpgrade), (m, e) -> {
                     if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
                         player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
                         return;
@@ -231,6 +227,18 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         }
     }
 
+    private ItemStack masterBranchItem(Upgrade upgrade) {
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add((upgrade.isUnlocked() ? ChatColor.RED : ChatColor.DARK_GRAY) + upgrade.getSubName());
+        lore.add("");
+        lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
+                "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + upgrade.getCurrencyCost());
+        return new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
+                .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
+                .lore(lore)
+                .get();
+    }
+
     private ItemStack branchItem(Upgrade upgrade) {
         return new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL, 1, (short) 8))
                 .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
@@ -241,7 +249,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability) {
         game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
-            if (upgrade.getName().equals("Master Upgrade")) {
+            if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
                 p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - §c§l" + upgrade.getName() + "§e!");
             } else {
                 p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - " + upgrade.getName() + "§e!");

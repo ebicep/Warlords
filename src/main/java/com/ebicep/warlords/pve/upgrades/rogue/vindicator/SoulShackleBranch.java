@@ -13,9 +13,9 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
         treeA.add(new Upgrade("Damage - Tier II", "+40% Damage", 10000));
         treeA.add(new Upgrade("Damage - Tier III", "+80% Damage", 20000));
 
-        treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
-        treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
-        treeB.add(new Upgrade("Energy - Tier III", "-15 Energy cost", 20000));
+        treeB.add(new Upgrade("Silence Duration - Tier I", "+1s Silence duration", 5000));
+        treeB.add(new Upgrade("Silence Duration - Tier II", "+2s Silence duration", 10000));
+        treeB.add(new Upgrade("Silence Duration - Tier III", "+4s Silence duration", 20000));
 
         treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
         treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
@@ -23,7 +23,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "PLACEHOLDER",
+                "Remove energy cost\n\nSoul Shackle now hits up to 5 enemies in a cone.",
                 50000
         );
     }
@@ -49,19 +49,25 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
         ability.setMaxDamageHeal(maxDamage * 1.8f);
     }
 
+    int minTicks = ability.getMinSilenceDurationInTicks();
+    int maxTicks = ability.getMaxSilenceDurationInTicks();
+
     @Override
     public void b1() {
-        ability.setMaxShackleTargets(2);
+        ability.setMinSilenceDurationInTicks(minTicks + 20);
+        ability.setMaxSilenceDurationInTicks(maxTicks + 20);
     }
 
     @Override
     public void b2() {
-        ability.setMaxShackleTargets(3);
+        ability.setMinSilenceDurationInTicks(minTicks + 40);
+        ability.setMaxSilenceDurationInTicks(maxTicks + 40);
     }
 
     @Override
     public void b3() {
-        ability.setMaxShackleTargets(4);
+        ability.setMinSilenceDurationInTicks(minTicks + 80);
+        ability.setMaxSilenceDurationInTicks(maxTicks + 80);
     }
 
     float cooldown = ability.getCooldown();
@@ -83,5 +89,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
     @Override
     public void master() {
+        ability.setEnergyCost(0);
+        ability.setPveUpgrade(true);
     }
 }

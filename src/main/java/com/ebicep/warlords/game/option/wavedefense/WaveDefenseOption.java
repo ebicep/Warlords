@@ -226,14 +226,14 @@ public class WaveDefenseOption implements Option {
         game.registerEvents(new Listener() {
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
-                WarlordsEntity warlordsEntity = event.getPlayer();
-                entities.remove(warlordsEntity);
-                if (warlordsEntity.getEntity() instanceof CustomEntity) {
+                WarlordsEntity we = event.getPlayer();
+                entities.remove(we);
+                if (we.getEntity() instanceof CustomEntity) {
                     new GameRunnable(game) {
                         @Override
                         public void run() {
-                            ((CustomEntity) warlordsEntity.getEntity()).onDeath((EntityInsentient) warlordsEntity.getEntity(), warlordsEntity.getDeathLocation(), WaveDefenseOption.this);
-                            game.removePlayer(warlordsEntity.getUuid());
+                            ((CustomEntity) we.getEntity()).onDeath((EntityInsentient) we.getEntity(), we.getDeathLocation(), WaveDefenseOption.this);
+                            game.removePlayer(we.getUuid());
                         }
                     }.runTask();
                 }
@@ -291,10 +291,10 @@ public class WaveDefenseOption implements Option {
                     newWave();
 
                     if (waveCounter > 1) {
-                        for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-                            entry.getKey().sendMessage(ChatColor.AQUA + "+100 ❂ Upgrade Insignia");
-                        }
-                        getGame().forEachOfflineWarlordsEntity(we -> we.addCurrency(100));
+                        getGame().forEachOnlineWarlordsEntity(we -> {
+                            we.addCurrency(100);
+                            we.sendMessage(ChatColor.AQUA + "+100 ❂ Upgrade Insignia");
+                        });
                     }
                 }
 

@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -13,12 +14,14 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SoulShackle extends AbstractAbility {
+    private boolean pveUpgrade = false;
 
     private final int shackleRange = 15;
     private float shacklePool = 0;
@@ -53,80 +56,108 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        SoulShackle tempSoulShackle = new SoulShackle();
-
-        for (WarlordsEntity shackleTarget : PlayerFilter
-                .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
-                .aliveEnemiesOf(wp)
-                .requireLineOfSight(wp)
-                .closestFirst(wp)
-                .limit(maxShackleTargets)
-        ) {
-            wp.subtractEnergy(energyCost);
+        if (pveUpgrade) {
+            Location playerLoc = new LocationBuilder(wp.getLocation())
+                    .pitch(0)
+                    .add(0, 1.7, 0);
+            Location playerEyeLoc = new LocationBuilder(wp.getLocation())
+                    .pitch(0)
+                    .backward(1);
+            Vector viewDirection = playerLoc.getDirection();
             Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
             Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
-
-            EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
-            FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
-                    .withColor(Color.YELLOW)
-                    .with(FireworkEffect.Type.BALL)
-                    .build());
-
-            wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                    ChatColor.GRAY + " You shackled " +
-                    ChatColor.YELLOW + shackleTarget.getName() +
-                    ChatColor.GRAY + "!"
-            );
-
-            int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
-            if (silenceDuration > maxSilenceDurationInTicks) {
-                silenceDuration = maxSilenceDurationInTicks;
-            }
-
-            shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-            shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
-            if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
-                if (shackleTarget.getEntity() instanceof Player) {
-                    PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
+            for (WarlordsEntity shackleTarget : PlayerFilter
+                    .entitiesAroundRectangle(wp, shackleRange, shackleRange + 2, shackleRange)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(wp)
+                    .limit(5)
+            ) {
+                Vector direction = shackleTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
+                if (viewDirection.dot(direction) > .6) {
+                    activateAbility(wp, shackleTarget);
                 }
             }
-            shackleTarget.getCooldownManager().addRegularCooldown(
-                    "Shackle Silence",
-                    "SILENCE",
-                    SoulShackle.class,
-                    tempSoulShackle,
-                    wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    silenceDuration,
-                    (cooldown, ticksLeft, counter) -> {
-                        if (counter % 10 == 0) {
-                            Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
-
-                            Location playerLoc = shackleTarget.getLocation();
-                            Location particleLoc = playerLoc.clone();
-                            for (int i = 0; i < 10; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    double angle = j / 10D * Math.PI * 2;
-                                    double width = 1.075;
-                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                    particleLoc.setY(playerLoc.getY() + i / 5D);
-                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
-                                }
-                            }
-                        }
-                    }
-            );
-            shacklePool = 0;
 
             return true;
+        } else {
+            for (WarlordsEntity shackleTarget : PlayerFilter
+                    .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
+                    .aliveEnemiesOf(wp)
+                    .requireLineOfSight(wp)
+                    .closestFirst(wp)
+                    .limit(maxShackleTargets)
+            ) {
+                wp.subtractEnergy(energyCost);
+                wp.sendMessage(
+                        WarlordsEntity.GIVE_ARROW_GREEN +
+                        ChatColor.GRAY + " You shackled " +
+                        ChatColor.YELLOW + shackleTarget.getName() +
+                        ChatColor.GRAY + "!"
+                );
+                Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+                Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
+                activateAbility(wp, shackleTarget);
+                shacklePool = 0;
+
+                return true;
+            }
         }
 
         return false;
+    }
+
+    private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
+        SoulShackle tempSoulShackle = new SoulShackle();
+        EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
+        FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
+                .withColor(Color.YELLOW)
+                .with(FireworkEffect.Type.BALL)
+                .build());
+
+        wp.getSpeed().addSpeedModifier("Shackle Speed", 40, 30, "BASE");
+
+        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
+        if (silenceDuration > maxSilenceDurationInTicks) {
+            silenceDuration = maxSilenceDurationInTicks;
+        }
+
+        shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
+        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            if (shackleTarget.getEntity() instanceof Player) {
+                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
+            }
+        }
+        shackleTarget.getCooldownManager().addRegularCooldown(
+                "Shackle Silence",
+                "SILENCE",
+                SoulShackle.class,
+                tempSoulShackle,
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                silenceDuration,
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 10 == 0) {
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
+
+                        Location playerLoc = shackleTarget.getLocation();
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = 1.075;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                            }
+                        }
+                    }
+                }
+        );
     }
 
     public float getShacklePool() {
@@ -159,5 +190,21 @@ public class SoulShackle extends AbstractAbility {
 
     public void setMaxShackleTargets(int maxShackleTargets) {
         this.maxShackleTargets = maxShackleTargets;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getMaxSilenceDurationInTicks() {
+        return maxSilenceDurationInTicks;
+    }
+
+    public int getMinSilenceDurationInTicks() {
+        return minSilenceDurationInTicks;
     }
 }

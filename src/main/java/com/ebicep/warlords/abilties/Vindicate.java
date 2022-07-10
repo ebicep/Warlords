@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int debuffsRemovedOnCast = 0;
 
     private final int radius = 8;
-    private final int vindicateDuration = 12;
-    private final int vindicateSelfDuration = 8;
+    private int vindicateDuration = 12;
+    private int vindicateSelfDuration = 8;
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
@@ -67,6 +68,10 @@ public class Vindicate extends AbstractAbility {
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
 
         Vindicate tempVindicate = new Vindicate();
+
+        if (pveUpgrade) {
+            buffOnUse(wp);
+        }
 
         for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
@@ -124,11 +129,40 @@ public class Vindicate extends AbstractAbility {
         return true;
     }
 
+    private void buffOnUse(WarlordsEntity we) {
+        we.getSpeed().addSpeedModifier("Vindicate Speed", 25, vindicateDuration);
+        // TODO: Add EPS increase
+    }
+
     public float getVindicateDamageReduction() {
         return (100 - vindicateDamageReduction) / 100f;
     }
 
-    public void setVindicateDamageReduction(int vindicateDamageReduction) {
+    public void setVindicateDamageReduction(float vindicateDamageReduction) {
         this.vindicateDamageReduction = vindicateDamageReduction;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getVindicateDuration() {
+        return vindicateDuration;
+    }
+
+    public void setVindicateDuration(int vindicateDuration) {
+        this.vindicateDuration = vindicateDuration;
+    }
+
+    public int getVindicateSelfDuration() {
+        return vindicateSelfDuration;
+    }
+
+    public void setVindicateSelfDuration(int vindicateSelfDuration) {
+        this.vindicateSelfDuration = vindicateSelfDuration;
     }
 }

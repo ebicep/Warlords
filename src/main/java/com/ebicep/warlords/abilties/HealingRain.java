@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Overheal;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,9 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -124,7 +123,11 @@ public class HealingRain extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .limit(5)
                             ) {
-                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
+                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
+                                FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                        .withColor(Color.AQUA)
+                                        .with(FireworkEffect.Type.BURST)
+                                        .build());
                                 strikeInRain(wp, enemyInRain);
                             }
                         }

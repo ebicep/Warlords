@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int timesUsedWithFlag = 0;
 
     private int radius = 15;
@@ -60,8 +61,8 @@ public class HeartToHeart extends AbstractAbility {
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
-            radius = 15;
-            verticalRadius = 15;
+            radius = getRadius();
+            verticalRadius = getVerticalRadius();
         }
 
         for (WarlordsEntity heartTarget : PlayerFilter
@@ -174,5 +175,29 @@ public class HeartToHeart extends AbstractAbility {
 
     public void setHealthRestore(float healthRestore) {
         this.healthRestore = healthRestore;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getVerticalRadius() {
+        return verticalRadius;
+    }
+
+    public void setVerticalRadius(int verticalRadius) {
+        this.verticalRadius = verticalRadius;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

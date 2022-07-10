@@ -18,8 +18,9 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         treeC.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "+8s Duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 124 - 277 (+1% of their max health) damage every 2 seconds.",
+                "Electrifying Storm",
+                "Healing Rain - Master Upgrade",
+                "+8s Duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 124 - 277 (+1% of their max health)\ndamage every 2 seconds.",
                 50000
         );
     }

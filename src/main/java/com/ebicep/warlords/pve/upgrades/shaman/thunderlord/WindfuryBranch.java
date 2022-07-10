@@ -24,19 +24,21 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         );
     }
 
+    float weaponDamage = ability.getWeaponDamage();
+
     @Override
     public void a1() {
-        ability.setWeaponDamage(155);
+        ability.setWeaponDamage(weaponDamage + 20);
     }
 
     @Override
     public void a2() {
-        ability.setWeaponDamage(175);
+        ability.setWeaponDamage(weaponDamage + 40);
     }
 
     @Override
     public void a3() {
-        ability.setWeaponDamage(215);
+        ability.setWeaponDamage(weaponDamage + 80);
     }
 
     @Override

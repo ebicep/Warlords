@@ -105,7 +105,7 @@ public class LightningRod extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                4 * 20
+                10 * 20
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

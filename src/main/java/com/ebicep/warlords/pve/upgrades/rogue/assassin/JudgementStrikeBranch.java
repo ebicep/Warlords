@@ -9,9 +9,9 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage - Tier I", "+15% Damage", 5000));
-        treeA.add(new Upgrade("Damage - Tier II", "+30% Damage", 10000));
-        treeA.add(new Upgrade("Damage - Tier III", "+60% Damage", 20000));
+        treeA.add(new Upgrade("Damage - Tier I", "+25% Damage", 5000));
+        treeA.add(new Upgrade("Damage - Tier II", "+50% Damage", 10000));
+        treeA.add(new Upgrade("Damage - Tier III", "+100% Damage", 20000));
 
         treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
         treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
@@ -33,20 +33,20 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
     @Override
     public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.15f);
-        ability.setMaxDamageHeal(maxDamage * 1.15f);
+        ability.setMinDamageHeal(minDamage * 1.25f);
+        ability.setMaxDamageHeal(maxDamage * 1.25f);
     }
 
     @Override
     public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.3f);
-        ability.setMaxDamageHeal(maxDamage * 1.3f);
+        ability.setMinDamageHeal(minDamage * 1.5f);
+        ability.setMaxDamageHeal(maxDamage * 1.5f);
     }
 
     @Override
     public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.6f);
-        ability.setMaxDamageHeal(maxDamage * 1.6f);
+        ability.setMinDamageHeal(minDamage * 2);
+        ability.setMaxDamageHeal(maxDamage * 2);
     }
 
     int energyCost = ability.getEnergyCost();
