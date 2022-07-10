@@ -293,7 +293,7 @@ public class WaveDefenseOption implements Option {
                     if (waveCounter > 1) {
                         getGame().forEachOnlineWarlordsEntity(we -> {
                             we.addCurrency(100);
-                            we.sendMessage(ChatColor.AQUA + "+100 ❂ Upgrade Insignia");
+                            we.sendMessage(ChatColor.AQUA + "+100 ❂ Insignia");
                         });
                     }
                 }
@@ -322,7 +322,12 @@ public class WaveDefenseOption implements Option {
     }
 
     public void setWaveCounter(int waveCounter) {
-        this.waveCounter = waveCounter;
+        this.waveCounter = waveCounter - 1;
         newWave();
+    }
+
+    @Nonnull
+    public Game getGame() {
+        return game;
     }
 }

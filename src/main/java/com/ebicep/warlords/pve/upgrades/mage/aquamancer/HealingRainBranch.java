@@ -9,9 +9,9 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     public HealingRainBranch(AbilityTree abilityTree, HealingRain ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Range - Tier I", "+2 Block radius", 5000));
-        treeA.add(new Upgrade("Range - Tier II", "+4 Block radius", 10000));
-        treeA.add(new Upgrade("Range - Tier III", "+8 Block radius", 20000));
+        treeA.add(new Upgrade("Range - Tier I", "+2 Blocks radius", 5000));
+        treeA.add(new Upgrade("Range - Tier II", "+4 Blocks radius", 10000));
+        treeA.add(new Upgrade("Range - Tier III", "+8 Blocks radius", 20000));
 
         treeC.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
         treeC.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));

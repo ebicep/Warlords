@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
+import com.ebicep.customentities.nms.pve.CustomEnderman;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
@@ -28,11 +29,11 @@ public class EliteMob {
             4000,
             0.28f
     );
-
     public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
-            () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
-            }, "Elite Skeleton",
+            () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {},
+            "Elite Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 1),
@@ -43,5 +44,21 @@ public class EliteMob {
             ),
             1200,
             0.25f
+    );
+    public static final Function<Location, PartialMonster> ELITE_ENDERMAN = loc -> PartialMonster.fromCustomEntity(
+            CustomEnderman.class,
+            () -> new CustomEnderman(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {},
+            "Elite Enderman",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            ),
+            3500,
+            0.5f
     );
 }

@@ -22,7 +22,14 @@ public class BasicScoreboardOption implements Option {
     public void register(Game game) {
         game.registerGameMarker(ScoreboardHandler.class, getDateScoreboard(game));
         game.registerGameMarker(ScoreboardHandler.class, getVersionScoreboard(game));
-        //game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+        switch (game.getGameMode()) {
+            case INTERCEPTION:
+            case SIMULATION_TRIAL:
+            case CAPTURE_THE_FLAG:
+            case TEAM_DEATHMATCH:
+            case DEBUG:
+                game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+        }
         game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));
     }
 

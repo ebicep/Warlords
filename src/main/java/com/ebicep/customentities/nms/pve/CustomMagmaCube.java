@@ -1,9 +1,17 @@
 package com.ebicep.customentities.nms.pve;
 
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import net.minecraft.server.v1_8_R3.EntityMagmaCube;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.LivingEntity;
+
+import java.util.UUID;
 
 public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<CustomMagmaCube> {
 
@@ -24,18 +32,26 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
 
     }
 
-    /*@Override
+    @Override
     public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         if (customMagmaCube.getSize() <= 1) return;
-        //TODO Will finish this on saturday -Plikie
         for (int i = 0; i < 2; i++) {
             CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
             babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
             babyMagmaCube.spawn(deathLocation);
-
-            waveDefenseOption.spawn(babyMagmaCube);
+            WarlordsNPC entity = new WarlordsNPC(
+                    UUID.randomUUID(),
+                    "Baby Magma Cube",
+                    Weapons.ABBADON,
+                    (LivingEntity) babyMagmaCube.get(),
+                    waveDefenseOption.getGame(),
+                    Team.RED,
+                    Specializations.AQUAMANCER
+            );
+            waveDefenseOption.getGame().addNPC(entity);
+            waveDefenseOption.getEntities().add(entity);
         }
-    }*/
+    }
 
     @Override
     public void spawn(Location location) {

@@ -61,7 +61,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -113,7 +113,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -165,7 +165,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
                             return;
                         }
                         switch (finalI) {
@@ -200,9 +200,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         menu.setItem(
                 4,
                 0,
-                masterBranchItem(masterUpgrade), (m, e) -> {
+                masterBranchItem(masterUpgrade),
+                (m, e) -> {
                     if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough ❂ Upgrade Insignia's to buy this upgrade!");
+                        player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
                         return;
                     }
                     if (masterUpgrade.isUnlocked()) {
