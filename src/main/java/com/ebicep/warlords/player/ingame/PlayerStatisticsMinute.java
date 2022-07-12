@@ -1,7 +1,5 @@
 package com.ebicep.warlords.player.ingame;
 
-import org.bukkit.Bukkit;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -45,7 +43,6 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
     public void advanceMinute() {
         current = new Entry();
         entries.add(current);
-        Bukkit.broadcastMessage("Player statistics per size: " + entries.size());
     }
 
     public void addKill() {

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
-import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -17,11 +16,12 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -209,14 +209,12 @@ public class WaveDefenseOption implements Option {
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getPlayer();
                 entities.remove(we);
-                Bukkit.broadcastMessage("entites on death: " + entities.size());
-                System.out.println(we.getEntity() instanceof CustomZombie);
-                if (we.getEntity() instanceof CustomEntity) {
+                Entity entity = ((CraftEntity) we.getEntity()).getHandle();
+                if (entity instanceof CustomEntity) {
                     new GameRunnable(game) {
                         @Override
                         public void run() {
-                            System.out.println("ondeath");
-                            ((CustomEntity) we.getEntity()).onDeath((EntityInsentient) we.getEntity(), we.getDeathLocation(), WaveDefenseOption.this);
+                            ((CustomEntity) entity).onDeath((EntityInsentient) entity, we.getDeathLocation(), WaveDefenseOption.this);
                             game.removePlayer(we.getUuid());
                         }
                     }.runTask();
@@ -234,9 +232,7 @@ public class WaveDefenseOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList(
-                        "Monsters left: " + ChatColor.GREEN + entities.size()
-                );
+                return Collections.singletonList("Monsters left: " + ChatColor.GREEN + entities.size());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
