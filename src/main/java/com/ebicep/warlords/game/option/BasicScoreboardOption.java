@@ -5,16 +5,15 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class BasicScoreboardOption implements Option {
 
@@ -34,13 +33,12 @@ public class BasicScoreboardOption implements Option {
     }
 
     private static SimpleScoreboardHandler getDateScoreboard(Game game) {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy - kk:mm");
-        format.setTimeZone(TimeZone.getTimeZone("EST"));
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy - kk:mm");
         SimpleScoreboardHandler simpleScoreboardHandler = new SimpleScoreboardHandler(0, "date") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList(ChatColor.GRAY + format.format(new Date()));
+                return Collections.singletonList(ChatColor.GRAY + format.format(DateUtil.getCurrentDateEST()));
             }
         };
         new GameRunnable(game) {

@@ -84,6 +84,8 @@ public class TestCommand implements CommandExecutor {
             warlordsPlayer.addCurrency(10000000);
 
         }
+
+
         //AbstractWeapon.giveTestItem((Player) sender);
 
 

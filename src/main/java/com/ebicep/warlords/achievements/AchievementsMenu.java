@@ -15,7 +15,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public class AchievementsMenu {
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh.mm aa");
+    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy hh.mm aa");
 
     //GENERAL - CTF - TDM - GAMEMODE - GAMEMODE
     //TIERED ACHIEVEMENTS - CHALLENGES

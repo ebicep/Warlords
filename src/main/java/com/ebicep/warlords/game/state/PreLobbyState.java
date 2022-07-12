@@ -10,11 +10,11 @@ import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.sr.SRCalculator;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -409,8 +409,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void giveLobbyScoreboard(boolean init, Player player) {
         CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
+        String dateString = DateUtil.formatCurrentDateEST("MM/dd/yyyy");
 
         String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
         String mapSuffix;

@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -28,8 +29,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -52,13 +52,13 @@ public abstract class DatabaseGameBase {
     @Transient
     public static final Location gameSwitchLocation = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
     @Transient
-    protected static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+    protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
     @Transient
     public static List<DatabaseGameBase> previousGames = new ArrayList<>();
     @Id
     protected String id;
     @Field("exact_date")
-    protected Date exactDate = new Date();
+    protected Instant exactDate = Instant.now();
     protected String date;
     protected GameMap map;
     @Field("game_mode")
@@ -73,8 +73,8 @@ public abstract class DatabaseGameBase {
     }
 
     public DatabaseGameBase(@Nonnull Game game, boolean counted) {
-        this.exactDate = new Date();
-        this.date = DATE_FORMAT.format(new Date());
+        this.exactDate = Instant.now();
+        this.date = DateUtil.formatCurrentDateEST(DATE_FORMAT);
         this.map = game.getMap();
         this.gameMode = game.getGameMode();
         this.gameAddons = Arrays.asList(game.getAddons().toArray(new GameAddon[0]));
@@ -389,11 +389,11 @@ public abstract class DatabaseGameBase {
         return id;
     }
 
-    public Date getExactDate() {
+    public Instant getExactDate() {
         return exactDate;
     }
 
-    public void setExactDate(Date exactDate) {
+    public void setExactDate(Instant exactDate) {
         this.exactDate = exactDate;
     }
 
