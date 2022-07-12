@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
+package com.ebicep.warlords.pve.upgrades.mage;
 
 import com.ebicep.warlords.abilties.TimeWarp;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -19,7 +19,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Gain 20% speed while Time Warp is active.\n\nAdditionally, for each block traveled during Time\nWarp temporarily gain 1% Crit Chance and 2% Crit Multiplier\non all abilities.",
+                "Gain 20% speed while Time Warp is active.\n\nAdditionally, for each block traveled during Time\nWarp temporarily gain 1% Crit Chance and 2%\nCrit Multiplier on all abilities.",
                 50000
         );
     }

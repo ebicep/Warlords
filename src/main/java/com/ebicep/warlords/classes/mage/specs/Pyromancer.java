@@ -6,10 +6,10 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
+import com.ebicep.warlords.pve.upgrades.mage.TimeWarpBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.InfernoBranch;
-import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranch;
 
 import java.util.List;
 
