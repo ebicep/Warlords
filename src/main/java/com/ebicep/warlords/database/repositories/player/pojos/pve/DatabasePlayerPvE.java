@@ -38,6 +38,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private int amountOfEpicStarPieces = 0;
     @Field("legendary_star_pieces")
     private int amountOfLegendaryStarPieces = 0;
+    @Field("supply_drop_rolls")
+    private int numberOfSupplyDropRolls = 0;
 
 
     @Override
@@ -177,5 +179,29 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public int getAmountOfLegendaryStarPieces() {
         return amountOfLegendaryStarPieces;
+    }
+
+    public void addCommonStarPiece() {
+        this.amountOfCommonStarPieces += 1;
+    }
+
+    public void addRareStarPiece() {
+        this.amountOfRareStarPieces += 1;
+    }
+
+    public void addEpicStarPiece() {
+        this.amountOfEpicStarPieces += 1;
+    }
+
+    public void addLegendaryStarPiece() {
+        this.amountOfLegendaryStarPieces += 1;
+    }
+
+    public int getNumberOfSupplyDropRolls() {
+        return numberOfSupplyDropRolls;
+    }
+
+    public void addSupplyDropRoll(int amount) {
+        this.numberOfSupplyDropRolls += amount;
     }
 }

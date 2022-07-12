@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
@@ -11,28 +12,56 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public enum WeaponsPvE {
 
-    NONE("None", null, ChatColor.GRAY, null, null),
-    COMMON("Common", CommonWeapon.class, ChatColor.GREEN, MasterworksFair::getCommonPlayerEntries, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5)),
-    RARE("Rare", RareWeapon.class, ChatColor.BLUE, MasterworksFair::getRarePlayerEntries, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3)),
-    EPIC("Epic", EpicWeapon.class, ChatColor.DARK_PURPLE, MasterworksFair::getEpicPlayerEntries, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 2)),
-    LEGENDARY("Legendary", LegendaryWeapon.class, ChatColor.GOLD, null, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1));
+    NONE("None",
+            null,
+            ChatColor.GRAY,
+            null,
+            null,
+            null),
+    COMMON("Common",
+            CommonWeapon.class,
+            ChatColor.GREEN,
+            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 5),
+            MasterworksFair::getCommonPlayerEntries,
+            DatabasePlayerPvE::addCommonStarPiece),
+    RARE("Rare",
+            RareWeapon.class,
+            ChatColor.BLUE,
+            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3),
+            MasterworksFair::getRarePlayerEntries,
+            DatabasePlayerPvE::addRareStarPiece),
+    EPIC("Epic",
+            EpicWeapon.class,
+            ChatColor.DARK_PURPLE,
+            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 2),
+            MasterworksFair::getEpicPlayerEntries,
+            DatabasePlayerPvE::addEpicStarPiece),
+    LEGENDARY("Legendary",
+            LegendaryWeapon.class,
+            ChatColor.GOLD,
+            new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1),
+            null,
+            DatabasePlayerPvE::addLegendaryStarPiece);
 
     public final String name;
     public final Class<?> weaponClass;
     public final ChatColor chatColor;
-    public final Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries;
     public final ItemStack glassItem;
+    public final Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries;
+    public final Consumer<DatabasePlayerPvE> addStarPiece;
 
-    WeaponsPvE(String name, Class<?> weaponClass, ChatColor chatColor, Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries, ItemStack glassItem) {
+    WeaponsPvE(String name, Class<?> weaponClass, ChatColor chatColor, ItemStack glassItem, Function<MasterworksFair, List<MasterworksFairPlayerEntry>> getPlayerEntries, Consumer<DatabasePlayerPvE> addStarPiece) {
         this.weaponClass = weaponClass;
         this.chatColor = chatColor;
         this.name = name;
         this.getPlayerEntries = getPlayerEntries;
         this.glassItem = glassItem;
+        this.addStarPiece = addStarPiece;
     }
 
     private static final WeaponsPvE[] vals = values();
