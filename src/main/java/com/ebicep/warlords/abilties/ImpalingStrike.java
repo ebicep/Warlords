@@ -13,9 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImpalingStrike extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
+    private float healingDoneFromEnemyCarrier = 0;
 
     private int leechDuration = 5;
-    private float healingDoneFromEnemyCarrier = 0;
+    private float leechAllyAmount = 25;
+    private float leechSelfAmount = 15;
 
     public ImpalingStrike() {
         super("Impaling Strike", 323, 427, 0, 90, 20, 175);
@@ -26,8 +29,8 @@ public class ImpalingStrike extends AbstractStrikeBase {
         description = "§7Impale an enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and afflict them with the §aLEECH §7effect for §6" + leechDuration + " §7seconds.\n" +
                 "§7Whenever an ally (including yourself) deals\n" +
-                "§7damage to a leeched enemy, they heal for §a15%\n" +
-                "§7of the damage dealt. You heal for §a25% §7of the\n" +
+                "§7damage to a leeched enemy, they heal for §a" + leechAllyAmount + "%\n" +
+                "§7of the damage dealt. You heal for §a" + leechSelfAmount + "% §7of the\n" +
                 "§7damage you deal to a leeched enemy instead.";
     }
 
@@ -42,6 +45,10 @@ public class ImpalingStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        if (pveUpgrade) {
+            // TODO: add leech
+            tripleHit(wp, nearPlayer);
+        }
         nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
         nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
                 "Leech Debuff",
@@ -58,11 +65,10 @@ public class ImpalingStrike extends AbstractStrikeBase {
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 float healingMultiplier;
                 if (event.getAttacker() == wp) {
-                    healingMultiplier = 0.25f;
+                    healingMultiplier = (leechSelfAmount / 100f);
                 } else {
-                    healingMultiplier = 0.15f;
+                    healingMultiplier = (leechAllyAmount / 100f);
                 }
-
                 event.getAttacker().addHealingInstance(
                         wp,
                         "Leech",
@@ -95,5 +101,29 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     public void addHealingDoneFromEnemyCarrier(float amount) {
         this.healingDoneFromEnemyCarrier += amount;
+    }
+
+    public float getLeechSelfAmount() {
+        return leechSelfAmount;
+    }
+
+    public void setLeechSelfAmount(float leechSelfAmount) {
+        this.leechSelfAmount = leechSelfAmount;
+    }
+
+    public float getLeechAllyAmount() {
+        return leechAllyAmount;
+    }
+
+    public void setLeechAllyAmount(float leechAllyAmount) {
+        this.leechAllyAmount = leechAllyAmount;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

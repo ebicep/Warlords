@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
+    private boolean pveUpgrade = false;
     private static final int radius = 6;
     private int duration = 10;
     protected int playersHealed = 0;
@@ -191,8 +193,8 @@ public class HammerOfLight extends AbstractAbility {
                                     hammerTarget.addDamageInstance(
                                             wp,
                                             name,
-                                            178,
-                                            244,
+                                            minDamage,
+                                            maxDamage,
                                             critChance,
                                             critMultiplier,
                                             false
@@ -210,21 +212,6 @@ public class HammerOfLight extends AbstractAbility {
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive() && wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
-//                        new BukkitRunnable() {
-//                            int counter = 0;
-//                            @Override
-//                            public void run() {
-//                                if(counter == 0) {
-//                                    hammer.setRightArmPose(new EulerAngle(5.15, 0, 0));
-//                                }
-//                                hammer.teleport(hammer.getLocation().clone().add(0, 5, 0));
-//                                if(counter >= 20) {
-//                                    hammer.remove();
-//                                    this.cancel();
-//                                }
-//                                counter++;
-//                            }
-//                        }.runTaskTimer(Warlords.getInstance(), 0, 1);
                         hammer.remove();
                         particleTask.cancel();
 
@@ -285,6 +272,26 @@ public class HammerOfLight extends AbstractAbility {
         return hammer;
     }
 
+    private void boostOnUse(WarlordsEntity we) {
+        we.getCooldownManager().addCooldown(new RegularCooldown<HammerOfLight>(
+                name,
+                null,
+                HammerOfLight.class,
+                new HammerOfLight(),
+                we,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                duration * 20
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().equals("Protector's Strike")) {
+                    // TODO
+                }
+            }
+        });
+    }
+
     public boolean isHammer() {
         return !isCrownOfLight;
     }
@@ -323,5 +330,13 @@ public class HammerOfLight extends AbstractAbility {
 
     public void setMaxDamage(float maxDamage) {
         this.maxDamage = maxDamage;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

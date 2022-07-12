@@ -29,20 +29,20 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
 
     @Override
     public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void a2() {
         ability.setMinDamageHeal(minDamage * 1.2f);
         ability.setMaxDamageHeal(maxDamage * 1.2f);
     }
 
     @Override
-    public void a3() {
+    public void a2() {
         ability.setMinDamageHeal(minDamage * 1.4f);
         ability.setMaxDamageHeal(maxDamage * 1.4f);
+    }
+
+    @Override
+    public void a3() {
+        ability.setMinDamageHeal(minDamage * 1.8f);
+        ability.setMaxDamageHeal(maxDamage * 1.8f);
     }
 
     @Override

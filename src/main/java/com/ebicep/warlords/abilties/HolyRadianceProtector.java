@@ -62,6 +62,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 emitMarkRadiance(wp, circleTarget);
             }
         }
+
         for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)

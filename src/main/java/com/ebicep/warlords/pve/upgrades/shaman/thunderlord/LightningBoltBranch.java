@@ -13,9 +13,9 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         treeA.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
         treeA.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
 
-        treeB.add(new Upgrade("Energy - Tier I", "-10 Energy cost", 5000));
-        treeB.add(new Upgrade("Energy - Tier II", "-20 Energy cost", 10000));
-        treeB.add(new Upgrade("Energy - Tier III", "-30 Energy cost", 20000));
+        treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
+        treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
+        treeB.add(new Upgrade("Energy - Tier III", "-15 Energy cost", 20000));
 
         treeC.add(new Upgrade("Crit Multiplier - Tier I", "+10% Crit multiplier", 5000));
         treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit multiplier", 10000));
@@ -49,19 +49,21 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    int energyCost = ability.getEnergyCost();
+
     @Override
     public void b1() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 5);
     }
 
     @Override
     public void b2() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 10);
     }
 
     @Override
     public void b3() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
+        ability.setEnergyCost(energyCost - 15);
     }
 
     @Override

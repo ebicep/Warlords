@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,8 +37,10 @@ public class CurrencyOnEventOption implements Option, Listener {
         }
 
         for (WarlordsEntity we : event.getPlayer().getHitBy().keySet()) {
-            we.sendMessage(ChatColor.AQUA + "+" + (currencyToAdd / 2) + " ❂ Insignia");
-            we.addCurrency(currencyToAdd / 2);
+            if (we instanceof WarlordsPlayer) {
+                we.sendMessage(ChatColor.AQUA + "+" + currencyToAdd + " ❂ Insignia");
+                we.addCurrency(currencyToAdd);
+            }
         }
     }
 }

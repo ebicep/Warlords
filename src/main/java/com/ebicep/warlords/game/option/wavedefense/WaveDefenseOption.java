@@ -11,19 +11,16 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,23 +54,6 @@ public class WaveDefenseOption implements Option {
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
         this.waves = waves;
-    }
-
-    public WarlordsEntity spawn(CustomEntity<?> entity) {
-        WarlordsEntity we = game.addNPC(new WarlordsNPC(
-                UUID.randomUUID(),
-                entity.toString(),
-                Weapons.ABBADON,
-                (LivingEntity) entity,
-                game,
-                Team.RED,
-                Specializations.PYROMANCER
-        ));
-
-        entities.add(we);
-        currentWave.spawnMonster(we.getLocation()).toNPC(game, team, UUID.randomUUID());
-        startSpawnTask();
-        return we;
     }
     
     public void startSpawnTask() {
@@ -228,6 +208,7 @@ public class WaveDefenseOption implements Option {
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getPlayer();
                 entities.remove(we);
+                Bukkit.broadcastMessage("entites on death: " + entities.size());
                 if (we.getEntity() instanceof CustomEntity) {
                     new GameRunnable(game) {
                         @Override
@@ -292,8 +273,10 @@ public class WaveDefenseOption implements Option {
 
                     if (waveCounter > 1) {
                         getGame().forEachOnlineWarlordsEntity(we -> {
-                            we.addCurrency(100);
-                            we.sendMessage(ChatColor.AQUA + "+100 ❂ Insignia");
+                            if (we instanceof WarlordsPlayer) {
+                                we.addCurrency(100);
+                                we.sendMessage(ChatColor.AQUA + "+100 ❂ Insignia");
+                            }
                         });
                     }
                 }

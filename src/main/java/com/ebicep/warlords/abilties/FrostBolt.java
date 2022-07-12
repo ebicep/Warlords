@@ -143,10 +143,10 @@ public class FrostBolt extends AbstractProjectileBase {
             @Override
             public void run() {
                 for (WarlordsEntity freezeTarget : PlayerFilter
-                        .entitiesAround(hit, 4, 4, 4)
+                        .entitiesAround(hit, 3, 3, 3)
                         .aliveEnemiesOf(giver)
                 ) {
-                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 5, 1.1, Material.PACKED_ICE, (byte) 0).play();
+                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE, (byte) 0).play();
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.FIZZ, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.GLASS, 2, 0.1f);
                     freezeTarget.getSpeed().addSpeedModifier(name, -slowness, 2 * 20, "BASE");
