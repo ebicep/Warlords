@@ -19,7 +19,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "After swapping with an enemy, the caster\ncannot be the target of any ability (both ally\nand enemy) for 2 seconds.",
+                "PLACEHOLDER",
                 50000
         );
     }

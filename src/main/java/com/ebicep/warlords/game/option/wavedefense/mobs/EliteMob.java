@@ -32,7 +32,8 @@ public class EliteMob {
     public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
             () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {},
+            (mob) -> {
+            },
             "Elite Skeleton",
             loc,
             new Utils.SimpleEntityEquipment(
@@ -44,6 +45,23 @@ public class EliteMob {
             ),
             1200,
             0.25f
+    );
+    public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Illusion Apprentice",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.DEAD_BUSH),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.SPIDER_EYE)
+            ),
+            7000,
+            0.3f
     );
     public static final Function<Location, PartialMonster> ELITE_ENDERMAN = loc -> PartialMonster.fromCustomEntity(
             CustomEnderman.class,

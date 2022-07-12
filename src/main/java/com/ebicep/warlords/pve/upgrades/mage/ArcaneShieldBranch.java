@@ -19,7 +19,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "+100% Duration\n\nWhen Arcane Shield breaks, deal damage equal to\n50% of the damage prevented by the Arcane Shield to\nall enemies within a 3 block radius and stun them\nfor 1s",
+                "PLACEHOLDER: +100% Duration",
                 50000
         );
     }

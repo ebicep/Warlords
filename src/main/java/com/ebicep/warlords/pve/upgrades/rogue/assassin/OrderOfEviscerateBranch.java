@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilties.OrderOfEviscerate;
-import com.ebicep.warlords.abilties.pve.PveOrderOfEviscerate;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -74,7 +73,6 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     @Override
     public void master() {
-        abilityTree.getPlayer().getSpec().setOrange(new PveOrderOfEviscerate());
-        abilityTree.getPlayer().updateOrangeItem();
+
     }
 }

@@ -273,8 +273,14 @@ public class WaveDefenseOption implements Option {
                     if (waveCounter > 1) {
                         getGame().forEachOnlineWarlordsEntity(we -> {
                             if (we instanceof WarlordsPlayer) {
-                                we.addCurrency(100);
-                                we.sendMessage(ChatColor.AQUA + "+100 ❂ Insignia");
+                                int currency;
+                                if (waveCounter % 10 == 1) {
+                                    currency = 1000;
+                                } else {
+                                    currency = 100;
+                                }
+                                we.addCurrency(currency);
+                                we.sendMessage(ChatColor.AQUA + "+" + currency + " ❂ Insignia");
                             }
                         });
                     }
