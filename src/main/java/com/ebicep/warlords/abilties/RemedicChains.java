@@ -20,13 +20,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility {
-    private final int duration = 8;
-    private final int alliesAffected = 3;
-    // Percent
-    private final float healingMultiplier = 0.125f;
     protected int playersLinked = 0;
     protected int numberOfBrokenLinks = 0;
+
+    // Percent
+    private float healingMultiplier = 0.125f;
+    private float allyDamageIncrease = 12;
+    private int duration = 8;
+    private int alliesAffected = 3;
     private int linkBreakRadius = 15;
+    private int castRange = 10;
 
     public RemedicChains() {
         super("Remedic Chains", 728, 815, 16, 50, 20, 200);
@@ -35,7 +38,7 @@ public class RemedicChains extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
-                "§7the damage they deal by §c12% §7as long as the\n" +
+                "§7the damage they deal by §c" + format(allyDamageIncrease) + "% §7as long as the\n" +
                 "§7link is active. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7When the link expires you and the allies\n" +
@@ -60,7 +63,7 @@ public class RemedicChains extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         List<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(player, 10, 10, 10)
+                .entitiesAround(player, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(alliesAffected)
@@ -175,7 +178,7 @@ public class RemedicChains extends AbstractAbility {
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.12f;
+                        return currentDamageValue * (1 + allyDamageIncrease / 100f);
                     }
                 });
 
@@ -207,5 +210,45 @@ public class RemedicChains extends AbstractAbility {
 
     public void setLinkBreakRadius(int linkBreakRadius) {
         this.linkBreakRadius = linkBreakRadius;
+    }
+
+    public int getCastRange() {
+        return castRange;
+    }
+
+    public void setCastRange(int castRange) {
+        this.castRange = castRange;
+    }
+
+    public int getAlliesAffected() {
+        return alliesAffected;
+    }
+
+    public void setAlliesAffected(int alliesAffected) {
+        this.alliesAffected = alliesAffected;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public float getHealingMultiplier() {
+        return healingMultiplier;
+    }
+
+    public void setHealingMultiplier(float healingMultiplier) {
+        this.healingMultiplier = healingMultiplier;
+    }
+
+    public float getAllyDamageIncrease() {
+        return allyDamageIncrease;
+    }
+
+    public void setAllyDamageIncrease(float allyDamageIncrease) {
+        this.allyDamageIncrease = allyDamageIncrease;
     }
 }

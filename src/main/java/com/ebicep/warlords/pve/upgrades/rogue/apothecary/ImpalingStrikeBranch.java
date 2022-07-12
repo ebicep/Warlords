@@ -23,7 +23,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Impaling Strike deals damage to 2 additiona enemies and inflicts leech on those targets.",
+                "Impaling Strike deals damage to 2 additional enemies and inflicts leech on those targets.",
                 50000
         );
     }

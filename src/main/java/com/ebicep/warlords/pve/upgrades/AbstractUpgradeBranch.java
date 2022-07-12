@@ -230,8 +230,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     private ItemStack masterBranchItem(Upgrade upgrade) {
         ArrayList<String> lore = new ArrayList<>();
-        lore.add((upgrade.isUnlocked() ? ChatColor.RED : ChatColor.DARK_GRAY) + upgrade.getSubName());
-        lore.add("");
+        if (upgrade.getSubName() != null) {
+            lore.add((upgrade.isUnlocked() ? ChatColor.RED : ChatColor.DARK_GRAY) + upgrade.getSubName());
+            lore.add("");
+        }
         lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
                 "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + upgrade.getCurrencyCost());
         return new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))

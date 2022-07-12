@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility {
-    private final int duration = 5;
-    // Percent
-    private final int maxHealthDamage = 4;
+    private boolean pveUpgrade = false;
     protected int playersHit = 0;
+
+    private int duration = 5;
+    private final int maxHealthDamage = 4;
     private int leechDuration = 5;
     private int enemyHitRadius = 8;
 
@@ -68,11 +69,13 @@ public class DrainingMiasma extends AbstractAbility {
                 .with(FireworkEffect.Type.BALL_LARGE)
                 .build());
 
+        int hitCounter = 0;
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         for (WarlordsEntity miasmaTarget : PlayerFilter
                 .entitiesAround(wp, getEnemyHitRadius(), getEnemyHitRadius(), getEnemyHitRadius())
                 .aliveEnemiesOf(wp)
         ) {
+            hitCounter++;
             Runnable cancelSlowness = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     name,
@@ -154,7 +157,33 @@ public class DrainingMiasma extends AbstractAbility {
             });
         }
 
+        if (pveUpgrade) {
+            increaseDamageOnHit(wp, hitCounter);
+        }
+
         return true;
+    }
+
+    private void increaseDamageOnHit(WarlordsEntity we, int hitCounter) {
+        we.getCooldownManager().addCooldown(new RegularCooldown<DrainingMiasma>(
+                "Impaling Boost",
+                "IMP BOOST",
+                DrainingMiasma.class,
+                new DrainingMiasma(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getAbility().equals("Impaling Strike")) {
+                    return currentDamageValue * (1 + (0.04f * hitCounter));
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
     public int getEnemyHitRadius() {
@@ -171,5 +200,21 @@ public class DrainingMiasma extends AbstractAbility {
 
     public void setLeechDuration(int leechDuration) {
         this.leechDuration = leechDuration;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

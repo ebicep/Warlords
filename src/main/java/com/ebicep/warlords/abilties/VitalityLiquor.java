@@ -24,8 +24,8 @@ import java.util.List;
 public class VitalityLiquor extends AbstractAbility {
     protected int numberOfAdditionalWaves = 0;
 
-    private final int acuRange = 8;
-    private final int duration = 3;
+    private int vitalityRange = 8;
+    private int duration = 3;
     private int energyPerSecond = 15;
     private float minWaveHealing = 268;
     private float maxWaveHealing = 324;
@@ -78,7 +78,7 @@ public class VitalityLiquor extends AbstractAbility {
 
 
         for (WarlordsEntity acuTarget : PlayerFilter
-                .entitiesAround(player, acuRange, acuRange, acuRange)
+                .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             acuTarget.addHealingInstance(
@@ -94,7 +94,7 @@ public class VitalityLiquor extends AbstractAbility {
         }
 
         for (WarlordsEntity enemyTarget : PlayerFilter
-                .entitiesAround(player, acuRange, acuRange, acuRange)
+                .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveEnemiesOf(wp)
         ) {
             new CooldownFilter<>(enemyTarget, RegularCooldown.class)
@@ -171,5 +171,13 @@ public class VitalityLiquor extends AbstractAbility {
 
     public void setEnergyPerSecond(int energyPerSecond) {
         this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getVitalityRange() {
+        return vitalityRange;
+    }
+
+    public void setVitalityRange(int vitalityRange) {
+        this.vitalityRange = vitalityRange;
     }
 }

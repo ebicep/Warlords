@@ -39,6 +39,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
             CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
             babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
             babyMagmaCube.spawn(deathLocation);
+            babyMagmaCube.setCustomNameVisible(true);
             WarlordsNPC entity = new WarlordsNPC(
                     UUID.randomUUID(),
                     "Baby Magma Cube",

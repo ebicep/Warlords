@@ -105,8 +105,8 @@ public class Windfury extends AbstractAbility {
                                     victim.addDamageInstance(
                                             attacker,
                                             name,
-                                            min * (1 + weaponDamage / 100f) * 1.2f,
-                                            max * (1 + weaponDamage / 100f) * 1.2f,
+                                            min * (weaponDamage / 100f) * 1.2f,
+                                            max * (weaponDamage / 100f) * 1.2f,
                                             critChance,
                                             critMultiplier,
                                             false
@@ -115,8 +115,8 @@ public class Windfury extends AbstractAbility {
                                     victim.addDamageInstance(
                                             attacker,
                                             name,
-                                            min * (1 + weaponDamage / 100f),
-                                            max * (1 + weaponDamage / 100f),
+                                            min * (weaponDamage / 100f),
+                                            max * (weaponDamage / 100f),
                                             critChance,
                                             critMultiplier,
                                             false
