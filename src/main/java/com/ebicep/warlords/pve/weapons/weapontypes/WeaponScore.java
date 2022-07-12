@@ -15,7 +15,7 @@ public interface WeaponScore {
     static void testWeaponScore(Player player) {
         double minScore = 100;
         double maxScore = 0;
-        int weaponsToGenerate = 10000;
+        int weaponsToGenerate = 500000;
         for (int i = 0; i < weaponsToGenerate; i++) {
             CommonWeapon commonWeapon = new CommonWeapon(player.getUniqueId());
             double score = commonWeapon.getWeaponScore();

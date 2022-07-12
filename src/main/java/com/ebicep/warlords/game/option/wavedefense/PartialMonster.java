@@ -68,7 +68,7 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee) {
+    static <T extends EntityInsentient & CustomEntity<?>> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -80,7 +80,7 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed) {
+    static <T extends EntityInsentient & CustomEntity<?>> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,
@@ -94,7 +94,7 @@ public interface PartialMonster {
         ));
     }
 
-    static <T extends EntityInsentient & CustomEntity> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
+    static <T extends EntityInsentient & CustomEntity<?>> PartialMonster fromCustomEntity(Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, String name, Location loc, EntityEquipment ee, int maxHealth, float walkSpeed, Specializations spec) {
         return (game, team, uuid) -> game.addNPC(new WarlordsNPC(
                 uuid,
                 name,

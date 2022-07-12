@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -209,10 +210,12 @@ public class WaveDefenseOption implements Option {
                 WarlordsEntity we = event.getPlayer();
                 entities.remove(we);
                 Bukkit.broadcastMessage("entites on death: " + entities.size());
+                System.out.println(we.getEntity() instanceof CustomZombie);
                 if (we.getEntity() instanceof CustomEntity) {
                     new GameRunnable(game) {
                         @Override
                         public void run() {
+                            System.out.println("ondeath");
                             ((CustomEntity) we.getEntity()).onDeath((EntityInsentient) we.getEntity(), we.getDeathLocation(), WaveDefenseOption.this);
                             game.removePlayer(we.getUuid());
                         }

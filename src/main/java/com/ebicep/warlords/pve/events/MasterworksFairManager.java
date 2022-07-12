@@ -69,8 +69,12 @@ public class MasterworksFairManager {
                                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                                             System.out.println("[MasterworksFairManager] Masterworks Fair reset time has passed. Resetting.");
                                             //give out rewards
+                                            List<MasterworksFairPlayerEntry> commonPlayerEntries = masterworksFair.getCommonPlayerEntries();
+                                            List<MasterworksFairPlayerEntry> rarePlayerEntries = masterworksFair.getRarePlayerEntries();
+                                            List<MasterworksFairPlayerEntry> epicPlayerEntries = masterworksFair.getEpicPlayerEntries();
 
-                                            //reset fair
+
+                                            //create new fair
                                             MasterworksFair newFair = new MasterworksFair();
                                             DatabaseManager.masterworksFairService.create(newFair);
                                             initializeFair(newFair);
@@ -104,6 +108,10 @@ public class MasterworksFairManager {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 20);
+    }
+
+    private static void awardEntries(List<MasterworksFairPlayerEntry> entries) {
+
     }
 
     public static void openMasterworksFairMenu(Player player) {

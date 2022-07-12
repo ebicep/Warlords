@@ -85,6 +85,7 @@ public class TestCommand implements CommandExecutor {
 
         }
 
+//        testWeaponScore((Player) sender);
 
         //AbstractWeapon.giveTestItem((Player) sender);
 

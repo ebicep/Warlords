@@ -30,8 +30,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private int amountOfLegendFragments = 0;
     @Field("fairy_essence")
     private int amountOfFairyEssence = 0;
-    @Field("star_pieces")
-    private int amountOfStarPieces = 0;
+    @Field("common_star_pieces")
+    private int amountOfCommonStarPieces = 0;
+    @Field("rare_star_pieces")
+    private int amountOfRareStarPieces = 0;
+    @Field("epic_star_pieces")
+    private int amountOfEpicStarPieces = 0;
+    @Field("legendary_star_pieces")
+    private int amountOfLegendaryStarPieces = 0;
 
 
     @Override
@@ -157,7 +163,19 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.amountOfFairyEssence += amount;
     }
 
-    public int getAmountOfStarPieces() {
-        return amountOfStarPieces;
+    public int getAmountOfCommonStarPieces() {
+        return amountOfCommonStarPieces;
+    }
+
+    public int getAmountOfRareStarPieces() {
+        return amountOfRareStarPieces;
+    }
+
+    public int getAmountOfEpicStarPieces() {
+        return amountOfEpicStarPieces;
+    }
+
+    public int getAmountOfLegendaryStarPieces() {
+        return amountOfLegendaryStarPieces;
     }
 }

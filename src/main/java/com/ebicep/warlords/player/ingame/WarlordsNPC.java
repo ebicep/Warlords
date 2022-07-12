@@ -113,7 +113,7 @@ public class WarlordsNPC extends WarlordsEntity {
         return entity;
     }
 
-    public static <T extends CustomEntity> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, @Nonnull Location loc, @Nullable EntityEquipment inv) {
+    public static <T extends CustomEntity<?>> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, @Nonnull Location loc, @Nullable EntityEquipment inv) {
         T customEntity = create.get();
         onCreate.accept(customEntity);
         customEntity.spawn(loc);

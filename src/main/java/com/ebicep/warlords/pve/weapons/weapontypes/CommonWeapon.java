@@ -31,6 +31,7 @@ public class CommonWeapon extends AbstractWeapon implements Salvageable, WeaponS
     public static final int HEALTH_BONUS_MAX = 200;
 
     public CommonWeapon() {
+        generateStats();
     }
 
     public CommonWeapon(UUID uuid) {
