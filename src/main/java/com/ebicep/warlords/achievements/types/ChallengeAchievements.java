@@ -18,7 +18,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -484,7 +488,7 @@ public enum ChallengeAchievements implements Achievement {
             super(achievement);
         }
 
-        public ChallengeAchievementRecord(ChallengeAchievements achievement, Date date) {
+        public ChallengeAchievementRecord(ChallengeAchievements achievement, Instant date) {
             super(achievement, date);
         }
 

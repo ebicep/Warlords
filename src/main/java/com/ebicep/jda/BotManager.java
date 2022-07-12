@@ -28,6 +28,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.ebicep.warlords.Warlords.onCustomServer;
+
 
 public class BotManager {
 
@@ -66,7 +68,7 @@ public class BotManager {
                     if (jda.getStatus() != JDA.Status.CONNECTED) {
                         return;
                     }
-                    if (!Warlords.onCustomServer()) {
+                    if (!onCustomServer()) {
                         if (counter == 0) {
                             getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
                                 textChannel.getIterableHistory()
@@ -130,6 +132,7 @@ public class BotManager {
     }
 
     public static Optional<TextChannel> getTextChannelCompsByName(String name) {
+        if (jda == null) return Optional.empty();
         if (compGamesServerChannelCache.containsKey(name))
             return Optional.ofNullable(compGamesServerChannelCache.get(name));
         Optional<TextChannel> optionalTextChannel = getCompGamesServer().getTextChannels().stream().filter(textChannel -> textChannel.getName().equalsIgnoreCase(name)).findFirst();
@@ -138,6 +141,7 @@ public class BotManager {
     }
 
     public static Optional<TextChannel> getTextChannelWL2ByName(String name) {
+        if (jda == null) return Optional.empty();
         if (wl2ServerChannelCache.containsKey(name)) return Optional.ofNullable(wl2ServerChannelCache.get(name));
         Optional<TextChannel> optionalTextChannel = getWL2Server().getTextChannels().stream().filter(textChannel -> textChannel.getName().equalsIgnoreCase(name)).findFirst();
         optionalTextChannel.ifPresent(textChannel -> wl2ServerChannelCache.put(name, textChannel));
@@ -149,7 +153,7 @@ public class BotManager {
         if (numberOfMessagesSentLast30Sec > 15) {
             return;
         }
-        if (Warlords.onCustomServer()) {
+        if (onCustomServer()) {
             return;
         }
         if (sendToCompServer) {
@@ -161,7 +165,7 @@ public class BotManager {
     }
 
     public static void sendStatusMessage(boolean onQuit) {
-        if (Warlords.onCustomServer()) {
+        if (onCustomServer()) {
             return;
         }
         DateFormat dateFormat = new SimpleDateFormat("hh:mm aa");

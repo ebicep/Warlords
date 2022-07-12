@@ -13,12 +13,16 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class AbstractWeapon {
 
     @Field("obtain_date")
-    protected Date date = new Date();
+    protected Instant date = Instant.now();
     @Field("melee_damage")
     protected int meleeDamage;
     @Field("crit_chance_bonus")
@@ -143,7 +147,7 @@ public abstract class AbstractWeapon {
         }
     }
 
-    public Date getDate() {
+    public Instant getDate() {
         return date;
     }
 

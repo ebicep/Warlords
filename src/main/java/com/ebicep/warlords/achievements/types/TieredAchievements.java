@@ -12,8 +12,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.function.Predicate;
 
 public enum TieredAchievements implements Achievement {
@@ -147,7 +147,7 @@ public enum TieredAchievements implements Achievement {
             super(achievement);
         }
 
-        public TieredAchievementRecord(TieredAchievements achievement, Date date) {
+        public TieredAchievementRecord(TieredAchievements achievement, Instant date) {
             super(achievement, date);
         }
 

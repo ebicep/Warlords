@@ -4,7 +4,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
-import java.util.Date;
+import java.time.Instant;
 
 public interface Achievement {
 
@@ -15,17 +15,17 @@ public interface Achievement {
     abstract class AbstractAchievementRecord<T extends Enum<T>> {
 
         private T achievement;
-        private Date date;
+        private Instant date;
 
         public AbstractAchievementRecord() {
         }
 
         public AbstractAchievementRecord(T achievement) {
             this.achievement = achievement;
-            this.date = new Date();
+            this.date = Instant.now();
         }
 
-        public AbstractAchievementRecord(T achievement, Date date) {
+        public AbstractAchievementRecord(T achievement, Instant date) {
             this.achievement = achievement;
             this.date = date;
         }
@@ -42,7 +42,7 @@ public interface Achievement {
             return achievement;
         }
 
-        public Date getDate() {
+        public Instant getDate() {
             return date;
         }
 

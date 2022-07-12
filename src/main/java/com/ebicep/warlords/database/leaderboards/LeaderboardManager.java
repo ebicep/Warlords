@@ -23,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -418,7 +419,7 @@ public class LeaderboardManager {
 
     public static Document getTopPlayersOnLeaderboard() {
         List<Leaderboard> leaderboards = leaderboardCTF.getComps().getLeaderboards();
-        Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        Document document = new Document("date", Instant.now()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
         for (String title : weeklyExperienceLeaderboards) {
             leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();

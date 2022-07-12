@@ -6,20 +6,22 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.DateUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class MasterworksFairManager {
 
@@ -29,28 +31,79 @@ public class MasterworksFairManager {
     public static void init() {
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findFirstByOrderByStartDateDesc())
-                .abortIfNull()
-                .syncLast(masterworksFair -> {
-                    System.out.println("[MasterworksFairManager] Found masterworks fair: " + masterworksFair.getStartDate());
-                    currentFair = masterworksFair;
-
-                    NPCManager.createIndependentNPCs();
-
-                    //runnable that updates fair every 20 seconds if there has been a change
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            if (updateFair) {
-                                updateFair = false;
-                                Warlords.newChain()
-                                        .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
-                                        .execute();
-                            }
+                .asyncLast(masterworksFair -> {
+                    if (masterworksFair == null) {
+                        System.out.println("[MasterworksFairManager] Could not find masterworks fair in database");
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(new Date());
+                        boolean monday = cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+                        if (monday) {
+                            System.out.println("[MasterworksFairManager] Monday. Creating new masterworks fair.");
+                            MasterworksFair newFair = new MasterworksFair();
+                            initializeFair(newFair);
+                            DatabaseManager.masterworksFairService.create(newFair);
+                        } else {
+                            System.out.println("[MasterworksFairManager] Not Monday. Skipping creation of new masterworks fair.");
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 20, 20 * 20);
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Masterworks Fair"))
+                                .asyncLast(timing -> {
+                                    if (timing == null) {
+                                        System.out.println("[MasterworksFairManager] Could not find masterworks fair timing in database. Creating new timing.");
+                                        DatabaseManager.timingsService.create(new DatabaseTiming("Masterworks Fair", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
+                                    }
+                                }).execute();
+                    } else {
+                        //check for reset
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Masterworks Fair"))
+                                .asyncLast(timing -> {
+                                    if (timing == null) {
+                                        System.out.println("[MasterworksFairManager] Could not find masterworks fair timing in database. Creating new timing.");
+                                        DatabaseManager.timingsService.create(new DatabaseTiming("Masterworks Fair", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
+                                    } else {
+                                        //check if week past
+                                        long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), Instant.now());
+                                        System.out.println("Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
+                                        //30 min buffer
+                                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
+                                            System.out.println("[MasterworksFairManager] Masterworks Fair reset time has passed. Resetting.");
+                                            //give out rewards
+
+                                            //reset fair
+                                            MasterworksFair newFair = new MasterworksFair();
+                                            DatabaseManager.masterworksFairService.create(newFair);
+                                            initializeFair(newFair);
+                                        } else {
+                                            initializeFair(masterworksFair);
+                                        }
+                                    }
+
+                                }).execute();
+                    }
                 })
                 .execute();
+    }
+
+    private static void initializeFair(MasterworksFair masterworksFair) {
+        System.out.println("[MasterworksFairManager] Initialize masterworks fair: " + masterworksFair.getStartDate());
+        currentFair = masterworksFair;
+
+        NPCManager.createIndependentNPCs();
+
+        //runnable that updates fair every 20 seconds if there has been a change
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if (updateFair) {
+                    updateFair = false;
+                    Warlords.newChain()
+                            .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
+                            .execute();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 20, 20 * 20);
     }
 
     public static void openMasterworksFairMenu(Player player) {
