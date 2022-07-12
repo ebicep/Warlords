@@ -61,9 +61,6 @@ public class WarlordsShopMenu {
             .lore("§7Try your luck in rerolling or\nopening skin shards here!\n")
             .get();
 
-    private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
-    private static final String[] mythicNames = new String[]{"Mythical", "Ascendant", "Brilliant"};
-
     public static void openMainMenu(Player player) {
         Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
 

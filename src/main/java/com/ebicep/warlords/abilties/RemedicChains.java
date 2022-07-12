@@ -99,7 +99,7 @@ public class RemedicChains extends AbstractAbility {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.12f;
+                    return currentDamageValue * (1 + allyDamageIncrease / 100f);
                 }
             });
 
