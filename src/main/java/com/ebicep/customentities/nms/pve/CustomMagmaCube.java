@@ -39,7 +39,6 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
             CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
             babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
             babyMagmaCube.spawn(deathLocation);
-            babyMagmaCube.setCustomNameVisible(true);
             WarlordsNPC entity = new WarlordsNPC(
                     UUID.randomUUID(),
                     "Baby Magma Cube",
@@ -54,14 +53,6 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
             waveDefenseOption.getGame().addNPC(entity);
             waveDefenseOption.getEntities().add(entity);
         }
-    }
-
-    @Override
-    public void spawn(Location location) {
-        setPosition(location.getX(), location.getY(), location.getZ());
-        getBukkitEntity().setCustomNameVisible(true);
-
-        ((CraftWorld) location.getWorld()).getHandle().addEntity(this);
     }
 
     @Override

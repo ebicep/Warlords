@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -16,16 +15,6 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
     public CustomSkeleton(World world) {
         super(world);
         this.goalSelector.a(7, pathfinderGoalFireAtPlayer);
-    }
-
-
-    @Override
-    public void spawn(Location location) {
-        setPosition(location.getX(), location.getY(), location.getZ());
-        getBukkitEntity().setCustomNameVisible(true);
-
-        ((CraftWorld) location.getWorld()).getHandle().addEntity(this);
-
     }
 
     @Override
@@ -49,38 +38,6 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         public PathfinderGoalFireAtPlayer(EntityInsentient self, int fireTickDelay) {
             this.self = self;
             this.fireTickDelay = fireTickDelay;
-        }
-
-        @Override
-        public boolean a() {
-            if (delay != 0) {
-                delay--;
-                return false;
-            }
-            ticks++;
-            if (ticks % fireTickDelay == 0) {
-                delay = fireTickDelay;
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public void c() {
-            if (self.getGoalTarget() == null) {
-                return;
-            }
-            EntityLiving target = self.getGoalTarget();
-
-            //Location targetLocation = target.getBukkitEntity().getLocation();
-            WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
-            WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
-            if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
-                Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
-                self.getBukkitEntity().teleport(lookAtLocation);
-                warlordsEntitySelf.getSpec().getWeapon().onActivate(warlordsEntitySelf, null);
-            }
         }
 
         //should just use arrow mechanic - https://gist.github.com/Minikloon/4f53ea780350c7b86761318ca313a9ed
@@ -141,7 +98,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
                 } else {
                     loc.setYaw((float) (0.5 * Math.PI));
                 }
-                loc.setYaw((float) loc.getYaw() - (float) Math.atan(dz / dx));
+                loc.setYaw(loc.getYaw() - (float) Math.atan(dz / dx));
             } else if (dz < 0) {
                 loc.setYaw((float) Math.PI);
             }
@@ -159,6 +116,37 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
             return loc;
         }
 
+        @Override
+        public boolean a() {
+            if (delay != 0) {
+                delay--;
+                return false;
+            }
+            ticks++;
+            if (ticks % fireTickDelay == 0) {
+                delay = fireTickDelay;
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public void c() {
+            if (self.getGoalTarget() == null) {
+                return;
+            }
+            EntityLiving target = self.getGoalTarget();
+
+            //Location targetLocation = target.getBukkitEntity().getLocation();
+            WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
+            WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
+            if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
+                Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
+                self.getBukkitEntity().teleport(lookAtLocation);
+                warlordsEntitySelf.getSpec().getWeapon().onActivate(warlordsEntitySelf, null);
+            }
+        }
 
         public int getFireTickDelay() {
             return fireTickDelay;
