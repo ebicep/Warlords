@@ -1,7 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.pve.events.MasterworksFairManager;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static com.ebicep.warlords.pve.events.MasterworksFairManager.currentFair;
+import static com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager.currentFair;
 
 public class MasterworksFairTrait extends Trait {
 
@@ -26,7 +26,7 @@ public class MasterworksFairTrait extends Trait {
         //only update every 10 mins
         if (tickCounter++ % 12000 == 0) {
             HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK");
+            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
             hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair");
 
             if (currentFair == null) return;

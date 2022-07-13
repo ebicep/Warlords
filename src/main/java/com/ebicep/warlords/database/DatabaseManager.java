@@ -14,7 +14,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.pve.events.MasterworksFairManager;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;

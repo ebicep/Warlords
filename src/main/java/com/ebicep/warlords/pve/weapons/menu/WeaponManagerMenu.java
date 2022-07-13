@@ -97,9 +97,9 @@ public class WeaponManagerMenu {
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.GREEN + "Your Drops")
                         .lore(
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfLegendFragments() + ChatColor.GOLD + " Legend Fragments",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getAmountOfFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence"
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendFragments() + ChatColor.GOLD + " Legend Fragments",
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence"
                         )
                         .get(),
                 (m, e) -> {

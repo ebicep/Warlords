@@ -1,12 +1,23 @@
 package com.ebicep.warlords.util.bukkit;
 
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public class PacketUtils {
+
+
+    public static void sendTitle(UUID uuid, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        if (offlinePlayer != null && offlinePlayer.isOnline()) {
+            sendTitle(offlinePlayer.getPlayer(), title, subtitle, fadeIn, stay, fadeOut);
+        }
+    }
 
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         CraftPlayer craftplayer = (CraftPlayer) player;

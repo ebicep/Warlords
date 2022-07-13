@@ -86,7 +86,7 @@ public class WeaponSkinSelectorMenu {
                 4,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getAmountOfFairyEssence())
+                        .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getFairyEssence())
                         .get(),
                 (m, e) -> openWeaponEditor(player, weapon)
         );
@@ -98,10 +98,10 @@ public class WeaponSkinSelectorMenu {
     public static void unlockWeaponSkin(Player player, AbstractWeapon weapon, Weapons weaponSkin, int page) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        if (databasePlayerPvE.getAmountOfFairyEssence() >= weaponSkin.getCost()) {
+        if (databasePlayerPvE.getFairyEssence() >= weaponSkin.getCost()) {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.setAmountOfFairyEssence(databasePlayerPvE.getAmountOfFairyEssence() - weaponSkin.getCost());
+            databasePlayerPvE.setFairyEssence(databasePlayerPvE.getFairyEssence() - weaponSkin.getCost());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(

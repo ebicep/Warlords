@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.events;
+package com.ebicep.warlords.pve.events.mastersworkfair;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
@@ -93,7 +93,11 @@ public class MasterworksFairManager {
         System.out.println("[MasterworksFairManager] Initialize masterworks fair: " + masterworksFair.getStartDate());
         currentFair = masterworksFair;
 
-        NPCManager.createIndependentNPCs();
+        if (Warlords.citizensEnabled) {
+            Warlords.newChain()
+                    .sync(NPCManager::createMasterworksFairNPC)
+                    .execute();
+        }
 
         //runnable that updates fair every 20 seconds if there has been a change
         new BukkitRunnable() {

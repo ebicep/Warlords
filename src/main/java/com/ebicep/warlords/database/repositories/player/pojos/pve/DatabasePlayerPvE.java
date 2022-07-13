@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -25,21 +26,27 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
     @Field("synthetic_shards")
-    private int amountOfSyntheticShards = 0;
+    private int syntheticShards = 0;
     @Field("legend_fragments")
-    private int amountOfLegendFragments = 0;
+    private int legendFragments = 0;
     @Field("fairy_essence")
-    private int amountOfFairyEssence = 0;
+    private int fairyEssence = 0;
     @Field("common_star_pieces")
-    private int amountOfCommonStarPieces = 0;
+    private int commonStarPieces = 0;
     @Field("rare_star_pieces")
-    private int amountOfRareStarPieces = 0;
+    private int rareStarPieces = 0;
     @Field("epic_star_pieces")
-    private int amountOfEpicStarPieces = 0;
+    private int epicStarPieces = 0;
     @Field("legendary_star_pieces")
-    private int amountOfLegendaryStarPieces = 0;
-    @Field("supply_drop_rolls")
-    private int numberOfSupplyDropRolls = 0;
+    private int legendaryStarPieces = 0;
+    @Field("skill_boost_modifiers")
+    private int skillBoostModifiers = 0;
+    @Field("supply_drop_tokens")
+    private int supplyDropTokens = 0;
+    @Field("supply_drop_rewards")
+    private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
+    @Field("coins")
+    private int coins = 0;
 
 
     @Override
@@ -137,71 +144,99 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return weaponInventory;
     }
 
-    public int getAmountOfSyntheticShards() {
-        return amountOfSyntheticShards;
+    public int getSyntheticShards() {
+        return syntheticShards;
     }
 
-    public void addSyntheticAlloy(int amount) {
-        this.amountOfSyntheticShards += amount;
+    public void addSyntheticShards(int amount) {
+        this.syntheticShards += amount;
     }
 
-    public int getAmountOfLegendFragments() {
-        return amountOfLegendFragments;
+    public int getLegendFragments() {
+        return legendFragments;
     }
 
     public void addLegendFragments(int amount) {
-        this.amountOfLegendFragments += amount;
+        this.legendFragments += amount;
     }
 
-    public int getAmountOfFairyEssence() {
-        return amountOfFairyEssence;
+    public int getFairyEssence() {
+        return fairyEssence;
     }
 
-    public void setAmountOfFairyEssence(int amountOfFairyEssence) {
-        this.amountOfFairyEssence = amountOfFairyEssence;
+    public void setFairyEssence(int fairyEssence) {
+        this.fairyEssence = fairyEssence;
     }
 
     public void addFairyEssence(int amount) {
-        this.amountOfFairyEssence += amount;
+        this.fairyEssence += amount;
     }
 
-    public int getAmountOfCommonStarPieces() {
-        return amountOfCommonStarPieces;
+    public int getCommonStarPieces() {
+        return commonStarPieces;
     }
 
-    public int getAmountOfRareStarPieces() {
-        return amountOfRareStarPieces;
+    public int getRareStarPieces() {
+        return rareStarPieces;
     }
 
-    public int getAmountOfEpicStarPieces() {
-        return amountOfEpicStarPieces;
+    public int getEpicStarPieces() {
+        return epicStarPieces;
     }
 
-    public int getAmountOfLegendaryStarPieces() {
-        return amountOfLegendaryStarPieces;
+    public int getLegendaryStarPieces() {
+        return legendaryStarPieces;
     }
 
     public void addCommonStarPiece() {
-        this.amountOfCommonStarPieces += 1;
+        this.commonStarPieces += 1;
     }
 
     public void addRareStarPiece() {
-        this.amountOfRareStarPieces += 1;
+        this.rareStarPieces += 1;
     }
 
     public void addEpicStarPiece() {
-        this.amountOfEpicStarPieces += 1;
+        this.epicStarPieces += 1;
     }
 
     public void addLegendaryStarPiece() {
-        this.amountOfLegendaryStarPieces += 1;
+        this.legendaryStarPieces += 1;
     }
 
-    public int getNumberOfSupplyDropRolls() {
-        return numberOfSupplyDropRolls;
+    public int getSkillBoostModifiers() {
+        return skillBoostModifiers;
+    }
+
+    public void addSkillBoostModifier() {
+        this.skillBoostModifiers += 1;
+    }
+
+    public int getSupplyDropTokens() {
+        return supplyDropTokens;
     }
 
     public void addSupplyDropRoll(int amount) {
-        this.numberOfSupplyDropRolls += amount;
+        this.supplyDropTokens += amount;
+    }
+
+    public List<SupplyDropEntry> getSupplyDropEntries() {
+        return supplyDropEntries;
+    }
+
+    public void addSupplyDropEntry(SupplyDropEntry entry) {
+        this.supplyDropEntries.add(entry);
+    }
+
+    public void setSupplyDropTokens(int supplyDropTokens) {
+        this.supplyDropTokens = supplyDropTokens;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void addCoins(int amount) {
+        this.coins += amount;
     }
 }

@@ -59,7 +59,7 @@ public class WeaponSalvageMenu {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
-            databasePlayer.getPveStats().addSyntheticAlloy(salvageAmount);
+            databasePlayer.getPveStats().addSyntheticShards(salvageAmount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(

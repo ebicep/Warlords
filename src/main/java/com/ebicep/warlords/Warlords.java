@@ -435,10 +435,14 @@ public class Warlords extends JavaPlugin {
                     }
                 }
         );
+
         SignGUI.init(this);
 
         CustomEntitiesRegistry.registerEntities();
 
+        Warlords.newChain()
+                .sync(NPCManager::createSupplyDropFairNPC)
+                .execute();
 
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");

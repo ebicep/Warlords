@@ -57,4 +57,9 @@ public class NumberFormat {
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(amount);
     }
+
+    public static String addCommas(int amount) {
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        return formatter.format(amount);
+    }
 }

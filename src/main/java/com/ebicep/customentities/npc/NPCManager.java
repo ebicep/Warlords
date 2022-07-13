@@ -3,15 +3,19 @@ package com.ebicep.customentities.npc;
 import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.customentities.npc.traits.MasterworksFairTrait;
 import com.ebicep.customentities.npc.traits.PveStartTrait;
+import com.ebicep.customentities.npc.traits.SupplyDropTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SkinTrait;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
@@ -21,6 +25,7 @@ public class NPCManager {
     public static NPC gameStartNPC;
     public static NPC pveStartNPC;
     public static NPC masterworksFairNPC;
+    public static NPC supplyDropNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
     public static void createGameNPCs() {
@@ -36,16 +41,11 @@ public class NPCManager {
                 .execute();
     }
 
-    public static void createIndependentNPCs() {
-        if (!Warlords.citizensEnabled) return;
-
-        Warlords.newChain()
-                .sync(NPCManager::createMasterworksFairNPC)
-                .execute();
-    }
-
     public static void destroyNPCs() {
         if (!Warlords.citizensEnabled) return;
+
+        npcRegistry.deregisterAll();
+        npcRegistry.despawnNPCs(DespawnReason.RELOAD);
 
         gameStartNPC.destroy();
         pveStartNPC.destroy();
@@ -81,7 +81,7 @@ public class NPCManager {
         pveStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 747.5, 90, 0));
     }
 
-    private static void createMasterworksFairNPC() {
+    public static void createMasterworksFairNPC() {
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
         masterworksFairNPC = npcRegistry.createNPC(EntityType.VILLAGER, "masterworks-fair");
@@ -91,6 +91,21 @@ public class NPCManager {
         masterworksFairNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
         masterworksFairNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2542, 50, 754.5, 135, 0));
+    }
+
+    public static void createSupplyDropFairNPC() {
+        registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
+
+        supplyDropNPC = npcRegistry.createNPC(EntityType.RABBIT, "supply-drop");
+        supplyDropNPC.addTrait(SupplyDropTrait.class);
+        HologramTrait hologramTrait = supplyDropNPC.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Supply Drop Susan");
+        //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
+
+        supplyDropNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+
+        supplyDropNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2538, 50, 751, 135, 0));
     }
 
 
