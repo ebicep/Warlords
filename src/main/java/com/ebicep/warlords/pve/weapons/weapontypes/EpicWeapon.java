@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore.getAverageValue;
 
-public class EpicWeapon extends AbstractBetterWeapon implements Salvageable, WeaponScore {
+public class EpicWeapon extends AbstractBetterWeapon implements Salvageable, WeaponScore, StatsRerollable {
 
     public static final int MELEE_DAMAGE_MIN = 120;
     @Transient
@@ -83,5 +83,15 @@ public class EpicWeapon extends AbstractBetterWeapon implements Salvageable, Wea
     @Override
     public int getMaxSalvageAmount() {
         return 18;
+    }
+
+    @Override
+    public int getRerollCost() {
+        return 500;
+    }
+
+    @Override
+    public void reroll() {
+        generateStats();
     }
 }

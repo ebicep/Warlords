@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -86,11 +86,11 @@ public class TestCommand implements CommandExecutor {
         }
 
 
-        MasterworksFairManager.awardEntriesThroughRewardInventory(MasterworksFairManager.currentFair);
+        //MasterworksFairManager.awardEntriesThroughRewardInventory(MasterworksFairManager.currentFair);
 
 //        testWeaponScore((Player) sender);
 
-        //AbstractWeapon.giveTestItem((Player) sender);
+        AbstractWeapon.giveTestItem((Player) sender);
 
 
 //        for (int i = 0; i < 20; i++) {

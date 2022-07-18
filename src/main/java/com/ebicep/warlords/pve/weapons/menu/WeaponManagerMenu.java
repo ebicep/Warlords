@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
+import com.ebicep.warlords.pve.weapons.weapontypes.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
@@ -205,7 +206,7 @@ public class WeaponManagerMenu {
                                             "",
                                             ChatColor.YELLOW + "Shift-Click" + ChatColor.GRAY + " to instantly salvage this weapon.",
                                             "",
-                                            ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + ((Salvageable) weapon).getSalvageRewardMessage(),
+                                            ChatColor.GREEN + "Rewards: " + ((Salvageable) weapon).getSalvageRewardMessage(),
                                             "",
                                             ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
                                     )
@@ -215,7 +216,7 @@ public class WeaponManagerMenu {
                                     .lore(
                                             ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
                                             "",
-                                            ChatColor.GREEN + "Rewards: " + ChatColor.AQUA + ((Salvageable) weapon).getSalvageRewardMessage(),
+                                            ChatColor.GREEN + "Rewards: " + ((Salvageable) weapon).getSalvageRewardMessage(),
                                             "",
                                             ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
                                     )
@@ -230,6 +231,16 @@ public class WeaponManagerMenu {
                     }
             ));
         }
+        //reroll common/rare/epic
+        if (weapon instanceof StatsRerollable) {
+            weaponOptions.add(new Pair<>(
+                    new ItemBuilder(Material.WORKBENCH)
+                            .name(ChatColor.GREEN + "Weapon Stats Reroll")
+                            .get(),
+                    (m, e) -> WeaponRerollMenu.openWeaponRerollMenu(player, weapon)
+            ));
+        }
+
         if (weapon instanceof AbstractBetterWeapon) {
             //synthetic alloy upgrade epic/legendary
             weaponOptions.add(new Pair<>(

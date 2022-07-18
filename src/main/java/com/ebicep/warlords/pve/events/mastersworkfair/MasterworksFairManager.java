@@ -193,7 +193,7 @@ public class MasterworksFairManager {
                                 .syncLast(databasePlayer -> {
                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                     pveStats.addMasterworksFairEntry(playerRecordEntry);
-                                    pveStats.getRewards().add(new MasterworksFairReward(value.starPieceRewardType, 0));
+                                    pveStats.getRewards().add(new MasterworksFairReward(value.starPieceRewardType, 1));
                                     switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                         case 0:
                                             pveStats.getRewards().add(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 10));

@@ -14,7 +14,7 @@ public interface Salvageable {
     }
 
     default String getSalvageRewardMessage() {
-        return ChatColor.AQUA.toString() + getMinSalvageAmount() + "-" + getMaxSalvageAmount() + " Synthetic Shards" + ChatColor.GRAY + ".";
+        return ChatColor.WHITE.toString() + getMinSalvageAmount() + "-" + getMaxSalvageAmount() + " Synthetic Shards" + ChatColor.GRAY + ".";
     }
 
 }

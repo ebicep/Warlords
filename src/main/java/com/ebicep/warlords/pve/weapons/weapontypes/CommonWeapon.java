@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import static com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore.getAverageValue;
 
-public class CommonWeapon extends AbstractWeapon implements Salvageable, WeaponScore {
+public class CommonWeapon extends AbstractWeapon implements Salvageable, WeaponScore, StatsRerollable {
 
     @Transient
     public static final int MELEE_DAMAGE_MIN = 80;
@@ -77,5 +77,15 @@ public class CommonWeapon extends AbstractWeapon implements Salvageable, WeaponS
     @Override
     public int getMaxSalvageAmount() {
         return 2;
+    }
+
+    @Override
+    public int getRerollCost() {
+        return 100;
+    }
+
+    @Override
+    public void reroll() {
+        generateStats();
     }
 }

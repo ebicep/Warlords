@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -114,18 +120,18 @@ public abstract class AbstractWeapon {
     }
 
     public static void giveTestItem(Player player) {
-//        AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
-//        AbstractWeapon abstractWeapon2 = new RareWeapon(player.getUniqueId());
-//        AbstractWeapon abstractWeapon3 = new EpicWeapon(player.getUniqueId());
-//        AbstractWeapon abstractWeapon4 = new LegendaryWeapon(player.getUniqueId());
-//
-//        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon2);
-//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon3);
-//        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon4);
-//        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-//
+        AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
+        AbstractWeapon abstractWeapon2 = new RareWeapon(player.getUniqueId());
+        AbstractWeapon abstractWeapon3 = new EpicWeapon(player.getUniqueId());
+        AbstractWeapon abstractWeapon4 = new LegendaryWeapon(player.getUniqueId());
+
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon2);
+        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon3);
+        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon4);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
 //        player.spigot().sendMessage(new TextComponentBuilder(ChatColor.GOLD + "Test Weapon 1")
 //                .setHoverItem(abstractWeapon.generateItemStack())
 //                .getTextComponent()
