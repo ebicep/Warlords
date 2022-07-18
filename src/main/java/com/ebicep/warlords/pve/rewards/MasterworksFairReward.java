@@ -11,20 +11,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reward {
+public class MasterworksFairReward extends AbstractReward {
 
-    private RewardTypes reward;
-    private float amount;
-    private String from;
     @Field("time_given")
     private Instant timeGiven;
-    @Field("time_claimed")
-    private Instant timeClaimed;
 
-    public Reward(RewardTypes reward, float amount, String from) {
-        this.reward = reward;
-        this.amount = amount;
-        this.from = from;
+    public MasterworksFairReward(RewardTypes reward, float amount) {
+        super(reward, amount, "Masterworks Fair");
         this.timeGiven = Instant.now();
     }
 
@@ -55,28 +48,8 @@ public class Reward {
                 .flags(ItemFlag.HIDE_POTION_EFFECTS)
                 .get();
     }
-
-    public RewardTypes getReward() {
-        return reward;
-    }
-
-    public float getAmount() {
-        return amount;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
     public Instant getTimeGiven() {
         return timeGiven;
     }
 
-    public Instant getTimeClaimed() {
-        return timeClaimed;
-    }
-
-    public void setTimeClaimed() {
-        this.timeClaimed = Instant.now();
-    }
 }

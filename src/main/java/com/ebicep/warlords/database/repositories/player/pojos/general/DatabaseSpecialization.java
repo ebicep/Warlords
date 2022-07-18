@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.rewards.LevelUpReward;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -21,6 +22,8 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
     protected int prestige;
     @Field("prestige_dates")
     protected List<Instant> prestigeDates = new ArrayList<>();
+    @Field("level_up_rewards")
+    private List<LevelUpReward> levelUpRewards = new ArrayList<>();
 
     public DatabaseSpecialization() {
 
@@ -64,6 +67,23 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
         this.prestige++;
         this.prestigeDates.add(Instant.now());
         this.experience = 0;
+    }
+
+    public List<LevelUpReward> getLevelUpRewards() {
+        return levelUpRewards;
+    }
+
+    public void addLevelUpReward(LevelUpReward levelUpReward) {
+        this.levelUpRewards.add(levelUpReward);
+    }
+
+    public boolean hasLevelUpReward(int level, int prestige) {
+        for (LevelUpReward reward : levelUpRewards) {
+            if (reward.getPrestige() == prestige && reward.getLevel() == level) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

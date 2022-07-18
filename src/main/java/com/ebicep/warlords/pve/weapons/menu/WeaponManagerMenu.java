@@ -103,10 +103,10 @@ public class WeaponManagerMenu {
                                 ChatColor.AQUA.toString() + databasePlayerPvE.getLegendFragments() + ChatColor.GOLD + " Legend Fragments",
                                 ChatColor.AQUA.toString() + databasePlayerPvE.getFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence",
                                 "",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getCommonStarPieces() + ChatColor.GREEN + " Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() > 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getRareStarPieces() + ChatColor.BLUE + " Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() > 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getEpicStarPieces() + ChatColor.DARK_PURPLE + " Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() > 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendaryStarPieces() + ChatColor.GOLD + " Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() > 1 ? "s" : "")
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getCommonStarPieces() + ChatColor.GREEN + " Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() == 1 ? "s" : ""),
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getRareStarPieces() + ChatColor.BLUE + " Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() == 1 ? "s" : ""),
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getEpicStarPieces() + ChatColor.DARK_PURPLE + " Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() == 1 ? "s" : ""),
+                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendaryStarPieces() + ChatColor.GOLD + " Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() == 1 ? "s" : "")
                         )
                         .get(),
                 (m, e) -> {

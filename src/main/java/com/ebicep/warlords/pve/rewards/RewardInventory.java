@@ -33,30 +33,30 @@ public class RewardInventory {
     public static void openRewardInventory(Player player, int page) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        List<Reward> rewards = databasePlayerPvE.getRewards().stream()
+        List<MasterworksFairReward> masterworksFairRewards = databasePlayerPvE.getRewards().stream()
                 .filter(reward -> reward.getTimeClaimed() == null)
                 .collect(Collectors.toList());
 
         Menu menu = new Menu("Your Rewards", 9 * 6);
 
-        if (rewards.isEmpty()) {
+        if (masterworksFairRewards.isEmpty()) {
             menu.setItem(4, 2, new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "You have no rewards to claim!").get(), (m, e) -> {
             });
         } else {
             for (int i = 0; i < 45; i++) {
                 int rewardNumber = ((page - 1) * 45) + i;
-                if (rewardNumber < rewards.size()) {
-                    Reward reward = rewards.get(rewardNumber);
+                if (rewardNumber < masterworksFairRewards.size()) {
+                    MasterworksFairReward masterworksFairReward = masterworksFairRewards.get(rewardNumber);
                     menu.setItem(i % 9, i / 9,
-                            reward.getItem(),
+                            masterworksFairReward.getItem(),
                             (m, e) -> {
-                                reward.getReward().biConsumer.accept(databasePlayer, reward.getAmount());
-                                reward.setTimeClaimed();
+                                masterworksFairReward.getReward().biConsumer.accept(databasePlayer, masterworksFairReward.getAmount());
+                                masterworksFairReward.setTimeClaimed();
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                        new TextComponentBuilder(ChatColor.GREEN + reward.getReward().name)
-                                                .setHoverItem(reward.getItemWithoutClaim())
+                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getReward().name)
+                                                .setHoverItem(masterworksFairReward.getItemWithoutClaim())
                                                 .getTextComponent());
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -73,15 +73,15 @@ public class RewardInventory {
                             .name(ChatColor.GREEN + "Click to claim all rewards!")
                             .get(),
                     (m, e) -> {
-                        for (Reward reward : rewards) {
-                            reward.getReward().biConsumer.accept(databasePlayer, reward.getAmount());
-                            reward.setTimeClaimed();
+                        for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
+                            masterworksFairReward.getReward().biConsumer.accept(databasePlayer, masterworksFairReward.getAmount());
+                            masterworksFairReward.setTimeClaimed();
 
                             sendRewardMessage(
                                     player.getUniqueId(),
                                     new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                    new TextComponentBuilder(ChatColor.GREEN + reward.getReward().name)
-                                            .setHoverItem(reward.getItemWithoutClaim())
+                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getReward().name)
+                                            .setHoverItem(masterworksFairReward.getItemWithoutClaim())
                                             .getTextComponent());
                         }
 
@@ -102,7 +102,7 @@ public class RewardInventory {
                     }
             );
         }
-        if (rewards.size() > (page * 45)) {
+        if (masterworksFairRewards.size() > (page * 45)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
                             .name(ChatColor.GREEN + "Next Page")

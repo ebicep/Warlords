@@ -11,7 +11,7 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
-import com.ebicep.warlords.pve.rewards.Reward;
+import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -26,7 +26,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
     //GENERAL
-    private List<Reward> rewards = new ArrayList<>();
+    @Field("masterworks_fair_rewards")
+    private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
     @Field("coins")
     private int coins = 0;
     //WEAPONS
@@ -256,9 +257,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.coins += amount;
     }
 
-    public List<Reward> getRewards() {
-        return rewards;
+    public List<MasterworksFairReward> getRewards() {
+        return masterworksFairRewards;
     }
-
 
 }

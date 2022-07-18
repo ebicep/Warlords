@@ -8,6 +8,16 @@ import java.util.function.BiConsumer;
 
 public enum RewardTypes {
 
+    SYNTHETIC_SHARD(
+            "Synthetic Shard",
+            new ItemStack(Material.BLAZE_POWDER),
+            (databasePlayer, amount) -> databasePlayer.getPveStats().addSyntheticShards(amount.intValue())
+    ),
+    FAIRY_ESSENCE(
+            "Fairy Essence",
+            new ItemStack(Material.INK_SACK, 1, (short) 13),
+            (databasePlayer, amount) -> databasePlayer.getPveStats().addFairyEssence(amount.intValue())
+    ),
     COMMON_STAR_PIECE(
             "Common Star Piece",
             new ItemStack(Material.NETHER_STAR),
