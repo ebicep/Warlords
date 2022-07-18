@@ -7,6 +7,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import static com.ebicep.warlords.player.general.WeaponsRarity.*;
 
 public enum Weapons {
@@ -135,6 +139,16 @@ public enum Weapons {
             }
         }
         return FELFLAME_BLADE;
+    }
+
+    public static Weapons getRandomWeaponFromRarity(WeaponsRarity rarity) {
+        List<Weapons> weapons = new ArrayList<>();
+        for (Weapons value : Weapons.values()) {
+            if (value.rarity == rarity) {
+                weapons.add(value);
+            }
+        }
+        return weapons.get(ThreadLocalRandom.current().nextInt(weapons.size()));
     }
 
     public ItemStack getItem() {

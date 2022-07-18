@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes;
 
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -36,6 +38,8 @@ public class CommonWeapon extends AbstractWeapon implements Salvageable, WeaponS
 
     public CommonWeapon(UUID uuid) {
         super(uuid);
+        this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.COMMON);
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
     @Override

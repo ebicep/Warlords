@@ -44,7 +44,12 @@ public class WeaponSkinSelectorMenu {
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     new ItemBuilder(weaponSkin.getItem())
                             .name(ChatColor.GREEN + weaponSkin.getName())
-                            .lore(isUnlocked ? ChatColor.GREEN + "Unlocked" : ChatColor.GRAY + "Cost: " + ChatColor.AQUA + weaponSkin.getCost() + ChatColor.LIGHT_PURPLE + " Fairy Essence")
+                            .lore(
+                                    ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
+                                    ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
+                                    "",
+                                    isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "UNLOCKED" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkin.getCost() + " Fairy Essence"
+                            )
                             .get(),
                     (m, e) -> {
                         if (isUnlocked) {

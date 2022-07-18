@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes;
 
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -39,6 +41,8 @@ public class EpicWeapon extends AbstractBetterWeapon implements Salvageable, Wea
 
     public EpicWeapon(UUID uuid) {
         super(uuid);
+        this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.EPIC);
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -34,6 +36,8 @@ public class LegendaryWeapon extends AbstractBetterWeapon {
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
         this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
+        this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
     @Override

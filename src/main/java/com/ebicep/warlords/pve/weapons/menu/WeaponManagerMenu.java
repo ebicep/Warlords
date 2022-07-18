@@ -100,14 +100,22 @@ public class WeaponManagerMenu {
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.GREEN + "Your Drops")
                         .lore(
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendFragments() + ChatColor.GOLD + " Legend Fragments",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence",
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendFragments() + ChatColor.GOLD + " Legend Fragments",
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence",
+//                                "",
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getCommonStarPieces() + ChatColor.GREEN + " Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() != 1 ? "s" : ""),
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getRareStarPieces() + ChatColor.BLUE + " Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() != 1 ? "s" : ""),
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getEpicStarPieces() + ChatColor.DARK_PURPLE + " Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() != 1 ? "s" : ""),
+//                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendaryStarPieces() + ChatColor.GOLD + " Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() != 1 ? "s" : "")
+                                ChatColor.WHITE.toString() + "Synthetic Shards" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getSyntheticShards(),
+                                ChatColor.GOLD.toString() + "Legend Fragments" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getLegendFragments(),
+                                ChatColor.LIGHT_PURPLE.toString() + "Fairy Essence" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getFairyEssence(),
                                 "",
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getCommonStarPieces() + ChatColor.GREEN + " Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() == 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getRareStarPieces() + ChatColor.BLUE + " Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() == 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getEpicStarPieces() + ChatColor.DARK_PURPLE + " Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() == 1 ? "s" : ""),
-                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendaryStarPieces() + ChatColor.GOLD + " Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() == 1 ? "s" : "")
+                                ChatColor.GREEN.toString() + "Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCommonStarPieces(),
+                                ChatColor.BLUE.toString() + "Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getRareStarPieces(),
+                                ChatColor.DARK_PURPLE.toString() + "Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getEpicStarPieces(),
+                                ChatColor.GOLD.toString() + "Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getLegendaryStarPieces()
                         )
                         .get(),
                 (m, e) -> {
