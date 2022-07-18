@@ -1,11 +1,8 @@
 package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -139,12 +136,12 @@ public abstract class AbstractWeapon {
 //                .getTextComponent()
 //        );
 
-        for (int i = 0; i < 50; i++) {
-            AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-            databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        }
+//        for (int i = 0; i < 50; i++) {
+//            AbstractWeapon abstractWeapon = new CommonWeapon(player.getUniqueId());
+//            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//            databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+//            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//        }
     }
 
     public Instant getDate() {

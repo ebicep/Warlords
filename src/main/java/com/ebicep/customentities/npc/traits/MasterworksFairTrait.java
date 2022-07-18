@@ -25,24 +25,28 @@ public class MasterworksFairTrait extends Trait {
     public void run() {
         //only update every 10 mins
         if (tickCounter++ % 12000 == 0) {
-            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-            hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair");
-
-            if (currentFair == null) return;
-            Instant currentDate = Instant.now();
-            Instant endDate = currentFair.getStartDate().plus(7, ChronoUnit.DAYS);
-            long days = ChronoUnit.DAYS.between(currentDate, endDate);
-            long hours = (ChronoUnit.HOURS.between(currentDate, endDate) % 24) + 1;
-            //long minutes = ChronoUnit.MINUTES.between(currentDate, endDate) % 60;
-            String timeLeft;
-            if (days <= 0) {
-                timeLeft = hours + " hour" + (hours != 1 ? "s" : "");
-            } else {
-                timeLeft = days + " day" + (days != 1 ? "s and " : "and ") + hours + " hour" + (hours != 1 ? "s" : "");
-            }
-            hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + timeLeft + ChatColor.BOLD + " left");
+            updateHologram();
         }
+    }
+
+    public void updateHologram() {
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair");
+
+        if (currentFair == null) return;
+        Instant currentDate = Instant.now();
+        Instant endDate = currentFair.getStartDate().plus(7, ChronoUnit.DAYS);
+        long days = ChronoUnit.DAYS.between(currentDate, endDate);
+        long hours = (ChronoUnit.HOURS.between(currentDate, endDate) % 24) + 1;
+        //long minutes = ChronoUnit.MINUTES.between(currentDate, endDate) % 60;
+        String timeLeft;
+        if (days <= 0) {
+            timeLeft = hours + " hour" + (hours != 1 ? "s" : "");
+        } else {
+            timeLeft = days + " day" + (days != 1 ? "s and " : "and ") + hours + " hour" + (hours != 1 ? "s" : "");
+        }
+        hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + timeLeft + ChatColor.BOLD + " left");
     }
 
     @EventHandler

@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -80,10 +80,13 @@ public class TestCommand implements CommandExecutor {
 //            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN);
 //            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
 
-            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
-            warlordsPlayer.addCurrency(10000000);
+//            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
+//            warlordsPlayer.addCurrency(10000000);
 
         }
+
+
+        MasterworksFairManager.awardEntriesThroughRewardInventory(MasterworksFairManager.currentFair);
 
 //        testWeaponScore((Player) sender);
 

@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
+import com.ebicep.warlords.pve.rewards.Reward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -47,6 +48,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
     @Field("coins")
     private int coins = 0;
+    private List<Reward> rewards = new ArrayList<>();
 
 
     @Override
@@ -216,7 +218,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return supplyDropTokens;
     }
 
-    public void addSupplyDropRoll(int amount) {
+    public void addSupplyDropToken(int amount) {
         this.supplyDropTokens += amount;
     }
 
@@ -238,5 +240,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public void addCoins(int amount) {
         this.coins += amount;
+    }
+
+    public List<Reward> getRewards() {
+        return rewards;
     }
 }

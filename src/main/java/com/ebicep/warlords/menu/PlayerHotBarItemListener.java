@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -49,6 +50,40 @@ public class PlayerHotBarItemListener implements Listener {
 
                 }));
 
+        if (!fromGame) {
+            Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
+                List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                if (!playerList.isEmpty()) {
+                    playerList.stream()
+                            .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
+                            .findFirst()
+                            .ifPresent(regularGamePlayer ->
+                                    addItem(player, 2, new ItemListener(
+                                            new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get(),
+                                            e -> {
+                                                Warlords.partyManager.getPartyFromAny(e.getPlayer().getUniqueId()).ifPresent(p -> {
+                                                    List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getRegularGamesMenu().getRegularGamePlayers();
+                                                    if (!playerList2.isEmpty()) {
+                                                        p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                                                        new BukkitRunnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                                                    p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                                                                } else {
+                                                                    this.cancel();
+                                                                }
+                                                            }
+                                                        }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                                                    }
+                                                });
+                                            }
+                                    ))
+                            );
+                }
+            });
+        }
+
         if (player.hasPermission("warlords.game.debug")) {
             addItem(player, 3, new ItemListener(
                     new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get(),
@@ -89,39 +124,10 @@ public class PlayerHotBarItemListener implements Listener {
             }
         }.runTaskLater(Warlords.getInstance(), Warlords.getPlayerHeads().containsKey(uuid) ? 0 : 80);
 
-        if (!fromGame) {
-            Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
-                if (!playerList.isEmpty()) {
-                    playerList.stream()
-                            .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                            .findFirst()
-                            .ifPresent(regularGamePlayer ->
-                                    addItem(player, 8, new ItemListener(
-                                            new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get(),
-                                            e -> {
-                                                Warlords.partyManager.getPartyFromAny(e.getPlayer().getUniqueId()).ifPresent(p -> {
-                                                    List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getRegularGamesMenu().getRegularGamePlayers();
-                                                    if (!playerList2.isEmpty()) {
-                                                        p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                                                        new BukkitRunnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
-                                                                    p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                                                                } else {
-                                                                    this.cancel();
-                                                                }
-                                                            }
-                                                        }.runTaskTimer(Warlords.getInstance(), 20, 10);
-                                                    }
-                                                });
-                                            }
-                                    ))
-                            );
-                }
-            });
-        }
+        addItem(player, 8, new ItemListener(
+                new ItemBuilder(Material.CHEST).name("§aReward Inventory").get(),
+                e -> RewardInventory.openRewardInventory(e.getPlayer(), 1)
+        ));
     }
 
     @EventHandler
