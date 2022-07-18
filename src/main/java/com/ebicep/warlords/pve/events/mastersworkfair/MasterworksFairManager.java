@@ -128,18 +128,21 @@ public class MasterworksFairManager {
     }
 
     public static void awardEntriesDirectly(MasterworksFair masterworksFair) {
+        Instant now = Instant.now();
         for (WeaponsPvE value : WeaponsPvE.values()) {
             if (value.getPlayerEntries != null) {
                 List<MasterworksFairPlayerEntry> playerEntries = value.getPlayerEntries.apply(masterworksFair);
                 playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
                 for (int i = 0; i < playerEntries.size(); i++) {
                     MasterworksFairPlayerEntry entry = playerEntries.get(i);
+                    MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(value, i + 1, now);
                     int finalI = i;
                     if (i < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
                         Warlords.newChain()
                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(entry.getUuid())))
                                 .syncLast(databasePlayer -> {
                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    pveStats.addMasterworksFairEntry(playerRecordEntry);
                                     value.addStarPiece.accept(pveStats);
                                     switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                         case 0:
@@ -157,6 +160,7 @@ public class MasterworksFairManager {
                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(entry.getUuid())))
                                 .syncLast(databasePlayer -> {
                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    pveStats.addMasterworksFairEntry(playerRecordEntry);
                                     if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
                                         pveStats.addSupplyDropToken(5);
                                     } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
@@ -174,18 +178,21 @@ public class MasterworksFairManager {
     }
 
     public static void awardEntriesThroughRewardInventory(MasterworksFair masterworksFair) {
+        Instant now = Instant.now();
         for (WeaponsPvE value : WeaponsPvE.values()) {
             if (value.getPlayerEntries != null) {
                 List<MasterworksFairPlayerEntry> playerEntries = value.getPlayerEntries.apply(masterworksFair);
                 playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
                 for (int i = 0; i < playerEntries.size(); i++) {
                     MasterworksFairPlayerEntry entry = playerEntries.get(i);
+                    MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(value, i + 1, now);
                     int finalI = i;
                     if (i < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
                         Warlords.newChain()
                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(entry.getUuid())))
                                 .syncLast(databasePlayer -> {
                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    pveStats.addMasterworksFairEntry(playerRecordEntry);
                                     pveStats.getRewards().add(new Reward(value.starPieceRewardType, 0, "Masterworks Fair"));
                                     switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                         case 0:
@@ -203,6 +210,7 @@ public class MasterworksFairManager {
                                 .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(entry.getUuid())))
                                 .syncLast(databasePlayer -> {
                                     DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    pveStats.addMasterworksFairEntry(playerRecordEntry);
                                     if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
                                         pveStats.getRewards().add(new Reward(RewardTypes.SUPPLY_DROP_TOKEN, 5, "Masterworks Fair"));
                                     } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities

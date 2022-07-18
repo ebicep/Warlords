@@ -65,11 +65,11 @@ public enum SupplyDropRewards {
     }
 
     public String getType() {
-        return dropChance <= 50 ? "RARE" : "COMMON";
+        return dropChance <= 10 ? "RARE" : "COMMON";
     }
 
     public ChatColor getChatColor() {
-        return dropChance <= 50 ? ChatColor.BLUE : ChatColor.GREEN;
+        return dropChance <= 10 ? ChatColor.BLUE : ChatColor.GREEN;
     }
 
     public void givePlayerRewardTitle(Player player) {

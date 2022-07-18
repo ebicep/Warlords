@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.rewards.Reward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -24,6 +25,11 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
+    //GENERAL
+    private List<Reward> rewards = new ArrayList<>();
+    @Field("coins")
+    private int coins = 0;
+    //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
     @Field("synthetic_shards")
@@ -42,14 +48,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private int legendaryStarPieces = 0;
     @Field("skill_boost_modifiers")
     private int skillBoostModifiers = 0;
-    @Field("supply_drop_tokens")
-    private int supplyDropTokens = 0;
+    //MASTERWORKS FAIR
+    @Field("masterworks_fair_submissions")
+    private List<MasterworksFairEntry> masterworksFairEntries = new ArrayList<>();
+    //SUPPLY DROP
     @Field("supply_drop_rewards")
     private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
-    @Field("coins")
-    private int coins = 0;
-    private List<Reward> rewards = new ArrayList<>();
-
+    @Field("supply_drop_tokens")
+    private int supplyDropTokens = 0;
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
@@ -214,8 +220,20 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.skillBoostModifiers += 1;
     }
 
+    public List<MasterworksFairEntry> getMasterworksFairEntries() {
+        return masterworksFairEntries;
+    }
+
+    public void addMasterworksFairEntry(MasterworksFairEntry entry) {
+        this.masterworksFairEntries.add(entry);
+    }
+
     public int getSupplyDropTokens() {
         return supplyDropTokens;
+    }
+
+    public void setSupplyDropTokens(int supplyDropTokens) {
+        this.supplyDropTokens = supplyDropTokens;
     }
 
     public void addSupplyDropToken(int amount) {
@@ -230,10 +248,6 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.supplyDropEntries.add(entry);
     }
 
-    public void setSupplyDropTokens(int supplyDropTokens) {
-        this.supplyDropTokens = supplyDropTokens;
-    }
-
     public int getCoins() {
         return coins;
     }
@@ -245,4 +259,6 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     public List<Reward> getRewards() {
         return rewards;
     }
+
+
 }
