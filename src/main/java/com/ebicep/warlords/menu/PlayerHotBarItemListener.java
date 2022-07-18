@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -145,7 +146,10 @@ public class PlayerHotBarItemListener implements Listener {
         }
 
         for (ItemListener itemListener : itemListeners) {
-            if (itemListener.getItemStack().equals(itemStack)) {
+            if (
+                    itemStack.getType() == Material.SKULL_ITEM && itemListener.itemStack.getType() == Material.SKULL_ITEM && Objects.equals(((SkullMeta) itemStack.getItemMeta()).getOwner(), ((SkullMeta) itemListener.itemStack.getItemMeta()).getOwner()) ||
+                            itemListener.getItemStack().equals(itemStack)
+            ) {
                 itemListener.getOnClick().accept(e);
             }
         }
@@ -169,13 +173,17 @@ public class PlayerHotBarItemListener implements Listener {
             return onClick;
         }
 
-        //equals and hashcode method that only compares itemstack
+        //equals and hashcode method that only compares itemstack unless type if skull then also compare owner
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ItemListener that = (ItemListener) o;
-            return itemStack.equals(that.itemStack);
+            if (itemStack.getType() == Material.SKULL_ITEM && that.itemStack.getType() == Material.SKULL_ITEM) {
+                return Objects.equals(((SkullMeta) itemStack.getItemMeta()).getOwner(), ((SkullMeta) that.itemStack.getItemMeta()).getOwner());
+            } else {
+                return itemStack.equals(that.itemStack);
+            }
         }
 
         @Override
