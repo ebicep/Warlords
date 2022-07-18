@@ -177,15 +177,15 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Game Addons = " + game.getAddons());
         System.out.println(" ----- GAME END ----- ");
 
-        List<WarlordsEntity> players = PlayerFilter.playingGame(game).toList();
+        List<WarlordsEntity> players = PlayerFilter.playingGameWarlordsPlayers(game).toList();
         if (players.isEmpty()) {
             return;
         }
         //PUBS
-        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
+        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             // TODO parse winEvent better here
-            if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
+            if (winEvent.getDeclaredWinner() == Team.BLUE) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), false, true);
             } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), false, true);
@@ -204,9 +204,9 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } //COMPS
-        else if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer >= 6000) {
+        else if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 16 && timer >= 6000) {
             String gameEnd = "[GAME] A game ended with ";
-            if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
+            if (winEvent.getDeclaredWinner() == Team.BLUE) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
             } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), true, false);
@@ -217,7 +217,7 @@ public class PlayingState implements State, TimerDebugAble {
             DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames);
         } //END GAME
         else {
-            if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer >= 6000) {
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, winEvent, false);
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB/COMP game was not added to the database and player information remained the same");

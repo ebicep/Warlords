@@ -148,7 +148,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
 
         //EXPERIENCE
-        if (players.size() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
+        if (winEvent != null && players.size() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
             showExperienceSummary(game);
         }
         sendGlobalMessage(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);
@@ -295,7 +295,7 @@ public class EndState implements State, TimerDebugAble {
     private void showExperienceSummary(Game game) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
-        for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+        for (WarlordsEntity wp : PlayerFilter.playingGameWarlordsPlayers(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 
