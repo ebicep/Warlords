@@ -131,6 +131,9 @@ commands:
   unstuck:
     description: Unstuck yourself
     usage: /unstuck
+  offlinefreeze:
+    description: Toggle offline freeze
+    usage: /offlinefreeze
 
 permissions:
   group.default:

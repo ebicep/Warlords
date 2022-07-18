@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 
 public class GameFreezeWhenOfflineOption implements Option {
 
+    public static boolean enabled = true;
     private static final String FROZEN_MESSAGE = ChatColor.YELLOW + "Missing player detected!";
 
     @Override
@@ -15,6 +16,8 @@ public class GameFreezeWhenOfflineOption implements Option {
         new GameRunnable(game, true) {
             @Override
             public void run() {
+                if (!enabled) return;
+
                 boolean anyOffline = game.offlinePlayersWithoutSpectators().anyMatch(e -> !e.getKey().isOnline());
 
                 if (game.isFrozen()) {
