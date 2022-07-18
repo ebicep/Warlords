@@ -86,4 +86,8 @@ public enum WeaponsPvE {
         }
         return NONE;
     }
+
+    public String getChatColorName() {
+        return chatColor.toString() + name;
+    }
 }

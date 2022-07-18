@@ -287,7 +287,7 @@ public class MasterworksFairManager {
         for (WeaponsPvE value : values) {
             if (value.getPlayerEntries != null) {
                 List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
-                infoLore.add(value.chatColor + value.name + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
+                infoLore.add(value.getChatColorName() + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
             }
         }
         infoItemBuilder.lore(infoLore);
