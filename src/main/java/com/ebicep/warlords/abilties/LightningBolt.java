@@ -21,6 +21,8 @@ import java.util.List;
 
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
+    private double hitbox = 3;
+
     public LightningBolt() {
         super("Lightning Bolt", 228, 385, 0, 60, 20, 200, 2.5, 60, false);
     }
@@ -102,7 +104,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
         int playersHit = 0;
         for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(currentLocation, 3, 3, 3)
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
         ) {
@@ -170,4 +172,11 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
 
+    public double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(double hitbox) {
+        this.hitbox = hitbox;
+    }
 }

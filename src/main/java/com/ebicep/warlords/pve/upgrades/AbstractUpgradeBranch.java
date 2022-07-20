@@ -28,6 +28,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     protected List<Upgrade> treeA = new ArrayList<>();
     protected List<Upgrade> treeB = new ArrayList<>();
     protected List<Upgrade> treeC = new ArrayList<>();
+    protected List<Upgrade> utilityTree = new ArrayList<>();
     protected Upgrade masterUpgrade;
 
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
@@ -197,6 +198,52 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             );
         }
 
+        for (int i = 0; i < utilityTree.size(); i++) {
+            Upgrade upgrade = utilityTree.get(i);
+            int finalI = i;
+            menu.setItem(
+                    2 + i + 1,
+                    1,
+                    branchItem(upgrade),
+                    (m, e) -> {
+                        updateInventory(player);
+                        if (upgrade.isUnlocked()) {
+                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+                            return;
+                        }
+                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
+                            return;
+                        }
+                        switch (finalI) {
+                            case 0:
+                                a1();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
+                            case 1:
+                                a2();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
+                            case 2:
+                                a3();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
+                        }
+                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+                        globalAnnouncement(player.getGame(), upgrade, ability);
+                        updateInventory(player);
+                        upgrade.setUnlocked(true);
+                        openUpgradeBranchMenu();
+
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                upgrade.getName(),
+                                upgrade.getDescription())
+                        );
+                    }
+            );
+        }
+
         menu.setItem(
                 4,
                 0,
@@ -277,6 +324,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     public abstract void c2();
 
     public abstract void c3();
+
+    public abstract void util1();
+
+    public abstract void util2();
 
     public abstract void master();
 

@@ -21,6 +21,9 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit multiplier", 10000));
         treeC.add(new Upgrade("Crit Multiplier - Tier III", "+40% Crit multiplier", 20000));
 
+        utilityTree.add(new Upgrade("Utility - Projectile Speed", "+100% Projectile speed", 30000));
+        utilityTree.add(new Upgrade("Utility - Splash Radius", "+2 Blocks hit radius", 30000));
+
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "Lightning Bolt shoots two additional projectiles.",
@@ -79,6 +82,16 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
     @Override
     public void c3() {
         ability.setCritMultiplier(ability.getCritMultiplier() + 20);
+    }
+
+    @Override
+    public void util1() {
+        ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
+    }
+
+    @Override
+    public void util2() {
+        ability.setHitbox(ability.getHitbox() + 2);
     }
 
     @Override

@@ -74,6 +74,16 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setCooldown(ability.getCooldown() * 0.7f);
         ability.setPveUpgrade(true);

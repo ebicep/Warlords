@@ -84,6 +84,16 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setEnergyCost(0);
         ability.setWaveWidth(2);

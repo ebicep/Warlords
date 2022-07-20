@@ -77,6 +77,16 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setBounceRange(ability.getBounceRange() + 5);
         ability.setRadius(ability.getRadius() + 5);

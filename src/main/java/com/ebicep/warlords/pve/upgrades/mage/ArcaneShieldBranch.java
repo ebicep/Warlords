@@ -78,6 +78,16 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setDuration(ability.getDuration() * 2);
         ability.setPveUpgrade(true);

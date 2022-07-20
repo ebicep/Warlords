@@ -84,6 +84,16 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setPuddleDuration(ability.getPuddleDuration() * 2);
     }

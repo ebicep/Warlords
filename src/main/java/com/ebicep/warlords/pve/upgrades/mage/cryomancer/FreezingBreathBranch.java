@@ -81,6 +81,16 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
         ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);

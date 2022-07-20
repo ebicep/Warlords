@@ -74,6 +74,16 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setEnergyRestore((int) (ability.getEnergyRestore() * 1.5f));
         ability.setPveUpgrade(true);

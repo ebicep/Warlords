@@ -78,6 +78,16 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setEnergyCost(0);
         ability.setPveUpgrade(true);

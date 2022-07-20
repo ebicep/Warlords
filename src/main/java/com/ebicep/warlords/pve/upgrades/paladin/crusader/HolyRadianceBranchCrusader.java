@@ -78,6 +78,16 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setEnergyCost(0);
         ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 2);

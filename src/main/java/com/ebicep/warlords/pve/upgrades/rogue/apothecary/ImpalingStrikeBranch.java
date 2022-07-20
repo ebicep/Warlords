@@ -88,6 +88,16 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setPveUpgrade(true);
     }

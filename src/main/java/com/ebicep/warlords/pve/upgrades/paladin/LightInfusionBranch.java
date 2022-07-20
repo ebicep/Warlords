@@ -74,6 +74,16 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
     }
 
     @Override
+    public void util1() {
+        
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setEnergyGiven((int) (ability.getEnergyGiven() * 1.5f));
         ability.setDuration(ability.getDuration() * 2);

@@ -72,6 +72,16 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
 
     }

@@ -84,6 +84,16 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setStrikeCritInterval(ability.getStrikeCritInterval() - 1);
         ability.setSpeedOnCritDuration(ability.getSpeedOnCritDuration() + 2);

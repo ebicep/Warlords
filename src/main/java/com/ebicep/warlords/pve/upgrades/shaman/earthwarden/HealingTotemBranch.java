@@ -78,6 +78,16 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
     }
 
     @Override
+    public void util1() {
+
+    }
+
+    @Override
+    public void util2() {
+
+    }
+
+    @Override
     public void master() {
         ability.setDuration((int) (ability.getDuration() * 1.5f));
         ability.setPveUpgrade(true);
