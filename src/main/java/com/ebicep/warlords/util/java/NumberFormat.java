@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.java;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -16,6 +17,10 @@ public class NumberFormat {
         decimalFormatOptionalTenths.setDecimalSeparatorAlwaysShown(false);
         decimalFormatTenths.setDecimalSeparatorAlwaysShown(false);
         decimalFormatOptionalHundredths.setDecimalSeparatorAlwaysShown(false);
+
+        decimalFormatOptionalTenths.setRoundingMode(RoundingMode.HALF_UP);
+        decimalFormatTenths.setRoundingMode(RoundingMode.HALF_UP);
+        decimalFormatOptionalHundredths.setRoundingMode(RoundingMode.HALF_UP);
 
         suffixes.put(1_000L, "k");
         suffixes.put(1_000_000L, "m");

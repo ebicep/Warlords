@@ -7,10 +7,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.Salvageable;
-import com.ebicep.warlords.pve.weapons.weapontypes.StatsRerollable;
-import com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore;
+import com.ebicep.warlords.pve.weapons.weapontypes.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -248,26 +245,24 @@ public class WeaponManagerMenu {
                     (m, e) -> WeaponRerollMenu.openWeaponRerollMenu(player, weapon)
             ));
         }
-
-        if (weapon instanceof AbstractBetterWeapon) {
-            //synthetic alloy upgrade epic/legendary
+        //upgrade epic/legendary
+        if (weapon instanceof Upgradeable) {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
                             .get(),
+                    (m, e) -> WeaponUpgradeMenu.openWeaponUpgradeMenu(player, weapon)
+            ));
+        }
+        if (weapon instanceof LegendaryWeapon) {
+            //synthetic alloy title legendary
+            weaponOptions.add(new Pair<>(
+                    new ItemBuilder(Material.NAME_TAG)
+                            .name(ChatColor.GREEN + "Title Weapon")
+                            .get(),
                     (m, e) -> {
                     }
             ));
-            if (weapon instanceof LegendaryWeapon) {
-                //synthetic alloy title legendary
-                weaponOptions.add(new Pair<>(
-                        new ItemBuilder(Material.NAME_TAG)
-                                .name(ChatColor.GREEN + "Title Weapon")
-                                .get(),
-                        (m, e) -> {
-                        }
-                ));
-            }
         }
 
         for (int i = 0; i < weaponOptions.size(); i++) {

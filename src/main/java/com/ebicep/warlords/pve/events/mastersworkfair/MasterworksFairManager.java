@@ -73,6 +73,12 @@ public class MasterworksFairManager {
                                         //30 min buffer
                                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                                             System.out.println("[MasterworksFairManager] Masterworks Fair reset time has passed. Resetting.");
+                                            //reset time
+                                            timing.setLastReset(DateUtil.getResetDateToday());
+                                            Warlords.newChain()
+                                                    .async(() -> DatabaseManager.timingsService.update(timing))
+                                                    .execute();
+
                                             //give out rewards
                                             awardEntriesThroughRewardInventory(masterworksFair);
 
@@ -175,6 +181,7 @@ public class MasterworksFairManager {
                 }
             }
         }
+        System.out.println("[MasterworksFairManager] Awarded entries directly");
     }
 
     public static void awardEntriesThroughRewardInventory(MasterworksFair masterworksFair) {
@@ -225,6 +232,7 @@ public class MasterworksFairManager {
                 }
             }
         }
+        System.out.println("[Masterworks Fair] Awarded entries through reward inventory");
     }
 
     public static void openMasterworksFairMenu(Player player) {

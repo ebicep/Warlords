@@ -16,5 +16,9 @@ public class Utils {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
+    public static int generateRandomIndexFromListSize(int size) {
+        return ThreadLocalRandom.current().nextInt(size);
+    }
+
 
 }
