@@ -24,7 +24,7 @@ public class RemedicChains extends AbstractAbility {
     protected int numberOfBrokenLinks = 0;
 
     // Percent
-    private float healingMultiplier = 0.125f;
+    private float healingMultiplier = 12.5f;
     private float allyDamageIncrease = 12;
     private int duration = 8;
     private int alliesAffected = 3;
@@ -44,7 +44,7 @@ public class RemedicChains extends AbstractAbility {
                 "§7When the link expires you and the allies\n" +
                 "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
                 "§7the link early will only heal the allies\n" +
-                "§7for §a12.5% §7of the original amount for\n" +
+                "§7for §a" + healingMultiplier + "% §7of the original amount for\n" +
                 "each second they have been linked." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
@@ -157,7 +157,7 @@ public class RemedicChains extends AbstractAbility {
                                     if (outOfRange) {
                                         numberOfBrokenLinks++;
 
-                                        float totalHealingMultiplier = (healingMultiplier * timeLinked.get());
+                                        float totalHealingMultiplier = ((healingMultiplier / 100f) * timeLinked.get());
                                         chainTarget.addHealingInstance(
                                                 wp,
                                                 name,

@@ -308,15 +308,15 @@ public class WarlordsEvents implements Listener {
                         break;
                     case "Elite Zombie":
                         wpVictim.addDamageInstance(wpAttacker, "", 300, 600, 25, 200, false);
-                        wpAttacker.setHitCooldown(30);
+                        wpAttacker.setHitCooldown(20);
                         break;
                     case "Pig Zombie":
                         wpVictim.addDamageInstance(wpAttacker, "", 100, 200, 25, 200, false);
-                        wpAttacker.setHitCooldown(15);
+                        wpAttacker.setHitCooldown(10);
                         break;
                     case "Zomboid":
                         wpVictim.addDamageInstance(wpAttacker, "", 400, 600, 25, 150, false);
-                        wpAttacker.setHitCooldown(40);
+                        wpAttacker.setHitCooldown(20);
                         break;
                     case "Illusion Apprentice":
                         wpVictim.addDamageInstance(wpAttacker, "", 600, 800, 25, 150, false);

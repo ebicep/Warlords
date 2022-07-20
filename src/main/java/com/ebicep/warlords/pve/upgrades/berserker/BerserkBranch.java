@@ -9,9 +9,9 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     public BerserkBranch(AbilityTree abilityTree, Berserk ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage Boost - Tier I", "+15% Damage boost", 5000));
-        treeA.add(new Upgrade("Damage Boost - Tier II", "+30% Damage boost", 10000));
-        treeA.add(new Upgrade("Damage Boost - Tier III", "+60% Damage boost", 20000));
+        treeA.add(new Upgrade("Damage Boost - Tier I", "+10% Damage boost", 5000));
+        treeA.add(new Upgrade("Damage Boost - Tier II", "+15% Damage boost", 10000));
+        treeA.add(new Upgrade("Damage Boost - Tier III", "+20% Damage boost", 20000));
 
         treeC.add(new Upgrade("Speed - Tier I", "+10% Speed", 5000));
         treeC.add(new Upgrade("Speed - Tier II", "+20% Speed", 10000));

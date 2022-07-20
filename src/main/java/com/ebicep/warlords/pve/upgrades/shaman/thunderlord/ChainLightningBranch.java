@@ -8,17 +8,17 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
     public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage Reduction - Tier I", "+5% Damage reduction", 5000));
-        treeA.add(new Upgrade("Damage Reduction - Tier II", "+10% Damage reduction", 10000));
-        treeA.add(new Upgrade("Damage Reduction - Tier III", "+15% Damage reduction", 20000));
+        treeA.add(new Upgrade("Damage Reduction - Tier I", "+2% Damage reduction per bounce", 5000));
+        treeA.add(new Upgrade("Damage Reduction - Tier II", "+4% Damage reduction per bounce", 10000));
+        treeA.add(new Upgrade("Damage Reduction - Tier III", "+6% Damage reduction per bounce", 20000));
 
         treeB.add(new Upgrade("Utility - Tier I", "+1 Chain bounces", 5000));
         treeB.add(new Upgrade("Utility - Tier II", "+2 Chain bounces", 10000));
         treeB.add(new Upgrade("Utility - Tier III", "+3 Chain bounces", 20000));
 
-        treeC.add(new Upgrade("Damage - Tier I", "+15% Damage", 5000));
-        treeC.add(new Upgrade("Damage - Tier II", "+30% Damage", 10000));
-        treeC.add(new Upgrade("Damage - Tier III", "+60% Damage", 20000));
+        treeC.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
+        treeC.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
+        treeC.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
@@ -29,17 +29,17 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void a1() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
     }
 
     @Override
     public void a2() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
     }
 
     @Override
     public void a3() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 5);
+        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
     }
 
     @Override
@@ -62,24 +62,25 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void c1() {
-        ability.setMinDamageHeal(minDamage * 1.15f);
-        ability.setMaxDamageHeal(maxDamage * 1.15f);
+        ability.setMinDamageHeal(minDamage * 1.1f);
+        ability.setMaxDamageHeal(maxDamage * 1.1f);
     }
 
     @Override
     public void c2() {
-        ability.setMinDamageHeal(minDamage * 1.3f);
-        ability.setMaxDamageHeal(maxDamage * 1.3f);
+        ability.setMinDamageHeal(minDamage * 1.2f);
+        ability.setMaxDamageHeal(maxDamage * 1.2f);
     }
 
     @Override
     public void c3() {
-        ability.setMinDamageHeal(minDamage * 1.6f);
-        ability.setMaxDamageHeal(maxDamage * 1.6f);
+        ability.setMinDamageHeal(minDamage * 1.4f);
+        ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
     @Override
     public void master() {
+        ability.setEnergyCost(0);
         ability.setRadius(30);
         ability.setBounceRange(20);
         ability.setPveUpgrade(true);

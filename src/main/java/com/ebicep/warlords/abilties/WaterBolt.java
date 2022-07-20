@@ -25,7 +25,7 @@ public class WaterBolt extends AbstractProjectileBase {
 
     private int maxFullDistance = 40;
     private double directHitMultiplier = 1.15;
-    private  float hitbox = 4;
+    private float hitbox = 4;
 
     private float minDamage = 231;
     private float maxDamage = 299;

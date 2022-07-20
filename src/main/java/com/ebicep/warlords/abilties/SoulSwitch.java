@@ -46,7 +46,7 @@ public class SoulSwitch extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
 
         for (WarlordsEntity swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), radius, 6.5, radius)
+                .entitiesAround(wp.getLocation(), radius, radius / 2f, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)

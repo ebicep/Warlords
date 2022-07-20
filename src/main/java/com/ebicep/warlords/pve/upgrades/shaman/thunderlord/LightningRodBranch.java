@@ -10,12 +10,12 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
     public LightningRodBranch(AbilityTree abilityTree, LightningRod ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown Reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown Reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown Reduction", 20000));
+        treeA.add(new Upgrade("Cooldown - Tier II", "-15% Cooldown Reduction", 10000));
+        treeA.add(new Upgrade("Cooldown - Tier III", "-20% Cooldown Reduction", 20000));
 
-        treeC.add(new Upgrade("Healing - Tier I", "+15% Healing", 5000));
-        treeC.add(new Upgrade("Healing - Tier II", "+30% Healing", 10000));
-        treeC.add(new Upgrade("Healing - Tier III", "+60% Healing", 20000));
+        treeC.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
+        treeC.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
+        treeC.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
@@ -33,12 +33,12 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
     @Override
     public void a2() {
-        ability.setCooldown(cooldown * 0.8f);
+        ability.setCooldown(cooldown * 0.85f);
     }
 
     @Override
     public void a3() {
-        ability.setCooldown(cooldown * 0.6f);
+        ability.setCooldown(cooldown * 0.8f);
     }
 
     @Override
@@ -56,19 +56,21 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
     }
 
+    int healthRestore = ability.getHealthRestore();
+
     @Override
     public void c1() {
-        ability.setHealthRestore(ability.getHealthRestore() + 15);
+        ability.setHealthRestore(healthRestore + 10);
     }
 
     @Override
     public void c2() {
-        ability.setHealthRestore(ability.getHealthRestore() + 15);
+        ability.setHealthRestore(healthRestore + 20);
     }
 
     @Override
     public void c3() {
-        ability.setHealthRestore(ability.getHealthRestore() + 30);
+        ability.setHealthRestore(healthRestore + 40);
     }
 
     @Override

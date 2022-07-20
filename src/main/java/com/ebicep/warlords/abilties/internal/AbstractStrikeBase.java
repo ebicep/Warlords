@@ -56,7 +56,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                                     (float) ((Math.random() * 2) - 1),
                                     1,
                                     4,
-                                    nearPlayer.getLocation().clone().add(0, 1, 0),
+                                    loc.clone().add(0, 1, 0),
                                     500);
                         } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
                             Utils.playGlobalSound(loc, "warrior.mortalstrike.impact", 2, 1);

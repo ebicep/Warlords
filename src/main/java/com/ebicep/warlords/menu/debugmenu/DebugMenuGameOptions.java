@@ -134,9 +134,10 @@ public class DebugMenuGameOptions {
                         itemBuilder.get(),
                         (m, e) -> {
                             if (isASelectedAddon) {
-                                if (!player.hasPermission("warlords.game.customtoggle") && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
+                                boolean customToggle = !player.hasPermission("warlords.game.customtoggle");
+                                if (customToggle && gameAddon.equals(GameAddon.CUSTOM_GAME)) {
                                     player.sendMessage(ChatColor.RED + "Only players with the Game Starter rank or higher can modify this addon!");
-                                } else if (gameAddon.equals(GameAddon.PRIVATE_GAME) && !player.isOp()) {
+                                } else if (customToggle && gameAddon.equals(GameAddon.PRIVATE_GAME)) {
                                     player.sendMessage(ChatColor.RED + "Games started from the start menu are automatically private!");
                                 } else {
                                     addons.remove(gameAddon);
@@ -192,7 +193,6 @@ public class DebugMenuGameOptions {
                         ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "),
                         player.isOp() && addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick()
                 );
-                //Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons);
             });
             menu.openForPlayer(player);
         }
