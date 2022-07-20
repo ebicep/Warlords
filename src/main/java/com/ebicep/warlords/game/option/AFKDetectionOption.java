@@ -54,9 +54,7 @@ public class AFKDetectionOption implements Option, Listener {
                     for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
                         if (we.isDead()) continue;
                         if (!(we.getEntity() instanceof Player)) continue;
-                        if (we.isSneaking())
-                            continue; //make sure no ppl that are sneaking are marked as AFK
-
+                        if (we.isSneaking()) continue; //make sure no ppl that are sneaking are marked as AFK
                         playerLocations.computeIfAbsent((WarlordsPlayer) we, k -> new ArrayList<>()).add(we.getLocation());
                         List<Location> locations = playerLocations.get(we);
                         if (locations.size() >= 2) {

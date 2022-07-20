@@ -6,16 +6,18 @@ import javax.annotation.Nonnull;
 
 public enum DifficultyIndex {
 
-    NORMAL("Normal", ChatColor.GOLD),
-    ENDLESS("Endless", ChatColor.RED)
+    NORMAL("Normal", "Fight off 30 waves of monsters to earn rewards.", ChatColor.GOLD),
+    ENDLESS("Endless", "Fight to the death against endless waves of\nmonsters to earn greater rewards.",  ChatColor.RED)
 
     ;
 
     private final String name;
+    private final String description;
     private final ChatColor difficultyColor;
 
-    DifficultyIndex(@Nonnull String name, ChatColor difficultyColor) {
+    DifficultyIndex(@Nonnull String name, String description, ChatColor difficultyColor) {
         this.name = name;
+        this.description = description;
         this.difficultyColor = difficultyColor;
     }
 
@@ -25,5 +27,9 @@ public enum DifficultyIndex {
 
     public ChatColor getDifficultyColor() {
         return difficultyColor;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

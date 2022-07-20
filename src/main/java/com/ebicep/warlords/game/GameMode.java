@@ -183,7 +183,7 @@ public enum GameMode {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
                     "",
-                    color + "Defend your crystal against waves of",
+                    color + "Survive against waves of",
                     color + "monsters!",
                     ""
             ));

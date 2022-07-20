@@ -40,6 +40,7 @@ public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
     private final Set<WarlordsEntity> entities = new HashSet<>();
     private int waveCounter = 0;
+    private int maxWave = 10000;
     private int spawnCount = 0;
     private Wave currentWave;
     private final Team team;
@@ -55,6 +56,12 @@ public class WaveDefenseOption implements Option {
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
         this.waves = waves;
+    }
+
+    public WaveDefenseOption(Team team, WaveList waves, int maxWave) {
+        this.team = team;
+        this.waves = waves;
+        this.maxWave = maxWave;
     }
     
     public void startSpawnTask() {
@@ -225,7 +232,8 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave: " + ChatColor.GREEN + ChatColor.BOLD + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 30 ? "/" + ChatColor.GREEN + maxWave : "") +
+                                ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
         });
@@ -263,7 +271,6 @@ public class WaveDefenseOption implements Option {
     
     @Override
     public void start(@Nonnull Game game) {
-
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -286,7 +293,7 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
-                if (waveCounter == Integer.MAX_VALUE) {
+                if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));
                 }
             }
@@ -317,5 +324,13 @@ public class WaveDefenseOption implements Option {
     @Nonnull
     public Game getGame() {
         return game;
+    }
+
+    public int getMaxWave() {
+        return maxWave;
+    }
+
+    public void setMaxWave(int maxWave) {
+        this.maxWave = maxWave;
     }
 }
