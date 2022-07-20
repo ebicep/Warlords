@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -53,6 +54,14 @@ public class UtilsTest {
         cal.set(2022, Calendar.JUNE, 11, 10, 0, 0);
         System.out.println(cal.getTime());
         System.out.println(cal.get(Calendar.DAY_OF_WEEK));
+    }
+
+    @Test
+    public void testNumberFormat() {
+        double value = 3.14;
+        double multiply = 1.19;
+        System.out.println(value * multiply);
+        System.out.println(NumberFormat.formatOptionalHundredths(value * multiply));
     }
 
 
