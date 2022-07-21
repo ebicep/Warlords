@@ -178,7 +178,6 @@ public final class WarlordsNPC extends WarlordsEntity {
             entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
         }
 
-
         return entity;
     }
 

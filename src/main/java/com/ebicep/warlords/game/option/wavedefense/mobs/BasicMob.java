@@ -28,7 +28,7 @@ public class BasicMob {
                     new ItemStack(Material.WOOD_AXE)
             ),
             2000,
-            0.35f,
+            0.38f,
             0,
             180,
             300
@@ -48,7 +48,7 @@ public class BasicMob {
                     new ItemStack(Material.BOW)
             ),
             1000,
-            0.2f,
+            0.25f,
             0,
             0,
             0
@@ -68,7 +68,7 @@ public class BasicMob {
                     new ItemStack(Material.COOKIE)
             ),
             2500,
-            0.4f,
+            0.42f,
             0,
             200,
             300
@@ -83,7 +83,7 @@ public class BasicMob {
             loc,
             null,
             1600,
-            0.4f,
+            0.42f,
             0,
             250,
             400
@@ -108,7 +108,7 @@ public class BasicMob {
             () -> new CustomSlime(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Lunar ",
+            "Lunar Anomaly",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -117,24 +117,10 @@ public class BasicMob {
                     new ItemStack(Material.DIAMOND_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
-            2500,
+            3000,
             0.5f,
             20,
             50,
             100
-    );
-    public static final Function<Location, PartialMonster> GUARDIAN = loc -> PartialMonster.fromCustomEntity(
-            CustomGuardian.class,
-            () -> new CustomGuardian(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {
-            },
-            "Guardian",
-            loc,
-            null,
-            1500,
-            0.3f,
-            0,
-            200,
-            300
     );
 }

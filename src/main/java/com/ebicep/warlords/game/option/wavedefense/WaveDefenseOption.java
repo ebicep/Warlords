@@ -107,8 +107,10 @@ public class WaveDefenseOption implements Option {
                 return we;
             }
 
+            int counter = 0;
             @Override
             public void run() {
+                counter++;
                 if (lastSpawn == null) {
                     lastSpawn = spawn(lastLocation);
                     if (lastSpawn != null) {
@@ -120,6 +122,7 @@ public class WaveDefenseOption implements Option {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
                     lastSpawn.getLocation(lastLocation);
                 }
+
                 spawnCount--;
                 if (spawnCount <= 0) {
                     spawner.cancel();
@@ -127,7 +130,7 @@ public class WaveDefenseOption implements Option {
                 }
             }
             
-        }.runTaskTimer(currentWave.getDelay(), 1);
+        }.runTaskTimer(currentWave.getDelay(), 20);
     }
 
     public void newWave() {
@@ -142,7 +145,6 @@ public class WaveDefenseOption implements Option {
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
-                entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
             }
         }
         waveCounter++;

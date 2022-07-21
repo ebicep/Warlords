@@ -27,7 +27,7 @@ public class EliteMob {
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
             4000,
-            0.3f,
+            0.35f,
             0,
             300,
             600
@@ -47,7 +47,7 @@ public class EliteMob {
                     new ItemStack(Material.BOW)
             ),
             1200,
-            0.25f,
+            0.3f,
             0,
             0,
             0
@@ -67,7 +67,7 @@ public class EliteMob {
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
             3000,
-            0.3f,
+            0.35f,
             20,
             100,
             200
@@ -87,7 +87,7 @@ public class EliteMob {
                     new ItemStack(Material.SPIDER_EYE)
             ),
             7000,
-            0.32f,
+            0.36f,
             0,
             400,
             800

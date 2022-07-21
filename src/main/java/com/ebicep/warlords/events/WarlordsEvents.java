@@ -272,6 +272,7 @@ public class WarlordsEvents implements Listener {
         WarlordsEntity wpVictim = Warlords.getPlayer(e.getEntity());
         if (wpAttacker != null && wpVictim != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
             if ((!(attacker instanceof Player) || ((Player) attacker).getInventory().getHeldItemSlot() == 0) && wpAttacker.getHitCooldown() == 0) {
+
                 wpAttacker.setHitCooldown(12);
                 wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
 
@@ -282,7 +283,6 @@ public class WarlordsEvents implements Listener {
                             .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                             .forEachOrdered(soulbinding -> {
                                 wpAttacker.doOnStaticAbility(Soulbinding.class, Soulbinding::addPlayersBinded);
-
                                 if (soulbinding.hasBoundPlayer(wpVictim)) {
                                     soulbinding.getSoulBindedPlayers().stream()
                                             .filter(p -> p.getBoundPlayer() == wpVictim)
@@ -292,8 +292,20 @@ public class WarlordsEvents implements Listener {
                                                 boundPlayer.setTimeLeft(baseSoulBinding.getBindDuration());
                                             });
                                 } else {
-                                    wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                    wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
+                                    wpVictim.sendMessage(
+                                            WarlordsEntity.RECEIVE_ARROW_RED +
+                                            ChatColor.GRAY + "You have been bound by " +
+                                            wpAttacker.getName() + "'s " +
+                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
+                                            ChatColor.GRAY + "!"
+                                    );
+                                    wpAttacker.sendMessage(
+                                            WarlordsEntity.GIVE_ARROW_GREEN +
+                                            ChatColor.GRAY + "Your " +
+                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
+                                            ChatColor.GRAY + "has bound " +
+                                            wpVictim.getName() + "!"
+                                    );
                                     soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
                                     Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                 }
@@ -310,6 +322,7 @@ public class WarlordsEvents implements Listener {
                             150,
                             false
                     );
+                    wpAttacker.setHitCooldown(20);
                 } else {
                     wpVictim.addDamageInstance(
                             wpAttacker,

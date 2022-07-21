@@ -84,7 +84,7 @@ public class DifficultyMenu {
 
         Warlords.getGameManager()
                 .newEntry(people)
-                .setCategory(GameMode.WAVE_DEFENSE)
+                .setGamemode(GameMode.WAVE_DEFENSE)
                 .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
                 .setPriority(0)
                 .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)

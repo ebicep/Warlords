@@ -48,7 +48,10 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
                     Team.RED,
                     Specializations.AQUAMANCER,
                     2000,
-                    0.5f
+                    0.5f,
+                    0,
+                    50,
+                    100
             );
             waveDefenseOption.getEntities().add(entity);
             waveDefenseOption.getGame().addNPC(entity);
