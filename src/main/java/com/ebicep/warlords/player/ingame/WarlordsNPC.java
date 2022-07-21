@@ -26,22 +26,68 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class WarlordsNPC extends WarlordsEntity {
+public final class WarlordsNPC extends WarlordsEntity {
 
-    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass) {
+    private float minMeleeDamage;
+    private float maxMeleeDamage;
+
+    public WarlordsNPC(
+            UUID uuid,
+            String name,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass
+    ) {
         super(uuid, name, weapon, entity, game, team, specClass);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
     }
 
-    public WarlordsNPC(UUID uuid, String name, Weapons weapon, LivingEntity entity, Game game, Team team, Specializations specClass, int maxHealth, float walkSpeed) {
+    public WarlordsNPC(
+            UUID uuid,
+            String name,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass,
+            int maxHealth,
+            float walkSpeed
+    ) {
         super(uuid, name, weapon, entity, game, team, specClass);
         this.walkspeed = walkSpeed;
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
         setMaxHealth(maxHealth);
+    }
+
+    public WarlordsNPC(
+            UUID uuid,
+            String name,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(uuid, name, weapon, entity, game, team, specClass);
+        this.walkspeed = walkSpeed;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        updateEntity();
+        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
+        setMaxHealth(maxHealth);
+        spec.setDamageResistance(damageResistance);
     }
 
     @Override
@@ -144,5 +190,21 @@ public class WarlordsNPC extends WarlordsEntity {
         Location deathLocation = getLocation();
 
 
+    }
+
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public void setMinMeleeDamage(int minMeleeDamage) {
+        this.minMeleeDamage = minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
+    public void setMaxMeleeDamage(int maxMeleeDamage) {
+        this.maxMeleeDamage = maxMeleeDamage;
     }
 }

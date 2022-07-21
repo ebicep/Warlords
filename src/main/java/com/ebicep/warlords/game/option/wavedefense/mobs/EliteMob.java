@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
-import com.ebicep.customentities.nms.pve.CustomEnderman;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
@@ -27,7 +26,10 @@ public class EliteMob {
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
             4000,
-            0.28f
+            0.3f,
+            0,
+            300,
+            600
     );
     public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
@@ -44,7 +46,10 @@ public class EliteMob {
                     new ItemStack(Material.BOW)
             ),
             1200,
-            0.25f
+            0.25f,
+            0,
+            0,
+            0
     );
     public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
@@ -61,22 +66,9 @@ public class EliteMob {
                     new ItemStack(Material.SPIDER_EYE)
             ),
             7000,
-            0.3f
-    );
-    public static final Function<Location, PartialMonster> ELITE_ENDERMAN = loc -> PartialMonster.fromCustomEntity(
-            CustomEnderman.class,
-            () -> new CustomEnderman(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {},
-            "Elite Enderman",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            ),
-            3500,
-            0.5f
+            0.32f,
+            0,
+            400,
+            800
     );
 }

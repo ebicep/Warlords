@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
-import com.ebicep.customentities.nms.pve.CustomEnderman;
 import com.ebicep.customentities.nms.pve.CustomMagmaCube;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
@@ -27,7 +26,10 @@ public class BossMob {
                     new ItemStack(Material.STICK)
             ),
             10000,
-            0.45f
+            0.45f,
+            0,
+            300,
+            600
     );
 
     public static final Function<Location, PartialMonster> SIN = loc -> PartialMonster.fromCustomEntity(
@@ -36,31 +38,11 @@ public class BossMob {
             },
             "Sin",
             loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET, 1, (short) 7),
-                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                    new ItemStack(Material.CHAINMAIL_BOOTS),
-                    new ItemStack(Material.STICK)
-            ),
+            null,
             25000,
-            0.6f
-    );
-
-    public static final Function<Location, PartialMonster> XATAH = loc -> PartialMonster.fromCustomEntity(
-            CustomEnderman.class,
-            () -> new CustomEnderman(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
-            },
-            "Xatah",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET, 1, (short) 7),
-                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                    new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                    new ItemStack(Material.CHAINMAIL_BOOTS),
-                    new ItemStack(Material.STICK)
-            ),
-            100000,
-            0.6f
+            0.6f,
+            0,
+            200,
+            400
     );
 }

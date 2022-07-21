@@ -26,6 +26,7 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -299,32 +300,26 @@ public class WarlordsEvents implements Listener {
                             });
                 }
 
-                // temporary
-                // TODO: make actual system to give them damage ranges + ability options in the mob itself.
-                switch (wpAttacker.getName()) {
-                    case "Zombie":
-                        wpVictim.addDamageInstance(wpAttacker, "", 180, 300, 25, 150, false);
-                        wpAttacker.setHitCooldown(20);
-                        break;
-                    case "Elite Zombie":
-                        wpVictim.addDamageInstance(wpAttacker, "", 300, 600, 25, 200, false);
-                        wpAttacker.setHitCooldown(20);
-                        break;
-                    case "Pig Zombie":
-                        wpVictim.addDamageInstance(wpAttacker, "", 100, 200, 25, 200, false);
-                        wpAttacker.setHitCooldown(10);
-                        break;
-                    case "Zomboid":
-                        wpVictim.addDamageInstance(wpAttacker, "", 400, 600, 25, 150, false);
-                        wpAttacker.setHitCooldown(20);
-                        break;
-                    case "Illusion Apprentice":
-                        wpVictim.addDamageInstance(wpAttacker, "", 600, 800, 25, 150, false);
-                        wpAttacker.setHitCooldown(20);
-                        break;
-                    default:
-                        wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);
-                        break;
+                if (wpAttacker instanceof WarlordsNPC) {
+                    wpVictim.addDamageInstance(
+                            wpAttacker,
+                            "",
+                            ((WarlordsNPC) wpAttacker).getMinMeleeDamage(),
+                            ((WarlordsNPC) wpAttacker).getMaxMeleeDamage(),
+                            15,
+                            150,
+                            false
+                    );
+                } else {
+                    wpVictim.addDamageInstance(
+                            wpAttacker,
+                            "",
+                            132,
+                            179,
+                            25,
+                            200,
+                            false
+                    );
                 }
                 wpVictim.updateHealth();
             }
