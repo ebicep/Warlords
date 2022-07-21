@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.*;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -17,7 +18,7 @@ public class BasicMob {
             () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Zombie",
+            "Lunar Lancer",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 14),
@@ -37,7 +38,7 @@ public class BasicMob {
             () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Skeleton",
+            "Lunar Mage",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 3),
@@ -57,7 +58,7 @@ public class BasicMob {
             () -> new CustomPigZombie(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Pig Zombie",
+            "Lunar Disciple",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -76,37 +77,16 @@ public class BasicMob {
             CustomSpider.class,
             () -> new CustomSpider(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
+                ParticleEffect.CLOUD.display(0, 0, 0, 0.1f, 30, mob.getBukkitEntity().getLocation(), 500);
             },
-            "Spider",
+            "Lunar Venari",
             loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            ),
-            1500,
-            0.2f,
+            null,
+            1600,
+            0.4f,
             0,
             250,
             400
-    );
-    public static final Function<Location, PartialMonster> BLAZE = loc -> PartialMonster.fromCustomEntity(
-            CustomBlaze.class,
-            () -> new CustomBlaze(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {
-
-            },
-            "BLAZE",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            )
     );
     public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromCustomEntity(
             CustomCreeper.class,
@@ -128,7 +108,7 @@ public class BasicMob {
             () -> new CustomSlime(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Chessking",
+            "Lunar ",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -142,26 +122,6 @@ public class BasicMob {
             20,
             50,
             100
-    );
-    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
-            CustomMagmaCube.class,
-            () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {
-            },
-            "Magma Cube",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            ),
-            3000,
-            0.3f,
-            20,
-            100,
-            200
     );
     public static final Function<Location, PartialMonster> GUARDIAN = loc -> PartialMonster.fromCustomEntity(
             CustomGuardian.class,

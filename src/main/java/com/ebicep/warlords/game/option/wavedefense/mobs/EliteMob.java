@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
+import com.ebicep.customentities.nms.pve.CustomMagmaCube;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
@@ -16,7 +17,7 @@ public class EliteMob {
     public static final Function<Location, PartialMonster> ELITE_ZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
             () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
-            }, "Elite Zombie",
+            }, "Illusion Swordsman",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -36,7 +37,7 @@ public class EliteMob {
             () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Elite Skeleton",
+            "Illusion Warlock",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 1),
@@ -50,6 +51,26 @@ public class EliteMob {
             0,
             0,
             0
+    );
+    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
+            CustomMagmaCube.class,
+            () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Illusion Illumination",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    new ItemStack(Material.DIAMOND_BOOTS),
+                    new ItemStack(Material.PRISMARINE_SHARD)
+            ),
+            3000,
+            0.3f,
+            20,
+            100,
+            200
     );
     public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,

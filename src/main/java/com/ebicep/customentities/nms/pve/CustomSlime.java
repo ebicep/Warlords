@@ -7,7 +7,7 @@ public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime
 
     public CustomSlime(World world) {
         super(world);
-        setSize(8);
+        setSize(5);
     }
 
     //jump
