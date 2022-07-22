@@ -46,6 +46,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         public static Location predictFutureLocation(WarlordsEntity self, WarlordsEntity target) {
             Location location = target.getLocation().clone();
             Vector oldVectorToSubtract = target.getCurrentVector().clone();
+            if (oldVectorToSubtract == null) return location;
             Vector vector = target.getCurrentVector().clone();
 
             List<Location> locations = target.getLocations();

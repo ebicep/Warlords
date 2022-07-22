@@ -24,7 +24,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "+30% Damage\n\nEnemies hit have a chance to be frozen for 2 seconds.",
-                500000
+                50000
         );
     }
 

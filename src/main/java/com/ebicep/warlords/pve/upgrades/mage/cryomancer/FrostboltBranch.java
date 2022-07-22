@@ -24,7 +24,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "+10% Slowness\n\nDirectly-hit enemies shatter after 1.5 seconds,\ndealing 309 - 454 damage to all nearby enemies\nand slow them by 35% for 2 seconds.",
-                500000
+                50000
         );
     }
 
