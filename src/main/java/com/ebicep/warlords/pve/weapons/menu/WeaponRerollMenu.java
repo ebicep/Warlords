@@ -76,7 +76,7 @@ public class WeaponRerollMenu {
 
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "Reroll Result: "),
-                    new TextComponentBuilder(weapon.getTitle())
+                    new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
         }

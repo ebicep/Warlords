@@ -82,7 +82,7 @@ public class WeaponBindMenu {
                                     if (boundWeapon == weapon) {
                                         player.spigot().sendMessage(
                                                 new TextComponent(ChatColor.AQUA + "You unbounded "),
-                                                new TextComponentBuilder(boundWeapon.getTitle())
+                                                new TextComponentBuilder(boundWeapon.getName())
                                                         .setHoverItem(boundWeapon.generateItemStack())
                                                         .getTextComponent());
                                     } else {
@@ -91,11 +91,11 @@ public class WeaponBindMenu {
 
                                         player.spigot().sendMessage(
                                                 new TextComponent(ChatColor.AQUA + "You unbounded "),
-                                                new TextComponentBuilder(boundWeapon.getTitle())
+                                                new TextComponentBuilder(boundWeapon.getName())
                                                         .setHoverItem(boundWeapon.generateItemStack())
                                                         .getTextComponent(),
                                                 new TextComponent(ChatColor.AQUA + " and bound "),
-                                                new TextComponentBuilder(weapon.getTitle())
+                                                new TextComponentBuilder(weapon.getName())
                                                         .setHoverItem(weapon.generateItemStack())
                                                         .getTextComponent());
                                     }
@@ -133,7 +133,7 @@ public class WeaponBindMenu {
 
                                     player.spigot().sendMessage(
                                             new TextComponent(ChatColor.AQUA + "You bound "),
-                                            new TextComponentBuilder(weapon.getTitle())
+                                            new TextComponentBuilder(weapon.getName())
                                                     .setHoverItem(weapon.generateItemStack())
                                                     .getTextComponent());
                                 }

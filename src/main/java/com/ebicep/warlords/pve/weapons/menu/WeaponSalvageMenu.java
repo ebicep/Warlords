@@ -63,8 +63,8 @@ public class WeaponSalvageMenu {
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
-                    new TextComponent(ChatColor.GRAY + "You received " + ChatColor.AQUA + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging "),
-                    new TextComponentBuilder(weapon.getTitle())
+                    new TextComponent(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging "),
+                    new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
         }

@@ -175,6 +175,9 @@ public class WeaponManagerMenu {
     }
 
     public static void openWeaponEditor(Player player, AbstractWeapon weapon) {
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        if (databasePlayer == null) return;
+
         Menu menu = new Menu("Weapon Editor", 9);
 
         menu.setItem(
@@ -199,6 +202,20 @@ public class WeaponManagerMenu {
                         .name(ChatColor.GREEN + "Skin Selector")
                         .get(),
                 (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1)
+        ));
+        //star piece
+        weaponOptions.add(new Pair<>(
+                new ItemBuilder(Material.NETHER_STAR)
+                        .name(ChatColor.GREEN + "Apply a Star Piece")
+                        .get(),
+                (m, e) -> {
+                    WeaponsPvE weaponsPvE = WeaponsPvE.getWeapon(weapon);
+                    if (weaponsPvE.getStarPiece.apply(databasePlayer.getPveStats()) <= 0) {
+                        player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
+                        return;
+                    }
+                    WeaponStarPieceMenu.openWeaponStarPieceMenu(player, weapon);
+                }
         ));
         //salvage common/rare/epic
         if (weapon instanceof Salvageable) {
