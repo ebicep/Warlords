@@ -87,11 +87,11 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BLAZE_POWDER)
             ),
-            22000,
+            25000,
             0.45f,
-            25,
-            250,
-            350
+            0,
+            700,
+            900
     );
     public static final Function<Location, PartialMonster> ZENITH = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
@@ -103,13 +103,13 @@ public class BossMob {
             new Utils.SimpleEntityEquipment(
                     Utils.getPlayerSkull("4oot"),
                     Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
-                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 255),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                     new ItemStack(Material.DIAMOND_SPADE)
             ),
-            60000,
+            32000,
             0.5f,
-            20,
+            10,
             800,
             1200
     );

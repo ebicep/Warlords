@@ -234,7 +234,7 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 30 ? "/" + ChatColor.GREEN + maxWave : "") +
+                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 100 ? "/" + ChatColor.GREEN + maxWave : "") +
                                 ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
