@@ -41,7 +41,7 @@ public enum CustomEntitiesRegistry {
 //    MOOSHROOM("MushroomCow", 96, EntityMushroomCow.class, CustomMooshroom.class),
 //    SNOWMAN("SnowMan", 97, EntitySnowman.class, CustomSnowman.class),
 //    OCELOT("Ocelot", 98, EntityOcelot.class, CustomOcelot.class),
-//    IRON_GOLEM("VillagerGolem", 99, EntityIronGolem.class, CustomIronGolem.class),
+    IRON_GOLEM("VillagerGolem", 99, EntityIronGolem.class, CustomIronGolem.class),
 //    HORSE("Horse", 100, EntityHorse.class, CustomHorse.class),
 //    RABBIT("Rabbit", 101, EntityRabbit.class, CustomRabbit.class),
 //    VILLAGER("Villager", 120, EntityVillager.class, CustomVillager.class),

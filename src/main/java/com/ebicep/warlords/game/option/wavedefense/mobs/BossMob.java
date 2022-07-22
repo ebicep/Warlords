@@ -73,4 +73,44 @@ public class BossMob {
             250,
             350
     );
+    public static final Function<Location, PartialMonster> PHYSIRA = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Physira",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    Utils.getPlayerSkull("ChybaWonsz"),
+                    new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                    new ItemStack(Material.DIAMOND_CHESTPLATE),
+                    new ItemStack(Material.CHAINMAIL_BOOTS),
+                    new ItemStack(Material.BLAZE_POWDER)
+            ),
+            22000,
+            0.45f,
+            25,
+            250,
+            350
+    );
+    public static final Function<Location, PartialMonster> ZENITH = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Zenith",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    Utils.getPlayerSkull("4oot"),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                    new ItemStack(Material.DIAMOND_SPADE)
+            ),
+            60000,
+            0.5f,
+            20,
+            800,
+            1200
+    );
 }

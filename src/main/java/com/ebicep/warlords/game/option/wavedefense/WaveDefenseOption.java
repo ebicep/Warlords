@@ -130,7 +130,7 @@ public class WaveDefenseOption implements Option {
                 }
             }
             
-        }.runTaskTimer(currentWave.getDelay(), 20);
+        }.runTaskTimer(currentWave.getDelay(), 15);
     }
 
     public void newWave() {

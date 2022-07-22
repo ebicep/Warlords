@@ -10,6 +10,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.Vector;
 
@@ -595,5 +596,17 @@ public class Utils {
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skull.setItemMeta(skullMeta);
         return skull;
+    }
+
+    /**
+     * @param armor Must always be leather armor.
+     * @return colored leather armor.
+     */
+    public static ItemStack applyColorTo(@Nonnull Material armor, int red, int green, int blue) {
+        ItemStack itemStack = new ItemStack(armor);
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
+        itemStack.setItemMeta(leatherArmorMeta);
+        return itemStack;
     }
 }

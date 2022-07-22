@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
+import com.ebicep.customentities.nms.pve.CustomIronGolem;
 import com.ebicep.customentities.nms.pve.CustomMagmaCube;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
@@ -59,13 +60,7 @@ public class EliteMob {
             },
             "Illusion Illumination",
             loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            ),
+            null,
             3000,
             0.35f,
             20,
@@ -73,21 +68,15 @@ public class EliteMob {
             200
     );
     public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
-            CustomZombie.class,
-            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            CustomIronGolem.class,
+            () -> new CustomIronGolem(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
             "Illusion Apprentice",
             loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.DEAD_BUSH),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.SPIDER_EYE)
-            ),
-            7000,
-            0.36f,
+            null,
+            6000,
+            0.35f,
             0,
             400,
             800

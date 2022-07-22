@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.*;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -22,9 +21,9 @@ public class BasicMob {
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 14),
-                    new ItemStack(Material.LEATHER_CHESTPLATE),
-                    new ItemStack(Material.LEATHER_LEGGINGS),
-                    new ItemStack(Material.LEATHER_BOOTS),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.WOOD_AXE)
             ),
             2000,
@@ -41,11 +40,11 @@ public class BasicMob {
             "Lunar Mage",
             loc,
             new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET, 1, (short) 3),
-                    new ItemStack(Material.LEATHER_CHESTPLATE),
-                    new ItemStack(Material.LEATHER_LEGGINGS),
-                    new ItemStack(Material.LEATHER_BOOTS),
-                    new ItemStack(Material.BOW)
+                    Utils.getPlayerSkull("4oot"),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                    new ItemStack(Material.BLAZE_POWDER)
             ),
             1000,
             0.25f,
@@ -62,9 +61,9 @@ public class BasicMob {
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
-                    new ItemStack(Material.LEATHER_CHESTPLATE),
-                    new ItemStack(Material.LEATHER_LEGGINGS),
-                    new ItemStack(Material.LEATHER_BOOTS),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                    Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.COOKIE)
             ),
             2500,
@@ -77,7 +76,6 @@ public class BasicMob {
             CustomSpider.class,
             () -> new CustomSpider(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
-                ParticleEffect.CLOUD.display(0, 0, 0, 0.1f, 30, mob.getBukkitEntity().getLocation(), 500);
             },
             "Lunar Venari",
             loc,
@@ -87,21 +85,6 @@ public class BasicMob {
             0,
             250,
             400
-    );
-    public static final Function<Location, PartialMonster> CREEPER = loc -> PartialMonster.fromCustomEntity(
-            CustomCreeper.class,
-            () -> new CustomCreeper(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {
-            },
-            "Creeper",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            )
     );
     public static final Function<Location, PartialMonster> SLIME = loc -> PartialMonster.fromCustomEntity(
             CustomSlime.class,
