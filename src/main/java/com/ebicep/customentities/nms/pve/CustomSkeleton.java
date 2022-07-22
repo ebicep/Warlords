@@ -14,7 +14,9 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
 
     public CustomSkeleton(World world) {
         super(world);
-        this.goalSelector.a(7, pathfinderGoalFireAtPlayer);
+        resetAI(world);
+        giveBaseAI(1.2, 1.0);
+        this.goalSelector.a(2, pathfinderGoalFireAtPlayer);
     }
 
     @Override
