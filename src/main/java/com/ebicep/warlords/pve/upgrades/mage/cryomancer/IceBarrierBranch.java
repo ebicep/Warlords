@@ -20,7 +20,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
                 "-15% Cooldown reduction\n\nEnvelop the player with a frosty aura, slowing enemies\nthat come within a 6 block radius of the player. Taunts\nenemies on activation.",
-                500000
+                50000
         );
     }
 

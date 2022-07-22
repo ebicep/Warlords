@@ -29,7 +29,7 @@ public class BasicMob {
             2000,
             0.38f,
             0,
-            180,
+            200,
             300
     );
     public static final Function<Location, PartialMonster> SKELETON = loc -> PartialMonster.fromCustomEntity(
@@ -69,8 +69,8 @@ public class BasicMob {
             2500,
             0.42f,
             0,
-            200,
-            300
+            250,
+            350
     );
     public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(
             CustomSpider.class,
@@ -81,10 +81,10 @@ public class BasicMob {
             loc,
             null,
             1600,
-            0.42f,
+            0.45f,
             0,
-            250,
-            400
+            300,
+            450
     );
     public static final Function<Location, PartialMonster> SLIME = loc -> PartialMonster.fromCustomEntity(
             CustomSlime.class,

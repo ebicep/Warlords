@@ -27,8 +27,8 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
-            4000,
-            0.35f,
+            3000,
+            0.38f,
             0,
             300,
             600
@@ -78,7 +78,7 @@ public class EliteMob {
             6000,
             0.35f,
             0,
-            400,
+            500,
             800
     );
 }

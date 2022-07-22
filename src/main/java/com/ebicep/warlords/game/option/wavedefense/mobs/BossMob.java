@@ -47,7 +47,7 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.COOKED_FISH)
             ),
-            16000,
+            15000,
             0.6f,
             5,
             200,
@@ -67,11 +67,11 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.IRON_AXE)
             ),
-            20000,
+            18000,
             0.45f,
             25,
-            250,
-            350
+            400,
+            600
     );
     public static final Function<Location, PartialMonster> PHYSIRA = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
@@ -87,7 +87,7 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BLAZE_POWDER)
             ),
-            25000,
+            18000,
             0.45f,
             0,
             700,
@@ -107,7 +107,7 @@ public class BossMob {
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                     new ItemStack(Material.DIAMOND_SPADE)
             ),
-            32000,
+            20000,
             0.5f,
             10,
             800,

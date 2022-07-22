@@ -1146,7 +1146,7 @@ public enum GameMap {
                         @Override
                         public int getMonsterCount() {
                             if (wave.getMessage() == null) {
-                                double scale = 120.0;
+                                double scale = 150.0;
                                 return (int) (super.getMonsterCount() + (waveCounter / scale / (waveCounter / scale + 1) * 100));
                             } else {
                                 return super.getMonsterCount();
@@ -1154,7 +1154,7 @@ public enum GameMap {
                         }
 
                     }),
-                    100
+                    50
             ));
 
             return options;
