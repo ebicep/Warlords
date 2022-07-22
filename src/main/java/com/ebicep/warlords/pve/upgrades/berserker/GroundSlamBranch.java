@@ -13,9 +13,9 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
         treeA.add(new Upgrade("Range - Tier II", "+2 Blocks radius", 10000));
         treeA.add(new Upgrade("Range - Tier III", "+3 Blocks radius", 20000));
 
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
+        treeC.add(new Upgrade("Cooldown - Tier I", "-5% Cooldown reduction", 5000));
+        treeC.add(new Upgrade("Cooldown - Tier II", "-10% Cooldown reduction", 10000));
+        treeC.add(new Upgrade("Cooldown - Tier III", "-20% Cooldown reduction", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
@@ -60,17 +60,17 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
 
     @Override
     public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
+        ability.setCooldown(cooldown * 0.95f);
     }
 
     @Override
     public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
+        ability.setCooldown(cooldown * 0.9f);
     }
 
     @Override
     public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
+        ability.setCooldown(cooldown * 0.8f);
     }
 
     @Override

@@ -217,15 +217,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         switch (finalI) {
                             case 0:
-                                a1();
+                                util1();
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                             case 1:
-                                a2();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 2:
-                                a3();
+                                util2();
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }

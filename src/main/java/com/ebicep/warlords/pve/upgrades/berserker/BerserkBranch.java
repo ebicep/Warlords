@@ -10,8 +10,8 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
     public BerserkBranch(AbilityTree abilityTree, Berserk ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Damage Boost - Tier I", "+10% Damage boost", 5000));
-        treeA.add(new Upgrade("Damage Boost - Tier II", "+15% Damage boost", 10000));
-        treeA.add(new Upgrade("Damage Boost - Tier III", "+20% Damage boost", 20000));
+        treeA.add(new Upgrade("Damage Boost - Tier II", "+20% Damage boost", 10000));
+        treeA.add(new Upgrade("Damage Boost - Tier III", "+30% Damage boost", 20000));
 
         treeC.add(new Upgrade("Speed - Tier I", "+10% Speed", 5000));
         treeC.add(new Upgrade("Speed - Tier II", "+20% Speed", 10000));
@@ -28,17 +28,17 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     @Override
     public void a1() {
-        ability.setDamageIncrease(damageBoost + 15);
+        ability.setDamageIncrease(damageBoost + 10);
     }
 
     @Override
     public void a2() {
-        ability.setDamageIncrease(damageBoost + 30);
+        ability.setDamageIncrease(damageBoost + 20);
     }
 
     @Override
     public void a3() {
-        ability.setDamageIncrease(damageBoost + 60);
+        ability.setDamageIncrease(damageBoost + 30);
     }
 
     @Override

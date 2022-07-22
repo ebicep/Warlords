@@ -45,7 +45,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         if (pveUpgrade) {
             bleedOnHit(wp, nearPlayer);
             if (nearPlayer.getCooldownManager().hasCooldownFromName("Bleed") && wp.getCooldownManager().hasCooldown(BloodLust.class)) {
-                nearPlayer.addDamageInstance(wp, name, minDamageHeal * 2, maxDamageHeal * 2, critChance, critMultiplier, false);
+                nearPlayer.addDamageInstance(wp, name, minDamageHeal * 1.5f, maxDamageHeal * 1.5f, critChance, critMultiplier, false);
             } else {
                 nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             }
