@@ -17,7 +17,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
 
     public CustomMagmaCube(World world) {
         super(world);
-        setSize(6);
+        setSize(7);
     }
 
     //jump
@@ -34,7 +34,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
 
     @Override
     public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        if (customMagmaCube.getSize() <= 5) return;
+        if (customMagmaCube.getSize() <= 6) return;
         for (int i = 0; i < 2; i++) {
             CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
             babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
@@ -48,7 +48,10 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
                     Team.RED,
                     Specializations.AQUAMANCER,
                     2000,
-                    0.5f
+                    0.5f,
+                    0,
+                    50,
+                    100
             );
             waveDefenseOption.getEntities().add(entity);
             waveDefenseOption.getGame().addNPC(entity);

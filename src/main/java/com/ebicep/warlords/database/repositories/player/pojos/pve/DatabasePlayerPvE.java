@@ -173,10 +173,6 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return fairyEssence;
     }
 
-    public void setFairyEssence(int fairyEssence) {
-        this.fairyEssence = fairyEssence;
-    }
-
     public void addFairyEssence(int amount) {
         this.fairyEssence += amount;
     }
@@ -211,6 +207,22 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public void addLegendaryStarPiece() {
         this.legendaryStarPieces += 1;
+    }
+
+    public void subtractCommonStarPiece() {
+        this.commonStarPieces -= 1;
+    }
+
+    public void subtractRareStarPiece() {
+        this.rareStarPieces -= 1;
+    }
+
+    public void subtractEpicStarPiece() {
+        this.epicStarPieces -= 1;
+    }
+
+    public void subtractLegendaryStarPiece() {
+        this.legendaryStarPieces -= 1;
     }
 
     public int getSkillBoostModifiers() {

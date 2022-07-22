@@ -211,18 +211,18 @@ public class EndState implements State, TimerDebugAble {
         players = players.stream().sorted(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()).reversed()).collect(Collectors.toList());
         List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
-            WarlordsEntity warlordsPlayer = players.get(i);
+            WarlordsEntity we = players.get(i);
             leaderboardPlayersDamage.add(
                     new TextComponentBuilder(
-                            ChatColor.AQUA + warlordsPlayer.getName() +
+                            ChatColor.AQUA + we.getName() +
                             ChatColor.GRAY + ": " +
-                            ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getMinuteStats().total().getDamage()))
+                            ChatColor.GOLD + NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()))
                     .setHoverText(
                             ChatColor.DARK_GRAY + "Lv" +
-                            ChatColor.GRAY + ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass()) + " " +
-                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() +
+                            ChatColor.GRAY + ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " " +
+                            ChatColor.GOLD + we.getSpec().getClassName() +
                             ChatColor.GREEN + " (" +
-                            warlordsPlayer.getSpec().getClass().getSimpleName() +
+                            we.getSpec().getClass().getSimpleName() +
                             ")"
                     ).getTextComponent());
 

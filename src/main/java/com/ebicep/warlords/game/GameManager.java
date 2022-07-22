@@ -509,7 +509,7 @@ public class GameManager implements AutoCloseable {
             return setRequestedGameAddons(rga.length == 0 ? EnumSet.noneOf(GameAddon.class) : EnumSet.copyOf(Arrays.asList(rga)));
         }
 
-        public QueueEntryBuilder setCategory(@Nullable GameMode category) {
+        public QueueEntryBuilder setGamemode(@Nullable GameMode category) {
             this.category = category;
             return this;
         }

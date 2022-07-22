@@ -201,7 +201,7 @@ public class GameStartCommand implements TabExecutor {
         }
         return Warlords.getGameManager()
                 .newEntry(selectedPeople == null ? people : selectedPeople)
-                .setCategory(category)
+                .setGamemode(category)
                 .setMap(map)
                 .setRequestedGameAddons(addon);
     }

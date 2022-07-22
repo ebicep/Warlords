@@ -7,6 +7,8 @@ public class CustomPigZombie extends EntityPigZombie implements CustomEntity<Cus
 
     public CustomPigZombie(World world) {
         super(world);
+        resetAI(world);
+        giveBaseAI();
     }
 
 

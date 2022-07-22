@@ -140,12 +140,13 @@ public enum GameAddon {
         }
 
     },
-
     TOURNAMENT_MODE(
             "Tournament Mode",
             null,
             "Tournament Mode"
-    );
+    )
+
+    ;
 
     private final String name;
     @Nullable

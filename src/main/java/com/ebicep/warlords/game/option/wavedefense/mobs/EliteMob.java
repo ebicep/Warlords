@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
-import com.ebicep.customentities.nms.pve.CustomEnderman;
+import com.ebicep.customentities.nms.pve.CustomIronGolem;
+import com.ebicep.customentities.nms.pve.CustomMagmaCube;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
@@ -17,7 +18,7 @@ public class EliteMob {
     public static final Function<Location, PartialMonster> ELITE_ZOMBIE = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
             () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()), (mob) -> {
-            }, "Elite Zombie",
+            }, "Illusion Swordsman",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET),
@@ -27,14 +28,17 @@ public class EliteMob {
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
             4000,
-            0.28f
+            0.35f,
+            0,
+            300,
+            600
     );
     public static final Function<Location, PartialMonster> ELITE_SKELETON = loc -> PartialMonster.fromCustomEntity(
             CustomSkeleton.class,
             () -> new CustomSkeleton(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
-            "Elite Skeleton",
+            "Illusion Warlock",
             loc,
             new Utils.SimpleEntityEquipment(
                     new ItemStack(Material.CARPET, 1, (short) 1),
@@ -44,39 +48,37 @@ public class EliteMob {
                     new ItemStack(Material.BOW)
             ),
             1200,
-            0.25f
+            0.3f,
+            0,
+            0,
+            0
+    );
+    public static final Function<Location, PartialMonster> MAGMA_CUBE = loc -> PartialMonster.fromCustomEntity(
+            CustomMagmaCube.class,
+            () -> new CustomMagmaCube(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Illusion Illumination",
+            loc,
+            null,
+            3000,
+            0.35f,
+            20,
+            100,
+            200
     );
     public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
-            CustomZombie.class,
-            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            CustomIronGolem.class,
+            () -> new CustomIronGolem(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {
             },
             "Illusion Apprentice",
             loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.DEAD_BUSH),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.SPIDER_EYE)
-            ),
-            7000,
-            0.3f
-    );
-    public static final Function<Location, PartialMonster> ELITE_ENDERMAN = loc -> PartialMonster.fromCustomEntity(
-            CustomEnderman.class,
-            () -> new CustomEnderman(((CraftWorld) loc.getWorld()).getHandle()),
-            (mob) -> {},
-            "Elite Enderman",
-            loc,
-            new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
-                    new ItemStack(Material.DIAMOND_CHESTPLATE),
-                    new ItemStack(Material.DIAMOND_LEGGINGS),
-                    new ItemStack(Material.DIAMOND_BOOTS),
-                    new ItemStack(Material.PRISMARINE_SHARD)
-            ),
-            3500,
-            0.5f
+            null,
+            6000,
+            0.35f,
+            0,
+            400,
+            800
     );
 }

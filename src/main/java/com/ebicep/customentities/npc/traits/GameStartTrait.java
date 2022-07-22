@@ -70,7 +70,7 @@ public class GameStartTrait extends Trait {
 
         Warlords.getGameManager()
                 .newEntry(people)
-                .setCategory(GameMode.CAPTURE_THE_FLAG)
+                .setGamemode(GameMode.CAPTURE_THE_FLAG)
                 .setMap(null)
                 .setPriority(0)
                 .setExpiresTime(System.currentTimeMillis() + 60 * 1000)

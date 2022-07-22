@@ -40,6 +40,7 @@ public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
     private final Set<WarlordsEntity> entities = new HashSet<>();
     private int waveCounter = 0;
+    private int maxWave = 10000;
     private int spawnCount = 0;
     private Wave currentWave;
     private final Team team;
@@ -55,6 +56,12 @@ public class WaveDefenseOption implements Option {
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
         this.waves = waves;
+    }
+
+    public WaveDefenseOption(Team team, WaveList waves, int maxWave) {
+        this.team = team;
+        this.waves = waves;
+        this.maxWave = maxWave;
     }
     
     public void startSpawnTask() {
@@ -100,8 +107,10 @@ public class WaveDefenseOption implements Option {
                 return we;
             }
 
+            int counter = 0;
             @Override
             public void run() {
+                counter++;
                 if (lastSpawn == null) {
                     lastSpawn = spawn(lastLocation);
                     if (lastSpawn != null) {
@@ -113,6 +122,7 @@ public class WaveDefenseOption implements Option {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
                     lastSpawn.getLocation(lastLocation);
                 }
+
                 spawnCount--;
                 if (spawnCount <= 0) {
                     spawner.cancel();
@@ -120,7 +130,7 @@ public class WaveDefenseOption implements Option {
                 }
             }
             
-        }.runTaskTimer(currentWave.getDelay(), 1);
+        }.runTaskTimer(currentWave.getDelay(), 15);
     }
 
     public void newWave() {
@@ -135,7 +145,6 @@ public class WaveDefenseOption implements Option {
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
                 sendMessage(entry.getKey(), false, message);
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
-                entry.getKey().playSound(entry.getKey().getLocation(), Sound.AMBIENCE_THUNDER, 500, 2);
             }
         }
         waveCounter++;
@@ -225,7 +234,8 @@ public class WaveDefenseOption implements Option {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return Collections.singletonList(
-                        "Wave: " + ChatColor.GREEN + ChatColor.BOLD + waveCounter + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 100 ? "/" + ChatColor.GREEN + maxWave : "") +
+                                ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
                 );
             }
         });
@@ -263,7 +273,6 @@ public class WaveDefenseOption implements Option {
     
     @Override
     public void start(@Nonnull Game game) {
-
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -286,7 +295,7 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
-                if (waveCounter == Integer.MAX_VALUE) {
+                if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));
                 }
             }
@@ -317,5 +326,13 @@ public class WaveDefenseOption implements Option {
     @Nonnull
     public Game getGame() {
         return game;
+    }
+
+    public int getMaxWave() {
+        return maxWave;
+    }
+
+    public void setMaxWave(int maxWave) {
+        this.maxWave = maxWave;
     }
 }

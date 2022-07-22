@@ -99,7 +99,7 @@ public abstract class AbstractWeapon implements StarPieceBonus {
 
     public abstract int getMeleeDamageRange();
 
-    public String getTitle() {
+    public String getName() {
         return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
     }
 
@@ -125,7 +125,7 @@ public abstract class AbstractWeapon implements StarPieceBonus {
             lore.add(ChatColor.AQUA + "BOUND");
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
-                .name(getTitle())
+                .name(getName())
                 .lore(lore)
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
@@ -134,7 +134,7 @@ public abstract class AbstractWeapon implements StarPieceBonus {
 
     public ItemStack generateItemStackInLore(String name) {
         List<String> lore = new ArrayList<>();
-        lore.add(getTitle());
+        lore.add(getName());
         lore.add("");
         lore.addAll(getBaseStats());
         lore.addAll(getLore());

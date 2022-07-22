@@ -133,7 +133,13 @@ commands:
     usage: /unstuck
   setwave:
     description: Set the wave counter in Wave Defense
-    usage: /unstuck
+    usage: /setwave
+  currency:
+    description: Edit the currency in Wave Defense
+    usage: /currency
+  offlinefreeze:
+    description: Toggle offline freeze
+    usage: /offlinefreeze
 
 permissions:
   group.default:

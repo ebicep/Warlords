@@ -74,11 +74,15 @@ public class WeaponSkinSelectorMenu {
                                 if (weaponSkin != weapon.getSelectedWeaponSkin()) {
                                     weapon.setSelectedWeaponSkin(weaponSkin);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openWeaponSkinSelectorMenu(player, weapon, pageNumber);
                                 }
                             } else {
+                                if (databasePlayer.getPveStats().getFairyEssence() < weaponSkin.getCost()) {
+                                    player.sendMessage(ChatColor.RED + "You do not have enough Fairy Essence to purchase this skin.");
+                                    return;
+                                }
                                 unlockWeaponSkin(player, weapon, weaponSkin, pageNumber);
                             }
+                            openWeaponSkinSelectorMenu(player, weapon, pageNumber);
                         }
                 );
             }
@@ -122,19 +126,17 @@ public class WeaponSkinSelectorMenu {
     public static void unlockWeaponSkin(Player player, AbstractWeapon weapon, Weapons weaponSkin, int page) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        if (databasePlayerPvE.getFairyEssence() >= weaponSkin.getCost()) {
+        if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.setFairyEssence(databasePlayerPvE.getFairyEssence() - weaponSkin.getCost());
+            databasePlayerPvE.addFairyEssence(-weaponSkin.getCost());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for "),
-                    new TextComponentBuilder(weapon.getTitle())
+                    new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent());
-        } else {
-            player.sendMessage(ChatColor.RED + "You don't have enough Fairy Essence to unlock this weapon skin.");
         }
     }
 
