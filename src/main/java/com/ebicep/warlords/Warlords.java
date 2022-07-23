@@ -1005,6 +1005,7 @@ public class Warlords extends JavaPlugin {
         new ToggleAFKDetectionCommand().register(this);
         new ServerStatusCommand().register(this);
         new UnstuckCommand().register(this);
+        new ToggleOfflineFreezeCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {
