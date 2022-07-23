@@ -34,6 +34,7 @@ import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.wavedefense.EditCurrencyCommand;
 import com.ebicep.warlords.game.option.wavedefense.SkipWaveCommand;
+import com.ebicep.warlords.guilds.GuildCommand;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyCommand;
@@ -1032,6 +1033,7 @@ public class Warlords extends JavaPlugin {
         new UnstuckCommand().register(this);
         new SkipWaveCommand().register(this);
         new EditCurrencyCommand().register(this);
+        new GuildCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {

@@ -19,6 +19,10 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPermissions;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
@@ -33,6 +37,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
@@ -294,17 +299,17 @@ public class WarlordsEvents implements Listener {
                                 } else {
                                     wpVictim.sendMessage(
                                             WarlordsEntity.RECEIVE_ARROW_RED +
-                                            ChatColor.GRAY + "You have been bound by " +
-                                            wpAttacker.getName() + "'s " +
-                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
-                                            ChatColor.GRAY + "!"
+                                                    ChatColor.GRAY + "You have been bound by " +
+                                                    wpAttacker.getName() + "'s " +
+                                                    ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
+                                                    ChatColor.GRAY + "!"
                                     );
                                     wpAttacker.sendMessage(
                                             WarlordsEntity.GIVE_ARROW_GREEN +
-                                            ChatColor.GRAY + "Your " +
-                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
-                                            ChatColor.GRAY + "has bound " +
-                                            wpVictim.getName() + "!"
+                                                    ChatColor.GRAY + "Your " +
+                                                    ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
+                                                    ChatColor.GRAY + "has bound " +
+                                                    wpVictim.getName() + "!"
                                     );
                                     soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
                                     Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
@@ -645,7 +650,8 @@ public class WarlordsEvents implements Listener {
                     System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
                 }
 
-                switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
+                ChatChannels channel = Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL);
+                switch (channel) {
                     case ALL:
                         WarlordsEntity wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
@@ -692,13 +698,33 @@ public class WarlordsEvents implements Listener {
                         break;
                     case PARTY:
                         if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
-                            e.setFormat(ChatColor.BLUE + "Party" + ChatColor.DARK_GRAY + " > " +
+                            e.setFormat(channel.getColoredName() + ChatColor.DARK_GRAY + " > " +
                                     (prefixColor) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
                         } else {
                             player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
+                            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                            e.setCancelled(true);
+                            return null;
+                        }
+                        break;
+                    case GUILD:
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+                        if (guildPlayerPair != null) {
+                            if (guildPlayerPair.getA().isMuted() && !guildPlayerPair.getA().playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
+                                player.sendMessage(ChatColor.RED + "The guild is currently muted.");
+                                e.setCancelled(true);
+                                return null;
+                            }
+                            e.setFormat(channel.getColoredName() + ChatColor.DARK_GRAY + " > " +
+                                    (prefixColor) + "%1$s" +
+                                    ChatColor.WHITE + ": %2$s"
+                            );
+                            e.getRecipients().retainAll(guildPlayerPair.getA().getOnlinePlayers());
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
                             Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                             e.setCancelled(true);
                             return null;

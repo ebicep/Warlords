@@ -50,8 +50,12 @@ public class PartyListener implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (e.getMessage().equalsIgnoreCase("/pl")) {
+        String message = e.getMessage();
+        if (message.equalsIgnoreCase("/pl")) {
             Bukkit.getServer().dispatchCommand(e.getPlayer(), "party list");
+            e.setCancelled(true);
+        } else if (message.equalsIgnoreCase("/gl")) {
+            Bukkit.getServer().dispatchCommand(e.getPlayer(), "guild list");
             e.setCancelled(true);
         }
     }

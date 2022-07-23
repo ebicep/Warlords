@@ -58,7 +58,7 @@ commands:
     usage: /recordaveragedamage
   chatchannelcommand:
     description: Changes chat channel or sends a mesasage in a different channel
-    aliases: [ chat, achat, ac, pchat, pc ]
+    aliases: [ chat, achat, ac, pchat, pc, gchat, gc ]
   me:
     description: Not happening.
     usage: Not happening.
@@ -137,6 +137,9 @@ commands:
   currency:
     description: Edit the currency in Wave Defense
     usage: /currency
+  guild:
+    description: Guild
+    aliases: [ guild, g ]
 
 permissions:
   group.default:
