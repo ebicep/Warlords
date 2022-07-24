@@ -15,6 +15,10 @@ import java.util.UUID;
 
 public class PollCommand implements CommandExecutor {
 
+    public static void sendPollMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.RED, true);
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
@@ -28,7 +32,7 @@ public class PollCommand implements CommandExecutor {
         }
 
         if (args.length <= 1) {
-            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+            sendPollMessage(player, ChatColor.RED + "Invalid Arguments!");
             return true;
         }
 
@@ -36,7 +40,7 @@ public class PollCommand implements CommandExecutor {
         String pollID = args[1];
         Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(pollID);
         if (!optionalPoll.isPresent()) {
-            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+            sendPollMessage(player, ChatColor.RED + "Invalid Arguments!");
             return true;
         }
 
@@ -45,7 +49,7 @@ public class PollCommand implements CommandExecutor {
         switch (input) {
             case "answer": {
                 if (args.length <= 2) {
-                    ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                    sendPollMessage(player, ChatColor.RED + "Invalid Arguments!");
                     return true;
                 }
                 try {
@@ -53,26 +57,26 @@ public class PollCommand implements CommandExecutor {
                     HashMap<UUID, Integer> playerAnsweredWithOption = poll.getPlayerAnsweredWithOption();
                     if (playerAnsweredWithOption.containsKey(player.getUniqueId())) {
                         if (playerAnsweredWithOption.get(player.getUniqueId()) == answer) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You already voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.RED + "!", ChatColor.BLUE, true);
+                            sendPollMessage(player, ChatColor.RED + "You already voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.RED + "!");
                         } else {
                             playerAnsweredWithOption.put(player.getUniqueId(), answer);
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You changed your vote to " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", ChatColor.BLUE, true);
+                            sendPollMessage(player, ChatColor.GREEN + "You changed your vote to " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!");
                         }
                     } else if (answer > 0 && answer <= poll.getOptions().size()) {
                         playerAnsweredWithOption.put(player.getUniqueId(), answer);
-                        ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", ChatColor.BLUE, true);
+                        sendPollMessage(player, ChatColor.GREEN + "You voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!");
                     } else {
-                        ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                        sendPollMessage(player, ChatColor.RED + "Invalid Arguments!");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                    sendPollMessage(player, ChatColor.RED + "Invalid Arguments!");
                 }
                 break;
             }
             case "end": {
                 if (!player.hasPermission("warlords.poll.end")) {
-                    ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid permissions!", ChatColor.BLUE, true);
+                    sendPollMessage(player, ChatColor.RED + "Invalid permissions!");
                     return true;
                 }
                 poll.setTimeLeft(0);

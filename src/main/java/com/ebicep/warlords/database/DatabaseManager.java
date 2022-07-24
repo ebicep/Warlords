@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.guild.GuildService;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -45,6 +46,7 @@ public class DatabaseManager {
     public static GameService gameService;
     public static TimingsService timingsService;
     public static MasterworksFairService masterworksFairService;
+    public static GuildService guildService;
 
     public static String lastWarlordsPlusString = "";
 
@@ -71,6 +73,7 @@ public class DatabaseManager {
             gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
+            guildService = context.getBean("guildService", GuildService.class);
         } catch (Exception e) {
             NPCManager.createGameNPCs();
             e.printStackTrace();
@@ -107,7 +110,7 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms");
+        System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true))
                 .execute();

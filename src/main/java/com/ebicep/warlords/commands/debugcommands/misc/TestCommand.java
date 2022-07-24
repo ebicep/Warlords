@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -90,7 +89,7 @@ public class TestCommand implements CommandExecutor {
 
 //        testWeaponScore((Player) sender);
 
-        AbstractWeapon.giveTestItem((Player) sender);
+        //AbstractWeapon.giveTestItem((Player) sender);
 
 
 //        for (int i = 0; i < 20; i++) {
@@ -116,6 +115,28 @@ public class TestCommand implements CommandExecutor {
         //SRCalculator.recalculateSR();
 
         Player player = (Player) sender;
+
+//        long start = System.nanoTime();
+//        OfflinePlayer offlinePlayer1 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
+//        System.out.println(offlinePlayer1.getName());
+//        long end = System.nanoTime();
+//        System.out.println((end - start) / 1000000 + "ms");
+//        long start2 = System.nanoTime();
+//        OfflinePlayer offlinePlayer2 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
+//        System.out.println(offlinePlayer2.getName());
+//        long end2 = System.nanoTime();
+//        System.out.println((end2 - start2) / 1000000 + "ms");
+
+//        Set<String> testSet = new HashSet<>();
+//        testSet.add("test1");
+//        testSet.add("test2");
+        //DatabaseManager.mongoClient.getDatabase("Warlords").getCollection("Test").insertOne(new Document("test", UUID.randomUUID()));
+        // DatabaseManager.guildService.create(new Guild(player, "test"));
+        //Guild test = DatabaseManager.guildService.findByName("fuck");
+//       // DatabaseManager.guildService.delete(test);
+        //   DatabaseManager.guildService.update(test);
+
+        //  DatabaseManager.guildService.update(GuildManager.GUILDS.get(0));
 
 //        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
 //        System.out.println(playerSettings.getSelectedSpec());

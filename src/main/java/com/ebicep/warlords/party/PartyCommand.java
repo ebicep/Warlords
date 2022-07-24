@@ -2,6 +2,7 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.jda.queuesystem.QueueManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,35 +36,37 @@ public class PartyCommand implements TabExecutor {
         switch (s) {
             case "party":
             case "p":
-                Player player = (Player) sender;
+                Player player = BaseCommand.requirePlayer(sender);
+                if (player == null) {
+                    return true;
+                }
                 if (args.length <= 0) {
-                    ChatUtils.sendMessageToPlayer(player, ChatColor.GOLD + "Party Commands: \n" +
-                                    ChatColor.YELLOW + "/p create" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a party" + "\n" +
-                                    ChatColor.YELLOW + "/p invite <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites another player to your party" + "\n" +
-                                    ChatColor.YELLOW + "/p list" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Lists the players in your current party" + "\n" +
-                                    ChatColor.YELLOW + "/p leave" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Leaves your current party" + "\n" +
-                                    ChatColor.YELLOW + "/p disband" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Disbands the party" + "\n" +
-                                    ChatColor.YELLOW + "/p (kick/remove) <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Removes a player from your party" + "\n" +
-                                    ChatColor.YELLOW + "/p transfer <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Transfers ownership of the party to a player" + "\n" +
-                                    ChatColor.YELLOW + "/p afk" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Toggles if you are AFK" + "\n" +
-                                    ChatColor.YELLOW + "/p promote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Promotes a player in the party" + "\n" +
-                                    ChatColor.YELLOW + "/p demote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Demotes a player in the party" + "\n" +
-                                    ChatColor.YELLOW + "/p poll <question/answer/answer...>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a poll to vote on" + "\n" +
-                                    ChatColor.YELLOW + "/p (open/close)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens/Closes the party" + "\n" +
-                                    ChatColor.YELLOW + "/p outside" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Shows the players outside of the party" + "\n" +
-                                    ChatColor.YELLOW + "/p leader" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Takes leader from current leader" + "\n" +
-                                    ChatColor.YELLOW + "/p forcejoin <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Forces a player to join your party" + "\n" +
-                                    ChatColor.YELLOW + "/p allinvite" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Toggles All Invite" + "\n" +
-                                    ChatColor.YELLOW + "/p invitequeue" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites the players in queue" + "\n"
-                            ,
-                            ChatColor.BLUE, false);
+                    Party.sendPartyMessage(player, ChatColor.GOLD + "Party Commands: \n" +
+                            ChatColor.YELLOW + "/p create" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a party" + "\n" +
+                            ChatColor.YELLOW + "/p invite <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites another player to your party" + "\n" +
+                            ChatColor.YELLOW + "/p list" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Lists the players in your current party" + "\n" +
+                            ChatColor.YELLOW + "/p leave" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Leaves your current party" + "\n" +
+                            ChatColor.YELLOW + "/p disband" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Disbands the party" + "\n" +
+                            ChatColor.YELLOW + "/p (kick/remove) <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Removes a player from your party" + "\n" +
+                            ChatColor.YELLOW + "/p transfer <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Transfers ownership of the party to a player" + "\n" +
+                            ChatColor.YELLOW + "/p afk" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Toggles if you are AFK" + "\n" +
+                            ChatColor.YELLOW + "/p promote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Promotes a player in the party" + "\n" +
+                            ChatColor.YELLOW + "/p demote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Demotes a player in the party" + "\n" +
+                            ChatColor.YELLOW + "/p poll <question/answer/answer...>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a poll to vote on" + "\n" +
+                            ChatColor.YELLOW + "/p (open/close)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens/Closes the party" + "\n" +
+                            ChatColor.YELLOW + "/p outside" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Shows the players outside of the party" + "\n" +
+                            ChatColor.YELLOW + "/p leader" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Takes leader from current leader" + "\n" +
+                            ChatColor.YELLOW + "/p forcejoin <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Forces a player to join your party" + "\n" +
+                            ChatColor.YELLOW + "/p allinvite" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Toggles All Invite" + "\n" +
+                            ChatColor.YELLOW + "/p invitequeue" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites the players in queue" + "\n"
+                    );
                     return true;
                 }
                 Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
                 String input = args[0];
                 if (input.equalsIgnoreCase("create")) {
                     if (currentParty.isPresent()) {
-                        ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are already in a party!", ChatColor.BLUE, true);
+                        Party.sendPartyMessage(player, ChatColor.RED + "You are already in a party!");
                         return true;
                     }
                     Party party = new Party((player).getUniqueId(), false);
@@ -72,21 +76,21 @@ public class PartyCommand implements TabExecutor {
                 }
                 if (!input.equalsIgnoreCase("join") && !input.equalsIgnoreCase("invite") && Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.getName().equalsIgnoreCase(input))) {
                     if (!currentParty.isPresent()) {
-                        ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are currently not in a party!", ChatColor.BLUE, true);
+                        Party.sendPartyMessage(player, ChatColor.RED + "You are currently not in a party!");
                         return true;
                     }
                 }
                 switch (input.toLowerCase()) {
                     case "invite": {
                         if (args.length <= 1) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Invalid Arguments!");
                             return true;
                         }
                         String playerToInvite = args[1];
                         Player invitedPlayer = Bukkit.getPlayer(playerToInvite);
                         if (!currentParty.isPresent()) {
                             if (invitedPlayer == sender) {
-                                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You can't invite yourself to a party!", ChatColor.BLUE, true);
+                                Party.sendPartyMessage(player, ChatColor.RED + "You can't invite yourself to a party!");
                                 return true;
                             }
                             Party party = new Party((player).getUniqueId(), false);
@@ -94,20 +98,20 @@ public class PartyCommand implements TabExecutor {
                             currentParty = Optional.of(party);
                         }
                         if (!currentParty.get().isAllInvite() && !currentParty.get().getPartyLeader().getUuid().equals(player.getUniqueId()) && currentParty.get().getPartyModerators().stream().noneMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()))) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "All invite is Disabled!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "All invite is Disabled!");
                             return true;
                         }
                         Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
                         if (invitedPlayer == null) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Unable to invite that player!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Unable to invite that player!");
                             return true;
                         }
                         if (Warlords.partyManager.inSameParty(player.getUniqueId(), invitedPlayer.getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player is already in the party!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "That player is already in the party!");
                             return true;
                         }
                         if (currentParty.get().getInvites().containsKey(invitedPlayer.getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player has already been invited! (" + currentParty.get().getInvites().get(invitedPlayer.getUniqueId()) + ")", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "That player has already been invited! (" + currentParty.get().getInvites().get(invitedPlayer.getUniqueId()) + ")");
                             return true;
                         }
                         currentParty.get().invite(playerToInvite);
@@ -127,30 +131,30 @@ public class PartyCommand implements TabExecutor {
                     }
                     case "join": {
                         if (args.length <= 1) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Invalid Arguments!");
                             return true;
                         }
                         String playerToJoin = args[1];
                         if (Warlords.partyManager.inAParty(player.getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are already in a party!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "You are already in a party!");
                             return true;
                         }
                         if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.getName().equalsIgnoreCase(playerToJoin))) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Cannot find a player with that name!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Cannot find a player with that name!");
                             return true;
                         }
                         if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.getName().equalsIgnoreCase(playerToJoin))) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player does not have a party!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "That player does not have a party!");
                             return true;
                         }
                         Player partyLeader = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(playerToJoin)).findAny().get();
                         Optional<Party> party = Warlords.partyManager.getPartyFromLeader(partyLeader.getUniqueId());
                         if (!party.isPresent()) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player does not have a party!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "That player does not have a party!");
                             return true;
                         }
                         if (!party.get().isOpen() && !party.get().getInvites().containsKey(player.getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invite expired or party is closed!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Invite expired or party is closed!");
                             return true;
                         }
                         party.get().join(player.getUniqueId());
@@ -162,13 +166,13 @@ public class PartyCommand implements TabExecutor {
                     }
                     case "leave":
                         currentParty.get().leave(player.getUniqueId());
-                        ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You left the party", ChatColor.BLUE, true);
+                        Party.sendPartyMessage(player, ChatColor.GREEN + "You left the party");
                         return true;
                     case "disband":
                         if (currentParty.get().getPartyLeader().getUuid().equals(player.getUniqueId())) {
                             currentParty.get().disband();
                         } else {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are not the party leader!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "You are not the party leader!");
                         }
                         return true;
                     case "list":
@@ -180,7 +184,7 @@ public class PartyCommand implements TabExecutor {
                     case "remove":
                     case "transfer": {
                         if (args.length <= 1) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Invalid Arguments!");
                             return true;
                         }
                         String targetPlayer = args[1];
@@ -195,47 +199,55 @@ public class PartyCommand implements TabExecutor {
                                         (isModerator && (input.equalsIgnoreCase("promote") || input.equalsIgnoreCase("demote") || input.equalsIgnoreCase("transfer"))) ||
                                         (isMember)
                         ) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Insufficient Permissions!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
                             return true;
                         }
                         if (player.getName().equalsIgnoreCase(targetPlayer)) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You cannot do this on yourself!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "You cannot do this on yourself!");
                             return true;
                         }
-                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetPlayer);
-                        if (offlinePlayer == null || !party.hasUUID(offlinePlayer.getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Cannot find player!", ChatColor.BLUE, true);
-                            return true;
-                        }
-                        if (input.equalsIgnoreCase("promote")) {
-                            party.promote(targetPlayer);
-                        } else if (input.equalsIgnoreCase("demote")) {
-                            party.demote(targetPlayer);
-                        } else if (input.equalsIgnoreCase("remove") || input.equalsIgnoreCase("kick")) {
-                            party.remove(targetPlayer);
-                        } else {
-                            party.transfer(targetPlayer);
-                        }
+                        new BukkitRunnable() {
+
+                            @Override
+                            public void run() {
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetPlayer);
+                                if (offlinePlayer == null || !party.hasUUID(offlinePlayer.getUniqueId())) {
+                                    Party.sendPartyMessage(player, ChatColor.RED + "Cannot find player!");
+                                    return;
+                                }
+                                UUID uuid = offlinePlayer.getUniqueId();
+                                if (input.equalsIgnoreCase("promote")) {
+                                    party.promote(uuid);
+                                } else if (input.equalsIgnoreCase("demote")) {
+                                    party.demote(uuid);
+                                } else if (input.equalsIgnoreCase("remove") || input.equalsIgnoreCase("kick")) {
+                                    party.remove(uuid);
+                                } else {
+                                    party.transfer(uuid);
+                                }
+                            }
+                        }.runTask(Warlords.getInstance());
+
                         return true;
                     }
                     case "poll": {
                         if (args.length <= 1) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Invalid Arguments!");
                             return true;
                         }
                         Party party = currentParty.get();
                         if (party.getPartyMembers().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()))) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Insufficient Permissions!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
                             return true;
                         }
                         if (!currentParty.get().getPolls().isEmpty()) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "There is already an ongoing poll!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "There is already an ongoing poll!");
                             return true;
                         }
                         String pollInfo = String.join("/", args);
                         int numberOfSlashes = (int) pollInfo.chars().filter(ch -> ch == '/').count();
                         if (numberOfSlashes <= 1) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You must have a question and more than 1 answer!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "You must have a question and more than 1 answer!");
                         } else {
                             List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                             String question = pollOptions.get(0);
@@ -254,7 +266,7 @@ public class PartyCommand implements TabExecutor {
                     case "close":
                     case "open": {
                         if (!currentParty.get().getPartyLeader().getUuid().equals((player).getUniqueId())) {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Insufficient Permissions!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
                             return true;
                         }
                         currentParty.get().setOpen(!input.equalsIgnoreCase("close"));
@@ -284,7 +296,7 @@ public class PartyCommand implements TabExecutor {
                     case "leader": {
                         currentParty.ifPresent(party -> {
                             if (sender.hasPermission("warlords.party.forceleader")) {
-                                party.transfer(sender.getName());
+                                party.transfer(((Player) sender).getUniqueId());
                             } else {
                                 sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                             }
@@ -307,11 +319,11 @@ public class PartyCommand implements TabExecutor {
                                 }
                                 Player playerToForceInvite = Bukkit.getPlayer(name);
                                 if (playerToForceInvite == null) {
-                                    ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Cannot find a player with that name!", ChatColor.BLUE, true);
+                                    Party.sendPartyMessage(player, ChatColor.RED + "Cannot find a player with that name!");
                                     return;
                                 }
                                 if (Warlords.partyManager.inSameParty(player.getUniqueId(), playerToForceInvite.getUniqueId())) {
-                                    ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "That player is already in the party!", ChatColor.BLUE, true);
+                                    Party.sendPartyMessage(player, ChatColor.RED + "That player is already in the party!");
                                     return;
                                 }
                                 Bukkit.getServer().dispatchCommand(playerToForceInvite, "p join " + party.getLeaderName());
@@ -332,7 +344,7 @@ public class PartyCommand implements TabExecutor {
                                 party.sendMessageToAllPartyPlayers(ChatColor.RED + "All invite is now off", ChatColor.BLUE, true);
                             }
                         } else {
-                            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "Insufficient Permissions!", ChatColor.BLUE, true);
+                            Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
                         }
                         return true;
                     }

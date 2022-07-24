@@ -2,6 +2,7 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.util.java.NumberFormat;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -62,6 +63,14 @@ public class UtilsTest {
         double multiply = 1.19;
         System.out.println(value * multiply);
         System.out.println(NumberFormat.formatOptionalHundredths(value * multiply));
+    }
+
+    @Test
+    public void testStrings() {
+        String[] args = {"a", "b", "c"};
+        String newName = StringUtils.join(args, " ", 1, args.length);
+        System.out.println(newName + "|");
+
     }
 
 

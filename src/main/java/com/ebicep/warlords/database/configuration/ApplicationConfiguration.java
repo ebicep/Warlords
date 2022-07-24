@@ -1,8 +1,11 @@
 package com.ebicep.warlords.database.configuration;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.bson.UuidRepresentation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +27,11 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Override
     public MongoClient mongoClient() {
         System.out.println("Getting mongoClient");
-        MongoClient mongoClient = MongoClients.create(key);
+        MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(key))
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .build();
+        MongoClient mongoClient = MongoClients.create(mongoClientSettings);
         DatabaseManager.mongoClient = mongoClient;
         DatabaseManager.warlordsDatabase = mongoClient.getDatabase("Warlords");
 

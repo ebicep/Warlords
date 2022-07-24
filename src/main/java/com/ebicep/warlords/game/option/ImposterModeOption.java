@@ -29,6 +29,10 @@ public class ImposterModeOption implements Option {
     private Game game;
     private GamePoll poll;
 
+    public static void sendImposterMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.AQUA, true);
+    }
+
 
     @Override
     public void register(@Nonnull Game game) {
@@ -39,17 +43,17 @@ public class ImposterModeOption implements Option {
         }
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(30, "imposter") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsEntity warlordsPlayer) {
-                if (warlordsPlayer == null) {
-                    return Collections.emptyList();
-                }
-                if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
-                    return Collections.emptyList();
-                }
-                if (imposters.entrySet().stream().anyMatch(teamListEntry -> teamListEntry.getValue().contains(warlordsPlayer))) {
-                    return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
-                }
+                    @Override
+                    public List<String> computeLines(@Nullable WarlordsEntity warlordsPlayer) {
+                        if (warlordsPlayer == null) {
+                            return Collections.emptyList();
+                        }
+                        if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
+                            return Collections.emptyList();
+                        }
+                        if (imposters.entrySet().stream().anyMatch(teamListEntry -> teamListEntry.getValue().contains(warlordsPlayer))) {
+                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
+                        }
 
                         return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
                     }
@@ -89,10 +93,10 @@ public class ImposterModeOption implements Option {
                         case 4:
                             if (imposters.get(team).contains(Warlords.getPlayer(player))) {
                                 title = ChatColor.RED + "The IMPOSTER";
-                                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", ChatColor.BLUE, true);
+                                sendImposterMessage(player, ChatColor.RED + "You are the IMPOSTER");
                             } else {
                                 title = ChatColor.GREEN + "INNOCENT";
-                                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", ChatColor.BLUE, true);
+                                sendImposterMessage(player, ChatColor.GREEN + "You are INNOCENT");
                             }
                             break;
                     }
@@ -221,10 +225,10 @@ public class ImposterModeOption implements Option {
                             (!votedCorrectly && imposters.get(team).stream().anyMatch(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(player.getName())))
             ) {
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", ChatColor.BLUE, true);
+                sendImposterMessage(player, ChatColor.GREEN + "You won!");
             } else {
                 PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You lost!", ChatColor.BLUE, true);
+                sendImposterMessage(player, ChatColor.RED + "You lost!");
             }
         } else {
             //win if
@@ -244,10 +248,10 @@ public class ImposterModeOption implements Option {
             }
             if (votedCorrectly && !isAnImposterOnOtherTeam) {
                 PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
-                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You lost!", ChatColor.BLUE, true);
+                sendImposterMessage(player, ChatColor.RED + "You lost!");
             } else {
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
-                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", ChatColor.BLUE, true);
+                sendImposterMessage(player, ChatColor.GREEN + "You won!");
             }
         }
     }
@@ -270,11 +274,7 @@ public class ImposterModeOption implements Option {
             }
         });
         message.setLength(message.length() - 1);
-        ChatUtils.sendMessageToPlayer(
-                player,
-                message.toString(),
-                ChatColor.BLUE, true
-        );
+        sendImposterMessage(player, message.toString());
     }
 
     private void sendTitle(String title, String subtitle) {
