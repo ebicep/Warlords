@@ -23,6 +23,10 @@ public class GuildRole {
         return roleName;
     }
 
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
     public Set<GuildPermissions> getPermissions() {
         return permissions;
     }

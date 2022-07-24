@@ -110,7 +110,7 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms");
+        System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true))
                 .execute();

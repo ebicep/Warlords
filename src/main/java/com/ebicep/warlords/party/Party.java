@@ -60,6 +60,10 @@ public class Party {
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
 
+    public static void sendPartyMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.BLUE, true);
+    }
+
     public void invite(String name) {
         Player player = Bukkit.getPlayer(name);
         invites.put(player.getUniqueId(), 60);
@@ -71,7 +75,7 @@ public class Party {
         Player player = Bukkit.getPlayer(uuid);
         sendMessageToAllPartyPlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " joined the party", ChatColor.BLUE, true);
         if (player.hasPermission("warlords.party.automoderator")) {
-            promote(Bukkit.getOfflinePlayer(uuid).getName());
+            promote(uuid);
         }
         Bukkit.getPlayer(uuid).sendMessage(getPartyList());
     }
@@ -87,7 +91,7 @@ public class Party {
             //disband party if no other members
             if (partyPlayers.isEmpty()) {
                 if (partyPlayer.isOnline()) {
-                    ChatUtils.sendMessageToPlayer(player.getPlayer(), ChatColor.RED + "The party was disbanded", ChatColor.BLUE, true);
+                    sendPartyMessage(player.getPlayer(), ChatColor.RED + "The party was disbanded");
                 }
                 disband();
             } else {
@@ -106,9 +110,9 @@ public class Party {
         }
     }
 
-    public void transfer(String name) {
+    public void transfer(UUID uuid) {
         partyPlayers.stream()
-                .filter(partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName().equalsIgnoreCase(name))
+                .filter(partyPlayer -> partyPlayer.getUuid().equals(uuid))
                 .findFirst()
                 .ifPresent(partyPlayer -> {
                     getPartyLeader().setPartyPlayerType(PartyPlayerType.MODERATOR);
@@ -118,16 +122,16 @@ public class Party {
                 });
     }
 
-    public void remove(String name) {
+    public void remove(UUID uuid) {
         partyPlayers.stream()
-                .filter(partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName().equalsIgnoreCase(name))
+                .filter(partyPlayer -> partyPlayer.getUuid().equals(uuid))
                 .findFirst()
                 .ifPresent(partyPlayer -> {
                     partyPlayers.remove(partyPlayer);
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(partyPlayer.getUuid());
                     sendMessageToAllPartyPlayers(ChatColor.AQUA + offlinePlayer.getName() + ChatColor.RED + " was removed from the party", ChatColor.BLUE, true);
                     if (offlinePlayer.isOnline()) {
-                        ChatUtils.sendMessageToPlayer(offlinePlayer.getPlayer(), ChatColor.RED + "You were removed from the party", ChatColor.BLUE, true);
+                        sendPartyMessage(offlinePlayer.getPlayer(), ChatColor.RED + "You were removed from the party");
                     }
                 });
     }
@@ -182,10 +186,9 @@ public class Party {
                 });
     }
 
-    public void promote(String name) {
-        UUID uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
+    public void promote(UUID uuid) {
         if (getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid))) {
-            transfer(name);
+            transfer(uuid);
         } else {
             partyPlayers.stream()
                     .filter(partyPlayer -> partyPlayer.getUuid().equals(uuid))
@@ -195,14 +198,14 @@ public class Party {
         }
     }
 
-    public void demote(String name) {
+    public void demote(UUID uuid) {
         partyPlayers.stream()
-                .filter(partyPlayer -> Bukkit.getOfflinePlayer(name).getUniqueId().equals(partyPlayer.getUuid()))
+                .filter(partyPlayer -> uuid.equals(partyPlayer.getUuid()))
                 .findFirst()
                 .ifPresent(partyPlayer -> {
                     if (partyPlayer.getPartyPlayerType() == PartyPlayerType.MODERATOR) {
                         partyPlayer.setPartyPlayerType(PartyPlayerType.MEMBER);
-                        sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(name).getName() + ChatColor.YELLOW + " was demoted to Party Member", ChatColor.BLUE, true);
+                        sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.YELLOW + " was demoted to Party Member", ChatColor.BLUE, true);
                     }
                 });
     }

@@ -117,9 +117,15 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 //        long start = System.nanoTime();
-//        Bukkit.getPlayer("test");
+//        OfflinePlayer offlinePlayer1 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
+//        System.out.println(offlinePlayer1.getName());
 //        long end = System.nanoTime();
-//        System.out.println("Offline player: " + (end - start) / 1000000 + "ms");
+//        System.out.println((end - start) / 1000000 + "ms");
+//        long start2 = System.nanoTime();
+//        OfflinePlayer offlinePlayer2 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
+//        System.out.println(offlinePlayer2.getName());
+//        long end2 = System.nanoTime();
+//        System.out.println((end2 - start2) / 1000000 + "ms");
 
 //        Set<String> testSet = new HashSet<>();
 //        testSet.add("test1");

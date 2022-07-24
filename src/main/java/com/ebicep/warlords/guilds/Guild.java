@@ -57,6 +57,10 @@ public class Guild {
         addPlayer(player, masterRole);
     }
 
+    public static void sendGuildMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
+    }
+
     public void join(Player player) {
         addPlayer(player, getDefaultRole());
         sendMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " has joined the guild!", true);
@@ -65,7 +69,7 @@ public class Guild {
     public void leave(Player player) {
         this.players.removeIf(guildPlayer -> guildPlayer.getUUID().equals(player.getUniqueId()));
         sendMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " has left the guild!", true);
-        ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You left the guild!", ChatColor.GREEN, true);
+        sendGuildMessage(player, ChatColor.RED + "You left the guild!");
     }
 
     public void transfer(GuildPlayer guildPlayer) {
@@ -107,6 +111,7 @@ public class Guild {
 
     public void disband() {
         this.disbanded = true;
+        GuildManager.GUILDS.remove(this);
         sendMessageToOnlinePlayers(ChatColor.RED + "The guild has been disbanded!", true);
     }
 
@@ -158,8 +163,22 @@ public class Guild {
         return Integer.MAX_VALUE;
     }
 
+    public GuildRole getRoleOfPlayer(UUID uuid) {
+        for (GuildRole role : roles) {
+            if (role.getPlayers().contains(uuid)) {
+                return role;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        sendMessageToOnlinePlayers(ChatColor.GREEN + "The guild name was changed to " + ChatColor.GOLD + name, true);
     }
 
     public UUID getCreatedBy() {
@@ -190,6 +209,14 @@ public class Guild {
             }
         }
         return null;
+    }
+
+    public String getDefaultRoleName() {
+        return defaultRole;
+    }
+
+    public void setDefaultRole(String defaultRole) {
+        this.defaultRole = defaultRole;
     }
 
     public List<GuildRole> getRoles() {

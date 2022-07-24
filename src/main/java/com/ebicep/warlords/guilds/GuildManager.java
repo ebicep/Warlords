@@ -18,12 +18,12 @@ public class GuildManager {
     public static final List<Guild> GUILDS = new ArrayList<>();
     private static final Set<GuildInvite> INVITES = new HashSet<>();
 
-    public static boolean addGuild(Guild guild) {
-        if (GUILDS.stream().anyMatch(g -> g.getName().equalsIgnoreCase(guild.getName()))) {
-            return false;
-        }
+    public static boolean existingGuildWithName(String name) {
+        return GUILDS.stream().anyMatch(guild -> guild.getName().equalsIgnoreCase(name));
+    }
+
+    public static void addGuild(Guild guild) {
         GUILDS.add(guild);
-        return true;
     }
 
     public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
