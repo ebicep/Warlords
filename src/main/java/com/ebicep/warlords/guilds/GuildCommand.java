@@ -14,14 +14,30 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GuildCommand implements TabExecutor {
 
     private static final String[] guildOptions = {
-            "create"
+            "menu",
+            "list",
+            "invite",
+            "mute",
+            "unmute",
+            "disband",
+            "leave",
+            "transfer",
+            "kick",
+            "promote",
+            "demote",
+            "rename",
+
+            "create",
+            "join",
     };
 
     @Override
@@ -34,18 +50,22 @@ public class GuildCommand implements TabExecutor {
         }
 
         if (args.length == 0) {
-            Guild.sendGuildMessage(player, ChatColor.GOLD + "Guild Commands: \n" +
-                    ChatColor.YELLOW + "/p create" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a guild" + "\n" +
-                    ChatColor.YELLOW + "/p invite <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites another player to your guild" + "\n" +
-                    ChatColor.YELLOW + "/p list" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Lists the players in your current guild" + "\n" +
-                    ChatColor.YELLOW + "/p leave" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Leaves your current guild" + "\n" +
-                    ChatColor.YELLOW + "/p disband" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Disbands the guild" + "\n" +
-                    ChatColor.YELLOW + "/p kick <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Removes a player from your guild" + "\n" +
-                    ChatColor.YELLOW + "/p transfer <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Transfers ownership of the guild to a player" + "\n" +
-                    ChatColor.YELLOW + "/p promote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Promotes a player in the guild" + "\n" +
-                    ChatColor.YELLOW + "/p mute " + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Mutes the guild" + "\n" +
-                    ChatColor.YELLOW + "/p unmute " + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Unmutes the guild" + "\n"
-            );
+            ChatUtils.sendMessageToPlayer(player, ChatColor.GOLD + "Guild Commands: \n" +
+                            ChatColor.YELLOW + "/g menu" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens the guild menu" + "\n" +
+                            ChatColor.YELLOW + "/g create" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a guild" + "\n" +
+                            ChatColor.YELLOW + "/g invite <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites another player to your guild" + "\n" +
+                            ChatColor.YELLOW + "/g join <guild name>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Joins a guild if public or invited" + "\n" +
+                            ChatColor.YELLOW + "/g list" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Lists the players in your current guild" + "\n" +
+                            ChatColor.YELLOW + "/g leave" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Leaves your current guild" + "\n" +
+                            ChatColor.YELLOW + "/g disband" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Disbands the guild" + "\n" +
+                            ChatColor.YELLOW + "/g kick <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Removes a player from your guild" + "\n" +
+                            ChatColor.YELLOW + "/g transfer <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Transfers ownership of the guild to a player" + "\n" +
+                            ChatColor.YELLOW + "/g promote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Promotes a player in the guild" + "\n" +
+                            ChatColor.YELLOW + "/g mute " + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Mutes the guild" + "\n" +
+                            ChatColor.YELLOW + "/g unmute " + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Unmutes the guild" + "\n" +
+                            ChatColor.YELLOW + "/g rename <name>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Renames the guild" + "\n"
+                    ,
+                    ChatColor.GREEN, false);
             return true;
         }
 
@@ -346,7 +366,20 @@ public class GuildCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
+        String lastArg = args[args.length - 1];
+        List<String> output;
+        if (args.length == 1) {
+            output = Arrays.stream(guildOptions)
+                    .filter(e -> e.startsWith(lastArg.toLowerCase(Locale.ROOT)))
+                    .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                    .collect(Collectors.toList());
+        } else {
+            output = Bukkit.getOnlinePlayers().stream()
+                    .map(HumanEntity::getName)
+                    .filter(e -> e.toLowerCase().startsWith(lastArg.toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
+        }
+        return output;
     }
 
     public void register(Warlords instance) {
