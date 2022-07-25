@@ -35,6 +35,7 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.wavedefense.EditCurrencyCommand;
 import com.ebicep.warlords.game.option.wavedefense.SkipWaveCommand;
 import com.ebicep.warlords.guilds.GuildCommand;
+import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyCommand;
@@ -51,10 +52,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.poll.PollCommand;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.LocationFactory;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.bukkit.RemoveEntities;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.util.bukkit.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -67,12 +66,9 @@ import org.bukkit.GameMode;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
@@ -96,7 +92,6 @@ public class Warlords extends JavaPlugin {
     public static final PartyManager partyManager = new PartyManager();
     private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
     private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
-    private static final HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
     public static String VERSION = "";
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
@@ -209,41 +204,6 @@ public class Warlords extends JavaPlugin {
         PlayerSettings settings = playerSettings.computeIfAbsent(key, (k) -> new PlayerSettings());
         // TODO update last accessed field on settings
         return settings;
-    }
-
-    public static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> getPlayerHeads() {
-        return playerHeads;
-    }
-
-    public static void updateHeads() {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            updateHead(onlinePlayer);
-        }
-        System.out.println("[Warlords] Heads updated");
-    }
-
-    public static void updateHead(Player player) {
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwner(player.getName());
-        playerSkull.setItemMeta(skullMeta);
-        playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
-    }
-
-    public static ItemStack getHead(Player player) {
-        return getHead(player.getUniqueId());
-    }
-
-    public static ItemStack getHead(UUID uuid) {
-        if (playerHeads.containsKey(uuid)) {
-            return CraftItemStack.asBukkitCopy(playerHeads.get(uuid));
-        }
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName());
-        playerSkull.setItemMeta(skullMeta);
-        playerHeads.put(uuid, CraftItemStack.asNMSCopy(playerSkull));
-        return playerSkull;
     }
 
     public static GameManager getGameManager() {
@@ -363,7 +323,7 @@ public class Warlords extends JavaPlugin {
 
         registerCommands();
 
-        updateHeads();
+        HeadUtils.updateHeads();
 
         readKeysConfig();
         readWeaponConfig();
@@ -465,6 +425,14 @@ public class Warlords extends JavaPlugin {
             BotManager.task.cancel();
         }
         try {
+            //updates all queues, locks main thread to ensure update is complete before disabling
+            DatabaseManager.updateQueue();
+            DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+            GuildManager.updateGuilds();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
             taskChainFactory.shutdown(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -515,7 +483,9 @@ public class Warlords extends JavaPlugin {
         }
         try {
             BotManager.deleteStatusMessage();
-            BotManager.jda.shutdownNow();
+            if (BotManager.jda != null) {
+                BotManager.jda.shutdownNow();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

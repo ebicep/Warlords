@@ -116,11 +116,15 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-//        long start = System.nanoTime();
+        long start = System.nanoTime();
+
+//        player.getInventory().addItem(playerSkull);
+//        player.getInventory().addItem(HeadUtils.getHead(UUID.fromString("e57c1a67-c163-45c6-ad47-91e903f7af51")));
+
 //        OfflinePlayer offlinePlayer1 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
 //        System.out.println(offlinePlayer1.getName());
-//        long end = System.nanoTime();
-//        System.out.println((end - start) / 1000000 + "ms");
+        long end = System.nanoTime();
+        System.out.println((end - start) / 1000000 + "ms");
 //        long start2 = System.nanoTime();
 //        OfflinePlayer offlinePlayer2 = Bukkit.getOfflinePlayer(UUID.fromString("b2e53e60-61c8-4298-a9bd-f400818075ec"));
 //        System.out.println(offlinePlayer2.getName());

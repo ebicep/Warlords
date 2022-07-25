@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -8,6 +10,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -18,12 +21,39 @@ public class GuildManager {
     public static final List<Guild> GUILDS = new ArrayList<>();
     private static final Set<GuildInvite> INVITES = new HashSet<>();
 
+    private static final Set<Guild> GUILDS_TO_UPDATE = new HashSet<>();
+
+    static {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                Warlords.newChain()
+                        .async(GuildManager::updateGuilds)
+                        .sync(GUILDS_TO_UPDATE::clear)
+                        .execute();
+            }
+        }.runTaskTimer(Warlords.getInstance(), 60, 20 * 20);
+    }
+
+    public static void updateGuilds() {
+        GUILDS_TO_UPDATE.forEach(guild -> DatabaseManager.guildService.update(guild));
+    }
+
+    public static void queueUpdateGuild(Guild guild) {
+        if (DatabaseManager.guildService == null || !DatabaseManager.enabled) {
+            return;
+        }
+        GUILDS_TO_UPDATE.add(guild);
+    }
+
     public static boolean existingGuildWithName(String name) {
         return GUILDS.stream().anyMatch(guild -> guild.getName().equalsIgnoreCase(name));
     }
 
     public static void addGuild(Guild guild) {
         GUILDS.add(guild);
+        queueUpdateGuild(guild);
     }
 
     public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {

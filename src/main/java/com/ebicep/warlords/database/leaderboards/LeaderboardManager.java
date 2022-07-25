@@ -81,13 +81,13 @@ public class LeaderboardManager {
 
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
             Location hologramLocation = hologram.getPosition().toLocation();
-            if (!DatabaseGameBase.lastGameStatsLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topDamageLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topHealingLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topAbsorbedLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topDHPPerMinuteLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topDamageOnCarrierLocation.equals(hologramLocation) &&
-                    !DatabaseGameBase.topHealingOnCarrierLocation.equals(hologramLocation)
+            if (!DatabaseGameBase.LAST_GAME_STATS_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_DAMAGE_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_HEALING_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_ABSORBED_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION.equals(hologramLocation) &&
+                    !DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION.equals(hologramLocation)
             ) {
                 hologram.delete();
             }
@@ -382,7 +382,7 @@ public class LeaderboardManager {
         removeLeaderboardPlayerSpecificHolograms(player);
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
                 .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
-                        (h.getPosition().toLocation().equals(DatabaseGameBase.gameSwitchLocation) ||
+                        (h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION) ||
                                 h.getPosition().toLocation().equals(leaderboardGameTypeSwitchLocation) ||
                                 h.getPosition().toLocation().equals(leaderboardCategorySwitchLocation) ||
                                 h.getPosition().toLocation().equals(leaderboardTimeSwitchLocation)))

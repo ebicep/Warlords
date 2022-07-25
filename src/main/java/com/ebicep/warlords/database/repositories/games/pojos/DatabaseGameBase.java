@@ -35,26 +35,16 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class DatabaseGameBase {
 
-    @Transient
-    public static final Location lastGameStatsLocation = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
-    @Transient
-    public static final Location topDamageLocation = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
-    @Transient
-    public static final Location topHealingLocation = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
-    @Transient
-    public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
-    @Transient
-    public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
-    @Transient
-    public static final Location topDamageOnCarrierLocation = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
-    @Transient
-    public static final Location topHealingOnCarrierLocation = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
-    @Transient
-    public static final Location gameSwitchLocation = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
-    @Transient
+    public static final Location LAST_GAME_STATS_LOCATION = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
+    public static final Location TOP_DAMAGE_LOCATION = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
+    public static final Location TOP_HEALING_LOCATION = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
+    public static final Location TOP_ABSORBED_LOCATION = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
+    public static final Location GAME_SWITCH_LOCATION = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
-    @Transient
-    public static List<DatabaseGameBase> previousGames = new ArrayList<>();
+    public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     @Id
     protected String id;
     @Field("exact_date")
@@ -301,10 +291,10 @@ public abstract class DatabaseGameBase {
 
     private static void createGameSwitcherHologram(Player player) {
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(DatabaseGameBase.gameSwitchLocation))
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
                 .forEach(Hologram::delete);
 
-        Hologram gameSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.gameSwitchLocation);
+        Hologram gameSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.GAME_SWITCH_LOCATION);
         gameSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.getLines().appendText("");
 

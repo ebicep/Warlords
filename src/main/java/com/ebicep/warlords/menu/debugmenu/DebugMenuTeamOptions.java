@@ -1,10 +1,10 @@
 package com.ebicep.warlords.menu.debugmenu;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -95,7 +95,7 @@ public class DebugMenuTeamOptions {
                     lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options");
                 }
                 menu.setItem(i % 4 + (blueTeam ? 0 : 5), y,
-                        new ItemBuilder(Warlords.getHead(wp.getUuid()))
+                        new ItemBuilder(HeadUtils.getHead(wp.getUuid()))
                                 .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getCarriedFlag() != null ? ChatColor.WHITE + " ⚑" : ""))
                                 .lore(lore)
                                 .get(),

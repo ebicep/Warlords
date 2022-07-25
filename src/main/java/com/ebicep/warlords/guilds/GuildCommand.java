@@ -276,7 +276,6 @@ public class GuildCommand implements TabExecutor {
                             return true;
                         }
                         guild.setName(newName);
-
                         break;
                     }
                 }
@@ -316,7 +315,6 @@ public class GuildCommand implements TabExecutor {
                         Guild.sendGuildMessage(player, ChatColor.GREEN + "You created guild " + ChatColor.GOLD + guildName);
                         break;
                     }
-
                     case "join": {
                         if (args.length < 2) {
                             Guild.sendGuildMessage(player, ChatColor.RED + "Usage: /guild join <guild name>");

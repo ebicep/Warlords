@@ -5,6 +5,8 @@ import com.ebicep.warlords.guilds.Guild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("guildService")
 public class GuildServiceImpl implements GuildService {
 
@@ -33,5 +35,10 @@ public class GuildServiceImpl implements GuildService {
     @Override
     public Guild findByName(String title) {
         return guildRepository.findByName(title);
+    }
+
+    @Override
+    public List<Guild> findAll() {
+        return guildRepository.findAll();
     }
 }

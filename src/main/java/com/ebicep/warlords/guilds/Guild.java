@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.guilds.GuildManager.queueUpdateGuild;
+
 @Document(collection = "Guilds")
 public class Guild {
 
@@ -61,15 +63,21 @@ public class Guild {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 
+    private void queueUpdate() {
+        queueUpdateGuild(this);
+    }
+
     public void join(Player player) {
         addPlayer(player, getDefaultRole());
         sendMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " has joined the guild!", true);
+        queueUpdate();
     }
 
     public void leave(Player player) {
         this.players.removeIf(guildPlayer -> guildPlayer.getUUID().equals(player.getUniqueId()));
         sendMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " has left the guild!", true);
         sendGuildMessage(player, ChatColor.RED + "You left the guild!");
+        queueUpdate();
     }
 
     public void transfer(GuildPlayer guildPlayer) {
@@ -80,11 +88,13 @@ public class Guild {
         roles.get(0).getPlayers().add(guildPlayer.getUUID());
         this.currentMaster = guildPlayer.getUUID();
         sendMessageToOnlinePlayers(ChatColor.GREEN + "The guild was transferred to " + ChatColor.AQUA + guildPlayer.getName(), true);
+        queueUpdate();
     }
 
     public void kick(GuildPlayer guildPlayer) {
         this.players.removeIf(player -> player.getUUID().equals(guildPlayer.getUUID()));
         sendMessageToOnlinePlayers(ChatColor.AQUA + guildPlayer.getName() + ChatColor.RED + " has been kicked from the guild!", true);
+        queueUpdate();
     }
 
     public void promote(GuildPlayer guildPlayer) {
@@ -93,6 +103,7 @@ public class Guild {
                 roles.get(i).getPlayers().remove(guildPlayer.getUUID());
                 roles.get(i - 1).getPlayers().add(guildPlayer.getUUID());
                 sendMessageToOnlinePlayers(ChatColor.AQUA + guildPlayer.getName() + ChatColor.GREEN + " has been promoted to " + roles.get(i - 1).getRoleName(), true);
+                queueUpdate();
                 return;
             }
         }
@@ -104,6 +115,7 @@ public class Guild {
                 roles.get(i).getPlayers().remove(guildPlayer.getUUID());
                 roles.get(i + 1).getPlayers().add(guildPlayer.getUUID());
                 sendMessageToOnlinePlayers(ChatColor.AQUA + guildPlayer.getName() + ChatColor.GREEN + " has been demoted to " + roles.get(i + 1).getRoleName(), true);
+                queueUpdate();
                 return;
             }
         }
@@ -113,6 +125,7 @@ public class Guild {
         this.disbanded = true;
         GuildManager.GUILDS.remove(this);
         sendMessageToOnlinePlayers(ChatColor.RED + "The guild has been disbanded!", true);
+        queueUpdate();
     }
 
     public String getList() {
@@ -200,6 +213,7 @@ public class Guild {
     public void setMuted(boolean muted) {
         this.muted = muted;
         sendMessageToOnlinePlayers((muted ? ChatColor.RED : ChatColor.GREEN) + "The guild is now " + (muted ? "muted" : "unmuted"), true);
+        queueUpdate();
     }
 
     public GuildRole getDefaultRole() {
@@ -211,12 +225,12 @@ public class Guild {
         return null;
     }
 
-    public String getDefaultRoleName() {
-        return defaultRole;
-    }
-
     public void setDefaultRole(String defaultRole) {
         this.defaultRole = defaultRole;
+    }
+
+    public String getDefaultRoleName() {
+        return defaultRole;
     }
 
     public List<GuildRole> getRoles() {
@@ -247,5 +261,12 @@ public class Guild {
 
     public int getPlayerLimit() {
         return playerLimit;
+    }
+
+    @Override
+    public String toString() {
+        return "Guild{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

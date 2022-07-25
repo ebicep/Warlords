@@ -1,11 +1,11 @@
 package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class GuildMenu {
         int row = 1;
         for (GuildPlayer guildPlayer : guild.getPlayers()) {
             menu.setItem(column, row,
-                    new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal())
+                    new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID())) //TODO check if this lags
                             .name(ChatColor.GREEN + guildPlayer.getName())
                             .lore(ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName())
                             .get(),

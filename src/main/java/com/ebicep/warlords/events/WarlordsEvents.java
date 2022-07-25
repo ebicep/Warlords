@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -97,12 +98,12 @@ public class WarlordsEvents implements Listener {
             e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
 
             if (DatabaseManager.playerService == null || !DatabaseManager.enabled) {
-                Warlords.updateHead(e.getPlayer());
+                HeadUtils.updateHead(e.getPlayer());
             }
             Warlords.newChain()
                     .async(() -> {
                         DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                            Warlords.updateHead(e.getPlayer());
+                            HeadUtils.updateHead(e.getPlayer());
 
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
                             if (Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
