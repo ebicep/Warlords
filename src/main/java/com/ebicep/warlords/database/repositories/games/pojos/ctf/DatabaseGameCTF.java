@@ -222,6 +222,17 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
     }
 
+    @Override
+    public List<String> getExtraLore() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + Utils.formatTimeLeft(timeLeft),
+                ChatColor.GRAY + "Winner: " + winner.teamColor + winner.name,
+                ChatColor.GRAY + "Blue Points: " + ChatColor.BLUE + bluePoints,
+                ChatColor.GRAY + "Red Points: " + ChatColor.RED + redPoints,
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + (players.getBlue().size() + players.getRed().size())
+        );
+    }
+
     private void appendTeamDHP(Hologram hologram, Map<ChatColor, Long> map) {
         map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
             ChatColor key = chatColorLongEntry.getKey();

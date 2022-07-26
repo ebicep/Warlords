@@ -55,6 +55,11 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public DatabaseGameBase findByDate(String date) {
+        return mongoTemplate.findOne(new Query().addCriteria(Criteria.where("date").is(date)), DatabaseGameBase.class, GamesCollections.ALL.collectionName);
+    }
+
+    @Override
     public DatabaseGameBase findOne(Query query, GamesCollections collection) {
         return mongoTemplate.findOne(query, DatabaseGameBase.class, collection.collectionName);
     }

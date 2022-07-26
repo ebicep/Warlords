@@ -245,9 +245,10 @@ public class DatabaseManager {
         //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
-    public static void updateGameAsync(DatabaseGameBase databaseGame, GamesCollections collection) {
+    public static void updateGameAsync(DatabaseGameBase databaseGame) {
         if (playerService == null || !enabled) return;
-        Warlords.newChain().async(() -> gameService.save(databaseGame, collection)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().gamesCollections)).execute();
     }
 
 }

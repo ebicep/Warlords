@@ -7,12 +7,15 @@ import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 @Document(collection = "Games_Information_TDM")
 public class DatabaseGameTDM extends DatabaseGameBase {
@@ -84,6 +87,17 @@ public class DatabaseGameTDM extends DatabaseGameBase {
                 ChatColor.GREEN + map + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
 
+    }
+
+    @Override
+    public List<String> getExtraLore() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + Utils.formatTimeLeft(timeLeft),
+                ChatColor.GRAY + "Winner: " + winner.teamColor + winner.name,
+                ChatColor.GRAY + "Blue Points: " + ChatColor.BLUE + bluePoints,
+                ChatColor.GRAY + "Red Points: " + ChatColor.RED + redPoints,
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + (players.getBlue().size() + players.getRed().size())
+        );
     }
 
     public int getTimeLeft() {

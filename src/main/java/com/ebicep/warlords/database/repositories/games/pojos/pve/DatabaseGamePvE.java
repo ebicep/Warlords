@@ -9,10 +9,13 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 @Document(collection = "Games_Information_PvE")
@@ -61,6 +64,16 @@ public class DatabaseGamePvE extends DatabaseGameBase {
     @Override
     public String getGameLabel() {
         return null;
+    }
+
+    @Override
+    public List<String> getExtraLore() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Time Elapsed: " + ChatColor.YELLOW + Utils.formatTimeLeft(timeElapsed),
+                ChatColor.GRAY + "Waves Cleared: " + ChatColor.YELLOW + wavesCleared,
+                ChatColor.GRAY + "Total Mobs Killed: " + ChatColor.YELLOW + totalMobsKilled,
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.size()
+        );
     }
 
     public DifficultyIndex getDifficulty() {
