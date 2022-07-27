@@ -26,7 +26,7 @@ public class BasicMob {
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.WOOD_AXE)
             ),
-            2000,
+            2200,
             0.38f,
             0,
             200,
@@ -44,9 +44,9 @@ public class BasicMob {
                     Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                     Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                    new ItemStack(Material.BLAZE_POWDER)
+                    new ItemStack(Material.BOW)
             ),
-            1000,
+            1200,
             0.25f,
             0,
             0,
@@ -66,7 +66,7 @@ public class BasicMob {
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.COOKIE)
             ),
-            2500,
+            2600,
             0.42f,
             0,
             250,
@@ -80,7 +80,7 @@ public class BasicMob {
             "Lunar Venari",
             loc,
             null,
-            1600,
+            2000,
             0.45f,
             0,
             300,

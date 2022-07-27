@@ -27,7 +27,7 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
-            3000,
+            3600,
             0.38f,
             0,
             300,
@@ -47,7 +47,7 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BOW)
             ),
-            1200,
+            1600,
             0.3f,
             0,
             0,
@@ -61,13 +61,13 @@ public class EliteMob {
             "Illusion Illumination",
             loc,
             null,
-            3000,
-            0.35f,
+            4000,
+            0.5f,
             20,
             100,
             200
     );
-    public static final Function<Location, PartialMonster> ILLUSION_APPRENTICE = loc -> PartialMonster.fromCustomEntity(
+    public static final Function<Location, PartialMonster> IRON_GOLEM = loc -> PartialMonster.fromCustomEntity(
             CustomIronGolem.class,
             () -> new CustomIronGolem(((CraftWorld) loc.getWorld()).getHandle()),
             (mob) -> {

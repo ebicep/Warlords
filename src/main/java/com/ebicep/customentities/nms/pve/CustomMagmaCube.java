@@ -23,7 +23,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
     //jump
     @Override
     protected void bF() {
-        this.motY = (0.05F + (float) this.getSize() * 0.05F); //motion y
+        this.motY = (0.07F + (float) this.getSize() * 0.07F); //motion y
         this.ai = true; //isAirBorne
     }
 
@@ -41,13 +41,13 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
             babyMagmaCube.spawn(deathLocation);
             WarlordsNPC entity = new WarlordsNPC(
                     UUID.randomUUID(),
-                    "Baby Magma Cube",
+                    "Illusion Illuminati",
                     Weapons.ABBADON,
                     (LivingEntity) babyMagmaCube.getBukkitEntity(),
                     waveDefenseOption.getGame(),
                     Team.RED,
-                    Specializations.AQUAMANCER,
-                    2000,
+                    Specializations.BERSERKER,
+                    2500,
                     0.5f,
                     0,
                     50,
