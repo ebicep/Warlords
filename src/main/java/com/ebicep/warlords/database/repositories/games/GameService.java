@@ -17,6 +17,8 @@ public interface GameService {
 
     void create(DatabaseGameBase game, GamesCollections collection);
 
+    void createBackup(DatabaseGameBase game);
+
     void save(DatabaseGameBase game, GamesCollections collection);
 
     void delete(DatabaseGameBase game, GamesCollections collection);

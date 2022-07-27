@@ -77,7 +77,7 @@ public abstract class DatabaseGameBase {
         this.date = DATE_FORMAT.format(new Date());
         this.map = game.getMap();
         this.gameMode = game.getGameMode();
-        this.gameAddons = Arrays.asList(game.getAddons().toArray(new GameAddon[0]));
+        this.gameAddons = new ArrayList<>(game.getAddons());
         this.counted = counted;
     }
 
@@ -145,6 +145,10 @@ public abstract class DatabaseGameBase {
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                 addGameToDatabase(databaseGame);
+            } else if (game.playersCount() >= 16 && game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                Warlords.newChain()
+                        .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
+                        .execute();
             }
 
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
@@ -167,30 +171,37 @@ public abstract class DatabaseGameBase {
 
     public static void addGameToDatabase(DatabaseGameBase databaseGame) {
         if (DatabaseManager.gameService == null) return;
-        GamesCollections collection = databaseGame.getGameMode().gamesCollections;
-        databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
-        //game in the database
-        if (DatabaseManager.gameService.exists(databaseGame, collection)) {
-            //if not counted then update player stats then set counted to true, else do nothing
-            if (!databaseGame.isCounted()) {
-                databaseGame.updatePlayerStatsFromGame(databaseGame, true);
-                databaseGame.setCounted(true);
-                DatabaseManager.updateGameAsync(databaseGame, collection);
-                DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
+        try {
+            GamesCollections collection = databaseGame.getGameMode().gamesCollections;
+            databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
+            //game in the database
+            if (DatabaseManager.gameService.exists(databaseGame, collection)) {
+                //if not counted then update player stats then set counted to true, else do nothing
+                if (!databaseGame.isCounted()) {
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                    databaseGame.setCounted(true);
+                    DatabaseManager.updateGameAsync(databaseGame, collection);
+                    DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
+                }
+            } else {
+                //game not in database then add game and update player stats if counted
+                if (databaseGame.isCounted()) {
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                }
+                //only add game if comps
+                //if (databaseGame.isPrivate) {
+                Warlords.newChain()
+                        .delay(4, TimeUnit.SECONDS)
+                        .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
+                        .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false))
+                        .execute();
+                //}
             }
-        } else {
-            //game not in database then add game and update player stats if counted
-            if (databaseGame.isCounted()) {
-                databaseGame.updatePlayerStatsFromGame(databaseGame, true);
-            }
-            //only add game if comps
-            //if (databaseGame.isPrivate) {
+        } catch (Exception e) {
             Warlords.newChain()
-                    .delay(4, TimeUnit.SECONDS)
-                    .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
-                    .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false))
+                    .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
-            //}
+            e.printStackTrace();
         }
     }
 
