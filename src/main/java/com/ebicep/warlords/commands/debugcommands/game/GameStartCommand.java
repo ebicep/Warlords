@@ -28,7 +28,8 @@ public class GameStartCommand implements TabExecutor {
         GameMap map = null;
         GameMode category = null;
         EnumSet<GameAddon> addon = EnumSet.of(GameAddon.PRIVATE_GAME);
-        ArrayList<OfflinePlayer> selectedPeople = null;
+        //ArrayList<OfflinePlayer> selectedPeople = null;
+        ArrayList<OfflinePlayer> selectedPeople = new ArrayList<>(Bukkit.getOnlinePlayers());
 
         GameMap[] maps = GameMap.values();
         GameMode[] categories = GameMode.values();

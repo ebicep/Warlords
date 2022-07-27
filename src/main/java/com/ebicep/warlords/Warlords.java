@@ -25,6 +25,7 @@ import com.ebicep.warlords.commands.debugcommands.game.*;
 import com.ebicep.warlords.commands.debugcommands.ingame.*;
 import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
+import com.ebicep.warlords.commands2.CommandManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
@@ -321,7 +322,8 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
 
-        registerCommands();
+        CommandManager.init(this);
+//        registerCommands();
 
         HeadUtils.updateHeads();
 
@@ -409,11 +411,14 @@ public class Warlords extends JavaPlugin {
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
 
+        /*
         for (String command : this.getDescription().getCommands().keySet()) {
             if (getCommand(command).getExecutor() == this) {
                 getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[Warlords] Warning, command " + command + " is specified in plugin.yml, but not defined in the plugins");
             }
         }
+
+         */
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
@@ -426,9 +431,11 @@ public class Warlords extends JavaPlugin {
         }
         try {
             //updates all queues, locks main thread to ensure update is complete before disabling
-            DatabaseManager.updateQueue();
-            DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
-            GuildManager.updateGuilds();
+            if (DatabaseManager.enabled) {
+                DatabaseManager.updateQueue();
+                DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                GuildManager.updateGuilds();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
