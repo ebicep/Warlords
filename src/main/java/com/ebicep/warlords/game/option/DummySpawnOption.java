@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
@@ -8,6 +7,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -60,7 +60,7 @@ public class DummySpawnOption implements Option {
                 ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 playerSkull.setItemMeta(skullMeta);
-                Warlords.getPlayerHeads().put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
+                HeadUtils.PLAYER_HEADS.put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
 
                 testDummy.teleport(loc);
                 testDummy.setTakeDamage(true);

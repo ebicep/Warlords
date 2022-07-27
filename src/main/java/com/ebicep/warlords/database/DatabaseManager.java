@@ -8,30 +8,25 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.guild.GuildService;
 import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFairService;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
+import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
@@ -45,11 +40,12 @@ public class DatabaseManager {
     public static GameService gameService;
     public static TimingsService timingsService;
     public static MasterworksFairService masterworksFairService;
+    public static GuildService guildService;
 
     public static String lastWarlordsPlusString = "";
 
     public static boolean enabled = true;
-    private static final HashMap<PlayersCollections, Set<DatabasePlayer>> playersToUpdate = new HashMap<PlayersCollections, Set<DatabasePlayer>>() {{
+    private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> playersToUpdate = new ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>>() {{
         for (PlayersCollections value : PlayersCollections.values()) {
             put(value, new HashSet<>());
         }
@@ -71,6 +67,7 @@ public class DatabaseManager {
             gameService = context.getBean("gameService", GameService.class);
             timingsService = context.getBean("timingsService", TimingsService.class);
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
+            guildService = context.getBean("guildService", GuildService.class);
         } catch (Exception e) {
             NPCManager.createGameNPCs();
             e.printStackTrace();
@@ -89,9 +86,16 @@ public class DatabaseManager {
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                updateName(player.getUniqueId());
             });
         });
+
+        System.out.println("[Warlords] Storing all guilds");
+        long guildStart = System.nanoTime();
+        Warlords.newChain()
+                .asyncFirst(() -> guildService.findAll())
+                .syncLast(GuildManager.GUILDS::addAll)
+                .sync(() -> System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms"))
+                .execute();
 
         MasterworksFairManager.init();
 
@@ -101,13 +105,13 @@ public class DatabaseManager {
             @Override
             public void run() {
                 Warlords.newChain()
-                        .async(() -> playersToUpdate.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer, playersCollections))))
+                        .async(DatabaseManager::updateQueue)
                         .sync(() -> playersToUpdate.forEach((playersCollections, databasePlayers) -> databasePlayers.clear()))
                         .execute();
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms");
+        System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true))
                 .execute();
@@ -131,11 +135,12 @@ public class DatabaseManager {
         if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
                     .syncFirst(() -> {
-                        String name = Bukkit.getOfflinePlayer(uuid).getName();
-                        if (name == null) {
-                            System.out.println("NULL NAME ERROR !!!!! " + uuid);
+                        Player player = Bukkit.getPlayer(uuid);
+                        if (player == null) {
+                            System.out.println("[WARNING] Player " + uuid + " name was not found");
+                            return null;
                         }
-                        return name;
+                        return player.getName();
                     })
                     .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
                     .sync(() -> {
@@ -158,6 +163,12 @@ public class DatabaseManager {
 
     private static void loadPlayerInfo(Player player) {
         DatabasePlayer databasePlayer = playerService.findByUUID(player.getUniqueId());
+
+        if (!Objects.equals(databasePlayer.getName(), player.getName())) {
+            databasePlayer.setName(player.getName());
+            queueUpdatePlayerAsync(databasePlayer);
+        }
+
         Warlords.getPlayerSettings(player.getUniqueId()).setSelectedSpec(databasePlayer.getLastSpec());
 
         ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
@@ -218,38 +229,8 @@ public class DatabaseManager {
         Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
     }
 
-    public static void updateName(UUID uuid) {
-        AtomicReference<String> currentName = new AtomicReference<>(Bukkit.getOfflinePlayer(uuid).getName());
-        Warlords.newChain().asyncFirst(() -> playerService.findByUUID(uuid))
-                .sync((player) -> {
-                    if (currentName.get() == null) {
-                        currentName.set(getName(uuid.toString()));
-                    } else if (player.getName().equals(currentName.get())) {
-                        return null;
-                    }
-                    return player;
-                })
-                .abortIfNull()
-                .asyncLast((player) -> {
-                    System.out.println("Changing " + player.getName() + "'s name to " + currentName);
-                    player.setName(currentName.get());
-                    playerService.update(player);
-                }).execute();
-
-    }
-
-    public static String getName(String uuid) {
-        String url = "https://api.mojang.com/user/profiles/" + uuid.replace("-", "") + "/names";
-        try {
-            String nameJson = IOUtils.toString(new URL(url));
-            JSONArray nameValue = (JSONArray) JSONValue.parseWithException(nameJson);
-            String playerSlot = nameValue.get(nameValue.size() - 1).toString();
-            JSONObject nameObject = (JSONObject) JSONValue.parseWithException(playerSlot);
-            return nameObject.get("name").toString();
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static void updateQueue() {
+        playersToUpdate.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer, playersCollections)));
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
@@ -264,9 +245,10 @@ public class DatabaseManager {
         //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
-    public static void updateGameAsync(DatabaseGameBase databaseGame, GamesCollections collection) {
+    public static void updateGameAsync(DatabaseGameBase databaseGame) {
         if (playerService == null || !enabled) return;
-        Warlords.newChain().async(() -> gameService.save(databaseGame, collection)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();
+        Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().gamesCollections)).execute();
     }
 
 }

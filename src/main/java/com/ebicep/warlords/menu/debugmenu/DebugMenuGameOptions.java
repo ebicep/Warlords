@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
@@ -263,7 +264,7 @@ public class DebugMenuGameOptions {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
                 menu.setItem(1, 2,
-                        new ItemBuilder(Warlords.getHead(player))
+                        new ItemBuilder(HeadUtils.getHead(player))
                                 .name(ChatColor.GREEN + "Player Options")
                                 .get(),
                         (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))

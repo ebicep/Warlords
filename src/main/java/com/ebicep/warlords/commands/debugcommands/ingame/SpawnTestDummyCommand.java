@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.command.Command;
@@ -61,7 +62,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 playerSkull.setItemMeta(skullMeta);
-                Warlords.getPlayerHeads().put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
+                HeadUtils.PLAYER_HEADS.put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
 
                 testDummy.setTakeDamage(true);
                 testDummy.setMaxHealth(1000000);

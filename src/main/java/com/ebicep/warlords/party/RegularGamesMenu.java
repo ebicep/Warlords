@@ -9,6 +9,7 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -212,7 +213,7 @@ public class RegularGamesMenu {
                         .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
                         .lore(ChatColor.GOLD + p.getSelectedSpec().name);
             } else {
-                itemBuilder = new ItemBuilder(Warlords.getHead(uuid))
+                itemBuilder = new ItemBuilder(HeadUtils.getHead(uuid))
                         .name(ChatColor.AQUA + name)
                         .lore(ChatColor.GOLD + p.getSelectedSpec().name);
             }

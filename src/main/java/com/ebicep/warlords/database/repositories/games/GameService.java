@@ -21,6 +21,8 @@ public interface GameService {
 
     void delete(DatabaseGameBase game, GamesCollections collection);
 
+    DatabaseGameBase findByDate(String date);
+
     DatabaseGameBase findOne(Query query, GamesCollections collection);
 
     List<DatabaseGameBase> findAll(GamesCollections collection);

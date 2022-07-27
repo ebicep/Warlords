@@ -27,11 +27,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MasterworksFairManager {
 
     public static MasterworksFair currentFair;
-    public static boolean updateFair = false;
+    public static AtomicBoolean updateFair = new AtomicBoolean(false);
 
     public static void init() {
         Warlords.newChain()
@@ -118,19 +119,19 @@ public class MasterworksFairManager {
                     .execute();
         }
 
-        //runnable that updates fair every 20 seconds if there has been a change
+        //runnable that updates fair every 30 seconds if there has been a change
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                if (updateFair) {
-                    updateFair = false;
+                if (updateFair.get()) {
+                    updateFair.set(false);
                     Warlords.newChain()
                             .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
                             .execute();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 20, 20 * 20);
+        }.runTaskTimer(Warlords.getInstance(), 20, 20 * 30);
     }
 
     public static void awardEntriesDirectly(MasterworksFair masterworksFair) {
@@ -278,7 +279,7 @@ public class MasterworksFairManager {
                                 weaponInventory.add(playerEntry.get().getWeapon());
                                 weaponPlayerEntries.remove(playerEntry.get());
 
-                                updateFair = true;
+                                updateFair.set(true);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                 openMasterworksFairMenu(player);
@@ -354,7 +355,7 @@ public class MasterworksFairManager {
                             masterworksFairPlayerEntry.setWeapon(abstractWeapon);
 
                             //update database stuff
-                            updateFair = true;
+                            updateFair.set(true);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                             openMasterworksFairMenu(player);

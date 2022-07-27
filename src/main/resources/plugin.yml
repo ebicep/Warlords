@@ -58,7 +58,7 @@ commands:
     usage: /recordaveragedamage
   chatchannelcommand:
     description: Changes chat channel or sends a mesasage in a different channel
-    aliases: [ chat, achat, ac, pchat, pc ]
+    aliases: [ chat, achat, ac, pchat, pc, gchat, gc ]
   me:
     description: Not happening.
     usage: Not happening.
@@ -140,6 +140,9 @@ commands:
   offlinefreeze:
     description: Toggle offline freeze
     usage: /offlinefreeze
+  guild:
+    description: Guild
+    aliases: [ guild, g ]
 
 permissions:
   group.default:

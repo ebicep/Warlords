@@ -35,7 +35,9 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     @Indexed(unique = true)
     private String uuid = "";
-    private String name = "";
+    private String name;
+    @Field("skin_base_64")
+    private String skinBase64;
     @Field("discord_id")
     private Long discordID = null;
     @Field("future_messages")
@@ -211,6 +213,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getSkinBase64() {
+        return skinBase64;
+    }
+
+    public void setSkinBase64(String skinBase64) {
+        this.skinBase64 = skinBase64;
     }
 
     public Long getDiscordID() {

@@ -2,6 +2,7 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -24,17 +25,21 @@ public class StreamCommand implements CommandExecutor {
             return true;
         }
 
-        if (Warlords.partyManager.inAParty(((Player) sender).getUniqueId())) {
-            ChatUtils.sendMessageToPlayer((Player) sender, ChatColor.RED + "You are already in a party", ChatColor.BLUE, true);
+        Player player = BaseCommand.requirePlayer(sender);
+        if (player == null) {
+            return true;
+        }
+
+        if (Warlords.partyManager.inAParty(player.getUniqueId())) {
+            Party.sendPartyMessage(player, ChatColor.RED + "You are already in a party");
             return true;
         }
 
         if (args.length == 0) {
-            Player player = (Player) sender;
             Party party = new Party(player.getUniqueId(), true);
             Warlords.partyManager.getParties().add(party);
             party.sendMessageToAllPartyPlayers(ChatColor.GREEN + "You created a public party! Players can join with\n" +
-                            ChatColor.GOLD + ChatColor.BOLD + "/party join " + sender.getName(),
+                            ChatColor.GOLD + ChatColor.BOLD + "/party join " + player.getName(),
                     ChatColor.BLUE, true);
             Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.getUniqueId() != player.getUniqueId())

@@ -72,6 +72,13 @@ public class ChatUtils {
             player.sendMessage("");
             return;
         }
+        if (message.contains("\n")) {
+            String[] messages = message.split("\n");
+            for (String s : messages) {
+                sendCenteredMessage(player, s);
+            }
+            return;
+        }
         message = ChatColor.translateAlternateColorCodes('&', message);
 
         int messagePxSize = 0;

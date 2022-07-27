@@ -20,6 +20,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.Bukkit;
@@ -350,7 +351,7 @@ public class DebugMenuPlayerOptions {
                 Menu menu = new Menu("CD Manager: " + target.getName(), 9 * 6);
                 //general info
                 menu.setItem(4, 0,
-                        new ItemBuilder(Warlords.getHead(player))
+                        new ItemBuilder(HeadUtils.getHead(player))
                                 .name(ChatColor.GREEN + "Cooldown Stats")
                                 .lore(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
                                         ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()

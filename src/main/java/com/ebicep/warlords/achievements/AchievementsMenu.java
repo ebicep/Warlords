@@ -1,12 +1,12 @@
 package com.ebicep.warlords.achievements;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.ChatColor;
@@ -103,7 +103,7 @@ public class AchievementsMenu {
         int y = 0;
         for (ChallengeAchievements achievement : challengeAchievements) {
             boolean hasAchievement = achievementRecords.stream().anyMatch(achievements -> achievements == achievement);
-            ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Warlords.getHead(UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7")) : Warlords.getHead(UUID.fromString("70b6981a-6ae8-4e76-8aeb-0fcd510f4be7")))
+            ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? HeadUtils.getHead(UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7")) : HeadUtils.getHead(UUID.fromString("70b6981a-6ae8-4e76-8aeb-0fcd510f4be7")))
                     .name(ChatColor.GREEN + achievement.name + " - " + (achievement.spec == null ? "General" : achievement.spec.name))
                     .lore(ChatColor.WHITE + WordWrap.wrapWithNewline(achievement.description, 200) +
                             (hasAchievement ? "\n\n" + ChatColor.GREEN + "Unlocked!" : ""))
@@ -185,7 +185,7 @@ public class AchievementsMenu {
         int y = 0;
         for (TieredAchievements achievement : tieredAchievements) {
             boolean hasAchievement = achievementRecords.stream().anyMatch(achievements -> achievements == achievement);
-            ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Warlords.getHead(UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7")) : Warlords.getHead(UUID.fromString("70b6981a-6ae8-4e76-8aeb-0fcd510f4be7")))
+            ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? HeadUtils.getHead(UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7")) : HeadUtils.getHead(UUID.fromString("70b6981a-6ae8-4e76-8aeb-0fcd510f4be7")))
                     .name(ChatColor.GREEN + achievement.name)// + " - " + (achievement.spec.name == null ? "General" : achievement.spec.name))
                     .lore(ChatColor.WHITE + WordWrap.wrapWithNewline(achievement.description, 200) +
                             (hasAchievement ? "\n\n" + ChatColor.GREEN + "Unlocked!" : ""))

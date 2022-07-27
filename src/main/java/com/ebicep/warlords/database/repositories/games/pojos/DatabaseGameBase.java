@@ -32,29 +32,20 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public abstract class DatabaseGameBase {
 
-    @Transient
-    public static final Location lastGameStatsLocation = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
-    @Transient
-    public static final Location topDamageLocation = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
-    @Transient
-    public static final Location topHealingLocation = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
-    @Transient
-    public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
-    @Transient
-    public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
-    @Transient
-    public static final Location topDamageOnCarrierLocation = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
-    @Transient
-    public static final Location topHealingOnCarrierLocation = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
-    @Transient
-    public static final Location gameSwitchLocation = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
-    @Transient
+    public static final Location LAST_GAME_STATS_LOCATION = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
+    public static final Location TOP_DAMAGE_LOCATION = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
+    public static final Location TOP_HEALING_LOCATION = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
+    public static final Location TOP_ABSORBED_LOCATION = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
+    public static final Location GAME_SWITCH_LOCATION = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
+    public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
-    @Transient
-    public static List<DatabaseGameBase> previousGames = new ArrayList<>();
     @Id
     protected String id;
     @Field("exact_date")
@@ -144,7 +135,7 @@ public abstract class DatabaseGameBase {
             databaseGame.createHolograms();
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
-                addGameToDatabase(databaseGame);
+                addGameToDatabase(databaseGame, null);
             }
 
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
@@ -165,23 +156,37 @@ public abstract class DatabaseGameBase {
 
     }
 
-    public static void addGameToDatabase(DatabaseGameBase databaseGame) {
+    public static void addGameToDatabase(DatabaseGameBase databaseGame, Player player) {
         if (DatabaseManager.gameService == null) return;
         GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
+            if (player != null) {
+                player.sendMessage(ChatColor.GREEN + "Game Found");
+            }
             //if not counted then update player stats then set counted to true, else do nothing
             if (!databaseGame.isCounted()) {
+                if (player != null) {
+                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, true);
                 databaseGame.setCounted(true);
-                DatabaseManager.updateGameAsync(databaseGame, collection);
-                DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
+                DatabaseManager.updateGameAsync(databaseGame);
             }
         } else {
+            if (player != null) {
+                player.sendMessage(ChatColor.GREEN + "Game Not Found");
+            }
             //game not in database then add game and update player stats if counted
             if (databaseGame.isCounted()) {
+                if (player != null) {
+                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+            }
+            if (player != null) {
+                player.sendMessage(ChatColor.GREEN + "Creating Game");
             }
             //only add game if comps
             //if (databaseGame.isPrivate) {
@@ -194,20 +199,28 @@ public abstract class DatabaseGameBase {
         }
     }
 
-    public static void removeGameFromDatabase(DatabaseGameBase databaseGame) {
+    public static void removeGameFromDatabase(DatabaseGameBase databaseGame, Player player) {
         if (DatabaseManager.gameService == null) return;
         GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
+            if (player != null) {
+                player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+            }
             //if counted then remove player stats then set counted to false, else do nothing
             if (databaseGame.isCounted()) {
+                if (player != null) {
+                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, false);
                 databaseGame.setCounted(false);
-                DatabaseManager.updateGameAsync(databaseGame, collection);
-                DatabaseManager.updateGameAsync(databaseGame, GamesCollections.ALL);
+                DatabaseManager.updateGameAsync(databaseGame);
+            }
+        } else { //else game not in database then do nothing
+            if (player != null) {
+                player.sendMessage(ChatColor.GREEN + "Game Not Found");
             }
         }
-        //else game not in database then do nothing
     }
 
     protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, boolean add) {
@@ -301,10 +314,10 @@ public abstract class DatabaseGameBase {
 
     private static void createGameSwitcherHologram(Player player) {
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(DatabaseGameBase.gameSwitchLocation))
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
                 .forEach(Hologram::delete);
 
-        Hologram gameSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.gameSwitchLocation);
+        Hologram gameSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.GAME_SWITCH_LOCATION);
         gameSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.getLines().appendText("");
 
@@ -369,6 +382,21 @@ public abstract class DatabaseGameBase {
     public abstract void createHolograms();
 
     public abstract String getGameLabel();
+
+    public abstract List<String> getExtraLore();
+
+    public List<String> getLore() {
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "Map: " + ChatColor.YELLOW + getMap().getMapName());
+        lore.add(ChatColor.GRAY + "Mode: " + ChatColor.AQUA + getGameMode().getName());
+        lore.add(ChatColor.GRAY + "Addons: " + ChatColor.GOLD + getGameAddons().stream()
+                .map(GameAddon::getName)
+                .collect(Collectors.joining(", ")));
+        lore.add(ChatColor.GRAY + "Counted: " + ChatColor.GREEN + counted);
+        lore.add("");
+        lore.addAll(getExtraLore());
+        return lore;
+    }
 
     public boolean isPrivate() {
         return gameAddons.contains(GameAddon.PRIVATE_GAME);
