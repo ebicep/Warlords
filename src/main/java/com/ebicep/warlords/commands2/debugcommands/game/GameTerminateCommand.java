@@ -64,7 +64,7 @@ public class GameTerminateCommand extends BaseCommand {
     @Default
     @Description("Terminates your current game")
     public void terminateGame(@Conditions("requireGame") Player player) {
-        Game playerGame = Objects.requireNonNull(Warlords.getPlayer(player)).getGame();
+        Game playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {

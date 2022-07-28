@@ -41,7 +41,7 @@ public class GameKillCommand extends BaseCommand {
     @Default
     @Description("Kills your current game")
     public void killGame(@Conditions("requireGame") Player player) {
-        Game playerGame = Objects.requireNonNull(Warlords.getPlayer(player)).getGame();
+        Game playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameHolder game : Warlords.getGameManager().getGames()) {
             if (Objects.equals(game.getGame(), playerGame)) {
                 game.forceEndGame();

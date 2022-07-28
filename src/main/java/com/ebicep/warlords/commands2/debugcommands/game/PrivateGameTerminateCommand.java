@@ -40,8 +40,8 @@ public class PrivateGameTerminateCommand extends BaseCommand {
 
     @Default
     @Description("Terminates your current game if private")
-    public void endPrivateGame(@Conditions("requireGame") Player player) {
-        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+    public void endPrivateGame(@Conditions("requireWarlordsPlayer") Player player) {
+        Game game = Warlords.getPlayer(player).getGame();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (Objects.equals(gameHolder.getGame(), game)) {
                 if (game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
