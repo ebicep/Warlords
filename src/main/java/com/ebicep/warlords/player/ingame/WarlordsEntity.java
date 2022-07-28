@@ -529,7 +529,7 @@ public abstract class WarlordsEntity {
                 attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
                 this.addDamageTaken(damageValue);
                 playHurtAnimation(this.entity, attacker);
-                recordDamage.add(damageValue);
+                attacker.getRecordDamage().add(damageValue);
 
                 finalEvent = new WarlordsDamageHealingFinalEvent(
                         this,

@@ -9,6 +9,7 @@ import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateComm
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugModeCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.ImposterCommand;
+import com.ebicep.warlords.commands2.debugcommands.ingame.RecordAverageDamageCommand;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -45,6 +46,7 @@ public class CommandManager {
         manager.registerCommand(new PrivateGameTerminateCommand());
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new RecordAverageDamageCommand());
     }
 
     public static void registerConditions() {
