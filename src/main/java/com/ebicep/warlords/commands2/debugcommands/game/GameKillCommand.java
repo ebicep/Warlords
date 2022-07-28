@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @CommandAlias("killgame")
-@CommandPermission("warlords.game.end.remote")
+@CommandPermission("warlords.game.kill")
 public class GameKillCommand extends BaseCommand {
 
     public static void killGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
@@ -52,6 +52,7 @@ public class GameKillCommand extends BaseCommand {
     }
 
     @Subcommand("all")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Kill all games")
     public void killAllGames(CommandIssuer issuer) {
         for (GameHolder game : Warlords.getGameManager().getGames()) {
@@ -61,12 +62,14 @@ public class GameKillCommand extends BaseCommand {
     }
 
     @Subcommand("map")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Kill all games matching map")
     public void killGameFromMap(CommandIssuer issuer, GameMap map) {
         killGameMatching(issuer, game -> Objects.equals(game.getGame().getMap(), map), "MAP");
     }
 
     @Subcommand("gamemode")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Kill all games matching gamemode")
     public void killGameFromGameMode(CommandIssuer issuer, GameMode gameMode) {
         killGameMatching(issuer, game -> Objects.equals(game.getGame().getGameMode(), gameMode), "GAMEMODE");
@@ -74,6 +77,7 @@ public class GameKillCommand extends BaseCommand {
 
     @Subcommand("gameid")
     @CommandCompletion("@gameids")
+    @CommandPermission("warlords.game.end.remote")
     @Description("Kill all games with matching id")
     public void killGameFromGameId(CommandIssuer issuer, @Values("@gameids") UUID uuid) {
         killGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
