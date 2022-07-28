@@ -9,7 +9,9 @@ import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateComm
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.ExperienceCommand;
 import com.ebicep.warlords.commands2.debugcommands.misc.FindPlayerCommand;
+import com.ebicep.warlords.commands2.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
@@ -55,6 +57,7 @@ public class CommandManager {
         manager.registerCommand(new UnstuckCommand(), true);
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
+        manager.registerCommand(new GamesCommand());
     }
 
     public static void registerContexts() {
@@ -239,11 +242,25 @@ public class CommandManager {
             if (value == null) {
                 return;
             }
-            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
-                throw new ConditionFailedException("Min value must be " + c.getConfigValue("min", 0));
+            if (c.hasConfig("previousGames")) {
+                int size = DatabaseGameBase.previousGames.size();
+                if (size == 0) {
+                    throw new ConditionFailedException("No previous games found!");
+                }
+                if (value < 0 || value > size) {
+                    throw new ConditionFailedException("Game must be an index in the previous games list!");
+                }
+                return;
             }
-            if (c.hasConfig("max") && c.getConfigValue("max", 3) < value) {
-                throw new ConditionFailedException("Max value must be " + c.getConfigValue("max", 3));
+
+            Integer min = c.getConfigValue("min", 0);
+            Integer max = c.getConfigValue("max", 3);
+
+            if (c.hasConfig("min") && min > value) {
+                throw new ConditionFailedException("Min value must be " + min);
+            }
+            if (c.hasConfig("max") && max < value) {
+                throw new ConditionFailedException("Max value must be " + max);
             }
         });
     }
