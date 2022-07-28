@@ -46,6 +46,7 @@ public class CommandManager {
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
+        manager.registerCommand(new ToggleAFKDetectionCommand());
     }
 
     public static void registerContexts() {
@@ -97,7 +98,10 @@ public class CommandManager {
             return optionalGameHolder.get();
         });
         manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
-        manager.getCommandContexts().registerContext(Boolean.class, command -> command.popFirstArg().equalsIgnoreCase("true"));
+        manager.getCommandContexts().registerContext(Boolean.class, command -> {
+            String arg = command.popFirstArg();
+            return arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("enable");
+        });
     }
 
     public static void registerCompletions() {
