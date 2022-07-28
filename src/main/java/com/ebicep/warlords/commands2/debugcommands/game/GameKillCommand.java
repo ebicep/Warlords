@@ -25,17 +25,17 @@ public class GameKillCommand extends BaseCommand {
 
     public static void killGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
         List<String> skippedGames = new ArrayList<>();
-        for (GameHolder game : Warlords.getGameManager().getGames()) {
-            if (game.getGame() == null) {
-                skippedGames.add(game.getName());
+        for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            if (gameHolder.getGame() == null) {
+                skippedGames.add(gameHolder.getName());
                 continue;
             }
-            if (gamePredicate.test(game)) {
-                game.forceEndGame();
-                ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + game.getName() + " - " + game.getMap() + " - " + game.getGame().playersCount() + " players");
+            if (gamePredicate.test(gameHolder)) {
+                gameHolder.forceEndGame();
+                ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " - " + gameHolder.getMap() + " - " + gameHolder.getGame().playersCount() + " players");
             }
         }
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.RED + "Skipped inactive kill game from " + from + ": " + skippedGames + " - " + skippedGames.size() + " games");
+        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames);
     }
 
     @Default

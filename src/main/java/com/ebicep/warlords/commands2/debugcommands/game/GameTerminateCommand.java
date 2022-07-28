@@ -1,0 +1,108 @@
+package com.ebicep.warlords.commands2.debugcommands.game;
+
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.game.state.PlayingState;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+@CommandAlias("terminategame|endgame")
+@CommandPermission("warlords.game.end.remote")
+public class GameTerminateCommand extends BaseCommand {
+    public static void terminateGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
+        List<GameHolder> inactiveGames = new ArrayList<>();
+        List<GameHolder> otherStateGames = new ArrayList<>();
+        for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            Game game = gameHolder.getGame();
+            if (game == null) {
+                inactiveGames.add(gameHolder);
+                continue;
+            }
+            if (game.isFrozen()) {
+                game.clearFrozenCauses();
+            }
+            Optional<PlayingState> state = game.getState(PlayingState.class);
+            if (!state.isPresent()) {
+                otherStateGames.add(gameHolder);
+                continue;
+            }
+            if (gamePredicate.test(gameHolder)) {
+                game.setNextState(new EndState(game, null));
+                ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"));
+            }
+        }
+        ChatChannelCommand.sendDebugMessage(
+                issuer,
+                ChatColor.RED + "(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
+                        inactiveGames.stream()
+                                .map(GameHolder::getName)
+                                .collect(Collectors.joining(", "))
+        );
+        ChatChannelCommand.sendDebugMessage(
+                issuer,
+                ChatColor.RED + "(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
+                        otherStateGames.stream()
+                                .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
+                                .collect(Collectors.joining(", "))
+        );
+    }
+
+    @Default
+    @Description("Kills your current game")
+    public void terminateGame(@Conditions("requireGame") Player player) {
+        Game playerGame = Objects.requireNonNull(Warlords.getPlayer(player)).getGame();
+        for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            Game game = gameHolder.getGame();
+            if (Objects.equals(game, playerGame)) {
+                game.setNextState(new EndState(game, null));
+                ChatChannelCommand.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName());
+                break;
+            }
+        }
+    }
+
+    @Subcommand("all")
+    @Description("Kill all games")
+    public void terminateAllGames(CommandIssuer issuer) {
+        terminateGameMatching(issuer, gameHolder -> true, "ALL");
+    }
+
+    @Subcommand("map")
+    @Description("Kill all games matching map")
+    public void terminateGameFromMap(CommandIssuer issuer, GameMap map) {
+        terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getMap(), map), "MAP");
+    }
+
+    @Subcommand("gamemode")
+    @Description("Kill all games matching gamemode")
+    public void terminateGameFromGameMode(CommandIssuer issuer, GameMode gameMode) {
+        terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameMode(), gameMode), "GAMEMODE");
+    }
+
+    @Subcommand("gameid")
+    @CommandCompletion("@gameids")
+    @Description("Kill all games with matching id")
+    public void terminateGameFromGameId(CommandIssuer issuer, @Values("@gameids") UUID uuid) {
+        terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
+    }
+
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
+}

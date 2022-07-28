@@ -4,6 +4,7 @@ import co.aikar.commands.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
+import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
@@ -40,6 +41,7 @@ public class CommandManager {
         manager.registerCommand(new DebugCommand());
         manager.registerCommand(new GameKillCommand());
         manager.registerCommand(new GameListCommand());
+        manager.registerCommand(new GameTerminateCommand());
     }
 
     public static void registerConditions() {
