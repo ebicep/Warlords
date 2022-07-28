@@ -1,9 +1,10 @@
 package com.ebicep.warlords.commands2.debugcommands.game;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
-import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -38,7 +39,7 @@ public class PrivateGameTerminateCommand extends BaseCommand {
     }
 
     @Default
-    @Description("Terminated your current game if private")
+    @Description("Terminates your current game if private")
     public void endPrivateGame(@Conditions("requireGame") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
@@ -80,9 +81,5 @@ public class PrivateGameTerminateCommand extends BaseCommand {
         }
     }
 
-    @HelpCommand
-    public void help(CommandIssuer issuer, CommandHelp help) {
-        help.showHelp();
-    }
 }
 
