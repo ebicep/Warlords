@@ -88,16 +88,6 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setMaxAllies(ability.getMaxAllies() + 2);
         ability.setPveUpgrade(true);

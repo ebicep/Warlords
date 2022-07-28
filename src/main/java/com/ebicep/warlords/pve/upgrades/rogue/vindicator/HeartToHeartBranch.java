@@ -78,16 +78,6 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
 
     }

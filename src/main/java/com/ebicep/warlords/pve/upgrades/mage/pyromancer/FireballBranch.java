@@ -82,16 +82,6 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setMaxFullDistance(ability.getMaxFullDistance() + 30);
         ability.setPveUpgrade(true);

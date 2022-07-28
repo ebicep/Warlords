@@ -82,16 +82,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setProjectileDamageReduction(100);
         ability.setBubbleRadius(ability.getBubbleRadius() * 2);

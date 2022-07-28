@@ -78,16 +78,6 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setCooldown(ability.getCooldown() * 0.7f);
     }

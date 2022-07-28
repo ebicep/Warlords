@@ -84,16 +84,6 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setEnergyRadius(ability.getEnergyRadius() * 2);
         ability.setEnergyMaxAllies(ability.getEnergyMaxAllies() + 2);

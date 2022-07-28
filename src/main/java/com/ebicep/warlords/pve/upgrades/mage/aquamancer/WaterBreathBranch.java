@@ -84,16 +84,6 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setHitbox(15);
         ability.setMaxAnimationTime(24);

@@ -84,16 +84,6 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setSlowness(ability.getSlowness() + 10);
         ability.setPveUpgrade(true);

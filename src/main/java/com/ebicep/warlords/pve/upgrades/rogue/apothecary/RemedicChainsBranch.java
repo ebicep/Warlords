@@ -78,16 +78,6 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setLinkBreakRadius(ability.getLinkBreakRadius() + 10);
         ability.setCastRange(ability.getCastRange() + 10);

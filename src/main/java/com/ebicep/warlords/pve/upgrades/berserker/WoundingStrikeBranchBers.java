@@ -83,16 +83,6 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setPveUpgrade(true);
     }

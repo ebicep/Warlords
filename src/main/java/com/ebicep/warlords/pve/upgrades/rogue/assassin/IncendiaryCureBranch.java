@@ -84,16 +84,6 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
 
     }

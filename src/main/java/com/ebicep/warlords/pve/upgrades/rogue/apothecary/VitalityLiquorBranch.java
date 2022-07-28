@@ -74,16 +74,6 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setMinDamageHeal(ability.getMinDamageHeal() * 2);
         ability.setMinDamageHeal(ability.getMaxDamageHeal() * 2);

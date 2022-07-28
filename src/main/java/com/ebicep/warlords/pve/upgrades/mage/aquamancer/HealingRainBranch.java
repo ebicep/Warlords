@@ -79,16 +79,6 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setDuration(ability.getDuration() + 8);
         ability.setPveUpgrade(true);

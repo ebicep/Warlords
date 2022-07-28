@@ -73,16 +73,6 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setMaxHits(ability.getMaxHits() + 2);
     }

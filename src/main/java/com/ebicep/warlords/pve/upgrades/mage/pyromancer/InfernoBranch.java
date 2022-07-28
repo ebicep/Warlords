@@ -70,16 +70,6 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setPveUpgrade(true);
     }

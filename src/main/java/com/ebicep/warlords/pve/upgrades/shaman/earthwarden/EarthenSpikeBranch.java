@@ -83,16 +83,6 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setSpikeHitbox(ability.getSpikeHitbox() * 1.5);
         ability.setVerticalVelocity(ability.getVerticalVelocity() * 1.5);

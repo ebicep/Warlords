@@ -9,20 +9,15 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
-        treeA.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
-        treeA.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
+        treeA.add(new Upgrade("Impair - Tier I", "+10% Damage\n+25% Projectile speed", 5000));
+        treeA.add(new Upgrade("Impair - Tier II", "+20% Damage\n+50% Projectile speed", 10000));
+        treeA.add(new Upgrade("Impair - Tier III", "+30% Damage\n+75% Projectile speed", 15000));
+        treeA.add(new Upgrade("Impair - Tier IV", "+40% Damage\n+100% Projectile speed", 20000));
 
-        treeB.add(new Upgrade("Energy - Tier I", "-5 Energy cost", 5000));
-        treeB.add(new Upgrade("Energy - Tier II", "-10 Energy cost", 10000));
-        treeB.add(new Upgrade("Energy - Tier III", "-15 Energy cost", 20000));
-
-        treeC.add(new Upgrade("Crit Multiplier - Tier I", "+10% Crit multiplier", 5000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit multiplier", 10000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier III", "+40% Crit multiplier", 20000));
-
-        utilityTree.add(new Upgrade("Utility - Projectile Speed", "+100% Projectile speed", 30000));
-        utilityTree.add(new Upgrade("Utility - Splash Radius", "+2 Blocks hit radius", 30000));
+        treeC.add(new Upgrade("Spark - Tier I", "-5 Energy cost\n+0.25 Block hit radius", 5000));
+        treeC.add(new Upgrade("Spark - Tier II", "-10 Energy cost\n+0.5 Block hit radius", 10000));
+        treeC.add(new Upgrade("Spark - Tier III", "-15 Energy cost\n+0.75 Block hit radius", 15000));
+        treeC.add(new Upgrade("Spark - Tier IV", "-20 Energy cost\n+1 Block hit radius", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
@@ -82,16 +77,6 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
     @Override
     public void c3() {
         ability.setCritMultiplier(ability.getCritMultiplier() + 20);
-    }
-
-    @Override
-    public void util1() {
-        ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
-    }
-
-    @Override
-    public void util2() {
-        ability.setHitbox(ability.getHitbox() + 2);
     }
 
     @Override

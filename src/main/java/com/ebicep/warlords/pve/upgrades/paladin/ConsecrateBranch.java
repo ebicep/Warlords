@@ -84,16 +84,6 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setEnergyCost(0);
         ability.setStrikeDamageBoost(ability.getStrikeDamageBoost() + 20);

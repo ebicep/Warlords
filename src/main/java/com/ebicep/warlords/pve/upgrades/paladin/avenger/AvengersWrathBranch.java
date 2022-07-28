@@ -74,16 +74,6 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
     }
 
     @Override
-    public void util1() {
-
-    }
-
-    @Override
-    public void util2() {
-
-    }
-
-    @Override
     public void master() {
         ability.setCooldown(cooldown * 0.4f);
         ability.setMaxTargets(ability.getMaxTargets() + 2);
