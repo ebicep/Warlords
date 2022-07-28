@@ -6,11 +6,9 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
-import com.ebicep.warlords.commands2.debugcommands.ingame.DebugCommand;
-import com.ebicep.warlords.commands2.debugcommands.ingame.DebugModeCommand;
-import com.ebicep.warlords.commands2.debugcommands.ingame.ImposterCommand;
-import com.ebicep.warlords.commands2.debugcommands.ingame.RecordAverageDamageCommand;
+import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.game.*;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
@@ -47,90 +45,7 @@ public class CommandManager {
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
-    }
-
-    public static void registerConditions() {
-        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(command.getIssuer()));
-
-        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {
-            requirePlayer(command.getIssuer());
-            requireWarlordsPlayer(command.getIssuer());
-            //target is arg else target is self
-            if (player != null) {
-                WarlordsEntity targetWarlordsPlayer = Warlords.getPlayer(player);
-                if (targetWarlordsPlayer == null) {
-                    throw new ConditionFailedException(ChatColor.RED + "Target must be in an active game to use this command!");
-                }
-                //make sure target is in the same game as the issuer
-//                if(!issuerWarlordsPlayer.getGame().equals(targetWarlordsPlayer.getGame())) {
-//                    throw new ConditionFailedException(ChatColor.RED + "You cannot use this command on players in different games!");
-//                }
-            }
-        });
-        manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
-            Optional<Game> game = Warlords.getGameManager().getPlayerGame(command.getIssuer().getPlayer().getUniqueId());
-            if (!game.isPresent()) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
-            }
-            if (command.hasConfig("withAddon")) {
-                GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
-                if (!game.get().getAddons().contains(addon)) {
-                    throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
-                }
-            }
-        });
-        manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {
-            if (value == null) {
-                return;
-            }
-            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
-                throw new ConditionFailedException("Min value must be " + c.getConfigValue("min", 0));
-            }
-            if (c.hasConfig("max") && c.getConfigValue("max", 3) < value) {
-                throw new ConditionFailedException("Max value must be " + c.getConfigValue("max", 3));
-            }
-        });
-    }
-
-    public static void registerCompletions() {
-        CommandCompletions<BukkitCommandCompletionContext> commandCompletions = manager.getCommandCompletions();
-        commandCompletions.registerAsyncCompletion("warlordsplayerssamegame", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-                if (warlordsEntity != null) {
-                    return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).collect(Collectors.toList());
-                }
-            }
-            return null;
-        });
-        commandCompletions.registerAsyncCompletion("warlordsplayers", command ->
-                Warlords.getPlayers().values()
-                        .stream()
-                        .filter(WarlordsPlayer.class::isInstance)
-                        .map(WarlordsPlayer.class::cast)
-                        .map(WarlordsPlayer::getName)
-                        .collect(Collectors.toList())
-        );
-        commandCompletions.registerAsyncCompletion("maps", command ->
-                Arrays.stream(GameMap.values())
-                        .map(GameMap::name)
-                        .collect(Collectors.toList()));
-        commandCompletions.registerAsyncCompletion("gamemodes", command ->
-                Arrays.stream(GameMode.values())
-                        .map(GameMode::name)
-                        .collect(Collectors.toList()));
-        commandCompletions.registerAsyncCompletion("gameids", command ->
-                Warlords.getGameManager().getGames()
-                        .stream()
-                        .map(GameManager.GameHolder::getGame)
-                        .filter(Objects::nonNull)
-                        .map(Game::getGameId)
-                        .map(String::valueOf)
-                        .collect(Collectors.toList())
-        );
-
+        manager.registerCommand(new SpawnTestDummyCommand());
     }
 
     public static void registerContexts() {
@@ -182,6 +97,94 @@ public class CommandManager {
             return optionalGameHolder.get();
         });
         manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
+        manager.getCommandContexts().registerContext(Boolean.class, command -> command.popFirstArg().equalsIgnoreCase("true"));
+    }
+
+    public static void registerCompletions() {
+        CommandCompletions<BukkitCommandCompletionContext> commandCompletions = manager.getCommandCompletions();
+        commandCompletions.registerAsyncCompletion("warlordsplayerssamegame", command -> {
+            CommandSender sender = command.getSender();
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+                if (warlordsEntity != null) {
+                    return warlordsEntity.getGame().warlordsPlayers().map(WarlordsEntity::getName).collect(Collectors.toList());
+                }
+            }
+            return null;
+        });
+        commandCompletions.registerAsyncCompletion("warlordsplayers", command ->
+                Warlords.getPlayers().values()
+                        .stream()
+                        .filter(WarlordsPlayer.class::isInstance)
+                        .map(WarlordsPlayer.class::cast)
+                        .map(WarlordsPlayer::getName)
+                        .collect(Collectors.toList())
+        );
+        commandCompletions.registerAsyncCompletion("enabledisable", command -> Arrays.asList("enable", "disable"));
+        commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
+        commandCompletions.registerAsyncCompletion("maps", command ->
+                Arrays.stream(GameMap.values())
+                        .map(GameMap::name)
+                        .collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("gamemodes", command ->
+                Arrays.stream(GameMode.values())
+                        .map(GameMode::name)
+                        .collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("gameids", command ->
+                Warlords.getGameManager().getGames()
+                        .stream()
+                        .map(GameManager.GameHolder::getGame)
+                        .filter(Objects::nonNull)
+                        .map(Game::getGameId)
+                        .map(String::valueOf)
+                        .collect(Collectors.toList())
+        );
+        commandCompletions.registerAsyncCompletion("gameteams", command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList()));
+
+    }
+
+    public static void registerConditions() {
+        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(command.getIssuer()));
+
+        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {
+            requirePlayer(command.getIssuer());
+            requireWarlordsPlayer(command.getIssuer());
+            //target is arg else target is self
+            if (player != null) {
+                WarlordsEntity targetWarlordsPlayer = Warlords.getPlayer(player);
+                if (targetWarlordsPlayer == null) {
+                    throw new ConditionFailedException(ChatColor.RED + "Target must be in an active game to use this command!");
+                }
+                //make sure target is in the same game as the issuer
+//                if(!issuerWarlordsPlayer.getGame().equals(targetWarlordsPlayer.getGame())) {
+//                    throw new ConditionFailedException(ChatColor.RED + "You cannot use this command on players in different games!");
+//                }
+            }
+        });
+        manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
+            Optional<Game> game = Warlords.getGameManager().getPlayerGame(command.getIssuer().getPlayer().getUniqueId());
+            if (!game.isPresent()) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+            }
+            if (command.hasConfig("withAddon")) {
+                GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
+                if (!game.get().getAddons().contains(addon)) {
+                    throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
+                }
+            }
+        });
+        manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {
+            if (value == null) {
+                return;
+            }
+            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
+                throw new ConditionFailedException("Min value must be " + c.getConfigValue("min", 0));
+            }
+            if (c.hasConfig("max") && c.getConfigValue("max", 3) < value) {
+                throw new ConditionFailedException("Max value must be " + c.getConfigValue("max", 3));
+            }
+        });
     }
 
     public static void requirePlayer(BukkitCommandIssuer issuer) {

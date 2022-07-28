@@ -72,36 +72,36 @@ public class DebugCommand extends BaseCommand {
     }
 
     @Subcommand("energy")
-    @CommandCompletion("enable|disable @warlordsplayers")
+    @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles ability energy usage for a player or sender if there is no target")
-    public void setEnergy(CommandIssuer issuer, @Values("enable|disable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setEnergy(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setNoEnergyConsumption(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s No Energy Consumption was set to " + enable);
     }
 
     @Subcommand("cooldown")
-    @CommandCompletion("enable|disable @warlordsplayers")
+    @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles ability cooldowns for a player or sender if there is no target")
-    public void setCooldown(CommandIssuer issuer, @Values("enable|disable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setCooldown(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
         boolean disable = option.equals("disable");
         target.setDisableCooldowns(disable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!");
     }
 
     @Subcommand("takedamage")
-    @CommandCompletion("enable|disable @warlordsplayers")
+    @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles if a player takes damage or sender if there is no target")
-    public void setTakeDamage(CommandIssuer issuer, @Values("enable|disable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setTakeDamage(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setTakeDamage(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer take" : "start taking") + " damage!");
     }
 
     @Subcommand("crits")
-    @CommandCompletion("enable|disable @warlordsplayers")
+    @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles if a player can crit or sender if there is no target")
-    public void setCrits(CommandIssuer issuer, @Values("enable|disable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setCrits(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setCanCrit(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Crits have been " + option + "d!");
