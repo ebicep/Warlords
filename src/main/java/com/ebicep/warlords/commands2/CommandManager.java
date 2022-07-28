@@ -47,6 +47,8 @@ public class CommandManager {
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
         manager.registerCommand(new ToggleAFKDetectionCommand());
+        manager.registerCommand(new ToggleOfflineFreezeCommand());
+        manager.registerCommand(new UnstuckCommand(), true);
     }
 
     public static void registerContexts() {
@@ -175,6 +177,11 @@ public class CommandManager {
                 GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
                 if (!game.get().getAddons().contains(addon)) {
                     throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
+                }
+            }
+            if (command.hasConfig("unfrozen")) {
+                if (game.get().isFrozen()) {
+                    throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
                 }
             }
         });

@@ -11,6 +11,10 @@ public class ChatChannelCommand extends BaseCommand {
         player.sendMessage(ChatColor.RED + "Debug" + ChatColor.DARK_GRAY + " > " + message);
     }
 
+    public static void sendDebugMessageExcludingSelf(Player player, String message) {
+        //TODO player.sendMessage(ChatColor.RED + "Debug" + ChatColor.DARK_GRAY + " > " + message);
+    }
+
     public static void sendDebugMessage(CommandIssuer commandIssuer, String message) {
         commandIssuer.sendMessage(ChatColor.RED + "Debug" + ChatColor.DARK_GRAY + " > " + message);
     }
