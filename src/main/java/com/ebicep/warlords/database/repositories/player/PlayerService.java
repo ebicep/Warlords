@@ -35,6 +35,8 @@ public interface PlayerService {
 
     DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection);
 
+    DatabasePlayer findByNameIgnoreCase(String name);
+
     List<DatabasePlayer> findAll();
 
     List<DatabasePlayer> findAll(PlayersCollections collections);

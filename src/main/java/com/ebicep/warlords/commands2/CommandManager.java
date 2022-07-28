@@ -7,11 +7,16 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
+import com.ebicep.warlords.commands2.debugcommands.misc.ExperienceCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,6 +24,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class CommandManager {
@@ -49,9 +55,27 @@ public class CommandManager {
         manager.registerCommand(new ToggleAFKDetectionCommand());
         manager.registerCommand(new ToggleOfflineFreezeCommand());
         manager.registerCommand(new UnstuckCommand(), true);
+        manager.registerCommand(new ExperienceCommand());
     }
 
     public static void registerContexts() {
+        manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
+            String name = command.popFirstArg();
+            OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
+            return new DatabasePlayerFuture(CompletableFuture.supplyAsync(() -> {
+                for (OfflinePlayer offlinePlayer : offlinePlayers) {
+                    //~50ms
+                    if (offlinePlayer.getName() != null && offlinePlayer.getName().equalsIgnoreCase(name)) {
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(offlinePlayer.getUniqueId());
+                        if (databasePlayer == null) {
+                            throw new ConditionFailedException("Could not find DatabasePlayer with UUID " + offlinePlayer.getUniqueId() + " (" + offlinePlayer.getName() + ")");
+                        }
+                        return databasePlayer;
+                    }
+                }
+                throw new ConditionFailedException("Could not find player with name " + name);
+            }));
+        });
         manager.getCommandContexts().registerContext(WarlordsPlayer.class, command -> {
             String target = command.popFirstArg();
             boolean checkSelf = target.equals(SELF);
@@ -151,6 +175,17 @@ public class CommandManager {
     }
 
     public static void registerConditions() {
+        manager.getCommandConditions().addCondition("database", command -> {
+            if (!DatabaseManager.enabled) {
+                throw new ConditionFailedException(ChatColor.RED + "The database is not enabled!");
+            }
+            if (command.hasConfig("player") && DatabaseManager.playerService == null) {
+                throw new ConditionFailedException(ChatColor.RED + "playerService is null");
+            }
+            if (command.hasConfig("game") && DatabaseManager.gameService == null) {
+                throw new ConditionFailedException(ChatColor.RED + "gameService is null");
+            }
+        });
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(command.getIssuer()));
 
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {

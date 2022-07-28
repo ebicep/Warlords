@@ -20,7 +20,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 
 public class TestCommand implements CommandExecutor {
 
-    private static void printCache() {
+    public static void printCache() {
         Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.LIFETIME.cacheName)).getNativeCache();
         System.out.println("CACHE - " + cache.asMap());
     }
