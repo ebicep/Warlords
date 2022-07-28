@@ -2,19 +2,27 @@ package com.ebicep.warlords.commands2;
 
 import co.aikar.commands.*;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugCommand;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameManager;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class CommandManager {
 
+    public static final String SELF = "*";
     public static PaperCommandManager manager;
 
     public static void init(Warlords instance) {
@@ -29,24 +37,17 @@ public class CommandManager {
 
     public static void registerCommands() {
         manager.registerCommand(new DebugCommand());
+        manager.registerCommand(new GameKillCommand());
     }
 
     public static void registerConditions() {
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> {
-            WarlordsEntity issuerWarlordsPlayer = Warlords.getPlayer(command.getIssuer().getPlayer());
-            if (issuerWarlordsPlayer == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
-            }
+            requireWarlordsPlayer(command.getIssuer());
         });
 
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {
-            if (!command.getIssuer().isPlayer()) {
-                throw new ConditionFailedException(ChatColor.RED + "This command requires a player!");
-            }
-            WarlordsEntity issuerWarlordsPlayer = Warlords.getPlayer(command.getIssuer().getPlayer());
-            if (issuerWarlordsPlayer == null) {
-                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
-            }
+            requirePlayer(command.getIssuer());
+            requireWarlordsPlayer(command.getIssuer());
             //target is arg else target is self
             if (player != null) {
                 WarlordsEntity targetWarlordsPlayer = Warlords.getPlayer(player);
@@ -91,25 +92,38 @@ public class CommandManager {
             }
             return null;
         });
-        commandCompletions.registerAsyncCompletion("warlordsplayers", command -> {
-            CommandSender sender = command.getSender();
-            if (sender instanceof Player) {
-                return Warlords.getPlayers().values()
+        commandCompletions.registerAsyncCompletion("warlordsplayers", command ->
+                Warlords.getPlayers().values()
                         .stream()
                         .filter(WarlordsPlayer.class::isInstance)
                         .map(WarlordsPlayer.class::cast)
                         .map(WarlordsPlayer::getName)
-                        .collect(Collectors.toList());
-            }
-            return null;
-        });
+                        .collect(Collectors.toList())
+        );
+        commandCompletions.registerAsyncCompletion("maps", command ->
+                Arrays.stream(GameMap.values())
+                        .map(GameMap::name)
+                        .collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("gamemodes", command ->
+                Arrays.stream(GameMode.values())
+                        .map(GameMode::name)
+                        .collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("gameids", command ->
+                Warlords.getGameManager().getGames()
+                        .stream()
+                        .map(GameManager.GameHolder::getGame)
+                        .filter(Objects::nonNull)
+                        .map(Game::getGameId)
+                        .map(String::valueOf)
+                        .collect(Collectors.toList())
+        );
 
     }
 
     public static void registerContexts() {
         manager.getCommandContexts().registerContext(WarlordsPlayer.class, command -> {
             String target = command.popFirstArg();
-            boolean checkSelf = target.equals(DebugCommand.SELF);
+            boolean checkSelf = target.equals(SELF);
             if (checkSelf) {
                 target = command.getSender().getName();
             }
@@ -130,12 +144,45 @@ public class CommandManager {
             }
             return optionalWarlordsPlayer.get();
         });
+        manager.getCommandContexts().registerContext(GameManager.GameHolder.class, command -> {
+            String target = command.popFirstArg();
+            boolean checkSelf = target.equals(SELF);
+            if (checkSelf) {
+                WarlordsEntity warlordsPlayer = requireWarlordsPlayer(command.getIssuer());
+                return Warlords.getGameManager().getGames()
+                        .stream()
+                        .filter(game -> {
+                            if (game.getGame() != null) {
+                                return game.getGame().equals(warlordsPlayer.getGame());
+                            }
+                            return false;
+                        })
+                        .findAny()
+                        .get();
+            }
+            Optional<GameManager.GameHolder> optionalGameHolder = Warlords.getGameManager().getGames().stream()
+                    .filter(game -> game.getName().equals(target))
+                    .findAny();
+            if (!optionalGameHolder.isPresent()) {
+                throw new InvalidCommandArgument("Could not find GameHolder with name " + target);
+            }
+            return optionalGameHolder.get();
+        });
+        manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
     }
 
     public static void requirePlayer(BukkitCommandIssuer issuer) {
         if (!issuer.isPlayer()) {
             throw new ConditionFailedException(ChatColor.RED + "This command requires a player!");
         }
+    }
+
+    public static WarlordsEntity requireWarlordsPlayer(BukkitCommandIssuer issuer) {
+        WarlordsEntity issuerWarlordsPlayer = Warlords.getPlayer(issuer.getPlayer());
+        if (issuerWarlordsPlayer == null) {
+            throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+        }
+        return issuerWarlordsPlayer;
     }
 
 }
