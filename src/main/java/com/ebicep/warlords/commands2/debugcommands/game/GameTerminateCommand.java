@@ -62,7 +62,7 @@ public class GameTerminateCommand extends BaseCommand {
     }
 
     @Default
-    @Description("Kills your current game")
+    @Description("Terminates your current game")
     public void terminateGame(@Conditions("requireGame") Player player) {
         Game playerGame = Objects.requireNonNull(Warlords.getPlayer(player)).getGame();
         for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
@@ -77,21 +77,21 @@ public class GameTerminateCommand extends BaseCommand {
 
     @Subcommand("all")
     @CommandPermission("warlords.game.end.remote")
-    @Description("Kill all games")
+    @Description("Terminates all games")
     public void terminateAllGames(CommandIssuer issuer) {
         terminateGameMatching(issuer, gameHolder -> true, "ALL");
     }
 
     @Subcommand("map")
     @CommandPermission("warlords.game.end.remote")
-    @Description("Kill all games matching map")
+    @Description("Terminates all games matching map")
     public void terminateGameFromMap(CommandIssuer issuer, GameMap map) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getMap(), map), "MAP");
     }
 
     @Subcommand("gamemode")
     @CommandPermission("warlords.game.end.remote")
-    @Description("Kill all games matching gamemode")
+    @Description("Terminates all games matching gamemode")
     public void terminateGameFromGameMode(CommandIssuer issuer, GameMode gameMode) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameMode(), gameMode), "GAMEMODE");
     }
@@ -99,7 +99,7 @@ public class GameTerminateCommand extends BaseCommand {
     @Subcommand("gameid")
     @CommandCompletion("@gameids")
     @CommandPermission("warlords.game.end.remote")
-    @Description("Kill all games with matching id")
+    @Description("Terminates all games with matching id")
     public void terminateGameFromGameId(CommandIssuer issuer, @Values("@gameids") UUID uuid) {
         terminateGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
     }
