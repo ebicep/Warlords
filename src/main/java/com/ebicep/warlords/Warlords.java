@@ -1008,6 +1008,7 @@ public class Warlords extends JavaPlugin {
         new ToggleAFKDetectionCommand().register(this);
         new ServerStatusCommand().register(this);
         new UnstuckCommand().register(this);
+        new ToggleOfflineFreezeCommand().register(this);
         new SkipWaveCommand().register(this);
         new EditCurrencyCommand().register(this);
         new GuildCommand().register(this);

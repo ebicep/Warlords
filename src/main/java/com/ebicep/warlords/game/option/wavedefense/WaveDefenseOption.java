@@ -297,6 +297,7 @@ public class WaveDefenseOption implements Option {
 
                 if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));
+                    this.cancel();
                 }
             }
         }.runTaskTimer(20, 0);
