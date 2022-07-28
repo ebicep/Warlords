@@ -8,10 +8,8 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.DebugModeCommand;
-import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameManager;
-import com.ebicep.warlords.game.GameMap;
-import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.commands2.debugcommands.ingame.ImposterCommand;
+import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
@@ -46,12 +44,11 @@ public class CommandManager {
         manager.registerCommand(new GameTerminateCommand());
         manager.registerCommand(new PrivateGameTerminateCommand());
         manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new ImposterCommand());
     }
 
     public static void registerConditions() {
-        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> {
-            requireWarlordsPlayer(command.getIssuer());
-        });
+        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(command.getIssuer()));
 
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {
             requirePlayer(command.getIssuer());
@@ -69,9 +66,15 @@ public class CommandManager {
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
-            Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(command.getIssuer().getPlayer().getUniqueId());
-            if (!playerGame.isPresent()) {
+            Optional<Game> game = Warlords.getGameManager().getPlayerGame(command.getIssuer().getPlayer().getUniqueId());
+            if (!game.isPresent()) {
                 throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+            }
+            if (command.hasConfig("withAddon")) {
+                GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
+                if (!game.get().getAddons().contains(addon)) {
+                    throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
+                }
             }
         });
         manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {

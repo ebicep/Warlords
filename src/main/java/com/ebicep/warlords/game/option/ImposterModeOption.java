@@ -64,6 +64,10 @@ public class ImposterModeOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
+        assignImpostersWithAnimation(20 * 12);
+    }
+
+    public void assignImpostersWithAnimation(int tickDelay) {
         new GameRunnable(game) {
 
             int counter = 0;
@@ -71,7 +75,7 @@ public class ImposterModeOption implements Option {
             @Override
             public void run() {
                 if (counter == 4) {
-                    assignImposters(game);
+                    assignImposters();
                 }
                 game.onlinePlayersWithoutSpectators().forEach(playerTeamEntry -> {
                     Player player = playerTeamEntry.getKey();
@@ -107,10 +111,10 @@ public class ImposterModeOption implements Option {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(20 * 12, 20);
+        }.runTaskTimer(tickDelay, 20);
     }
 
-    private void assignImposters(Game game) {
+    public void assignImposters() {
         for (Team team : TeamMarker.getTeams(game)) {
             List<WarlordsEntity> teamPlayers = game.warlordsEntities().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
             if (teamPlayers.size() == 0) {
