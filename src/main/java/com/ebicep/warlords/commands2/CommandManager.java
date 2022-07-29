@@ -59,6 +59,7 @@ public class CommandManager {
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
         manager.registerCommand(new GetPlayersCommand());
+        manager.registerCommand(new MuteCommand());
     }
 
     public static void registerContexts() {
