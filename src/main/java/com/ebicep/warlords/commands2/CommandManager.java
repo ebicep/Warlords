@@ -7,15 +7,13 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
-import com.ebicep.warlords.commands2.debugcommands.misc.ExperienceCommand;
-import com.ebicep.warlords.commands2.debugcommands.misc.FindPlayerCommand;
-import com.ebicep.warlords.commands2.debugcommands.misc.GamesCommand;
-import com.ebicep.warlords.commands2.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
+import com.ebicep.warlords.commands2.debugcommands.misc.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Bukkit;
@@ -60,6 +58,7 @@ public class CommandManager {
         manager.registerCommand(new FindPlayerCommand());
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
+        manager.registerCommand(new GetPlayersCommand());
     }
 
     public static void registerContexts() {
@@ -239,6 +238,12 @@ public class CommandManager {
                 if (game.get().isFrozen()) {
                     throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
                 }
+            }
+        });
+        manager.getCommandConditions().addCondition(Player.class, "requireParty", (command, exec, player) -> {
+            Optional<Party> optionalParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
+            if (!optionalParty.isPresent()) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
             }
         });
         manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {
