@@ -47,6 +47,7 @@ public class CommandManager {
         manager.registerCommand(new GameListCommand());
         manager.registerCommand(new GameTerminateCommand());
         manager.registerCommand(new PrivateGameTerminateCommand());
+
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
@@ -54,6 +55,7 @@ public class CommandManager {
         manager.registerCommand(new ToggleAFKDetectionCommand());
         manager.registerCommand(new ToggleOfflineFreezeCommand());
         manager.registerCommand(new UnstuckCommand(), true);
+
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
         manager.registerCommand(new GamesCommand());
@@ -63,6 +65,7 @@ public class CommandManager {
         manager.registerCommand(new MyLocationCommand());
         manager.registerCommand(new RecordGamesCommand());
         manager.registerCommand(new ServerStatusCommand());
+        manager.registerCommand(new TestCommand());
     }
 
     public static void registerContexts() {
