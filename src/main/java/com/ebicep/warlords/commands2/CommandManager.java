@@ -10,6 +10,7 @@ import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.ExperienceCommand;
 import com.ebicep.warlords.commands2.debugcommands.misc.FindPlayerCommand;
 import com.ebicep.warlords.commands2.debugcommands.misc.GamesCommand;
+import com.ebicep.warlords.commands2.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -58,6 +59,7 @@ public class CommandManager {
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
         manager.registerCommand(new GamesCommand());
+        manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
     }
 
     public static void registerContexts() {
@@ -184,6 +186,7 @@ public class CommandManager {
                         .collect(Collectors.toList())
         );
         commandCompletions.registerAsyncCompletion("gameteams", command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("playerabilitystats", command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet().stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.toList()));
 
     }
 
