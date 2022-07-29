@@ -83,7 +83,6 @@ public class GameKillCommand extends BaseCommand {
         killGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
     }
 
-
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.showHelp();

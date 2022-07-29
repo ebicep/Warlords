@@ -12,7 +12,7 @@ public class ToggleOfflineFreezeCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@enabledisable")
-    public void toggleAFKDetection(CommandIssuer issuer, @Values("@enabledisable") String option) {
+    public void toggleOfflineFreeze(CommandIssuer issuer, @Values("@enabledisable") String option) {
         GameFreezeWhenOfflineOption.enabled = option.equals("enable");
         issuer.sendMessage((GameFreezeWhenOfflineOption.enabled ? ChatColor.GREEN : ChatColor.RED) + "Offline Freeze is now " + option + "d.");
     }

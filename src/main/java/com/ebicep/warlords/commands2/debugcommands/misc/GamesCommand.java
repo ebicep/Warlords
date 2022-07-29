@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands2.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
@@ -260,6 +261,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("reload")
+    @Description("Reloads game holograms")
     public void reload(CommandIssuer issuer) {
         sendDebugMessage(issuer, ChatColor.GREEN + "Deleting Holograms");
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
@@ -270,6 +272,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("list")
+    @Description("Prints list of games")
     public void list(CommandIssuer issuer) {
         StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
         for (int i = 0; i < previousGames.size(); i++) {
@@ -279,6 +282,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("edit")
+    @Description("Opens game editor from date")
     public void edit(Player player, String date) {
         sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date);
 
@@ -296,6 +300,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("add")
+    @Description("Adds game to database")
     public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
         sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
@@ -303,10 +308,15 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
+    @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
         sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
 }
