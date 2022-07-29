@@ -66,6 +66,8 @@ public class CommandManager {
         manager.registerCommand(new RecordGamesCommand());
         manager.registerCommand(new ServerStatusCommand());
         manager.registerCommand(new TestCommand());
+
+        //manager.registerCommand(new AchievementsCommand());
     }
 
     public static void registerContexts() {
