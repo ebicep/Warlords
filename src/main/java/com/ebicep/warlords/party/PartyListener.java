@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -43,16 +42,5 @@ public class PartyListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent e) {
-        String message = e.getMessage();
-        if (message.equalsIgnoreCase("/pl")) {
-            Bukkit.getServer().dispatchCommand(e.getPlayer(), "party list");
-            e.setCancelled(true);
-        } else if (message.equalsIgnoreCase("/gl")) {
-            Bukkit.getServer().dispatchCommand(e.getPlayer(), "guild list");
-            e.setCancelled(true);
-        }
-    }
 
 }

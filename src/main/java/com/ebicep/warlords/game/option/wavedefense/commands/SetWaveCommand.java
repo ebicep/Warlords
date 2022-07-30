@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
 @CommandAlias("setwave")
-public class SkipWaveCommand extends BaseCommand {
+public class SetWaveCommand extends BaseCommand {
 
     @Subcommand("set")
     @Description("Set the wave counter")

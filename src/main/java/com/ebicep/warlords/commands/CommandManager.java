@@ -19,9 +19,13 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
+import com.ebicep.warlords.game.option.wavedefense.commands.SetWaveCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.commands.GuildCommand;
+import com.ebicep.warlords.guilds.commands.GuildPlayerWrapper;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -109,6 +113,9 @@ public class CommandManager {
         manager.registerCommand(new QueueCommand());
 
         manager.registerCommand(new EditCurrencyCommand());
+        manager.registerCommand(new SetWaveCommand());
+
+        manager.registerCommand(new GuildCommand());
     }
 
     public static void registerContexts() {
@@ -185,6 +192,18 @@ public class CommandManager {
             }
             throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
         });
+        manager.getCommandContexts().registerIssuerOnlyContext(GuildPlayerWrapper.class, command -> {
+            Player player = command.getPlayer();
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair != null) {
+                if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
+                    Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    throw new ConditionFailedException();
+                }
+                return new GuildPlayerWrapper(guildPlayerPair);
+            }
+            throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+        });
         //Contexts
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
@@ -220,6 +239,19 @@ public class CommandManager {
                 }
             }
             throw new InvalidCommandArgument("Could not find a player in your party with the name " + arg);
+        });
+        manager.getCommandContexts().registerContext(GuildPlayer.class, command -> {
+            String arg = command.popFirstArg();
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(command.getPlayer());
+            if (guildPlayerPair == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+            }
+            for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
+                if (Bukkit.getOfflinePlayer(guildPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
+                    return guildPlayer;
+                }
+            }
+            throw new InvalidCommandArgument("Could not find a player in your guild with the name " + arg);
         });
         manager.getCommandContexts().registerContext(AbstractPoll.class, command -> {
             Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
@@ -294,6 +326,28 @@ public class CommandManager {
                         .flatMap(Collection::stream)
                         .map(PartyPlayer::getUUID)
                         .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                        .collect(Collectors.toList());
+            }
+            return null;
+        });
+        commandCompletions.registerAsyncCompletion("guildmembers", command -> {
+            CommandSender sender = command.getSender();
+            if (sender instanceof Player) {
+                return GuildManager.GUILDS.stream()
+                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                        .map(Guild::getPlayers)
+                        .flatMap(Collection::stream)
+                        .map(GuildPlayer::getUUID)
+                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                        .collect(Collectors.toList());
+            }
+            return null;
+        });
+        commandCompletions.registerAsyncCompletion("guildnames", command -> {
+            CommandSender sender = command.getSender();
+            if (sender instanceof Player) {
+                return GuildManager.GUILDS.stream()
+                        .map(Guild::getName)
                         .collect(Collectors.toList());
             }
             return null;
@@ -406,6 +460,26 @@ public class CommandManager {
             }
             if (partyPlayerPair.getB().getPartyPlayerType().ordinal() >= partyPlayer.getPartyPlayerType().ordinal()) {
                 Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                throw new ConditionFailedException();
+            }
+        });
+        manager.getCommandConditions().addCondition(GuildPlayer.class, "lowerRank", (command, exec, guildPlayer) -> {
+            Player player = command.getIssuer().getPlayer();
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+            }
+            Guild guild = guildPlayerPair.getA();
+            if (guild.getRoleLevel(guildPlayerPair.getB()) >= guild.getRoleLevel(guildPlayer)) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                throw new ConditionFailedException();
+            }
+        });
+        manager.getCommandConditions().addCondition(GuildPlayerWrapper.class, "requirePerm", (command, exec, guildPlayerWrapper) -> {
+            Player player = command.getIssuer().getPlayer();
+            GuildPermissions perm = GuildPermissions.valueOf(command.getConfigValue("perm", ""));
+            if (!guildPlayerWrapper.getGuild().playerHasPermission(guildPlayerWrapper.getGuildPlayer(), perm)) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
                 throw new ConditionFailedException();
             }
         });

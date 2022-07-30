@@ -8,9 +8,6 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
-  guild:
-    description: Guild
-    aliases: [ guild, g ]
 
 permissions:
   group.default:

@@ -124,6 +124,7 @@ public class PartyCommand extends BaseCommand {
         }
     }
 
+    @CommandAlias("pl")
     @Subcommand("list")
     @Description("Lists the players in your party")
     public void list(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
