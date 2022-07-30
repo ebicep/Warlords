@@ -9,6 +9,7 @@ import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateComm
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.*;
 import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ClassCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -75,6 +76,7 @@ public class CommandManager {
 
         //manager.registerCommand(new AchievementsCommand());
         manager.registerCommand(new ChatCommand());
+        manager.registerCommand(new ClassCommand());
     }
 
     public static void registerContexts() {
@@ -255,6 +257,11 @@ public class CommandManager {
                 if (game.get().isFrozen()) {
                     throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
                 }
+            }
+        });
+        manager.getCommandConditions().addCondition(Player.class, "outsideGame", (command, exec, player) -> {
+            if (Warlords.hasPlayer(player)) {
+                throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while in an active game!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "requireParty", (command, exec, player) -> {
