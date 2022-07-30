@@ -82,6 +82,7 @@ public class CommandManager {
         manager.registerCommand(new LobbyCommand());
         manager.registerCommand(new ParticleQualityCommand());
         manager.registerCommand(new ResourcePackCommand());
+        manager.registerCommand(new ShoutCommand());
     }
 
     public static void registerContexts() {
