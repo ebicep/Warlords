@@ -67,7 +67,7 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.IRON_AXE)
             ),
-            18000,
+            17000,
             0.45f,
             25,
             400,
@@ -87,7 +87,7 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BLAZE_POWDER)
             ),
-            18000,
+            17000,
             0.45f,
             0,
             700,

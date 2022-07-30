@@ -316,8 +316,8 @@ public class WarlordsEvents implements Listener {
                             "",
                             ((WarlordsNPC) wpAttacker).getMinMeleeDamage(),
                             ((WarlordsNPC) wpAttacker).getMaxMeleeDamage(),
-                            15,
-                            150,
+                            -1,
+                            100,
                             false
                     );
                     wpAttacker.setHitCooldown(20);

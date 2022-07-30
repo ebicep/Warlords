@@ -47,7 +47,7 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BOW)
             ),
-            1600,
+            1800,
             0.3f,
             0,
             0,
@@ -75,10 +75,10 @@ public class EliteMob {
             "Illusion Apprentice",
             loc,
             null,
-            6000,
+            5000,
             0.35f,
             0,
             500,
-            800
+            750
     );
 }

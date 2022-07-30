@@ -18,16 +18,7 @@ public class CustomZombie extends EntityZombie implements CustomEntity<CustomZom
 
     @Override
     public void onDeath(CustomZombie entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        //test
-        /*WarlordsEntity we = Warlords.getPlayer(this.getBukkitEntity());
-        if (we != null) {
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(we, 20, 20, 20)
-                    .aliveEnemiesOf(we)
-            ) {
-                enemy.addDamageInstance(we, "Test", 500, 500, -1, 100, false);
-            }
-        }*/
+
     }
 
     @Override
