@@ -18,6 +18,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -106,6 +107,8 @@ public class CommandManager {
 
         manager.registerCommand(new BotCommand());
         manager.registerCommand(new QueueCommand());
+
+        manager.registerCommand(new EditCurrencyCommand());
     }
 
     public static void registerContexts() {
@@ -145,8 +148,14 @@ public class CommandManager {
             }
         });
         manager.getCommandContexts().registerIssuerAwareContext(WarlordsPlayer.class, command -> {
-            String arg = command.popFirstArg();
-            String target = arg == null ? command.getSender().getName() : arg;
+            String target;
+            String name = command.getSender().getName();
+            if (command.getIndex() == 0) {
+                target = name;
+            } else {
+                String arg = command.popFirstArg();
+                target = arg == null ? name : arg;
+            }
 
             Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
                     .stream()
@@ -155,7 +164,7 @@ public class CommandManager {
                     .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
                     .findAny();
             if (!optionalWarlordsPlayer.isPresent()) {
-                if (arg == null) {
+                if (target.equals(name)) {
                     throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
                 } else {
                     throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
@@ -408,15 +417,20 @@ public class CommandManager {
         }
     }
 
-    public static WarlordsEntity requireWarlordsPlayer(Player player) {
+    public static void requireWarlordsPlayer(Player player) {
         WarlordsEntity issuerWarlordsPlayer = Warlords.getPlayer(player);
         if (issuerWarlordsPlayer == null) {
             throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
         }
-        return issuerWarlordsPlayer;
     }
 
     public static void requireGameConfig(ConditionContext<BukkitCommandIssuer> command, Game game) {
+        if (command.hasConfig("gamemode")) {
+            GameMode gamemode = GameMode.valueOf(command.getConfigValue("gamemode", ""));
+            if (game.getGameMode() != gamemode) {
+                throw new ConditionFailedException(ChatColor.RED + "Game does not contain gamemode " + gamemode.name());
+            }
+        }
         if (command.hasConfig("withAddon")) {
             GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
             if (!game.getAddons().contains(addon)) {

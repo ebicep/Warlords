@@ -24,6 +24,7 @@ public class SpawnTestDummyCommand extends BaseCommand {
 
     @Default
     @CommandCompletion("@gameteams @boolean")
+    @Syntax("<team> <takeDamage>")
     @Description("Spawns a test dummy on the specified team and true/false for whether it will take damage")
     public void spawnTestDummy(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer, @Values("@gameteams") Team team, @Values("@boolean") Boolean takeDamage) {
         Game game = warlordsPlayer.getGame();
