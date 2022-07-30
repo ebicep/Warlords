@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands2;
 
 import co.aikar.commands.*;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
@@ -29,9 +30,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static co.aikar.commands.ACFBukkitUtil.isValidName;
 
 public class CommandManager {
 
@@ -84,9 +88,44 @@ public class CommandManager {
         manager.registerCommand(new ResourcePackCommand());
         manager.registerCommand(new ShoutCommand());
         manager.registerCommand(new SpectateCommand());
+        manager.registerCommand(new MessageCommand());
     }
 
     public static void registerContexts() {
+        manager.getCommandContexts().registerIssuerAwareContext(Player.class, (c) -> {
+            boolean isOptional = c.isOptional();
+            CommandSender sender = c.getSender();
+            boolean isPlayerSender = sender instanceof Player;
+            if (!c.hasFlag("other")) {
+                Player player = isPlayerSender ? (Player) sender : null;
+                if (player == null && !isOptional) {
+                    throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+                }
+//                PlayerInventory inventory = player != null ? player.getInventory() : null;
+//                if (inventory != null && c.hasFlag("itemheld") && !ACFBukkitUtil.isValidItem(inventory.getItem(inventory.getHeldItemSlot()))) {
+//                    throw new InvalidCommandArgument(MinecraftMessageKeys.YOU_MUST_BE_HOLDING_ITEM, false);
+//                }
+                return player;
+            } else {
+                String arg = c.popFirstArg();
+                if (arg == null && isOptional) {
+                    if (c.hasFlag("defaultself")) {
+                        if (isPlayerSender) {
+                            return (Player) sender;
+                        } else {
+                            throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+                        }
+                    } else {
+                        return null;
+                    }
+                } else if (arg == null) {
+                    throw new InvalidCommandArgument();
+                }
+
+                OnlinePlayer onlinePlayer = getOnlinePlayer(c.getIssuer(), arg, isOptional);
+                return onlinePlayer != null ? onlinePlayer.getPlayer() : null;
+            }
+        });
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
             OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
@@ -336,5 +375,57 @@ public class CommandManager {
             throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
         }
         return issuerWarlordsPlayer;
+    }
+
+    @Nullable
+    public static OnlinePlayer getOnlinePlayer(BukkitCommandIssuer issuer, String lookup, boolean allowMissing) throws InvalidCommandArgument {
+        Player player = findPlayerSmart(issuer, lookup);
+        //noinspection Duplicates
+        if (player == null) {
+            if (allowMissing) {
+                return null;
+            }
+            throw new InvalidCommandArgument(false);
+        }
+        return new OnlinePlayer(player);
+    }
+
+    public static Player findPlayerSmart(CommandIssuer issuer, String search) {
+        CommandSender requester = issuer.getIssuer();
+        if (search == null) {
+            return null;
+        }
+        String name = ACFUtil.replace(search, ":confirm", "");
+
+        if (!isValidName(name)) {
+            issuer.sendError(MinecraftMessageKeys.IS_NOT_A_VALID_NAME, "{name}", name);
+            return null;
+        }
+
+        List<Player> matches = Bukkit.getServer().matchPlayer(name);
+        List<Player> confirmList = new ArrayList<>();
+        //findMatches(search, requester, matches, confirmList);
+
+
+        if (matches.size() > 1 || confirmList.size() > 1) {
+            String allMatches = matches.stream().map(Player::getName).collect(Collectors.joining(", "));
+            issuer.sendError(MinecraftMessageKeys.MULTIPLE_PLAYERS_MATCH,
+                    "{search}", name, "{all}", allMatches);
+            return null;
+        }
+
+        //noinspection Duplicates
+        if (matches.isEmpty()) {
+            Player player = ACFUtil.getFirstElement(confirmList);
+            if (player == null) {
+                issuer.sendError(MinecraftMessageKeys.NO_PLAYER_FOUND_SERVER, "{search}", name);
+                return null;
+            } else {
+                issuer.sendInfo(MinecraftMessageKeys.PLAYER_IS_VANISHED_CONFIRM, "{vanished}", player.getName());
+                return null;
+            }
+        }
+
+        return matches.get(0);
     }
 }
