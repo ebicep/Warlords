@@ -9,10 +9,7 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.*;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ClassCommand;
-import com.ebicep.warlords.commands2.miscellaneouscommands.DiscordCommand;
-import com.ebicep.warlords.commands2.miscellaneouscommands.HotkeyModeCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -82,6 +79,7 @@ public class CommandManager {
         manager.registerCommand(new ClassCommand());
         manager.registerCommand(new DiscordCommand());
         manager.registerCommand(new HotkeyModeCommand());
+        manager.registerCommand(new LobbyCommand());
     }
 
     public static void registerContexts() {
