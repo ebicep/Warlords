@@ -80,6 +80,7 @@ public class CommandManager {
         manager.registerCommand(new DiscordCommand());
         manager.registerCommand(new HotkeyModeCommand());
         manager.registerCommand(new LobbyCommand());
+        manager.registerCommand(new ParticleQualityCommand());
     }
 
     public static void registerContexts() {
