@@ -81,6 +81,7 @@ public class CommandManager {
         manager.registerCommand(new HotkeyModeCommand());
         manager.registerCommand(new LobbyCommand());
         manager.registerCommand(new ParticleQualityCommand());
+        manager.registerCommand(new ResourcePackCommand());
     }
 
     public static void registerContexts() {
