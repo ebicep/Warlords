@@ -49,6 +49,11 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -66,6 +71,11 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         ability.setEnergyCost(energyCost - 15);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     int energyGiven = ability.getEnergyGiven();
 
     @Override
@@ -81,6 +91,11 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
     @Override
     public void c3() {
         ability.setEnergyGiven(energyGiven + 6);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

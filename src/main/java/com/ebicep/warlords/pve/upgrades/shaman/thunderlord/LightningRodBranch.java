@@ -42,6 +42,11 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -71,6 +81,11 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
     @Override
     public void c3() {
         ability.setHealthRestore(healthRestore + 40);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

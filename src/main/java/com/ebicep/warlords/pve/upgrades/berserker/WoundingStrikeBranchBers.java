@@ -49,6 +49,11 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         ability.setMaxDamageHeal(maxDamage * 1.5f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -66,6 +71,11 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         ability.setEnergyCost(energyCost - 15);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     int woundDuration = ability.getWoundingDuration();
     @Override
     public void c1() {
@@ -80,6 +90,11 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
     @Override
     public void c3() {
         ability.setWoundingDuration(woundDuration + 3);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

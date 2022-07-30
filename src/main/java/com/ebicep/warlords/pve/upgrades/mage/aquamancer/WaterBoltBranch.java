@@ -42,6 +42,11 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -83,6 +93,11 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         ability.setMaxDamageHeal(maxHealing * 1.4f);
         ability.setMinDamage(minDamage * 1.4f);
         ability.setMaxDamage(maxDamage * 1.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

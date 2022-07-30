@@ -43,6 +43,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
         ability.setMaxBounces(4);
     }
@@ -55,6 +60,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
     @Override
     public void b3() {
         ability.setMaxBounces(6);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     float minDamage = ability.getMinDamageHeal();
@@ -76,6 +86,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
     public void c3() {
         ability.setMinDamageHeal(minDamage * 1.4f);
         ability.setMaxDamageHeal(maxDamage * 1.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

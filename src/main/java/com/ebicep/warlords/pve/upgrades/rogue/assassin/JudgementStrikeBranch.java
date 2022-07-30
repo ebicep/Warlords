@@ -49,6 +49,11 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ability.setMaxDamageHeal(maxDamage * 2);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -66,6 +71,11 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ability.setEnergyCost(energyCost - 15);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     int speedOnCrit = ability.getSpeedOnCrit();
 
     @Override
@@ -81,6 +91,11 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     @Override
     public void c3() {
         ability.setSpeedOnCrit(speedOnCrit + 20);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

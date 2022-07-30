@@ -49,6 +49,11 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -64,6 +69,11 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     @Override
     public void b3() {
         ability.setEnergyCost(energyCost - 15);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     int minConversion = ability.getMinConvert();
@@ -85,6 +95,11 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     public void c3() {
         ability.setMinConvert(minConversion + 80);
         ability.setMaxConvert(maxConversion + 80);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

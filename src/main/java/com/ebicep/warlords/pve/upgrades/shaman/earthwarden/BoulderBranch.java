@@ -49,6 +49,11 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     double velocity = ability.getVelocity();
 
     @Override
@@ -66,6 +71,11 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         ability.setVelocity(velocity + .3);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     double hitbox = ability.getHitbox();
 
     @Override
@@ -81,6 +91,11 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
     @Override
     public void c3() {
         ability.setHitbox(hitbox + 3);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

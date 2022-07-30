@@ -46,6 +46,11 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
         ability.setHitbox(6);
     }
@@ -58,6 +63,11 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     @Override
     public void b3() {
         ability.setHitbox(8);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     float minDamage = ability.getMinDamageHeal();
@@ -79,6 +89,11 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     public void c3() {
         ability.setMinDamageHeal(minDamage * 1.6f);
         ability.setMaxDamageHeal(maxDamage * 1.6f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

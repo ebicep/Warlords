@@ -42,6 +42,11 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -71,6 +81,11 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.6f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

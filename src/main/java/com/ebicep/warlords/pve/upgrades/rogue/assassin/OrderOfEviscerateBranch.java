@@ -42,6 +42,11 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -57,6 +62,11 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
     }
 
     @Override
+    public void b4() {
+
+    }
+
+    @Override
     public void c1() {
 
     }
@@ -68,6 +78,11 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     @Override
     public void c3() {
+
+    }
+
+    @Override
+    public void c4() {
 
     }
 

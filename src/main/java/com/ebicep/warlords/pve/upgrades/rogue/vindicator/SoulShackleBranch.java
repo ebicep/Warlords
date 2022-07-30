@@ -49,6 +49,11 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
         ability.setMaxDamageHeal(maxDamage * 1.8f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int minTicks = ability.getMinSilenceDurationInTicks();
     int maxTicks = ability.getMaxSilenceDurationInTicks();
 
@@ -70,6 +75,11 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
         ability.setMaxSilenceDurationInTicks(maxTicks + 80);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float cooldown = ability.getCooldown();
 
     @Override
@@ -85,6 +95,11 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.6f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

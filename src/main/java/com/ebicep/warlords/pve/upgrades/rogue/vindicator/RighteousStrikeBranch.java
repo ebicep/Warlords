@@ -49,6 +49,11 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
     @Override
     public void b1() {
@@ -63,6 +68,11 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     @Override
     public void b3() {
         ability.setEnergyCost(energyCost - 15);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     int abilityReductionInTicks = ability.getAbilityReductionInTicks();
@@ -80,6 +90,11 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     @Override
     public void c3() {
         ability.setAbilityReductionInTicks(abilityReductionInTicks + 30);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

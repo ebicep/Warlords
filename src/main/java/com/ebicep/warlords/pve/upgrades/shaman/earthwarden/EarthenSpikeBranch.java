@@ -48,6 +48,11 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -65,6 +70,11 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
         ability.setEnergyCost(energyCost - 30);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float speed = ability.getSpeed();
 
     @Override
@@ -80,6 +90,11 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
     @Override
     public void c3() {
         ability.setSpeed(speed * 1.8f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

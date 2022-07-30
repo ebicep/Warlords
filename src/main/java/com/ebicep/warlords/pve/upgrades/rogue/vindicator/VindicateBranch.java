@@ -46,6 +46,11 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -57,6 +62,11 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -75,6 +85,11 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
     @Override
     public void c3() {
         ability.setVindicateDamageReduction(damageReduction + 40);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

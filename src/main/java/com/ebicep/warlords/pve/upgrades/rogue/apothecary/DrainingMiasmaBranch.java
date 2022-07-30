@@ -42,6 +42,11 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -71,6 +81,11 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
     @Override
     public void c3() {
         ability.setEnemyHitRadius(hitRadius + 6);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

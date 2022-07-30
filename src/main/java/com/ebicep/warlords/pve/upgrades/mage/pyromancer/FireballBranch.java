@@ -43,6 +43,11 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         ability.setEnergyCost(ability.getEnergyCost() - 10);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     double projectileSpeed = ability.getProjectileSpeed();
 
     @Override
@@ -58,6 +63,11 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
     @Override
     public void b3() {
         ability.setProjectileSpeed(projectileSpeed * 1.8);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     float minDamage = ability.getMinDamageHeal();
@@ -79,6 +89,11 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
     public void c3() {
         ability.setMinDamageHeal(minDamage * 1.4f);
         ability.setMaxDamageHeal(maxDamage * 1.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

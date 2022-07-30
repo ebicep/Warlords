@@ -28,55 +28,73 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
+    double projectileSpeed = ability.getProjectileSpeed();
 
     @Override
     public void a1() {
         ability.setMinDamageHeal(minDamage * 1.1f);
         ability.setMaxDamageHeal(maxDamage * 1.1f);
+        ability.setProjectileSpeed(projectileSpeed * 1.25);
     }
 
     @Override
     public void a2() {
         ability.setMinDamageHeal(minDamage * 1.2f);
         ability.setMaxDamageHeal(maxDamage * 1.2f);
+        ability.setProjectileSpeed(projectileSpeed * 1.5);
     }
 
     @Override
     public void a3() {
+        ability.setMinDamageHeal(minDamage * 1.3f);
+        ability.setMaxDamageHeal(maxDamage * 1.3f);
+        ability.setProjectileSpeed(projectileSpeed * 1.75);
+    }
+
+    @Override
+    public void a4() {
         ability.setMinDamageHeal(minDamage * 1.4f);
         ability.setMaxDamageHeal(maxDamage * 1.4f);
+        ability.setProjectileSpeed(projectileSpeed * 2);
+    }
+
+    @Override
+    public void b1() {
+    }
+
+    @Override
+    public void b2() {
+    }
+
+    @Override
+    public void b3() {
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     int energyCost = ability.getEnergyCost();
 
     @Override
-    public void b1() {
+    public void c1() {
         ability.setEnergyCost(energyCost - 5);
     }
 
     @Override
-    public void b2() {
+    public void c2() {
         ability.setEnergyCost(energyCost - 10);
     }
 
     @Override
-    public void b3() {
+    public void c3() {
         ability.setEnergyCost(energyCost - 15);
     }
 
     @Override
-    public void c1() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCritMultiplier(ability.getCritMultiplier() + 20);
+    public void c4() {
+        ability.setEnergyCost(energyCost - 20);
     }
 
     @Override

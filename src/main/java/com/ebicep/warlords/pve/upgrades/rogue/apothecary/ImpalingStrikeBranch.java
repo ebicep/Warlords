@@ -49,6 +49,11 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -64,6 +69,11 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     @Override
     public void b3() {
         ability.setEnergyCost(energyCost - 15);
+    }
+
+    @Override
+    public void b4() {
+
     }
 
     float selfLeech = ability.getLeechSelfAmount();
@@ -85,6 +95,11 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     public void c3() {
         ability.setLeechSelfAmount(selfLeech + 10);
         ability.setLeechAllyAmount(allyLeech + 10);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

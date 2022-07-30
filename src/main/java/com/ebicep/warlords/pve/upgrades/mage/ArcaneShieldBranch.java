@@ -42,6 +42,11 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -75,6 +85,11 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
         ability.setShieldPercentage(100);
         ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
         ability.updateDescription(null);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

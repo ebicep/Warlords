@@ -49,6 +49,11 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
         ability.setMaxDamageHeal(maxHealing * 1.6f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     float puddleRadius = ability.getPuddleRadius();
 
     @Override
@@ -66,6 +71,11 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
         ability.setPuddleRadius(puddleRadius + 3);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float cooldown = ability.getCooldown();
 
     @Override
@@ -81,6 +91,11 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.6f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

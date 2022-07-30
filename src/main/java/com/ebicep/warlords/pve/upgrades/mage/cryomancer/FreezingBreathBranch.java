@@ -46,6 +46,11 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
         ability.setHitbox(11);
         ability.setMaxAnimationTime(16);
@@ -63,6 +68,11 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
         ability.setMaxAnimationTime(24);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     int slowness = ability.getSlowness();
 
     @Override
@@ -78,6 +88,11 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
     @Override
     public void c3() {
         ability.setSlowness(slowness + 40);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

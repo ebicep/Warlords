@@ -43,6 +43,11 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -54,6 +59,11 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -76,6 +86,11 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
     public void c3() {
         ability.setMinDamageHeal(minHealing * 1.4f);
         ability.setMaxDamageHeal(maxHealing * 1.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

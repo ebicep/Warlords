@@ -46,6 +46,11 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -57,6 +62,11 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -79,6 +89,11 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     public void c3() {
         ability.setBubbleHealing((int) (bubbleHealing * 1.5f));
         ability.setBubbleMissingHealing(bubbleMissingHealing * 1.5f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

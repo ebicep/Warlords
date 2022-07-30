@@ -42,6 +42,11 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -69,6 +79,11 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
     @Override
     public void c3() {
         ability.setProcChance(ability.getProcChance() + 10);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

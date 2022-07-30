@@ -49,6 +49,11 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
         ability.setMaxDamageHeal(maxDamage * 1.8f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     float radius = ability.getRadius();
 
     @Override
@@ -66,6 +71,11 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
         ability.setRadius(radius + 3);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float cooldown = ability.getCooldown();
 
     @Override
@@ -81,6 +91,11 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

@@ -49,6 +49,11 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     float hitbox = ability.getHitbox();
 
     @Override
@@ -66,6 +71,11 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
         ability.setHitbox(hitbox + 3);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float cooldown = ability.getCooldown();
 
     @Override
@@ -81,6 +91,11 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.6f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

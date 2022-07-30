@@ -41,6 +41,11 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -52,6 +57,11 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -70,6 +80,11 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.4f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

@@ -49,6 +49,11 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int waveSize = ability.getWaveSize();
 
     @Override
@@ -66,6 +71,11 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         ability.setWaveSize(waveSize + 3);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     float cooldown = ability.getCooldown();
 
     @Override
@@ -81,6 +91,11 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
     @Override
     public void c3() {
         ability.setCooldown(cooldown * 0.8f);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

@@ -49,6 +49,11 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
+    @Override
+    public void a4() {
+
+    }
+
     int energyCost = ability.getEnergyCost();
 
     @Override
@@ -66,6 +71,11 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         ability.setEnergyCost(energyCost - 15);
     }
 
+    @Override
+    public void b4() {
+
+    }
+
     int energySteal = ability.getEnergySteal();
 
     @Override
@@ -81,6 +91,11 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
     @Override
     public void c3() {
         ability.setEnergySteal(energySteal + 20);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

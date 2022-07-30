@@ -46,6 +46,11 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -57,6 +62,11 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -73,6 +83,11 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
     @Override
     public void c3() {
         ability.setRadius(ability.getRadius() + 1);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

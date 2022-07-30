@@ -42,6 +42,11 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -53,6 +58,11 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -69,6 +79,11 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
     @Override
     public void c3() {
         ability.setWarpHealPercentage(50);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override

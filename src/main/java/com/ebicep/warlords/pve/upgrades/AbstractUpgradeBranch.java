@@ -77,6 +77,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 a3();
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
+                            case 3:
+                                a4();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
                         }
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
                         globalAnnouncement(player.getGame(), upgrade, ability);
@@ -129,6 +133,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 b3();
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
+                            case 3:
+                                b4();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
                         }
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
                         globalAnnouncement(player.getGame(), upgrade, ability);
@@ -179,6 +187,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 break;
                             case 2:
                                 c3();
+                                player.subtractCurrency(upgrade.getCurrencyCost());
+                                break;
+                            case 3:
+                                c4();
                                 player.subtractCurrency(upgrade.getCurrencyCost());
                                 break;
                         }
@@ -266,17 +278,23 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public abstract void a3();
 
+    public abstract void a4();
+
     public abstract void b1();
 
     public abstract void b2();
 
     public abstract void b3();
 
+    public abstract void b4();
+
     public abstract void c1();
 
     public abstract void c2();
 
     public abstract void c3();
+
+    public abstract void c4();
 
     public abstract void master();
 

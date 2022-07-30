@@ -40,6 +40,11 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
     }
 
     @Override
+    public void a4() {
+
+    }
+
+    @Override
     public void b1() {
 
     }
@@ -51,6 +56,11 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
     @Override
     public void b3() {
+
+    }
+
+    @Override
+    public void b4() {
 
     }
 
@@ -67,6 +77,11 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
     @Override
     public void c3() {
         ability.setCritMultiplierIncrease(70);
+    }
+
+    @Override
+    public void c4() {
+
     }
 
     @Override
