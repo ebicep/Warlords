@@ -4,15 +4,12 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 @CommandAlias("test")
@@ -27,17 +24,13 @@ public class TestCommand extends BaseCommand {
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-        if (issuer.getIssuer() instanceof Player) {
-            Player player = issuer.getIssuer();
-            ChatChannels.playerSendMessage(player, "Test command");
-        }
+
         ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
     }
 
     @CommandAlias("testgame")
     @Description("In game test command")
-    public void testGame(@Conditions("requireWarlordsPlayer") Player player) {
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+    public void testGame(WarlordsPlayer warlordsPlayer) {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
 
@@ -49,7 +42,7 @@ public class TestCommand extends BaseCommand {
 //            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
 //            warlordsPlayer.addCurrency(10000000);
 
-        ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Test executed");
+        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed");
     }
 
     @HelpCommand

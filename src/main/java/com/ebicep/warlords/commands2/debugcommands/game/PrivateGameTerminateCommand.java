@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -39,14 +40,18 @@ public class PrivateGameTerminateCommand extends BaseCommand {
 
     @Default
     @Description("Terminates your current game if private")
-    public void endPrivateGame(@Conditions("requireWarlordsPlayer|requireGame:withAddon=PRIVATE_GAME") Player player) {
-        Game game = Warlords.getPlayer(player).getGame();
+    public void endPrivateGame(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer) {
+        Game game = warlordsPlayer.getGame();
+        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) warlordsPlayer.getEntity();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (Objects.equals(gameHolder.getGame(), game)) {
-                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(warlordsPlayer.getUuid());
                 if (currentParty.isPresent()) {
                     Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
-                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer() == player) {
+                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer().getUniqueId().equals(warlordsPlayer.getUuid())) {
                         endGameInstance(player, gameHolder, game);
                         player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");
                     } else {

@@ -39,7 +39,6 @@ import static co.aikar.commands.ACFBukkitUtil.isValidName;
 
 public class CommandManager {
 
-    public static final String SELF = "*";
     public static PaperCommandManager manager;
 
     public static void init(Warlords instance) {
@@ -92,6 +91,7 @@ public class CommandManager {
     }
 
     public static void registerContexts() {
+        //Issuer aware contexts
         manager.getCommandContexts().registerIssuerAwareContext(Player.class, (c) -> {
             boolean isOptional = c.isOptional();
             CommandSender sender = c.getSender();
@@ -126,6 +126,26 @@ public class CommandManager {
                 return onlinePlayer != null ? onlinePlayer.getPlayer() : null;
             }
         });
+        manager.getCommandContexts().registerIssuerAwareContext(WarlordsPlayer.class, command -> {
+            String arg = command.popFirstArg();
+            String target = arg == null ? command.getSender().getName() : arg;
+
+            Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
+                    .stream()
+                    .filter(WarlordsPlayer.class::isInstance)
+                    .map(WarlordsPlayer.class::cast)
+                    .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(target))
+                    .findAny();
+            if (!optionalWarlordsPlayer.isPresent()) {
+                if (arg == null) {
+                    throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+                } else {
+                    throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
+                }
+            }
+            return optionalWarlordsPlayer.get();
+        });
+        //Contexts
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
             OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
@@ -143,53 +163,7 @@ public class CommandManager {
                 throw new ConditionFailedException("Could not find player with name " + name);
             }));
         });
-        manager.getCommandContexts().registerContext(WarlordsPlayer.class, command -> {
-            String target = command.popFirstArg();
-            boolean checkSelf = target.equals(SELF);
-            if (checkSelf) {
-                target = command.getSender().getName();
-            }
-            String finalTarget = target;
 
-            Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
-                    .stream()
-                    .filter(WarlordsPlayer.class::isInstance)
-                    .map(WarlordsPlayer.class::cast)
-                    .filter(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(finalTarget))
-                    .findAny();
-            if (!optionalWarlordsPlayer.isPresent()) {
-                if (checkSelf) {
-                    throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
-                } else {
-                    throw new InvalidCommandArgument("Could not find WarlordsPlayer with name " + target);
-                }
-            }
-            return optionalWarlordsPlayer.get();
-        });
-        manager.getCommandContexts().registerContext(GameManager.GameHolder.class, command -> {
-            String target = command.popFirstArg();
-            boolean checkSelf = target.equals(SELF);
-            if (checkSelf) {
-                WarlordsEntity warlordsPlayer = requireWarlordsPlayer(command.getIssuer().getPlayer());
-                return Warlords.getGameManager().getGames()
-                        .stream()
-                        .filter(game -> {
-                            if (game.getGame() != null) {
-                                return game.getGame().equals(warlordsPlayer.getGame());
-                            }
-                            return false;
-                        })
-                        .findAny()
-                        .get();
-            }
-            Optional<GameManager.GameHolder> optionalGameHolder = Warlords.getGameManager().getGames().stream()
-                    .filter(game -> game.getName().equals(target))
-                    .findAny();
-            if (!optionalGameHolder.isPresent()) {
-                throw new InvalidCommandArgument("Could not find GameHolder with name " + target);
-            }
-            return optionalGameHolder.get();
-        });
         manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
         manager.getCommandContexts().registerContext(Boolean.class, command -> {
             String arg = command.popFirstArg();
@@ -273,21 +247,6 @@ public class CommandManager {
         });
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(player));
 
-//        manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayerTarget", (command, exec, player) -> {
-//            requirePlayer(command.getIssuer());
-//            requireWarlordsPlayer(player);
-//            //target is arg else target is self
-//            if (player != null) {
-//                WarlordsEntity targetWarlordsPlayer = Warlords.getPlayer(player);
-//                if (targetWarlordsPlayer == null) {
-//                    throw new ConditionFailedException(ChatColor.RED + "Target must be in an active game to use this command!");
-//                }
-//                //make sure target is in the same game as the issuer
-////                if(!issuerWarlordsPlayer.getGame().equals(targetWarlordsPlayer.getGame())) {
-////                    throw new ConditionFailedException(ChatColor.RED + "You cannot use this command on players in different games!");
-////                }
-//            }
-//        });
         manager.getCommandConditions().addCondition(Player.class, "requireGame", (command, exec, player) -> {
             Optional<Game> game = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
             if (!game.isPresent()) {
@@ -298,18 +257,16 @@ public class CommandManager {
                     throw new ConditionFailedException(ChatColor.RED + "Target player must be in an active game to use this command!");
                 }
             }
-            if (command.hasConfig("withAddon")) {
-                GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
-                if (!game.get().getAddons().contains(addon)) {
-                    throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
-                }
-            }
-            if (command.hasConfig("unfrozen")) {
-                if (game.get().isFrozen()) {
-                    throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
-                }
-            }
+            requireGameConfig(command, game.get());
         });
+        manager.getCommandConditions().addCondition(WarlordsPlayer.class, "requireGame", (command, exec, player) -> {
+            Game game = player.getGame();
+            if (game == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
+            }
+            requireGameConfig(command, game);
+        });
+
         manager.getCommandConditions().addCondition(Player.class, "outsideGame", (command, exec, player) -> {
             if (Warlords.hasPlayer(player)) {
                 throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while in an active game!");
@@ -376,6 +333,21 @@ public class CommandManager {
         }
         return issuerWarlordsPlayer;
     }
+
+    public static void requireGameConfig(ConditionContext<BukkitCommandIssuer> command, Game game) {
+        if (command.hasConfig("withAddon")) {
+            GameAddon addon = GameAddon.valueOf(command.getConfigValue("withAddon", ""));
+            if (!game.getAddons().contains(addon)) {
+                throw new ConditionFailedException(ChatColor.RED + "Game does not contain addon " + addon.name());
+            }
+        }
+        if (command.hasConfig("unfrozen")) {
+            if (game.isFrozen()) {
+                throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while the game is frozen!");
+            }
+        }
+    }
+
 
     @Nullable
     public static OnlinePlayer getOnlinePlayer(BukkitCommandIssuer issuer, String lookup, boolean allowMissing) throws InvalidCommandArgument {

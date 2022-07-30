@@ -1,11 +1,12 @@
 package com.ebicep.warlords.commands2.debugcommands.ingame;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 @CommandAlias("recordaveragedamagedone")
 @CommandPermission("warlords.game.recordaverage")
@@ -13,8 +14,7 @@ public class RecordAverageDamageCommand extends BaseCommand {
 
     @Default
     @Description("Prints your average damage done")
-    public void getAverageDamageDone(@Conditions("requireWarlordsPlayer") Player player) {
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+    public void getAverageDamageDone(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.sendMessage(ChatColor.GREEN + "Average Damage Done = " + ChatColor.RED + warlordsPlayer.getRecordDamage().stream()
                 .mapToDouble(Float::floatValue)
                 .average()

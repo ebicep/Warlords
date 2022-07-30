@@ -5,7 +5,6 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands2.CommandManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.GameFreezeOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
@@ -67,14 +66,14 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("respawn")
     @CommandCompletion("@warlordsplayers")
     @Description("Respawns a player or sender if there is no target")
-    public void respawn(CommandIssuer issuer, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void respawn(CommandIssuer issuer, @Optional WarlordsPlayer target) {
         target.respawn();
     }
 
     @Subcommand("energy")
     @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles ability energy usage for a player or sender if there is no target")
-    public void setEnergy(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setEnergy(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setNoEnergyConsumption(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s No Energy Consumption was set to " + enable);
@@ -83,7 +82,7 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("cooldown")
     @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles ability cooldowns for a player or sender if there is no target")
-    public void setCooldown(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setCooldown(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean disable = option.equals("disable");
         target.setDisableCooldowns(disable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!");
@@ -92,7 +91,7 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("takedamage")
     @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles if a player takes damage or sender if there is no target")
-    public void setTakeDamage(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setTakeDamage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setTakeDamage(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer take" : "start taking") + " damage!");
@@ -101,7 +100,7 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("crits")
     @CommandCompletion("@enabledisable @warlordsplayers")
     @Description("Toggles if a player can crit or sender if there is no target")
-    public void setCrits(CommandIssuer issuer, @Values("@enabledisable") String option, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void setCrits(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean enable = option.equals("enable");
         target.setCanCrit(enable);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Crits have been " + option + "d!");
@@ -110,7 +109,7 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("heal")
     @CommandCompletion("@warlordsplayers")
     @Description("Heals a player based on the amount or sender if there is no target")
-    public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addHealingInstance(target, "debug", amount, amount, -1, 100, false, false);
         target.setRegenTimer(10);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!");
@@ -119,7 +118,7 @@ public class DebugCommand extends BaseCommand {
     @Subcommand("damage")
     @CommandCompletion("@warlordsplayers")
     @Description("Damages a player based on the amount or sender if there is no target")
-    public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Default(CommandManager.SELF) WarlordsPlayer target) {
+    public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
         target.addDamageInstance(target, "debug", amount, amount, -1, 100, false);
         target.setRegenTimer(10);
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!");

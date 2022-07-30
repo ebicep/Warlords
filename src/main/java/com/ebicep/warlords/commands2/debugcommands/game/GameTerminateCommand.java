@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @CommandAlias("terminategame|endgame")
 @CommandPermission("warlords.game.end")
 public class GameTerminateCommand extends BaseCommand {
+
     public static void terminateGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
         List<GameHolder> inactiveGames = new ArrayList<>();
         List<GameHolder> otherStateGames = new ArrayList<>();

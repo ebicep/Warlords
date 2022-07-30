@@ -141,11 +141,11 @@ public enum ChatChannels {
 
     public static void playerSendMessage(Player player, String message, ChatChannels chatChannel) {
         UUID uuid = player.getUniqueId();
-        ChatChannels oldChatChannel = Warlords.playerChatChannels.getOrDefault(uuid, ALL);
-        Warlords.playerChatChannels.put(uuid, chatChannel == null ? ALL : chatChannel);
         new BukkitRunnable() {
             @Override
             public void run() {
+                ChatChannels oldChatChannel = Warlords.playerChatChannels.getOrDefault(uuid, ALL);
+                Warlords.playerChatChannels.put(uuid, chatChannel == null ? ALL : chatChannel);
                 player.chat(message);
                 Warlords.playerChatChannels.put(uuid, oldChatChannel);
             }

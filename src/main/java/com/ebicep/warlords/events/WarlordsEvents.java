@@ -611,7 +611,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
         try {
-            if (!Warlords.playerChatChannels.containsKey(uuid)) {
+            if (!Warlords.playerChatChannels.containsKey(uuid) || Warlords.playerChatChannels.get(uuid) == null) {
                 Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
             }
 

@@ -2,18 +2,17 @@ package com.ebicep.warlords.commands2.debugcommands.ingame;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -26,14 +25,13 @@ public class SpawnTestDummyCommand extends BaseCommand {
     @Default
     @CommandCompletion("@gameteams @boolean")
     @Description("Spawns a test dummy on the specified team and true/false for whether it will take damage")
-    public void spawnTestDummy(@Conditions("requireWarlordsPlayer|requireGame:withAddon=PRIVATE_GAME") Player player, @Values("@gameteams") Team team, @Values("@boolean") Boolean takeDamage) {
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+    public void spawnTestDummy(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer, @Values("@gameteams") Team team, @Values("@boolean") Boolean takeDamage) {
         Game game = warlordsPlayer.getGame();
         WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                 UUID.randomUUID(),
                 "testdummy",
                 Weapons.BLUDGEON,
-                WarlordsNPC.spawnZombieNoAI(player.getLocation(), null),
+                WarlordsNPC.spawnZombieNoAI(warlordsPlayer.getLocation(), null),
                 game,
                 team,
                 Specializations.PYROMANCER
