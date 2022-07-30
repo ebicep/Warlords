@@ -14,7 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import static com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand.sendDebugMessage;
+import static com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand.sendDebugMessage;
 
 @CommandAlias("wl")
 @CommandPermission("warlords.game.debug")

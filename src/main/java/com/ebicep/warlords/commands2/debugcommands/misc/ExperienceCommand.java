@@ -5,7 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.commands2.DatabasePlayerFuture;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import org.bukkit.ChatColor;
 
@@ -19,7 +19,7 @@ public class ExperienceCommand extends BaseCommand {
     @Conditions("database:player")
     public CompletionStage<?> add(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
         return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Added " + amount + " universal experience to " + databasePlayer.getName());
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Added " + amount + " universal experience to " + databasePlayer.getName());
             databasePlayer.setExperience(databasePlayer.getExperience() + amount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });
@@ -29,7 +29,7 @@ public class ExperienceCommand extends BaseCommand {
     @Conditions("database:player")
     public CompletionStage<?> subtract(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
         return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Subtracted " + amount + " universal experience to " + databasePlayer.getName());
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Subtracted " + amount + " universal experience to " + databasePlayer.getName());
             databasePlayer.setExperience(databasePlayer.getExperience() - amount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });

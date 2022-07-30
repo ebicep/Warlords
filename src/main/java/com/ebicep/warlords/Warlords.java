@@ -82,6 +82,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -97,8 +98,8 @@ public class Warlords extends JavaPlugin {
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
     public static boolean citizensEnabled;
-    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
-    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
+    public static ConcurrentHashMap<UUID, ChatChannels> playerChatChannels = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<UUID, CustomScoreboard> playerScoreboards = new ConcurrentHashMap<>();
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -108,7 +109,6 @@ public class Warlords extends JavaPlugin {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
     }
 
-    public Location npcCTFLocation;
     private GameManager gameManager;
 
     public static Warlords getInstance() {

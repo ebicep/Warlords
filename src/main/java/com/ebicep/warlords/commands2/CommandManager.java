@@ -8,14 +8,20 @@ import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
 import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.*;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -68,6 +74,7 @@ public class CommandManager {
         manager.registerCommand(new TestCommand());
 
         //manager.registerCommand(new AchievementsCommand());
+        manager.registerCommand(new ChatCommand());
     }
 
     public static void registerContexts() {
@@ -195,6 +202,7 @@ public class CommandManager {
         );
         commandCompletions.registerAsyncCompletion("gameteams", command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("playerabilitystats", command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet().stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
 
     }
 
@@ -253,6 +261,21 @@ public class CommandManager {
             Optional<Party> optionalParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
             if (!optionalParty.isPresent()) {
                 throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+            }
+        });
+        manager.getCommandConditions().addCondition(Player.class, "requireGuild", (command, exec, player) -> {
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+            }
+        });
+        manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
+            ChatChannels selectedChatChannel = Warlords.playerChatChannels.get(player.getUniqueId());
+            if (command.hasConfig("target")) {
+                ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
+                if (selectedChatChannel == currentChatChannel) {
+                    throw new ConditionFailedException(ChatColor.RED + "You are already in this channel");
+                }
             }
         });
         manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {

@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand.sendDebugMessage;
+import static com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 

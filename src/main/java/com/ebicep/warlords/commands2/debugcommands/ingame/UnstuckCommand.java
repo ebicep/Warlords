@@ -7,7 +7,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,7 +36,7 @@ public class UnstuckCommand extends BaseCommand {
         STUCK_COOLDOWNS.put(player.getUniqueId(), Instant.now());
         player.teleport(player.getLocation().add(0, 1, 0));
         player.sendMessage(ChatColor.GREEN + "You were teleported 1 block upwards.");
-        ChatChannelCommand.sendDebugMessageExcludingSelf(player, ChatColor.RED + "Used the unstuck command.");
+        ChatCommand.sendDebugMessage(player, ChatColor.RED + "Used the unstuck command.");
     }
 
 }

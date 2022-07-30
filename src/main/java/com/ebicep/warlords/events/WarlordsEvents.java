@@ -17,17 +17,11 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
 import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
-import com.ebicep.warlords.guilds.Guild;
-import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.GuildPermissions;
-import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -38,7 +32,6 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
@@ -65,7 +58,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 public class WarlordsEvents implements Listener {
@@ -619,122 +611,39 @@ public class WarlordsEvents implements Listener {
             return;
         }
         try {
-            // We need to do this in a callSyncMethod, because we need it to happen in the main thread. or else weird bugs can happen in other threads
-            Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
+            if (!Warlords.playerChatChannels.containsKey(uuid)) {
+                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+            }
 
-                if (!Warlords.playerChatChannels.containsKey(uuid)) {
-                    Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-                }
+            String prefix = "";
+            ChatColor prefixColor = ChatColor.WHITE;
 
-                String prefix = "";
-                ChatColor prefixColor = ChatColor.WHITE;
+            if (PermissionHandler.isDefault(player)) {
+                prefixColor = ChatColor.AQUA;
+                prefix = prefixColor + "";
+            } else if (PermissionHandler.isGameTester(player)) {
+                prefixColor = ChatColor.YELLOW;
+                prefix = prefixColor + "[T] ";
+            } else if (PermissionHandler.isGameStarter(player)) {
+                prefixColor = ChatColor.YELLOW;
+                prefix = prefixColor + "[GS] ";
+            } else if (PermissionHandler.isContentCreator(player)) {
+                prefixColor = ChatColor.LIGHT_PURPLE;
+                prefix = prefixColor + "[CT] ";
+            } else if (PermissionHandler.isCoordinator(player)) {
+                prefixColor = ChatColor.GOLD;
+                prefix = prefixColor + "[HGS] ";
+            } else if (PermissionHandler.isAdmin(player)) {
+                prefixColor = ChatColor.DARK_AQUA;
+                prefix = prefixColor + "[ADMIN] ";
+            } else {
+                System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
+            }
 
-                if (PermissionHandler.isDefault(player)) {
-                    prefixColor = ChatColor.AQUA;
-                    prefix = prefixColor + "";
-                } else if (PermissionHandler.isGameTester(player)) {
-                    prefixColor = ChatColor.YELLOW;
-                    prefix = prefixColor + "[T] ";
-                } else if (PermissionHandler.isGameStarter(player)) {
-                    prefixColor = ChatColor.YELLOW;
-                    prefix = prefixColor + "[GS] ";
-                } else if (PermissionHandler.isContentCreator(player)) {
-                    prefixColor = ChatColor.LIGHT_PURPLE;
-                    prefix = prefixColor + "[CT] ";
-                } else if (PermissionHandler.isCoordinator(player)) {
-                    prefixColor = ChatColor.GOLD;
-                    prefix = prefixColor + "[HGS] ";
-                } else if (PermissionHandler.isAdmin(player)) {
-                    prefixColor = ChatColor.DARK_AQUA;
-                    prefix = prefixColor + "[ADMIN] ";
-                } else {
-                    System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
-                }
+            ChatChannels channel = Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL);
+            channel.onPlayerChatEvent(e, prefixColor, prefix);
 
-                ChatChannels channel = Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL);
-                switch (channel) {
-                    case ALL:
-                        WarlordsEntity wp = Warlords.getPlayer(player);
-                        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
-
-                        if (wp == null) {
-                            e.setFormat(ChatColor.DARK_GRAY + "[" +
-                                    ChatColor.GOLD + Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3) +
-                                    ChatColor.DARK_GRAY + "][" +
-                                    ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                                    ChatColor.DARK_GRAY + "]" +
-                                    ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
-                                    ChatColor.DARK_GRAY + "[" +
-                                    playerSettings.getSelectedSpec().specType.getColoredSymbol() +
-                                    ChatColor.DARK_GRAY + "] " +
-
-                                    (prefix) +
-                                    (prefixColor) + "%1$s" +
-
-                                    ChatColor.WHITE + ": %2$s"
-                            );
-                            e.getRecipients().removeIf(Warlords::hasPlayer);
-                            return null;
-                        }
-                        e.setFormat(wp.getTeam().teamColor() + "[" +
-                                wp.getTeam().prefix() + "]" +
-                                ChatColor.DARK_GRAY + "[" +
-                                ChatColor.GOLD + wp.getSpec().getClassNameShort() +
-                                ChatColor.DARK_GRAY + "][" +
-                                ChatColor.GRAY + (level < 10 ? "0" : "") + level +
-                                ChatColor.DARK_GRAY + "][" +
-                                playerSettings.getSelectedSpec().specType.getColoredSymbol() +
-                                ChatColor.DARK_GRAY + "] " +
-                                (wp.isDead() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
-
-                                (prefix) +
-                                (prefixColor) + "%1$s" +
-
-                                ChatColor.WHITE + ": %2$s"
-                        );
-                        if (!(wp.getGame().getState() instanceof EndState)) {
-                            e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeam(p.getUniqueId()) != wp.getTeam());
-                        }
-                        break;
-                    case PARTY:
-                        if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
-                            e.setFormat(channel.getColoredName() + ChatColor.DARK_GRAY + " > " +
-                                    (prefixColor) + "%1$s" +
-                                    ChatColor.WHITE + ": %2$s"
-                            );
-                            e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
-                            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-                            e.setCancelled(true);
-                            return null;
-                        }
-                        break;
-                    case GUILD:
-                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-                        if (guildPlayerPair != null) {
-                            if (guildPlayerPair.getA().isMuted() && !guildPlayerPair.getA().playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
-                                player.sendMessage(ChatColor.RED + "The guild is currently muted.");
-                                e.setCancelled(true);
-                                return null;
-                            }
-                            e.setFormat(channel.getColoredName() + ChatColor.DARK_GRAY + " > " +
-                                    (prefixColor) + "%1$s" +
-                                    ChatColor.WHITE + ": %2$s"
-                            );
-                            e.getRecipients().retainAll(guildPlayerPair.getA().getOnlinePlayers());
-                        } else {
-                            player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
-                            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-                            e.setCancelled(true);
-                            return null;
-                        }
-                        break;
-                }
-                return null;
-            }).get();
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (Exception ex) {
             Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
             System.out.println("UUID: " + uuid);
             System.out.println("Chat Channels: " + Warlords.playerChatChannels);

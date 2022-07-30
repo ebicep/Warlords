@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -27,11 +27,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (mutedPlayers.getOrDefault(uuid, false)) {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted");
             return;
         }
         mutedPlayers.put(uuid, true);
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name);
     }
 
     @CommandAlias("unmute")
@@ -41,11 +41,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (!mutedPlayers.getOrDefault(uuid, false)) {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted");
             return;
         }
         mutedPlayers.put(uuid, false);
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name);
     }
 
     @CommandAlias("mutelist")
@@ -56,9 +56,9 @@ public class MuteCommand extends BaseCommand {
                 .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
                 .collect(Collectors.joining(","));
         if (mutedList.isEmpty()) {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players");
         } else {
-            ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
         }
     }
 

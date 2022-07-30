@@ -5,7 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMap;
@@ -32,10 +32,10 @@ public class GameKillCommand extends BaseCommand {
             }
             if (gamePredicate.test(gameHolder)) {
                 gameHolder.forceEndGame();
-                ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " - " + gameHolder.getMap() + " - " + gameHolder.getGame().playersCount() + " players");
+                ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " - " + gameHolder.getMap() + " - " + gameHolder.getGame().playersCount() + " players");
             }
         }
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames);
     }
 
     @Default
@@ -45,7 +45,7 @@ public class GameKillCommand extends BaseCommand {
         for (GameHolder game : Warlords.getGameManager().getGames()) {
             if (Objects.equals(game.getGame(), playerGame)) {
                 game.forceEndGame();
-                ChatChannelCommand.sendDebugMessage(player, ChatColor.GREEN + "Killed own game " + game.getName());
+                ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Killed own game " + game.getName());
                 break;
             }
         }
@@ -58,7 +58,7 @@ public class GameKillCommand extends BaseCommand {
         for (GameHolder game : Warlords.getGameManager().getGames()) {
             game.forceEndGame();
         }
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed all games");
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed all games");
     }
 
     @Subcommand("map")

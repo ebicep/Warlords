@@ -5,10 +5,11 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands2.miscellaneouscommands.ChatChannelCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,8 +27,11 @@ public class TestCommand extends BaseCommand {
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-
-        ChatChannelCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
+        if (issuer.getIssuer() instanceof Player) {
+            Player player = issuer.getIssuer();
+            ChatChannels.playerSendMessage(player, "Test command");
+        }
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
     }
 
     @CommandAlias("testgame")
@@ -45,7 +49,7 @@ public class TestCommand extends BaseCommand {
 //            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
 //            warlordsPlayer.addCurrency(10000000);
 
-        ChatChannelCommand.sendDebugMessage(player, ChatColor.GREEN + "Test executed");
+        ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Test executed");
     }
 
     @HelpCommand
