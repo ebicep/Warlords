@@ -8,12 +8,6 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
-  setwave:
-    description: Set the wave counter in Wave Defense
-    usage: /setwave
-  currency:
-    description: Edit the currency in Wave Defense
-    usage: /currency
   guild:
     description: Guild
     aliases: [ guild, g ]

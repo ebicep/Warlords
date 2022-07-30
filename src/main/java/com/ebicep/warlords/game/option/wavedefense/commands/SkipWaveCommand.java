@@ -1,36 +1,25 @@
 package com.ebicep.warlords.game.option.wavedefense.commands;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.game.GameMode;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-public class SkipWaveCommand implements CommandExecutor {
+@CommandAlias("setwave")
+public class SkipWaveCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        WarlordsEntity we = BaseCommand.requireWarlordsPlayer(sender);
-        if (we != null) {
-            if (we.getGame() != null && we.getGame().getGameMode().equals(GameMode.WAVE_DEFENSE)) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) we.getGame().getOptions().stream()
-                    .filter(option -> option instanceof WaveDefenseOption)
-                    .findFirst()
-                    .get();
-
-                int amount = Integer.parseInt(args[0]);
-                waveDefenseOption.setWaveCounter(amount);
-            }
-        }
-        return true;
+    @Subcommand("set")
+    @Description("Set the wave counter")
+    public void set(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer amount) {
+        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) warlordsPlayer.getGame().getOptions().stream()
+                .filter(option -> option instanceof WaveDefenseOption)
+                .findFirst()
+                .get();
+        waveDefenseOption.setWaveCounter(amount);
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("setwave").setExecutor(this);
-    }
 
 }
