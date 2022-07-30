@@ -1,114 +1,78 @@
 package com.ebicep.jda.queuesystem;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.party.PartyManager;
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class QueueCommand implements CommandExecutor {
+@CommandAlias("queue")
+public class QueueCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+    @Default
+    @Description("Shows the queue")
+    public void queue(Player player) {
+        player.sendMessage(QueueManager.getQueue());
+    }
 
-        if (args.length == 0) {
-            sender.sendMessage(QueueManager.getQueue());
-            return true;
-        }
-
-        Player player = ((Player) sender);
-
-        switch (args[0]) {
-            case "join": {
-                if (PartyManager.inAParty(player.getUniqueId())) {
-                    sender.sendMessage(ChatColor.RED + "You cannot join the queue if you are in a party!");
-                    return true;
-                }
-                if (QueueManager.queue.contains(player.getUniqueId())) {
-                    sender.sendMessage(ChatColor.RED + "You are already in the queue!");
-                } else {
-                    QueueManager.addPlayerToQueue(sender.getName(), false);
-                    QueueManager.removePlayerFromFutureQueue(sender.getName());
-                    sender.sendMessage(ChatColor.GREEN + "You are now #" + QueueManager.queue.size() + " in queue!");
-                    QueueManager.sendQueue();
-                }
-                return true;
-            }
-            case "leave": {
-                QueueManager.removePlayerFromQueue(sender.getName());
-                sender.sendMessage(ChatColor.RED + "You left the queue!");
-                QueueManager.sendQueue();
-                return true;
-            }
-            case "add": {
-                if (sender.hasPermission("warlords.queue.clear")) {
-                    if (args.length == 1) {
-                        sender.sendMessage(ChatColor.RED + "Invalid player!");
-                        return true;
-                    }
-                    String playerToAdd = args[1];
-                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerToAdd);
-                    if (offlinePlayer == null) {
-                        sender.sendMessage(ChatColor.RED + "Invalid player!");
-                        return true;
-                    }
-
-                    QueueManager.addPlayerToQueue(playerToAdd, false);
-                    sender.sendMessage(QueueManager.getQueue());
-                    QueueManager.sendQueue();
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
-                }
-            }
-            case "remove": {
-                if (sender.hasPermission("warlords.queue.clear")) {
-                    if (args.length == 1) {
-                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
-                        return true;
-                    }
-                    if (!NumberUtils.isNumber(args[1])) {
-                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
-                        return true;
-                    }
-
-                    int queuePos = Integer.parseInt(args[1]);
-                    if (queuePos > QueueManager.queue.size() || queuePos < 1) {
-                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
-                        return true;
-                    }
-
-                    QueueManager.queue.remove(queuePos - 1);
-                    sender.sendMessage(QueueManager.getQueue());
-                    QueueManager.sendQueue();
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
-                }
-                return true;
-            }
-            case "clear": {
-                if (sender.hasPermission("warlords.queue.clear")) {
-                    QueueManager.queue.clear();
-                    QueueManager.futureQueue.clear();
-                    QueueManager.sendQueue();
-                    sender.sendMessage(ChatColor.GREEN + "Queue cleared");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
-                }
-                return true;
-            }
-            default: {
-                sender.sendMessage(ChatColor.RED + "Invalid Arguments (/queue join/leave)");
-                return true;
-            }
+    @Subcommand("join")
+    @Description("Joins the queue")
+    public void join(@Conditions("party:false") Player player) {//, @Optional String time) {
+        if (QueueManager.queue.contains(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "You are already in the queue!");
+        } else {
+            QueueManager.addPlayerToQueue(player.getName(), false);
+            QueueManager.removePlayerFromFutureQueue(player.getName());
+            player.sendMessage(ChatColor.GREEN + "You are now #" + QueueManager.queue.size() + " in queue!");
+            QueueManager.sendQueue();
         }
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("queue").setExecutor(this);
+    @Subcommand("leave")
+    @Description("Leaves the queue")
+    public void leave(Player player) {
+        QueueManager.removePlayerFromQueue(player.getName());
+        player.sendMessage(ChatColor.RED + "You left the queue!");
+        QueueManager.sendQueue();
     }
+
+    @Subcommand("add")
+    @CommandPermission("warlords.queue.clear")
+    @Description("Adds a player to the queue")
+    public void add(Player player, @Flags("other") Player target) {
+        QueueManager.addPlayerToQueue(target.getUniqueId(), false);
+        player.sendMessage(QueueManager.getQueue());
+        QueueManager.sendQueue();
+    }
+
+    @Subcommand("remove")
+    @CommandPermission("warlords.queue.clear")
+    @Description("Removes a player from the queue")
+    public void remove(Player player, Integer queuePosition) {
+        if (queuePosition > QueueManager.queue.size() || queuePosition < 1) {
+            player.sendMessage(ChatColor.RED + "Invalid queue number!");
+            return;
+        }
+
+        QueueManager.queue.remove(queuePosition - 1);
+        player.sendMessage(QueueManager.getQueue());
+        QueueManager.sendQueue();
+    }
+
+    @Subcommand("clear")
+    @CommandPermission("warlords.queue.clear")
+    @Description("Clears the queue")
+    public void clear(Player player) {
+        QueueManager.queue.clear();
+        QueueManager.futureQueue.clear();
+        QueueManager.sendQueue();
+        player.sendMessage(ChatColor.GREEN + "Queue cleared");
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
+
 }

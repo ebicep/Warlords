@@ -4,6 +4,7 @@ import co.aikar.commands.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.ebicep.jda.BotCommand;
 import com.ebicep.jda.BotManager;
+import com.ebicep.jda.queuesystem.QueueCommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameKillCommand;
 import com.ebicep.warlords.commands.debugcommands.game.GameListCommand;
@@ -100,6 +101,7 @@ public class CommandManager {
         manager.registerCommand(new StreamCommand());
 
         manager.registerCommand(new BotCommand());
+        manager.registerCommand(new QueueCommand());
     }
 
     public static void registerContexts() {
