@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands2.miscellaneouscommands;
+package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;

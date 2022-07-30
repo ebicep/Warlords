@@ -1,50 +1,61 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class PrivateGameTerminateCommand extends GameTargetCommand implements TabExecutor {
+@CommandAlias("endprivategame")
+public class PrivateGameTerminateCommand extends BaseCommand {
 
-    @Override
-    protected void doAction(CommandSender sender, Collection<GameManager.GameHolder> gameInstances) {
+    private static void endGameInstance(Player player, GameManager.GameHolder holder, Game game) {
+        if (holder.getGame() == null) return;
 
-        if (gameInstances.isEmpty()) {
-            sender.sendMessage(ChatColor.RED + "No valid targets found!");
+        if (holder.getGame().isFrozen()) {
+            holder.getGame().clearFrozenCauses();
+        }
+        Optional<PlayingState> state = game.getState(PlayingState.class);
+        if (!state.isPresent()) {
+            player.sendMessage(ChatColor.RED + "The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
+        } else {
+            player.sendMessage(ChatColor.RED + "Terminating game...");
+            game.setNextState(new EndState(game, null));
+        }
+    }
+
+    @Default
+    @Description("Terminates your current game if private")
+    public void endPrivateGame(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer) {
+        Game game = warlordsPlayer.getGame();
+        if (!(warlordsPlayer.getEntity() instanceof Player)) {
             return;
         }
-
-        for (GameManager.GameHolder holder : gameInstances) {
-            Game game = holder.getGame();
-
-            if (game == null) {
-                sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "The game is not active now");
-                continue;
-            }
-
-            Player player = (Player) sender;
-            Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-            if (game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+        Player player = (Player) warlordsPlayer.getEntity();
+        for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            if (Objects.equals(gameHolder.getGame(), game)) {
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(warlordsPlayer.getUuid());
                 if (currentParty.isPresent()) {
                     Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
-                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer() == player) {
-                        endGameInstance(sender, holder, game);
-                        sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "Game has been terminated. Warping back to lobby...");
+                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer().getUniqueId().equals(warlordsPlayer.getUuid())) {
+                        endGameInstance(player, gameHolder, game);
+                        player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");
                     } else {
-                        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " You are not the party leader, unable to terminate game.");
+                        player.sendMessage(ChatColor.RED + "You are not the party leader, unable to terminate game.");
                     }
                 } else {
                     int gamePlayers = 0;
@@ -54,40 +65,22 @@ public class PrivateGameTerminateCommand extends GameTargetCommand implements Ta
                     game.removePlayer(UUID.fromString("8b41f2a4-4a0e-3012-b77b-c2dede582103"));
                     game.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
 
-                    for (UUID uuid : game.getPlayers().keySet()) {
+                    for (UUID ignored : game.getPlayers().keySet()) {
                         gamePlayers++;
                     }
 
                     if (gamePlayers > 1) {
-                        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " You are not the only player in the game, unable to terminate game.");
+                        player.sendMessage(ChatColor.RED + "You are not the only player in the game, unable to terminate game.");
                     } else {
-                        endGameInstance(sender, holder, game);
-                        sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "Game has been terminated. Warping back to lobby...");
+                        endGameInstance(player, gameHolder, game);
+                        player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");
                     }
                 }
-            } else {
-                sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Game is not private, unable to terminate game.");
+
+                return;
             }
         }
     }
 
-    private void endGameInstance(CommandSender sender, GameManager.GameHolder holder, Game game) {
-        if (holder.getGame() == null) return;
-
-        if (holder.getGame().isFrozen()) {
-            holder.getGame().clearFrozenCauses();
-        }
-        Optional<PlayingState> state = game.getState(PlayingState.class);
-        if (!state.isPresent()) {
-            sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
-        } else {
-            sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "Terminating game...");
-            game.setNextState(new EndState(game, null));
-        }
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("endprivategame").setExecutor(this);
-        instance.getCommand("endprivategame").setTabCompleter(this);
-    }
 }
+

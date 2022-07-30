@@ -1,234 +1,131 @@
 package com.ebicep.warlords.commands.debugcommands.ingame;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.GameFreezeOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 
-import static com.ebicep.warlords.commands.BaseCommand.requireGame;
-import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPrivateGame;
+@CommandAlias("wl")
+@CommandPermission("warlords.game.debug")
+public class DebugCommand extends BaseCommand {
 
-public class DebugCommand implements TabExecutor {
+    @Default
+    public void openDebugMenu(Player player) {
+        DebugMenu.openDebugMenu(player);
+    }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.debug")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-
-        if (args.length < 1) {
-            DebugMenu.openDebugMenu((Player) sender);
-            //sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy, cooldown, cooldownmode, takedamage]");
-            return true;
-        }
-        String input = args[0];
-        switch (input.toLowerCase(Locale.ROOT)) {
-            case "respawn": {
-                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 1 ? args[1] : null);
-                if (wp == null) {
-                    return true;
-                }
-                wp.respawn();
-                return true;
+    @Subcommand("freeze")
+    @Description("Freezes/Unfreezes the game")
+    public void freezeGame(@Conditions("requireGame") Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        if (!game.isUnfreezeCooldown()) {
+            if (game.isFrozen()) {
+                GameFreezeOption.resumeGame(game);
+            } else {
+                game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + player.getName());
+                sendDebugMessage(player, ChatColor.GREEN + "The game has been frozen!");
             }
-            case "energy": {
-                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if (wp == null) {
-                    return true;
-                }
-                switch (args.length > 1 ? args[1] : "") {
-                    case "disable":
-                        wp.setNoEnergyConsumption(true);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been disabled!");
-                        return true;
-                    case "enable":
-                        wp.setNoEnergyConsumption(false);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been enabled!");
-                        return true;
-                    default:
-                        sender.sendMessage("§cInvalid option!");
-                        return false;
-                }
-            }
-            case "cooldown": {
-                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if (wp == null) {
-                    return true;
-                }
-                switch (args.length > 1 ? args[1] : "") {
-                    case "disable":
-                        wp.setDisableCooldowns(true);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aCooldown timers have been disabled!");
-                        return true;
-                    case "enable":
-                        wp.setDisableCooldowns(false);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aCooldown timers have been enabled!");
-                        return true;
-                    default:
-                        sender.sendMessage("§cInvalid option!");
-                        return false;
-                }
-            }
-            case "damage": {
-                WarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if (wp == null) {
-                    return true;
-                }
-                switch (args.length > 1 ? args[1] : "") {
-                    case "disable":
-                        wp.setTakeDamage(false);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aTaking damage has been disabled!");
-                        return true;
-                    case "enable":
-                        wp.setTakeDamage(true);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aTaking damage has been enabled!");
-                        return true;
-                    default:
-                        sender.sendMessage("§cInvalid option!");
-                        return false;
-                }
-            }
-            case "heal":
-            case "takedamage": {
-                if (args.length < 2) {
-                    sender.sendMessage("§c" + (input.equals("takedamage") ? "Take Damage" : "Heal") + " requires more arguments, valid arguments: [number]");
-                    return true;
-                }
-                if (NumberUtils.isNumber(args[1])) {
-                    int amount = Integer.parseInt(args[1]);
-
-                    String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
-
-                    WarlordsEntity wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                    if (wp == null) {
-                        return true;
-                    }
-                    sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + " §a" + endMessage);
-
-                    if (input.equals("takedamage")) {
-                        wp.addDamageInstance(wp, "debug", amount, amount, -1, 100, false);
-                    } else {
-                        wp.addHealingInstance(wp, "debug", amount, amount, -1, 100, false, false);
-                    }
-                    wp.setRegenTimer(10);
-
-                    return true;
-                }
-                sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000, 4000, 5000]");
-                return true;
-            }
-            case "crits": {
-                WarlordsEntity wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if (wp == null) {
-                    return true;
-                }
-                switch (args.length > 1 ? args[1] : "") {
-                    case "disable":
-                        wp.setCanCrit(false);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aCrits has been disabled!");
-                        return true;
-                    case "enable":
-                        wp.setCanCrit(true);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aCrits has been enabled!");
-                        return true;
-                    default:
-                        sender.sendMessage("§cInvalid option!");
-                        return false;
-                }
-            }
-            case "freeze": {
-                Game game = requireGame(sender, args.length > 1 ? args[1] : null);
-                if (game == null) {
-                    return true;
-                }
-                if (!game.isUnfreezeCooldown()) {
-                    if (game.isFrozen()) {
-                        GameFreezeOption.resumeGame(game);
-                    } else {
-                        game.addFrozenCause(ChatColor.GOLD + "Manually paused by §c" + sender.getName());
-                        sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game is currently unfreezing!");
-                }
-                return true;
-            }
-            case "timer": {
-                Game game = requireGame(sender, args.length > 2 ? args[2] : null);
-                if (game == null) {
-                    return true;
-                }
-                if (!(game.getState() instanceof TimerDebugAble)) {
-                    sender.sendMessage("§cThis gamestate cannot be manipulated by the timer debug option");
-                    return true;
-                }
-                TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
-                if (args.length < 2) {
-                    sender.sendMessage("§cTimer requires 2 or more arguments, valid arguments: [skip, reset]");
-                    return true;
-                }
-                switch (args[1]) {
-                    case "reset":
-                        timerDebugAble.resetTimer();
-                        sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been reset!");
-                        return true;
-                    case "skip":
-                        timerDebugAble.skipTimer();
-                        sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been skipped!");
-                        return true;
-                    default:
-                        sender.sendMessage("§cInvalid option! [reset, skip]");
-                        return true;
-                }
-            }
-            default:
-                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage, freeze, timer");
-                return true;
+        } else {
+            sendDebugMessage(player, ChatColor.RED + "The game is currently unfreezing!");
         }
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("wl").setExecutor(this);
-        instance.getCommand("wl").setTabCompleter(this);
+    @Subcommand("timer")
+    @CommandCompletion("reset|skip")
+    @Description("Resets or skips the timer")
+    public void timer(@Conditions("requireGame") Player player, @Values("reset|skip") String option) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        if (!(game.getState() instanceof TimerDebugAble)) {
+            sendDebugMessage(player, ChatColor.RED + "This gamestate cannot be manipulated by the timer debug option!");
+            return;
+        }
+        TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
+        switch (option) {
+            case "reset":
+                timerDebugAble.resetTimer();
+                sendDebugMessage(player, ChatColor.GREEN + "Timer has been reset!");
+                break;
+            case "skip":
+                timerDebugAble.skipTimer();
+                sendDebugMessage(player, ChatColor.GREEN + "Timer has been skipped!");
+                break;
+
+        }
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        String lastArg = args[args.length - 1];
-        if (args.length > 1) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(e -> e.getName().toLowerCase().startsWith(lastArg.toLowerCase()))
-                    .map(e -> e.getName().charAt(0) + e.getName().substring(1))
-                    .collect(Collectors.toList());
-        }
-        return Stream.of("respawn",
-                        "energy",
-                        "cooldown",
-                        "damage",
-                        "heal",
-                        "takedamage",
-                        "crits",
-                        "freeze",
-                        "timer")
-                .filter(e -> e.startsWith(lastArg.toLowerCase(Locale.ROOT)))
-                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
-                .collect(Collectors.toList());
+    @Subcommand("respawn")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Respawns a player or sender if there is no target")
+    public void respawn(CommandIssuer issuer, @Optional WarlordsPlayer target) {
+        target.respawn();
+    }
+
+    @Subcommand("energy")
+    @CommandCompletion("@enabledisable @warlordsplayers")
+    @Description("Toggles ability energy usage for a player or sender if there is no target")
+    public void setEnergy(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean enable = option.equals("enable");
+        target.setNoEnergyConsumption(enable);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s No Energy Consumption was set to " + enable);
+    }
+
+    @Subcommand("cooldown")
+    @CommandCompletion("@enabledisable @warlordsplayers")
+    @Description("Toggles ability cooldowns for a player or sender if there is no target")
+    public void setCooldown(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean disable = option.equals("disable");
+        target.setDisableCooldowns(disable);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!");
+    }
+
+    @Subcommand("takedamage")
+    @CommandCompletion("@enabledisable @warlordsplayers")
+    @Description("Toggles if a player takes damage or sender if there is no target")
+    public void setTakeDamage(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean enable = option.equals("enable");
+        target.setTakeDamage(enable);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " will " + (!enable ? "no longer take" : "start taking") + " damage!");
+    }
+
+    @Subcommand("crits")
+    @CommandCompletion("@enabledisable @warlordsplayers")
+    @Description("Toggles if a player can crit or sender if there is no target")
+    public void setCrits(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
+        boolean enable = option.equals("enable");
+        target.setCanCrit(enable);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Crits have been " + option + "d!");
+    }
+
+    @Subcommand("heal")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Heals a player based on the amount or sender if there is no target")
+    public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
+        target.addHealingInstance(target, "debug", amount, amount, -1, 100, false, false);
+        target.setRegenTimer(10);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " was healed for " + amount + " health!");
+    }
+
+    @Subcommand("damage")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Damages a player based on the amount or sender if there is no target")
+    public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
+        target.addDamageInstance(target, "debug", amount, amount, -1, 100, false);
+        target.setRegenTimer(10);
+        sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + " took " + amount + " damage!");
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
     }
 }

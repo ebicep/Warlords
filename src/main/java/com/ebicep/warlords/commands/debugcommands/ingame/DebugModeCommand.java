@@ -1,42 +1,30 @@
 package com.ebicep.warlords.commands.debugcommands.ingame;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class DebugModeCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+@CommandAlias("debugmode")
+@CommandPermission("warlords.game.debugmode")
+public class DebugModeCommand extends BaseCommand {
 
-        if (!sender.hasPermission("warlords.game.debugmode")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-
-        WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
-        if (warlordsPlayer == null) {
-            sender.sendMessage("§cYou are not in a game");
-        }
+    @Default
+    @Description("Disables energy consumption, Disables cooldowns, and Prevents damage from being taken")
+    public void debugMode(WarlordsPlayer warlordsPlayer) {
         if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
-            sender.sendMessage("§cDebug commands are disabled in public games!");
-            return true;
+            ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.RED + "Debug commands are disabled in public games!");
+            return;
         }
-
         warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
-        warlordsPlayer.sendMessage(ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
-
-        return true;
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("debugmode").setExecutor(this);
+        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
     }
 }

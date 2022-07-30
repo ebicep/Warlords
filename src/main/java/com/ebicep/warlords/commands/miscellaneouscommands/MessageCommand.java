@@ -1,105 +1,60 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Flags;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class MessageCommand implements CommandExecutor {
+public class MessageCommand extends BaseCommand {
 
-    public static final LinkedHashMap<PlayerMessage, Long> lastPlayerMessages = new LinkedHashMap<>();
+    public static final LinkedHashMap<PlayerMessage, Instant> lastPlayerMessages = new LinkedHashMap<>();
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        Player player = BaseCommand.requirePlayer(sender);
-
-        if (player == null) {
-            return true;
-        }
-
+    @CommandAlias("msg")
+    @Description("Privately message a player")
+    public void message(Player player, @Flags("other") Player target, String message) {
         if (MuteCommand.mutedPlayers.getOrDefault(player.getUniqueId(), false)) {
-            return true;
+            return;
+        }
+        if (player.getUniqueId().equals(target.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "You cannot message yourself!");
+            return;
         }
 
-        switch (s) {
-            case "tell":
-            case "msg": {
-                if (args.length < 2) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Parameters! /msg (player) (message)");
-                    return true;
-                }
-                String targetPlayer = args[0];
-                Player otherPlayer = Bukkit.getPlayer(targetPlayer);
-                if (otherPlayer != null) {
-                    if (otherPlayer.equals(player)) {
-                        sender.sendMessage(ChatColor.RED + "You cannot message yourself.");
-                        return true;
-                    }
-                    StringBuilder message = new StringBuilder();
-                    for (int i = 1; i < args.length; i++) {
-                        message.append(args[i]).append(" ");
-
-                    }
-                    sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                    otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                    PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
-                    lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED + "Cannot find that player.");
-                return true;
-            }
-            case "r": {
-                if (args.length < 1) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Parameters! /r (message)");
-                    return true;
-                }
-                Optional<PlayerMessage> playerMessage = lastPlayerMessages.entrySet().stream()
-                        .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
-                        .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
-                        .map(Map.Entry::getKey)
-                        .findFirst();
-                if (playerMessage.isPresent()) {
-                    StringBuilder message = new StringBuilder();
-                    for (String arg : args) {
-                        message.append(arg).append(" ");
-                    }
-                    Player otherPlayer = Bukkit.getPlayer(playerMessage.get().getFrom());
-                    if (otherPlayer != null) {
-                        sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                        otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                        PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
-                        lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
-                        return true;
-                    }
-                    sender.sendMessage(ChatColor.RED + "That player is no longer online!");
-                    return true;
-                }
-                sender.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes.");
-                return true;
-            }
-        }
-
-        return true;
+        player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+        target.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+        PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), target.getUniqueId());
+        lastPlayerMessages.put(newPlayerMessage, Instant.now());
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("msg").setExecutor(this);
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                lastPlayerMessages.entrySet().removeIf(playerMessageLongEntry -> System.currentTimeMillis() - playerMessageLongEntry.getValue() >= 300000);
+    @CommandAlias("r")
+    @Description("Reply to a player")
+    public void reply(Player player, String message) {
+        Optional<PlayerMessage> playerMessage = lastPlayerMessages.entrySet().stream()
+                .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst();
+        if (playerMessage.isPresent() && Instant.now().isBefore(lastPlayerMessages.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
+            Player otherPlayer = Bukkit.getPlayer(playerMessage.get().getFrom());
+            if (otherPlayer != null) {
+                player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
+                lastPlayerMessages.put(newPlayerMessage, Instant.now());
+            } else {
+                player.sendMessage(ChatColor.RED + "That player is no longer online!");
             }
-        }.runTaskTimer(Warlords.getInstance(), 40, 20 * 60 * 5);
+        } else {
+            player.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes.");
+        }
     }
 
 }

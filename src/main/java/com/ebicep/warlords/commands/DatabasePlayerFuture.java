@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands2;
+package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 

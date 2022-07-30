@@ -1,5 +1,9 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -10,14 +14,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -27,11 +26,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
-
-public class GamesCommand implements CommandExecutor {
+@CommandAlias("games")
+@CommandPermission("warlords.game.lookupgame")
+public class GamesCommand extends BaseCommand {
 
     public static void openGamesDebugMenu(Player player) {
         Menu menu = new Menu("Games Debug", 9 * 6);
@@ -254,91 +255,71 @@ public class GamesCommand implements CommandExecutor {
         menu.openForPlayer(player);
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.lookupgame")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-
-        if (args.length == 0) {
-            if (sender instanceof Player) {
-                openGamesDebugMenu((Player) sender);
-            }
-        } else {
-            switch (args[0].toLowerCase()) {
-                case "reload":
-                    sender.sendMessage(ChatColor.GREEN + "Deleting Holograms");
-                    previousGames.forEach(DatabaseGameBase::deleteHolograms);
-                    sender.sendMessage(ChatColor.GREEN + "Creating Holograms");
-                    previousGames.forEach(DatabaseGameBase::createHolograms);
-                    sender.sendMessage(ChatColor.GREEN + "Setting Visibility");
-                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    return true;
-                case "list":
-                    StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
-                    for (int i = 0; i < previousGames.size(); i++) {
-                        stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
-                    }
-                    sender.sendMessage(stringBuilder.toString());
-                    return true;
-                case "edit":
-                    if (args.length < 2) {
-                        sender.sendMessage(ChatColor.RED + "Usage: /games edit <game date>");
-                        return true;
-                    }
-
-                    String date = StringUtils.join(args, " ", 1, args.length);
-                    sender.sendMessage(ChatColor.GREEN + "Locating game with date " + date);
-
-                    Warlords.newChain()
-                            .asyncFirst(() -> DatabaseManager.gameService.findByDate(date))
-                            .syncLast(databaseGameBase -> {
-                                if (databaseGameBase == null) {
-                                    sender.sendMessage(ChatColor.RED + "Game not found.");
-                                } else if (sender instanceof Player) {
-                                    openGameEditorMenu((Player) sender, databaseGameBase);
-                                }
-                            }).execute();
-                    return true;
-            }
-
-            if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Usage: /games [add/remove] <game number>");
-                return true;
-            }
-
-            if (!NumberUtils.isNumber(args[1])) {
-                sender.sendMessage(ChatColor.RED + "Invalid game number!");
-                return true;
-            }
-
-            int gameNumber = Integer.parseInt(args[1]);
-            if (gameNumber >= previousGames.size() || gameNumber < 0) {
-                sender.sendMessage(ChatColor.RED + "Invalid game number!");
-                return true;
-            }
-
-            String input = args[0];
-            switch (input.toLowerCase()) {
-                case "add":
-                    sender.sendMessage(ChatColor.GREEN + "Adding game!");
-                    DatabaseGameBase.addGameToDatabase(previousGames.get(gameNumber), sender instanceof Player ? (Player) sender : null);
-                    return true;
-                case "remove":
-                    sender.sendMessage(ChatColor.RED + "Removing game!");
-                    DatabaseGameBase.removeGameFromDatabase(previousGames.get(gameNumber), sender instanceof Player ? (Player) sender : null);
-                    return true;
-            }
-        }
-
-
-        return true;
+    @Default
+    public void games(Player player) {
+        openGamesDebugMenu(player);
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("games").setExecutor(this);
+    @Subcommand("reload")
+    @Description("Reloads game holograms")
+    public void reload(CommandIssuer issuer) {
+        sendDebugMessage(issuer, ChatColor.GREEN + "Deleting Holograms");
+        previousGames.forEach(DatabaseGameBase::deleteHolograms);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Creating Holograms");
+        previousGames.forEach(DatabaseGameBase::createHolograms);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Setting Visibility");
+        Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
     }
 
+    @Subcommand("list")
+    @Description("Prints list of games")
+    public void list(CommandIssuer issuer) {
+        StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
+        for (int i = 0; i < previousGames.size(); i++) {
+            stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
+        }
+        sendDebugMessage(issuer, stringBuilder.toString());
+    }
+
+    @Subcommand("edit")
+    @Conditions("database:game")
+    @Description("Opens game editor from date")
+    public void edit(Player player, String date) {
+        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date);
+
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.gameService.findByDate(date))
+                .syncLast(databaseGameBase -> {
+                    if (databaseGameBase == null) {
+                        sendDebugMessage(player, ChatColor.RED + "Game not found");
+                    } else {
+                        sendDebugMessage(player, ChatColor.GREEN + "Game found");
+                        openGameEditorMenu(player, databaseGameBase);
+                    }
+
+                }).execute();
+    }
+
+    @Subcommand("add")
+    @Conditions("database:game")
+    @Description("Adds game to database")
+    public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
+        DatabaseGameBase databaseGame = previousGames.get(gameNumber);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
+        DatabaseGameBase.addGameToDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
+    }
+
+    @Subcommand("remove")
+    @Conditions("database:game")
+    @Description("Removes game from database")
+    public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
+        DatabaseGameBase databaseGame = previousGames.get(gameNumber);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
+        DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
 }

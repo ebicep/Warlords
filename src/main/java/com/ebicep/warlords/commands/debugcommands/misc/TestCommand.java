@@ -1,29 +1,58 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.player.general.SpecType;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-
-public class TestCommand implements CommandExecutor {
+@CommandAlias("test")
+@CommandPermission("warlords.game.test")
+public class TestCommand extends BaseCommand {
 
     public static void printCache() {
         Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.LIFETIME.cacheName)).getNativeCache();
         System.out.println("CACHE - " + cache.asMap());
     }
+
+    @Default
+    @Description("Universal test command")
+    public void test(CommandIssuer issuer) {
+
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
+    }
+
+    @CommandAlias("testgame")
+    @Description("In game test command")
+    public void testGame(WarlordsPlayer warlordsPlayer) {
+//            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
+//            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
+
+//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED);
+//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN);
+//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
+
+//            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
+//            warlordsPlayer.addCurrency(10000000);
+
+        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed");
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
+}
+
+/*
+
 
 //    private void subtractSpecs(DatabasePlayer databasePlayer, DatabasePlayer lifeTime, DatabasePlayer season4) {
 //        for (DatabaseWarlordsClass aClass : databasePlayer.getClasses()) {
@@ -61,14 +90,6 @@ public class TestCommand implements CommandExecutor {
 //            aClass.setExperience(lifeTimeClass.getExperience() - season4Class.getExperience());
 //        }
 //    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.test")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
         WarlordsEntity warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
@@ -469,3 +490,5 @@ public class TestCommand implements CommandExecutor {
         //instance.getCommand("class").setTabCompleter(this);
     }
 }
+
+ */

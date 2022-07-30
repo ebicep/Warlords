@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.state;
 
-import com.ebicep.warlords.commands2.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
+import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;

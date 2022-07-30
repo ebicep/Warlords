@@ -1,28 +1,21 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
 import org.bukkit.entity.Player;
 
 import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu;
 
-public class MenuCommand implements CommandExecutor {
+@CommandAlias("menu")
+public class MenuCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        Player player = BaseCommand.requirePlayerOutsideGame(sender);
-        if (player != null) {
-            openMainMenu(player);
-        }
-
-        return true;
+    @Default
+    @Description("Opens the main menu")
+    public void menu(@Conditions("outsideGame") Player player) {
+        openMainMenu(player);
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("menu").setExecutor(this);
-    }
 }

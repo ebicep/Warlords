@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
+import co.aikar.commands.BaseCommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
@@ -8,20 +9,17 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.ebicep.warlords.util.warlords.Utils.*;
 
-public class GameStartCommand implements TabExecutor {
+public class GameStartCommand extends BaseCommand {
 
     @Nullable
     private static GameManager.QueueEntryBuilder buildQueue(@Nonnull List<? extends OfflinePlayer> people, @Nonnull CommandSender sender, @Nonnull String[] args) {
@@ -141,7 +139,7 @@ public class GameStartCommand implements TabExecutor {
                         } else if (length == 32 || length == 36) {
                             try {
                                 UUID id = UUID.fromString(length == 32 ? argData.replaceFirst(
-                                    "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+                                        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
                                 ) : argData);
                                 p = allowOfflinePlayer ? Bukkit.getOfflinePlayer(id) : Bukkit.getPlayer(id);
                             } catch (IllegalArgumentException e) {
@@ -251,84 +249,5 @@ public class GameStartCommand implements TabExecutor {
             sender.sendMessage(ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
             sender.sendMessage(ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        System.out.println(sender.getName() + " tried to use start command");
-        sender.sendMessage(ChatColor.RED + "This command is disabled, use the " + (sender.hasPermission("warlords.game.debug") ? "emerald" : "blaze powder") + " to start a game.");
-        return true;
-//        Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
-//
-//        List<Player> people = party
-//                .map(Party::getAllPartyPeoplePlayerOnline)
-//                .orElseGet(() -> sender instanceof Player ? Collections.singletonList((Player)sender) : new ArrayList<>(Bukkit.getOnlinePlayers()));
-//        if (party.isPresent()) {
-//            if (!party.get().getPartyLeader().getUuid().equals(((Player) sender).getUniqueId())) {
-//                sender.sendMessage(ChatColor.RED + "You are not the party leader");
-//                return true;
-//            } else if (!party.get().allOnlineAndNoAFKs()) {
-//                sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
-//                return true;
-//            }
-//        }
-//        final GameManager.QueueEntryBuilder queueEntry = buildQueue(people, sender, args);
-//        if (queueEntry == null) {
-//            return true;
-//        }
-//
-//        Pair<GameManager.QueueResult, Game> result = queueEntry
-//                .setPriority(-10)
-//                .queueNow();
-//        Game game = result.getB();
-//        if (game == null) {
-//            sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine failed to find a game server suiteable for your request:");
-//            sender.sendMessage(ChatColor.GRAY + result.getA().toString());
-//        } else {
-//            sender.sendMessage(
-//                    ChatColor.RED + "DEV:" +
-//                            ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-//                            " a game with the following parameters:"
-//            );
-//            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
-//            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap()));
-//            sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
-//            sender.sendMessage(ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
-//            sender.sendMessage(ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());
-//            sender.sendMessage(ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
-//            sender.sendMessage(ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
-//        }
-//        return true;
-    }
-
-    public Stream<String> prefixedEnum(Enum<?>[] list, String prefix) {
-        return Stream.concat(
-                Stream.of(prefix + ":NULL"),
-                Stream.concat(
-                        Stream.of(list).map(e -> toTitleCase(e.name())),
-                        Stream.of(list).map(e -> prefix + ":" + toTitleCase(e.name()))
-                )
-        );
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        return new ArrayList<>();
-//        Stream.of(
-//                        prefixedEnum(GameMap.values(), "map"),
-//                        prefixedEnum(GameAddon.values(), "addon"),
-//                        prefixedEnum(GameMode.values(), "category"),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getName()),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId()),
-//                        Stream.of("players:*")
-//                ).flatMap(Function.identity())
-//                .filter(e -> startsWithIgnoreCase(e, args[args.length - 1]))
-//                .collect(Collectors.toList());
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("start").setExecutor(this);
-        instance.getCommand("start").setTabCompleter(this);
     }
 }

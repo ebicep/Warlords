@@ -1,80 +1,70 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class MuteCommand implements CommandExecutor {
+@CommandAlias("mute")
+@CommandPermission("warlords.player.mute")
+public class MuteCommand extends BaseCommand {
 
     public static HashMap<UUID, Boolean> mutedPlayers = new HashMap<>();
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if (!sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
-            return true;
+    @Default
+    @CommandCompletion("@players")
+    @Description("Mutes a player")
+    public void mute(CommandIssuer issuer, @Values("@players") Player player) {
+        UUID uuid = player.getUniqueId();
+        String name = player.getName();
+        if (mutedPlayers.getOrDefault(uuid, false)) {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted");
+            return;
         }
-
-        if (s.equalsIgnoreCase("mute") || s.equalsIgnoreCase("unmute")) {
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "Enter player name");
-                return true;
-            }
-        }
-
-        switch (s.toLowerCase()) {
-            case "mute": {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
-                String name = offlinePlayer.getName();
-                UUID uuid = offlinePlayer.getUniqueId();
-                if (mutedPlayers.getOrDefault(uuid, false)) {
-                    sender.sendMessage(ChatColor.RED + name + " is already muted");
-                    return true;
-                }
-                mutedPlayers.put(uuid, true);
-                sender.sendMessage(ChatColor.GREEN + "Muted " + name);
-                return true;
-            }
-            case "unmute": {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
-                String name = offlinePlayer.getName();
-                UUID uuid = offlinePlayer.getUniqueId();
-                if (!mutedPlayers.getOrDefault(uuid, false)) {
-                    sender.sendMessage(ChatColor.RED + name + " is not muted");
-                    return true;
-                }
-                mutedPlayers.put(uuid, false);
-                sender.sendMessage(ChatColor.GREEN + "Unmuted " + name);
-                return true;
-            }
-            case "mutelist": {
-                String mutedList = mutedPlayers.entrySet().stream()
-                        .filter(Map.Entry::getValue)
-                        .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
-                        .collect(Collectors.joining(","));
-                if (mutedList.isEmpty()) {
-                    sender.sendMessage(ChatColor.GREEN + "There are no muted players");
-                } else {
-                    sender.sendMessage(ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
-                }
-                return true;
-            }
-        }
-
-        return true;
+        mutedPlayers.put(uuid, true);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name);
     }
 
-
-    public void register(Warlords instance) {
-        instance.getCommand("mute").setExecutor(this);
+    @CommandAlias("unmute")
+    @CommandCompletion("@players")
+    @Description("Unmutes a player")
+    public void unmute(CommandIssuer issuer, @Values("@players") Player player) {
+        UUID uuid = player.getUniqueId();
+        String name = player.getName();
+        if (!mutedPlayers.getOrDefault(uuid, false)) {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted");
+            return;
+        }
+        mutedPlayers.put(uuid, false);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name);
     }
+
+    @CommandAlias("mutelist")
+    @Description("Shows the list of muted players")
+    public void muteList(CommandIssuer issuer) {
+        String mutedList = mutedPlayers.entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
+                .collect(Collectors.joining(","));
+        if (mutedList.isEmpty()) {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players");
+        } else {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
+        }
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
+
 }

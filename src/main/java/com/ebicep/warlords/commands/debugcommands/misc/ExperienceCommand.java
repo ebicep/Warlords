@@ -1,101 +1,41 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.DatabasePlayerFuture;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class ExperienceCommand implements CommandExecutor {
+import java.util.concurrent.CompletionStage;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+@CommandAlias("experience")
+@CommandPermission("warlords.exp.give")
+@Conditions("database:player")
+public class ExperienceCommand extends BaseCommand {
 
-        if (!sender.hasPermission("warlords.exp.give")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-
-        if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Invalid Arguments");
-            return true;
-        }
-
-        switch (args[0].toLowerCase()) {
-            case "give": {
-                if (args.length == 1) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Arguments");
-                    return true;
-                } else if (args.length == 2) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Arguments");
-                    return true;
-                }
-
-                OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                if (player == null) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Player");
-                    return true;
-                }
-
-                if (DatabaseManager.playerService == null) return true;
-
-                Warlords.newChain()
-                        .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
-                        .syncLast(databasePlayer -> {
-                            databasePlayer.setExperience(databasePlayer.getExperience() + Integer.parseInt(args[2]));
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            sender.sendMessage(ChatColor.GREEN + "Gave " + player.getName() + " " + args[2] + " experience!");
-                            if (player.isOnline()) {
-                                player.getPlayer().sendMessage(ChatColor.GREEN + "You received " + args[2] + " experience!");
-                            }
-                        })
-                        .execute();
-
-
-                return true;
-            }
-            case "take": {
-                if (args.length == 1) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Arguments");
-                    return true;
-                } else if (args.length == 2) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Arguments");
-                    return true;
-                }
-
-                OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-                if (player == null) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Player");
-                    return true;
-                }
-
-                if (DatabaseManager.playerService == null) return true;
-
-                Warlords.newChain()
-                        .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
-                        .syncLast(databasePlayer -> {
-                            databasePlayer.setExperience(databasePlayer.getExperience() - Integer.parseInt(args[2]));
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            sender.sendMessage(ChatColor.RED + "Took " + args[2] + " experience from " + player.getName());
-                            if (player.isOnline()) {
-                                player.getPlayer().sendMessage(ChatColor.RED + "You lost " + args[2] + " experience!");
-                            }
-                        })
-                        .execute();
-
-
-                return true;
-            }
-        }
-
-        return true;
+    @Subcommand("add")
+    public CompletionStage<?> add(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
+        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Added " + amount + " universal experience to " + databasePlayer.getName());
+            databasePlayer.setExperience(databasePlayer.getExperience() + amount);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        });
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("experience").setExecutor(this);
+    @Subcommand("subtract")
+    public CompletionStage<?> subtract(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
+        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Subtracted " + amount + " universal experience to " + databasePlayer.getName());
+            databasePlayer.setExperience(databasePlayer.getExperience() - amount);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        });
     }
 
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
+    }
 }

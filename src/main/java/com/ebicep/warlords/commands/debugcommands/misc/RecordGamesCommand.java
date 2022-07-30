@@ -1,35 +1,29 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class RecordGamesCommand implements CommandExecutor {
+@CommandAlias("recordgames")
+@CommandPermission("warlords.game.recordgames")
+public class RecordGamesCommand extends BaseCommand {
 
     public static boolean recordGames = true;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.recordgames")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-
-        recordGames = !recordGames;
-        if(recordGames) {
-            sender.sendMessage(ChatColor.GREEN + "All games from now on will be recorded!");
+    @Default
+    @Description("Toggles recording of games")
+    public void recordGames(CommandIssuer issuer) {
+        if (recordGames) {
+            recordGames = false;
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "All games from now on will not be recorded!");
         } else {
-            sender.sendMessage(ChatColor.RED + "All games from now on will not be recorded!");
+            recordGames = true;
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "All games from now on will be recorded!");
         }
-
-        return true;
     }
-
-    public void register(Warlords instance) {
-        instance.getCommand("recordgames").setExecutor(this);
-    }
-
 }

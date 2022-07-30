@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand.sendDebugMessage;
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 
 public abstract class DatabaseGameBase {
 

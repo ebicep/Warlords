@@ -1,16 +1,16 @@
-package com.ebicep.warlords.commands2;
+package com.ebicep.warlords.commands;
 
 import co.aikar.commands.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
-import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
-import com.ebicep.warlords.commands2.debugcommands.game.GameTerminateCommand;
-import com.ebicep.warlords.commands2.debugcommands.game.PrivateGameTerminateCommand;
-import com.ebicep.warlords.commands2.debugcommands.ingame.*;
-import com.ebicep.warlords.commands2.debugcommands.misc.*;
-import com.ebicep.warlords.commands2.miscellaneouscommands.*;
+import com.ebicep.warlords.commands.debugcommands.game.GameKillCommand;
+import com.ebicep.warlords.commands.debugcommands.game.GameListCommand;
+import com.ebicep.warlords.commands.debugcommands.game.GameTerminateCommand;
+import com.ebicep.warlords.commands.debugcommands.game.PrivateGameTerminateCommand;
+import com.ebicep.warlords.commands.debugcommands.ingame.*;
+import com.ebicep.warlords.commands.debugcommands.misc.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
