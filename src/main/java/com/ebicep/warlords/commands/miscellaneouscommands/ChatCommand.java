@@ -47,13 +47,13 @@ public class ChatCommand extends BaseCommand {
 
     @Subcommand("party|p")
     @Description("Switch to PARTY chat channel")
-    public void partyChat(@Conditions("requireParty|otherChatChannel:target=PARTY") Player player) {
+    public void partyChat(@Conditions("party:true|otherChatChannel:target=PARTY") Player player) {
         switchChannels(player, ChatChannels.PARTY);
     }
 
     @Subcommand("guild|g")
     @Description("Switch to GUILD chat channel")
-    public void guildChat(@Conditions("requireGuild|otherChatChannel:target=GUILD") Player player) {
+    public void guildChat(@Conditions("guild:true|otherChatChannel:target=GUILD") Player player) {
         switchChannels(player, ChatChannels.GUILD);
     }
 
@@ -65,13 +65,13 @@ public class ChatCommand extends BaseCommand {
 
     @CommandAlias("pchat|pc")
     @Description("Send a message to the PARTY chat channel")
-    public void partyChat(@Conditions("requireParty") Player player, String message) {
+    public void partyChat(@Conditions("party:true") Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.PARTY);
     }
 
     @CommandAlias("gchat|gc")
     @Description("Send a message to the GUILD chat channel")
-    public void guildChat(@Conditions("requireGuild") Player player, String message) {
+    public void guildChat(@Conditions("guild:true") Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD);
     }
 

@@ -5,10 +5,14 @@ import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -182,8 +186,11 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
                                             if (offlinePlayer == null) continue;
                                             UUID uuid = offlinePlayer.getUniqueId();
+                                            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
                                             if (resetMenu.get()) {
-                                                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> party.getRegularGamesMenu().reset());
+                                                if (partyPlayerPair != null) {
+                                                    partyPlayerPair.getA().getRegularGamesMenu().reset();
+                                                }
                                                 resetMenu.set(false);
                                             }
                                             //includes offline players
@@ -199,32 +206,30 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                     databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
                                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                                 }
-                                                // TODO: fix
                                                 if (!isExperimental) {
-                                                    Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                                                        party.getRegularGamesMenu().getRegularGamePlayers().add(
+                                                    if (partyPlayerPair != null) {
+                                                        partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers().add(
                                                                 new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Specializations.getSpecFromName(spec))
                                                         );
-                                                    });
+                                                    }
                                                 }
                                             } else {
-                                                // TODO: fix
                                                 if (!isExperimental) {
-                                                    Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                                                        party.getRegularGamesMenu().getRegularGamePlayers().add(
+                                                    if (partyPlayerPair != null) {
+                                                        partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers().add(
                                                                 new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Specializations.PYROMANCER)
                                                         );
-                                                    });
+                                                    }
                                                 }
                                             }
                                             if (!isExperimental) {
-                                                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                                                    if (offlinePlayer.isOnline()) {
-                                                        offlinePlayer.getPlayer().getInventory().setItem(7,
-                                                                new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getItem()).name("§aTeam Builder")
-                                                                        .get());
-                                                    }
-                                                });
+                                                if (partyPlayerPair != null && offlinePlayer.isOnline()) {
+                                                    offlinePlayer.getPlayer().getInventory().setItem(7,
+                                                            new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).getItem())
+                                                                    .name("§aTeam Builder")
+                                                                    .get());
+
+                                                }
                                             }
                                             //only send messages to online
                                             if (offlinePlayer.isOnline()) {

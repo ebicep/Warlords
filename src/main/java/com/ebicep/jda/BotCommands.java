@@ -3,6 +3,9 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,14 +44,14 @@ public class BotCommands implements CommandExecutor {
             case "experimental2":
             case "experimental3":
                 Player player = (Player) sender;
-                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-                if (!currentParty.isPresent()) {
+                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                if (partyPlayerPair == null) {
                     sender.sendMessage(ChatColor.RED + "You are not in a party!");
                     return true;
                 }
                 StringBuilder players = new StringBuilder();
-                currentParty.get().getPartyPlayers().forEach(partyPlayer -> {
-                    players.append(Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName()).append(",");
+                partyPlayerPair.getA().getPartyPlayers().forEach(partyPlayer -> {
+                    players.append(Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName()).append(",");
                 });
                 players.setLength(players.length() - 1);
                 botTeams.get().sendMessage("/" + input + " " + players).queue();

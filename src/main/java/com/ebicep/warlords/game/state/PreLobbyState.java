@@ -120,7 +120,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
                             return;
                         }
-                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                        PartyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
                             List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
                             //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
                             if (partyPlayersInGame.size() > sameTeamPartyLimit) {

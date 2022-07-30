@@ -2,6 +2,9 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -98,8 +101,9 @@ public class PlayerHotBarItemListener implements Listener {
             );
 
             if (!fromGame) {
-                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
-                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+                if (partyPlayerPair != null) {
+                    List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
                     if (!playerList.isEmpty()) {
                         playerList.stream()
                                 .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
@@ -109,27 +113,28 @@ public class PlayerHotBarItemListener implements Listener {
                                                 2,
                                                 new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get(),
                                                 e -> {
-                                                    Warlords.partyManager.getPartyFromAny(e.getPlayer().getUniqueId()).ifPresent(p -> {
-                                                        List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getRegularGamesMenu().getRegularGamePlayers();
+                                                    Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
+                                                    if (p != null) {
+                                                        List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getA().getRegularGamesMenu().getRegularGamePlayers();
                                                         if (!playerList2.isEmpty()) {
-                                                            p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                                                            p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
                                                             new BukkitRunnable() {
                                                                 @Override
                                                                 public void run() {
                                                                     if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
-                                                                        p.getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                                                                        p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
                                                                     } else {
                                                                         this.cancel();
                                                                     }
                                                                 }
                                                             }.runTaskTimer(Warlords.getInstance(), 20, 10);
                                                         }
-                                                    });
+                                                    }
                                                 }
                                         ))
                                 );
                     }
-                });
+                }
             }
 
             listeners.add(new ItemListener(

@@ -11,7 +11,10 @@ import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -48,9 +51,9 @@ public class PrivateGameTerminateCommand extends BaseCommand {
         Player player = (Player) warlordsPlayer.getEntity();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (Objects.equals(gameHolder.getGame(), game)) {
-                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(warlordsPlayer.getUuid());
-                if (currentParty.isPresent()) {
-                    Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
+                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(warlordsPlayer.getUuid());
+                if (partyPlayerPair != null) {
+                    Player partyLeader = Bukkit.getPlayer(partyPlayerPair.getA().getPartyLeader().getUUID());
                     if (partyLeader.getPlayer() != null && partyLeader.getPlayer().getUniqueId().equals(warlordsPlayer.getUuid())) {
                         endGameInstance(player, gameHolder, game);
                         player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");

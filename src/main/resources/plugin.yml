@@ -5,12 +5,6 @@ main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
 commands:
-  party:
-    description: Party options
-    aliases: [ party, p ]
-  stream:
-    description: Creates a new party where anyone can join
-    usage: /stream
   me:
     description: Not happening.
     usage: Not happening.
@@ -20,9 +14,6 @@ commands:
   queue:
     description: Queue system
     aliases: [ queue ]
-  discord:
-    description: Link and unlink discord account with minecraft account
-    aliases: [ discord ]
   poll:
     description: Poll stuff
     aliases: [ poll ]

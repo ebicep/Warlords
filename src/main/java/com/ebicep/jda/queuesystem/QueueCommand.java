@@ -1,6 +1,7 @@
 package com.ebicep.jda.queuesystem;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.party.PartyManager;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,7 +25,7 @@ public class QueueCommand implements CommandExecutor {
 
         switch (args[0]) {
             case "join": {
-                if (Warlords.partyManager.inAParty(player.getUniqueId())) {
+                if (PartyManager.inAParty(player.getUniqueId())) {
                     sender.sendMessage(ChatColor.RED + "You cannot join the queue if you are in a party!");
                     return true;
                 }

@@ -20,6 +20,12 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.party.PartyPlayerType;
+import com.ebicep.warlords.party.commands.PartyCommand;
+import com.ebicep.warlords.party.commands.PartyPlayerWrapper;
+import com.ebicep.warlords.party.commands.StreamCommand;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -88,6 +94,9 @@ public class CommandManager {
         manager.registerCommand(new ShoutCommand());
         manager.registerCommand(new SpectateCommand());
         manager.registerCommand(new MessageCommand());
+
+        manager.registerCommand(new PartyCommand());
+        manager.registerCommand(new StreamCommand());
     }
 
     public static void registerContexts() {
@@ -145,6 +154,19 @@ public class CommandManager {
             }
             return optionalWarlordsPlayer.get();
         });
+        //Issuer only contexts
+        manager.getCommandContexts().registerIssuerOnlyContext(PartyPlayerWrapper.class, command -> {
+            Player player = command.getPlayer();
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            if (partyPlayerPair != null) {
+                if (command.hasFlag("leader") && partyPlayerPair.getB().getPartyPlayerType() != PartyPlayerType.LEADER) {
+                    Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    throw new ConditionFailedException();
+                }
+                return new PartyPlayerWrapper(partyPlayerPair);
+            }
+            throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+        });
         //Contexts
         manager.getCommandContexts().registerContext(DatabasePlayerFuture.class, command -> {
             String name = command.popFirstArg();
@@ -163,11 +185,23 @@ public class CommandManager {
                 throw new ConditionFailedException("Could not find player with name " + name);
             }));
         });
-
         manager.getCommandContexts().registerContext(UUID.class, command -> UUID.fromString(command.popFirstArg()));
         manager.getCommandContexts().registerContext(Boolean.class, command -> {
             String arg = command.popFirstArg();
             return arg.equalsIgnoreCase("true") || arg.equalsIgnoreCase("enable");
+        });
+        manager.getCommandContexts().registerContext(PartyPlayer.class, command -> {
+            String arg = command.popFirstArg();
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(command.getPlayer().getUniqueId());
+            if (partyPlayerPair == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+            }
+            for (PartyPlayer partyPlayer : partyPlayerPair.getA().getPartyPlayers()) {
+                if (Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
+                    return partyPlayer;
+                }
+            }
+            throw new InvalidCommandArgument("Could not find a player in your party with the name " + arg);
         });
     }
 
@@ -225,6 +259,20 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("gameteams", command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("playerabilitystats", command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet().stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
+        commandCompletions.registerAsyncCompletion("partyleaders", command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("partymembers", command -> {
+            CommandSender sender = command.getSender();
+            if (sender instanceof Player) {
+                return PartyManager.PARTIES.stream()
+                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                        .map(Party::getPartyPlayers)
+                        .flatMap(Collection::stream)
+                        .map(PartyPlayer::getUUID)
+                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                        .collect(Collectors.toList());
+            }
+            return null;
+        });
 
     }
 
@@ -272,16 +320,23 @@ public class CommandManager {
                 throw new ConditionFailedException(ChatColor.RED + "You cannot use this command while in an active game!");
             }
         });
-        manager.getCommandConditions().addCondition(Player.class, "requireParty", (command, exec, player) -> {
-            Optional<Party> optionalParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-            if (!optionalParty.isPresent()) {
+        manager.getCommandConditions().addCondition(Player.class, "party", (command, exec, player) -> {
+            Pair<Party, PartyPlayer> optionalParty = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            if (optionalParty == null && command.hasConfig("true")) {
                 throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
             }
+            if (optionalParty != null && command.hasConfig("false")) {
+                throw new ConditionFailedException(ChatColor.RED + "You cannot be in a party to use this command!");
+
+            }
         });
-        manager.getCommandConditions().addCondition(Player.class, "requireGuild", (command, exec, player) -> {
+        manager.getCommandConditions().addCondition(Player.class, "guild", (command, exec, player) -> {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-            if (guildPlayerPair == null) {
+            if (guildPlayerPair == null && command.hasConfig("true")) {
                 throw new ConditionFailedException(ChatColor.RED + "You must be in a guild to use this command!");
+            }
+            if (guildPlayerPair != null && command.hasConfig("false")) {
+                throw new ConditionFailedException(ChatColor.RED + "You cannot be in a guild to use this command!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
@@ -316,6 +371,17 @@ public class CommandManager {
             }
             if (c.hasConfig("max") && max < value) {
                 throw new ConditionFailedException("Max value must be " + max);
+            }
+        });
+        manager.getCommandConditions().addCondition(PartyPlayer.class, "lowerRank", (command, exec, partyPlayer) -> {
+            Player player = command.getIssuer().getPlayer();
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            if (partyPlayerPair == null) {
+                throw new ConditionFailedException(ChatColor.RED + "You must be in a party to use this command!");
+            }
+            if (partyPlayerPair.getB().getPartyPlayerType().ordinal() >= partyPlayer.getPartyPlayerType().ordinal()) {
+                Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                throw new ConditionFailedException();
             }
         });
     }

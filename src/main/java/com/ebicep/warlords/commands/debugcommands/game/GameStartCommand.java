@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -206,23 +208,26 @@ public class GameStartCommand extends BaseCommand {
     }
 
     public static void startGame(Player sender, String[] args, boolean excludeStarter) {
-        Optional<Party> party = Warlords.partyManager.getPartyFromAny(sender.getUniqueId());
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(sender.getUniqueId());
 
-        List<Player> people = new ArrayList<>(party
-                .map(Party::getAllPartyPeoplePlayerOnline)
-                .orElseGet(() -> Collections.singletonList(sender)));
-        if (excludeStarter) {
-            people.removeIf(player -> player.getUniqueId().equals(sender.getUniqueId()));
-        }
-        if (party.isPresent()) {
-            if (!party.get().getPartyLeader().getUuid().equals(sender.getUniqueId())) {
+        List<Player> people;
+        if (partyPlayerPair != null) {
+            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(sender.getUniqueId())) {
                 sender.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
-            } else if (!party.get().allOnlineAndNoAFKs()) {
+            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
                 sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }
+            people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
+            if (excludeStarter) {
+                people.removeIf(player -> player.getUniqueId().equals(sender.getUniqueId()));
+            }
+        } else {
+            people = Collections.singletonList(sender);
         }
+
+
         final GameManager.QueueEntryBuilder queueEntry = buildQueue(people, sender, args);
         if (queueEntry == null) {
             return;

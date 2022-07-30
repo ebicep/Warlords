@@ -6,6 +6,9 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -84,9 +87,10 @@ public enum ChatChannels {
             Player player = e.getPlayer();
             UUID uuid = player.getUniqueId();
 
-            if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+            if (partyPlayerPair != null) {
                 e.setFormat(getColoredName() + CHAT_ARROW + getChatFormat(prefixColor, prefix));
-                e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
+                e.getRecipients().retainAll(partyPlayerPair.getA().getAllPartyPeoplePlayerOnline());
             } else {
                 Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");

@@ -30,7 +30,6 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
-import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -78,7 +77,6 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
-    public static final PartyManager partyManager = new PartyManager();
     private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
     private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
     public static String VERSION = "";

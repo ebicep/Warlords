@@ -6,14 +6,16 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -70,13 +72,13 @@ public class DifficultyMenu {
 
     // TODO: random map
     private static void startNormalGame(Player player, boolean endless) {
-        Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> Collections.singletonList(player));
-        if (party.isPresent()) {
-            if (!party.get().getPartyLeader().getUuid().equals(player.getUniqueId())) {
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+        List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);
+        if (partyPlayerPair != null) {
+            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
-            } else if (!party.get().allOnlineAndNoAFKs()) {
+            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }

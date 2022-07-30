@@ -3,6 +3,9 @@ package com.ebicep.customentities.npc.traits;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.util.java.Pair;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -13,7 +16,6 @@ import org.bukkit.event.EventHandler;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class GameStartTrait extends Trait {
     public GameStartTrait() {
@@ -56,18 +58,17 @@ public class GameStartTrait extends Trait {
     private void tryToJoinQueue(Player player) {
 
         //check if player is in a party, they must be leader to join
-        Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> Collections.singletonList(player));
-        if (party.isPresent()) {
-            if (!party.get().getPartyLeader().getUuid().equals(player.getUniqueId())) {
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+        if (partyPlayerPair != null) {
+            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
                 return;
-            } else if (!party.get().allOnlineAndNoAFKs()) {
+            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
                 player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return;
             }
         }
-
+        List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);
         Warlords.getGameManager()
                 .newEntry(people)
                 .setGamemode(GameMode.CAPTURE_THE_FLAG)
