@@ -9,7 +9,7 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import org.bukkit.ChatColor;
 
-@CommandAlias("recordgames")
+@CommandAlias("recordgames|countgames")
 @CommandPermission("warlords.game.recordgames")
 public class RecordGamesCommand extends BaseCommand {
 

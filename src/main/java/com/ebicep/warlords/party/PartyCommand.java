@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class PartyCommand implements TabExecutor {
 
     private static final String[] partyOptions = {

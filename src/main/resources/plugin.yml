@@ -5,141 +5,33 @@ main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
 commands:
-  start:
-    description: Starts a new game.
-    usage: /start [...map:MapName | category:CategoryName | addon:AddonName | players:* | player:PlayerName]
-  terminategame:
-    description: Terminates the game.
-    permission: warlords.game.end
-    aliases: [endgame]
-    usage: /<command> [...game holder name/map name/category name/game uuid]
-  killgame:
-    description: Kills the game
-    permission: warlords.game.kill
-    usage: /<command> [...game holder name/map name/category name/game uuid]
-  endprivategame:
-    description: Terminates a private game.
-    usage: /<command>
-  menu:
-    description: Opens the game menu.
-    usage: /menu
-  shout:
-    description: Shouts in game
-    usage: /shout [MESSAGE]
-  hotkeymode:
-    description: Switches between hotkeymode and classic
-    usage: /hotkeymode
-  wl:
-    description: Debug tools.
-    usage: /wl [args] [bonus args]
-  class:
-    description: Select your class.
-    usage: /class [class]
-  getplayers:
-    description: Gets Players in lobby
-    usage: /getplayers
-  test:
-    description: Test Command
-    usage: /test
-  pq:
-    description: Sets particle quality
-    usage: /pq [LOW,MEDIUM,HIGH]
-  spawntestdummy:
-    description: Spawns Test Dummy
-    usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]
   party:
     description: Party options
     aliases: [ party, p ]
   stream:
     description: Creates a new party where anyone can join
     usage: /stream
-  recordaveragedamage:
-    description: Prints average damage taken
-    usage: /recordaveragedamage
-  chatchannelcommand:
-    description: Changes chat channel or sends a mesasage in a different channel
-    aliases: [ chat, achat, ac, pchat, pc, gchat, gc ]
   me:
     description: Not happening.
     usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot
-  lb:
-    description: Leaderboard Commands
-    usage: /lb
-  recordgames:
-    description: Toggles recording games
-    aliases: [ recordgames, countgames ]
-  games:
-    description: Games stuff
-    aliases: [ recordgames, countgames ]
-  spectate:
-    description: Opens spectator menu
-    usage: /spectate
-  debugmode:
-    description: Turns on debugmode
-    usage: /debugmode
-  mylocation:
-    description: Prints your location
-    usage: /mylocation
-  msg:
-    description: Message a player
-    aliases: [ msg, r, tell ]
-  experience:
-    description: Experience stuff
-    aliases: [ experience, exp ]
   queue:
     description: Queue system
     aliases: [ queue ]
-  imposter:
-    description: Sus
-    aliases: [ imposter, impostor ]
-  lobby:
-    description: Warps you back into the lobby if you are in a game lobby
-    aliases: [ lobby, l, hub ]
-  gamelist:
-    description: Shows the list of games
-    permission: warlords.game.list
   discord:
     description: Link and unlink discord account with minecraft account
     aliases: [ discord ]
   poll:
     description: Poll stuff
     aliases: [ poll ]
-  achievements:
-    description: Achievements
-    aliases: [ achievement, achievements ]
-  findplayer:
-    description: Finds player in game
-    aliases: [ findplayer ]
-  mute:
-    description: Mute
-    aliases: [ mute, unmute, mutelist ]
-  resource:
-    description: Gets the resource pack
-    usage: /resource
-  abilitystats:
-    description: Displays players last abiiity stats
-    usage: /abilitystats
-  afkdetection:
-    description: Toggle afk detection
-    usage: /afkdetection
-  serverstatus:
-    description: Toggle server status
-    usage: /serverstatus
-  unstuck:
-    description: Unstuck yourself
-    usage: /unstuck
   setwave:
     description: Set the wave counter in Wave Defense
     usage: /setwave
   currency:
     description: Edit the currency in Wave Defense
     usage: /currency
-  offlinefreeze:
-    description: Toggle offline freeze
-    usage: /offlinefreeze
   guild:
     description: Guild
     aliases: [ guild, g ]

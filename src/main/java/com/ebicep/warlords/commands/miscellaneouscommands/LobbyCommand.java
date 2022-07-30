@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Team;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-@CommandAlias("lobby")
+@CommandAlias("lobby|l|hub")
 public class LobbyCommand extends BaseCommand {
 
     @Default

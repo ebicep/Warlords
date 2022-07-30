@@ -6,7 +6,7 @@ import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.achievements.AchievementsMenu;
 import org.bukkit.entity.Player;
 
-@CommandAlias("achievements")
+@CommandAlias("achievements|achievement")
 public class AchievementsCommand extends BaseCommand {
 
     @Default

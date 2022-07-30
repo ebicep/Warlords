@@ -17,7 +17,7 @@ public class MessageCommand extends BaseCommand {
 
     public static final LinkedHashMap<PlayerMessage, Instant> lastPlayerMessages = new LinkedHashMap<>();
 
-    @CommandAlias("msg")
+    @CommandAlias("msg|tell")
     @Description("Privately message a player")
     public void message(Player player, @Flags("other") Player target, String message) {
         if (MuteCommand.mutedPlayers.getOrDefault(player.getUniqueId(), false)) {

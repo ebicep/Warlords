@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 
 import java.util.concurrent.CompletionStage;
 
-@CommandAlias("experience")
+@CommandAlias("experience|exp")
 @CommandPermission("warlords.exp.give")
 @Conditions("database:player")
 public class ExperienceCommand extends BaseCommand {
