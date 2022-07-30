@@ -8,12 +8,6 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
-  queue:
-    description: Queue system
-    aliases: [ queue ]
-  poll:
-    description: Poll stuff
-    aliases: [ poll ]
   setwave:
     description: Set the wave counter in Wave Defense
     usage: /setwave

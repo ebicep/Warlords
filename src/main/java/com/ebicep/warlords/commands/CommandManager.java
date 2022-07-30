@@ -30,6 +30,8 @@ import com.ebicep.warlords.party.commands.PartyPlayerWrapper;
 import com.ebicep.warlords.party.commands.StreamCommand;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.poll.AbstractPoll;
+import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
@@ -99,6 +101,8 @@ public class CommandManager {
 
         manager.registerCommand(new PartyCommand());
         manager.registerCommand(new StreamCommand());
+
+        manager.registerCommand(new PollCommand());
 
         manager.registerCommand(new BotCommand());
         manager.registerCommand(new QueueCommand());
@@ -207,6 +211,13 @@ public class CommandManager {
                 }
             }
             throw new InvalidCommandArgument("Could not find a player in your party with the name " + arg);
+        });
+        manager.getCommandContexts().registerContext(AbstractPoll.class, command -> {
+            Optional<AbstractPoll<?>> optionalPoll = AbstractPoll.getPoll(command.popFirstArg());
+            if (!optionalPoll.isPresent()) {
+                throw new InvalidCommandArgument(ChatColor.RED + "Could not find a poll with that ID");
+            }
+            return optionalPoll.get();
         });
     }
 
