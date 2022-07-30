@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands2;
 
 import co.aikar.commands.*;
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands2.debugcommands.game.GameKillCommand;
 import com.ebicep.warlords.commands2.debugcommands.game.GameListCommand;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.commands2.debugcommands.ingame.*;
 import com.ebicep.warlords.commands2.debugcommands.misc.*;
 import com.ebicep.warlords.commands2.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.commands2.miscellaneouscommands.ClassCommand;
+import com.ebicep.warlords.commands2.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -77,6 +79,7 @@ public class CommandManager {
         //manager.registerCommand(new AchievementsCommand());
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
+        manager.registerCommand(new DiscordCommand());
     }
 
     public static void registerContexts() {
@@ -218,6 +221,11 @@ public class CommandManager {
             }
             if (command.hasConfig("game") && DatabaseManager.gameService == null) {
                 throw new ConditionFailedException(ChatColor.RED + "gameService is null");
+            }
+        });
+        manager.getCommandConditions().addCondition("bot", command -> {
+            if (BotManager.jda == null) {
+                throw new ConditionFailedException(ChatColor.RED + "The bot is not enabled!");
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "requireWarlordsPlayer", (command, exec, player) -> requireWarlordsPlayer(player));
