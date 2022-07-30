@@ -282,6 +282,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("edit")
+    @Conditions("database:game")
     @Description("Opens game editor from date")
     public void edit(Player player, String date) {
         sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date);
@@ -300,6 +301,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("add")
+    @Conditions("database:game")
     @Description("Adds game to database")
     public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
@@ -308,6 +310,7 @@ public class GamesCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
+    @Conditions("database:game")
     @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
