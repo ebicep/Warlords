@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands;
 
 import co.aikar.commands.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import com.ebicep.jda.BotCommand;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameKillCommand;
@@ -97,6 +98,8 @@ public class CommandManager {
 
         manager.registerCommand(new PartyCommand());
         manager.registerCommand(new StreamCommand());
+
+        manager.registerCommand(new BotCommand());
     }
 
     public static void registerContexts() {

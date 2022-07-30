@@ -8,9 +8,6 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
-  bot:
-    description: Runs bot commands
-    usage: /bot
   queue:
     description: Queue system
     aliases: [ queue ]
