@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;

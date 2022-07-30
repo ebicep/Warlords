@@ -1,5 +1,6 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.waves;
 
+import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 

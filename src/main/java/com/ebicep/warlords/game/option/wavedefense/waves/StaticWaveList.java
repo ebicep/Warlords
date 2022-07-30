@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.waves;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,6 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.waves;
 
+import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;

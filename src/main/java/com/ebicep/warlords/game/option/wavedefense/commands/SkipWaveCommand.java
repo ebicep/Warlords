@@ -1,8 +1,9 @@
-package com.ebicep.warlords.game.option.wavedefense;
+package com.ebicep.warlords.game.option.wavedefense.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
