@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public class BotCommand extends BaseCommand {
 
     @Default
-    public void sendBal(@Conditions("party:false") Player player, PartyPlayerWrapper partyPlayerWrapper, String command) {
+    public void sendBal(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, String command) {
         java.util.Optional<TextChannel> botTeams = BotManager.getTextChannelCompsByName("bot-teams");
         java.util.Optional<TextChannel> gsTeams = BotManager.getTextChannelCompsByName("gs-teams");
         if (!botTeams.isPresent()) {
