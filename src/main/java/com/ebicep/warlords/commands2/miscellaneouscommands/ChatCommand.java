@@ -52,16 +52,19 @@ public class ChatCommand extends BaseCommand {
     }
 
     @CommandAlias("achat|ac")
+    @Description("Send a message to the ALL chat channel")
     public void allChat(Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.ALL);
     }
 
     @CommandAlias("pchat|pc")
+    @Description("Send a message to the PARTY chat channel")
     public void partyChat(@Conditions("requireParty") Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.PARTY);
     }
 
     @CommandAlias("gchat|gc")
+    @Description("Send a message to the GUILD chat channel")
     public void guildChat(@Conditions("requireGuild") Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD);
     }
