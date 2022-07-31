@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
-import com.ebicep.customentities.nms.pve.CustomIronGolem;
-import com.ebicep.customentities.nms.pve.CustomMagmaCube;
-import com.ebicep.customentities.nms.pve.CustomSkeleton;
-import com.ebicep.customentities.nms.pve.CustomZombie;
+import com.ebicep.customentities.nms.pve.*;
 import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -27,9 +24,9 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.PRISMARINE_SHARD)
             ),
-            3600,
+            4000,
             0.38f,
-            0,
+            10,
             300,
             600
     );
@@ -47,9 +44,9 @@ public class EliteMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.BOW)
             ),
-            1800,
+            2000,
             0.3f,
-            0,
+            10,
             0,
             0
     );
@@ -76,6 +73,20 @@ public class EliteMob {
             loc,
             null,
             5000,
+            0.35f,
+            20,
+            500,
+            750
+    );
+    public static final Function<Location, PartialMonster> WITCH = loc -> PartialMonster.fromCustomEntity(
+            CustomWitch.class,
+            () -> new CustomWitch(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Illusion Enchantress",
+            loc,
+            null,
+            2500,
             0.35f,
             0,
             500,

@@ -59,7 +59,7 @@ public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime
                             }
 
                             if (ticksLeft % 20 == 0) {
-                                float healthDamage = enemy.getMaxHealth() * 0.03f;
+                                float healthDamage = enemy.getMaxHealth() * 0.04f;
                                 enemy.addDamageInstance(
                                         we,
                                         "Shimmer",

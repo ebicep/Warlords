@@ -63,7 +63,7 @@ public class PrismGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
-        Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
+        Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.1f);
 
         // First Particle Sphere
         playSphereAnimation(wp.getLocation(), bubbleRadius + 2.5, 68, 176, 176);

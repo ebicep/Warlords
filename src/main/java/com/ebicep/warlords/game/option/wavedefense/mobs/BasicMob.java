@@ -26,7 +26,7 @@ public class BasicMob {
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.WOOD_AXE)
             ),
-            2200,
+            2800,
             0.38f,
             0,
             200,
@@ -46,7 +46,7 @@ public class BasicMob {
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.BOW)
             ),
-            1200,
+            1600,
             0.25f,
             0,
             0,
@@ -60,17 +60,31 @@ public class BasicMob {
             "Lunar Disciple",
             loc,
             new Utils.SimpleEntityEquipment(
-                    new ItemStack(Material.CARPET),
+                    new ItemStack(Material.WOOD, 1, (short) 3),
                     Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                     Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
                     Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
                     new ItemStack(Material.COOKIE)
             ),
-            2600,
+            2800,
             0.42f,
             0,
             250,
             350
+    );
+    public static final Function<Location, PartialMonster> WOLF = loc -> PartialMonster.fromCustomEntity(
+            CustomWolf.class,
+            () -> new CustomWolf(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Lunar Hound",
+            loc,
+            null,
+            900,
+            0.5f,
+            0,
+            600,
+            800
     );
     public static final Function<Location, PartialMonster> SPIDER = loc -> PartialMonster.fromCustomEntity(
             CustomSpider.class,
@@ -80,7 +94,7 @@ public class BasicMob {
             "Lunar Venari",
             loc,
             null,
-            2000,
+            2200,
             0.45f,
             0,
             300,

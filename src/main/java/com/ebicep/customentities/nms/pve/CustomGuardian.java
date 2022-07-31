@@ -7,7 +7,6 @@ public class CustomGuardian extends EntityGuardian implements CustomEntity<Custo
 
     public CustomGuardian(World world) {
         super(world);
-        setSize(6, 6);
     }
 
 

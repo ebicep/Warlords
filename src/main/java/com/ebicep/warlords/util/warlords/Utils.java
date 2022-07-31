@@ -43,6 +43,16 @@ public class Utils {
             "Apothecary"
     };
 
+    public static boolean isProjectile(String ability) {
+        return ability.equals("Fireball") ||
+                ability.equals("Frostbolt") ||
+                ability.equals("Water Bolt") ||
+                ability.equals("Lightning Bolt") ||
+                ability.equals("Flame Burst") ||
+                ability.equals("Fallen Souls") ||
+                ability.equals("Soothing Elixir");
+    }
+
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
     public static final ItemStack[] woolSortedByColor = {
@@ -332,10 +342,10 @@ public class Utils {
     }
 
     /**
-     * Allows an Stream to be used in a for-each loop, as they do not come out of the box with support for this.
+     * Allows a Stream to be used in a for-each loop, as they do not come out of the box with support for this.
      * @param <T> The type
      * @param stream The stream
-     * @return An one-time use <code>Iterable</code> for iterating over the stream
+     * @return A one-time use <code>Iterable</code> for iterating over the stream
      */
     @Nonnull
     public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {

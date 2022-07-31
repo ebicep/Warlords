@@ -154,13 +154,21 @@ public class WaveDefenseOption implements Option {
         spawnCount = currentWave.getMonsterCount();
             
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-            sendMessage(
-                    entry.getKey(),
-                    false,
-                    ChatColor.YELLOW + "A wave of §c§l" +
-                    spawnCount + "§e monsters will spawn in §c" +
-                    currentWave.getDelay() / 20 + " §eseconds!"
-            );
+            if (currentWave.getMessage() != null) {
+                sendMessage(
+                        entry.getKey(),
+                false,
+                ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                );
+            } else {
+                sendMessage(
+                        entry.getKey(),
+                false,
+                ChatColor.YELLOW + "A wave of §c§l" +
+                        spawnCount + "§e monsters will spawn in §c" +
+                        currentWave.getDelay() / 20 + " §eseconds!"
+                );
+            }
 
             float soundPitch = 0.8f;
             String wavePrefix = "§eWave ";

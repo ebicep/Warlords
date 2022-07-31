@@ -1,28 +1,24 @@
 package com.ebicep.warlords.game.state;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.CustomScoreboard;
-import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
     public static final String WARLORDS_DATABASE_MESSAGEFEED = "warlords.database.messagefeed";
@@ -59,8 +55,6 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public State run() {
-        return new SyncTimerState(game);
-        /*
         if (hasEnoughPlayers() || timerHasBeenSkipped) {
             timerHasBeenSkipped = false;
             if (timer % 20 == 0) {
@@ -120,7 +114,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
                             return;
                         }
-                        PartyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                        /*PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId()).getA(party -> {
                             List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
                             //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
                             if (partyPlayersInGame.size() > sameTeamPartyLimit) {
@@ -140,7 +134,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             } else {
                                 bluePlayers.addAll(partyPlayers);
                             }
-                        });
+                        });*/
                     });
 
                     HashMap<String, Integer> playersSR = new HashMap<>();
@@ -399,8 +393,6 @@ public class PreLobbyState implements State, TimerDebugAble {
             game.forEachOnlinePlayerWithoutSpectators((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
-
-         */
     }
 
     @Override

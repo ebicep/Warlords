@@ -27,7 +27,7 @@ public class BossMob {
                     new ItemStack(Material.CHAINMAIL_BOOTS),
                     new ItemStack(Material.STICK)
             ),
-            10000,
+            12000,
             0.5f,
             0,
             400,
@@ -49,9 +49,9 @@ public class BossMob {
             ),
             15000,
             0.6f,
-            5,
-            200,
-            300
+            10,
+            300,
+            400
     );
     public static final Function<Location, PartialMonster> MITHRA = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,

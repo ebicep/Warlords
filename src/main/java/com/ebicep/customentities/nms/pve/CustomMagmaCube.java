@@ -74,7 +74,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
                     .entitiesAround(we, flameHitbox, flameHitbox, flameHitbox)
                     .aliveEnemiesOf(we)
             ) {
-                enemy.addDamageInstance(we, "Blight", 124, 332, -1, 100, false);
+                enemy.addDamageInstance(we, "Blight", 900, 1200, -1, 100, false);
             }
         }
 

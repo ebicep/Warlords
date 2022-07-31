@@ -11,7 +11,6 @@ public class CustomPigZombie extends EntityPigZombie implements CustomEntity<Cus
         giveBaseAI();
     }
 
-
     @Override
     public CustomPigZombie get() {
         return this;
