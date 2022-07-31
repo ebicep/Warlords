@@ -94,7 +94,7 @@ public interface CustomEntity<T extends EntityInsentient> {
 
     default void spawn(Location location) {
         EffectUtils.playCylinderAnimation(location, 1.05, ParticleEffect.SPELL_WITCH, 1);
-        Utils.playGlobalSound(location, Sound.AMBIENCE_CAVE, 1, 2);
+        Utils.playGlobalSound(location, Sound.GHAST_FIREBALL, 1, 0.3f);
         T customEntity = get();
         customEntity.setPosition(location.getX(), location.getY(), location.getZ());
         customEntity.setCustomNameVisible(true);

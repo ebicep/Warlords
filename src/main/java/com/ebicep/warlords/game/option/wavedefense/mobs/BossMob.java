@@ -90,8 +90,8 @@ public class BossMob {
             17000,
             0.45f,
             0,
-            700,
-            900
+            600,
+            800
     );
     public static final Function<Location, PartialMonster> ZENITH = loc -> PartialMonster.fromCustomEntity(
             CustomZombie.class,
@@ -111,6 +111,26 @@ public class BossMob {
             0.5f,
             10,
             800,
-            1200
+            1000
+    );
+    public static final Function<Location, PartialMonster> JUDAS = loc -> PartialMonster.fromCustomEntity(
+            CustomZombie.class,
+            () -> new CustomZombie(((CraftWorld) loc.getWorld()).getHandle()),
+            (mob) -> {
+            },
+            "Judas",
+            loc,
+            new Utils.SimpleEntityEquipment(
+                    Utils.getPlayerSkull("4oot"),
+                    Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                    new ItemStack(Material.DIAMOND_LEGGINGS),
+                    Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
+                    new ItemStack(Material.DIAMOND_SPADE)
+            ),
+            50000,
+            0.5f,
+            20,
+            1500,
+            2000
     );
 }
