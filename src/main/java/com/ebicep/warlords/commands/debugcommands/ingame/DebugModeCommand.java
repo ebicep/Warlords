@@ -19,12 +19,12 @@ public class DebugModeCommand extends BaseCommand {
     @Description("Disables energy consumption, Disables cooldowns, and Prevents damage from being taken")
     public void debugMode(WarlordsPlayer warlordsPlayer) {
         if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
-            ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.RED + "Debug commands are disabled in public games!");
+            ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.RED + "Debug commands are disabled in public games!", true);
             return;
         }
         warlordsPlayer.setNoEnergyConsumption(true);
         warlordsPlayer.setDisableCooldowns(true);
         warlordsPlayer.setTakeDamage(false);
-        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
+        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!", true);
     }
 }

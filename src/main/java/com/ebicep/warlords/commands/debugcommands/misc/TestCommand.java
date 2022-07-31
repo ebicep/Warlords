@@ -25,7 +25,7 @@ public class TestCommand extends BaseCommand {
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
 
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed");
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }
 
     @CommandAlias("testgame")
@@ -42,7 +42,7 @@ public class TestCommand extends BaseCommand {
 //            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
 //            warlordsPlayer.addCurrency(10000000);
 
-        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed");
+        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }
 
     @HelpCommand

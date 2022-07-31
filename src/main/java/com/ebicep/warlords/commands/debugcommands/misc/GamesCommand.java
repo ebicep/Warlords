@@ -263,11 +263,11 @@ public class GamesCommand extends BaseCommand {
     @Subcommand("reload")
     @Description("Reloads game holograms")
     public void reload(CommandIssuer issuer) {
-        sendDebugMessage(issuer, ChatColor.GREEN + "Deleting Holograms");
+        sendDebugMessage(issuer, ChatColor.GREEN + "Deleting Holograms", true);
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Creating Holograms");
+        sendDebugMessage(issuer, ChatColor.GREEN + "Creating Holograms", true);
         previousGames.forEach(DatabaseGameBase::createHolograms);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Setting Visibility");
+        sendDebugMessage(issuer, ChatColor.GREEN + "Setting Visibility", true);
         Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
     }
 
@@ -278,22 +278,22 @@ public class GamesCommand extends BaseCommand {
         for (int i = 0; i < previousGames.size(); i++) {
             stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
         }
-        sendDebugMessage(issuer, stringBuilder.toString());
+        sendDebugMessage(issuer, stringBuilder.toString(), true);
     }
 
     @Subcommand("edit")
     @Conditions("database:game")
     @Description("Opens game editor from date")
     public void edit(Player player, String date) {
-        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date);
+        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date, true);
 
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.gameService.findByDate(date))
                 .syncLast(databaseGameBase -> {
                     if (databaseGameBase == null) {
-                        sendDebugMessage(player, ChatColor.RED + "Game not found");
+                        sendDebugMessage(player, ChatColor.RED + "Game not found", true);
                     } else {
-                        sendDebugMessage(player, ChatColor.GREEN + "Game found");
+                        sendDebugMessage(player, ChatColor.GREEN + "Game found", true);
                         openGameEditorMenu(player, databaseGameBase);
                     }
 
@@ -305,7 +305,7 @@ public class GamesCommand extends BaseCommand {
     @Description("Adds game to database")
     public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
+        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
         DatabaseGameBase.addGameToDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
@@ -314,7 +314,7 @@ public class GamesCommand extends BaseCommand {
     @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate());
+        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 

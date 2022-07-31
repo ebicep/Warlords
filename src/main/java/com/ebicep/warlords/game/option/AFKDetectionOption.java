@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.state.PlayingState;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -69,9 +69,9 @@ public class AFKDetectionOption implements Option, Listener {
                                         if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
                                             //hasnt moved for 12.5 seconds
                                             for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)");
-                                                PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                                Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                                Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)");
+                                                Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                             }
                                             game.addFrozenCause(ChatColor.AQUA + we.getName() + ChatColor.RED + " has been detected as AFK.");
                                             wasFrozen = true;
@@ -81,9 +81,9 @@ public class AFKDetectionOption implements Option, Listener {
                                     if (thirdLastLocation.equals(fourthLastLocation)) {
                                         //hasnt moved for 10 seconds
                                         for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)");
-                                            PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                            Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                            Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)");
+                                            Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                         }
                                     }
                                     continue;
@@ -91,9 +91,9 @@ public class AFKDetectionOption implements Option, Listener {
                                 if (secondLastLocation.equals(thirdLastLocation)) {
                                     //hasnt moved for 7.5 seconds
                                     for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                        PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                        PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)");
-                                        PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                        Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                        Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)");
+                                        Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                     }
                                 }
                                 continue;
@@ -101,9 +101,9 @@ public class AFKDetectionOption implements Option, Listener {
                             if (lastLocation.equals(secondLastLocation)) {
                                 //hasnt moved for 5 seconds
                                 for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
-                                    PermissionHandler.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                    Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
+                                    Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
+                                    Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                 }
                             }
                         }

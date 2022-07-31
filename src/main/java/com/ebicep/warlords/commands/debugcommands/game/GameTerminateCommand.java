@@ -43,7 +43,7 @@ public class GameTerminateCommand extends BaseCommand {
             }
             if (gamePredicate.test(gameHolder)) {
                 game.setNextState(new EndState(game, null));
-                ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"));
+                ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"), true);
             }
         }
         ChatCommand.sendDebugMessage(
@@ -51,15 +51,15 @@ public class GameTerminateCommand extends BaseCommand {
                 ChatColor.RED + "(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
                         inactiveGames.stream()
                                 .map(GameHolder::getName)
-                                .collect(Collectors.joining(", "))
-        );
+                                .collect(Collectors.joining(", ")),
+                true);
         ChatCommand.sendDebugMessage(
                 issuer,
                 ChatColor.RED + "(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
                         otherStateGames.stream()
                                 .map(gameHolder -> gameHolder.getName() + "(" + gameHolder.getGame().getState().getClass().getSimpleName() + ")")
-                                .collect(Collectors.joining(", "))
-        );
+                                .collect(Collectors.joining(", ")),
+                true);
     }
 
     @Default
@@ -70,7 +70,7 @@ public class GameTerminateCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 game.setNextState(new EndState(game, null));
-                ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName());
+                ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName(), true);
                 break;
             }
         }

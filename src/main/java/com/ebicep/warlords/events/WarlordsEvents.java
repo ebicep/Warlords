@@ -19,7 +19,7 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.Specializations;
@@ -58,7 +58,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.logging.Level;
 
 public class WarlordsEvents implements Listener {
 
@@ -610,46 +609,18 @@ public class WarlordsEvents implements Listener {
             e.setCancelled(true);
             return;
         }
-        try {
-            if (!Warlords.playerChatChannels.containsKey(uuid) || Warlords.playerChatChannels.get(uuid) == null) {
-                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-            }
 
-            String prefix = "";
-            ChatColor prefixColor = ChatColor.WHITE;
-
-            if (PermissionHandler.isDefault(player)) {
-                prefixColor = ChatColor.AQUA;
-                prefix = prefixColor + "";
-            } else if (PermissionHandler.isGameTester(player)) {
-                prefixColor = ChatColor.YELLOW;
-                prefix = prefixColor + "[T] ";
-            } else if (PermissionHandler.isGameStarter(player)) {
-                prefixColor = ChatColor.YELLOW;
-                prefix = prefixColor + "[GS] ";
-            } else if (PermissionHandler.isContentCreator(player)) {
-                prefixColor = ChatColor.LIGHT_PURPLE;
-                prefix = prefixColor + "[CT] ";
-            } else if (PermissionHandler.isCoordinator(player)) {
-                prefixColor = ChatColor.GOLD;
-                prefix = prefixColor + "[HGS] ";
-            } else if (PermissionHandler.isAdmin(player)) {
-                prefixColor = ChatColor.DARK_AQUA;
-                prefix = prefixColor + "[ADMIN] ";
-            } else {
-                System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
-            }
-
-            ChatChannels channel = Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL);
-            channel.onPlayerChatEvent(e, prefixColor, prefix);
-
-        } catch (Exception ex) {
-            Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
-            System.out.println("UUID: " + uuid);
-            System.out.println("Chat Channels: " + Warlords.playerChatChannels);
-            System.out.println("Player Chat Channel: " + Warlords.playerChatChannels.get(uuid));
-            System.out.println("Contains UUID: " + Warlords.playerChatChannels.containsKey(uuid));
+        if (!Warlords.playerChatChannels.containsKey(uuid) || Warlords.playerChatChannels.get(uuid) == null) {
+            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
         }
+
+        String prefixWithColor = Permissions.getPrefixWithColor(player);
+        if (prefixWithColor.equals(ChatColor.AQUA.toString())) {
+            System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
+        }
+
+        ChatChannels channel = Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL);
+        channel.onPlayerChatEvent(e, prefixWithColor);
     }
 
     @EventHandler

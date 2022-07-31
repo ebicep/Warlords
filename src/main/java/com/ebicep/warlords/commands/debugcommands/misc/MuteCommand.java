@@ -27,11 +27,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (mutedPlayers.getOrDefault(uuid, false)) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted", true);
             return;
         }
         mutedPlayers.put(uuid, true);
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name, true);
     }
 
     @CommandAlias("unmute")
@@ -41,11 +41,11 @@ public class MuteCommand extends BaseCommand {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         if (!mutedPlayers.getOrDefault(uuid, false)) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted", true);
             return;
         }
         mutedPlayers.put(uuid, false);
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name);
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name, true);
     }
 
     @CommandAlias("mutelist")
@@ -56,9 +56,9 @@ public class MuteCommand extends BaseCommand {
                 .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
                 .collect(Collectors.joining(","));
         if (mutedList.isEmpty()) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "There are no muted players", true);
         } else {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList);
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Muted Players: " + ChatColor.AQUA + mutedList, true);
         }
     }
 

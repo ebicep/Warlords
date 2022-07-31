@@ -20,10 +20,10 @@ public class RecordGamesCommand extends BaseCommand {
     public void recordGames(CommandIssuer issuer) {
         if (recordGames) {
             recordGames = false;
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "All games from now on will not be recorded!");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "All games from now on will not be recorded!", true);
         } else {
             recordGames = true;
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "All games from now on will be recorded!");
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "All games from now on will be recorded!", true);
         }
     }
 }

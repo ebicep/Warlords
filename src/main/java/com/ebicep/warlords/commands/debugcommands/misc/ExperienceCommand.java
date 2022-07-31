@@ -19,7 +19,7 @@ public class ExperienceCommand extends BaseCommand {
     @Subcommand("add")
     public CompletionStage<?> add(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
         return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Added " + amount + " universal experience to " + databasePlayer.getName());
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Added " + amount + " universal experience to " + databasePlayer.getName(), true);
             databasePlayer.setExperience(databasePlayer.getExperience() + amount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });
@@ -28,7 +28,7 @@ public class ExperienceCommand extends BaseCommand {
     @Subcommand("subtract")
     public CompletionStage<?> subtract(CommandIssuer issuer, DatabasePlayerFuture databasePlayerFuture, @Conditions("limits:min=0,max=10000") Integer amount) {
         return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Subtracted " + amount + " universal experience to " + databasePlayer.getName());
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Subtracted " + amount + " universal experience to " + databasePlayer.getName(), true);
             databasePlayer.setExperience(databasePlayer.getExperience() - amount);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });
