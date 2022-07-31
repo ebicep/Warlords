@@ -841,7 +841,7 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the Orb of Life has lived for 8 seconds.
-                            if (orb.getBukkitEntity().getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
+                            if (orb.getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
                                 orb.remove();
                                 itr.remove();
                             }
