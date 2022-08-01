@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense2.mobs2;
+package com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

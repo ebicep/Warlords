@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
+import com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes.Mob;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;

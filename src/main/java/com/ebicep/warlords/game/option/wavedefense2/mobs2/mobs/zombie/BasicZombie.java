@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.zombie;
 
 import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
-import com.ebicep.warlords.game.option.wavedefense2.mobs2.BasicMob;
+import com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

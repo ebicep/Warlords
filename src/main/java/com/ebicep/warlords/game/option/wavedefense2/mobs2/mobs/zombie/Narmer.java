@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.zombie;
 
 import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
-import com.ebicep.warlords.game.option.wavedefense2.mobs2.BossMob;
+import com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
