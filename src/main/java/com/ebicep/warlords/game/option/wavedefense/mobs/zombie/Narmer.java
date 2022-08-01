@@ -1,7 +1,8 @@
-package com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.zombie;
+package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
-import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
-import com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +37,12 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption2 waveDefenseOption) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+
+    }
+
+    @Override
+    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
         Bukkit.broadcastMessage(ChatColor.RED + "Narmer onDeath");
         dropItem();
     }

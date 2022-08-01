@@ -3,7 +3,7 @@ package com.ebicep.customentities.nms.pve;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -41,7 +41,7 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
     }
 
     @Override
-    public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption2 waveDefenseOption) {
+    public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         if (customMagmaCube.getSize() <= 6) return;
         for (int i = 0; i < 2; i++) {
             //TODO Custom class for this

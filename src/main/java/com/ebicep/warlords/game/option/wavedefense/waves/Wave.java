@@ -1,15 +1,13 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import org.bukkit.Location;
-
-import java.util.Random;
 
 public interface Wave {
 
-    PartialMonster spawnRandomMonster(Location loc, Random random);
+    AbstractMob<?> spawnRandomMonster(Location loc);
 
-    PartialMonster spawnMonster(Location loc);
+    AbstractMob<?> spawnMonster(Location loc);
 
     int getMonsterCount();
 

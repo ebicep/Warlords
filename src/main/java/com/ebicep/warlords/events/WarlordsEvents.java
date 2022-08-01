@@ -312,15 +312,17 @@ public class WarlordsEvents implements Listener {
                 }
 
                 if (wpAttacker instanceof WarlordsNPC) {
-                    wpVictim.addDamageInstance(
-                            wpAttacker,
-                            "",
-                            ((WarlordsNPC) wpAttacker).getMinMeleeDamage(),
-                            ((WarlordsNPC) wpAttacker).getMaxMeleeDamage(),
-                            -1,
-                            100,
-                            false
-                    );
+                    if (!(((WarlordsNPC) wpAttacker).getMinMeleeDamage() == 0)) {
+                        wpVictim.addDamageInstance(
+                                wpAttacker,
+                                "",
+                                ((WarlordsNPC) wpAttacker).getMinMeleeDamage(),
+                                ((WarlordsNPC) wpAttacker).getMaxMeleeDamage(),
+                                -1,
+                                100,
+                                false
+                        );
+                    }
                     wpAttacker.setHitCooldown(20);
                 } else {
                     wpVictim.addDamageInstance(

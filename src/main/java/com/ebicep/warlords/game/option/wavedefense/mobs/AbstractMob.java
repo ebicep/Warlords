@@ -1,12 +1,13 @@
-package com.ebicep.warlords.game.option.wavedefense2.mobs2;
+package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
-import com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.mobtypes.Mob;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.Mob;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import org.bukkit.Location;
@@ -83,7 +84,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
-        //TODO FIX
         mapper.apply(this.warlordsNPC);
         return this;
     }
@@ -92,7 +92,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void whileAlive();
 
-    public abstract void onDeath(Location deathLocation, WaveDefenseOption2 waveDefenseOption);
+    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver);
+
+    public abstract void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption);
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;

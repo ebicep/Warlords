@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import org.bukkit.Location;
 
 import java.util.Random;
@@ -11,15 +11,16 @@ public interface WaveList {
 
     Wave getWave(int wave, Random random);
 
+    // TODO Move to AbstractMob, will do later
     default WaveList prependMapper(BiFunction<Wave, Integer, Wave> mapper) {
         return (wave, random) -> mapper.apply(this.getWave(wave, random), wave);
     }
 
-    default WaveList prependEntityMapper(BiFunction<WarlordsEntity, Integer, WarlordsEntity> mapper) {
+    default WaveList prependEntityMapper(BiFunction<WarlordsNPC, Integer, WarlordsNPC> mapper) {
         return prependMapper((w, counter) -> new DelegatingWave(w) {
             @Override
-            public PartialMonster spawnRandomMonster(Location loc, Random random) {
-                return super.spawnRandomMonster(loc, random).prependOperation(e -> mapper.apply(e, counter));
+            public AbstractMob<?> spawnRandomMonster(Location loc) {
+                return super.spawnRandomMonster(loc).prependOperation(e -> mapper.apply(e, counter));
             }
 
         });

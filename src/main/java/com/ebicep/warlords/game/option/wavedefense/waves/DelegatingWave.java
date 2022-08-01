@@ -1,9 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import org.bukkit.Location;
-
-import java.util.Random;
 
 public class DelegatingWave implements Wave {
 
@@ -14,12 +12,12 @@ public class DelegatingWave implements Wave {
     }
 
     @Override
-    public PartialMonster spawnRandomMonster(Location loc, Random random) {
-        return w.spawnRandomMonster(loc, random);
+    public AbstractMob<?> spawnRandomMonster(Location loc) {
+        return w.spawnRandomMonster(loc);
     }
 
     @Override
-    public PartialMonster spawnMonster(Location loc) {
+    public AbstractMob<?> spawnMonster(Location loc) {
         return w.spawnMonster(loc);
     }
 

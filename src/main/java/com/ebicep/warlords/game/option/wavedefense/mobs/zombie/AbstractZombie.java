@@ -1,7 +1,7 @@
-package com.ebicep.warlords.game.option.wavedefense2.mobs2.mobs.zombie;
+package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
 import com.ebicep.customentities.nms.pve.CustomZombie;
-import com.ebicep.warlords.game.option.wavedefense2.mobs2.AbstractMob;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import org.bukkit.Location;
 import org.bukkit.inventory.EntityEquipment;
 

@@ -1,22 +1,23 @@
 package com.ebicep.warlords.game.option.wavedefense.waves;
 
-import com.ebicep.warlords.game.option.wavedefense.PartialMonster;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static com.ebicep.warlords.game.option.wavedefense.mobs.Mobs.BASIC_ZOMBIE;
 
 public class SimpleWave implements Wave {
-    
+
     private int delay;
     private double totalWeight;
-    private final List<Pair<Double, Function<Location, PartialMonster>>> entries = new ArrayList<>();
+    private final List<Pair<Double, Mobs>> entries = new ArrayList<>();
     private final int count;
     private final String message;
     private MobTier mobTier;
@@ -34,44 +35,44 @@ public class SimpleWave implements Wave {
         this.mobTier = mobTier;
     }
 
-    public SimpleWave add(Function<Location, PartialMonster> factory) {
+    public SimpleWave add(Mobs factory) {
         return add(entries.isEmpty() ? 1 : totalWeight / entries.size(), factory);
     }
 
-    public SimpleWave add(double baseWeight, Function<Location, PartialMonster> factory) {
+    public SimpleWave add(double baseWeight, Mobs factory) {
         totalWeight += baseWeight;
         entries.add(new Pair<>(baseWeight, factory));
         return this;
     }
 
     @Override
-    public PartialMonster spawnRandomMonster(Location loc, Random random) {
-        double index = random.nextDouble() * totalWeight;
-        for (Pair<Double, Function<Location, PartialMonster>> entry : entries) {
+    public AbstractMob<?> spawnRandomMonster(Location loc) {
+        double index = ThreadLocalRandom.current().nextDouble() * totalWeight;
+        for (Pair<Double, Mobs> entry : entries) {
             if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
                 loc.getWorld().spigot().strikeLightningEffect(loc, false);
             }
             if (index < entry.getA()) {
-                return entry.getB().apply(loc);
+                return entry.getB().createMob.apply(loc);
             }
             index -= entry.getA();
         }
-        return PartialMonster.fromEntity("No monsters", WarlordsNPC.spawnZombieNoAI(loc, null));
+        return BASIC_ZOMBIE.createMob.apply(loc);
     }
 
     @Override
-    public PartialMonster spawnMonster(Location loc) {
+    public AbstractMob<?> spawnMonster(Location loc) {
         double index = totalWeight;
-        for (Pair<Double, Function<Location, PartialMonster>> entry : entries) {
+        for (Pair<Double, Mobs> entry : entries) {
             if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
                 loc.getWorld().spigot().strikeLightningEffect(loc, false);
             }
             if (index < entry.getA()) {
-                return entry.getB().apply(loc);
+                return entry.getB().createMob.apply(loc);
             }
             index -= entry.getA();
         }
-        return PartialMonster.fromEntity("No monsters", WarlordsNPC.spawnZombieNoAI(loc, null));
+        return BASIC_ZOMBIE.createMob.apply(loc);
     }
 
     @Override
