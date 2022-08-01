@@ -79,6 +79,10 @@ public class GuildManager {
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
     }
 
+    public static boolean hasInviteFromGuild(Player invited, Guild guild) {
+        return INVITES.contains(new GuildInvite(invited.getUniqueId(), guild));
+    }
+
     public static Optional<Guild> getGuildFromInvite(Player player, String guildName) {
         return INVITES.stream()
                 .filter(invite ->

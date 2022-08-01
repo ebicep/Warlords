@@ -68,7 +68,7 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("menu")
     @Description("Opens the guild menu")
     public void menu(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper) {
-        GuildMenu.openGuildMenu(guildPlayerWrapper.getGuild(), player);
+        GuildMenu.openGuildMenu(guildPlayerWrapper.getGuild(), player, 1);
     }
 
     @CommandAlias("gl")
@@ -88,7 +88,19 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "You cannot invite yourself to your own guild.");
             return;
         }
+        if (guild.getPlayerMatchingUUID(target.getUniqueId()).isPresent()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "That player is already in your guild.");
+            return;
+        }
+        if (GuildManager.hasInviteFromGuild(target, guild)) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "That player has already been invited to your guild.");
+            return;
+        }
         GuildManager.addInvite(player, target, guild);
+        Guild.sendGuildMessage(player,
+                ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
+                        ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
+        );
     }
 
     @Subcommand("mute")

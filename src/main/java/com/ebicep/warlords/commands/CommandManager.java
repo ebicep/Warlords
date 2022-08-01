@@ -358,16 +358,16 @@ public class CommandManager {
     public static void registerConditions() {
         manager.getCommandConditions().addCondition("database", command -> {
             if (!DatabaseManager.enabled) {
-                throw new ConditionFailedException(ChatColor.RED + "The database is not enabled!");
+                throw new ConditionFailedException(ChatColor.RED + "The database is currently disabled!");
             }
             if (command.hasConfig("player") && DatabaseManager.playerService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Player database is currently disabled");
+                throw new ConditionFailedException(ChatColor.RED + "Player database is currently disabled!");
             }
             if (command.hasConfig("game") && DatabaseManager.gameService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Games are currently disabled");
+                throw new ConditionFailedException(ChatColor.RED + "Games are currently disabled!");
             }
             if (command.hasConfig("guild") && DatabaseManager.guildService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "Guilds are current disabled");
+                throw new ConditionFailedException(ChatColor.RED + "Guilds are current disabled!");
             }
         });
         manager.getCommandConditions().addCondition("bot", command -> {
