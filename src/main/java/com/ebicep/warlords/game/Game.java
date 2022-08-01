@@ -64,21 +64,21 @@ public final class Game implements Runnable, AutoCloseable {
     private final GameMode gameMode;
     @Nonnull
     private final EnumSet<GameAddon> addons;
+    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private final LocationFactory locations;
+    private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
     @Nonnull
     private List<Option> options;
-
     @Nullable
     private State state = null;
     @Nullable
     private State nextState = null;
     private boolean closed = false;
-    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
     private boolean unfreezeCooldown = false;
     private int maxPlayers;
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
-    private final LocationFactory locations;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
@@ -307,7 +307,7 @@ public final class Game implements Runnable, AutoCloseable {
      * <code>null</code>
      *
      * @param player The player to check
-     * @param team The team to check, of null for spectators
+     * @param team   The team to check, of null for spectators
      * @return True if the player is in the specified team
      */
     public boolean isOnTeam(@Nonnull UUID player, @Nullable Team team) {
@@ -370,10 +370,11 @@ public final class Game implements Runnable, AutoCloseable {
         Warlords.addPlayer(entity);
         return entity;
     }
+
     /**
      * Adds a player into the game
      *
-     * @param player The player to add
+     * @param player      The player to add
      * @param asSpectator If the player should be added as an spectator
      * @see #acceptsPeople()
      * @see #acceptsSpectators()
@@ -477,8 +478,11 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.keySet().stream().map(Warlords::getPlayer).filter(Objects::nonNull);
     }
 
-    public Stream<WarlordsEntity> warlordsPlayers() {
-        return this.players.keySet().stream().map(Warlords::getPlayer).filter(WarlordsPlayer.class::isInstance);
+    public Stream<WarlordsPlayer> warlordsPlayers() {
+        return this.players.keySet().stream()
+                .map(Warlords::getPlayer)
+                .filter(WarlordsPlayer.class::isInstance)
+                .map(WarlordsPlayer.class::cast);
     }
 
     public Stream<Map.Entry<UUID, Team>> players() {
@@ -522,9 +526,9 @@ public final class Game implements Runnable, AutoCloseable {
     public Stream<Map.Entry<Player, Team>> onlinePlayers() {
         return players()
                 .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getPlayer(e.getKey()),
-                e.getValue()
-        )).filter(e -> e.getKey() != null);
+                        Bukkit.getPlayer(e.getKey()),
+                        e.getValue()
+                )).filter(e -> e.getKey() != null);
     }
 
     public Stream<UUID> spectators() {
@@ -597,13 +601,12 @@ public final class Game implements Runnable, AutoCloseable {
     public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
         this.registerGameMarker(ScoreboardHandler.class, handler);
     }
-    private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
 
     /**
      * Registers a gamemarker.
      *
-     * @param <T> The type of gamemarker to register
-     * @param clazz The clazz of the type
+     * @param <T>    The type of gamemarker to register
+     * @param clazz  The clazz of the type
      * @param object The actual object to register
      * @throws IllegalStateException when the game has been closed
      */
@@ -620,7 +623,7 @@ public final class Game implements Runnable, AutoCloseable {
     /**
      * Gets the list of all registered game markers for a specified
      *
-     * @param <T> The type to return
+     * @param <T>   The type to return
      * @param clazz A class instance of the requested marker
      * @return The requested list, or Collections.EMPTY_LIST if none is found
      */
@@ -643,7 +646,7 @@ public final class Game implements Runnable, AutoCloseable {
      * @param task The task to register
      * @return The task itself
      * @throws IllegalStateException when the game has been closed (this also
-     * directly calls the cancel function)
+     *                               directly calls the cancel function)
      */
     @Nonnull
     public BukkitTask registerGameTask(@Nonnull BukkitTask task) {
@@ -797,10 +800,10 @@ public final class Game implements Runnable, AutoCloseable {
                 + ",\nacceptsPlayers=" + acceptsPlayers
                 + ",\nacceptsSpectators=" + acceptsSpectators
                 + ",\ngameMarkers=" + gameMarkers
-                        .entrySet()
-                        .stream()
-                        .map(e -> e.getKey().getSimpleName()+ ": " + e.getValue().stream().map(Object::toString).collect(Collectors.joining("\n\t\t", "\n\t\t", "")))
-                        .collect(Collectors.joining("\n\t", "\n\t", ""))
+                .entrySet()
+                .stream()
+                .map(e -> e.getKey().getSimpleName() + ": " + e.getValue().stream().map(Object::toString).collect(Collectors.joining("\n\t\t", "\n\t\t", "")))
+                .collect(Collectors.joining("\n\t", "\n\t", ""))
                 + ",\nlocations=" + locations
                 + "\n}";
     }

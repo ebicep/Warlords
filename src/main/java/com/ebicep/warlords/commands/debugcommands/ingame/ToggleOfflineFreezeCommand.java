@@ -1,41 +1,20 @@
 package com.ebicep.warlords.commands.debugcommands.ingame;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class ToggleOfflineFreezeCommand implements CommandExecutor {
+@CommandAlias("offlinefreeze")
+@CommandPermission("warlords.game.toggleofflinefreeze")
+public class ToggleOfflineFreezeCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.isOp()) {
-            return true;
-        }
-
-        if (args.length == 0) {
-            return true;
-        }
-
-        String arg = args[0];
-        switch (arg) {
-            case "enable":
-                GameFreezeWhenOfflineOption.enabled = true;
-                sender.sendMessage(ChatColor.GREEN + "Offline Freeze is now enabled.");
-                break;
-            case "disable":
-                GameFreezeWhenOfflineOption.enabled = false;
-                sender.sendMessage(ChatColor.RED + "Offline Freeze is now disabled.");
-                break;
-        }
-
-        return true;
+    @Default
+    @CommandCompletion("@enabledisable")
+    public void toggleOfflineFreeze(CommandIssuer issuer, @Values("@enabledisable") String option) {
+        GameFreezeWhenOfflineOption.enabled = option.equals("enable");
+        issuer.sendMessage((GameFreezeWhenOfflineOption.enabled ? ChatColor.GREEN : ChatColor.RED) + "Offline Freeze is now " + option + "d.");
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("offlinefreeze").setExecutor(this);
-    }
 }

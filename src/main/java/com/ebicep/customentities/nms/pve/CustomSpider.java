@@ -1,6 +1,7 @@
 package com.ebicep.customentities.nms.pve;
 
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpider> {
 
@@ -12,6 +13,10 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
 //        this.goalSelector.a(4, new PathfinderGoalSpiderMeleeAttack(this, EntityHuman.class));
 //        this.targetSelector.a(2, new PathfinderGoalSpiderNearestAttackableTarget<>(this, EntityHuman.class));
+    }
+
+    public CustomSpider(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
     }
 
     @Override

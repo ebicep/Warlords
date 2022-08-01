@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -15,8 +16,12 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
     public CustomSkeleton(World world) {
         super(world);
         resetAI(world);
-        //giveBaseAI(1.2, 1.0);
+        giveBaseAI(1.2, 1.0);
         this.goalSelector.a(2, pathfinderGoalFireAtPlayer);
+    }
+
+    public CustomSkeleton(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
     }
 
     @Override

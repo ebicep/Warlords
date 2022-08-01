@@ -1,5 +1,7 @@
 package com.ebicep.warlords.party;
 
+import com.ebicep.warlords.util.java.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -7,29 +9,41 @@ import java.util.UUID;
 
 public class PartyManager {
 
-    private final List<Party> parties = new ArrayList<>();
+    public static final List<Party> PARTIES = new ArrayList<>();
 
-    public List<Party> getParties() {
-        return parties;
+    public static void disbandParty(Party party) {
+        PARTIES.remove(party);
     }
 
-    public void disbandParty(Party party) {
-        parties.remove(party);
+    public static Optional<Party> getPartyFromLeaderName(String name) {
+        return PARTIES.stream().filter(party -> party.getLeaderName().equals(name)).findFirst();
     }
 
-    public Optional<Party> getPartyFromLeader(UUID uuid) {
-        return parties.stream().filter(party -> party.getPartyLeader().getUuid().equals(uuid)).findFirst();
+    public static Pair<Party, PartyPlayer> getPartyAndPartyFromLeader(UUID uuid) {
+        for (Party party : PARTIES) {
+            if (party.getPartyLeader().getUUID().equals(uuid)) {
+                return new Pair<>(party, party.getPartyLeader());
+            }
+        }
+        return null;
     }
 
-    public Optional<Party> getPartyFromAny(UUID uuid) {
-        return parties.stream().filter(party -> party.getPartyPlayers().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid))).findFirst();
+    public static Pair<Party, PartyPlayer> getPartyAndPartyPlayerFromAny(UUID uuid) {
+        for (Party party : PARTIES) {
+            for (PartyPlayer partyPlayer : party.getPartyPlayers()) {
+                if (partyPlayer.getUUID().equals(uuid)) {
+                    return new Pair<>(party, partyPlayer);
+                }
+            }
+        }
+        return null;
     }
 
-    public boolean inAParty(UUID uuid) {
-        return parties.stream().anyMatch(party -> party.hasUUID(uuid));
+    public static boolean inAParty(UUID uuid) {
+        return PARTIES.stream().anyMatch(party -> party.hasUUID(uuid));
     }
 
-    public boolean inSameParty(UUID uuid1, UUID uuid2) {
-        return parties.stream().anyMatch(party -> party.hasUUID(uuid1) && party.hasUUID(uuid2));
+    public static boolean inSameParty(UUID uuid1, UUID uuid2) {
+        return PARTIES.stream().anyMatch(party -> party.hasUUID(uuid1) && party.hasUUID(uuid2));
     }
 }

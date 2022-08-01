@@ -1,48 +1,23 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Locale;
+@CommandAlias("class")
+@CommandPermission("warlords.game.changeclass")
+public class ClassCommand extends BaseCommand {
 
-public class ClassCommand implements CommandExecutor {
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.changeclass")) {
-            return true;
-        }
-
-        Player player = BaseCommand.requirePlayerOutsideGame(sender);
-        if (player != null) {
-            PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
-            if (args.length != 0) {
-                try {
-                    Specializations selectedSpec = Specializations.valueOf(args[0].toUpperCase(Locale.ROOT));
-                    settings.setSelectedSpec(selectedSpec);
-                } catch (IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Specializations.values()));
-                    return true;
-                }
-            }
-
-            Specializations selected = settings.getSelectedSpec();
-            player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + selected);
-        }
-        return true;
+    @Default
+    @Description("Change your class")
+    public void changeClass(@Conditions("outsideGame") Player player, Specializations spec) {
+        PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
+        settings.setSelectedSpec(spec);
+        player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + spec);
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("class").setExecutor(this);
-        //instance.getCommand("class").setTabCompleter(this);
-    }
 }

@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
@@ -82,7 +82,7 @@ public class RegularGamesMenu {
         for (RegularGamePlayer p : teamPlayers) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(p.getUuid());
             if (offlinePlayer.getPlayer() != null) {
-                if (PermissionHandler.isGameStarter(offlinePlayer.getPlayer()) || offlinePlayer.getPlayer().isOp()) {
+                if (Permissions.isGameStarter(offlinePlayer.getPlayer()) || offlinePlayer.getPlayer().isOp()) {
                     uuidsWithPerms.add(p.getUuid());
                 }
             }

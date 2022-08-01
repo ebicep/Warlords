@@ -89,6 +89,12 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findByUUID(uuid, collection);
     }
 
+    //@Cacheable(cacheResolver = "cacheResolver", key = "#result?.uuid", unless = "#result == null")
+    @Override
+    public DatabasePlayer findByNameIgnoreCase(String name) {
+        return playerRepository.findByNameIgnoreCase(name);
+    }
+
     @Override
     public List<DatabasePlayer> findAll() {
         return playerRepository.findAll();

@@ -1,51 +1,27 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.Bukkit;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.game.Game;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class FindPlayerCommand implements CommandExecutor {
+import java.util.stream.Collectors;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+@CommandAlias("findplayer")
+public class FindPlayerCommand extends BaseCommand {
 
-        if (!sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
-            return true;
-        }
+    @Default
+    @CommandCompletion("@gameplayers")
+    @Description("Finds a player by name")
+    public void findPlayer(CommandIssuer issuer, @Conditions("requireGame") @Values("@gameplayers") Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        boolean isSpectator = game.spectators().collect(Collectors.toList()).contains(player.getUniqueId());
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Found player " + ChatColor.RED + player.getName() + (isSpectator ? ChatColor.GREEN + " (Spectating)" : " (Playing)") + ChatColor.GREEN + " in game " + ChatColor.RED + game.getGameId(), true);
 
-        if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Invalid Arguments! Enter player name");
-            return true;
-        }
-
-        String targetPlayer = args[0];
-        Player player = Bukkit.getPlayer(targetPlayer);
-
-        if (player == null) {
-            sender.sendMessage(ChatColor.RED + "That player does not exist!");
-            return true;
-        }
-
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-
-        if (warlordsPlayer == null) {
-            sender.sendMessage(ChatColor.RED + "That player is not in a game!");
-            return true;
-        }
-
-        sender.sendMessage(ChatColor.GREEN + player.getName() + " is in game - " + warlordsPlayer.getGame().getGameId().toString());
-
-
-        return true;
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("findplayer").setExecutor(this);
-    }
 }

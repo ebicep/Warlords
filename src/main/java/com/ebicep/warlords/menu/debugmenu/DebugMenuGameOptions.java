@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
@@ -259,7 +260,7 @@ public class DebugMenuGameOptions {
                         } else {
                             game.addFrozenCause("Debug");
                         }
-                        System.out.println("[DEBUG] " + player.getName() + " froze game " + game.getGameId());
+                        sendDebugMessage(player, player.getName() + " froze game " + game.getGameId(), true);
                     });
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
@@ -303,8 +304,7 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         timerDebugAble.skipTimer();
-                        player.sendMessage(ChatColor.RED + "DEV: " + ChatColor.GREEN + "Timer skipped");
-                        System.out.println("[DEBUG] " + player.getName() + " skip timer of game " + game.getGameId());
+                        sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId(), true);
                     }
             );
             menu.setItem(5, 1,
@@ -326,8 +326,7 @@ public class DebugMenuGameOptions {
                                             throw new Exception();
                                         }
                                         ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                        player.sendMessage(ChatColor.RED + "DEV: " + ChatColor.GREEN + "Timer set to " + time);
-                                        System.out.println("[DEBUG] " + player.getName() + " set timer of game " + game.getGameId() + " to " + time);
+                                        sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time, true);
                                     } catch (Exception exception) {
                                         p.sendMessage(ChatColor.RED + "Invalid time");
                                     }
@@ -362,8 +361,7 @@ public class DebugMenuGameOptions {
                                         throw new NumberFormatException();
                                     }
                                     game.setPoints(team, score);
-                                    player.sendMessage(ChatColor.RED + "DEV: " + ChatColor.GREEN + "Score of team " + team.getName() + " set to " + score);
-                                    System.out.println("[DEBUG] " + player.getName() + " set score of team " + team.getName() + " to " + score);
+                                    sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score, true);
                                 } catch (NumberFormatException exception) {
                                     p.sendMessage(ChatColor.RED + "Invalid score");
                                 }

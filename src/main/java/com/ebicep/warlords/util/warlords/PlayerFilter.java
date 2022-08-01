@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -304,7 +305,7 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public static PlayerFilter playingGameWarlordsPlayers(@Nonnull Game game) {
-        return new PlayerFilter(game.warlordsPlayers());
+        return new PlayerFilter(game.warlordsPlayers().map(WarlordsPlayer.class::cast));
     }
 
     @Nonnull

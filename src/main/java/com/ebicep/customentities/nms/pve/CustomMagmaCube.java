@@ -1,23 +1,20 @@
 package com.ebicep.customentities.nms.pve;
 
-import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import net.minecraft.server.v1_8_R3.EntityMagmaCube;
 import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.entity.LivingEntity;
-
-import java.util.UUID;
 
 public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<CustomMagmaCube> {
+
+    private final int flameHitbox = 6;
 
     public CustomMagmaCube(World world) {
         super(world);
         setSize(7);
+    }
+
+    public CustomMagmaCube(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
     }
 
     //jump
@@ -30,32 +27,6 @@ public class CustomMagmaCube extends EntityMagmaCube implements CustomEntity<Cus
     @Override
     protected void bH() {
 
-    }
-
-    @Override
-    public void onDeath(CustomMagmaCube customMagmaCube, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        if (customMagmaCube.getSize() <= 6) return;
-        for (int i = 0; i < 2; i++) {
-            CustomMagmaCube babyMagmaCube = new CustomMagmaCube(((CraftWorld) deathLocation.getWorld()).getHandle());
-            babyMagmaCube.setSize(customMagmaCube.getSize() - 1);
-            babyMagmaCube.spawn(deathLocation);
-            WarlordsNPC entity = new WarlordsNPC(
-                    UUID.randomUUID(),
-                    "Illusion Illuminati",
-                    Weapons.ABBADON,
-                    (LivingEntity) babyMagmaCube.getBukkitEntity(),
-                    waveDefenseOption.getGame(),
-                    Team.RED,
-                    Specializations.BERSERKER,
-                    2500,
-                    0.5f,
-                    0,
-                    50,
-                    100
-            );
-            waveDefenseOption.getEntities().add(entity);
-            waveDefenseOption.getGame().addNPC(entity);
-        }
     }
 
     @Override

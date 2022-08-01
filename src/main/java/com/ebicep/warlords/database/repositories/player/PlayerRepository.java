@@ -13,4 +13,6 @@ public interface PlayerRepository extends MongoRepository<DatabasePlayer, String
     @Query("{uuid:'?0'}")
     DatabasePlayer findByUUID(UUID uuid);
 
+    DatabasePlayer findByNameIgnoreCase(String name);
+
 }

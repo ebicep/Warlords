@@ -93,7 +93,7 @@ public class Guild {
 
     public void kick(GuildPlayer guildPlayer) {
         this.players.removeIf(player -> player.getUUID().equals(guildPlayer.getUUID()));
-        sendMessageToOnlinePlayers(ChatColor.AQUA + guildPlayer.getName() + ChatColor.RED + " has been kicked from the guild!", true);
+        sendMessageToOnlinePlayers(ChatColor.AQUA + guildPlayer.getName() + ChatColor.RED + " was kicked from the guild!", true);
         queueUpdate();
     }
 
@@ -183,6 +183,15 @@ public class Guild {
             }
         }
         return null;
+    }
+
+    public boolean hasUUID(UUID uuid) {
+        for (GuildPlayer guildPlayer : players) {
+            if (guildPlayer.getUUID().equals(uuid)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getName() {

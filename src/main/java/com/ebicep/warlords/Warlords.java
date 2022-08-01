@@ -11,37 +11,25 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
-import com.ebicep.jda.queuesystem.QueueCommand;
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.classes.rogue.specs.Apothecary;
-import com.ebicep.warlords.commands.debugcommands.game.*;
-import com.ebicep.warlords.commands.debugcommands.ingame.*;
-import com.ebicep.warlords.commands.debugcommands.misc.*;
-import com.ebicep.warlords.commands.miscellaneouscommands.*;
+import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
-import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.game.option.wavedefense.EditCurrencyCommand;
-import com.ebicep.warlords.game.option.wavedefense.SkipWaveCommand;
-import com.ebicep.warlords.guilds.GuildCommand;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
-import com.ebicep.warlords.party.PartyCommand;
 import com.ebicep.warlords.party.PartyListener;
-import com.ebicep.warlords.party.PartyManager;
-import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -51,7 +39,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
@@ -81,6 +68,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -89,15 +77,14 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 public class Warlords extends JavaPlugin {
 
     public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
-    public static final PartyManager partyManager = new PartyManager();
     private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
     private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
     public static String VERSION = "";
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
     public static boolean citizensEnabled;
-    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
-    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
+    public static ConcurrentHashMap<UUID, ChatChannels> playerChatChannels = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<UUID, CustomScoreboard> playerScoreboards = new ConcurrentHashMap<>();
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -107,7 +94,6 @@ public class Warlords extends JavaPlugin {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
     }
 
-    public Location npcCTFLocation;
     private GameManager gameManager;
 
     public static Warlords getInstance() {
@@ -321,7 +307,8 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
 
-        registerCommands();
+        CommandManager.init(this);
+//        registerCommands();
 
         HeadUtils.updateHeads();
 
@@ -409,11 +396,14 @@ public class Warlords extends JavaPlugin {
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
 
+        /*
         for (String command : this.getDescription().getCommands().keySet()) {
             if (getCommand(command).getExecutor() == this) {
                 getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[Warlords] Warning, command " + command + " is specified in plugin.yml, but not defined in the plugins");
             }
         }
+
+         */
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
@@ -426,9 +416,11 @@ public class Warlords extends JavaPlugin {
         }
         try {
             //updates all queues, locks main thread to ensure update is complete before disabling
-            DatabaseManager.updateQueue();
-            DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
-            GuildManager.updateGuilds();
+            if (DatabaseManager.enabled) {
+                DatabaseManager.updateQueue();
+                DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                GuildManager.updateGuilds();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -961,50 +953,13 @@ public class Warlords extends JavaPlugin {
     }
 
     private void registerCommands() {
-        new GameStartCommand().register(this);
-        new GameTerminateCommand().register(this);
-        new PrivateGameTerminateCommand().register(this);
-        new GameKillCommand().register(this);
-        new GameListCommand().register(this);
-        new MenuCommand().register(this);
-        new ShoutCommand().register(this);
-        new HotkeyModeCommand().register(this);
-        new DebugCommand().register(this);
-        new ClassCommand().register(this);
-        new GetPlayersCommand().register(this);
-        new TestCommand().register(this);
-        new ParticleQualityCommand().register(this);
-        new SpawnTestDummyCommand().register(this);
-        new PartyCommand().register(this);
-        new StreamCommand().register(this);
-        new RecordAverageDamageCommand().register(this);
-        new ChatChannelCommand().register(this);
-        new BotCommands().register(this);
-        new LeaderboardCommand().register(this);
-        new RecordGamesCommand().register(this);
-        new GamesCommand().register(this);
-        new SpectateCommand().register(this);
-        new DebugModeCommand().register(this);
-        new MyLocationCommand().register(this);
-        new MessageCommand().register(this);
-        new ExperienceCommand().register(this);
-        new QueueCommand().register(this);
-        new ImposterCommand().register(this);
-        new LobbyCommand().register(this);
-        new DiscordCommand().register(this);
-        new PollCommand().register(this);
-        new AchievementsCommand().register(this);
-        new FindPlayerCommand().register(this);
-        new MuteCommand().register(this);
-        new ResourcepackCommand().register(this);
-        new GetPlayerLastAbilityStatsCommand().register(this);
-        new ToggleAFKDetectionCommand().register(this);
-        new ServerStatusCommand().register(this);
-        new UnstuckCommand().register(this);
-        new ToggleOfflineFreezeCommand().register(this);
-        new SkipWaveCommand().register(this);
-        new EditCurrencyCommand().register(this);
-        new GuildCommand().register(this);
+//        new PartyCommand().register(this);
+//        new StreamCommand().register(this);
+//        new BotCommands().register(this);
+//        new LeaderboardCommand().register(this);
+//        new SkipWaveCommand().register(this);
+//        new EditCurrencyCommand().register(this);
+//        new GuildCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {

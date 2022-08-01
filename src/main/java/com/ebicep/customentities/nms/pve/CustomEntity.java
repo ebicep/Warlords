@@ -1,8 +1,12 @@
 package com.ebicep.customentities.nms.pve;
 
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public interface CustomEntity<T extends EntityInsentient> {
@@ -87,8 +91,9 @@ public interface CustomEntity<T extends EntityInsentient> {
         }
     }
 
-
     default void spawn(Location location) {
+        EffectUtils.playCylinderAnimation(location, 1.05, ParticleEffect.SPELL_WITCH, 1);
+        Utils.playGlobalSound(location, Sound.GHAST_FIREBALL, 1.5f, 0.25f);
         T customEntity = get();
         customEntity.setPosition(location.getX(), location.getY(), location.getZ());
         customEntity.setCustomNameVisible(true);
@@ -97,10 +102,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void onDeath(T entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-
     }
 
     T get();
-
-
 }

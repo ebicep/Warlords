@@ -1,5 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -7,29 +13,22 @@ import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
 import java.util.EnumSet;
 import java.util.OptionalInt;
 
 import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
-public class GameListCommand implements CommandExecutor {
+@CommandAlias("gamelist")
+@CommandPermission("warlords.game.list")
+public class GameListCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.hasPermission("warlords.game.list")) {
-            sender.sendMessage("§cYou do not have permission to do that.");
-            return true;
-        }
-        
-        for(GameHolder holder : Warlords.getGameManager().getGames()) {
+    @Default
+    @Description("Lists all games")
+    public void listGames(CommandIssuer issuer) {
+        for (GameHolder holder : Warlords.getGameManager().getGames()) {
             StringBuilder message = new StringBuilder();
-            message
-                    .append(ChatColor.GRAY).append("[")
+            message.append(ChatColor.GRAY).append("[")
                     .append(ChatColor.AQUA).append(holder.getName())
                     .append(ChatColor.GRAY).append("|")
                     .append(ChatColor.AQUA).append(toTitleHumanCase(holder.getMap().name()));
@@ -45,15 +44,14 @@ public class GameListCommand implements CommandExecutor {
                 EnumSet<GameAddon> addons = game.getAddons();
                 if (!addons.isEmpty()) {
                     message.append(ChatColor.GRAY).append('(');
-                    for(GameAddon addon : addons) {
+                    for (GameAddon addon : addons) {
                         message.append(ChatColor.GREEN).append(addon.name());
                         message.append(ChatColor.GRAY).append(',');
                     }
                     message.setLength(message.length() - 1);
                     message.append("] ");
                 }
-                message
-                        .append(ChatColor.GOLD).append(game.getState().getClass().getSimpleName())
+                message.append(ChatColor.GOLD).append(game.getState().getClass().getSimpleName())
                         .append(ChatColor.GRAY).append(" [ ")
                         .append(ChatColor.GREEN).append(game.getPlayers().size())
                         .append(ChatColor.GRAY).append("/")
@@ -66,14 +64,8 @@ public class GameListCommand implements CommandExecutor {
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 message.append(time).append(word);
             }
-                    
-            sender.sendMessage(message.toString());
+            issuer.sendMessage(message.toString());
         }
-
-        return true;
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("gamelist").setExecutor(this);
-    }
 }

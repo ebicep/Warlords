@@ -1,16 +1,17 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -18,35 +19,8 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
-public class SpectateCommand implements CommandExecutor {
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        Player player = BaseCommand.requirePlayerOutsideGame(sender);
-        if (player != null) {
-            if (!Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().acceptsSpectators())) {
-                sender.sendMessage(ChatColor.RED + "There are no active games right now!");
-                return true;
-            }
-
-            Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
-            if (currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
-                sender.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
-                return true;
-            }
-
-            openSpectateMenu(player);
-
-            return true;
-        }
-
-        return true;
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("spectate").setExecutor(this);
-    }
+@CommandAlias("spectate")
+public class SpectateCommand extends BaseCommand {
 
     public static void openSpectateMenu(Player player) {
         Menu menu = new Menu("Current Games", 9 * 3);
@@ -100,7 +74,6 @@ public class SpectateCommand implements CommandExecutor {
         }
 
 
-
         Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
         if (currentGame.isPresent()) {
             menu.setItem(
@@ -121,5 +94,15 @@ public class SpectateCommand implements CommandExecutor {
         }
 
         menu.openForPlayer(player);
+    }
+
+    @Default
+    @Description("Opens the spectate menu")
+    public void spectate(@Conditions("outsideGame") Player player) {
+        if (Warlords.getGameManager().getGames().stream().noneMatch(e -> e.getGame() != null && e.getGame().acceptsSpectators())) {
+            player.sendMessage(ChatColor.RED + "There are no active games right now!");
+            return;
+        }
+        openSpectateMenu(player);
     }
 }

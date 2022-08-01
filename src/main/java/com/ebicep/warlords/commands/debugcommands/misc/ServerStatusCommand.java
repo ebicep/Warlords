@@ -1,42 +1,27 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class ServerStatusCommand implements CommandExecutor {
+@CommandAlias("serverstatus")
+@CommandPermission("warlords.game.serverstatus")
+public class ServerStatusCommand extends BaseCommand {
 
     public static boolean enabled = true;
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.isOp()) {
-            return true;
+    @Default
+    @CommandCompletion("@enabledisable")
+    @Description("Enables/Disables server status")
+    public void serverStatus(CommandIssuer issuer, @Values("@enabledisable") String option) {
+        ServerStatusCommand.enabled = option.equals("enable");
+        if (ServerStatusCommand.enabled) {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Server status is now enabled.", true);
+        } else {
+            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "Server status is now disabled.", true);
         }
-
-        if (args.length == 0) {
-            return true;
-        }
-
-        switch (args[0]) {
-            case "toggle": {
-                enabled = !enabled;
-                if (enabled) {
-                    sender.sendMessage(ChatColor.GREEN + "Server status is now enabled.");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Server status is now disabled.");
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("serverstatus").setExecutor(this);
     }
 
 }

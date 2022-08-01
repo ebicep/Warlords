@@ -1,41 +1,20 @@
 package com.ebicep.warlords.commands.debugcommands.ingame;
 
-import com.ebicep.warlords.Warlords;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.option.AFKDetectionOption;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 
-public class ToggleAFKDetectionCommand implements CommandExecutor {
+@CommandAlias("afkdetection")
+@CommandPermission("warlords.game.toggleafkdetection")
+public class ToggleAFKDetectionCommand extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-
-        if (!sender.isOp()) {
-            return true;
-        }
-
-        if (args.length == 0) {
-            return true;
-        }
-
-        String arg = args[0];
-        switch (arg) {
-            case "enable":
-                AFKDetectionOption.enabled = true;
-                sender.sendMessage(ChatColor.GREEN + "AFK detection is now enabled.");
-                break;
-            case "disable":
-                AFKDetectionOption.enabled = false;
-                sender.sendMessage(ChatColor.RED + "AFK detection is now disabled.");
-                break;
-        }
-
-        return true;
+    @Default
+    @CommandCompletion("@enabledisable")
+    public void toggleAFKDetection(CommandIssuer issuer, @Values("@enabledisable") String option) {
+        AFKDetectionOption.enabled = option.equals("enable");
+        issuer.sendMessage((AFKDetectionOption.enabled ? ChatColor.GREEN : ChatColor.RED) + "AFK Detection is now " + option + "d.");
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("afkdetection").setExecutor(this);
-    }
 }

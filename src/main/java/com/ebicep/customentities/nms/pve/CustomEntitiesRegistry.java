@@ -28,7 +28,7 @@ public enum CustomEntitiesRegistry {
     //    ENDER_DRAGON("EnderDragon", 63, EntityEnderDragon.class, CustomEnderDragon.class),
 //    WITHER("WitherBoss", 64, EntityWither.class, CustomWither.class),
 //    BAT("Bat", 65, EntityBat.class, CustomBat.class),
-//    WITCH("Witch", 66, EntityWitch.class, CustomWitch.class),
+    WITCH("Witch", 66, EntityWitch.class, CustomWitch.class),
 //    ENDERMITE("Endermite", 67, EntityEndermite.class, CustomEndermite.class),
     GUARDIAN("Guardian", 68, EntityGuardian.class, CustomGuardian.class),
 //    SHULKER("Shulker", 69, EntityShulker.class, CustomShulker.class),
@@ -37,7 +37,7 @@ public enum CustomEntitiesRegistry {
 //    COW("Cow", 92, EntityCow.class, CustomCow.class),
 //    CHICKEN("Chicken", 93, EntityChicken.class, CustomChicken.class),
 //    SQUID("Squid", 94, EntitySquid.class, CustomSquid.class),
-//    WOLF("Wolf", 95, EntityWolf.class, CustomWolf.class),
+    WOLF("Wolf", 95, EntityWolf.class, CustomWolf.class),
 //    MOOSHROOM("MushroomCow", 96, EntityMushroomCow.class, CustomMooshroom.class),
 //    SNOWMAN("SnowMan", 97, EntitySnowman.class, CustomSnowman.class),
 //    OCELOT("Ocelot", 98, EntityOcelot.class, CustomOcelot.class),
@@ -45,7 +45,6 @@ public enum CustomEntitiesRegistry {
 //    HORSE("Horse", 100, EntityHorse.class, CustomHorse.class),
 //    RABBIT("Rabbit", 101, EntityRabbit.class, CustomRabbit.class),
 //    VILLAGER("Villager", 120, EntityVillager.class, CustomVillager.class),
-
 
     ;
 

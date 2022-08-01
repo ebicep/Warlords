@@ -1,6 +1,7 @@
 package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -17,10 +18,10 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
-    public static List<AbstractPoll<?>> polls = new ArrayList<>();
+    public static final List<AbstractPoll<?>> POLLS = new ArrayList<>();
 
     public static Optional<AbstractPoll<?>> getPoll(String pollID) {
-        return AbstractPoll.polls.stream().filter(p -> AbstractPoll.getPollID(p).equals(pollID)).findAny();
+        return AbstractPoll.POLLS.stream().filter(p -> AbstractPoll.getPollID(p).equals(pollID)).findAny();
     }
 
     public static String getPollID(AbstractPoll<?> poll) {
@@ -42,7 +43,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     }
 
     public void init() {
-        AbstractPoll.polls.add(this);
+        AbstractPoll.POLLS.add(this);
         id = AbstractPoll.getPollID(this);
 
         sendPollAnnouncement(true);
@@ -56,7 +57,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                     sendPollResults();
                     onPollEnd();
 
-                    AbstractPoll.polls.remove(AbstractPoll.this);
+                    AbstractPoll.POLLS.remove(AbstractPoll.this);
                     this.cancel();
                 } else {
                     if (!infiniteVotingTime) {
@@ -96,7 +97,12 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                 player.spigot().sendMessage(message);
             }
             if (!infiniteVotingTime) {
-                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - " + id);
+                player.spigot().sendMessage(
+                        new TextComponent(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - "),
+                        new TextComponentBuilder(ChatColor.YELLOW + id)
+                                .setClickEvent(ClickEvent.Action.SUGGEST_COMMAND, id)
+                                .getTextComponent()
+                );
             } else {
                 player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
             }

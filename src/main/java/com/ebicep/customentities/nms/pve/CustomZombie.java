@@ -1,9 +1,8 @@
 package com.ebicep.customentities.nms.pve;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import net.minecraft.server.v1_8_R3.EntityZombie;
 import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class CustomZombie extends EntityZombie implements CustomEntity<CustomZombie> {
 
@@ -16,18 +15,8 @@ public class CustomZombie extends EntityZombie implements CustomEntity<CustomZom
         giveBaseAI();
     }
 
-    @Override
-    public void onDeath(CustomZombie entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        //test
-        /*WarlordsEntity we = Warlords.getPlayer(this.getBukkitEntity());
-        if (we != null) {
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(we, 20, 20, 20)
-                    .aliveEnemiesOf(we)
-            ) {
-                enemy.addDamageInstance(we, "Test", 500, 500, -1, 100, false);
-            }
-        }*/
+    public CustomZombie(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
     }
 
     @Override

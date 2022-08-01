@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -33,6 +33,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 
 public abstract class DatabaseGameBase {
 
@@ -141,11 +143,11 @@ public abstract class DatabaseGameBase {
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
 
             //sending message if player information remained the same
-            for (WarlordsEntity value : PlayerFilter.playingGame(game)) {
+            for (WarlordsEntity value : PlayerFilter.playingGameWarlordsPlayers(game)) {
                 if (updatePlayerStats) {
-                    PermissionHandler.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
+                    Permissions.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
                 } else {
-                    PermissionHandler.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                    Permissions.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database but player information remained the same");
                 }
 
             }
@@ -163,12 +165,12 @@ public abstract class DatabaseGameBase {
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             if (player != null) {
-                player.sendMessage(ChatColor.GREEN + "Game Found");
+                sendDebugMessage(player, ChatColor.GREEN + "Game Found", true);
             }
             //if not counted then update player stats then set counted to true, else do nothing
             if (!databaseGame.isCounted()) {
                 if (player != null) {
-                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                 }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, true);
                 databaseGame.setCounted(true);
@@ -176,17 +178,17 @@ public abstract class DatabaseGameBase {
             }
         } else {
             if (player != null) {
-                player.sendMessage(ChatColor.GREEN + "Game Not Found");
+                sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
             }
             //game not in database then add game and update player stats if counted
             if (databaseGame.isCounted()) {
                 if (player != null) {
-                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                 }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, true);
             }
             if (player != null) {
-                player.sendMessage(ChatColor.GREEN + "Creating Game");
+                sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
             }
             //only add game if comps
             //if (databaseGame.isPrivate) {
@@ -205,12 +207,12 @@ public abstract class DatabaseGameBase {
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
             if (player != null) {
-                player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
             }
             //if counted then remove player stats then set counted to false, else do nothing
             if (databaseGame.isCounted()) {
                 if (player != null) {
-                    player.sendMessage(ChatColor.GREEN + "Updating Player Stats");
+                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                 }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, false);
                 databaseGame.setCounted(false);
@@ -218,7 +220,7 @@ public abstract class DatabaseGameBase {
             }
         } else { //else game not in database then do nothing
             if (player != null) {
-                player.sendMessage(ChatColor.GREEN + "Game Not Found");
+                sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
             }
         }
     }

@@ -214,6 +214,14 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 0,
                 masterBranchItem(masterUpgrade),
                 (m, e) -> {
+                    if (
+                        !treeA.stream().allMatch(Upgrade::isUnlocked) ||
+                        !treeB.stream().allMatch(Upgrade::isUnlocked) ||
+                        !treeC.stream().allMatch(Upgrade::isUnlocked)
+                    ) {
+                        player.sendMessage(ChatColor.RED + "You need to unlock a full upgrade branch before unlocking the master upgrade!");
+                        return;
+                    }
                     if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
                         player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
                         return;

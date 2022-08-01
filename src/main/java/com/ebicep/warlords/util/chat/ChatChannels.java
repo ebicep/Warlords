@@ -1,15 +1,181 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPermissions;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public enum ChatChannels {
 
-    ALL("All", null),
-    PARTY("Party", ChatColor.BLUE),
-    GUILD("Guild", ChatColor.GREEN),
+    DEBUG("Debug",
+            ChatColor.RED
+    ) {
+        @Override
+        public String getFormat(Player player, String prefixWithColor) {
+            return getColoredName() + CHAT_ARROW + getChatFormat(prefixWithColor);
+        }
+
+        @Override
+        public void setRecipients(Player player, Set<Player> players) {
+            players.removeIf(p -> !Permissions.isAdmin(player) && !p.equals(player));
+        }
+
+        @Override
+        public void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor) {
+            Player player = e.getPlayer();
+            e.setFormat(getFormat(player, prefixWithColor));
+            setRecipients(player, e.getRecipients());
+        }
+    },
+    ALL("All",
+            null
+    ) {
+        @Override
+        public String getFormat(Player player, String prefixWithColor) {
+            UUID uuid = player.getUniqueId();
+            WarlordsEntity wp = Warlords.getPlayer(player);
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
+
+            if (wp != null) {
+                return wp.getTeam().teamColor() + "[" +
+                        wp.getTeam().prefix() + "]" +
+                        ChatColor.DARK_GRAY + "[" +
+                        ChatColor.GOLD + wp.getSpec().getClassNameShort() +
+                        ChatColor.DARK_GRAY + "][" +
+                        ChatColor.GRAY + (level < 10 ? "0" : "") + level +
+                        ChatColor.DARK_GRAY + "][" +
+                        playerSettings.getSelectedSpec().specType.getColoredSymbol() +
+                        ChatColor.DARK_GRAY + "] " +
+                        (wp.isDead() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
+                        getChatFormat(prefixWithColor);
+            } else {
+                return ChatColor.DARK_GRAY + "[" +
+                        ChatColor.GOLD + Specializations.getClass(playerSettings.getSelectedSpec()).name.toUpperCase().substring(0, 3) +
+                        ChatColor.DARK_GRAY + "][" +
+                        ChatColor.GRAY + (level < 10 ? "0" : "") + level +
+                        ChatColor.DARK_GRAY + "]" +
+                        ExperienceManager.getPrestigeLevelString(player.getUniqueId(), playerSettings.getSelectedSpec()) +
+                        ChatColor.DARK_GRAY + "[" +
+                        playerSettings.getSelectedSpec().specType.getColoredSymbol() +
+                        ChatColor.DARK_GRAY + "] " +
+                        getChatFormat(prefixWithColor);
+            }
+        }
+
+        @Override
+        public void setRecipients(Player player, Set<Player> players) {
+            WarlordsEntity wp = Warlords.getPlayer(player);
+
+            if (wp != null) {
+                if (!(wp.getGame().getState() instanceof EndState)) {
+                    players.removeIf(p -> wp.getGame().getPlayerTeam(p.getUniqueId()) != wp.getTeam());
+                }
+            } else {
+                players.removeIf(Warlords::hasPlayer);
+            }
+        }
+
+        @Override
+        public void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor) {
+            Player player = e.getPlayer();
+            e.setFormat(getFormat(player, prefixWithColor));
+            setRecipients(player, e.getRecipients());
+        }
+    },
+    PARTY("Party",
+            ChatColor.BLUE
+    ) {
+        @Override
+        public String getFormat(Player player, String prefixWithColor) {
+            return getColoredName() + CHAT_ARROW + getChatFormat(prefixWithColor);
+        }
+
+        @Override
+        public void setRecipients(Player player, Set<Player> players) {
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            if (partyPlayerPair != null) {
+                players.retainAll(partyPlayerPair.getA().getAllPartyPeoplePlayerOnline());
+            }
+        }
+
+        @Override
+        public void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor) {
+            Player player = e.getPlayer();
+            UUID uuid = player.getUniqueId();
+
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+            if (partyPlayerPair != null) {
+                e.setFormat(getFormat(player, prefixWithColor));
+                setRecipients(player, e.getRecipients());
+            } else {
+                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
+                e.setCancelled(true);
+            }
+        }
+    },
+    GUILD("Guild",
+            ChatColor.GREEN
+    ) {
+        @Override
+        public String getFormat(Player player, String prefixWithColor) {
+            return getColoredName() + CHAT_ARROW + getChatFormat(prefixWithColor);
+        }
+
+        @Override
+        public void setRecipients(Player player, Set<Player> players) {
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair != null) {
+                players.retainAll(guildPlayerPair.getA().getOnlinePlayers());
+            }
+        }
+
+        @Override
+        public void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor) {
+            Player player = e.getPlayer();
+            UUID uuid = player.getUniqueId();
+
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair != null) {
+                if (guildPlayerPair.getA().isMuted() && !guildPlayerPair.getA().playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
+                    player.sendMessage(ChatColor.RED + "The guild is currently muted.");
+                    e.setCancelled(true);
+                    return;
+                }
+                e.setFormat(getFormat(player, prefixWithColor));
+                setRecipients(player, e.getRecipients());
+            } else {
+                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
+                e.setCancelled(true);
+            }
+        }
+    },
 
     ;
 
+    public static final String CHAT_ARROW = ChatColor.DARK_GRAY + " > ";
     public final String name;
     public final ChatColor chatColor;
 
@@ -18,7 +184,66 @@ public enum ChatChannels {
         this.chatColor = chatColor;
     }
 
+    public static void playerSendMessage(Player player, String message) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.chat(message);
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
+    }
+
+    /**
+     * @param player          Sender of the message
+     * @param message         Message to send
+     * @param chatChannel     Channel to send the message to
+     * @param asyncPlayerChat If true, the message will be sent through async player.chat(message) calling AsyncPlayerChatEvent.
+     *                        If false, the message will be sent synchronously through player.sendMessage(message) to each online player.
+     */
+    public static void playerSendMessage(Player player, String message, ChatChannels chatChannel, boolean asyncPlayerChat) {
+        if (asyncPlayerChat) {
+            UUID uuid = player.getUniqueId();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    ChatChannels oldChatChannel = Warlords.playerChatChannels.getOrDefault(uuid, ALL);
+                    Warlords.playerChatChannels.put(uuid, chatChannel == null ? ALL : chatChannel);
+                    player.chat(message);
+                    Warlords.playerChatChannels.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
+                }
+            }.runTaskAsynchronously(Warlords.getInstance());
+        } else {
+            try {
+                String formattedMessage = String.format(chatChannel.getFormat(player, Permissions.getPrefixWithColor(player)), player.getName(), message);
+                Set<Player> players = new HashSet<>(Bukkit.getOnlinePlayers());
+                chatChannel.setRecipients(player, players);
+                for (Player recipient : players) {
+                    recipient.sendMessage(formattedMessage);
+                }
+                Bukkit.getServer().getConsoleSender().sendMessage(formattedMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void switchChannels(Player player, ChatChannels chatChannel) {
+        Warlords.playerChatChannels.put(player.getUniqueId(), chatChannel);
+        player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name() + ChatColor.GREEN + " channel");
+    }
+
+    public static String getChatFormat(String prefixWithColor) {
+        return prefixWithColor + "%1$s" + ChatColor.WHITE + ": %2$s";
+    }
+
+    public abstract String getFormat(Player player, String prefixWithColor);
+
+    public abstract void setRecipients(Player player, Set<Player> players);
+
+    public abstract void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor);
+
     public String getColoredName() {
         return chatColor + name;
     }
+
 }

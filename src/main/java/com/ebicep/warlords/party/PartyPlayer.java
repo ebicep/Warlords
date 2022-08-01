@@ -23,11 +23,11 @@ public class PartyPlayer {
         return ChatColor.GREEN + " ● ";
     }
 
-    public UUID getUuid() {
+    public UUID getUUID() {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUUID(UUID uuid) {
         this.uuid = uuid;
     }
 

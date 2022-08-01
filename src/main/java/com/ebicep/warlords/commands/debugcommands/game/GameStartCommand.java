@@ -1,34 +1,35 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
+import co.aikar.commands.BaseCommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.util.warlords.Utils.*;
 
-public class GameStartCommand implements TabExecutor {
+public class GameStartCommand extends BaseCommand {
 
     @Nullable
-    private static GameManager.QueueEntryBuilder buildQueue(@Nonnull List<? extends OfflinePlayer> people, @Nonnull CommandSender sender, @Nonnull String[] args) {
+    private static GameManager.QueueEntryBuilder buildQueue(@Nonnull List<? extends OfflinePlayer> people, @Nonnull Player player, @Nonnull String[] args) {
         GameMap map = null;
         GameMode category = null;
         EnumSet<GameAddon> addon = EnumSet.of(GameAddon.PRIVATE_GAME);
-        ArrayList<OfflinePlayer> selectedPeople = null;
+        //ArrayList<OfflinePlayer> selectedPeople = null;
+        ArrayList<OfflinePlayer> selectedPeople = new ArrayList<>(Bukkit.getOnlinePlayers());
 
         GameMap[] maps = GameMap.values();
         GameMode[] categories = GameMode.values();
@@ -44,16 +45,16 @@ public class GameStartCommand implements TabExecutor {
                 GameMode foundCategory = arrayGetItem(categories, e -> e.name().equalsIgnoreCase(arg));
                 GameAddon foundAddon = arrayGetItem(addons, e -> e.name().equalsIgnoreCase(arg));
                 if ((foundMap == null ? 0 : 1) + (foundCategory == null ? 0 : 1) + (foundAddon == null ? 0 : 1) > 1) {
-                    sender.sendMessage(ChatColor.RED + "Vague option: " + arg);
+                    sendDebugMessage(player, ChatColor.RED + "Vague option: " + arg, false);
                     isValid = false;
                     if (foundMap != null) {
-                        sender.sendMessage("Prepend map: to specify the map with this name");
+                        sendDebugMessage(player, ChatColor.RED + "Prepend map: to specify the map with this name", false);
                     }
                     if (foundCategory != null) {
-                        sender.sendMessage("Prepend category: to specify the category with this name");
+                        sendDebugMessage(player, ChatColor.RED + "Prepend category: to specify the category with this name", false);
                     }
                     if (foundAddon != null) {
-                        sender.sendMessage("Prepend addon: to specify the addon with this name");
+                        sendDebugMessage(player, ChatColor.RED + "Prepend addon: to specify the addon with this name", false);
                     }
                 } else if (foundMap != null) {
                     map = foundMap;
@@ -68,7 +69,7 @@ public class GameStartCommand implements TabExecutor {
                         addon.add(foundAddon);
                     }
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Invalid addon! " + arg);
+                    sendDebugMessage(player, ChatColor.RED + "Invalid addon! " + arg, false);
                     isValid = false;
                 }
             } else {
@@ -82,7 +83,7 @@ public class GameStartCommand implements TabExecutor {
                         } else if (argData.equalsIgnoreCase("null")) {
                             map = null;
                         } else {
-                            sender.sendMessage(ChatColor.RED + "Map not found: " + argData);
+                            sendDebugMessage(player, ChatColor.RED + "Map not found: " + argData, false);
                             isValid = false;
                         }
                         seenMapOrCategory = true;
@@ -94,7 +95,7 @@ public class GameStartCommand implements TabExecutor {
                         } else if (argData.equalsIgnoreCase("null")) {
                             category = null;
                         } else {
-                            sender.sendMessage(ChatColor.RED + "Category not found: " + argData);
+                            sendDebugMessage(player, ChatColor.RED + "Category not found: " + argData, false);
                             isValid = false;
                         }
                         seenMapOrCategory = true;
@@ -110,15 +111,15 @@ public class GameStartCommand implements TabExecutor {
                         } else if (argData.equalsIgnoreCase("null")) {
                             addon = EnumSet.noneOf(GameAddon.class);
                         } else {
-                            sender.sendMessage(ChatColor.RED + "Addon not found: " + argData);
+                            sendDebugMessage(player, ChatColor.RED + "Addon not found: " + argData, false);
                             isValid = false;
                         }
                         break;
                     case "player":
                     case "players":
                     case "offline-player":
-                        if (!sender.hasPermission("warlords.game.start.players")) {
-                            sender.sendMessage("You do not have permissions to invite players outside your party: " + arg);
+                        if (!player.hasPermission("warlords.game.start.players")) {
+                            sendDebugMessage(player, ChatColor.RED + "You do not have permissions to invite players outside your party: " + arg, false);
                             isValid = false;
                             continue;
                         }
@@ -134,23 +135,23 @@ public class GameStartCommand implements TabExecutor {
                         } else if (length <= 16) {
                             p = Bukkit.getPlayer(argData);
                             if (p == null) {
-                                sender.sendMessage(ChatColor.RED + "Player not online: " + argData + " specify offline-player:<uuid> to target offline players");
+                                sendDebugMessage(player, ChatColor.RED + "Player not online: " + argData + " specify offline-player:<uuid> to target offline players", false);
                                 isValid = false;
                             }
                         } else if (length == 32 || length == 36) {
                             try {
                                 UUID id = UUID.fromString(length == 32 ? argData.replaceFirst(
-                                    "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+                                        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
                                 ) : argData);
                                 p = allowOfflinePlayer ? Bukkit.getOfflinePlayer(id) : Bukkit.getPlayer(id);
                             } catch (IllegalArgumentException e) {
                                 p = null;
-                                sender.sendMessage(ChatColor.RED + "Invalid UUID: " + argData);
+                                sendDebugMessage(player, ChatColor.RED + "Invalid UUID: " + argData, false);
                                 isValid = false;
                             }
                         } else {
                             p = null;
-                            sender.sendMessage(ChatColor.RED + "Invalid name/UUID: " + argData);
+                            sendDebugMessage(player, ChatColor.RED + "Invalid name/UUID: " + argData, false);
                             isValid = false;
                         }
                         if (p != null) {
@@ -161,23 +162,23 @@ public class GameStartCommand implements TabExecutor {
                         }
                         break;
                     default:
-                        sender.sendMessage(ChatColor.RED + "Unknown option type: " + argType + " in " + arg);
+                        sendDebugMessage(player, ChatColor.RED + "Unknown option type: " + argType + " in " + arg, false);
                         isValid = false;
                 }
             }
         }
         if (category != null && map != null && !map.getGameModes().contains(category)) {
-            sender.sendMessage(ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.values()));
+            sendDebugMessage(player, ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.values()), false);
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
-            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this.");
+            sendDebugMessage(player, ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this.", false);
             isValid = false;
         }
 
         for (GameAddon a : addon) {
-            if (!a.hasPermission(sender)) {
-                sender.sendMessage(ChatColor.RED + "You do not have the permission to use addon: " + Utils.toTitleCase(a.name()));
+            if (!a.hasPermission(player)) {
+                sendDebugMessage(player, ChatColor.RED + "You do not have the permission to use addon: " + Utils.toTitleCase(a.name()), false);
                 isValid = false;
             }
         }
@@ -186,18 +187,18 @@ public class GameStartCommand implements TabExecutor {
             return null;
         }
 
-        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Requesting a game with the following parameters:");
+        sendDebugMessage(player, ChatColor.GREEN + "Requesting a game with the following parameters:", false);
         if (category != null) {
-            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + toTitleHumanCase(category.name()));
+            sendDebugMessage(player, ChatColor.GRAY + "- Category: " + ChatColor.RED + toTitleHumanCase(category.name()), false);
         }
         if (map != null) {
-            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(map.name()));
+            sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(map.name()), false);
         }
         if (!addon.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
+            sendDebugMessage(player, ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")), false);
         }
         if (selectedPeople != null) {
-            sender.sendMessage(ChatColor.GRAY + "- Players: " + ChatColor.RED + selectedPeople.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
+            sendDebugMessage(player, ChatColor.GRAY + "- Players: " + ChatColor.RED + selectedPeople.stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")), false);
         }
         return Warlords.getGameManager()
                 .newEntry(selectedPeople == null ? people : selectedPeople)
@@ -206,25 +207,28 @@ public class GameStartCommand implements TabExecutor {
                 .setRequestedGameAddons(addon);
     }
 
-    public static void startGame(Player sender, String[] args, boolean excludeStarter) {
-        Optional<Party> party = Warlords.partyManager.getPartyFromAny(sender.getUniqueId());
+    public static void startGame(Player player, String[] args, boolean excludeStarter) {
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
 
-        List<Player> people = new ArrayList<>(party
-                .map(Party::getAllPartyPeoplePlayerOnline)
-                .orElseGet(() -> Collections.singletonList(sender)));
-        if (excludeStarter) {
-            people.removeIf(player -> player.getUniqueId().equals(sender.getUniqueId()));
-        }
-        if (party.isPresent()) {
-            if (!party.get().getPartyLeader().getUuid().equals(sender.getUniqueId())) {
-                sender.sendMessage(ChatColor.RED + "You are not the party leader");
+        List<Player> people;
+        if (partyPlayerPair != null) {
+            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
+                sendDebugMessage(player, ChatColor.RED + "You are not the party leader", false);
                 return;
-            } else if (!party.get().allOnlineAndNoAFKs()) {
-                sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
+            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
+                sendDebugMessage(player, ChatColor.RED + "All party members must be online or not afk", false);
                 return;
             }
+            people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
+            if (excludeStarter) {
+                people.removeIf(p -> p.getUniqueId().equals(player.getUniqueId()));
+            }
+        } else {
+            people = Collections.singletonList(player);
         }
-        final GameManager.QueueEntryBuilder queueEntry = buildQueue(people, sender, args);
+
+
+        final GameManager.QueueEntryBuilder queueEntry = buildQueue(people, player, args);
         if (queueEntry == null) {
             return;
         }
@@ -234,100 +238,20 @@ public class GameStartCommand implements TabExecutor {
                 .queueNow();
         Game game = result.getB();
         if (game == null) {
-            sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine failed to find a game server suiteable for your request:");
-            sender.sendMessage(ChatColor.GRAY + result.getA().toString());
+            sendDebugMessage(player, ChatColor.RED + "Engine failed to find a game server suitable for your request:", false);
+            sendDebugMessage(player, ChatColor.GRAY + result.getA().toString(), false);
         } else {
-            sender.sendMessage(
-                    ChatColor.RED + "DEV:" +
-                            ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-                            " a game with the following parameters:"
-            );
-            sender.sendMessage(ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
-            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap().getMapName()));
-            sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
-            sender.sendMessage(ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
-            sender.sendMessage(ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());
-            sender.sendMessage(ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
-            sender.sendMessage(ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
+            sendDebugMessage(player,
+                    ChatColor.GREEN + "Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
+                            " a game with the following parameters:",
+                    false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId(), false);
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        System.out.println(sender.getName() + " tried to use start command");
-        sender.sendMessage(ChatColor.RED + "This command is disabled, use the " + (sender.hasPermission("warlords.game.debug") ? "emerald" : "blaze powder") + " to start a game.");
-        return true;
-//        Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
-//
-//        List<Player> people = party
-//                .map(Party::getAllPartyPeoplePlayerOnline)
-//                .orElseGet(() -> sender instanceof Player ? Collections.singletonList((Player)sender) : new ArrayList<>(Bukkit.getOnlinePlayers()));
-//        if (party.isPresent()) {
-//            if (!party.get().getPartyLeader().getUuid().equals(((Player) sender).getUniqueId())) {
-//                sender.sendMessage(ChatColor.RED + "You are not the party leader");
-//                return true;
-//            } else if (!party.get().allOnlineAndNoAFKs()) {
-//                sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
-//                return true;
-//            }
-//        }
-//        final GameManager.QueueEntryBuilder queueEntry = buildQueue(people, sender, args);
-//        if (queueEntry == null) {
-//            return true;
-//        }
-//
-//        Pair<GameManager.QueueResult, Game> result = queueEntry
-//                .setPriority(-10)
-//                .queueNow();
-//        Game game = result.getB();
-//        if (game == null) {
-//            sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine failed to find a game server suiteable for your request:");
-//            sender.sendMessage(ChatColor.GRAY + result.getA().toString());
-//        } else {
-//            sender.sendMessage(
-//                    ChatColor.RED + "DEV:" +
-//                            ChatColor.GRAY + " Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
-//                            " a game with the following parameters:"
-//            );
-//            sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()));
-//            sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + toTitleHumanCase(game.getMap()));
-//            sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
-//            sender.sendMessage(ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers());
-//            sender.sendMessage(ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers());
-//            sender.sendMessage(ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople());
-//            sender.sendMessage(ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId());
-//        }
-//        return true;
-    }
-
-    public Stream<String> prefixedEnum(Enum<?>[] list, String prefix) {
-        return Stream.concat(
-                Stream.of(prefix + ":NULL"),
-                Stream.concat(
-                        Stream.of(list).map(e -> toTitleCase(e.name())),
-                        Stream.of(list).map(e -> prefix + ":" + toTitleCase(e.name()))
-                )
-        );
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-        return new ArrayList<>();
-//        Stream.of(
-//                        prefixedEnum(GameMap.values(), "map"),
-//                        prefixedEnum(GameAddon.values(), "addon"),
-//                        prefixedEnum(GameMode.values(), "category"),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getName()),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
-//                        Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId()),
-//                        Stream.of("players:*")
-//                ).flatMap(Function.identity())
-//                .filter(e -> startsWithIgnoreCase(e, args[args.length - 1]))
-//                .collect(Collectors.toList());
-    }
-
-    public void register(Warlords instance) {
-        instance.getCommand("start").setExecutor(this);
-        instance.getCommand("start").setTabCompleter(this);
     }
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.menu.Menu.*;
 
 public class DebugMenuTeamOptions {
@@ -56,11 +57,13 @@ public class DebugMenuTeamOptions {
         });
         menu.setItem(3, 0, killTeam, (m, e) -> {
             bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
+            sendDebugMessage(player, ChatColor.GREEN + "Killed all blue players", true);
         });
         menu.setItem(5, 0, redInfo, (m, e) -> {
         });
         menu.setItem(8, 0, killTeam, (m, e) -> {
             redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
+            sendDebugMessage(player, ChatColor.GREEN + "Killed all red players", true);
         });
 
         //players

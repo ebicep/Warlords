@@ -1,34 +1,90 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.GameMode;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Predicate;
 
-public class GameKillCommand extends GameTargetCommand implements TabExecutor {
+@CommandAlias("killgame")
+@CommandPermission("warlords.game.kill")
+public class GameKillCommand extends BaseCommand {
 
-    @Override
-    protected void doAction(CommandSender sender, Collection<GameHolder> gameInstances) {
-        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Requesting engine to kill games...");
-        if (gameInstances.isEmpty()) {
-            sender.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + "No valid targets found!");
-            return;
-        }
-        for (GameHolder holder : gameInstances) {
-            if (holder.getGame() == null) {
-                sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "The game is not active now");
+    public static void killGameMatching(CommandIssuer issuer, Predicate<GameHolder> gamePredicate, String from) {
+        List<String> skippedGames = new ArrayList<>();
+        for (GameHolder gameHolder : Warlords.getGameManager().getGames()) {
+            if (gameHolder.getGame() == null) {
+                skippedGames.add(gameHolder.getName());
                 continue;
             }
-            holder.forceEndGame();
-            sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "Terminated");
+            if (gamePredicate.test(gameHolder)) {
+                gameHolder.forceEndGame();
+                ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " - " + gameHolder.getMap() + " - " + gameHolder.getGame().playersCount() + " players", true);
+            }
+        }
+        ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "(" + skippedGames.size() + ") Skipped inactive kill game from " + from + ": " + skippedGames, true);
+    }
+
+    @Default
+    @Description("Kills your current game")
+    public void killGame(@Conditions("requireGame") Player player) {
+        Game playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (GameHolder game : Warlords.getGameManager().getGames()) {
+            if (Objects.equals(game.getGame(), playerGame)) {
+                game.forceEndGame();
+                ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Killed own game " + game.getName(), true);
+                break;
+            }
         }
     }
 
-    public void register(Warlords instance) {
-        instance.getCommand("killgame").setExecutor(this);
-        instance.getCommand("killgame").setTabCompleter(this);
+    @Subcommand("all")
+    @CommandPermission("warlords.game.end.remote")
+    @Description("Kill all games")
+    public void killAllGames(CommandIssuer issuer) {
+        for (GameHolder game : Warlords.getGameManager().getGames()) {
+            game.forceEndGame();
+        }
+        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed all games", true);
+    }
+
+    @Subcommand("map")
+    @CommandPermission("warlords.game.end.remote")
+    @Description("Kill all games matching map")
+    public void killGameFromMap(CommandIssuer issuer, GameMap map) {
+        killGameMatching(issuer, game -> Objects.equals(game.getGame().getMap(), map), "MAP");
+    }
+
+    @Subcommand("gamemode")
+    @CommandPermission("warlords.game.end.remote")
+    @Description("Kill all games matching gamemode")
+    public void killGameFromGameMode(CommandIssuer issuer, GameMode gameMode) {
+        killGameMatching(issuer, game -> Objects.equals(game.getGame().getGameMode(), gameMode), "GAMEMODE");
+    }
+
+    @Subcommand("gameid")
+    @CommandCompletion("@gameids")
+    @CommandPermission("warlords.game.end.remote")
+    @Description("Kill all games with matching id")
+    public void killGameFromGameId(CommandIssuer issuer, @Values("@gameids") UUID uuid) {
+        killGameMatching(issuer, game -> Objects.equals(game.getGame().getGameId(), uuid), "GAMEID");
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.showHelp();
     }
 }

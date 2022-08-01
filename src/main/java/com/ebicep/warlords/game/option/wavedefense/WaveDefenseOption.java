@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -10,18 +10,18 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
+import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
+import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,14 +38,13 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
-    private final Set<WarlordsEntity> entities = new HashSet<>();
+    private final Set<AbstractMob<?>> mobs = new HashSet<>();
     private int waveCounter = 0;
     private int maxWave = 10000;
     private int spawnCount = 0;
     private Wave currentWave;
     private final Team team;
     private final WaveList waves;
-    private final Random random = new Random();
     @Nonnull
     private Game game;
     private Location lastLocation = new Location(null, 0, 0, 0);
@@ -63,7 +62,7 @@ public class WaveDefenseOption implements Option {
         this.waves = waves;
         this.maxWave = maxWave;
     }
-    
+
     public void startSpawnTask() {
         if (spawner != null) {
             spawner.cancel();
@@ -102,12 +101,13 @@ public class WaveDefenseOption implements Option {
             }
 
             public WarlordsEntity spawn(Location loc) {
-                WarlordsEntity we = currentWave.spawnRandomMonster(loc, random).toNPC(game, team, UUID.randomUUID());
-                entities.add(we);
-                return we;
+                AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
+                mobs.add(abstractMob);
+                return abstractMob.toNPC(game, team, UUID.randomUUID());
             }
 
             int counter = 0;
+
             @Override
             public void run() {
                 counter++;
@@ -129,8 +129,8 @@ public class WaveDefenseOption implements Option {
                     spawner = null;
                 }
             }
-            
-        }.runTaskTimer(currentWave.getDelay(), 15);
+
+        }.runTaskTimer(currentWave.getDelay(), 13);
     }
 
     public void newWave() {
@@ -148,17 +148,25 @@ public class WaveDefenseOption implements Option {
             }
         }
         waveCounter++;
-        currentWave = waves.getWave(waveCounter, random);
+        currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
-            
+
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-            sendMessage(
-                    entry.getKey(),
-                    false,
-                    ChatColor.YELLOW + "A wave of §c§l" +
-                    spawnCount + "§e monsters will spawn in §c" +
-                    currentWave.getDelay() / 20 + " §eseconds!"
-            );
+            if (currentWave.getMessage() != null) {
+                sendMessage(
+                        entry.getKey(),
+                false,
+                ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                );
+            } else {
+                sendMessage(
+                        entry.getKey(),
+                false,
+                ChatColor.YELLOW + "A wave of §c§l" +
+                        spawnCount + "§e monsters will spawn in §c" +
+                        currentWave.getDelay() / 20 + " §eseconds!"
+                );
+            }
 
             float soundPitch = 0.8f;
             String wavePrefix = "§eWave ";
@@ -199,7 +207,7 @@ public class WaveDefenseOption implements Option {
             }
 
             entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
-            PacketUtils.sendTitle(entry.getKey(),wavePrefix + waveCounter, "", 20, 60, 20);
+            PacketUtils.sendTitle(entry.getKey(), wavePrefix + waveCounter, "", 20, 60, 20);
         }
         startSpawnTask();
     }
@@ -214,16 +222,35 @@ public class WaveDefenseOption implements Option {
             }
         }
         game.registerEvents(new Listener() {
+
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity receiver = event.getPlayer();
+                for (AbstractMob<?> mob : mobs) {
+                    if (mob.getWarlordsNPC().equals(attacker) && event.isDamageInstance()) {
+                        mob.onAttack(attacker, receiver);
+                    }
+                }
+            }
+
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getPlayer();
-                entities.remove(we);
-                Entity entity = ((CraftEntity) we.getEntity()).getHandle();
-                if (entity instanceof CustomEntity) {
+                AbstractMob<?> removed = null;
+                for (AbstractMob<?> mob : mobs) {
+                    if (mob.getWarlordsNPC().equals(we)) {
+                        removed = mob;
+                        mobs.remove(mob);
+                        break;
+                    }
+                }
+                if (removed != null) {
+                    AbstractMob<?> finalRemoved = removed;
                     new GameRunnable(game) {
                         @Override
                         public void run() {
-                            ((CustomEntity) entity).onDeath((EntityInsentient) entity, we.getDeathLocation(), WaveDefenseOption.this);
+                            finalRemoved.onDeath(we.getDeathLocation(), WaveDefenseOption.this);
                             game.removePlayer(we.getUuid());
                         }
                     }.runTask();
@@ -242,7 +269,7 @@ public class WaveDefenseOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList("Monsters left: " + ChatColor.GREEN + entities.size());
+                return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
@@ -270,13 +297,15 @@ public class WaveDefenseOption implements Option {
 
         }.register(game);
     }
-    
+
     @Override
     public void start(@Nonnull Game game) {
         new GameRunnable(game) {
+            int counter = 0;
+
             @Override
             public void run() {
-                if (entities.isEmpty() && spawnCount == 0) {
+                if (mobs.isEmpty() && spawnCount == 0) {
                     newWave();
 
                     if (waveCounter > 1) {
@@ -295,6 +324,13 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
+                //test
+                if (counter++ % 40 == 0) {
+                    for (AbstractMob<?> mob : mobs) {
+                        mob.whileAlive();
+                    }
+                }
+
                 if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));
                     this.cancel();
@@ -303,8 +339,8 @@ public class WaveDefenseOption implements Option {
         }.runTaskTimer(20, 0);
     }
 
-    public Set<WarlordsEntity> getEntities() {
-        return entities;
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs;
     }
 
     public int getWaveCounter() {
