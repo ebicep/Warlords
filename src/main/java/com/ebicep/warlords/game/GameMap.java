@@ -13,6 +13,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.waves.DelegatingWave;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.wavedefense.waves.StaticWaveList;
+import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
+import com.ebicep.warlords.game.option.wavedefense2.mobs2.Mobs;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -1036,143 +1038,30 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
 
             options.add(new CurrencyOnEventOption(250));
-            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(2, 5 * SECOND, null)
-                            .add(1, BasicMob.WOLF)
-                            .add(0.02, BasicMob.SPIDER)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.05, BasicMob.SKELETON)
-                    )
-                    .add(10, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.NARMER)
-                    )
-                    .add(11, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.9, BasicMob.ZOMBIE)
-                            .add(0.1, BasicMob.SPIDER)
-                            .add(0.1, BasicMob.SKELETON)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.03, BasicMob.SLIME)
-                            .add(0.03, EliteMob.ELITE_ZOMBIE)
-                    )
-                    .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.BOLTARO)
-                    )
-                    .add(21, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.65, BasicMob.ZOMBIE)
-                            .add(0.2, BasicMob.SPIDER)
-                            .add(0.1, BasicMob.SKELETON)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.01, BasicMob.SLIME)
-                            .add(0.15, EliteMob.ELITE_ZOMBIE)
-                            .add(0.05, EliteMob.ELITE_SKELETON)
-                            .add(0.02, EliteMob.MAGMA_CUBE)
-                    )
-                    .add(30, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.MITHRA)
-                    )
-                    .add(31, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.45, BasicMob.ZOMBIE)
-                            .add(0.1, BasicMob.SKELETON)
-                            .add(0.2, BasicMob.PIGZOMBIE)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.25, EliteMob.ELITE_ZOMBIE)
-                            .add(0.05, EliteMob.MAGMA_CUBE)
-                            .add(0.01, EliteMob.IRON_GOLEM)
-                    )
-                    .add(40, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.PHYSIRA)
-                    )
-                    .add(41, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.2, BasicMob.SKELETON)
-                            .add(0.35, BasicMob.ZOMBIE)
-                            .add(0.2, BasicMob.PIGZOMBIE)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.45, EliteMob.ELITE_ZOMBIE)
-                            .add(0.06, EliteMob.MAGMA_CUBE)
-                            .add(0.02, EliteMob.IRON_GOLEM)
-                    )
-                    .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.ZENITH)
-                    )
-                    .add(51, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.1, BasicMob.ZOMBIE)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.6, EliteMob.ELITE_ZOMBIE)
-                            .add(0.2, EliteMob.ELITE_SKELETON)
-                            .add(0.08, EliteMob.MAGMA_CUBE)
-                            .add(0.02, EliteMob.IRON_GOLEM)
-                    )
-                    .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.NARMER)
-                    )
-                    .add(61, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.7, EliteMob.ELITE_ZOMBIE)
-                            .add(0.2, EliteMob.ELITE_SKELETON)
-                            .add(0.05, BasicMob.ZOMBIE)
-                            .add(0.1, EliteMob.MAGMA_CUBE)
-                            .add(0.04, EliteMob.IRON_GOLEM)
-                    )
-                    .add(70, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.BOLTARO)
-                    )
-                    .add(71, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.8, EliteMob.ELITE_ZOMBIE)
-                            .add(0.3, EliteMob.ELITE_SKELETON)
-                            .add(0.05, EliteMob.MAGMA_CUBE)
-                            .add(0.1, EliteMob.IRON_GOLEM)
-                    )
-                    .add(80, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.MITHRA)
-                    )
-                    .add(81, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.8, EliteMob.ELITE_ZOMBIE)
-                            .add(0.3, EliteMob.ELITE_SKELETON)
-                            .add(0.05, EliteMob.MAGMA_CUBE)
-                            .add(0.1, EliteMob.IRON_GOLEM)
-                    )
-                    .add(90, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.PHYSIRA)
-                    )
-                    .add(91, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.8, EliteMob.ELITE_ZOMBIE)
-                            .add(0.25, EliteMob.ELITE_SKELETON)
-                            .add(0.06, EliteMob.MAGMA_CUBE)
-                            .add(0.15, EliteMob.IRON_GOLEM)
-                    )
-                    .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(BossMob.ZENITH)
-                    )
-                    .add(101, new SimpleWave(1, 10 * SECOND, null)
-                            .add(0.05, BasicMob.WOLF)
-                            .add(0.1, BasicMob.SPIDER)
-                            .add(0.6, EliteMob.ELITE_ZOMBIE)
-                            .add(0.4, EliteMob.ELITE_SKELETON)
-                            .add(0.08, EliteMob.MAGMA_CUBE)
-                            .add(0.25, EliteMob.IRON_GOLEM)
-                    )
-                    .prependEntityMapper((entity, waveCounter) -> {
-                        double scale = 600.0;
-                        int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / scale + 1);
-                        entity.setMaxHealth(health);
-                        entity.setHealth(health);
-                        return entity;
-                    })
-                    .prependMapper((wave, waveCounter) -> new DelegatingWave(wave) {
-                        @Override
-                        public int getMonsterCount() {
-                            if (wave.getMessage() == null) {
-                                double scale = 125.0;
-                                return (int) (super.getMonsterCount() + (waveCounter / scale / (waveCounter / scale + 1) * 100));
-                            } else {
-                                return super.getMonsterCount();
-                            }
-                        }
-
-                    }),
+            options.add(new WaveDefenseOption2(Team.RED, new com.ebicep.warlords.game.option.wavedefense2.waves2.StaticWaveList()
+                    .add(1, new com.ebicep.warlords.game.option.wavedefense2.waves2.SimpleWave(2, 5 * SECOND, null)
+                            .add(1, Mobs.BASIC_ZOMBIE)
+                            .add(1, Mobs.NARMER)
+                    ),
+//                    .prependEntityMapper((entity, waveCounter) -> {
+//                        double scale = 600.0;
+//                        int health = (int) Math.pow(entity.getMaxHealth(), waveCounter / scale + 1);
+//                        entity.setMaxHealth(health);
+//                        entity.setHealth(health);
+//                        return entity;
+//                    })
+//                    .prependMapper((wave, waveCounter) -> new com.ebicep.warlords.game.option.wavedefense2.waves2.DelegatingWave(wave) {
+//                        @Override
+//                        public int getMonsterCount() {
+//                            if (wave.getMessage() == null) {
+//                                double scale = 125.0;
+//                                return (int) (super.getMonsterCount() + (waveCounter / scale / (waveCounter / scale + 1) * 100));
+//                            } else {
+//                                return super.getMonsterCount();
+//                            }
+//                        }
+//
+//                    }),
                     50
             ));
 

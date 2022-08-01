@@ -26,7 +26,7 @@ public class ChatCommand extends BaseCommand {
     }
 
     public static void sendDebugMessage(CommandIssuer commandIssuer, String message, boolean asyncPlayerChat) {
-        if (commandIssuer.getIssuer() instanceof Player) {
+        if (commandIssuer != null && commandIssuer.getIssuer() instanceof Player) {
             sendDebugMessage((Player) commandIssuer.getIssuer(), message, asyncPlayerChat);
         } else {
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -34,7 +34,9 @@ public class ChatCommand extends BaseCommand {
                     onlinePlayer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
                 }
             }
-            commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            if (commandIssuer != null) {
+                commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            }
         }
     }
 

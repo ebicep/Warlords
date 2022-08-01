@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense2.WaveDefenseOption2;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -15,6 +15,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime> {
 
@@ -25,6 +26,10 @@ public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime
         setSize(5);
     }
 
+    public CustomSlime(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
+    }
+
     //jump
     @Override
     protected void bF() {
@@ -33,7 +38,7 @@ public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime
     }
 
     @Override
-    public void onDeath(CustomSlime entity, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    public void onDeath(CustomSlime entity, Location deathLocation, WaveDefenseOption2 waveDefenseOption) {
         WarlordsEntity we = Warlords.getPlayer(this.getBukkitEntity());
         if (we != null) {
             for (WarlordsEntity enemy : PlayerFilter
