@@ -17,7 +17,6 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.util.Vector;
 
 public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
@@ -44,7 +43,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         Location loc = getWarlordsNPC().getLocation();
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we == null) return;
-        EffectUtils.playCylinderAnimation(loc, 9, ParticleEffect.SPELL, 1);
+        EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
         Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(we, 9, 9, 9)
@@ -71,8 +70,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.2).setY(0.2);
-        receiver.setVelocity(v, false);
+
     }
 
     @Override
