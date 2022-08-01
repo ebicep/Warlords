@@ -13,6 +13,7 @@ public enum GuildPermissions {
     BYPASS_MUTE("Bypass Mute", "Bypass guild chat mute", Material.NOTE_BLOCK),
     CHANGE_ROLE("Promote/Demote Players", "Promote or demote players up to their own rank", Material.PISTON_STICKY_BASE),
     CHANGE_NAME("Change Guild Name", "Change the guild's name", Material.BOOK_AND_QUILL),
+    PURCHASE_UPGRADES("Purchase Upgrades", "Purchase Upgrades for the Guild", Material.ENCHANTMENT_TABLE),
 
     ;
 
