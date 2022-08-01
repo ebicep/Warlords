@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -15,11 +17,17 @@ import java.util.Optional;
 
 
 @CommandAlias("guild|g")
+@Conditions("database:guild|database:player")
 public class GuildCommand extends BaseCommand {
 
     @Subcommand("create")
     @Description("Creates a guild")
     public void create(@Conditions("guild:false") Player player, String guildName) {
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        if (!Guild.CAN_CREATE.test(databasePlayer)) {
+            player.sendMessage(ChatColor.RED + "You do not meet the requirements to create a guild.");
+            return;
+        }
         if (guildName.length() > 15) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
             return;

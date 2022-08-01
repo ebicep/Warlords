@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,12 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.guilds.GuildManager.queueUpdateGuild;
 
 @Document(collection = "Guilds")
 public class Guild {
+
+    public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        return pveStats.getCoins() >= 100;
+    };
 
     @Id
     private String id;
