@@ -2,6 +2,7 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -137,11 +138,13 @@ public class PlayerHotBarItemListener implements Listener {
                 }
             }
 
-            listeners.add(new ItemListener(
-                    7,
-                    new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get(),
-                    e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer())
-            ));
+            if (DatabaseManager.enabled) {
+                listeners.add(new ItemListener(
+                        7,
+                        new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get(),
+                        e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer())
+                ));
+            }
 
             addItems(player, listeners);
         } else {
@@ -155,8 +158,11 @@ public class PlayerHotBarItemListener implements Listener {
         }
         addStaticItem(player, 4, SELECTION_MENU);
         addStaticItem(player, 5, SPECTATE_MENU);
-        addStaticItem(player, 6, WEAPONS_MENU);
-        addStaticItem(player, 8, REWARD_INVENTORY_MENU);
+
+        if (DatabaseManager.enabled) {
+            addStaticItem(player, 6, WEAPONS_MENU);
+            addStaticItem(player, 8, REWARD_INVENTORY_MENU);
+        }
     }
 
     @EventHandler
