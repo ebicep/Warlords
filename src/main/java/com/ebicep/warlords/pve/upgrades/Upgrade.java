@@ -6,12 +6,20 @@ public class Upgrade {
     private String subName;
     private String description;
     private int currencyCost;
+    private Runnable onUpgrade;
     private boolean isUnlocked = false;
 
     public Upgrade(String name, String description, int currencyCost) {
         this.name = name;
         this.description = description;
         this.currencyCost = currencyCost;
+    }
+
+    public Upgrade(String name, String description, int currencyCost, Runnable onUpgrade) {
+        this.name = name;
+        this.description = description;
+        this.currencyCost = currencyCost;
+        this.onUpgrade = onUpgrade;
     }
 
     public Upgrade(String name, String subName, String description, int currencyCost) {
@@ -59,5 +67,13 @@ public class Upgrade {
 
     public void setSubName(String subName) {
         this.subName = subName;
+    }
+
+    public Runnable getOnUpgrade() {
+        return onUpgrade;
+    }
+
+    public void setOnUpgrade(Runnable onUpgrade) {
+        this.onUpgrade = onUpgrade;
     }
 }
