@@ -25,7 +25,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
                 0.38f,
                 10,
                 300,
-                600
+                500
         );
     }
 
@@ -41,7 +41,10 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-
+        Location loc = receiver.getLocation();
+        Utils.playGlobalSound(loc, "warrior.revenant.orbsoflife", 2, 0.6f);
+        Utils.playGlobalSound(loc, Sound.PORTAL_TRAVEL, 1, 0.5f);
+        receiver.subtractCurrency(25);
     }
 
     @Override
