@@ -9,10 +9,10 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Impair - Tier I", "+10% Damage\n+25% Projectile speed", 5000));
-        treeA.add(new Upgrade("Impair - Tier II", "+20% Damage\n+50% Projectile speed", 10000));
-        treeA.add(new Upgrade("Impair - Tier III", "+30% Damage\n+75% Projectile speed", 15000));
-        treeA.add(new Upgrade("Impair - Tier IV", "+40% Damage\n+100% Projectile speed", 20000));
+        treeA.add(new Upgrade("Impair - Tier I", "+7.5% Damage\n+20% Projectile speed", 5000));
+        treeA.add(new Upgrade("Impair - Tier II", "+15% Damage\n+40% Projectile speed", 10000));
+        treeA.add(new Upgrade("Impair - Tier III", "+22.5% Damage\n+60% Projectile speed", 15000));
+        treeA.add(new Upgrade("Impair - Tier IV", "+30% Damage\n+80% Projectile speed", 20000));
 
         treeC.add(new Upgrade("Spark - Tier I", "-5 Energy cost\n+0.25 Block hit radius", 5000));
         treeC.add(new Upgrade("Spark - Tier II", "-10 Energy cost\n+0.5 Block hit radius", 10000));
@@ -32,30 +32,30 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     @Override
     public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-        ability.setProjectileSpeed(projectileSpeed * 1.25);
+        ability.setMinDamageHeal(minDamage * 1.075f);
+        ability.setMaxDamageHeal(maxDamage * 1.075f);
+        ability.setProjectileSpeed(projectileSpeed * 1.2);
     }
 
     @Override
     public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
-        ability.setProjectileSpeed(projectileSpeed * 1.5);
+        ability.setMinDamageHeal(minDamage * 1.15f);
+        ability.setMaxDamageHeal(maxDamage * 1.15f);
+        ability.setProjectileSpeed(projectileSpeed * 1.4);
     }
 
     @Override
     public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.3f);
-        ability.setMaxDamageHeal(maxDamage * 1.3f);
-        ability.setProjectileSpeed(projectileSpeed * 1.75);
+        ability.setMinDamageHeal(minDamage * 1.225f);
+        ability.setMaxDamageHeal(maxDamage * 1.225f);
+        ability.setProjectileSpeed(projectileSpeed * 1.6);
     }
 
     @Override
     public void a4() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
-        ability.setProjectileSpeed(projectileSpeed * 2);
+        ability.setMinDamageHeal(minDamage * 1.3f);
+        ability.setMaxDamageHeal(maxDamage * 1.3f);
+        ability.setProjectileSpeed(projectileSpeed * 1.8);
     }
 
     @Override

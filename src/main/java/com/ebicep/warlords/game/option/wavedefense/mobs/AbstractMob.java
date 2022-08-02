@@ -79,6 +79,19 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         );
         onSpawn();
         game.addNPC(warlordsNPC);
+
+        // temp
+        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions()
+                .stream()
+                .filter(option -> option instanceof WaveDefenseOption)
+                .findFirst()
+                .get();
+
+        double scale = 600.0;
+        int health = (int) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / scale + 1);
+        warlordsNPC.setMaxHealth(health);
+        warlordsNPC.setHealth(health);
+
         return warlordsNPC;
     }
 

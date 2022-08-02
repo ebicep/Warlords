@@ -9,13 +9,14 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
     public LightningRodBranch(AbilityTree abilityTree, LightningRod ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown Reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-15% Cooldown Reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-20% Cooldown Reduction", 20000));
+        treeA.add(new Upgrade("Cooldown - Tier I", "-5% Cooldown Reduction", 5000));
+        treeA.add(new Upgrade("Cooldown - Tier II", "-10% Cooldown Reduction", 10000));
+        treeA.add(new Upgrade("Cooldown - Tier III", "-15% Cooldown Reduction", 15000));
+        treeA.add(new Upgrade("Cooldown - Tier IV", "-20% Cooldown Reduction", 20000));
 
         treeC.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
-        treeC.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
-        treeC.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
+        treeC.add(new Upgrade("Healing - Tier II", "+15% Healing", 10000));
+        treeC.add(new Upgrade("Healing - Tier III", "+20% Healing", 20000));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
