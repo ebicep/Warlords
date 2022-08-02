@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util.chat;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -45,6 +46,7 @@ public enum ChatChannels {
             Player player = e.getPlayer();
             e.setFormat(getFormat(player, prefixWithColor));
             setRecipients(player, e.getRecipients());
+            SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
         }
     },
     ALL("All",
@@ -101,6 +103,7 @@ public enum ChatChannels {
             Player player = e.getPlayer();
             e.setFormat(getFormat(player, prefixWithColor));
             setRecipients(player, e.getRecipients());
+            SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
         }
     },
     PARTY("Party",
@@ -128,6 +131,7 @@ public enum ChatChannels {
             if (partyPlayerPair != null) {
                 e.setFormat(getFormat(player, prefixWithColor));
                 setRecipients(player, e.getRecipients());
+                SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
                 Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
@@ -165,6 +169,7 @@ public enum ChatChannels {
                 }
                 e.setFormat(getFormat(player, prefixWithColor));
                 setRecipients(player, e.getRecipients());
+                SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
                 Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");

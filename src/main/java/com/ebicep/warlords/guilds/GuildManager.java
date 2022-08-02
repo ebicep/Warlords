@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogInvite;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -58,7 +59,7 @@ public class GuildManager {
 
     public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
         for (Guild guild : GUILDS) {
-            if (guild.isDisbanded()) continue;
+            if (guild.getDisbandDate() != null) continue;
             for (GuildPlayer guildPlayer : guild.getPlayers()) {
                 if (guildPlayer.getUUID().equals(player.getUniqueId())) {
                     return new Pair<>(guild, guildPlayer);
@@ -70,6 +71,9 @@ public class GuildManager {
 
     public static void addInvite(Player from, Player to, Guild guild) {
         INVITES.add(new GuildInvite(to.getUniqueId(), guild));
+        guild.log(new GuildLogInvite(from.getUniqueId(), to.getUniqueId()));
+        guild.queueUpdate();
+
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
         ChatUtils.sendCenteredMessage(to, ChatColor.AQUA + from.getName() + ChatColor.YELLOW + " has invited you to join their guild!");
         TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept. " + ChatColor.GOLD + "Click here to join " + guild.getName());
@@ -95,7 +99,7 @@ public class GuildManager {
 
     public static Optional<Guild> getGuildFromName(String guildName) {
         return GUILDS.stream()
-                .filter(guild -> !guild.isDisbanded() && guild.getName().equalsIgnoreCase(guildName))
+                .filter(guild -> guild.getDisbandDate() == null && guild.getName().equalsIgnoreCase(guildName))
                 .findFirst();
     }
 

@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.*;
+import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @CommandAlias("guild|g")
@@ -150,7 +152,7 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("transfer")
     @CommandCompletion("@guildmembers")
     @Description("Transfers ownership of your guild")
-    public void transfer(@Conditions("guild:true") Player player, @Flags("leader") GuildPlayerWrapper guildPlayerWrapper, GuildPlayer target) {
+    public void transfer(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper, GuildPlayer target) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.equals(guildPlayer)) {
@@ -178,7 +180,7 @@ public class GuildCommand extends BaseCommand {
             return;
         }
 
-        guild.kick(target);
+        guild.kick(guildPlayer, target);
         Player kickedPlayer = Bukkit.getPlayer(target.getUUID());
         if (kickedPlayer != null) {
             Guild.sendGuildMessage(kickedPlayer, ChatColor.RED + "You were kicked from the guild!");
@@ -187,7 +189,7 @@ public class GuildCommand extends BaseCommand {
 
     @Subcommand("promote")
     @CommandCompletion("@guildmembers")
-    @Description("Promotes a player to guild leader")
+    @Description("Promotes a player in your guild")
     public void promote(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper, @Conditions("lowerRank") GuildPlayer target) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
@@ -195,12 +197,12 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!");
             return;
         }
-        guild.promote(target);
+        guild.promote(guildPlayer, target);
     }
 
     @Subcommand("demote")
     @CommandCompletion("@guildmembers")
-    @Description("Demotes a player to guild member")
+    @Description("Demotes a player in your guild")
     public void demote(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper, @Conditions("lowerRank") GuildPlayer target) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
@@ -208,7 +210,7 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!");
             return;
         }
-        guild.demote(target);
+        guild.demote(guildPlayer, target);
     }
 
     @Subcommand("rename")
@@ -230,6 +232,21 @@ public class GuildCommand extends BaseCommand {
             return;
         }
         guild.setName(newName);
+    }
+
+    @Subcommand("log")
+    @Description("View the audit log of your guild")
+    public void log(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        ChatUtils.sendMessageToPlayer(
+                player,
+                guild.getAuditLog().stream()
+                        .map(AbstractGuildLog::getFormattedLog)
+                        .collect(Collectors.joining("\n")),
+                ChatColor.GREEN,
+                false
+        );
     }
 
 

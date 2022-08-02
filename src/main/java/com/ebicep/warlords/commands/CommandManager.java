@@ -89,6 +89,7 @@ public class CommandManager {
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new MyLocationCommand());
         manager.registerCommand(new RecordGamesCommand());
+        manager.registerCommand(new SeeAllChatsCommand());
         manager.registerCommand(new ServerStatusCommand());
         manager.registerCommand(new TestCommand());
 
@@ -197,7 +198,7 @@ public class CommandManager {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair != null) {
                 if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
-                    Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
                     throw new ConditionFailedException();
                 }
                 return new GuildPlayerWrapper(guildPlayerPair);
