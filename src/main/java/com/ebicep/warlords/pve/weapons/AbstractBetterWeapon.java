@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weapontypes.Upgradeable;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -20,6 +21,12 @@ public abstract class AbstractBetterWeapon extends AbstractWeapon implements Sta
 
     public AbstractBetterWeapon(UUID uuid) {
         super(uuid);
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+        player.getSpeed().addBaseModifier(getSpeedBonus());
     }
 
     @Override
@@ -69,5 +76,10 @@ public abstract class AbstractBetterWeapon extends AbstractWeapon implements Sta
     @Override
     public int getUpgradeLevel() {
         return upgradeLevel;
+    }
+
+    public int getSpeedBonus() {
+        float amount = starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
+        return Math.round(amount);
     }
 }

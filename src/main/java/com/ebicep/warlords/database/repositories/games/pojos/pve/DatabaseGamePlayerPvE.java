@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -27,8 +29,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         super(warlordsEntity);
         if (warlordsEntity instanceof WarlordsPlayer) {
             WarlordsPlayer warlordsPlayer = (WarlordsPlayer) warlordsEntity;
-            this.prestige = warlordsPlayer.getPrestige();
-            this.level = warlordsPlayer.getLevel();
+            this.prestige = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid()).getSpec(warlordsPlayer.getSpecClass()).getPrestige();
+            this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
             this.weapon = warlordsPlayer.getAbstractWeapon();
             this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
         }

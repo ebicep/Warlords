@@ -85,7 +85,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
     private Vector currentVector;
-    private final CalculateSpeed speed;
+    protected CalculateSpeed speed;
     private final Location deathLocation;
     private final CooldownManager cooldownManager = new CooldownManager(this);
     protected String name;
@@ -93,7 +93,7 @@ public abstract class WarlordsEntity {
     private Team team;
     protected AbstractPlayerClass spec;
     private Specializations specClass;
-    private Weapons weapon;
+    protected Weapons weaponSkin;
     private int health;
     private int maxHealth;
     private int regenTimer;
@@ -131,16 +131,16 @@ public abstract class WarlordsEntity {
     /**
      * @param uuid
      * @param name
-     * @param game      what game should the WarlordsPlayer be assigned to.
-     * @param team      optional team parameter to assign the WarlordsPlayer to a team.
-     * @param weapon
+     * @param game       what game should the WarlordsPlayer be assigned to.
+     * @param team       optional team parameter to assign the WarlordsPlayer to a team.
+     * @param weaponSkin
      * @param specClass
      * @param entity
      */
     public WarlordsEntity(
             @Nonnull UUID uuid,
             @Nonnull String name,
-            @Nonnull Weapons weapon,
+            @Nonnull Weapons weaponSkin,
             @Nonnull LivingEntity entity,
             @Nonnull Game game,
             @Nonnull Team team,
@@ -166,7 +166,7 @@ public abstract class WarlordsEntity {
         this.hitCooldown = 20;
         this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed, 13, true) : new CalculateSpeed(this::setWalkSpeed, 13);
         this.entity = entity;
-        this.weapon = weapon;
+        this.weaponSkin = weaponSkin;
         this.deathLocation = this.entity.getLocation();
         this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)
@@ -1145,7 +1145,7 @@ public abstract class WarlordsEntity {
 
     public void assignItemLore(Player player) {
         //§
-        ItemStack weapon = new ItemStack(this.weapon.getItem());
+        ItemStack weapon = new ItemStack(this.weaponSkin.getItem());
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName("§cWarlord's Felflame of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
@@ -1202,8 +1202,8 @@ public abstract class WarlordsEntity {
             Player player = (Player) entity;
             player.getInventory().setItem(
                     0,
-                    new ItemBuilder(weapon.getItem())
-                            .name(ChatColor.GOLD + "Warlord's " + weapon.getName() + " of the " + spec.getClass().getSimpleName())
+                    new ItemBuilder(weaponSkin.getItem())
+                            .name(ChatColor.GOLD + "Warlord's " + weaponSkin.getName() + " of the " + spec.getClass().getSimpleName())
                             .lore(
                                     ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
                                     ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
@@ -1229,7 +1229,6 @@ public abstract class WarlordsEntity {
                             .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                             .get());
         }
-
     }
 
     public void weaponRightClick() {
@@ -1237,7 +1236,7 @@ public abstract class WarlordsEntity {
             Player player = (Player) entity;
             player.getInventory().setItem(
                     0,
-                    new ItemBuilder(weapon.getItem())
+                    new ItemBuilder(weaponSkin.getItem())
                             .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
                             .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
                                     ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
@@ -1270,7 +1269,7 @@ public abstract class WarlordsEntity {
 
     public ItemStack getItemStackForAbility(AbstractAbility ability) {
         if (ability == spec.getWeapon()) {
-            return weapon.getItem();
+            return weaponSkin.getItem();
         } else if (ability == spec.getRed()) {
             return new ItemStack(Material.INK_SACK, 1, (byte) 1);
         } else if (ability == spec.getPurple()) {
@@ -1399,7 +1398,7 @@ public abstract class WarlordsEntity {
         Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
-        this.weapon = Weapons.getSelected(player, this.specClass);
+        this.weaponSkin = Weapons.getSelected(player, this.specClass);
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
@@ -1792,8 +1791,8 @@ public abstract class WarlordsEntity {
         return specClass;
     }
 
-    public Weapons getWeapon() {
-        return weapon;
+    public Weapons getWeaponSkin() {
+        return weaponSkin;
     }
 
     public Team getTeam() {
@@ -2137,5 +2136,9 @@ public abstract class WarlordsEntity {
 
     public void setInPve(boolean inPve) {
         isInPve = inPve;
+    }
+
+    public void setSpeed(CalculateSpeed speed) {
+        this.speed = speed;
     }
 }

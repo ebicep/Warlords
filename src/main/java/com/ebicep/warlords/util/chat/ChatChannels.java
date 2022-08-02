@@ -16,15 +16,15 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public enum ChatChannels {
 
@@ -229,6 +229,30 @@ public enum ChatChannels {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void playerSpigotSendMessage(Player player, ChatChannels chatChannel, BaseComponent... components) {
+        try {
+            String formattedMessage = String.format(chatChannel.getFormat(player, Permissions.getPrefixWithColor(player)), player.getName(), "");
+            List<BaseComponent> baseComponents = new ArrayList<>(Arrays.asList(components));
+            baseComponents.add(0, new TextComponent(formattedMessage));
+
+            Set<Player> players = new HashSet<>(Bukkit.getOnlinePlayers());
+            chatChannel.setRecipients(player, players);
+            for (Player recipient : players) {
+                recipient.spigot().sendMessage(baseComponents.toArray(new BaseComponent[0]));
+            }
+
+            StringBuilder messageToConsole = new StringBuilder();
+            for (BaseComponent baseComponent : baseComponents) {
+                if (baseComponent instanceof TextComponent) {
+                    messageToConsole.append(((TextComponent) baseComponent).getText());
+                }
+            }
+            Bukkit.getServer().getConsoleSender().sendMessage(messageToConsole.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

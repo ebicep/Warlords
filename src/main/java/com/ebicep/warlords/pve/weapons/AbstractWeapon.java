@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -49,6 +50,11 @@ public abstract class AbstractWeapon implements StarPieceBonus {
     public AbstractWeapon(UUID uuid) {
         generateStats();
         this.specialization = Warlords.getPlayerSettings(uuid).getSelectedSpec();
+    }
+
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        player.setMaxHealth(player.getMaxHealth() + getHealthBonus());
+        player.setHealth(player.getMaxHealth() + getHealthBonus());
     }
 
     public static void giveTestItem(Player player) {
@@ -107,7 +113,7 @@ public abstract class AbstractWeapon implements StarPieceBonus {
         return Arrays.asList(
                 ChatColor.GRAY + "Damage: " + ChatColor.RED + (starPieceBonus == WeaponStats.MELEE_DAMAGE ?
                         getStarPieceBonusMultiplicativeString(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + getStarPieceBonusMultiplicativeString(meleeDamage + getMeleeDamageRange()) + getStarPieceBonusString() :
-                        NumberFormat.formatOptionalHundredths(meleeDamage) + ChatColor.GRAY.toString() + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange())),
+                        NumberFormat.formatOptionalHundredths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange())),
                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + (starPieceBonus == WeaponStats.CRIT_CHANCE ? getStarPieceBonusMultiplicativeString(critChance) + "%" + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(critChance) + "%"),
                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + (starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? getStarPieceBonusMultiplicativeString(critMultiplier) + "%" + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(critMultiplier) + "%"),
                 "",
@@ -165,20 +171,29 @@ public abstract class AbstractWeapon implements StarPieceBonus {
         return date;
     }
 
-    public float getMeleeDamage() {
-        return meleeDamage;
+    public int getMeleeDamageMin() {
+        float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? meleeDamage * getStarPieceBonusMultiplicativeValue() : meleeDamage;
+        return Math.round(amount);
     }
 
-    public float getCritChance() {
-        return critChance;
+    public int getMeleeDamageMax() {
+        float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? (meleeDamage + getMeleeDamageRange()) * getStarPieceBonusMultiplicativeValue() : meleeDamage + getMeleeDamageRange();
+        return Math.round(amount);
     }
 
-    public float getCritMultiplier() {
-        return critMultiplier;
+    public int getCritChance() {
+        float amount = starPieceBonus == WeaponStats.CRIT_CHANCE ? critChance * getStarPieceBonusMultiplicativeValue() : critChance;
+        return Math.round(amount);
     }
 
-    public float getHealthBonus() {
-        return healthBonus;
+    public int getCritMultiplier() {
+        float amount = starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? critMultiplier * getStarPieceBonusMultiplicativeValue() : critMultiplier;
+        return Math.round(amount);
+    }
+
+    public int getHealthBonus() {
+        float amount = starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
+        return Math.round(amount);
     }
 
     public Weapons getSelectedWeaponSkin() {

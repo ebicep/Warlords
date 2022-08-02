@@ -37,6 +37,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
+import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
@@ -117,6 +118,8 @@ public class CommandManager {
         manager.registerCommand(new SetWaveCommand());
 
         manager.registerCommand(new GuildCommand());
+
+        manager.registerCommand(new WeaponCommand());
     }
 
     public static void registerContexts() {
