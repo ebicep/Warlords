@@ -49,22 +49,24 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                 .entitiesAround(we, 9, 9, 9)
                 .aliveTeammatesOfExcludingSelf(we)
         ) {
-            ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
-                    name,
-                    "",
-                    LastStand.class,
-                    new LastStand(),
-                    we,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    2 * 20
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * .6f;
-                }
-            });
+            if (!ally.getEntity().equals(this)) {
+                ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                        name,
+                        "",
+                        LastStand.class,
+                        new LastStand(),
+                        we,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        2 * 20
+                ) {
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * .6f;
+                    }
+                });
+            }
         }
     }
 

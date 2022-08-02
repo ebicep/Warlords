@@ -29,8 +29,8 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
                 4000,
                 0.35f,
                 10,
-                300,
-                450
+                200,
+                300
         );
     }
 
@@ -54,8 +54,8 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
             ally.addHealingInstance(
                     we,
                     "Healing",
-                    100,
-                    100,
+                    150,
+                    150,
                     -1,
                     100,
                     false,

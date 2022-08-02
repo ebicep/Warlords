@@ -325,7 +325,7 @@ public class WaveDefenseOption implements Option {
                 }
 
                 //test
-                if (counter++ % 40 == 0) {
+                if (counter++ % 60 == 0) {
                     for (AbstractMob<?> mob : mobs) {
                         mob.whileAlive();
                     }
