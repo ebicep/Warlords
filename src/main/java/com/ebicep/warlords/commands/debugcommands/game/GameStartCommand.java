@@ -292,12 +292,12 @@ public class GameStartCommand extends BaseCommand {
                         .findFirst();
                 if (!optionalBoundWeapon.isPresent()) {
                     allHaveBoundWeapons = false;
-                    if (person.equals(player)) continue;
-                    person.sendMessage(ChatColor.RED + "You must have a bound weapon for your selected spec!");
+                    for (Player p : people) {
+                        p.sendMessage(ChatColor.AQUA + person.getName() + ChatColor.RED + " does not have a bound weapon for their selected specialization. This is required to play!");
+                    }
                 }
             }
             if (!allHaveBoundWeapons) {
-                player.sendMessage(ChatColor.RED + "Not everyone has a bound weapon for their selected spec!");
                 return;
             }
         }
