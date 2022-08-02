@@ -28,6 +28,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -273,7 +274,7 @@ public class WarlordsEvents implements Listener {
             if ((!(attacker instanceof Player) || ((Player) attacker).getInventory().getHeldItemSlot() == 0) && wpAttacker.getHitCooldown() == 0) {
 
                 wpAttacker.setHitCooldown(12);
-                wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
+                wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit());
 
                 if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
                     Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
@@ -312,12 +313,13 @@ public class WarlordsEvents implements Listener {
                 }
 
                 if (wpAttacker instanceof WarlordsNPC) {
-                    if (!(((WarlordsNPC) wpAttacker).getMinMeleeDamage() == 0)) {
+                    WarlordsNPC warlordsNPC = (WarlordsNPC) wpAttacker;
+                    if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
                         wpVictim.addDamageInstance(
                                 wpAttacker,
                                 "",
-                                ((WarlordsNPC) wpAttacker).getMinMeleeDamage(),
-                                ((WarlordsNPC) wpAttacker).getMaxMeleeDamage(),
+                                warlordsNPC.getMinMeleeDamage(),
+                                warlordsNPC.getMaxMeleeDamage(),
                                 -1,
                                 100,
                                 false
@@ -325,15 +327,28 @@ public class WarlordsEvents implements Listener {
                     }
                     wpAttacker.setHitCooldown(20);
                 } else {
-                    wpVictim.addDamageInstance(
-                            wpAttacker,
-                            "",
-                            132,
-                            179,
-                            25,
-                            200,
-                            false
-                    );
+                    if (wpAttacker instanceof WarlordsPlayer) {
+                        AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getAbstractWeapon();
+                        wpVictim.addDamageInstance(
+                                wpAttacker,
+                                "",
+                                weapon.getMeleeDamageMin(),
+                                weapon.getMeleeDamageMax(),
+                                Math.round(weapon.getCritChance()),
+                                Math.round(weapon.getCritMultiplier()),
+                                false
+                        );
+                    } else {
+                        wpVictim.addDamageInstance(
+                                wpAttacker,
+                                "",
+                                132,
+                                179,
+                                25,
+                                200,
+                                false
+                        );
+                    }
                 }
                 wpVictim.updateHealth();
             }

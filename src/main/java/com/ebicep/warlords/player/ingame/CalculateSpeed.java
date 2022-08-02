@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;
     private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f / 113 * 100 / BASE_SPEED;
-
-    private final float minspeed;
-    private final float maxspeed;
+    private int baseModifier;
+    private float minSpeed;
+    private final float maxSpeed;
     private final List<Modifier> modifiers = new LinkedList<>();
     private final Consumer<Float> updateWalkingSpeed;
     private float lastSpeed = 0;
@@ -18,16 +18,18 @@ public class CalculateSpeed {
 
     public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
-        this.minspeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
-        this.maxspeed = BASE_SPEED * 1.40f;
+        this.baseModifier = baseModifier;
+        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
+        this.maxSpeed = BASE_SPEED * 1.40f;
         this.updateWalkingSpeed = updateWalkingSpeed;
         this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
 
     public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier, boolean isPve) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
-        this.minspeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
-        this.maxspeed = BASE_SPEED * 2;
+        this.baseModifier = baseModifier;
+        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
+        this.maxSpeed = BASE_SPEED * 2;
         this.updateWalkingSpeed = updateWalkingSpeed;
         this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
@@ -83,11 +85,11 @@ public class CalculateSpeed {
                 appliedEffects.put(next.name, next);
             }
 
-            if (speed < this.minspeed) {
-                speed = this.minspeed;
+            if (speed < this.minSpeed) {
+                speed = this.minSpeed;
             }
-            if (speed > this.maxspeed) {
-                speed = this.maxspeed;
+            if (speed > this.maxSpeed) {
+                speed = this.maxSpeed;
             }
 
             for (Modifier next : this.modifiers) {
@@ -164,6 +166,13 @@ public class CalculateSpeed {
     public void removeSlownessModifiers() {
         boolean isChanged = this.modifiers.removeIf(modifier -> modifier.duration > 0 && modifier.calculatedModifier < 1);
         this.changed = changed || isChanged;
+    }
+
+    public void addBaseModifier(int add) {
+        this.baseModifier += add;
+        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
+        this.modifiers.clear();
+        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
 
     private static class Modifier {

@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -40,6 +41,13 @@ public class LegendaryWeapon extends AbstractBetterWeapon {
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+        player.getSpec().setEnergyOnHit(player.getSpec().getEnergyOnHit() + getEnergyPerHitBonus());
+        player.getSpec().setEnergyPerSec(player.getSpec().getEnergyPerSec() + getEnergyPerSecondBonus());
     }
 
     @Override
@@ -101,5 +109,15 @@ public class LegendaryWeapon extends AbstractBetterWeapon {
     @Override
     public int getMaxUpgradeLevel() {
         return 4;
+    }
+
+    public int getEnergyPerHitBonus() {
+        float amount = starPieceBonus == WeaponStats.ENERGY_PER_HIT_BONUS ? energyPerHitBonus * getStarPieceBonusMultiplicativeValue() : energyPerHitBonus;
+        return Math.round(amount);
+    }
+
+    public int getEnergyPerSecondBonus() {
+        float amount = starPieceBonus == WeaponStats.ENERGY_PER_SECOND_BONUS ? energyPerSecondBonus * getStarPieceBonusMultiplicativeValue() : energyPerSecondBonus;
+        return Math.round(amount);
     }
 }

@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -97,7 +97,7 @@ public class DebugMenuGameOptions {
                                 .name(ChatColor.GREEN + map.getMapName())
                                 .get(),
                         (m, e) -> {
-                            List<GameAddon> addons = new ArrayList<>();
+                            EnumSet<GameAddon> addons = EnumSet.noneOf(GameAddon.class);
                             addons.add(GameAddon.PRIVATE_GAME);
                             if (!player.hasPermission("warlords.game.customtoggle")) {
                                 addons.add(GameAddon.CUSTOM_GAME);
@@ -112,7 +112,7 @@ public class DebugMenuGameOptions {
             menu.openForPlayer(player);
         }
 
-        public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, List<GameAddon> addons) {
+        public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, EnumSet<GameAddon> addons) {
             int menuHeight = (4 + GameAddon.values().length / 7);
             Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.getName(), 9 * menuHeight);
 
@@ -162,39 +162,16 @@ public class DebugMenuGameOptions {
                                 .name(ChatColor.GREEN + "Comps Preset")
                                 .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
                                 .get(),
-                        (m, e) -> {
-                            List<GameAddon> gameAddons = new ArrayList<>();
-                            gameAddons.add(GameAddon.PRIVATE_GAME);
-                            gameAddons.add(GameAddon.FREEZE_GAME);
-                            StringBuilder stringAddons = new StringBuilder();
-                            gameAddons.forEach(gameAddon -> {
-                                stringAddons.append("addon:").append(gameAddon.name()).append(" ");
-                            });
-                            System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-                            GameStartCommand.startGame(player, ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "), false);
-                        });
+                        (m, e) -> GameStartCommand.startGame(player, false, selectedGameMode, selectedGameMap, EnumSet.of(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME)));
             }
             menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
             menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
-                StringBuilder stringAddons = new StringBuilder();
-                if (addons.isEmpty()) {
-                    stringAddons.append("addon:NULL");
-                } else {
-                    //safe guard
-                    if (!player.isOp()) {
-                        addons.remove(GameAddon.TOURNAMENT_MODE);
-                    }
-                    addons.forEach(gameAddon -> {
-                        stringAddons.append("addon:").append(gameAddon.name()).append(" ");
-                    });
+                //safe guard
+                if (!player.isOp()) {
+                    addons.remove(GameAddon.TOURNAMENT_MODE);
                 }
-                System.out.println(player.getName() + " - map:" + selectedGameMap.getMapName() + " category:" + selectedGameMode.name() + " " + stringAddons);
-                GameStartCommand.startGame(
-                        player,
-                        ("map:" + selectedGameMap.name() + " category:" + selectedGameMode.name() + " " + stringAddons).split(" "),
-                        player.isOp() && addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick()
-                );
+                GameStartCommand.startGame(player, addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(), selectedGameMode, selectedGameMap, addons);
             });
             menu.openForPlayer(player);
         }

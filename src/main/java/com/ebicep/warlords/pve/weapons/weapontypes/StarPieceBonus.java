@@ -18,8 +18,8 @@ public interface StarPieceBonus {
 
     int getStarPieceBonusValue();
 
-    default double getStarPieceBonusMultiplicativeValue() {
-        return 1 + getStarPieceBonusValue() / 100.0;
+    default float getStarPieceBonusMultiplicativeValue() {
+        return 1 + getStarPieceBonusValue() / 100.0f;
     }
 
     default List<WeaponStats> getRandomStatBonus() {

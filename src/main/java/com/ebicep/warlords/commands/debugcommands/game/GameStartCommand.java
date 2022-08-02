@@ -2,10 +2,15 @@ package com.ebicep.warlords.commands.debugcommands.game;
 
 import co.aikar.commands.BaseCommand;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -232,6 +237,76 @@ public class GameStartCommand extends BaseCommand {
         if (queueEntry == null) {
             return;
         }
+
+        Pair<GameManager.QueueResult, Game> result = queueEntry
+                .setPriority(-10)
+                .queueNow();
+        Game game = result.getB();
+        if (game == null) {
+            sendDebugMessage(player, ChatColor.RED + "Engine failed to find a game server suitable for your request:", false);
+            sendDebugMessage(player, ChatColor.GRAY + result.getA().toString(), false);
+        } else {
+            sendDebugMessage(player,
+                    ChatColor.GREEN + "Engine " + (result.getA() == GameManager.QueueResult.READY_NEW ? "initiated" : "found") +
+                            " a game with the following parameters:",
+                    false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Gamemode: " + ChatColor.RED + Utils.toTitleHumanCase(game.getGameMode()), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Map: " + ChatColor.RED + game.getMap().getMapName(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Min players: " + ChatColor.RED + game.getMinPlayers(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Max players: " + ChatColor.RED + game.getMaxPlayers(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Open for public: " + ChatColor.RED + game.acceptsPeople(), false);
+            sendDebugMessage(player, ChatColor.GRAY + "- Game ID: " + ChatColor.RED + game.getGameId(), false);
+        }
+    }
+
+    public static void startGame(Player player, boolean excludeStarter, GameMode gameMode, GameMap map, EnumSet<GameAddon> addons) {
+        List<Player> people;
+        UUID uuid = player.getUniqueId();
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+        if (partyPlayerPair != null) {
+            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(uuid)) {
+                sendDebugMessage(player, ChatColor.RED + "You are not the party leader", false);
+                return;
+            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
+                sendDebugMessage(player, ChatColor.RED + "All party members must be online or not afk", false);
+                return;
+            }
+            people = partyPlayerPair.getA().getAllPartyPeoplePlayerOnline();
+            if (excludeStarter) {
+                people.removeIf(p -> p.getUniqueId().equals(uuid));
+            }
+        } else {
+            people = Collections.singletonList(player);
+        }
+
+        boolean allHaveBoundWeapons = true;
+        if (gameMode == GameMode.WAVE_DEFENSE && DatabaseManager.playerService != null) {
+            for (Player person : people) {
+                Specializations selectedSpec = Warlords.getPlayerSettings(person.getUniqueId()).getSelectedSpec();
+                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(person.getUniqueId());
+                DatabasePlayerPvE databaseBasePvE = databasePlayer.getPveStats();
+                Optional<AbstractWeapon> optionalBoundWeapon = databaseBasePvE.getWeaponInventory().stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == selectedSpec)
+                        .findFirst();
+                if (!optionalBoundWeapon.isPresent()) {
+                    allHaveBoundWeapons = false;
+                    if (person.equals(player)) continue;
+                    person.sendMessage(ChatColor.RED + "You must have a bound weapon for your selected spec!");
+                }
+            }
+            if (!allHaveBoundWeapons) {
+                player.sendMessage(ChatColor.RED + "Not everyone has a bound weapon for their selected spec!");
+                return;
+            }
+        }
+
+        GameManager.QueueEntryBuilder queueEntry = Warlords.getGameManager()
+                .newEntry(people)
+                .setGamemode(gameMode)
+                .setMap(map)
+                .setRequestedGameAddons(addons);
 
         Pair<GameManager.QueueResult, Game> result = queueEntry
                 .setPriority(-10)
