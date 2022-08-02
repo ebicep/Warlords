@@ -19,13 +19,13 @@ import java.util.List;
 
 public class CapacitorTotem extends AbstractTotemBase {
     private boolean pveUpgrade = false;
-    private int duration = 8;
-    private int radius = 6;
     private Runnable pulseDamage;
-
+    private boolean teamCarrierPassedThrough = false;
     private int numberOfProcs = 0;
     private int numberOfProcsAfterCarrierPassed = 0;
-    private boolean teamCarrierPassedThrough = false;
+
+    private int duration = 8;
+    private double radius = 6;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
@@ -133,11 +133,11 @@ public class CapacitorTotem extends AbstractTotemBase {
         this.duration = duration;
     }
 
-    public int getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(double radius) {
         this.radius = radius;
     }
 

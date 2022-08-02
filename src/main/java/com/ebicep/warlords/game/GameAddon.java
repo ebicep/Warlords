@@ -144,7 +144,17 @@ public enum GameAddon {
             "Tournament Mode",
             null,
             "Tournament Mode"
-    )
+    ),
+    PVE(
+            "PVE",
+                    null,
+                    "Test"
+    ) {
+        @Override
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
+            player.setInPve(true);
+        }
+    }
 
     ;
 

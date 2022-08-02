@@ -85,6 +85,10 @@ public class LightningRod extends AbstractAbility {
             player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
             capacitorTotem.pulseDamage();
+            capacitorTotem.pulseDamage();
+            if (capacitorTotem.isPveUpgrade()) {
+                capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.25);
+            }
             capacitorTotem.addProc();
         });
 
@@ -105,7 +109,7 @@ public class LightningRod extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                10 * 20
+                8 * 20
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Windfury extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int timesProcd = 0;
 
     private int procChance = 35;
@@ -51,6 +53,10 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        if (wp.isInPve()) {
+            Bukkit.broadcastMessage("is in pve");
+            setProcChance(5);
+        }
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
@@ -123,6 +129,10 @@ public class Windfury extends AbstractAbility {
                                     );
                                 }
 
+                                if (pveUpgrade) {
+                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 1);
+                                }
+
                                 counter++;
                                 if (counter == maxHits) {
                                     this.cancel();
@@ -159,5 +169,13 @@ public class Windfury extends AbstractAbility {
 
     public void setWeaponDamage(float weaponDamage) {
         this.weaponDamage = weaponDamage;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

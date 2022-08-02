@@ -31,29 +31,6 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.25f);
-        ability.setMaxDamageHeal(maxDamage * 1.25f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.5f);
-        ability.setMaxDamageHeal(maxDamage * 1.5f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     int energyCost = ability.getEnergyCost();
 
     @Override

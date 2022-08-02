@@ -25,26 +25,6 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
     }
 
     @Override
-    public void a1() {
-        ability.setCritChanceIncrease(35);
-    }
-
-    @Override
-    public void a2() {
-        ability.setCritChanceIncrease(40);
-    }
-
-    @Override
-    public void a3() {
-        ability.setCritChanceIncrease(50);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

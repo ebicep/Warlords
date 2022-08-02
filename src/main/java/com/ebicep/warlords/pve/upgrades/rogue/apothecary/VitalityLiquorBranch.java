@@ -27,26 +27,6 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
     int vitalityRange = ability.getVitalityRange();
 
     @Override
-    public void a1() {
-        ability.setVitalityRange(vitalityRange + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setVitalityRange(vitalityRange + 4);
-    }
-
-    @Override
-    public void a3() {
-        ability.setVitalityRange(vitalityRange + 6);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

@@ -27,26 +27,6 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
     // WIP
 
     @Override
-    public void a1() {
-
-    }
-
-    @Override
-    public void a2() {
-
-    }
-
-    @Override
-    public void a3() {
-
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

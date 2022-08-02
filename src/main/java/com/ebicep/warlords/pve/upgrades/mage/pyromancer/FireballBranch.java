@@ -28,26 +28,6 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         );
     }
 
-    @Override
-    public void a1() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
-    }
-
-    @Override
-    public void a2() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
-    }
-
-    @Override
-    public void a3() {
-        ability.setEnergyCost(ability.getEnergyCost() - 10);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     double projectileSpeed = ability.getProjectileSpeed();
 
     @Override

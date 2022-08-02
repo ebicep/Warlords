@@ -9,6 +9,7 @@ public class Upgrade {
     private Runnable onUpgrade;
     private boolean isUnlocked = false;
 
+    @Deprecated
     public Upgrade(String name, String description, int currencyCost) {
         this.name = name;
         this.description = description;
@@ -22,11 +23,20 @@ public class Upgrade {
         this.onUpgrade = onUpgrade;
     }
 
+    @Deprecated
     public Upgrade(String name, String subName, String description, int currencyCost) {
         this.name = name;
         this.subName = subName;
         this.description = description;
         this.currencyCost = currencyCost;
+    }
+
+    public Upgrade(String name, String subName, String description, int currencyCost, Runnable onUpgrade) {
+        this.name = name;
+        this.subName = subName;
+        this.description = description;
+        this.currencyCost = currencyCost;
+        this.onUpgrade = onUpgrade;
     }
 
     public String getName() {

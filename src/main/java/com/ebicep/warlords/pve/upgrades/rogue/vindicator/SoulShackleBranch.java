@@ -31,29 +31,6 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.8f);
-        ability.setMaxDamageHeal(maxDamage * 1.8f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     int minTicks = ability.getMinSilenceDurationInTicks();
     int maxTicks = ability.getMaxSilenceDurationInTicks();
 

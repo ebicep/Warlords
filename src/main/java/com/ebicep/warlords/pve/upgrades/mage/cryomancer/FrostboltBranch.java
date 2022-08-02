@@ -30,26 +30,6 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
     int energyCost = ability.getEnergyCost();
 
-    @Override
-    public void a1() {
-        ability.setEnergyCost(energyCost - 10);
-    }
-
-    @Override
-    public void a2() {
-        ability.setEnergyCost(energyCost - 20);
-    }
-
-    @Override
-    public void a3() {
-        ability.setEnergyCost(energyCost - 30);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     double projectileSpeed = ability.getProjectileSpeed();
 
     @Override

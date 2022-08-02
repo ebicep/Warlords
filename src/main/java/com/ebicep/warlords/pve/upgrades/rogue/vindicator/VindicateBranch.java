@@ -28,29 +28,6 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
     int resistDuration = ability.getVindicateSelfDuration();
 
     @Override
-    public void a1() {
-        ability.setVindicateDuration(duration + 2);
-        ability.setVindicateSelfDuration(resistDuration + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setVindicateDuration(duration + 4);
-        ability.setVindicateSelfDuration(resistDuration + 4);
-    }
-
-    @Override
-    public void a3() {
-        ability.setVindicateDuration(duration + 8);
-        ability.setVindicateSelfDuration(resistDuration + 8);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

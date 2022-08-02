@@ -27,26 +27,6 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
     int slamSize = ability.getSlamSize();
 
     @Override
-    public void a1() {
-        ability.setSlamSize(slamSize + 1);
-    }
-
-    @Override
-    public void a2() {
-        ability.setSlamSize(slamSize + 2);
-    }
-
-    @Override
-    public void a3() {
-        ability.setSlamSize(slamSize + 3);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

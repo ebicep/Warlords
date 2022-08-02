@@ -92,11 +92,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue;
-                if (pveUpgrade) {
-                    newDamageValue = currentDamageValue * (((10 - hitCounter) / maxDamageReduction) / 2);
-                } else {
-                    newDamageValue = currentDamageValue * (((10 - hitCounter) / maxDamageReduction));
-                }
+                newDamageValue = currentDamageValue * (((10 - hitCounter) / maxDamageReduction));
                 event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
@@ -189,6 +185,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private void partOfChainLightningPulseDamage(WarlordsEntity wp, CapacitorTotem capacitorTotem) {
         ArmorStand totem = capacitorTotem.getTotem();
         capacitorTotem.pulseDamage();
+        if (capacitorTotem.isPveUpgrade()) {
+            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.25);
+        }
 
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
@@ -234,5 +233,17 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public int getBounceRange() {
+        return bounceRange;
+    }
+
+    public int getMaxBounces() {
+        return maxBounces;
     }
 }

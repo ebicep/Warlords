@@ -6,60 +6,118 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
+
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
+    int energyCost = ability.getEnergyCost();
+    int radius = ability.getRadius();
+    int bounceRange = ability.getBounceRange();
+    int maxBounces = ability.getMaxBounces();
+
     public ChainLightningBranch(AbilityTree abilityTree, ChainLightning ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage Reduction - Tier I", "+2% Damage reduction per bounce", 5000));
-        treeA.add(new Upgrade("Damage Reduction - Tier II", "+4% Damage reduction per bounce", 10000));
-        treeA.add(new Upgrade("Damage Reduction - Tier III", "+6% Damage reduction per bounce", 20000));
 
-        treeB.add(new Upgrade("Utility - Tier I", "+1 Chain bounces", 5000));
-        treeB.add(new Upgrade("Utility - Tier II", "+2 Chain bounces", 10000));
-        treeB.add(new Upgrade("Utility - Tier III", "+3 Chain bounces", 20000));
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+5% Damage\n+2 Blocks cast and bounce range",
+                5000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.05f);
+                    ability.setMaxDamageHeal(maxDamage * 1.05f);
+                    ability.setRadius(radius + 2);
+                    ability.setBounceRange(bounceRange + 2);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+10% Damage\n+4 Blocks cast and bounce range",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setRadius(radius + 4);
+                    ability.setBounceRange(bounceRange + 4);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+15% Damage\n+6 Blocks cast and bounce range",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setRadius(radius + 6);
+                    ability.setBounceRange(bounceRange + 6);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+20% Damage\n+8 Blocks cast and bounce range",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setRadius(radius + 8);
+                    ability.setBounceRange(bounceRange + 8);
+                }
+        ));
 
-        treeC.add(new Upgrade("Damage - Tier I", "+10% Damage", 5000));
-        treeC.add(new Upgrade("Damage - Tier II", "+20% Damage", 10000));
-        treeC.add(new Upgrade("Damage - Tier III", "+40% Damage", 20000));
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "-5 Energy cost\n+1 Chain Bounce",
+                5000,
+                () -> {
+                    ability.setMaxBounces(maxBounces + 1);
+                    ability.setEnergyCost(energyCost - 5);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-10 Energy cost",
+                10000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 10);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "-15 Energy cost",
+                15000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 15);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "-20 Energy cost\n+2 Chain Bounces",
+                20000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 20);
+                    ability.setMaxBounces(maxBounces + 2);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "Remove energy cost\n+10 Blocks cast and bounce range\n\nChain Lightning now deals 5% more damage per bounce instead of less.",
-                50000
+                "Electrifying Chains",
+                "Chain Lightning - Master Upgrade",
+                "Chain Lightning now deals 5% more damage\nper bounce instead of less.",
+                50000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                }
         );
     }
 
     @Override
-    public void a1() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 2);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
-        ability.setMaxBounces(4);
     }
 
     @Override
     public void b2() {
-        ability.setMaxBounces(5);
     }
 
     @Override
     public void b3() {
-        ability.setMaxBounces(6);
     }
 
     @Override
@@ -67,25 +125,16 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     }
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
-
     @Override
     public void c1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
     }
 
     @Override
     public void c2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
     }
 
     @Override
     public void c3() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
     @Override
@@ -95,9 +144,5 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     @Override
     public void master() {
-        ability.setEnergyCost(0);
-        ability.setRadius(30);
-        ability.setBounceRange(20);
-        ability.setPveUpgrade(true);
     }
 }

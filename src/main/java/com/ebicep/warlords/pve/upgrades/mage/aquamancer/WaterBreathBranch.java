@@ -30,26 +30,6 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void a1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     double velocity = ability.getVelocity();
 
     @Override

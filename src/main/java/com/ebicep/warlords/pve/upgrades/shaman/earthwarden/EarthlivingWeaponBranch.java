@@ -26,26 +26,6 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
     int weaponDamage = ability.getWeaponDamage();
 
     @Override
-    public void a1() {
-        ability.setWeaponDamage(weaponDamage + 15);
-    }
-
-    @Override
-    public void a2() {
-        ability.setWeaponDamage(weaponDamage + 30);
-    }
-
-    @Override
-    public void a3() {
-        ability.setWeaponDamage(weaponDamage + 60);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

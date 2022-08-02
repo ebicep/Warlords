@@ -28,29 +28,6 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
     int verticalRadius = ability.getVerticalRadius();
 
     @Override
-    public void a1() {
-        ability.setRadius(radius + 4);
-        ability.setVerticalRadius(verticalRadius + 4);
-    }
-
-    @Override
-    public void a2() {
-        ability.setRadius(radius + 8);
-        ability.setVerticalRadius(verticalRadius + 8);
-    }
-
-    @Override
-    public void a3() {
-        ability.setRadius(radius + 16);
-        ability.setVerticalRadius(verticalRadius + 16);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

@@ -28,29 +28,6 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
     float maxDamage = ability.getMaxDamageHeal();
 
     @Override
-    public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

@@ -31,29 +31,6 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minHealing * 1.15f);
-        ability.setMaxDamageHeal(maxHealing * 1.15f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minHealing * 1.3f);
-        ability.setMaxDamageHeal(maxHealing * 1.3f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minHealing * 1.6f);
-        ability.setMaxDamageHeal(maxHealing * 1.6f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     float puddleRadius = ability.getPuddleRadius();
 
     @Override

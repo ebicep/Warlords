@@ -28,29 +28,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     int projectileDamageReduction = ability.getProjectileDamageReduction();
 
     @Override
-    public void a1() {
-        ability.setDamageReduction(damageReduction + 5);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 5);
-    }
-
-    @Override
-    public void a2() {
-        ability.setDamageReduction(damageReduction + 10);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 10);
-    }
-
-    @Override
-    public void a3() {
-        ability.setDamageReduction(damageReduction + 20);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 20);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }

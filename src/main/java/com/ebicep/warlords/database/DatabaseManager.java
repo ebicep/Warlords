@@ -44,7 +44,7 @@ public class DatabaseManager {
 
     public static String lastWarlordsPlusString = "";
 
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> playersToUpdate = new ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>>() {{
         for (PlayersCollections value : PlayersCollections.values()) {
             put(value, new HashSet<>());

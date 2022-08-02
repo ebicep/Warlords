@@ -31,29 +31,6 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.15f);
-        ability.setMaxDamageHeal(maxDamage * 1.15f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.3f);
-        ability.setMaxDamageHeal(maxDamage * 1.3f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.6f);
-        ability.setMaxDamageHeal(maxDamage * 1.6f);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
     float hitbox = ability.getHitbox();
 
     @Override

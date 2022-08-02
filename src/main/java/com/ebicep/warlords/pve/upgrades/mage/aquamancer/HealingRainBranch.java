@@ -28,26 +28,6 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
     int radius = ability.getRadius();
 
     @Override
-    public void a1() {
-        ability.setRadius(radius + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setRadius(radius + 4);
-    }
-
-    @Override
-    public void a3() {
-        ability.setRadius(radius + 8);
-    }
-
-    @Override
-    public void a4() {
-
-    }
-
-    @Override
     public void b1() {
 
     }
