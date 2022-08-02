@@ -47,7 +47,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             Upgrade upgrade = treeA.get(i);
             int finalI = i;
             menu.setItem(
-                    3,
+                    2,
                     4 - i,
                     branchItem(upgrade),
                     (m, e) -> {
@@ -95,7 +95,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             Upgrade upgrade = treeB.get(i);
             int finalI = i;
             menu.setItem(
-                    5,
+                    6,
                     4 - i,
                     branchItem(upgrade),
                     (m, e) -> {
