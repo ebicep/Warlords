@@ -89,6 +89,7 @@ public class CommandManager {
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new MyLocationCommand());
         manager.registerCommand(new RecordGamesCommand());
+        manager.registerCommand(new SeeAllChatsCommand());
         manager.registerCommand(new ServerStatusCommand());
         manager.registerCommand(new TestCommand());
 
@@ -197,7 +198,7 @@ public class CommandManager {
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair != null) {
                 if (command.hasFlag("master") && !guildPlayerPair.getA().getCurrentMaster().equals(player.getUniqueId())) {
-                    Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+                    Guild.sendGuildMessage(player, ChatColor.RED + "Insufficient Permissions!");
                     throw new ConditionFailedException();
                 }
                 return new GuildPlayerWrapper(guildPlayerPair);
@@ -358,13 +359,16 @@ public class CommandManager {
     public static void registerConditions() {
         manager.getCommandConditions().addCondition("database", command -> {
             if (!DatabaseManager.enabled) {
-                throw new ConditionFailedException(ChatColor.RED + "The database is not enabled!");
+                throw new ConditionFailedException(ChatColor.RED + "The database is currently disabled!");
             }
             if (command.hasConfig("player") && DatabaseManager.playerService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "playerService is null");
+                throw new ConditionFailedException(ChatColor.RED + "Player database is currently disabled!");
             }
             if (command.hasConfig("game") && DatabaseManager.gameService == null) {
-                throw new ConditionFailedException(ChatColor.RED + "gameService is null");
+                throw new ConditionFailedException(ChatColor.RED + "Games are currently disabled!");
+            }
+            if (command.hasConfig("guild") && DatabaseManager.guildService == null) {
+                throw new ConditionFailedException(ChatColor.RED + "Guilds are current disabled!");
             }
         });
         manager.getCommandConditions().addCondition("bot", command -> {

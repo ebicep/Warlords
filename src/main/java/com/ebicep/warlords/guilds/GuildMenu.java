@@ -1,5 +1,8 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.*;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLogPermissionAdd;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLogPermissionRemove;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -17,7 +20,7 @@ import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class GuildMenu {
 
-    public static void openGuildMenu(Guild guild, Player player) {
+    public static void openGuildMenu(Guild guild, Player player, int page) {
         Menu menu = new Menu(guild.getName(), 9 * 6);
 
         if (player.getUniqueId().equals(guild.getCurrentMaster())) {
@@ -28,22 +31,42 @@ public class GuildMenu {
                     (m, e) -> openRoleSelectorMenu(guild, player));
         }
 
-        int column = 1;
-        int row = 1;
-        for (GuildPlayer guildPlayer : guild.getPlayers()) {
-            menu.setItem(column, row,
-                    new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID())) //TODO check if this lags
-                            .name(ChatColor.GREEN + guildPlayer.getName())
-                            .lore(ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName())
-                            .get(),
-                    (m, e) -> {
+        int playerPerPage = 36;
+        List<GuildPlayer> guildPlayers = guild.getPlayers();
+        for (int i = 0; i < playerPerPage; i++) {
+            int index = ((page - 1) * playerPerPage) + i;
+            if (index < guildPlayers.size()) {
+                GuildPlayer guildPlayer = guildPlayers.get(index);
+                menu.setItem(i % 9, i / 9 + 1,
+                        new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID())) //TODO check if this lags
+                                .name(ChatColor.GREEN + guildPlayer.getName())
+                                .lore(ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName())
+                                .get(),
+                        (m, e) -> {
 
-                    });
-            column += 1;
-            if (column > 7) {
-                column = 1;
-                row += 1;
+                        });
+            } else {
+                break;
             }
+        }
+
+        if (page - 1 > 0) {
+            menu.setItem(0, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .get(),
+                    (m, e) -> openGuildMenu(guild, player, page - 1)
+            );
+        }
+        if (guild.getPlayers().size() > (page * playerPerPage)) {
+            menu.setItem(8, 5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .get(),
+                    (m, e) -> openGuildMenu(guild, player, page + 1)
+            );
         }
 
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -80,6 +103,8 @@ public class GuildMenu {
                         GuildRole role = new GuildRole(roleName);
                         guildRoles.add(1, role);
                         Guild.sendGuildMessage(player, ChatColor.GREEN + "Role created: " + roleName);
+                        guild.log(new GuildLogRoleCreate(player.getUniqueId(), roleName));
+                        guild.queueUpdate();
                     });
                 }
         );
@@ -94,7 +119,7 @@ public class GuildMenu {
             );
         }
 
-        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildMenu(guild, player));
+        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildMenu(guild, player, 1));
         menu.openForPlayer(player);
     }
 
@@ -113,9 +138,12 @@ public class GuildMenu {
                     (m, e) -> {
                         if (permissions.contains(value)) {
                             permissions.remove(value);
+                            guild.log(new GuildLogPermissionRemove(player.getUniqueId(), role.getRoleName(), value));
                         } else {
                             permissions.add(value);
+                            guild.log(new GuildLogPermissionAdd(player.getUniqueId(), role.getRoleName(), value));
                         }
+                        guild.queueUpdate();
                         openRoleEditor(guild, role, player);
                     }
             );
@@ -126,16 +154,19 @@ public class GuildMenu {
             }
         }
 
-        menu.setItem(1, 3,
-                new ItemBuilder(Material.GRASS)
-                        .name(ChatColor.GREEN + "Click to set as default role")
-                        .lore(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
-                        .get(),
-                (m, e) -> {
-                    guild.setDefaultRole(role.getRoleName());
-                    openRoleEditor(guild, role, player);
-                });
-
+        if (!guild.getDefaultRole().equals(role)) {
+            menu.setItem(1, 3,
+                    new ItemBuilder(Material.GRASS)
+                            .name(ChatColor.GREEN + "Click to set as default role")
+                            .lore(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
+                            .get(),
+                    (m, e) -> {
+                        guild.setDefaultRole(role.getRoleName());
+                        guild.log(new GuildLogRoleSetDefault(player.getUniqueId(), role.getRoleName()));
+                        guild.queueUpdate();
+                        openRoleEditor(guild, role, player);
+                    });
+        }
         menu.setItem(3, 3,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Click to rename role")
@@ -143,20 +174,22 @@ public class GuildMenu {
                         .get(),
                 (m, e) -> {
                     SignGUI.open(player, new String[]{"", "^^^^^^", "Enter new", "role name"}, (p, lines) -> {
-                        String roleName = lines[0];
-                        if (roleName.isEmpty()) {
+                        String newRoleName = lines[0];
+                        if (newRoleName.isEmpty()) {
                             Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
                             return;
                         }
-                        if (guildRoles.stream().anyMatch(r -> r.getRoleName().equalsIgnoreCase(roleName))) {
+                        if (guildRoles.stream().anyMatch(r -> r.getRoleName().equalsIgnoreCase(newRoleName))) {
                             Guild.sendGuildMessage(player, ChatColor.RED + "A role with that name already exists!");
                             return;
                         }
-                        if (roleName.length() < 3) {
+                        if (newRoleName.length() < 3) {
                             Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
                             return;
                         }
-                        role.setRoleName(roleName);
+                        guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
+                        role.setRoleName(newRoleName);
+                        guild.queueUpdate();
                         openRoleEditor(guild, role, player);
                     });
                 });
@@ -172,31 +205,44 @@ public class GuildMenu {
                         .get(),
                 (m, e) -> {
                     int roleIndex = guildRoles.indexOf(role);
+                    int newRoleIndex;
                     if (roleIndex == guildRoles.size() - 1) {
-                        guildRoles.remove(role);
-                        guildRoles.add(1, role);
+                        newRoleIndex = 1;
                     } else {
-                        guildRoles.remove(role);
-                        guildRoles.add(roleIndex + 1, role);
+                        newRoleIndex = roleIndex + 1;
                     }
+                    guildRoles.remove(role);
+                    guildRoles.add(newRoleIndex, role);
+                    guild.log(new GuildLogRoleChangeLevel(player.getUniqueId(), role.getRoleName(), roleIndex, newRoleIndex));
+                    guild.queueUpdate();
                     openRoleEditor(guild, role, player);
                 });
 
-        menu.setItem(5, 3,
+        menu.setItem(7, 3,
                 new ItemBuilder(Material.LAVA_BUCKET)
                         .name(ChatColor.GREEN + "Click to delete role")
-                        .lore(lore)
                         .get(),
                 (m, e) -> {
-//                    SignGUI.open(player, new String[]{"", "Type CONFIRM", "Exiting will read", "current text!"}, (p, lines) -> {
-//                        String confirmation = lines[0];
-//                        if (confirmation.equals("CONFIRM")) {
-//                            guildRoles.remove(role);
-//                            openRoleSelectorMenu(guild, player);
-//                        } else {
-//                            Guild.sendGuildMessage(player, ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM");
-//                        }
-//                    });
+                    if (guild.getDefaultRole().equals(role)) {
+                        Guild.sendGuildMessage(player, ChatColor.RED + "You cannot delete the default role. Reassign it first!");
+                        return;
+                    }
+                    if (!role.getPlayers().isEmpty()) {
+                        Guild.sendGuildMessage(player, ChatColor.RED + "You must remove all players from this role before deleting it!");
+                        return;
+                    }
+
+                    SignGUI.open(player, new String[]{"", "Type CONFIRM", "Exiting will read", "current text!"}, (p, lines) -> {
+                        String confirmation = lines[0];
+                        if (confirmation.equals("CONFIRM")) {
+                            guildRoles.remove(role);
+                            guild.log(new GuildLogRoleDelete(player.getUniqueId(), role.getRoleName()));
+                            guild.queueUpdate();
+                            openRoleSelectorMenu(guild, player);
+                        } else {
+                            Guild.sendGuildMessage(player, ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM");
+                        }
+                    });
                 });
 
 
