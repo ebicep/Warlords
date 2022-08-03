@@ -137,7 +137,7 @@ public enum ChallengeAchievements implements Achievement {
                         .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
                         .collect(Collectors.toList());
                 if (events.isEmpty()) return false;
-                int lastHealth = events.get(0).getFinalHealth();
+                float lastHealth = events.get(0).getFinalHealth();
                 float totalAbsorbed = 0;
                 for (WarlordsDamageHealingFinalEvent event : events) {
                     if (event.isHasFlag() && lastHealth == event.getFinalHealth()) {

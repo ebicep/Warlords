@@ -94,7 +94,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateHealth() {
         if (!isDead()) {
             String oldName = getEntity().getCustomName();
-            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + getHealth() + "❤";
+            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(getHealth()) + "❤";
             getEntity().setCustomName(newName);
         }
     }

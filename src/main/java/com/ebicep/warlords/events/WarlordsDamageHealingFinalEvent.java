@@ -16,8 +16,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
     private final WarlordsEntity attacker;
     private final String ability;
-    private final int initialHealth;
-    private final int finalHealth;
+    private final float initialHealth;
+    private final float finalHealth;
     private final float valueBeforeAllReduction;
     private final float valueBeforeInterveneReduction;
     private final float valueBeforeShieldReduction;
@@ -38,7 +38,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
-            int initialHealth,
+            float initialHealth,
             float valueBeforeAllReduction,
             float valueBeforeInterveneReduction,
             float valueBeforeShieldReduction,
@@ -94,11 +94,11 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return ability;
     }
 
-    public int getInitialHealth() {
+    public float getInitialHealth() {
         return initialHealth;
     }
 
-    public int getFinalHealth() {
+    public float getFinalHealth() {
         return finalHealth;
     }
 

@@ -45,8 +45,8 @@ public abstract class AbstractWeapon {
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        player.setMaxHealth(player.getMaxHealth() + getHealthBonus());
-        player.setHealth(player.getMaxHealth() + getHealthBonus());
+        player.setMaxHealth(Math.round(player.getMaxHealth() + getHealthBonus()));
+        player.setHealth(Math.round(player.getMaxHealth() + getHealthBonus()));
     }
 
     public abstract ChatColor getChatColor();
@@ -112,15 +112,15 @@ public abstract class AbstractWeapon {
         return date;
     }
 
-    public abstract int getMeleeDamageMin();
+    public abstract float getMeleeDamageMin();
 
-    public abstract int getMeleeDamageMax();
+    public abstract float getMeleeDamageMax();
 
-    public abstract int getCritChance();
+    public abstract float getCritChance();
 
-    public abstract int getCritMultiplier();
+    public abstract float getCritMultiplier();
 
-    public abstract int getHealthBonus();
+    public abstract float getHealthBonus();
 
     public Weapons getSelectedWeaponSkin() {
         return selectedWeaponSkin;

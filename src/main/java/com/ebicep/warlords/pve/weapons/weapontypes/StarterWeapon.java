@@ -12,7 +12,8 @@ import java.util.UUID;
 
 public class StarterWeapon extends AbstractWeapon implements Salvageable {
 
-    public static final int MELEE_DAMAGE = 80;
+    public static final int MELEE_DAMAGE_MIN = 76;
+    public static final int MELEE_DAMAGE_MAX = 103;
     public static final int HEALTH_BONUS = 160;
 
     public StarterWeapon() {
@@ -46,37 +47,37 @@ public class StarterWeapon extends AbstractWeapon implements Salvageable {
 
     @Override
     public void generateStats() {
-        this.meleeDamage = MELEE_DAMAGE;
+        this.meleeDamage = MELEE_DAMAGE_MIN;
         this.healthBonus = HEALTH_BONUS;
     }
 
     @Override
     public int getMeleeDamageRange() {
-        return 0;
+        return 27; //MAX - MIN = 27
     }
 
     @Override
-    public int getMeleeDamageMin() {
-        return Math.round(meleeDamage);
+    public float getMeleeDamageMin() {
+        return MELEE_DAMAGE_MIN;
     }
 
     @Override
-    public int getMeleeDamageMax() {
-        return Math.round(meleeDamage);
+    public float getMeleeDamageMax() {
+        return MELEE_DAMAGE_MAX;
     }
 
     @Override
-    public int getCritChance() {
+    public float getCritChance() {
         return -1;
     }
 
     @Override
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         return 0;
     }
 
     @Override
-    public int getHealthBonus() {
+    public float getHealthBonus() {
         return Math.round(healthBonus);
     }
 

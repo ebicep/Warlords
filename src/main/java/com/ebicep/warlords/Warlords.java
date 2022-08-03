@@ -897,7 +897,7 @@ public class Warlords extends JavaPlugin {
 
                             // Checks whether the player has the healing powerup active.
                             if (wps.getCooldownManager().hasCooldown(HealingPowerup.class)) {
-                                int heal = (int) (wps.getMaxHealth() * .08);
+                                float heal = wps.getMaxHealth() * .08f;
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }

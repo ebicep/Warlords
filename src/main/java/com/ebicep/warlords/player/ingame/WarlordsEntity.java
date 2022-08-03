@@ -94,8 +94,8 @@ public abstract class WarlordsEntity {
     protected AbstractPlayerClass spec;
     private Specializations specClass;
     protected Weapons weaponSkin;
-    private int health;
-    private int maxHealth;
+    private float health;
+    private float maxHealth;
     private int regenTimer;
     private int respawnTimer = -1;
     private boolean dead = false;
@@ -243,7 +243,7 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
 
-        int initialHealth = health;
+        float initialHealth = health;
 
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.doBeforeReductionFromSelf(event);
@@ -291,7 +291,7 @@ public abstract class WarlordsEntity {
                 // Fall Damage
                 sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
-                if (health - damageValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
+                if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     // Title card "YOU DIED!"
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
@@ -429,7 +429,7 @@ public abstract class WarlordsEntity {
                 //adding dmg to shield
                 arcaneShield.addShieldHealth(-damageValue);
                 //check if broken
-                if (arcaneShield.getShieldHealth() < 0) {
+                if (arcaneShield.getShieldHealth() <= 0) {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
                     }
@@ -646,7 +646,7 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
 
-        int initialHealth = health;
+        float initialHealth = health;
 
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
@@ -673,17 +673,15 @@ public abstract class WarlordsEntity {
                 healValue = this.maxHealth - this.health;
             }
 
-            if (healValue < 0) return Optional.empty();
+            if (healValue <= 0) return Optional.empty();
 
-            if (healValue != 0) {
-                // Displays the healing message.
-                sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield, false);
-                health += healValue;
-                addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
+            // Displays the healing message.
+            sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield, false);
+            health += healValue;
+            addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
-                if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
-                    playHitSound(attacker);
-                }
+            if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
+                playHitSound(attacker);
             }
 
         } else {
@@ -691,7 +689,7 @@ public abstract class WarlordsEntity {
             // Teammate Healing
             if (isTeammate(attacker)) {
 
-                int maxHealth = this.maxHealth;
+                float maxHealth = this.maxHealth;
                 if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
                     maxHealth *= 1.1;
                 }
@@ -700,12 +698,10 @@ public abstract class WarlordsEntity {
                     healValue = maxHealth - this.health;
                 }
 
-                if (healValue < 0) return Optional.empty();
+                if (healValue <= 0) return Optional.empty();
 
                 boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
-                if (healValue != 0) {
-                    sendHealingMessage(attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
-                }
+                sendHealingMessage(attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
 
                 health += healValue;
                 attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
@@ -1419,19 +1415,19 @@ public abstract class WarlordsEntity {
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
-    public int getHealth() {
+    public float getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(float health) {
         this.health = health;
     }
 
-    public int getMaxHealth() {
+    public float getMaxHealth() {
         return maxHealth;
     }
 
-    public void setMaxHealth(int maxHealth) {
+    public void setMaxHealth(float maxHealth) {
         this.maxHealth = maxHealth;
     }
 

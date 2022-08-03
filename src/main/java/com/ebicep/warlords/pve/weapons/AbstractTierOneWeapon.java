@@ -42,31 +42,31 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
     }
 
     @Override
-    public int getMeleeDamageMin() {
+    public float getMeleeDamageMin() {
         float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? meleeDamage * getStarPieceBonusMultiplicativeValue() : meleeDamage;
         return Math.round(amount);
     }
 
     @Override
-    public int getMeleeDamageMax() {
+    public float getMeleeDamageMax() {
         float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? (meleeDamage + getMeleeDamageRange()) * getStarPieceBonusMultiplicativeValue() : meleeDamage + getMeleeDamageRange();
         return Math.round(amount);
     }
 
     @Override
-    public int getCritChance() {
+    public float getCritChance() {
         float amount = starPieceBonus == WeaponStats.CRIT_CHANCE ? critChance * getStarPieceBonusMultiplicativeValue() : critChance;
         return Math.round(amount);
     }
 
     @Override
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         float amount = starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? critMultiplier * getStarPieceBonusMultiplicativeValue() : critMultiplier;
         return Math.round(amount);
     }
 
     @Override
-    public int getHealthBonus() {
+    public float getHealthBonus() {
         float amount = starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
         return Math.round(amount);
     }
