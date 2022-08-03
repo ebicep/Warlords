@@ -33,16 +33,16 @@ public abstract class AbstractAbility {
     protected float maxDamageHeal;
     protected float currentCooldown;
     protected float cooldown;
-    protected int energyCost;
-    protected int critChance;
-    protected int critMultiplier;
+    protected float energyCost;
+    protected float critChance;
+    protected float critMultiplier;
     protected String description;
     protected boolean boosted;
 
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
 
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
@@ -138,27 +138,27 @@ public abstract class AbstractAbility {
         this.cooldown = cooldown;
     }
 
-    public int getEnergyCost() {
+    public float getEnergyCost() {
         return energyCost;
     }
 
-    public void setEnergyCost(int energyCost) {
+    public void setEnergyCost(float energyCost) {
         this.energyCost = energyCost;
     }
 
-    public int getCritChance() {
+    public float getCritChance() {
         return critChance;
     }
 
-    public void setCritChance(int critChance) {
+    public void setCritChance(float critChance) {
         this.critChance = critChance;
     }
 
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         return critMultiplier;
     }
 
-    public void setCritMultiplier(int critMultiplier) {
+    public void setCritMultiplier(float critMultiplier) {
         this.critMultiplier = critMultiplier;
     }
 
@@ -197,10 +197,10 @@ public abstract class AbstractAbility {
                         getCooldown() == 0 ? null :
                                 ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalHundredths(getCooldown()) + " seconds",
                         getEnergyCost() == 0 ? null :
-                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + getEnergyCost(),
+                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getEnergyCost()),
                         getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + getCritChance() + "%" + "\n" +
-                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + getCritMultiplier() + "%",
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritChance()) + "%" + "\n" +
+                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritMultiplier()) + "%",
                         "",
                         getDescription()
                 )

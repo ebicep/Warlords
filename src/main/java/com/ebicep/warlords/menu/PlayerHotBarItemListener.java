@@ -3,6 +3,7 @@ package com.ebicep.warlords.menu;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -24,10 +26,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.openGamemodeMenu;
@@ -35,138 +39,114 @@ import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu
 
 public class PlayerHotBarItemListener implements Listener {
 
-    private static final HashMap<UUID, Set<ItemListener>> playerHotBarItemListeners = new HashMap<>();
 
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> DEBUG_MENU = new Pair<>(
-            new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get(),
-            e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "wl"));
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> START_MENU = new Pair<>(
-            new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get(),
-            e -> openGamemodeMenu(e.getPlayer()));
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> SELECTION_MENU = new Pair<>(
-            new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get(),
-            e -> openMainMenu(e.getPlayer()));
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> SPECTATE_MENU = new Pair<>(
-            new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get(),
-            e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> WEAPONS_MENU = new Pair<>(
-            new ItemBuilder(Material.DIAMOND_SWORD).name("§aWeapons").get(),
-            e -> WeaponManagerMenu.openWeaponInventoryFromExternal(e.getPlayer()));
-    private static final Pair<ItemStack, Consumer<PlayerInteractEvent>> REWARD_INVENTORY_MENU = new Pair<>(
-            new ItemBuilder(Material.CHEST).name("§aReward Inventory").get(),
-            e -> RewardInventory.openRewardInventory(e.getPlayer(), 1));
-    private static final List<Pair<ItemStack, Consumer<PlayerInteractEvent>>> STATIC_ITEM_LIST = new ArrayList<Pair<ItemStack, Consumer<PlayerInteractEvent>>>() {{
-        add(DEBUG_MENU);
-        add(START_MENU);
-        add(SELECTION_MENU);
-        add(SPECTATE_MENU);
-        add(WEAPONS_MENU);
-        add(REWARD_INVENTORY_MENU);
-    }};
+    private static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get();
+    private static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
+    private static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
+    private static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD).name("§aWeapons").get();
+    private static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.CHEST).name("§aReward Inventory").get();
+    private static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
+    private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
-    public static void addItems(Player player) {
-        for (ItemListener listener : playerHotBarItemListeners.get(player.getUniqueId())) {
-            player.getInventory().setItem(listener.getSlot(), listener.getItemStack());
-        }
+    static {
+        SLOT_HOTBAR_LISTENER.put(1, e -> {
+        });
+        SLOT_HOTBAR_LISTENER.put(2, e -> {
+            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
+            if (p != null) {
+                List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getA().getRegularGamesMenu().getRegularGamePlayers();
+                if (!playerList2.isEmpty()) {
+                    p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                }
+            }
+        });
+        SLOT_HOTBAR_LISTENER.put(3, e -> {
+            if (e.getPlayer().hasPermission("warlords.game.debug")) {
+                Bukkit.getServer().dispatchCommand(e.getPlayer(), "wl");
+            } else {
+                openGamemodeMenu(e.getPlayer());
+            }
+        });
+        SLOT_HOTBAR_LISTENER.put(4, e -> openMainMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
+        SLOT_HOTBAR_LISTENER.put(6, e -> WeaponManagerMenu.openWeaponInventoryFromExternal(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(7, e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(8, e -> RewardInventory.openRewardInventory(e.getPlayer(), 1));
     }
 
-    public static void addItems(Player player, Set<ItemListener> listeners) {
-        if (!playerHotBarItemListeners.containsKey(player.getUniqueId())) {
-            playerHotBarItemListeners.put(player.getUniqueId(), listeners);
-        }
-        for (ItemListener listener : listeners) {
-            player.getInventory().setItem(listener.getSlot(), listener.getItemStack());
-        }
-    }
-
-    public static void addStaticItem(Player player, int slot, Pair<ItemStack, Consumer<PlayerInteractEvent>> pair) {
-        player.getInventory().setItem(slot, pair.getA());
+    public static void setItem(Player player, int slot, ItemStack itemStack) {
+        player.getInventory().setItem(slot, itemStack);
     }
 
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
         UUID uuid = player.getUniqueId();
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        AbstractPlayerClass apc = selectedSpec.create.get();
 
-        if (!playerHotBarItemListeners.containsKey(uuid)) {
-            Set<ItemListener> listeners = new HashSet<>();
-
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
-            listeners.add(new ItemListener(
-                    1,
-                    new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                            .name("§aWeapon Skin Preview")
-                            .get(),
-                    e -> {
-                    })
-            );
-
-            if (!fromGame) {
-                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
-                if (partyPlayerPair != null) {
-                    List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
-                    if (!playerList.isEmpty()) {
-                        playerList.stream()
-                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                                .findFirst()
-                                .ifPresent(regularGamePlayer ->
-                                        listeners.add(new ItemListener(
-                                                2,
-                                                new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get(),
-                                                e -> {
-                                                    Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
-                                                    if (p != null) {
-                                                        List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getA().getRegularGamesMenu().getRegularGamePlayers();
-                                                        if (!playerList2.isEmpty()) {
-                                                            p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                                                            new BukkitRunnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
-                                                                        p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                                                                    } else {
-                                                                        this.cancel();
-                                                                    }
-                                                                }
-                                                            }.runTaskTimer(Warlords.getInstance(), 20, 10);
-                                                        }
-                                                    }
-                                                }
-                                        ))
-                                );
-                    }
+        setItem(player, 1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                .name("§aWeapon Skin Preview")
+                .get());
+        if (!fromGame) {
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
+            if (partyPlayerPair != null) {
+                List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
+                if (!playerList.isEmpty()) {
+                    playerList.stream()
+                            .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
+                            .findFirst()
+                            .ifPresent(regularGamePlayer -> setItem(player, 2, new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get()));
                 }
             }
-
-            if (DatabaseManager.enabled) {
-                listeners.add(new ItemListener(
-                        7,
-                        new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get(),
-                        e -> ExperienceManager.openLevelingRewardsMenu(e.getPlayer())
-                ));
-            }
-
-            addItems(player, listeners);
-        } else {
-            addItems(player);
         }
 
         if (player.hasPermission("warlords.game.debug")) {
-            addStaticItem(player, 3, DEBUG_MENU);
+            setItem(player, 3, DEBUG_MENU);
         } else {
-            addStaticItem(player, 3, START_MENU);
+            setItem(player, 3, START_MENU);
         }
-        addStaticItem(player, 4, SELECTION_MENU);
-        addStaticItem(player, 5, SPECTATE_MENU);
+        setItem(player, 4, SELECTION_MENU);
+        setItem(player, 5, SPECTATE_MENU);
 
         if (DatabaseManager.enabled) {
-            addStaticItem(player, 6, WEAPONS_MENU);
-            addStaticItem(player, 8, REWARD_INVENTORY_MENU);
+            updateWeaponManagerItem(player, selectedSpec);
+            setItem(player, 7, new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get());
+            setItem(player, 8, REWARD_INVENTORY_MENU);
         }
+    }
+
+    public static void updateWeaponManagerItem(Player player, Specializations selectedSpec) {
+        UUID uuid = player.getUniqueId();
+        if (DatabaseManager.playerService != null) {
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
+            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                    .filter(AbstractWeapon::isBound)
+                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == selectedSpec)
+                    .findFirst();
+            if (optionalWeapon.isPresent()) {
+                setItem(player, 6, optionalWeapon.get().generateItemStack());
+                return;
+            }
+        }
+        setItem(player, 6, WEAPONS_MENU);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
+        if (!e.getPlayer().getWorld().getName().equals("MainLobby")) {
+            return;
+        }
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
@@ -174,72 +154,10 @@ public class PlayerHotBarItemListener implements Listener {
         if (itemStack == null) {
             return;
         }
-        Set<ItemListener> itemListeners = playerHotBarItemListeners.get(e.getPlayer().getUniqueId());
-        if (itemListeners == null) {
-            return;
+        int slot = e.getPlayer().getInventory().getHeldItemSlot();
+        if (SLOT_HOTBAR_LISTENER.containsKey(slot)) {
+            SLOT_HOTBAR_LISTENER.get(slot).accept(e);
         }
-
-        for (ItemListener itemListener : itemListeners) {
-            if (
-                    itemStack.getType() == Material.SKULL_ITEM && itemListener.itemStack.getType() == Material.SKULL_ITEM && Objects.equals(((SkullMeta) itemStack.getItemMeta()).getOwner(), ((SkullMeta) itemListener.itemStack.getItemMeta()).getOwner()) ||
-                            itemListener.getItemStack().equals(itemStack)
-            ) {
-                itemListener.getOnClick().accept(e);
-                return;
-            }
-        }
-
-        for (Pair<ItemStack, Consumer<PlayerInteractEvent>> itemStackConsumerPair : STATIC_ITEM_LIST) {
-            ItemStack is = itemStackConsumerPair.getA();
-            if (itemStack.getType() == Material.SKULL_ITEM && is.getType() == Material.SKULL_ITEM && Objects.equals(((SkullMeta) itemStack.getItemMeta()).getOwner(), ((SkullMeta) is.getItemMeta()).getOwner()) || is.equals(itemStack)) {
-                itemStackConsumerPair.getB().accept(e);
-            }
-        }
-
-    }
-
-    public static class ItemListener {
-
-        private final int slot;
-        private final ItemStack itemStack;
-        private final Consumer<PlayerInteractEvent> onClick;
-
-        public ItemListener(int slot, ItemStack itemStack, Consumer<PlayerInteractEvent> onClick) {
-            this.slot = slot;
-            this.itemStack = itemStack;
-            this.onClick = onClick;
-        }
-
-        public int getSlot() {
-            return slot;
-        }
-
-        public ItemStack getItemStack() {
-            return itemStack;
-        }
-
-        public Consumer<PlayerInteractEvent> getOnClick() {
-            return onClick;
-        }
-
-        //equals and hashcode method that only compares itemstack unless type if skull then also compare owner
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ItemListener that = (ItemListener) o;
-            if (itemStack.getType() == Material.SKULL_ITEM && that.itemStack.getType() == Material.SKULL_ITEM) {
-                return Objects.equals(((SkullMeta) itemStack.getItemMeta()).getOwner(), ((SkullMeta) that.itemStack.getItemMeta()).getOwner());
-            } else {
-                return itemStack.equals(that.itemStack);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(itemStack);
-        }
-
     }
 }
 

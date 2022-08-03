@@ -34,7 +34,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + (starPieceBonus == WeaponStats.SPEED_BONUS ? getStarPieceBonusMultiplicativeString(speedBonus) + "%" + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(speedBonus) + "%"));
+        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
     }
 
     @Override

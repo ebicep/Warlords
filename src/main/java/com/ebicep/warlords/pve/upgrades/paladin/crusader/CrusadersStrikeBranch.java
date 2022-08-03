@@ -49,7 +49,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     @Override
     public void b1() {

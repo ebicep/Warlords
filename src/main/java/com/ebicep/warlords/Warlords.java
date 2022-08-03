@@ -335,9 +335,19 @@ public class Warlords extends JavaPlugin {
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-            PlayerHotBarItemListener.giveLobbyHotBar(player, false);
+            player.teleport(getRejoinPoint(player.getUniqueId()));
+            player.getInventory().clear();
         });
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+                    PlayerHotBarItemListener.giveLobbyHotBar(player, false);
+                });
+            }
+        }.runTaskLater(Warlords.getInstance(), 60);
 
 
         ProtocolManager protocolManager;
@@ -715,7 +725,7 @@ public class Warlords extends JavaPlugin {
                         // Energy
                         if (wp.getEnergy() < wp.getMaxEnergy()) {
                             // Standard energy value per second.
-                            float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
+                            float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20;
                             // Checks whether the player has Avenger's Wrath active.
                             for (AvengersWrath avengersWrath : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
                                     .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)

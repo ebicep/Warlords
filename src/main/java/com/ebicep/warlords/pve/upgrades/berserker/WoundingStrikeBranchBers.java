@@ -49,7 +49,7 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         ability.setMaxDamageHeal(maxDamage * 1.6f);
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     @Override
     public void b1() {

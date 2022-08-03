@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -93,6 +94,7 @@ public class WeaponBindMenu {
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, selectedWeapon);
+                                    PlayerHotBarItemListener.updateWeaponManagerItem(player, spec);
                                 }
                         );
                     } else {

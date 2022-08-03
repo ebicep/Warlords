@@ -28,13 +28,13 @@ public class Consecrate extends AbstractAbility {
     protected float radius;
     protected Location location;
 
-    public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost, float radius) {
+    public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.radius = radius;
     }
 
-    public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost, float radius, Location location) {
+    public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius, Location location) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.radius = radius;

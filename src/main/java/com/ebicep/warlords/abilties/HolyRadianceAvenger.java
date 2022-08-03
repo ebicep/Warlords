@@ -21,7 +21,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
     private int markDuration = 8;
     private int energyPerSecond = 8;
 
-    public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
     }
 

@@ -43,7 +43,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
 
         attacksDone++;
-        int critChance = this.critChance;
+        float critChance = this.critChance;
         if (attacksDone == strikeCritInterval) {
             attacksDone = 0;
             critChance = 100;

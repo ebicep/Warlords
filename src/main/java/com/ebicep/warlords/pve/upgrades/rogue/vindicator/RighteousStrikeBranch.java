@@ -49,7 +49,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
         ability.setMaxDamageHeal(maxDamage * 1.4f);
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
     @Override
     public void b1() {
         ability.setEnergyCost(energyCost - 5);

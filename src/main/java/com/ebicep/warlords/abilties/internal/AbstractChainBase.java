@@ -18,7 +18,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
     protected int playersHit = 0;
 
-    public AbstractChainBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public AbstractChainBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 

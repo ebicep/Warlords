@@ -49,7 +49,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ability.setMaxDamageHeal(maxDamage * 2);
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     @Override
     public void b1() {
