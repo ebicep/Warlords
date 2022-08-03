@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -44,8 +43,4 @@ public class Physira extends AbstractZombie implements BossMob {
 
     }
 
-    @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        dropItem();
-    }
 }

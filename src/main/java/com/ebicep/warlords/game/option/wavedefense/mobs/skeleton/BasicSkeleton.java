@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -44,8 +43,4 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
 
     }
 
-    @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-
-    }
 }

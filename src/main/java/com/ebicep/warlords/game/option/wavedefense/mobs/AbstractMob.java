@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -8,7 +10,11 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -16,6 +22,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.UnaryOperator;
 
 public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
@@ -93,7 +100,29 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver);
 
-    public abstract void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption);
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+        dropWeapon(killer);
+    }
+
+    public void dropWeapon(WarlordsEntity killer) {
+        if (ThreadLocalRandom.current().nextInt(0, 100) < dropRate() && DatabaseManager.playerService != null) {
+            UUID uuid = killer.getUuid();
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+            AbstractWeapon weapon = generateWeapon(uuid);
+            databasePlayer.getPveStats().getWeaponInventory().add(weapon);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            killer.getGame().forEachOnlinePlayer((player, team) -> {
+                player.spigot().sendMessage(
+                        new TextComponent(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found "),
+                        new TextComponentBuilder(weapon.getName())
+                                .setHoverItem(weapon.generateItemStack())
+                                .getTextComponent(),
+                        new TextComponent(ChatColor.GRAY + "!")
+                );
+            });
+        }
+    }
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;

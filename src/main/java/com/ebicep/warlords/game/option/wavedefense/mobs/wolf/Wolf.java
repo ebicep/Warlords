@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.wolf;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
@@ -35,8 +34,4 @@ public class Wolf extends AbstractWolf implements BasicMob {
 
     }
 
-    @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-
-    }
 }

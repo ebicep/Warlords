@@ -86,7 +86,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+        super.onDeath(killer, deathLocation, waveDefenseOption);
         WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
         if (we == null) return;
         for (WarlordsEntity enemy : PlayerFilter
@@ -136,8 +137,4 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
         Utils.playGlobalSound(deathLocation, Sound.SLIME_WALK, 2, 0.5f);
     }
 
-    @Override
-    public void dropItem() {
-
-    }
 }

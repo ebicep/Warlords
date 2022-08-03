@@ -250,7 +250,7 @@ public class WaveDefenseOption implements Option {
                     new GameRunnable(game) {
                         @Override
                         public void run() {
-                            finalRemoved.onDeath(we.getDeathLocation(), WaveDefenseOption.this);
+                            finalRemoved.onDeath(event.getKiller(), we.getDeathLocation(), WaveDefenseOption.this);
                             game.removePlayer(we.getUuid());
                         }
                     }.runTask();

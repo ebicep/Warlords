@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.magmacube;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
@@ -35,12 +34,22 @@ public class BabyMagmaCube extends AbstractMagmaCube {
     }
 
     @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-
+    public int dropRate() {
+        return 0;
     }
 
     @Override
-    public void dropItem() {
+    public int commonDropChance() {
+        return 0;
+    }
 
+    @Override
+    public int rareDropChance() {
+        return 0;
+    }
+
+    @Override
+    public int epicDropChance() {
+        return 0;
     }
 }

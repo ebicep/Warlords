@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -43,8 +42,4 @@ public class BasicPigZombie extends AbstractPigZombie implements BasicMob {
 
     }
 
-    @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-
-    }
 }
