@@ -32,6 +32,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
+    private final MobTier mobTier;
     protected final EntityEquipment ee;
     protected final int maxHealth;
     protected final float walkSpeed;
@@ -41,10 +42,11 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     protected WarlordsNPC warlordsNPC;
 
-    public AbstractMob(T entity, Location spawnLocation, String name, EntityEquipment ee, int maxHealth, float walkSpeed, int damageResistance, float minMeleeDamage, float maxMeleeDamage) {
+    public AbstractMob(T entity, Location spawnLocation, String name, MobTier mobTier, EntityEquipment ee, int maxHealth, float walkSpeed, int damageResistance, float minMeleeDamage, float maxMeleeDamage) {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
+        this.mobTier = mobTier;
         this.ee = ee;
         this.maxHealth = maxHealth;
         this.walkSpeed = walkSpeed;
@@ -73,6 +75,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.warlordsNPC = new WarlordsNPC(
                 uuid,
                 name,
+                mobTier,
                 Weapons.ABBADON,
                 livingEntity,
                 game,
@@ -139,5 +142,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;
+    }
+
+    public MobTier getMobTier() {
+        return mobTier;
     }
 }

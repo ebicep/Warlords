@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -19,6 +20,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Shaman",
+                MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.WOOD, 1, (short) 3),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),

@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
@@ -30,6 +31,7 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     private float minMeleeDamage;
     private float maxMeleeDamage;
+    private MobTier mobTier;
 
     public WarlordsNPC(
             UUID uuid,
@@ -44,25 +46,6 @@ public final class WarlordsNPC extends WarlordsEntity {
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
-    }
-
-    public WarlordsNPC(
-            UUID uuid,
-            String name,
-            Weapons weapon,
-            LivingEntity entity,
-            Game game,
-            Team team,
-            Specializations specClass,
-            int maxHealth,
-            float walkSpeed
-    ) {
-        super(uuid, name, weapon, entity, game, team, specClass);
-        this.walkspeed = walkSpeed;
-        updateEntity();
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        setSpawnGrave(false);
-        setMaxHealth(maxHealth);
     }
 
     public WarlordsNPC(
@@ -90,6 +73,33 @@ public final class WarlordsNPC extends WarlordsEntity {
         spec.setDamageResistance(damageResistance);
     }
 
+    public WarlordsNPC(
+            UUID uuid,
+            String name,
+            MobTier mobTier,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(uuid, name, weapon, entity, game, team, specClass);
+        this.mobTier = mobTier;
+        this.walkspeed = walkSpeed;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        updateEntity();
+        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
+        setMaxHealth(maxHealth);
+        spec.setDamageResistance(damageResistance);
+    }
+
     @Override
     public void updateHealth() {
         if (!isDead()) {
@@ -101,7 +111,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     
     @Override
     public void updateEntity() {
-        entity.setCustomName(ChatColor.RED.toString() + Math.round(this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
+        entity.setCustomName(ChatColor.YELLOW.toString() + this.getSpec().getDamageResistance() + "% §7- " + ChatColor.GOLD + mobTier.getSymbol() + " §7- §c" + Math.round(this.getHealth()) + "❤");
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);
@@ -184,11 +194,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
-
         //TODO Dropping weapons
         Location deathLocation = getLocation();
-
-
     }
 
     public float getMinMeleeDamage() {
@@ -205,5 +212,13 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public void setMaxMeleeDamage(int maxMeleeDamage) {
         this.maxMeleeDamage = maxMeleeDamage;
+    }
+
+    public MobTier getMobTier() {
+        return mobTier;
+    }
+
+    public void setMobTier(MobTier mobTier) {
+        this.mobTier = mobTier;
     }
 }

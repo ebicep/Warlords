@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.spider;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
@@ -10,6 +11,7 @@ public class Spider extends AbstractSpider implements BasicMob {
         super(
                 spawnLocation,
                 "Lunar Venari",
+                MobTier.BASE,
                 null,
                 2200,
                 0.45f,

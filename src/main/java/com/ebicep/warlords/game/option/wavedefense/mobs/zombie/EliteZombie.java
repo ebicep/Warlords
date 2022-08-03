@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,6 +15,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Swordsman",
+                MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),

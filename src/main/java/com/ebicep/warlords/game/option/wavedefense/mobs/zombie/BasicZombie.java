@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -13,6 +14,7 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
         super(
                 spawnLocation,
                 "Lunar Lancer",
+                MobTier.BASE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.CARPET, 1, (short) 14),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.irongolem;
 
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,6 +18,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Apprentice",
+                MobTier.ELITE,
                 null,
                 5000,
                 0.4f,

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,6 +17,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
                 "Zenith",
+                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         Utils.getPlayerSkull("4oot"),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),

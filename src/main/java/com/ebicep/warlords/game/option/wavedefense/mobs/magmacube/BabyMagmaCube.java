@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.magmacube;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 
@@ -9,6 +10,7 @@ public class BabyMagmaCube extends AbstractMagmaCube {
         super(
                 spawnLocation,
                 "Illusion Illuminati",
+                MobTier.ELITE,
                 null,
                 2500,
                 0.35f,

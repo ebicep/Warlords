@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -24,6 +25,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Illumination",
+                MobTier.BASE,
                 null,
                 4000,
                 0.5f,

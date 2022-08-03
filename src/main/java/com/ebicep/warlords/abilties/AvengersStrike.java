@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
@@ -12,9 +13,10 @@ import java.util.Optional;
 
 public class AvengersStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
+    private int struckTargets = 0;
 
     protected float energyStole = 0;
-    private int energySteal = 10;
+    private float energySteal = 10;
 
     public AvengersStrike() {
         super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
@@ -38,14 +40,33 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        struckTargets++;
+        float multiplier;
+        if (nearPlayer instanceof WarlordsNPC) {
+            if (!pveUpgrade) return;
+            switch (((WarlordsNPC) nearPlayer).getMobTier()) {
+                case BASE:
+                    multiplier = 1.3f;
+                    break;
+                case ELITE:
+                    multiplier = 1.15f;
+                    break;
+                default:
+                    multiplier = 1;
+                    break;
+            }
+        } else {
+            multiplier = 1;
+        }
+
         Optional<Consecrate> optionalConsecrate = getStandingOnConsecrate(wp, nearPlayer);
         if (optionalConsecrate.isPresent()) {
             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
-                    maxDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
+                    (minDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f)) * multiplier,
+                    (maxDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f)) * multiplier,
                     critChance,
                     critMultiplier,
                     false
@@ -54,8 +75,8 @@ public class AvengersStrike extends AbstractStrikeBase {
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal,
-                    maxDamageHeal,
+                    minDamageHeal * multiplier,
+                    maxDamageHeal * multiplier,
                     critChance,
                     critMultiplier,
                     false
@@ -63,10 +84,6 @@ public class AvengersStrike extends AbstractStrikeBase {
         }
 
         energyStole += nearPlayer.subtractEnergy(energySteal);
-
-        if (pveUpgrade) {
-            tripleHit(wp, nearPlayer);
-        }
     }
 
     public boolean isPveUpgrade() {
@@ -77,11 +94,28 @@ public class AvengersStrike extends AbstractStrikeBase {
         this.pveUpgrade = pveUpgrade;
     }
 
-    public int getEnergySteal() {
+    public float getEnergySteal() {
         return energySteal;
     }
 
-    public void setEnergySteal(int energySteal) {
+    public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
+    }
+
+    int counter = 0;
+    @Override
+    public void runEverySecond() {
+        if (counter++ % 60 == 0 && struckTargets > 0) {
+            counter = 0;
+            struckTargets--;
+        }
+    }
+
+    public int getStruckTargets() {
+        return struckTargets;
+    }
+
+    public void setStruckTargets(int struckTargets) {
+        this.struckTargets = struckTargets;
     }
 }
