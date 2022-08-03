@@ -6,10 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.*;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,6 +27,12 @@ public class WeaponCommand extends BaseCommand {
                 new TextComponentBuilder(abstractWeapon.getName())
                         .setHoverItem(abstractWeapon.generateItemStack())
                         .getTextComponent());
+    }
+
+    @Subcommand("starter")
+    @Description("Gives you a starter weapon")
+    public void stater(Player player) {
+        giveWeapon(player, new StarterWeapon(player.getUniqueId()));
     }
 
     @Subcommand("common")
@@ -54,6 +57,16 @@ public class WeaponCommand extends BaseCommand {
     @Description("Give yourself a legendary weapon with your selected specialization")
     public void legendary(Player player) {
         giveWeapon(player, new LegendaryWeapon(player.getUniqueId()));
+    }
+
+    @Subcommand("clear")
+    @Description("Clears your weapon inventory")
+    public void clear(Player player) {
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        databasePlayer.getPveStats().getWeaponInventory().clear();
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                new TextComponent(ChatColor.GRAY + "Cleared weapon inventory."));
     }
 
     @HelpCommand

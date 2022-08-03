@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.events.supplydrop;
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.java.Utils;
+import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -30,11 +30,17 @@ public enum SupplyDropRewards {
 
     ;
 
-    public static int totalWeight = 0;
+    public static final RandomCollection<SupplyDropRewards> RANDOM_COLLECTION = new RandomCollection<>();
+
+    static {
+        for (SupplyDropRewards supplyDropRewards : values()) {
+            RANDOM_COLLECTION.add(supplyDropRewards.dropChance, supplyDropRewards);
+        }
+    }
+
     public final String name;
     public final Consumer<DatabasePlayerPvE> giveReward;
     public final int dropChance;
-
 
     SupplyDropRewards(String name, Consumer<DatabasePlayerPvE> giveReward, int dropChance) {
         this.name = name;
@@ -43,25 +49,7 @@ public enum SupplyDropRewards {
     }
 
     public static SupplyDropRewards getRandomReward() {
-        int random = Utils.generateRandomValueBetweenInclusive(0, getTotalWeight());
-        int currentWeight = 0;
-        for (SupplyDropRewards value : values()) {
-            currentWeight += value.dropChance;
-            if (random <= currentWeight) {
-                return value;
-            }
-        }
-        System.out.println("Something went wrong with the random reward selection.");
-        return SYNTHETIC_SHARDS_3;
-    }
-
-    public static int getTotalWeight() {
-        if (totalWeight == 0) {
-            for (SupplyDropRewards reward : values()) {
-                totalWeight += reward.dropChance;
-            }
-        }
-        return totalWeight;
+        return RANDOM_COLLECTION.next();
     }
 
     public String getType() {

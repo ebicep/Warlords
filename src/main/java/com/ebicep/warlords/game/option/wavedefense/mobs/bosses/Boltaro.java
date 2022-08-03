@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
-import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -43,8 +42,5 @@ public class Boltaro extends AbstractZombie implements BossMob {
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
     }
 
-    @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        dropItem();
-    }
+
 }

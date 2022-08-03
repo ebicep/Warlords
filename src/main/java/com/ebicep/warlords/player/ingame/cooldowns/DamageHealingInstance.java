@@ -49,14 +49,14 @@ public interface DamageHealingInstance {
     /**
      * If attacker has abilities that increase their crit chance (inferno)
      */
-    default int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+    default float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
         return currentCritChance;
     }
 
     /**
      * If attacker has abilities that increase their crit multiplier (inferno)
      */
-    default int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
+    default float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
         return currentCritMultiplier;
     }
 

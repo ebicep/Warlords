@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 public class WeaponStarPieceMenu {
 
-    public static void openWeaponStarPieceMenu(Player player, AbstractWeapon weapon) {
+    public static void openWeaponStarPieceMenu(Player player, AbstractTierOneWeapon weapon) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 

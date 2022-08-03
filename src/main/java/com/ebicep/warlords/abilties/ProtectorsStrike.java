@@ -69,7 +69,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 String ability = event.getAbility();
                 if (ability.equals("Protector's Strike")) {
-                    float healthFraction = lerp(0, 1, (float) wp.getHealth() / wp.getMaxHealth());
+                    float healthFraction = lerp(0, 1, wp.getHealth() / wp.getMaxHealth());
 
                     if (healthFraction > 1) {
                         healthFraction = 1; // in the case of overheal

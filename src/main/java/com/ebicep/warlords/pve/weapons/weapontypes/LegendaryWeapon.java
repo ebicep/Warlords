@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryWeapon extends AbstractBetterWeapon {
+public class LegendaryWeapon extends AbstractTierTwoWeapon {
 
     protected String title;
     @Field("skill_boost")

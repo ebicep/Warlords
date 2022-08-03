@@ -16,14 +16,14 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
     private final WarlordsEntity attacker;
     private final String ability;
-    private final int initialHealth;
-    private final int finalHealth;
+    private final float initialHealth;
+    private final float finalHealth;
     private final float valueBeforeAllReduction;
     private final float valueBeforeInterveneReduction;
     private final float valueBeforeShieldReduction;
     private final float value;
-    private final int critChance;
-    private final int critMultiplier;
+    private final float critChance;
+    private final float critMultiplier;
     private final boolean isCrit;
     private final boolean hasFlag;
     private final boolean isDead;
@@ -38,13 +38,13 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
-            int initialHealth,
+            float initialHealth,
             float valueBeforeAllReduction,
             float valueBeforeInterveneReduction,
             float valueBeforeShieldReduction,
             float value,
-            int critChance,
-            int critMultiplier,
+            float critChance,
+            float critMultiplier,
             boolean isCrit,
             boolean isDamageInstance
     ) {
@@ -94,11 +94,11 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return ability;
     }
 
-    public int getInitialHealth() {
+    public float getInitialHealth() {
         return initialHealth;
     }
 
-    public int getFinalHealth() {
+    public float getFinalHealth() {
         return finalHealth;
     }
 
@@ -118,11 +118,11 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return value;
     }
 
-    public int getCritChance() {
+    public float getCritChance() {
         return critChance;
     }
 
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         return critMultiplier;
     }
 

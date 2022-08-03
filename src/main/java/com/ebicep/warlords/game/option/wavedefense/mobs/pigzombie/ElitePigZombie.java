@@ -71,7 +71,8 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
     }
 
     @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+        super.onDeath(killer, deathLocation, waveDefenseOption);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.PURPLE)
                 .with(FireworkEffect.Type.BURST)

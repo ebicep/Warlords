@@ -88,7 +88,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
-        final int duration = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
+        final int duration = (4 + (2 * Math.round(wp.getHealth() / wp.getMaxHealth()))) * 20;
 
         CircleEffect circle = new CircleEffect(
                 wp,

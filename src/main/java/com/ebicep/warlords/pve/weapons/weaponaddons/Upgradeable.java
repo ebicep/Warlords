@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.weapons.weapontypes;
+package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;

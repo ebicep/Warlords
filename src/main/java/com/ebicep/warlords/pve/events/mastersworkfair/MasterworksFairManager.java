@@ -16,7 +16,7 @@ import com.ebicep.warlords.pve.rewards.RewardTypes;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
-import com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore;
+import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.DateUtil;
 import org.bukkit.ChatColor;

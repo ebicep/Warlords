@@ -112,7 +112,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.setCustomName(this.getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + this.getHealth() + "❤"); // TODO add level and class into the name of this jimmy
+        jimmy.setCustomName(this.getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(0);
@@ -156,7 +156,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 getEntity().setCustomName("");
             } else {
                 String oldName = getEntity().getCustomName();
-                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + getHealth() + "❤";
+                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(getHealth()) + "❤";
                 getEntity().setCustomName(newName);
             }
         }

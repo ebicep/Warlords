@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.weapons.weapontypes;
+package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 public interface StatsRerollable {
 

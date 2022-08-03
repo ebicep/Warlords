@@ -619,7 +619,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-                        float newHealth = (float) wp.getHealth() / wp.getMaxHealth() * 40;
+                        float newHealth = wp.getHealth() / wp.getMaxHealth() * 40;
 
                         if (newHealth < 0) {
                             newHealth = 0;
@@ -897,7 +897,7 @@ public class Warlords extends JavaPlugin {
 
                             // Checks whether the player has the healing powerup active.
                             if (wps.getCooldownManager().hasCooldown(HealingPowerup.class)) {
-                                int heal = (int) (wps.getMaxHealth() * .08);
+                                float heal = wps.getMaxHealth() * .08f;
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }

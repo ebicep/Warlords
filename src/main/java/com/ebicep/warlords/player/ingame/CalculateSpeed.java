@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;
     private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f / 113 * 100 / BASE_SPEED;
-    private int baseModifier;
+    private float baseModifier;
     private float minSpeed;
     private final float maxSpeed;
     private final List<Modifier> modifiers = new LinkedList<>();
@@ -16,7 +16,7 @@ public class CalculateSpeed {
     private boolean hasPendingTimers = false;
     private boolean hasEffectAlteringEffects = false;
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier) {
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifier) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
         this.baseModifier = baseModifier;
         this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
@@ -25,7 +25,7 @@ public class CalculateSpeed {
         this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier, boolean isPve) {
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifier, boolean isPve) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
         this.baseModifier = baseModifier;
         this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
@@ -168,7 +168,7 @@ public class CalculateSpeed {
         this.changed = changed || isChanged;
     }
 
-    public void addBaseModifier(int add) {
+    public void addBaseModifier(float add) {
         this.baseModifier += add;
         this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
         this.modifiers.clear();
@@ -177,13 +177,13 @@ public class CalculateSpeed {
 
     private static class Modifier {
         public final String name;
-        public final int modifier;
+        public final float modifier;
         public final float calculatedModifier;
         public int duration;
         public final boolean afterLimit;
         public final Collection<String> toDisable;
 
-        public Modifier(String name, int modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
+        public Modifier(String name, float modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
             this.name = name;
             this.modifier = modifier;
             this.calculatedModifier = 1 + modifier / 100f;

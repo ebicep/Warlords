@@ -73,5 +73,21 @@ public class UtilsTest {
 
     }
 
+    @Test
+    public void testRandom() {
+//        double min = 100;
+//        double max = 0;
+//        for (int i = 0; i < 10000; i++) {
+//            int aDouble = Utils.generateRandomValueBetweenInclusive(0, 100);
+//            if (aDouble < min) {
+//                min = aDouble;
+//            } else if (aDouble > max) {
+//                max = aDouble;
+//            }
+//        }
+//        System.out.println("Min: " + min);
+//        System.out.println("Max: " + max);
+    }
+
 
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class RecordTimeElapsedOption implements Option {
 
-    private int timeElapsed;
+    private int ticksElapsed;
     private static final int SCOREBOARD_PRIORITY = 50;
 
     @Override
@@ -24,9 +25,12 @@ public class RecordTimeElapsedOption implements Option {
 
             @Override
             public void run() {
-                timeElapsed++;
+                if (game.getState(EndState.class).isPresent()) {
+                    this.cancel();
+                }
+                ticksElapsed++;
             }
-        }.runTaskTimer(0, GameRunnable.SECOND);
+        }.runTaskTimer(0, 0);
     }
 
     @Override
@@ -34,20 +38,20 @@ public class RecordTimeElapsedOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed));
+                return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(ticksElapsed / 20));
             }
         });
     }
 
-    public int getTimeElapsed() {
-        return timeElapsed;
+    public int getTicksElapsed() {
+        return ticksElapsed;
     }
 
-    public static int getTimeElapsed(@Nonnull Game game) {
+    public static int getTicksElapsed(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
             if (option instanceof RecordTimeElapsedOption) {
-                RecordTimeElapsedOption drawAfterTimeoutOption = (RecordTimeElapsedOption) option;
-                return drawAfterTimeoutOption.getTimeElapsed();
+                RecordTimeElapsedOption recordTimeElapsedOption = (RecordTimeElapsedOption) option;
+                return recordTimeElapsedOption.getTicksElapsed();
             }
         }
         return 0;

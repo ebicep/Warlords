@@ -76,7 +76,8 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     }
 
     @Override
-    public void onDeath(Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+        super.onDeath(killer, deathLocation, waveDefenseOption);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we != null) {
             for (WarlordsEntity enemy : PlayerFilter
