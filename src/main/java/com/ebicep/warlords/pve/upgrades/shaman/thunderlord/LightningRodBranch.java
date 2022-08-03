@@ -53,38 +53,34 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
         treeB.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+8% Healing\n-2.5% Cooldown reduction",
+                "+6% Healing",
                 5000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 8);
-                    ability.setCooldown(cooldown * 0.975f);
+                    ability.setHealthRestore(healthRestore + 6);
                 }
         ));
         treeB.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+16% Healing\n-5% Cooldown reduction",
+                "+12% Healing",
                 10000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 16);
-                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setHealthRestore(healthRestore + 12);
                 }
         ));
         treeB.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+24% Healing\n-7.5% Cooldown reduction",
+                "+18% Healing",
                 15000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 24);
-                    ability.setCooldown(cooldown * 0.925f);
+                    ability.setHealthRestore(healthRestore + 18);
                 }
         ));
         treeB.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+32% Healing\n-10% Cooldown reduction",
+                "+24% Healing",
                 20000,
                 () -> {
-                    ability.setHealthRestore(healthRestore + 32);
-                    ability.setCooldown(cooldown * 0.9f);
+                    ability.setHealthRestore(healthRestore + 24);
                 }
         ));
 

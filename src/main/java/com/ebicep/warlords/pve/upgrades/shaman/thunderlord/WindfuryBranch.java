@@ -16,72 +16,72 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+10% Weapon Damage\n-5% Cooldown Reduction",
+                "+15% Weapon damage\n-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 10);
+                    ability.setWeaponDamage(weaponDamage + 15);
                     ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+20% Weapon Damage\n-10% Cooldown Reduction",
+                "+30% Weapon damage\n-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 20);
+                    ability.setWeaponDamage(weaponDamage + 30);
                     ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+30% Weapon Damage\n-15% Cooldown Reduction",
+                "+45% Weapon damage\n-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 30);
+                    ability.setWeaponDamage(weaponDamage + 45);
                     ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+40% Weapon Damage\n-20% Cooldown Reduction",
+                "+60% Weapon Damage\n-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setWeaponDamage(weaponDamage + 40);
+                    ability.setWeaponDamage(weaponDamage + 60);
                     ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+5% Proc chance\n",
+                "+4% Proc chance\n",
                 5000,
                 () -> {
-                    ability.setProcChance(procChance + 5);
+                    ability.setProcChance(procChance + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+10% Proc chance\n+1 Windfury hit",
+                "+8% Proc chance\n+1 Windfury hit",
                 10000,
                 () -> {
-                    ability.setProcChance(procChance + 10);
+                    ability.setProcChance(procChance + 8);
                     ability.setMaxHits(maxHits + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+15% Proc chance",
+                "+12% Proc chance",
                 15000,
                 () -> {
-                    ability.setProcChance(procChance + 15);
+                    ability.setProcChance(procChance + 12);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+20% Proc chance\n+2 Windfury hits",
+                "+16% Proc chance\n+2 Windfury hits",
                 20000,
                 () -> {
-                    ability.setProcChance(procChance + 20);
+                    ability.setProcChance(procChance + 16);
                     ability.setMaxHits(maxHits + 2);
                 }
         ));
@@ -89,10 +89,11 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         masterUpgrade = new Upgrade(
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
-                "Hits on an enemy will permanently reduce their\ndamage reduction by 1% for each Windfury additional\nproc.",
+                "+100% Additional weapon damage\n\nHits on an enemy will permanently reduce their\ndamage reduction by 2% for each Windfury additional\nproc.",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
+                    ability.setWeaponDamage(ability.getWeaponDamage() + 100);
                 }
         );
     }

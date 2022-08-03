@@ -59,40 +59,40 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-5 Energy cost\n+0.25 Block hit radius",
+                "-2.5 Energy cost\n+0.25 Block hit radius",
                 5000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 5);
+                    ability.setEnergyCost(energyCost - 2.5f);
                     ability.setHitbox(hitbox + 0.25);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10 Energy cost\n+0.5 Block hit radius",
+                "-5 Energy cost\n+0.5 Block hit radius",
                 10000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 10);
+                    ability.setEnergyCost(energyCost - 5);
                     ability.setHitbox(hitbox + 0.5);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-15 Energy cost\n+0.75 Block hit radius",
+                "-7.5 Energy cost\n+0.75 Block hit radius",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 15);
+                    ability.setEnergyCost(energyCost - 7.5f);
                     ability.setHitbox(hitbox + 0.75);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20 Energy cost\n+1 Block hit radius",
+                "-10 Energy cost\n+1 Block hit radius",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 20);
+                    ability.setEnergyCost(energyCost - 10);
                     ability.setHitbox(hitbox + 1);
                 }
         ));

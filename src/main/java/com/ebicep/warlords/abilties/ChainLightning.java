@@ -27,7 +27,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private int radius = 20;
     private int bounceRange = 10;
     private int maxBounces = 3;
-    private float maxDamageReduction = 10;
+    private float damageReductionPerBounce = 10;
+    private float maxDamageReduction = 30;
 
     public int getDamageReduction() {
         return damageReduction;
@@ -50,8 +51,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 "§e" + maxBounces  + " §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
-                "§7You gain §e" + maxDamageReduction + "% §7damage resistance for\n" +
-                "§7each target hit, up to §e" + (maxDamageReduction * maxBounces) + "% §7damage\n" +
+                "§7You gain §e" + damageReductionPerBounce + "% §7damage resistance for\n" +
+                "§7each target hit, up to §e" + maxDamageReduction + "% §7damage\n" +
                 "§7resistance. This buff lasts §64.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
@@ -92,7 +93,11 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue;
-                newDamageValue = currentDamageValue * (((10 - hitCounter) / maxDamageReduction));
+                float multiplier = (((10 - hitCounter) / damageReductionPerBounce));
+                if (multiplier > (100 - maxDamageReduction / 100f) && pveUpgrade) {
+                    multiplier = (100 - maxDamageReduction / 100f);
+                }
+                newDamageValue = currentDamageValue * multiplier;
                 event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
@@ -150,14 +155,14 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             switch (playersSize) {
                 case 0:
                     // We hit the first player
-                    damageMultiplier = pveUpgrade ? 1.05f : 1f;
+                    damageMultiplier = pveUpgrade ? 1.06f : 1f;
                     break;
                 case 1:
                     // We hit the second player
-                    damageMultiplier = pveUpgrade ? 1.1f : .85f;
+                    damageMultiplier = pveUpgrade ? 1.12f : .85f;
                     break;
                 default:
-                    damageMultiplier = pveUpgrade ? 1.15f : .7f;
+                    damageMultiplier = pveUpgrade ? 1.18f : .7f;
                     break;
             }
 
@@ -219,12 +224,12 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         this.radius = radius;
     }
 
-    public float getMaxDamageReduction() {
-        return maxDamageReduction;
+    public float getDamageReductionPerBounce() {
+        return damageReductionPerBounce;
     }
 
-    public void setMaxDamageReduction(float maxDamageReduction) {
-        this.maxDamageReduction = maxDamageReduction;
+    public void setDamageReductionPerBounce(float damageReductionPerBounce) {
+        this.damageReductionPerBounce = damageReductionPerBounce;
     }
 
     public boolean isPveUpgrade() {
@@ -245,5 +250,13 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     public int getMaxBounces() {
         return maxBounces;
+    }
+
+    public float getMaxDamageReduction() {
+        return maxDamageReduction;
+    }
+
+    public void setMaxDamageReduction(float maxDamageReduction) {
+        this.maxDamageReduction = maxDamageReduction;
     }
 }

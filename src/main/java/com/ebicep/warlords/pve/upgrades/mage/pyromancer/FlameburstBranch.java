@@ -7,6 +7,12 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
+    float cooldown = ability.getCooldown();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
+    float energyCost = ability.getEnergyCost();
+    float critMultiplier = ability.getCritMultiplier();
+
     public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
@@ -23,14 +29,18 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Remove energy cost\n\nFlame Burst gains an additional 0.5% Crit Chance and\n1% Crit Multiplier for each block it travels.",
-                50000
+                "PLACEHOLDER",
+                50000,
+                () -> {
+                    ability.setAcceleration(1.005);
+                    ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
+                    ability.setEnergyCost(energyCost + 140);
+                    ability.setMinDamageHeal(minDamage * 2);
+                    ability.setMaxDamageHeal(maxDamage * 2);
+                    ability.setCooldown(cooldown * 2);
+                    ability.setHitbox(ability.getHitbox() + 5);
+                    ability.setPveUpgrade(true);
+                }
         );
     }
-
-    float cooldown = ability.getCooldown();
-
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
-
 }

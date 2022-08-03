@@ -22,6 +22,7 @@ public class Inferno extends AbstractAbility {
     private int duration = 18;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
+    private int maxHits = 10;
 
     public Inferno() {
         super("Inferno", 0, 0, 46.98f, 0, 0, 0);
@@ -32,7 +33,7 @@ public class Inferno extends AbstractAbility {
         description = "§7Combust into a molten inferno,\n" +
                 "§7increasing your Crit Chance by §c" + critChanceIncrease + "%\n" +
                 "§7and your Crit Multiplier by §c" + critMultiplierIncrease + "%§7. Lasts\n" +
-                "§6" + duration + " §7seconds.";
+                "§6" + duration + " §7seconds. Max hits: " + maxHits;
     }
 
     @Override
@@ -90,13 +91,14 @@ public class Inferno extends AbstractAbility {
                 return currentCritMultiplier + critMultiplierIncrease;
             }
 
+            int finalMaxHits = maxHits;
+
             @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (pveUpgrade) {
-                    if (isKiller) {
-                        subtractCooldown(1);
-                    } else {
-                        subtractCooldown(.5f);
+                    if (isCrit && !(finalMaxHits <= 0)) {
+                        subtractCooldown(0.25f);
+                        finalMaxHits--;
                     }
                     wp.updateOrangeItem();
                 }
@@ -140,5 +142,13 @@ public class Inferno extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
+    }
+
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
     }
 }

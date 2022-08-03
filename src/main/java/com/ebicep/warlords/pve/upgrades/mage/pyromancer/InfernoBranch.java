@@ -7,19 +7,47 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
+    int maxHits = ability.getMaxHits();
+
     public InfernoBranch(AbilityTree abilityTree, Inferno ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Crit Chance - Tier I", "+5% Crit Chance bonus", 5000));
-        treeA.add(new Upgrade("Crit Chance - Tier II", "+10% Crit Chance bonus", 10000));
-        treeA.add(new Upgrade("Crit Chance - Tier III", "+20% Crit Chance bonus", 20000));
 
-        treeC.add(new Upgrade("Crit Multiplier - Tier I", "+10% Crit Multiplier bonus", 5000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier II", "+20% Crit Multiplier bonus", 10000));
-        treeC.add(new Upgrade("Crit Multiplier - Tier III", "+40% Crit Multiplier bonus", 20000));
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 10 hits)",
+                5000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 20 hits)",
+                10000,
+                () -> {
+                    ability.setMaxHits(maxHits + 10);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 30 hits)",
+                15000,
+                () -> {
+                    ability.setMaxHits(maxHits + 20);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 40 hits)",
+                20000,
+                () -> {
+                    ability.setMaxHits(maxHits + 30);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
                 "Master Upgrade",
-                "Reduce the cooldown of Inferno by 1 second\nfor each enemy killed. (0.5s on assists.)",
+                "PLACEHOLDER",
                 50000
         );
     }

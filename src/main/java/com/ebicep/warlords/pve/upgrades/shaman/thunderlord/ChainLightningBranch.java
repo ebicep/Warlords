@@ -19,44 +19,44 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+5% Damage\n+2 Blocks cast and bounce range",
+                "+10% Damage\n+2 Blocks cast and bounce range",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.05f);
-                    ability.setMaxDamageHeal(maxDamage * 1.05f);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                     ability.setRadius(radius + 2);
                     ability.setBounceRange(bounceRange + 2);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+10% Damage\n+4 Blocks cast and bounce range",
+                "+15% Damage\n+4 Blocks cast and bounce range",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                     ability.setRadius(radius + 4);
                     ability.setBounceRange(bounceRange + 4);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+15% Damage\n+6 Blocks cast and bounce range",
+                "+20% Damage\n+6 Blocks cast and bounce range",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                     ability.setRadius(radius + 6);
                     ability.setBounceRange(bounceRange + 6);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+20% Damage\n+8 Blocks cast and bounce range",
+                "+25% Damage\n+8 Blocks cast and bounce range",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setMinDamageHeal(minDamage * 1.25f);
+                    ability.setMaxDamageHeal(maxDamage * 1.25f);
                     ability.setRadius(radius + 8);
                     ability.setBounceRange(bounceRange + 8);
                 }
@@ -100,10 +100,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         masterUpgrade = new Upgrade(
                 "Electrifying Chains",
                 "Chain Lightning - Master Upgrade",
-                "Chain Lightning now deals 5% more damage\nper bounce instead of less.",
+                "Increase max damage reduction cap by 10%. Additionally,\nChain Lightning now deals 6% more damage per bounce\ninstead of less.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
+                    ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
                 }
         );
     }

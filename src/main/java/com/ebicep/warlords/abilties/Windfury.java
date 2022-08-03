@@ -125,7 +125,7 @@ public class Windfury extends AbstractAbility {
                                 }
 
                                 if (pveUpgrade) {
-                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 1);
+                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 2);
                                 }
 
                                 counter++;

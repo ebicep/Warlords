@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -122,7 +123,19 @@ public class Vindicate extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * getVindicateDamageReduction();
+                WarlordsEntity we = event.getAttacker();
+                if (pveUpgrade) {
+                    if (Utils.isLineOfSightVindicator(event.getPlayer().getEntity(), we.getEntity())) {
+                        final Vector v = wp.getLocation().toVector().subtract(we.getLocation().toVector()).normalize().multiply(-1.25).setY(0.3);
+                        we.setVelocity(v, false);
+                        we.addDamageInstance(event.getPlayer(), name, currentDamageValue, currentDamageValue, -1, 100, false);
+                        return currentDamageValue * 0;
+                    } else {
+                        return currentDamageValue * getVindicateDamageReduction();
+                    }
+                } else {
+                    return currentDamageValue * getVindicateDamageReduction();
+                }
             }
         });
 

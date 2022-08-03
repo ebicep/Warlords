@@ -24,7 +24,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
         );
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     float cooldown = ability.getCooldown();
 
