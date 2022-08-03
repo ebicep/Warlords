@@ -5,15 +5,11 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
-import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.*;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
-import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -293,7 +289,7 @@ public class WeaponManagerMenu {
                     (m, e) -> WeaponUpgradeMenu.openWeaponUpgradeMenu(player, weapon)
             ));
         }
-        if (weapon instanceof LegendaryWeapon) {
+        if (weapon instanceof AbstractLegendaryWeapon) {
             //synthetic alloy title legendary
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)

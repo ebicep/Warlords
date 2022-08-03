@@ -524,7 +524,11 @@ public abstract class WarlordsEntity {
 
                 // debt and healing
                 if (!debt && takeDamage) {
-                    this.health -= Math.round(damageValue);
+                    if (this.health - damageValue > maxHealth) {
+                        this.health = maxHealth;
+                    } else {
+                        this.health -= damageValue;
+                    }
                 }
 
                 attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
@@ -1235,9 +1239,9 @@ public abstract class WarlordsEntity {
                     0,
                     new ItemBuilder(weaponSkin.getItem())
                             .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
-                            .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
-                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
-                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getWeapon().getCritMultiplier() + "%",
+                            .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(spec.getWeapon().getEnergyCost()),
+                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(spec.getWeapon().getCritChance()) + "%",
+                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(spec.getWeapon().getCritMultiplier()) + "%",
                                     "",
                                     spec.getWeapon().getDescription(),
                                     "",
@@ -1553,7 +1557,7 @@ public abstract class WarlordsEntity {
         return energyGiven;
     }
 
-    public float subtractEnergy(int amount) {
+    public float subtractEnergy(float amount) {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;

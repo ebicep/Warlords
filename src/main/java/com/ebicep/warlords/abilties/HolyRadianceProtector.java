@@ -24,7 +24,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
     private final int markRadius = 15;
     private int markDuration = 6;
 
-    public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
     }
 

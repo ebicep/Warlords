@@ -9,8 +9,10 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -146,6 +148,10 @@ public class WarlordsShopMenu {
                         openClassMenu(player, selectedGroup);
 
                         if (DatabaseManager.playerService == null) return;
+                        if (player.getWorld().getName().equals("MainLobby")) {
+                            PlayerHotBarItemListener.updateWeaponManagerItem(player, spec);
+                        }
+
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         databasePlayer.setLastSpec(spec);
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -349,23 +355,23 @@ public class WarlordsShopMenu {
                             Helmets.setSelectedMage(player, helmet);
                         } else if (
                                 helmet == Helmets.SIMPLE_WARRIOR_HELMET ||
-                                helmet == Helmets.GREATER_WARRIOR_HELMET ||
-                                helmet == Helmets.MASTERWORK_WARRIOR_HELMET ||
-                                helmet == Helmets.LEGENDARY_WARRIOR_HELMET
+                                        helmet == Helmets.GREATER_WARRIOR_HELMET ||
+                                        helmet == Helmets.MASTERWORK_WARRIOR_HELMET ||
+                                        helmet == Helmets.LEGENDARY_WARRIOR_HELMET
                         ) {
                             Helmets.setSelectedWarrior(player, helmet);
                         } else if (
                                 helmet == Helmets.SIMPLE_PALADIN_HELMET ||
-                                helmet == Helmets.GREATER_PALADIN_HELMET ||
-                                helmet == Helmets.MASTERWORK_PALADIN_HELMET ||
-                                helmet == Helmets.LEGENDARY_PALADIN_HELMET
+                                        helmet == Helmets.GREATER_PALADIN_HELMET ||
+                                        helmet == Helmets.MASTERWORK_PALADIN_HELMET ||
+                                        helmet == Helmets.LEGENDARY_PALADIN_HELMET
                         ) {
                             Helmets.setSelectedPaladin(player, helmet);
                         } else if (
                                 helmet == Helmets.SIMPLE_SHAMAN_HELMET ||
-                                helmet == Helmets.GREATER_SHAMAN_HELMET ||
-                                helmet == Helmets.MASTERWORK_SHAMAN_HELMET ||
-                                helmet == Helmets.LEGENDARY_SHAMAN_HELMET
+                                        helmet == Helmets.GREATER_SHAMAN_HELMET ||
+                                        helmet == Helmets.MASTERWORK_SHAMAN_HELMET ||
+                                        helmet == Helmets.LEGENDARY_SHAMAN_HELMET
                         ) {
                             Helmets.setSelectedShaman(player, helmet);
                         } else if (
@@ -605,8 +611,8 @@ public class WarlordsShopMenu {
                 "",
                 "§6Specialization Stats:",
                 "",
-                "§7Health: §a" + apc.getMaxHealth(),
-                "§7Energy: §a" + apc.getMaxEnergy() + " §7/ §a+" + apc.getEnergyPerSec() + " §7per sec §7/ §a+" + apc.getEnergyOnHit() + " §7per hit",
+                "§7Health: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxHealth()),
+                "§7Energy: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()) + " §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyOnHit()) + " §7per hit",
                 "",
                 selectedSpec == APOTHECARY ? "§7Speed: §e10%" : null,
                 apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"

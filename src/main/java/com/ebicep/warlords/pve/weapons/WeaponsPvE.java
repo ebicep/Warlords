@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.pve.rewards.RewardTypes;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -55,7 +54,7 @@ public enum WeaponsPvE {
             DatabasePlayerPvE::subtractEpicStarPiece,
             RewardTypes.EPIC_STAR_PIECE),
     LEGENDARY("Legendary",
-            LegendaryWeapon.class,
+            AbstractLegendaryWeapon.class,
             ChatColor.GOLD,
             new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1),
             null,

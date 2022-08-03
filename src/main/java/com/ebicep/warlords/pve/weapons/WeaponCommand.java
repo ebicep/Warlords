@@ -6,7 +6,12 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.pve.weapons.weapontypes.*;
+import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -54,9 +59,13 @@ public class WeaponCommand extends BaseCommand {
     }
 
     @Subcommand("legendary")
-    @Description("Give yourself a legendary weapon with your selected specialization")
-    public void legendary(Player player) {
-        giveWeapon(player, new LegendaryWeapon(player.getUniqueId()));
+    @Description("Give yourself a legendary weapon with your selected specialization, optional title")
+    public void legendary(Player player, @Optional LegendaryTitles title) {
+        if (title != null) {
+            giveWeapon(player, title.create.apply(player.getUniqueId()));
+        } else {
+            giveWeapon(player, new LegendaryWeapon(player.getUniqueId()));
+        }
     }
 
     @Subcommand("clear")

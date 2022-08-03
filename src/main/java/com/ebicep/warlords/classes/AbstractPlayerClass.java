@@ -25,8 +25,8 @@ public abstract class AbstractPlayerClass {
 
     protected int maxHealth;
     protected int maxEnergy;
-    protected int energyPerSec;
-    protected int energyOnHit;
+    protected float energyPerSec;
+    protected float energyOnHit;
     protected int damageResistance;
     protected AbstractAbility weapon;
     protected AbstractAbility red;
@@ -200,19 +200,19 @@ public abstract class AbstractPlayerClass {
         this.maxEnergy = maxEnergy;
     }
 
-    public int getEnergyPerSec() {
+    public float getEnergyPerSec() {
         return energyPerSec;
     }
 
-    public void setEnergyPerSec(int energyPerSec) {
+    public void setEnergyPerSec(float energyPerSec) {
         this.energyPerSec = energyPerSec;
     }
 
-    public int getEnergyOnHit() {
+    public float getEnergyOnHit() {
         return energyOnHit;
     }
 
-    public void setEnergyOnHit(int energyOnHit) {
+    public void setEnergyOnHit(float energyOnHit) {
         this.energyOnHit = energyOnHit;
     }
 

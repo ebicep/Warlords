@@ -22,11 +22,11 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     protected WarlordsEntity owner;
     protected ArmorStand totem;
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, ArmorStand totem, WarlordsEntity owner) {
+    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, ArmorStand totem, WarlordsEntity owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.totem = totem;
         this.owner = owner;

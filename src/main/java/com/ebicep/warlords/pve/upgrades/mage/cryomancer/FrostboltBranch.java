@@ -28,7 +28,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
         );
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     double projectileSpeed = ability.getProjectileSpeed();
 

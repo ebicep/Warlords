@@ -47,7 +47,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
 
-    public AbstractPiercingProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
+    public AbstractPiercingProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;

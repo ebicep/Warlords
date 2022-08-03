@@ -19,7 +19,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
     private final int radius;
 
-    public AbstractHolyRadianceBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, int radius) {
+    public AbstractHolyRadianceBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, int radius) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.radius = radius;
     }

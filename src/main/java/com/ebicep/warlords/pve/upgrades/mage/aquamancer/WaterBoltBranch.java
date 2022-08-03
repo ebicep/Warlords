@@ -24,7 +24,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         );
     }
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
