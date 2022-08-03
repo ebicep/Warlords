@@ -33,26 +33,6 @@ public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse>
 
     float hitbox = ability.getHitbox();
 
-    @Override
-    public void b1() {
-        ability.setHitbox(hitbox + 1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setHitbox(hitbox + 2);
-    }
-
-    @Override
-    public void b3() {
-        ability.setHitbox(hitbox + 3);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

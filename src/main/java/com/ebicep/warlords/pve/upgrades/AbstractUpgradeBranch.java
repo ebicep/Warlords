@@ -30,7 +30,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     protected List<Upgrade> treeC = new ArrayList<>();
     protected Upgrade masterUpgrade;
 
-    private int maxUpgrades = 4;
+    private int maxUpgrades = 6;
 
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
         this.abilityTree = abilityTree;
@@ -267,14 +267,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             }
         });
     }
-
-    public abstract void b1();
-
-    public abstract void b2();
-
-    public abstract void b3();
-
-    public abstract void b4();
 
     public abstract void c1();
 

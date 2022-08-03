@@ -27,26 +27,6 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     int radius = ability.getRadius();
 
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 

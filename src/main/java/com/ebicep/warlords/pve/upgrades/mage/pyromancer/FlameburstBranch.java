@@ -30,26 +30,6 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void b1() {
-        ability.setHitbox(6);
-    }
-
-    @Override
-    public void b2() {
-        ability.setHitbox(7);
-    }
-
-    @Override
-    public void b3() {
-        ability.setHitbox(8);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 

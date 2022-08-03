@@ -30,29 +30,6 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void b1() {
-        ability.setHitbox(11);
-        ability.setMaxAnimationTime(16);
-    }
-
-    @Override
-    public void b2() {
-        ability.setHitbox(12);
-        ability.setMaxAnimationTime(20);
-    }
-
-    @Override
-    public void b3() {
-        ability.setHitbox(14);
-        ability.setMaxAnimationTime(24);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     int slowness = ability.getSlowness();
 
     @Override

@@ -27,26 +27,6 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
     float cooldown = ability.getCooldown();
 
     @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
-    @Override
     public void c1() {
         ability.setShieldPercentage(60);
         ability.updateShieldHealth(abilityTree.getPlayer().getSpec());

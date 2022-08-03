@@ -26,26 +26,6 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     float damageBoost = ability.getDamageIncrease();
 
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     int speedBuff = ability.getSpeedBuff();
 
     @Override

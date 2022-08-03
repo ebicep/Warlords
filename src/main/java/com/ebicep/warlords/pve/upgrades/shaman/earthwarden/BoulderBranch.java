@@ -33,26 +33,6 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
     double velocity = ability.getVelocity();
 
-    @Override
-    public void b1() {
-        ability.setVelocity(velocity + .1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setVelocity(velocity + .2);
-    }
-
-    @Override
-    public void b3() {
-        ability.setVelocity(velocity + .3);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     double hitbox = ability.getHitbox();
 
     @Override

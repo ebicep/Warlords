@@ -25,26 +25,6 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
 
     int weaponDamage = ability.getWeaponDamage();
 
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     int procChance = ability.getProcChance();
 
     @Override

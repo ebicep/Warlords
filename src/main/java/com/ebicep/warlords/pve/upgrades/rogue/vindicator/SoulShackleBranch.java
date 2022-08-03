@@ -34,29 +34,6 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
     int minTicks = ability.getMinSilenceDurationInTicks();
     int maxTicks = ability.getMaxSilenceDurationInTicks();
 
-    @Override
-    public void b1() {
-        ability.setMinSilenceDurationInTicks(minTicks + 20);
-        ability.setMaxSilenceDurationInTicks(maxTicks + 20);
-    }
-
-    @Override
-    public void b2() {
-        ability.setMinSilenceDurationInTicks(minTicks + 40);
-        ability.setMaxSilenceDurationInTicks(maxTicks + 40);
-    }
-
-    @Override
-    public void b3() {
-        ability.setMinSilenceDurationInTicks(minTicks + 80);
-        ability.setMaxSilenceDurationInTicks(maxTicks + 80);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

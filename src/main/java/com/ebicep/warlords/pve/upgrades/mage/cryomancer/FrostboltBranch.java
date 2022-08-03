@@ -32,26 +32,6 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
     double projectileSpeed = ability.getProjectileSpeed();
 
-    @Override
-    public void b1() {
-        ability.setProjectileSpeed(projectileSpeed * 1.2);
-    }
-
-    @Override
-    public void b2() {
-        ability.setProjectileSpeed(projectileSpeed * 1.4);
-    }
-
-    @Override
-    public void b3() {
-        ability.setProjectileSpeed(projectileSpeed * 1.8);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 

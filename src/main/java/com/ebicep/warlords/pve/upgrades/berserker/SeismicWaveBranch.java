@@ -33,26 +33,6 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
 
     int waveSize = ability.getWaveSize();
 
-    @Override
-    public void b1() {
-        ability.setWaveSize(waveSize + 1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setWaveSize(waveSize + 2);
-    }
-
-    @Override
-    public void b3() {
-        ability.setWaveSize(waveSize + 3);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

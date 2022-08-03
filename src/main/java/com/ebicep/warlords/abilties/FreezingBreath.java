@@ -51,9 +51,9 @@ public class FreezingBreath extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-        Utils.playGlobalSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
 
-        Location playerLoc = new LocationBuilder(player.getLocation())
+        Location playerLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)
                 .add(0, 1.7, 0);
 
@@ -74,27 +74,27 @@ public class FreezingBreath extends AbstractAbility {
                 }
 
                 ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
-                        center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
+                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0), 500);
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
                     ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
-                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                 }
 
                 animationTimer++;
             }
         }.runTaskTimer(0, 1);
 
-        Location playerEyeLoc = new LocationBuilder(player.getLocation())
+        Location playerEyeLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)
                 .backward(1);
 
         Vector viewDirection = playerLoc.getDirection();
 
         for (WarlordsEntity breathTarget : PlayerFilter
-                .entitiesAroundRectangle(player, hitbox - 2.5, hitbox, hitbox - 2.5)
+                .entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .aliveEnemiesOf(wp)
         ) {
             playersHit++;

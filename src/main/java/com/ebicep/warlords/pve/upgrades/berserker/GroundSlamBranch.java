@@ -26,26 +26,6 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
 
     int slamSize = ability.getSlamSize();
 
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

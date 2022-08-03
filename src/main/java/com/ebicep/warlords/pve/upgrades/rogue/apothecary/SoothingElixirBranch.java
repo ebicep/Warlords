@@ -33,26 +33,6 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
 
     float puddleRadius = ability.getPuddleRadius();
 
-    @Override
-    public void b1() {
-        ability.setPuddleRadius(puddleRadius + 1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setPuddleRadius(puddleRadius + 2);
-    }
-
-    @Override
-    public void b3() {
-        ability.setPuddleRadius(puddleRadius + 3);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

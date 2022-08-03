@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -53,10 +52,6 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (wp.isInPve()) {
-            Bukkit.broadcastMessage("is in pve");
-            setProcChance(5);
-        }
         wp.subtractEnergy(energyCost);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 

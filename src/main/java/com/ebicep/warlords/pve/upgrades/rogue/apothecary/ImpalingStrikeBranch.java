@@ -33,26 +33,6 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
 
     int energyCost = ability.getEnergyCost();
 
-    @Override
-    public void b1() {
-        ability.setEnergyCost(energyCost - 5);
-    }
-
-    @Override
-    public void b2() {
-        ability.setEnergyCost(energyCost - 10);
-    }
-
-    @Override
-    public void b3() {
-        ability.setEnergyCost(energyCost - 15);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 

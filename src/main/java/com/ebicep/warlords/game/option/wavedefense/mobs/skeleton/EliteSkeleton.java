@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.FreezingBreath;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -32,6 +33,9 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onSpawn() {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
+        if (we == null) return;
+        we.getSpec().setBlue(new FreezingBreath());
     }
 
     @Override
@@ -41,7 +45,6 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        attacker.getSpec().setBlue(new FreezingBreath());
         attacker.getSpec().getBlue().onActivate(attacker, null);
     }
 

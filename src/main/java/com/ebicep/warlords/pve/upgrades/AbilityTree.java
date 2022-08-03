@@ -19,7 +19,7 @@ public class AbilityTree {
     private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
     private final List<UpgradeLog> upgradeLog = new ArrayList<>();
 
-    private int maxMasterUpgrades = 2;
+    private int maxMasterUpgrades = 3;
 
     public AbilityTree(WarlordsPlayer player) {
         this.player = player;

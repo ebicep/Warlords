@@ -109,23 +109,6 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
     }
 
     @Override
-    public void b1() {
-    }
-
-    @Override
-    public void b2() {
-    }
-
-    @Override
-    public void b3() {
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
-    @Override
     public void c1() {
     }
 

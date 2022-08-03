@@ -32,26 +32,6 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
 
     int energyCost = ability.getEnergyCost();
 
-    @Override
-    public void b1() {
-        ability.setEnergyCost(energyCost - 10);
-    }
-
-    @Override
-    public void b2() {
-        ability.setEnergyCost(energyCost - 20);
-    }
-
-    @Override
-    public void b3() {
-        ability.setEnergyCost(energyCost - 30);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float speed = ability.getSpeed();
 
     @Override

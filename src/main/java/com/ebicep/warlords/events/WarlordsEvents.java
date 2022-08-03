@@ -332,10 +332,10 @@ public class WarlordsEvents implements Listener {
                         wpVictim.addDamageInstance(
                                 wpAttacker,
                                 "",
-                                weapon.getMeleeDamageMin(),
-                                weapon.getMeleeDamageMax(),
-                                Math.round(weapon.getCritChance()),
-                                Math.round(weapon.getCritMultiplier()),
+                                132,
+                                179,
+                                25,
+                                200,
                                 false
                         );
                     } else {

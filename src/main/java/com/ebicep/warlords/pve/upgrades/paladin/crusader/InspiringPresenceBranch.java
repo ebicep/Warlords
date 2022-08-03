@@ -26,26 +26,6 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
 
     int duration = ability.getDuration();
 
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     int energyPerSecond = ability.getEnergyPerSecond();
 
     @Override

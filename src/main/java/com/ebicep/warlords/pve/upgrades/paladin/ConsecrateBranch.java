@@ -33,26 +33,6 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
 
     float radius = ability.getRadius();
 
-    @Override
-    public void b1() {
-        ability.setRadius(radius + 1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setRadius(radius + 2);
-    }
-
-    @Override
-    public void b3() {
-        ability.setRadius(radius + 3);
-    }
-
-    @Override
-    public void b4() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
     @Override

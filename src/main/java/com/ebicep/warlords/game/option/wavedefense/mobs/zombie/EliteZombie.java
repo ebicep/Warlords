@@ -13,7 +13,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
     public EliteZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Lunar Swordsman",
+                "Illusion Swordsman",
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
@@ -42,9 +42,8 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
         Location loc = receiver.getLocation();
-        Utils.playGlobalSound(loc, "warrior.revenant.orbsoflife", 2, 0.6f);
-        Utils.playGlobalSound(loc, Sound.PORTAL_TRAVEL, 1, 0.5f);
-        receiver.subtractCurrency(25);
+        Utils.playGlobalSound(loc, Sound.PORTAL_TRAVEL, 1, 1.5f);
+        receiver.subtractEnergy(25);
     }
 
     @Override
