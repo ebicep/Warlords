@@ -22,8 +22,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private final float valueBeforeInterveneReduction;
     private final float valueBeforeShieldReduction;
     private final float value;
-    private final int critChance;
-    private final int critMultiplier;
+    private final float critChance;
+    private final float critMultiplier;
     private final boolean isCrit;
     private final boolean hasFlag;
     private final boolean isDead;
@@ -43,8 +43,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             float valueBeforeInterveneReduction,
             float valueBeforeShieldReduction,
             float value,
-            int critChance,
-            int critMultiplier,
+            float critChance,
+            float critMultiplier,
             boolean isCrit,
             boolean isDamageInstance
     ) {
@@ -118,11 +118,11 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
         return value;
     }
 
-    public int getCritChance() {
+    public float getCritChance() {
         return critChance;
     }
 
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         return critMultiplier;
     }
 

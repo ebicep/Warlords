@@ -85,7 +85,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         openUpgradeBranchMenu();
 
                         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
                                 upgrade.getName(),
                                 upgrade.getDescription())
                         );
@@ -137,7 +137,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         openUpgradeBranchMenu();
 
                         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
                                 upgrade.getName(),
                                 upgrade.getDescription())
                         );
@@ -189,7 +189,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         openUpgradeBranchMenu();
 
                         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTimeElapsed(player.getGame()),
+                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
                                 upgrade.getName(),
                                 upgrade.getDescription())
                         );

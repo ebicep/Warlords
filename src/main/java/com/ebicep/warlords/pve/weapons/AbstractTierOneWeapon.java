@@ -31,11 +31,11 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
     @Override
     public List<String> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritChance()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritMultiplier()) + "%",
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritChance()) + "%" + getStarPieceBonusString(WeaponStats.CRIT_CHANCE),
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritMultiplier()) + "%" + getStarPieceBonusString(WeaponStats.CRIT_MULTIPLIER),
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getHealthBonus())
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
         );
     }
 
@@ -62,6 +62,10 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
     @Override
     public float getHealthBonus() {
         return starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
+    }
+
+    public String getStarPieceBonusString(WeaponStats weaponStats) {
+        return starPieceBonus == weaponStats ? getStarPieceBonusString() : "";
     }
 
     public WeaponStats getStarPieceBonus() {

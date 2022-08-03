@@ -334,8 +334,8 @@ public class WarlordsEvents implements Listener {
                                 "",
                                 weapon.getMeleeDamageMin(),
                                 weapon.getMeleeDamageMax(),
-                                Math.round(weapon.getCritChance()),
-                                Math.round(weapon.getCritMultiplier()),
+                                weapon.getCritChance(),
+                                weapon.getCritMultiplier(),
                                 false
                         );
                     } else {

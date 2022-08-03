@@ -15,8 +15,8 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
     private String ability;
     private float min;
     private float max;
-    private int critChance;
-    private int critMultiplier;
+    private float critChance;
+    private float critMultiplier;
     private boolean ignoreReduction;
     private boolean isLastStandFromShield;
     private boolean isDamageInstance;
@@ -29,8 +29,8 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
             String ability,
             float min,
             float max,
-            int critChance,
-            int critMultiplier,
+            float critChance,
+            float critMultiplier,
             boolean ignoreReduction,
             boolean isLastStandFromShield,
             boolean isDamageInstance
@@ -79,19 +79,19 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
         this.max = max;
     }
 
-    public int getCritChance() {
+    public float getCritChance() {
         return critChance;
     }
 
-    public void setCritChance(int critChance) {
+    public void setCritChance(float critChance) {
         this.critChance = critChance;
     }
 
-    public int getCritMultiplier() {
+    public float getCritMultiplier() {
         return critMultiplier;
     }
 
-    public void setCritMultiplier(int critMultiplier) {
+    public void setCritMultiplier(float critMultiplier) {
         this.critMultiplier = critMultiplier;
     }
 

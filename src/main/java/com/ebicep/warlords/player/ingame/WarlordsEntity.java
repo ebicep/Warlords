@@ -60,6 +60,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -217,8 +218,8 @@ public abstract class WarlordsEntity {
             String ability,
             float min,
             float max,
-            int critChance,
-            int critMultiplier,
+            float critChance,
+            float critMultiplier,
             boolean ignoreReduction
     ) {
         return this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
@@ -229,8 +230,8 @@ public abstract class WarlordsEntity {
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
-        int critChance = event.getCritChance();
-        int critMultiplier = event.getCritMultiplier();
+        float critChance = event.getCritChance();
+        float critMultiplier = event.getCritMultiplier();
         boolean ignoreReduction = event.isIgnoreReduction();
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
@@ -261,7 +262,7 @@ public abstract class WarlordsEntity {
 
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
-        int crit = (int) ((Math.random() * (100)));
+        double crit = ThreadLocalRandom.current().nextDouble(100);
         boolean isCrit = false;
         if (crit <= critChance && attacker.canCrit) {
             isCrit = true;
@@ -620,8 +621,8 @@ public abstract class WarlordsEntity {
             String ability,
             float min,
             float max,
-            int critChance,
-            int critMultiplier,
+            float critChance,
+            float critMultiplier,
             boolean ignoreReduction,
             boolean isLastStandFromShield
     ) {
@@ -633,8 +634,8 @@ public abstract class WarlordsEntity {
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
-        int critChance = event.getCritChance();
-        int critMultiplier = event.getCritMultiplier();
+        float critChance = event.getCritChance();
+        float critMultiplier = event.getCritMultiplier();
         boolean ignoreReduction = event.isIgnoreReduction();
         boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
@@ -650,7 +651,7 @@ public abstract class WarlordsEntity {
 
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
-        int crit = (int) ((Math.random() * (100)));
+        double crit = ThreadLocalRandom.current().nextDouble(100);
         boolean isCrit = false;
 
         if (crit <= critChance && attacker.canCrit) {
