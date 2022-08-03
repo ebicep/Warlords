@@ -28,28 +28,4 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     int speedBuff = ability.getSpeedBuff();
 
-    @Override
-    public void c1() {
-        ability.setSpeedBuff(speedBuff + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setSpeedBuff(speedBuff + 20);
-    }
-
-    @Override
-    public void c3() {
-        ability.setSpeedBuff(speedBuff + 30);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

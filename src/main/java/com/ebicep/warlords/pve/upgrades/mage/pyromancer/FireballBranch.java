@@ -33,32 +33,4 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setMaxFullDistance(ability.getMaxFullDistance() + 30);
-        ability.setPveUpgrade(true);
-    }
 }

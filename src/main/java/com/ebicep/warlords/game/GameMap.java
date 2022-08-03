@@ -1199,7 +1199,7 @@ public enum GameMap {
                             .add(0.08, Mobs.MAGMA_CUBE)
                             .add(0.25, Mobs.IRON_GOLEM)
                     ),
-                    50
+                    5000
             ));
 
             return options;

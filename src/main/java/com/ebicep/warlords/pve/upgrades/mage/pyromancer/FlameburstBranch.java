@@ -33,32 +33,4 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minDamage * 1.15f);
-        ability.setMaxDamageHeal(maxDamage * 1.15f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minDamage * 1.3f);
-        ability.setMaxDamageHeal(maxDamage * 1.3f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minDamage * 1.6f);
-        ability.setMaxDamageHeal(maxDamage * 1.6f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyCost(0);
-        ability.setPveUpgrade(true);
-    }
 }

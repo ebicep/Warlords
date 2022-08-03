@@ -268,16 +268,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         });
     }
 
-    public abstract void c1();
-
-    public abstract void c2();
-
-    public abstract void c3();
-
-    public abstract void c4();
-
-    public abstract void master();
-
     public ItemStack getItemStack() {
         return itemStack;
     }

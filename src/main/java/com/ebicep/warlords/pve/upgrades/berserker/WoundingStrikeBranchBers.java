@@ -30,32 +30,8 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int woundDuration = ability.getWoundingDuration();
-    @Override
-    public void c1() {
-        ability.setWoundingDuration(woundDuration + 1);
-    }
 
-    @Override
-    public void c2() {
-        ability.setWoundingDuration(woundDuration + 2);
-    }
-
-    @Override
-    public void c3() {
-        ability.setWoundingDuration(woundDuration + 3);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

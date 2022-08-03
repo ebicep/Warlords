@@ -31,37 +31,9 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int minConversion = ability.getMinConvert();
     int maxConversion = ability.getMaxConvert();
 
-    @Override
-    public void c1() {
-        ability.setMinConvert(minConversion + 20);
-        ability.setMaxConvert(maxConversion + 20);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinConvert(minConversion + 40);
-        ability.setMaxConvert(maxConversion + 40);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinConvert(minConversion + 80);
-        ability.setMaxConvert(maxConversion + 80);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setMaxAllies(ability.getMaxAllies() + 2);
-        ability.setPveUpgrade(true);
-    }
 }

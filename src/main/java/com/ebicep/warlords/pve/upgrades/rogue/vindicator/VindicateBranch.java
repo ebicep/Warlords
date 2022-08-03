@@ -29,28 +29,4 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
 
     float damageReduction = ability.getVindicateDamageReduction();
 
-    @Override
-    public void c1() {
-        ability.setVindicateDamageReduction(damageReduction + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setVindicateDamageReduction(damageReduction + 20);
-    }
-
-    @Override
-    public void c3() {
-        ability.setVindicateDamageReduction(damageReduction + 40);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setCooldown(ability.getCooldown() * 0.7f);
-    }
 }

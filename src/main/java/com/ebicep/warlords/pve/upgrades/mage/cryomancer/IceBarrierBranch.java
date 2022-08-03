@@ -28,28 +28,4 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
     int damageReductionPercent = ability.getDamageReductionPercent();
 
-    @Override
-    public void c1() {
-        ability.setDamageReductionPercent(damageReductionPercent + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setDamageReductionPercent(damageReductionPercent + 20);
-    }
-
-    @Override
-    public void c3() {
-        ability.setDamageReductionPercent(damageReductionPercent + 40);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setCooldown(ability.getCooldown() * 0.85f);
-    }
 }

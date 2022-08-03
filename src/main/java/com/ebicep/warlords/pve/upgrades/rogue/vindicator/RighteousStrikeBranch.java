@@ -31,32 +31,8 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int abilityReductionInTicks = ability.getAbilityReductionInTicks();
 
-    @Override
-    public void c1() {
-        ability.setAbilityReductionInTicks(abilityReductionInTicks + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setAbilityReductionInTicks(abilityReductionInTicks + 20);
-    }
-
-    @Override
-    public void c3() {
-        ability.setAbilityReductionInTicks(abilityReductionInTicks + 30);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

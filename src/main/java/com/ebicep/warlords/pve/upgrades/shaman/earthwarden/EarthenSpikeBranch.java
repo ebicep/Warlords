@@ -30,34 +30,8 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     float speed = ability.getSpeed();
 
-    @Override
-    public void c1() {
-        ability.setSpeed(speed * 1.2f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setSpeed(speed * 1.4f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setSpeed(speed * 1.8f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setSpikeHitbox(ability.getSpikeHitbox() * 1.5);
-        ability.setVerticalVelocity(ability.getVerticalVelocity() * 1.5);
-        ability.setPveUpgrade(true);
-    }
 }

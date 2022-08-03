@@ -31,32 +31,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int energySteal = ability.getEnergySteal();
 
-    @Override
-    public void c1() {
-        ability.setEnergySteal(energySteal + 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnergySteal(energySteal + 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnergySteal(energySteal + 20);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

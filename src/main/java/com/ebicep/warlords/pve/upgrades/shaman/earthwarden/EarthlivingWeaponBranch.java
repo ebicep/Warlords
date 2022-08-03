@@ -27,28 +27,4 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
 
     int procChance = ability.getProcChance();
 
-    @Override
-    public void c1() {
-        ability.setProcChance(procChance + 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setProcChance(procChance + 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setProcChance(procChance + 20);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setMaxHits(ability.getMaxHits() + 2);
-    }
 }

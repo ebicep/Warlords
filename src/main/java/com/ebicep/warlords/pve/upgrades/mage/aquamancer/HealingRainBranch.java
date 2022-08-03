@@ -30,32 +30,4 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setDuration(ability.getDuration() + 8);
-        ability.setPveUpgrade(true);
-    }
 }

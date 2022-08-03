@@ -31,38 +31,4 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
     float minDamage = ability.getMinDamage();
     float maxDamage = ability.getMaxDamage();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
-        ability.setMinDamage(minDamage * 1.1f);
-        ability.setMaxDamage(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
-        ability.setMinDamage(minDamage * 1.2f);
-        ability.setMaxDamage(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
-        ability.setMinDamage(minDamage * 1.4f);
-        ability.setMaxDamage(maxDamage * 1.4f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
-        ability.setPveUpgrade(true);
-    }
 }

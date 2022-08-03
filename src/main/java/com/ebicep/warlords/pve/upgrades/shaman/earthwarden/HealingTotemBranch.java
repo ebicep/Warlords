@@ -29,29 +29,4 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setDuration((int) (ability.getDuration() * 1.5f));
-        ability.setPveUpgrade(true);
-    }
 }

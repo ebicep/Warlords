@@ -31,36 +31,9 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 
-    @Override
-    public void c1() {
-        ability.setLeechSelfAmount(selfLeech + 2.5f);
-        ability.setLeechAllyAmount(allyLeech + 2.5f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setLeechSelfAmount(selfLeech + 5);
-        ability.setLeechAllyAmount(allyLeech + 5);
-    }
-
-    @Override
-    public void c3() {
-        ability.setLeechSelfAmount(selfLeech + 10);
-        ability.setLeechAllyAmount(allyLeech + 10);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

@@ -100,24 +100,4 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
     }
 
 
-    @Override
-    public void c1() {
-    }
-
-    @Override
-    public void c2() {
-    }
-
-    @Override
-    public void c3() {
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-    }
 }

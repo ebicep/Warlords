@@ -24,28 +24,4 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         );
     }
 
-    @Override
-    public void c1() {
-        ability.setCritMultiplierIncrease(40);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCritMultiplierIncrease(50);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCritMultiplierIncrease(70);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

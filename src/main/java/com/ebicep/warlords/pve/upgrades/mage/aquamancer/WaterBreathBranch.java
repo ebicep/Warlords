@@ -35,33 +35,4 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.15f);
-        ability.setMaxDamageHeal(maxHealing * 1.15f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.3f);
-        ability.setMaxDamageHeal(maxHealing * 1.3f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.6f);
-        ability.setMaxDamageHeal(maxHealing * 1.6f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setHitbox(15);
-        ability.setMaxAnimationTime(24);
-        ability.setPveUpgrade(true);
-    }
 }

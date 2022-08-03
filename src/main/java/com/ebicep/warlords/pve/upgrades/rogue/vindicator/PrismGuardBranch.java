@@ -30,32 +30,4 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
-    @Override
-    public void c1() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.1f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.25f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.25f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.5f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.5f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setProjectileDamageReduction(100);
-        ability.setBubbleRadius(ability.getBubbleRadius() * 2);
-    }
 }

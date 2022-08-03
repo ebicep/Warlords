@@ -105,29 +105,4 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
         );
     }
 
-    @Override
-    public void c1() {
-        ability.setRadius(ability.getRadius() + 1);
-    }
-
-    @Override
-    public void c2() {
-        ability.setRadius(ability.getRadius() + 1);
-    }
-
-    @Override
-    public void c3() {
-        ability.setRadius(ability.getRadius() + 1);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setDuration((int) (ability.getDuration() * 1.5f));
-        ability.setPveUpgrade(true);
-    }
 }

@@ -28,29 +28,4 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
 
     int energyPerSecond = ability.getEnergyPerSecond();
 
-    @Override
-    public void c1() {
-        ability.setEnergyPerSecond(energyPerSecond + 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnergyPerSecond(energyPerSecond + 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnergyPerSecond(energyPerSecond + 15);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setCooldown(ability.getCooldown() * 0.7f);
-        ability.setPveUpgrade(true);
-    }
 }

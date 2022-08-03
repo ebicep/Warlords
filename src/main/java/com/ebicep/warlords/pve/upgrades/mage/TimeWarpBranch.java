@@ -26,28 +26,4 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setWarpHealPercentage(35);
-    }
-
-    @Override
-    public void c2() {
-        ability.setWarpHealPercentage(40);
-    }
-
-    @Override
-    public void c3() {
-        ability.setWarpHealPercentage(50);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

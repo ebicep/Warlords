@@ -35,31 +35,4 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
     double hitbox = ability.getHitbox();
 
-    @Override
-    public void c1() {
-        ability.setHitbox(hitbox + 1);
-    }
-
-    @Override
-    public void c2() {
-        ability.setHitbox(hitbox + 2);
-    }
-
-    @Override
-    public void c3() {
-        ability.setHitbox(hitbox + 3);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyCost(0);
-        ability.setBoulderSpeed(ability.getBoulderSpeed() * 2);
-        ability.setMinDamageHeal(minDamage * 1.9f);
-        ability.setMaxDamageHeal(maxDamage * 1.9f);
-    }
 }

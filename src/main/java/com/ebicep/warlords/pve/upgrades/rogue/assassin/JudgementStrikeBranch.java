@@ -31,33 +31,8 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int speedOnCrit = ability.getSpeedOnCrit();
 
-    @Override
-    public void c1() {
-        ability.setSpeedOnCrit(speedOnCrit + 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setSpeedOnCrit(speedOnCrit + 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setSpeedOnCrit(speedOnCrit + 20);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setStrikeCritInterval(ability.getStrikeCritInterval() - 1);
-        ability.setSpeedOnCritDuration(ability.getSpeedOnCritDuration() + 2);
-    }
 }

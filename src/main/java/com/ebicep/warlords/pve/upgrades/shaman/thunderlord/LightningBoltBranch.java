@@ -10,7 +10,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     double projectileSpeed = ability.getProjectileSpeed();
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
     double hitbox = ability.getHitbox();
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
@@ -109,28 +109,4 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
     }
 
 
-    @Override
-    public void c1() {
-        ability.setEnergyCost(energyCost - 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnergyCost(energyCost - 10);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnergyCost(energyCost - 15);
-    }
-
-    @Override
-    public void c4() {
-        ability.setEnergyCost(energyCost - 20);
-    }
-
-    @Override
-    public void master() {
-        ability.setShotsFiredAtATime(3);
-    }
 }

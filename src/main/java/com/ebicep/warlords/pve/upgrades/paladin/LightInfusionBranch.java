@@ -28,29 +28,4 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyGiven((int) (ability.getEnergyGiven() * 1.5f));
-        ability.setDuration(ability.getDuration() * 2);
-    }
 }

@@ -31,34 +31,8 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
 
     int energyGiven = ability.getEnergyGiven();
 
-    @Override
-    public void c1() {
-        ability.setEnergyGiven(energyGiven + 2);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnergyGiven(energyGiven + 4);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnergyGiven(energyGiven + 6);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyRadius(ability.getEnergyRadius() * 2);
-        ability.setEnergyMaxAllies(ability.getEnergyMaxAllies() + 2);
-        ability.setPveUpgrade(true);
-    }
 }

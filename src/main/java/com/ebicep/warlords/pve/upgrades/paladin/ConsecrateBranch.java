@@ -35,29 +35,4 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.85f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.7f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.4f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyCost(0);
-        ability.setStrikeDamageBoost(ability.getStrikeDamageBoost() + 20);
-    }
 }

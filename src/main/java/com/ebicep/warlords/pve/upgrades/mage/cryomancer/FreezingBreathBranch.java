@@ -32,32 +32,4 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
 
     int slowness = ability.getSlowness();
 
-    @Override
-    public void c1() {
-        ability.setSlowness(slowness + 10);
-    }
-
-    @Override
-    public void c2() {
-        ability.setSlowness(slowness + 20);
-    }
-
-    @Override
-    public void c3() {
-        ability.setSlowness(slowness + 40);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        ability.setHitbox(18);
-        ability.setMaxAnimationTime(32);
-        ability.setPveUpgrade(true);
-    }
 }

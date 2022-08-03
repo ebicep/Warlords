@@ -28,28 +28,4 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
 
     int hitRadius = ability.getEnemyHitRadius();
 
-    @Override
-    public void c1() {
-        ability.setEnemyHitRadius(hitRadius + 2);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnemyHitRadius(hitRadius + 4);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnemyHitRadius(hitRadius + 6);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

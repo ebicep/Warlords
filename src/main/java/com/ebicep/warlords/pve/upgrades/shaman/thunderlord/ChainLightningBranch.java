@@ -9,7 +9,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    int energyCost = ability.getEnergyCost();
+    float energyCost = ability.getEnergyCost();
     int radius = ability.getRadius();
     int bounceRange = ability.getBounceRange();
     int maxBounces = ability.getMaxBounces();
@@ -108,24 +108,4 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         );
     }
 
-    @Override
-    public void c1() {
-    }
-
-    @Override
-    public void c2() {
-    }
-
-    @Override
-    public void c3() {
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-    }
 }

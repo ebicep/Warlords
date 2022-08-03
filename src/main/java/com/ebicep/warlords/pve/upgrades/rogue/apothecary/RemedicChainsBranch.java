@@ -29,30 +29,4 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void c4() {
-
-    }
-
-    @Override
-    public void master() {
-        ability.setLinkBreakRadius(ability.getLinkBreakRadius() + 10);
-        ability.setCastRange(ability.getCastRange() + 10);
-        ability.setAllyDamageIncrease(30);
-    }
 }
