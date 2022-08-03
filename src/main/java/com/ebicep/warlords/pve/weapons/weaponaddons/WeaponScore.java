@@ -1,5 +1,6 @@
-package com.ebicep.warlords.pve.weapons.weapontypes;
+package com.ebicep.warlords.pve.weapons.weaponaddons;
 
+import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

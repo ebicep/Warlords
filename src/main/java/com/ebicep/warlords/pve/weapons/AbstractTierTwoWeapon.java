@@ -1,25 +1,28 @@
 package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.weapontypes.StarPieceBonus;
-import com.ebicep.warlords.pve.weapons.weapontypes.Upgradeable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public abstract class AbstractBetterWeapon extends AbstractWeapon implements StarPieceBonus, Upgradeable {
+/**
+ * Abstract class for weapons that are above starter/common/rare
+ */
+public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implements StarPieceBonus, Upgradeable {
 
     @Field("speed_bonus")
     protected float speedBonus;
     @Field("upgrade_level")
     protected int upgradeLevel = 0;
 
-    public AbstractBetterWeapon() {
+    public AbstractTierTwoWeapon() {
     }
 
-    public AbstractBetterWeapon(UUID uuid) {
+    public AbstractTierTwoWeapon(UUID uuid) {
         super(uuid);
     }
 

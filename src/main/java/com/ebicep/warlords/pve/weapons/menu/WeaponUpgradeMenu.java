@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.Upgradeable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

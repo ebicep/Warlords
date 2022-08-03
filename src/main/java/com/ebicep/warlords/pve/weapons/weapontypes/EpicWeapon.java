@@ -2,7 +2,10 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
-import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 
@@ -11,9 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ebicep.warlords.pve.weapons.weapontypes.WeaponScore.getAverageValue;
+import static com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore.getAverageValue;
 
-public class EpicWeapon extends AbstractBetterWeapon implements Salvageable, WeaponScore, StatsRerollable {
+public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, WeaponScore, StatsRerollable {
 
     public static final int MELEE_DAMAGE_MIN = 120;
     public static final int MELEE_DAMAGE_MAX = 180;

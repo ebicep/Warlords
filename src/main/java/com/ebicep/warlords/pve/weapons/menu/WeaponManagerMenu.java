@@ -4,10 +4,16 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.weapons.AbstractBetterWeapon;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.pve.weapons.weapontypes.*;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
+import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.pve.weapons.weapontypes.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -203,24 +209,26 @@ public class WeaponManagerMenu {
                         .get(),
                 (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1)
         ));
-        //star piece
-        weaponOptions.add(new Pair<>(
-                new ItemBuilder(Material.NETHER_STAR)
-                        .name(ChatColor.GREEN + "Apply a Star Piece")
-                        .get(),
-                (m, e) -> {
-                    WeaponsPvE weaponsPvE = WeaponsPvE.getWeapon(weapon);
-                    if (weaponsPvE.getStarPiece.apply(databasePlayer.getPveStats()) <= 0) {
-                        player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
-                        return;
+        if (weapon instanceof AbstractTierOneWeapon) {
+            //star piece
+            weaponOptions.add(new Pair<>(
+                    new ItemBuilder(Material.NETHER_STAR)
+                            .name(ChatColor.GREEN + "Apply a Star Piece")
+                            .get(),
+                    (m, e) -> {
+                        WeaponsPvE weaponsPvE = WeaponsPvE.getWeapon(weapon);
+                        if (weaponsPvE.getStarPiece.apply(databasePlayer.getPveStats()) <= 0) {
+                            player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
+                            return;
+                        }
+                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, (AbstractTierOneWeapon) weapon);
                     }
-                    WeaponStarPieceMenu.openWeaponStarPieceMenu(player, weapon);
-                }
-        ));
+            ));
+        }
         //salvage common/rare/epic
         if (weapon instanceof Salvageable) {
             weaponOptions.add(new Pair<>(
-                    !(weapon instanceof AbstractBetterWeapon) ?
+                    !(weapon instanceof AbstractTierTwoWeapon) ?
                             new ItemBuilder(Material.FURNACE)
                                     .name(ChatColor.GREEN + "Salvage Weapon")
                                     .lore(
@@ -244,7 +252,21 @@ public class WeaponManagerMenu {
                                     )
                                     .get(),
                     (m, e) -> {
-                        if (!(weapon instanceof AbstractBetterWeapon) && e.isShiftClick()) {
+                        if (weapon.isBound()) {
+                            player.sendMessage(ChatColor.RED + "You cannot salvage a bound weapon!");
+                            return;
+                        }
+                        Specializations weaponSpec = weapon.getSpecializations();
+                        List<AbstractWeapon> sameSpecWeapons = databasePlayer.getPveStats().getWeaponInventory()
+                                .stream()
+                                .filter(w -> w.getSpecializations() == weaponSpec)
+                                .collect(Collectors.toList());
+                        if (sameSpecWeapons.size() == 1) {
+                            player.sendMessage(ChatColor.RED + "You cannot salvage this weapon because you need to have at least one for each specialization!");
+                            return;
+                        }
+
+                        if (!(weapon instanceof AbstractTierTwoWeapon) && e.isShiftClick()) {
                             WeaponSalvageMenu.salvageWeapon(player, weapon);
                             openWeaponInventoryFromInternal(player);
                         } else {
