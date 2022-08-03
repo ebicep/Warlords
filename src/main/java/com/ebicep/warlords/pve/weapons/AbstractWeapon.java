@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,32 +44,36 @@ public abstract class AbstractWeapon {
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        player.setMaxHealth(Math.round(player.getMaxHealth() + getHealthBonus()));
-        player.setHealth(Math.round(player.getMaxHealth() + getHealthBonus()));
+        player.setMaxHealth(player.getMaxHealth() + getHealthBonus());
+        player.setHealth(player.getMaxHealth() + getHealthBonus());
     }
 
     public abstract ChatColor getChatColor();
 
     public abstract List<String> getLore();
 
-    public List<String> getLoreAddons() {
-        return new ArrayList<>();
-    }
-
     public abstract void generateStats();
 
     public abstract int getMeleeDamageRange();
 
-    public String getName() {
-        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    public abstract List<String> getBaseStats();
+
+    public abstract float getMeleeDamageMin();
+
+    public abstract float getMeleeDamageMax();
+
+    public abstract float getCritChance();
+
+    public abstract float getCritMultiplier();
+
+    public abstract float getHealthBonus();
+
+    public List<String> getLoreAddons() {
+        return new ArrayList<>();
     }
 
-    protected List<String> getBaseStats() {
-        return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + meleeDamage,
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + healthBonus
-        );
+    public String getName() {
+        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
     }
 
     public ItemStack generateItemStack() {
@@ -111,16 +114,6 @@ public abstract class AbstractWeapon {
     public Instant getDate() {
         return date;
     }
-
-    public abstract float getMeleeDamageMin();
-
-    public abstract float getMeleeDamageMax();
-
-    public abstract float getCritChance();
-
-    public abstract float getCritMultiplier();
-
-    public abstract float getHealthBonus();
 
     public Weapons getSelectedWeaponSkin() {
         return selectedWeaponSkin;

@@ -29,46 +29,39 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
     }
 
     @Override
-    protected List<String> getBaseStats() {
+    public List<String> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + (starPieceBonus == WeaponStats.MELEE_DAMAGE ?
-                        getStarPieceBonusMultiplicativeString(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + getStarPieceBonusMultiplicativeString(meleeDamage + getMeleeDamageRange()) + getStarPieceBonusString() :
-                        NumberFormat.formatOptionalHundredths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange())),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + (starPieceBonus == WeaponStats.CRIT_CHANCE ? getStarPieceBonusMultiplicativeString(critChance) + "%" + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(critChance) + "%"),
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + (starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? getStarPieceBonusMultiplicativeString(critMultiplier) + "%" + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(critMultiplier) + "%"),
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritChance()) + "%",
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritMultiplier()) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + (starPieceBonus == WeaponStats.HEALTH_BONUS ? getStarPieceBonusMultiplicativeString(healthBonus) + getStarPieceBonusString() : NumberFormat.formatOptionalHundredths(healthBonus))
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getHealthBonus())
         );
     }
 
     @Override
     public float getMeleeDamageMin() {
-        float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? meleeDamage * getStarPieceBonusMultiplicativeValue() : meleeDamage;
-        return Math.round(amount);
+        return starPieceBonus == WeaponStats.MELEE_DAMAGE ? meleeDamage * getStarPieceBonusMultiplicativeValue() : meleeDamage;
     }
 
     @Override
     public float getMeleeDamageMax() {
-        float amount = starPieceBonus == WeaponStats.MELEE_DAMAGE ? (meleeDamage + getMeleeDamageRange()) * getStarPieceBonusMultiplicativeValue() : meleeDamage + getMeleeDamageRange();
-        return Math.round(amount);
+        return starPieceBonus == WeaponStats.MELEE_DAMAGE ? (meleeDamage + getMeleeDamageRange()) * getStarPieceBonusMultiplicativeValue() : meleeDamage + getMeleeDamageRange();
     }
 
     @Override
     public float getCritChance() {
-        float amount = starPieceBonus == WeaponStats.CRIT_CHANCE ? critChance * getStarPieceBonusMultiplicativeValue() : critChance;
-        return Math.round(amount);
+        return starPieceBonus == WeaponStats.CRIT_CHANCE ? critChance * getStarPieceBonusMultiplicativeValue() : critChance;
     }
 
     @Override
     public float getCritMultiplier() {
-        float amount = starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? critMultiplier * getStarPieceBonusMultiplicativeValue() : critMultiplier;
-        return Math.round(amount);
+        return starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? critMultiplier * getStarPieceBonusMultiplicativeValue() : critMultiplier;
     }
 
     @Override
     public float getHealthBonus() {
-        float amount = starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
-        return Math.round(amount);
+        return starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
     }
 
     public WeaponStats getStarPieceBonus() {

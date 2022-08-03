@@ -619,7 +619,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-                        float newHealth = (float) wp.getHealth() / wp.getMaxHealth() * 40;
+                        float newHealth = wp.getHealth() / wp.getMaxHealth() * 40;
 
                         if (newHealth < 0) {
                             newHealth = 0;

@@ -4,8 +4,10 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -57,13 +59,22 @@ public class StarterWeapon extends AbstractWeapon implements Salvageable {
     }
 
     @Override
+    public List<String> getBaseStats() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
+                "",
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getHealthBonus())
+        );
+    }
+
+    @Override
     public float getMeleeDamageMin() {
-        return MELEE_DAMAGE_MIN;
+        return meleeDamage;
     }
 
     @Override
     public float getMeleeDamageMax() {
-        return MELEE_DAMAGE_MAX;
+        return meleeDamage + getMeleeDamageRange();
     }
 
     @Override
@@ -78,7 +89,7 @@ public class StarterWeapon extends AbstractWeapon implements Salvageable {
 
     @Override
     public float getHealthBonus() {
-        return Math.round(healthBonus);
+        return healthBonus;
     }
 
     @Override

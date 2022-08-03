@@ -1059,7 +1059,7 @@ public abstract class WarlordsEntity {
 
     public void displayActionBar() {
         StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
-        float healthRatio = (float) health / maxHealth;
+        float healthRatio = health / maxHealth;
         if (healthRatio >= .75) {
             actionBarMessage.append(ChatColor.DARK_GREEN);
 
@@ -1070,7 +1070,7 @@ public abstract class WarlordsEntity {
             actionBarMessage.append(ChatColor.RED);
 
         }
-        actionBarMessage.append("§l").append(health).append(ChatColor.GOLD).append("§l/§l").append(maxHealth).append("    ");
+        actionBarMessage.append("§l").append(Math.round(health)).append(ChatColor.GOLD).append("§l/§l").append(Math.round(maxHealth)).append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {

@@ -127,7 +127,7 @@ public class DebugMenuTeamOptions {
         private static String[] getPlayerStatLore(WarlordsEntity wp) {
             return new String[]{
                     ChatColor.GREEN + "Spec" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getSpec().getClass().getSimpleName(),
-                    ChatColor.GREEN + "Health" + ChatColor.GRAY + ": " + ChatColor.RED + wp.getHealth(),
+                    ChatColor.GREEN + "Health" + ChatColor.GRAY + ": " + ChatColor.RED + Math.round(wp.getHealth()),
                     ChatColor.GREEN + "Energy" + ChatColor.GRAY + ": " + ChatColor.YELLOW + (int) wp.getEnergy(),
                     ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getMinuteStats().total().getKills(),
                     ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getMinuteStats().total().getAssists(),

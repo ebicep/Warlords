@@ -81,8 +81,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
         return upgradeLevel;
     }
 
-    public int getSpeedBonus() {
-        float amount = starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
-        return Math.round(amount);
+    public float getSpeedBonus() {
+        return starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
     }
 }
