@@ -60,11 +60,6 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                     3 * 20
             ) {
                 @Override
-                public boolean isHealing() {
-                    return true;
-                }
-
-                @Override
                 public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                     return currentHealValue * .75f;
                 }

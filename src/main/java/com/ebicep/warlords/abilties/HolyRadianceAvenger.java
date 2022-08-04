@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -72,7 +73,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         critMultiplier
                 );
 
-                markTarget.getCooldownManager().addRegularCooldown(
+                markTarget.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
                         name,
                         "AVE MARK",
                         HolyRadianceAvenger.class,
@@ -87,7 +88,12 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                                 EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
                             }
                         }
-                );
+                ) {
+                    @Override
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + energyPerSecond / 20f;
+                    }
+                });
 
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                         ChatColor.GRAY + " You have marked " +

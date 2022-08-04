@@ -55,7 +55,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         Location location = player.getLocation();

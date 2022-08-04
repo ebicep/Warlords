@@ -62,7 +62,7 @@ public class AvengersStrike extends AbstractStrikeBase {
             );
         }
 
-        energyStole += nearPlayer.subtractEnergy(energySteal);
+        energyStole += nearPlayer.subtractEnergy(energySteal, true);
 
         if (pveUpgrade) {
             tripleHit(wp, nearPlayer);

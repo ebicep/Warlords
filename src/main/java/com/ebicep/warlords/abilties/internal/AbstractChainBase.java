@@ -35,7 +35,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
             playersHit += hitCounter;
 
             AbstractPlayerClass.sendRightClickPacket(player);
-            warlordsPlayer.subtractEnergy(energyCost);
+            warlordsPlayer.subtractEnergy(energyCost, false);
 
             onHit(warlordsPlayer, player, hitCounter);
 

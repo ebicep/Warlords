@@ -97,9 +97,9 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
 
     public static class Entry {
 
-        List<WarlordsDamageHealingFinalEvent> eventsAsSelf = new ArrayList<>();
+        private final List<WarlordsDamageHealingFinalEvent> eventsAsSelf = new ArrayList<>();
 
-        List<WarlordsDamageHealingFinalEvent> eventsAsAttacker = new ArrayList<>();
+        private final List<WarlordsDamageHealingFinalEvent> eventsAsAttacker = new ArrayList<>();
 
         public List<WarlordsDamageHealingFinalEvent> getEventsAsSelf() {
             return eventsAsSelf;
@@ -108,6 +108,7 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         public List<WarlordsDamageHealingFinalEvent> getEventsAsAttacker() {
             return eventsAsAttacker;
         }
+
 
     }
 

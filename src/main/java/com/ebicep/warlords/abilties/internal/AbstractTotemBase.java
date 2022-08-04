@@ -40,7 +40,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
 
         Location standLocation = player.getLocation();
         standLocation.setYaw(0);

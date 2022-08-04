@@ -81,7 +81,7 @@ public class EarthenSpike extends AbstractAbility {
 
                 FallingBlock block = spawnFallingBlock(location, location);
                 EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);
-                wp.subtractEnergy(energyCost);
+                wp.subtractEnergy(energyCost, false);
 
                 new GameRunnable(wp.getGame()) {
                     private final float SPEED_SQUARED = speed * speed;

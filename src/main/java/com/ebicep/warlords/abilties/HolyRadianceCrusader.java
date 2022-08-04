@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -74,7 +75,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         critMultiplier
                 );
                 markTarget.getSpeed().addSpeedModifier("Crusader Mark Speed", 25, 20 * markDuration, "BASE");
-                markTarget.getCooldownManager().addRegularCooldown(
+                markTarget.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceCrusader>(
                         name,
                         "CRUS MARK",
                         HolyRadianceCrusader.class,
@@ -101,7 +102,12 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                                 }
                             }
                         }
-                );
+                ) {
+                    @Override
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + energyPerSecond / 20f;
+                    }
+                });
 
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                         ChatColor.GRAY + " You have marked " +

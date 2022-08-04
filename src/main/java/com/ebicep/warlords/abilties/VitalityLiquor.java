@@ -59,7 +59,7 @@ public class VitalityLiquor extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), Sound.GLASS, 2, 0.1f);
         Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.7f);
         new FallingBlockWaveEffect(player.getLocation(), 7, 1, Material.SAPLING, (byte) 2).play();
@@ -129,7 +129,7 @@ public class VitalityLiquor extends AbstractAbility {
                                             false
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class);
-                                    allyTarget.getCooldownManager().addRegularCooldown(
+                                    allyTarget.getCooldownManager().addCooldown(new RegularCooldown<VitalityLiquor>(
                                             "Vitality Liquor",
                                             "VITAL",
                                             VitalityLiquor.class,
@@ -139,7 +139,12 @@ public class VitalityLiquor extends AbstractAbility {
                                             cooldownManager -> {
                                             },
                                             duration * 20
-                                    );
+                                    ) {
+                                        @Override
+                                        public float addEnergyGainPerTick(float energyGainPerTick) {
+                                            return energyGainPerTick + energyPerSecond / 20f;
+                                        }
+                                    });
                                 }
                             }
                         }.runTaskLater(5);

@@ -51,7 +51,7 @@ public class ShadowStep extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Location playerLoc = wp.getLocation();
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
         Utils.playGlobalSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
 

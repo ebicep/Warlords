@@ -63,7 +63,7 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
 
         Location location = player.getLocation().clone();
 

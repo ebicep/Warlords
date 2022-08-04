@@ -18,9 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class AvengersWrath extends AbstractAbility {
-    private boolean pveUpgrade = false;
     protected int extraPlayersStruck = 0;
-
+    private boolean pveUpgrade = false;
     private int duration = 12;
     private int energyPerSecond = 20;
     private int maxTargets = 2;
@@ -116,9 +115,14 @@ public class AvengersWrath extends AbstractAbility {
                                     false
                             );
                         }
-                        wrathTarget.subtractEnergy(10);
+                        wrathTarget.subtractEnergy(10, true);
                     }
                 }
+            }
+
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                return energyGainPerTick + energyPerSecond / 20f;
             }
         });
 

@@ -50,7 +50,7 @@ public class GroundSlam extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
         activateAbility(wp, player);
 

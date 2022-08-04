@@ -50,7 +50,7 @@ public class FreezingBreath extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
 
         Location playerLoc = new LocationBuilder(player.getLocation())

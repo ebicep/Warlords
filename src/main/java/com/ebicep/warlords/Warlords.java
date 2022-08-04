@@ -13,9 +13,11 @@ import com.ebicep.customentities.nms.pve.CustomEntitiesRegistry;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.OrbsOfLife;
+import com.ebicep.warlords.abilties.RecklessCharge;
+import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilties.UndyingArmy;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.EnergyPowerup;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.classes.rogue.specs.Apothecary;
@@ -35,6 +37,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -95,14 +98,15 @@ public class Warlords extends JavaPlugin {
     }
 
     private GameManager gameManager;
-
-    public static Warlords getInstance() {
-        return instance;
-    }
+    private int counter = 0;
 
 //    public static HashMap<UUID, WarlordsEntity> getPlayers() {
 //        return players;
 //    }
+
+    public static Warlords getInstance() {
+        return instance;
+    }
 
     public static <T> TaskChain<T> newChain() {
         return taskChainFactory.newChain();
@@ -194,6 +198,10 @@ public class Warlords extends JavaPlugin {
 
     public static GameManager getGameManager() {
         return getInstance().gameManager;
+    }
+
+    public static boolean onCustomServer() {
+        return !serverIP.equals("51.81.49.127");
     }
 
     public void readKeysConfig() {
@@ -503,8 +511,6 @@ public class Warlords extends JavaPlugin {
         // TODO persist this.playerSettings to a database
     }
 
-    private int counter = 0;
-
     private void startMainLoop() {
         new BukkitRunnable() {
 
@@ -728,45 +734,14 @@ public class Warlords extends JavaPlugin {
                         if (wp.getEnergy() < wp.getMaxEnergy()) {
                             // Standard energy value per second.
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20;
-                            // Checks whether the player has Avenger's Wrath active.
-                            for (AvengersWrath avengersWrath : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
-                                    .collect(Collectors.toList())
-                            ) {
-                                energyGainPerTick += avengersWrath.getEnergyPerSecond() / 20f;
+
+                            for (AbstractCooldown<?> abstractCooldown : wp.getCooldownManager().getCooldownsDistinct()) {
+                                energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
                             }
-                            // Checks whether the player has Inspiring Presence active.
-                            for (InspiringPresence inspiringPresence : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
-                                    .collect(Collectors.toList())
-                            ) {
-                                energyGainPerTick += inspiringPresence.getEnergyPerSecond() / 20f;
+                            for (AbstractCooldown<?> abstractCooldown : wp.getCooldownManager().getCooldownsDistinct()) {
+                                energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
                             }
-                            // Checks whether the player has been marked by an Avenger.
-                            for (HolyRadianceAvenger holyRadianceAvenger : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(HolyRadianceAvenger.class)
-                                    .collect(Collectors.toList())
-                            ) {
-                                energyGainPerTick -= holyRadianceAvenger.getEnergyPerSecond() / 20f;
-                            }
-                            // Checks whether the player has been marked by a Crusader.
-                            for (HolyRadianceCrusader holyRadianceCrusader : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(HolyRadianceCrusader.class)
-                                    .collect(Collectors.toList())
-                            ) {
-                                energyGainPerTick += holyRadianceCrusader.getEnergyPerSecond() / 20f;
-                            }
-                            // Checks whether the player has Vitality Liquor active.
-                            for (VitalityLiquor vitalityLiquor : new CooldownFilter<>(cooldownManager, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(VitalityLiquor.class)
-                                    .collect(Collectors.toList())
-                            ) {
-                                energyGainPerTick += vitalityLiquor.getEnergyPerSecond() / 20f;
-                            }
-                            // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
-                                energyGainPerTick *= 1.4;
-                            }
+
                             // Setting energy gain to the value after all ability instance multipliers have been applied.
                             float newEnergy = wp.getEnergy() + energyGainPerTick;
                             if (newEnergy > wp.getMaxEnergy()) {
@@ -1024,9 +999,5 @@ public class Warlords extends JavaPlugin {
                 }
             }
         }
-    }
-
-    public static boolean onCustomServer() {
-        return !serverIP.equals("51.81.49.127");
     }
 }

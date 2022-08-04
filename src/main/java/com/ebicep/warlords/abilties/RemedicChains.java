@@ -70,7 +70,7 @@ public class RemedicChains extends AbstractAbility {
                 .stream().collect(Collectors.toList());
 
         if (teammatesNear.size() >= 1) {
-            wp.subtractEnergy(energyCost);
+            wp.subtractEnergy(energyCost, false);
             Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
             RemedicChains tempRemedicChain = new RemedicChains();
