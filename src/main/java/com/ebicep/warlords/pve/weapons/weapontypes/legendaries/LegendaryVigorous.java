@@ -21,6 +21,11 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "+2 Energy per Second for 10 seconds after using 500 energy. Can be triggered once per 30 seconds.";
+    }
+
+    @Override
     public void generateStats() {
         this.meleeDamage = MELEE_DAMAGE_MIN;
         this.critChance = CRIT_CHANCE;

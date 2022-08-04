@@ -20,6 +20,11 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Increase maximum health by 0.5% per upgrade purchased.";
+    }
+
+    @Override
     public void generateStats() {
         this.meleeDamage = MELEE_DAMAGE_MIN;
         this.critChance = CRIT_CHANCE;

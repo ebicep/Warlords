@@ -22,6 +22,11 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Increase healing provided by 10%.";
+    }
+
+    @Override
     public void generateStats() {
         this.meleeDamage = MELEE_DAMAGE_MIN;
         this.critChance = CRIT_CHANCE;

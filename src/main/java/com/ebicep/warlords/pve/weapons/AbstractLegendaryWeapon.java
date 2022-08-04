@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -47,6 +48,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
+    public abstract String getPassiveEffect();
+
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
@@ -78,11 +81,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         if (skillCritMultiplierBonus != 0) {
             lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
         }
-        lore.addAll(Arrays.asList(
-                "",
-                ChatColor.GREEN + Specializations.getClass(specialization).name + " (" + specialization.name + "):",
-                ChatColor.GRAY + selectedSkillBoost.name + " - Description placeholder"
-        ));
+        String passiveEffect = getPassiveEffect();
+        if (!passiveEffect.isEmpty()) {
+            lore.addAll(Arrays.asList(
+                    "",
+                    ChatColor.GREEN + "Passive Effect:",
+                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
+            ));
+        }
+
         return lore;
     }
 

@@ -226,6 +226,13 @@ public abstract class WarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(WarlordsDamageHealingEvent event) {
+        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.doBeforeVariableSetFromSelf(event);
+        }
+        for (AbstractCooldown<?> abstractCooldown : event.getAttacker().getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.doBeforeVariableSetFromAttacker(event);
+        }
+
         WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
@@ -486,9 +493,9 @@ public abstract class WarlordsEntity {
                         critMultiplier,
                         isCrit,
                         true);
-//                secondStats.addDamageHealingEventAsSelf(finalEvent);
-//                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-//
+                secondStats.addDamageHealingEventAsSelf(finalEvent);
+                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+
 //                checkForAchievementsDamage(attacker);
             } else {
 
@@ -549,8 +556,8 @@ public abstract class WarlordsEntity {
                         critMultiplier,
                         isCrit,
                         true);
-//                secondStats.addDamageHealingEventAsSelf(finalEvent);
-//                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+                secondStats.addDamageHealingEventAsSelf(finalEvent);
+                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
 //
 //                checkForAchievementsDamage(attacker);
 
@@ -732,9 +739,9 @@ public abstract class WarlordsEntity {
                 critMultiplier,
                 isCrit,
                 false);
-//        secondStats.addDamageHealingEventAsSelf(finalEvent);
-//        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-//
+        secondStats.addDamageHealingEventAsSelf(finalEvent);
+        attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+
 //        checkForAchievementsHealing(attacker);
 
         return Optional.of(finalEvent);

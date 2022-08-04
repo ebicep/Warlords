@@ -21,6 +21,11 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "";
+    }
+
+    @Override
     public void generateStats() {
         this.meleeDamage = MELEE_DAMAGE_MIN;
         this.critChance = CRIT_CHANCE;
