@@ -111,7 +111,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     
     @Override
     public void updateEntity() {
-        entity.setCustomName(ChatColor.YELLOW.toString() + this.getSpec().getDamageResistance() + "% §7- " + ChatColor.GOLD + mobTier.getSymbol() + " §7- §c" + Math.round(this.getHealth()) + "❤");
+        entity.setCustomName(ChatColor.GOLD + mobTier.getSymbol() + " §7- §c" + Math.round(this.getHealth()) + "❤");
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);

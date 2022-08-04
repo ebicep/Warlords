@@ -84,7 +84,7 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",
                 "Light Infusion - Master Upgrade",
-                "Each Avenger's Strike casted in the last\n3 seconds will increase the energy given from Light Infusion by 30\n\nWarning: WIP",
+                "Each Avenger's Strike casted in the last\n3 seconds will increase the energy given\nfrom Light Infusion by 30\n\nWarning: WIP",
                 50000,
                 () -> {
 

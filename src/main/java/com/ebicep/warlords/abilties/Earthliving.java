@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Earthliving extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int timesProcd = 0;
     protected int playersHealed = 0;
 
@@ -132,6 +133,24 @@ public class Earthliving extends AbstractAbility {
                                     );
                                 }
 
+                                if (pveUpgrade) {
+//                                    WarlordsNPC npc = new WarlordsNPC(
+//                                            UUID.randomUUID(),
+//                                            name,
+//                                            MobTier.BASE,
+//                                            Weapons.ABBADON,
+//                                            ,
+//                                            wp.getGame(),
+//                                            Team.BLUE,
+//                                            Specializations.PYROMANCER,
+//                                            2000,
+//                                            0.5f,
+//                                            0,
+//                                            500,
+//                                            750
+//                                    );
+                                }
+
                                 counter++;
                                 if (counter == maxHits) {
                                     this.cancel();
@@ -176,6 +195,14 @@ public class Earthliving extends AbstractAbility {
 
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }
 

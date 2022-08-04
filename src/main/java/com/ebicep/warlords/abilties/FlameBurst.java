@@ -22,6 +22,8 @@ public class FlameBurst extends AbstractProjectileBase {
     private float hitbox = 5;
     private double acceleration = 1.0275;
 
+    private double projectileWidth = 0.24D;
+
     public FlameBurst() {
         super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
     }
@@ -70,7 +72,7 @@ public class FlameBurst extends AbstractProjectileBase {
 
         for (float i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
-            double width = 0.24D;
+            double width = projectileWidth;
             ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                     center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
         }
@@ -148,5 +150,13 @@ public class FlameBurst extends AbstractProjectileBase {
 
     public void setAcceleration(double acceleration) {
         this.acceleration = acceleration;
+    }
+
+    public double getProjectileWidth() {
+        return projectileWidth;
+    }
+
+    public void setProjectileWidth(double projectileWidth) {
+        this.projectileWidth = projectileWidth;
     }
 }

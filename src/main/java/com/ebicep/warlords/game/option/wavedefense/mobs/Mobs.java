@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.wolf.Wolf;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EliteZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EnvoyZombie;
 import org.bukkit.Location;
 
 import java.util.function.Function;
@@ -31,6 +32,8 @@ public enum Mobs {
     ELITE_PIG_ZOMBIE(ElitePigZombie::new),
     MAGMA_CUBE(MagmaCube::new),
     IRON_GOLEM(IronGolem::new),
+
+    ENVOY_ZOMBIE(EnvoyZombie::new),
 
     // Boss
     NARMER(Narmer::new),
