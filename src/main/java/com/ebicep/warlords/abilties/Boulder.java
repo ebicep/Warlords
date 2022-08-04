@@ -25,6 +25,7 @@ import java.util.List;
 
 public class Boulder extends AbstractAbility {
     private boolean pveUpgrade = false;
+
     protected int playersHit = 0;
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;

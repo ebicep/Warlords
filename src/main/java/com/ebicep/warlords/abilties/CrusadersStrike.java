@@ -15,6 +15,7 @@ import java.util.Optional;
 
 public class CrusadersStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
+
     protected int energyGivenToPlayers = 0;
 
     private int energyGiven = 24;

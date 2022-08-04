@@ -13,8 +13,6 @@ import java.util.Optional;
 
 public class AvengersStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
-    private int struckTargets = 0;
-
     protected float energyStole = 0;
     private float energySteal = 10;
 
@@ -40,7 +38,6 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        struckTargets++;
         float multiplier = 1;
         if (nearPlayer instanceof WarlordsNPC) {
             if (!pveUpgrade) return;

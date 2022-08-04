@@ -18,13 +18,13 @@ import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
+    private boolean pveUpgrade = false;
     private final int speedBuff = 30;
     private final int radius = 10;
     protected int playersHit = 0;
-    private boolean pveUpgrade = false;
     private int duration = 12;
     private int energyPerSecond = 10;
-    private List<WarlordsEntity> playersEffected = new ArrayList<>();
+    private List<WarlordsEntity> playersAffected = new ArrayList<>();
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
@@ -92,7 +92,7 @@ public class InspiringPresence extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             playersHit++;
-            tempPresence.getPlayersEffected().add(presenceTarget);
+            tempPresence.getPlayersAffected().add(presenceTarget);
             if (pveUpgrade) {
                 resetCooldowns(presenceTarget);
             }
@@ -147,8 +147,8 @@ public class InspiringPresence extends AbstractAbility {
         this.duration = duration;
     }
 
-    public List<WarlordsEntity> getPlayersEffected() {
-        return playersEffected;
+    public List<WarlordsEntity> getPlayersAffected() {
+        return playersAffected;
     }
 
     public int getEnergyPerSecond() {

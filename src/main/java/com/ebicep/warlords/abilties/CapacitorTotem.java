@@ -19,6 +19,7 @@ import java.util.List;
 
 public class CapacitorTotem extends AbstractTotemBase {
     private boolean pveUpgrade = false;
+
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
     private int numberOfProcs = 0;

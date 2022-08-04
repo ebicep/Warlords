@@ -16,15 +16,15 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                 "Envoy Entropy",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET, 1, (short) 1),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.BOW)
+                        new ItemStack(Material.CARPET, 1, (short) 6),
+                        new ItemStack(Material.DIAMOND_HELMET),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.DIAMOND_PICKAXE)
                 ),
-                4000,
+                3000,
                 0.35f,
-                20,
+                10,
                 0,
                 0
         );
@@ -33,6 +33,9 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onSpawn() {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
+            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
+        });
     }
 
     @Override

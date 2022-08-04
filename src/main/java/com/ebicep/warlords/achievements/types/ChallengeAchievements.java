@@ -296,7 +296,7 @@ public enum ChallengeAchievements implements Achievement {
                 if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                             .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
-                            .anyMatch(inspiringPresence -> inspiringPresence.getPlayersEffected().size() >= 4);
+                            .anyMatch(inspiringPresence -> inspiringPresence.getPlayersAffected().size() >= 4);
                 }
                 return false;
             },

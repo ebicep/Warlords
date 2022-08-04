@@ -21,6 +21,7 @@ import java.util.*;
 
 public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
     private boolean pveUpgrade = false;
+
     protected int numberOfDismounts = 0;
     private int damageReduction = 0;
 
