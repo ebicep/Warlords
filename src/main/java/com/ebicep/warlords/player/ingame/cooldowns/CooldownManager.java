@@ -28,7 +28,7 @@ public class CooldownManager {
     }
 
     public boolean hasCooldownFromName(String name) {
-        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
 
     public boolean hasCooldown(AbstractCooldown<?> abstractCooldown) {

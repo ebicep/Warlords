@@ -23,6 +23,11 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getPassiveEffect() {
+        return "Increase the next ability damage by 1% per targets hit.";
+    }
+
+    @Override
     public void generateStats() {
         this.meleeDamage = MELEE_DAMAGE_MIN;
         this.critChance = CRIT_CHANCE;

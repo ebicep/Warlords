@@ -31,6 +31,17 @@ public interface DamageHealingInstance {
 
     //DAMAGE
 
+    /**
+     * Calls before variables are declared - based on self cooldowns
+     */
+    default void doBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
+    }
+
+    /**
+     * Calls before variables are declared - based on attackers cooldowns
+     */
+    default void doBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+    }
 
     /**
      * Calls before any reduction - based on self cooldowns
