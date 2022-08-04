@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
@@ -12,14 +11,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class StarterWeapon extends AbstractWeapon implements Salvageable {
+public class StarterWeapon extends AbstractWeapon {
 
     public static final int MELEE_DAMAGE_MIN = 76;
     public static final int MELEE_DAMAGE_MAX = 103;
     public static final int HEALTH_BONUS = 160;
 
     public StarterWeapon() {
-        generateStats();
     }
 
     public StarterWeapon(UUID uuid) {
@@ -92,13 +90,4 @@ public class StarterWeapon extends AbstractWeapon implements Salvageable {
         return healthBonus;
     }
 
-    @Override
-    public int getMinSalvageAmount() {
-        return 1;
-    }
-
-    @Override
-    public int getMaxSalvageAmount() {
-        return 1;
-    }
 }

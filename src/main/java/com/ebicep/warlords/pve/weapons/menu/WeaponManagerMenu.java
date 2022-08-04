@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -46,7 +47,9 @@ public class WeaponManagerMenu {
         PlayerMenuSettings menuSettings = playerMenuSettings.get(player.getUniqueId());
         int page = menuSettings.getPage();
         menuSettings.sort();
-        List<AbstractWeapon> weaponInventory = menuSettings.getSortedWeaponInventory();
+        List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
+        weaponInventory.removeIf(weapon -> weapon instanceof StarterWeapon);
+
         SortOptions sortedBy = menuSettings.getSortOption();
         WeaponsPvE filterBy = menuSettings.getFilter();
 
@@ -180,10 +183,10 @@ public class WeaponManagerMenu {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer == null) return;
 
-        Menu menu = new Menu("Weapon Editor", 9);
+        Menu menu = new Menu("Weapon Editor", 9 * 3);
 
         menu.setItem(
-                0,
+                4,
                 0,
                 weapon.generateItemStack(),
                 (m, e) -> {
@@ -303,14 +306,14 @@ public class WeaponManagerMenu {
         for (int i = 0; i < weaponOptions.size(); i++) {
             Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option = weaponOptions.get(i);
             menu.setItem(
-                    i + 2,
-                    0,
+                    i % 7 + 1,
+                    i / 7 + 1,
                     option.getA(),
                     option.getB()
             );
         }
 
-        menu.setItem(8, 0, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
+        menu.setItem(4, 2, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
         menu.openForPlayer(player);
     }
 

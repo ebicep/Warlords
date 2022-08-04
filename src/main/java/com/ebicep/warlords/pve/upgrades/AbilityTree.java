@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ public class AbilityTree {
     }
 
     public static class UpgradeLog {
+        @Id
+        private String id;
         @Field("time_elapsed")
         private int gameTimeLeft;
         @Field("name")
