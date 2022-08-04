@@ -165,6 +165,9 @@ public class DatabaseManager {
             databasePlayer.setName(player.getName());
             queueUpdatePlayerAsync(databasePlayer);
         }
+
+        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedSpec(databasePlayer.getLastSpec());
+
         //check weapon inventory
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         for (Specializations value : Specializations.values()) {
@@ -174,8 +177,6 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
-
-        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedSpec(databasePlayer.getLastSpec());
 
         ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
         ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());

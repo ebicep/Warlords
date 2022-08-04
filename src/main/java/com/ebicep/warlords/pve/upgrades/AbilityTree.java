@@ -19,7 +19,7 @@ public class AbilityTree {
     private final WarlordsPlayer player;
     private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
     private final List<UpgradeLog> upgradeLog = new ArrayList<>();
-
+    private int freeUpgrades = 0;
     public AbilityTree(WarlordsPlayer player) {
         this.player = player;
     }
@@ -45,7 +45,6 @@ public class AbilityTree {
         }
     }
 
-
     public WarlordsPlayer getPlayer() {
         return player;
     }
@@ -56,6 +55,10 @@ public class AbilityTree {
 
     public List<UpgradeLog> getUpgradeLog() {
         return upgradeLog;
+    }
+
+    public void addFreeUpgrades(int amount) {
+        this.freeUpgrades += amount;
     }
 
     public static class UpgradeLog {
