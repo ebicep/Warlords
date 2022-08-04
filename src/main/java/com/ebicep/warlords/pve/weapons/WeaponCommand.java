@@ -18,6 +18,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 
 @CommandAlias("weapon")
 @Conditions("database:player")
@@ -76,6 +78,21 @@ public class WeaponCommand extends BaseCommand {
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                 new TextComponent(ChatColor.GRAY + "Cleared weapon inventory."));
+    }
+
+    @Subcommand("list")
+    @Description("Lists all your weapons")
+    public void list(Player player) {
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        for (int i = 0; i < weaponInventory.size(); i++) {
+            AbstractWeapon weapon = weaponInventory.get(i);
+            player.spigot().sendMessage(
+                    new TextComponent(ChatColor.GOLD.toString() + (i + 1) + ". "),
+                    new TextComponentBuilder(weapon.getName())
+                            .setHoverItem(weapon.generateItemStack())
+                            .getTextComponent());
+        }
     }
 
     @HelpCommand

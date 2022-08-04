@@ -273,4 +273,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return masterworksFairRewards;
     }
 
+    public void addReward(MasterworksFairReward reward) {
+        this.masterworksFairRewards.add(reward);
+    }
+
 }

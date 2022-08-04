@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 
-import com.ebicep.warlords.util.java.DateUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,7 +15,7 @@ public class MasterworksFair {
     protected String id;
 
     @Field("start_date")
-    private Instant startDate = DateUtil.getResetDateLatestMonday();
+    private Instant startDate = Instant.now();
     @Field("common_entries")
     private List<MasterworksFairPlayerEntry> commonPlayerEntries = new ArrayList<>();
     @Field("rare_entries")

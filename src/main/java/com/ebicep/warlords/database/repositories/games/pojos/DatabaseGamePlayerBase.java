@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.LinkedHashMap;
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
+    @Id
+    private String id;
     protected String uuid;
     protected String name;
     protected Specializations spec;

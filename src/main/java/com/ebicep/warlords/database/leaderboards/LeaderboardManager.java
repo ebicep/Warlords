@@ -143,7 +143,7 @@ public class LeaderboardManager {
 
                         if (init) {
                             DatabaseTiming.checkTimings();
-                            NPCManager.createGameNPCs();
+                            NPCManager.createGameJoinNPCs();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???

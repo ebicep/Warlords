@@ -7,6 +7,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
@@ -91,6 +92,11 @@ public class WeaponBindMenu {
                                             new TextComponentBuilder(selectedWeapon.getName())
                                                     .setHoverItem(selectedWeapon.generateItemStack())
                                                     .getTextComponent());
+
+                                    //remove unbounded starter weapon as it is no longer needed
+                                    if (boundWeapon instanceof StarterWeapon) {
+                                        weaponInventory.remove(boundWeapon);
+                                    }
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, selectedWeapon);

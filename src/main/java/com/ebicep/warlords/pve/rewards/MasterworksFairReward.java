@@ -16,9 +16,9 @@ public class MasterworksFairReward extends AbstractReward {
     @Field("time_given")
     private Instant timeGiven;
 
-    public MasterworksFairReward(RewardTypes reward, float amount) {
+    public MasterworksFairReward(RewardTypes reward, float amount, Instant timeGiven) {
         super(reward, amount, "Masterworks Fair");
-        this.timeGiven = Instant.now();
+        this.timeGiven = timeGiven;
     }
 
     private List<String> getLore() {
