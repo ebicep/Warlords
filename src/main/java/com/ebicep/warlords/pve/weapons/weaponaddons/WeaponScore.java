@@ -31,13 +31,13 @@ public interface WeaponScore {
         System.out.println("Max Score: " + maxScore);
     }
 
-    default double getWeaponScore() {
+    default float getWeaponScore() {
         List<Double> averageScores = getWeaponScoreAverageValues();
         double sum = 0;
         for (Double d : averageScores) {
             sum += d;
         }
-        return Math.round(sum / averageScores.size() * 10000) / 100.0;
+        return Math.round(sum / averageScores.size() * 10000) / 100f;
     }
 
     default String getWeaponScoreString() {

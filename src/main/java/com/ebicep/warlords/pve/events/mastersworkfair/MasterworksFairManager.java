@@ -15,6 +15,8 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,23 +24,29 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MasterworksFairManager {
 
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter
+            .ofPattern("LLL dd yyyy z")
+            .withZone(ZoneId.of("America/New_York"));
     public static boolean enabled = true;
     public static MasterworksFair currentFair;
     public static AtomicBoolean updateFair = new AtomicBoolean(false);
-
     public static BukkitTask runnable;
 
     public static void resetFair(MasterworksFair masterworksFair) {
-        resetFair(masterworksFair, true);
+        resetFair(masterworksFair, true, 5);
     }
 
-    public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
+    public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutes) {
         if (currentFair == null) {
             System.out.println("[MasterworksFairManager] Current fair is null, cannot reset fair");
             return;
@@ -47,8 +55,7 @@ public class MasterworksFairManager {
         //give out rewards
         awardEntries(masterworksFair, throughRewardsInventory);
         //reset fair
-        currentFair = null;
-        MasterworksFairTrait.startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
+        MasterworksFairTrait.startTime = Instant.now().plus(minutes, ChronoUnit.MINUTES);
         MasterworksFairTrait.PAUSED.set(false);
     }
 
@@ -84,14 +91,18 @@ public class MasterworksFairManager {
         Warlords.newChain()
                 .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
                 .sync(() -> {
+                    currentFair = null;
+
                     Instant now = Instant.now();
                     for (WeaponsPvE value : WeaponsPvE.values()) {
                         if (value.getPlayerEntries != null) {
                             List<MasterworksFairPlayerEntry> playerEntries = value.getPlayerEntries.apply(masterworksFair);
                             playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
+                            Collections.reverse(playerEntries);
+
                             for (int i = 0; i < playerEntries.size(); i++) {
                                 MasterworksFairPlayerEntry entry = playerEntries.get(i);
-                                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(value, i + 1, now);
+                                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(now, value, i + 1, Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())));
                                 int finalI = i;
                                 Warlords.newChain()
                                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(entry.getUuid()))
@@ -100,14 +111,14 @@ public class MasterworksFairManager {
                                             pveStats.addMasterworksFairEntry(playerRecordEntry);
                                             if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
                                                 if (throughRewardsInventory) {
-                                                    pveStats.addReward(new MasterworksFairReward(value.starPieceRewardType, 1));
+                                                    pveStats.addReward(new MasterworksFairReward(value.starPieceRewardType, 1, now));
                                                 } else {
                                                     value.addStarPiece.accept(pveStats);
                                                 }
                                                 switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                                     case 0:
                                                         if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 10));
+                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 10, now));
                                                         } else {
                                                             pveStats.addSupplyDropToken(10);
                                                         }
@@ -115,7 +126,7 @@ public class MasterworksFairManager {
                                                     case 1:
                                                     case 2:
                                                         if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 7));
+                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 7, now));
                                                         } else {
                                                             pveStats.addSupplyDropToken(7);
                                                         }
@@ -124,24 +135,25 @@ public class MasterworksFairManager {
                                             } else {
                                                 if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 5));
+                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 5, now));
                                                     } else {
                                                         pveStats.addSupplyDropToken(5);
                                                     }
                                                 } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 3));
+                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 3, now));
                                                     } else {
                                                         pveStats.addSupplyDropToken(3);
                                                     }
                                                 } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 1));
+                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 1, now));
                                                     } else {
                                                         pveStats.addSupplyDropToken(1);
                                                     }
                                                 }
                                             }
+                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                         })
                                         .execute();
                             }
@@ -166,10 +178,11 @@ public class MasterworksFairManager {
             return;
         }
 
-        Menu menu = new Menu("Masterworks Fair", 9 * 5);
+        Menu menu = new Menu("Masterworks Fair", 9 * 6);
         UUID uuid = player.getUniqueId();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        List<AbstractWeapon> weaponInventory = databasePlayerPvE.getWeaponInventory();
 
         WeaponsPvE[] values = WeaponsPvE.values();
         int column = 2;
@@ -183,7 +196,7 @@ public class MasterworksFairManager {
                 ItemBuilder itemBuilder;
                 if (!playerEntry.isPresent()) {
                     itemBuilder = new ItemBuilder(value.glassItem);
-                    itemBuilder.name(ChatColor.GREEN + "Click to submit a weapon");
+                    itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
                 } else {
                     itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
                     itemBuilder.addLore(
@@ -192,9 +205,7 @@ public class MasterworksFairManager {
                             ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to remove your submission"
                     );
                 }
-                menu.setItem(
-                        column,
-                        2,
+                menu.setItem(column, 2,
                         itemBuilder.get(),
                         (m, e) -> {
                             if (!playerEntry.isPresent() || e.isLeftClick()) { //submit | change weapon
@@ -210,6 +221,25 @@ public class MasterworksFairManager {
                             }
                         }
                 );
+
+                //last 10 placements
+                List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
+                List<String> placementHistory = masterworksFairEntries
+                        .stream()
+                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                        .collect(Utils.lastN(10))
+                        .stream()
+                        .map(masterworksFairEntry -> ChatColor.GRAY + FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
+                        .collect(Collectors.toList());
+                menu.setItem(column, 3,
+                        new ItemBuilder(Material.BOOK)
+                                .name(ChatColor.GREEN + "Your most recent placements")
+                                .lore(IntStream.range(0, placementHistory.size())
+                                        .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
+                                        .collect(Collectors.toList()))
+                                .get(), (m, e) -> {
+
+                        });
                 column += 2;
             }
         }
@@ -227,8 +257,7 @@ public class MasterworksFairManager {
         menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {
         });
 
-
-        menu.setItem(4, 4, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 

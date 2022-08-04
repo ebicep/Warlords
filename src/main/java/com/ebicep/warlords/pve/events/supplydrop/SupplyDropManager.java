@@ -112,8 +112,9 @@ public class SupplyDropManager {
                 });
 
         //last 20 supply drops
-        List<String> supplyDropHistory = databasePlayerPvE.getSupplyDropEntries()
-                .subList(Math.max(0, databasePlayerPvE.getSupplyDropEntries().size() - 20), databasePlayerPvE.getSupplyDropEntries().size())
+        List<SupplyDropEntry> supplyDropEntries = databasePlayerPvE.getSupplyDropEntries();
+        List<String> supplyDropHistory = supplyDropEntries
+                .subList(Math.max(0, supplyDropEntries.size() - 20), supplyDropEntries.size())
                 .stream()
                 .map(SupplyDropEntry::getReward)
                 .map(supplyDropRewards -> supplyDropRewards.getChatColor() + supplyDropRewards.name + "\n")

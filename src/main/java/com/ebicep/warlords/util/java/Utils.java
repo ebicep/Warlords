@@ -1,7 +1,8 @@
 package com.ebicep.warlords.util.java;
 
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collector;
 
 public class Utils {
 
@@ -18,6 +19,19 @@ public class Utils {
 
     public static int generateRandomIndexFromListSize(int size) {
         return ThreadLocalRandom.current().nextInt(size);
+    }
+
+    public static <T> Collector<T, ?, List<T>> lastN(int n) {
+        return Collector.<T, Deque<T>, List<T>>of(ArrayDeque::new, (acc, t) -> {
+            if (acc.size() == n)
+                acc.pollFirst();
+            acc.add(t);
+        }, (acc1, acc2) -> {
+            while (acc2.size() < n && !acc1.isEmpty()) {
+                acc2.addFirst(acc1.pollLast());
+            }
+            return acc2;
+        }, ArrayList::new);
     }
 
 
