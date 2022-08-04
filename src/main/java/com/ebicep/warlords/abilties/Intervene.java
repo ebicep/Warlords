@@ -78,7 +78,7 @@ public class Intervene extends AbstractAbility {
             if (veneTarget.hasFlag()) {
                 carriersIntervened++;
             }
-            wp.subtractEnergy(energyCost);
+            wp.subtractEnergy(energyCost, false);
             // Green line / Sound
             Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1, 1);
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);

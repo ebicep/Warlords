@@ -43,9 +43,9 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                                 .findAny();
 
                         if (optionalHammer.isPresent()) {
-                            wp.subtractEnergy(energyCost - (optionalHammer.get().isCrownOfLight() ? 10 : 0));
+                            wp.subtractEnergy(energyCost - (optionalHammer.get().isCrownOfLight() ? 10 : 0), false);
                         } else {
-                            wp.subtractEnergy(energyCost);
+                            wp.subtractEnergy(energyCost, false);
                         }
 
                         Location loc = nearPlayer.getLocation();

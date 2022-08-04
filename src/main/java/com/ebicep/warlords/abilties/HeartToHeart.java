@@ -75,7 +75,7 @@ public class HeartToHeart extends AbstractAbility {
             if (wp.hasFlag()) {
                 timesUsedWithFlag++;
             }
-            wp.subtractEnergy(energyCost);
+            wp.subtractEnergy(energyCost, false);
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 

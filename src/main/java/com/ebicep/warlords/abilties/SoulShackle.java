@@ -87,12 +87,12 @@ public class SoulShackle extends AbstractAbility {
                     .closestFirst(wp)
                     .limit(maxShackleTargets)
             ) {
-                wp.subtractEnergy(energyCost);
+                wp.subtractEnergy(energyCost, false);
                 wp.sendMessage(
                         WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " You shackled " +
-                        ChatColor.YELLOW + shackleTarget.getName() +
-                        ChatColor.GRAY + "!"
+                                ChatColor.GRAY + " You shackled " +
+                                ChatColor.YELLOW + shackleTarget.getName() +
+                                ChatColor.GRAY + "!"
                 );
                 Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
                 Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);

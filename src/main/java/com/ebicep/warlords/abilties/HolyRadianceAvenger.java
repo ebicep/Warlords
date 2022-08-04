@@ -113,6 +113,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         }
                         return currentDamageValue;
                     }
+
+                    @Override
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + energyPerSecond / 20f;
+                    }
                 });
 
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +

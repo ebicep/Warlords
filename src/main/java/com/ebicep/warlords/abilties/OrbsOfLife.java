@@ -74,7 +74,7 @@ public class OrbsOfLife extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();

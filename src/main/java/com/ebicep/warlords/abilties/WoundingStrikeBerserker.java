@@ -68,13 +68,8 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                             nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                         }
                     },
-                    woundingDuration * 20
+                    woundingDuration * 200
             ) {
-                @Override
-                public boolean isHealing() {
-                    return true;
-                }
-
                 @Override
                 public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                     return currentHealValue * .6f;
@@ -110,11 +105,6 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                     }
                 }
         ) {
-            @Override
-            public boolean isHealing() {
-                return true;
-            }
-
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .3f;

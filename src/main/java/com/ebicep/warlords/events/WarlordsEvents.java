@@ -274,7 +274,7 @@ public class WarlordsEvents implements Listener {
             if ((!(attacker instanceof Player) || ((Player) attacker).getInventory().getHeldItemSlot() == 0) && wpAttacker.getHitCooldown() == 0) {
 
                 wpAttacker.setHitCooldown(12);
-                wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit());
+                wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyOnHit(), true);
 
                 if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
                     Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
@@ -327,7 +327,7 @@ public class WarlordsEvents implements Listener {
                     }
                     wpAttacker.setHitCooldown(20);
                 } else {
-                    if (wpAttacker instanceof WarlordsPlayer) {
+                    if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getAbstractWeapon() != null) {
                         AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getAbstractWeapon();
                         wpVictim.addDamageInstance(
                                 wpAttacker,

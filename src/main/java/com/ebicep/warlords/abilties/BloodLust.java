@@ -41,7 +41,7 @@ public class BloodLust extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player p) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
         BloodLust tempBloodLust = new BloodLust();

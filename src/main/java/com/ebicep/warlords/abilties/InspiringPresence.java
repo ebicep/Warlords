@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -17,13 +18,12 @@ import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    protected int playersHit = 0;
-
-    private int duration = 12;
-    private int energyPerSecond = 10;
     private final int speedBuff = 30;
     private final int radius = 10;
+    protected int playersHit = 0;
+    private boolean pveUpgrade = false;
+    private int duration = 12;
+    private int energyPerSecond = 10;
     private List<WarlordsEntity> playersEffected = new ArrayList<>();
 
     public InspiringPresence() {
@@ -57,7 +57,7 @@ public class InspiringPresence extends AbstractAbility {
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
 
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
                 name,
                 "PRES",
                 InspiringPresence.class,
@@ -76,7 +76,12 @@ public class InspiringPresence extends AbstractAbility {
                         ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
                     }
                 }
-        );
+        ) {
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                return energyGainPerTick + energyPerSecond / 20f;
+            }
+        });
 
         if (pveUpgrade) {
             resetCooldowns(wp);
@@ -98,7 +103,7 @@ public class InspiringPresence extends AbstractAbility {
             );
 
             Runnable cancelAllySpeed = presenceTarget.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
-            presenceTarget.getCooldownManager().addRegularCooldown(
+            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
                     name,
                     "PRES",
                     InspiringPresence.class,
@@ -109,7 +114,12 @@ public class InspiringPresence extends AbstractAbility {
                         cancelAllySpeed.run();
                     },
                     duration * 20
-            );
+            ) {
+                @Override
+                public float addEnergyGainPerTick(float energyGainPerTick) {
+                    return energyGainPerTick + energyPerSecond / 20f;
+                }
+            });
         }
 
         return true;

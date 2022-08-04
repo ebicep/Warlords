@@ -1,35 +1,8 @@
-package com.ebicep.warlords.player.ingame.cooldowns;
+package com.ebicep.warlords.player.ingame.cooldowns.instances;
 
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 
-public interface DamageHealingInstance {
-
-    /**
-     * if true, only the methods of the first cooldown is applied, the rest are skipped,
-     * checks based on class and name
-     */
-    default boolean distinct() {
-        return false;
-    }
-
-    /**
-     * boolean if damageheal instance is healing
-     */
-    default boolean isHealing() {
-        return false;
-    }
-
-    //HEALING
-
-    /**
-     * Done before any healing is done to players
-     */
-    default float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-        return currentHealValue;
-    }
-
-
-    //DAMAGE
+public interface DamageInstance extends Instance {
 
     /**
      * Calls before variables are declared - based on self cooldowns

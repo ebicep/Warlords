@@ -56,7 +56,7 @@ public class SoulSwitch extends AbstractAbility {
             } else if (wp.getCarriedFlag() != null) {
                 wp.sendMessage(ChatColor.RED + "You cannot Soul Switch while holding the flag!");
             } else {
-                wp.subtractEnergy(energyCost);
+                wp.subtractEnergy(energyCost, false);
                 Utils.playGlobalSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
 
                 Location swapLocation = swapTarget.getLocation();

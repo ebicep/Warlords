@@ -93,7 +93,7 @@ public class PowerupOption implements Option {
             public int getDelay() {
                 return cooldown * 20;
             }
-            
+
         });
     }
 
@@ -185,16 +185,12 @@ public class PowerupOption implements Option {
         return duration;
     }
 
-    public int getCooldown() {
-        return cooldown;
-    }
-
-    public int getMaxCooldown() {
-        return maxCooldown;
-    }
-
     public void setDuration(@Nonnegative int duration) {
         this.duration = duration;
+    }
+
+    public int getCooldown() {
+        return cooldown;
     }
 
     public void setCooldown(@Nonnegative int cooldown) {
@@ -206,6 +202,10 @@ public class PowerupOption implements Option {
         if (oldCooldown != 0 && cooldown == 0 && hasStarted) {
             spawn();
         }
+    }
+
+    public int getMaxCooldown() {
+        return maxCooldown;
     }
 
     public void setMaxCooldown(@Nonnegative int maxCooldown) {
@@ -267,7 +267,7 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().removeCooldown(EnergyPowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<EnergyPowerup>(
                         "Energy",
                         "ENERGY",
                         EnergyPowerup.class,
@@ -276,7 +276,12 @@ public class PowerupOption implements Option {
                         CooldownTypes.BUFF,
                         cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GOLD + ChatColor.BOLD + "ENERGY" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20
-                );
+                ) {
+                    @Override
+                    public float multiplyEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick * 1.4f;
+                    }
+                });
                 warlordsPlayer.sendMessage(String.format("§6You activated the §lENERGY §6powerup! §a+40%% §6Energy gain for §a%d §6seconds!", option.getDuration()));
             }
 
@@ -300,7 +305,8 @@ public class PowerupOption implements Option {
                         CooldownTypes.BUFF,
                         cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20,
-                        (cooldown, ticksLeft, counter) -> {}
+                        (cooldown, ticksLeft, counter) -> {
+                        }
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -332,7 +338,7 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             warlordsPlayer.setCooldownModifier(1);
                             warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.AQUA + ChatColor.BOLD + "COOLDOWN" + ChatColor.GOLD + " powerup has worn off.");
-                        } ,
+                        },
                         option.getDuration() * 20
                 );
                 warlordsPlayer.setCooldownModifier(0.75);
@@ -370,9 +376,7 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§a§l5000 SELF HEAL");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 15));
             }
-        }
-
-        ;
+        };
 
         private final int duration;
         private final Material debugMaterial;
@@ -387,11 +391,11 @@ public class PowerupOption implements Option {
         public int getDuration() {
             return duration;
         }
-        
+
         public Material getDebugMaterial() {
             return debugMaterial;
         }
-        
+
         public int getDebugData() {
             return debugData;
         }

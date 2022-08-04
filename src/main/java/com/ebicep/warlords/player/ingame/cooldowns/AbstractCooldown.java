@@ -1,10 +1,13 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.DamageInstance;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.EnergyInstance;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.HealingInstance;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageHealingInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance {
 
     protected String name;
     protected String nameAbbreviation;

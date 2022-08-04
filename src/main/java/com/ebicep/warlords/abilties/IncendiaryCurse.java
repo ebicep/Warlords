@@ -54,7 +54,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         Location location = player.getLocation();

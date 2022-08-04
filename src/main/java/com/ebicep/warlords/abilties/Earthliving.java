@@ -55,7 +55,7 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
         Earthliving tempEarthliving = new Earthliving();

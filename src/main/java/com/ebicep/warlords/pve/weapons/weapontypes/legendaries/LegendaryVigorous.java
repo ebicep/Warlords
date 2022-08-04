@@ -1,6 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.events.WarlordsPlayerEnergyUsed;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
@@ -23,6 +30,58 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "+2 Energy per Second for 10 seconds after using 500 energy. Can be triggered once per 30 seconds.";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        final int[] cooldown = new int[1];
+        final float[] energyUsed = new float[1];
+
+        player.getGame().registerEvents(new Listener() {
+
+            @EventHandler
+            public void onEvent(WarlordsPlayerEnergyUsed event) {
+                if (event.getPlayer() != player) {
+                    return;
+                }
+                if (cooldown[0] > 0) {
+                    return;
+                }
+                energyUsed[0] += event.getEnergyUsed();
+                if (energyUsed[0] >= 500) {
+                    cooldown[0] = 30;
+                    energyUsed[0] = 0;
+                    player.getCooldownManager().addCooldown(new RegularCooldown<LegendaryVigorous>(
+                            "LegendaryVigorous",
+                            "VIGOR",
+                            LegendaryVigorous.class,
+                            null,
+                            player,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            10 * 20
+                    ) {
+                        @Override
+                        public float addEnergyGainPerTick(float energyGainPerTick) {
+                            return energyGainPerTick + 0.2f;
+                        }
+                    });
+                }
+
+            }
+        });
+        new GameRunnable(player.getGame()) {
+
+            @Override
+            public void run() {
+                if (cooldown[0] > 0) {
+                    cooldown[0]--;
+                }
+            }
+        }.runTaskTimer(0, 20);
     }
 
     @Override

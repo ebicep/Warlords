@@ -56,7 +56,7 @@ public class ArcaneShield extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
 

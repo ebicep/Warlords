@@ -59,7 +59,7 @@ public class Boulder extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         Location location = player.getLocation();

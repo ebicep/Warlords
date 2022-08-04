@@ -81,7 +81,7 @@ public class AvengersStrike extends AbstractStrikeBase {
             );
         }
 
-        energyStole += nearPlayer.subtractEnergy(energySteal);
+        energyStole += nearPlayer.subtractEnergy(energySteal, true);
     }
 
     public boolean isPveUpgrade() {
@@ -98,22 +98,5 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
-    }
-
-    int counter = 0;
-    @Override
-    public void runEverySecond() {
-        if (counter++ % 60 == 0 && struckTargets > 0) {
-            counter = 0;
-            struckTargets--;
-        }
-    }
-
-    public int getStruckTargets() {
-        return struckTargets;
-    }
-
-    public void setStruckTargets(int struckTargets) {
-        this.struckTargets = struckTargets;
     }
 }

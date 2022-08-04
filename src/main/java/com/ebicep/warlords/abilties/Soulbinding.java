@@ -68,7 +68,7 @@ public class Soulbinding extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();

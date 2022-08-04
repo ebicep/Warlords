@@ -11,10 +11,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.events.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
@@ -196,9 +193,13 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
         if (event.isHealingInstance()) {
-            return addHealingInstance(event);
+            Optional<WarlordsDamageHealingFinalEvent> eventOptional = addHealingInstance(event);
+            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
+            return eventOptional;
         } else {
-            return addDamageInstance(event);
+            Optional<WarlordsDamageHealingFinalEvent> eventOptional = addDamageInstance(event);
+            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
+            return eventOptional;
         }
     }
 
@@ -673,9 +674,7 @@ public abstract class WarlordsEntity {
         final float healValueBeforeReduction = healValue;
 
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-            if (abstractCooldown.isHealing()) {
-                healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
-            }
+            healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
         }
 
         // Self Healing
@@ -1564,7 +1563,7 @@ public abstract class WarlordsEntity {
         return energyGiven;
     }
 
-    public float subtractEnergy(float amount) {
+    public float subtractEnergy(float amount, boolean fromAttacker) {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
@@ -1578,6 +1577,9 @@ public abstract class WarlordsEntity {
                 amountSubtracted = amount;
                 energy -= amount;
             }
+        }
+        if (!fromAttacker) {
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerEnergyUsed(this, amountSubtracted));
         }
         return amountSubtracted;
     }
