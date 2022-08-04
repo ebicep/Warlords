@@ -1035,7 +1035,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption(250));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(8, 5 * SECOND, null)
-                            .add(1, Mobs.ENVOY_ZOMBIE)
+                            .add(1, Mobs.BASIC_ZOMBIE)
                             .add(0.02, Mobs.SPIDER)
                             .add(0.05, Mobs.WOLF)
                             .add(0.05, Mobs.BASIC_SKELETON)

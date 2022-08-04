@@ -18,41 +18,41 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+5% Damage\n+2.5 Energy steal",
+                "+7.5% Damage\n+2.5 Energy steal",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.05f);
-                    ability.setMaxDamageHeal(maxDamage * 1.05f);
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
                     ability.setEnergySteal(energySteal + 2.5f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+10% Damage\n+5 Energy steal",
+                "+15% Damage\n+5 Energy steal",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                     ability.setEnergySteal(energySteal + 5);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+15% Damage\n+7.5 Energy steal",
+                "+22.5% Damage\n+7.5 Energy steal",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
                     ability.setEnergySteal(energySteal + 7.5f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+20% Damage\n+10 Energy steal",
+                "+30% Damage\n+10 Energy steal",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                     ability.setEnergySteal(energySteal + 10);
                 }
         ));
@@ -97,7 +97,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         masterUpgrade = new Upgrade(
                 "Avenger's Slash",
                 "Avenger's Strike - Master Upgrade",
-                "-5 Additional energy cost.\n\nDeal 30% more damage against BASIC enemies\nand 15% more damage against ELITE enemies.",
+                "-5 Additional energy cost.\n\nDeal 40% more damage against BASIC enemies\nand 20% more damage against ELITE enemies.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

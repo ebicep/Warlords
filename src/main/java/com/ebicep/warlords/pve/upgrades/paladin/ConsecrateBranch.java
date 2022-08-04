@@ -93,8 +93,8 @@ public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
                 50000,
                 () -> {
                     ability.setEnergyCost(ability.getEnergyCost() - 30);
-                    ability.setRadius(ability.getRadius() - 2);
-                    ability.setCooldown(ability.getCooldown() * 0.9f);
+                    ability.setRadius(ability.getRadius() + 2);
+                    ability.setCooldown(ability.getCooldown() * 0.8f);
                 }
         );
     }

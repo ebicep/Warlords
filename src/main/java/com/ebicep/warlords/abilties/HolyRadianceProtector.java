@@ -61,6 +61,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
             ) {
                 emitMarkRadiance(wp, circleTarget);
             }
+
+            return true;
         }
 
         for (WarlordsEntity markTarget : PlayerFilter

@@ -9,8 +9,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 
-public class EnvoyEntropy extends AbstractSkeleton implements EliteMob {
-    public EnvoyEntropy(Location spawnLocation) {
+public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
+    public EnvoySkeleton(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Envoy Entropy",

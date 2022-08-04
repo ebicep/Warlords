@@ -53,12 +53,24 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     @Override
     public boolean chain(WarlordsEntity wp, Player player) {
+        if (pveUpgrade) {
+            for (WarlordsEntity circleTarget : PlayerFilter
+                    .entitiesAround(wp, 8, 8, 8)
+                    .aliveEnemiesOf(wp)
+            ) {
+                emitMarkRadiance(wp, circleTarget);
+            }
+
+            return true;
+        }
+
         for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
+            if (pveUpgrade) return true;
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
@@ -95,7 +107,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                         if (pveUpgrade) {
                             if (event.getAbility().equals("Avenger's Strike")) {
-                                return currentDamageValue * 1.5f;
+                                return currentDamageValue * 1.4f;
                             }
                             return currentDamageValue;
                         }
@@ -121,6 +133,44 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
             }
         }
         return false;
+    }
+
+    private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
+        HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
+                minDamageHeal,
+                maxDamageHeal,
+                cooldown,
+                energyCost,
+                critChance,
+                critMultiplier
+        );
+        target.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
+                name,
+                "AVE MARK",
+                HolyRadianceAvenger.class,
+                tempMark,
+                giver,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 10 == 0) {
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
+                    }
+                }
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveUpgrade) {
+                    if (event.getAbility().equals("Avenger's Strike")) {
+                        return currentDamageValue * 1.4f;
+                    }
+                    return currentDamageValue;
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
     public int getMarkRadius() {

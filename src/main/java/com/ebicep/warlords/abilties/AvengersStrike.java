@@ -41,22 +41,20 @@ public class AvengersStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         struckTargets++;
-        float multiplier;
+        float multiplier = 1;
         if (nearPlayer instanceof WarlordsNPC) {
             if (!pveUpgrade) return;
             switch (((WarlordsNPC) nearPlayer).getMobTier()) {
                 case BASE:
-                    multiplier = 1.3f;
+                    multiplier = 1.4f;
                     break;
                 case ELITE:
-                    multiplier = 1.15f;
+                    multiplier = 1.2f;
                     break;
                 default:
                     multiplier = 1;
                     break;
             }
-        } else {
-            multiplier = 1;
         }
 
         Optional<Consecrate> optionalConsecrate = getStandingOnConsecrate(wp, nearPlayer);

@@ -89,7 +89,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             //reducing chain cooldown
-            if (!(wp.isInPve() && maxReductions > 2)) {
+            if (!(wp.isInPve() && maxReductions >= 2)) {
                 wp.getSpec().getRed().subtractCooldown(2);
                 if (wp.getEntity() instanceof Player) {
                     wp.updateRedItem((Player) wp.getEntity());
@@ -124,7 +124,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             //reducing chain cooldown
-            if (!(wp.isInPve() && maxReductions > 2)) {
+            if (!(wp.isInPve() && maxReductions >= 2)) {
                 wp.getSpec().getRed().subtractCooldown(2);
                 if (wp.getEntity() instanceof Player) {
                     wp.updateRedItem((Player) wp.getEntity());

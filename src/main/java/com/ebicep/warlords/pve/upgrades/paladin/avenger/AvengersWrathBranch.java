@@ -83,10 +83,10 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
         masterUpgrade = new Upgrade(
                 "Avenger’s Armageddon",
                 "Avenger's Wrath - Master Upgrade",
-                "Avenger's Wrath hits 2 additional targets.",
+                "Avenger's Wrath hits 3 additional targets.",
                 50000,
                 () -> {
-                    ability.setMaxTargets(ability.getMaxTargets() + 2);
+                    ability.setMaxTargets(ability.getMaxTargets() + 3);
                 }
         );
     }

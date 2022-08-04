@@ -9,41 +9,42 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
     int speedBuff = ability.getSpeedBuff();
     float cooldown = ability.getCooldown();
+    int duration = ability.getDuration();
 
     public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
 
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "+5% Speed",
+                "+1.5s Duration",
                 2500,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 5);
+                    ability.setDuration(duration + 1);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier II",
-                "+10% Speed",
+                "+3s Duration",
                 5000,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 10);
+                    ability.setDuration(duration + 3);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "+15% Speed",
+                "+4.5s Duration",
                 7500,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 15);
+                    ability.setDuration(duration + 5);
                 }
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "+20% Speed\n+15 Energy given",
+                "+6s Duration\n+20 Energy given",
                 10000,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 20);
-                    ability.setEnergyGiven(ability.getEnergyGiven() + 15);
+                    ability.setDuration(duration + 6);
+                    ability.setEnergyGiven(ability.getEnergyGiven() + 20);
                 }
         ));
 
@@ -73,21 +74,21 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-30% Cooldown reduction\n+2s Duration",
+                "-30% Cooldown reduction\n+20% Speed",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.7f);
-                    ability.setDuration(ability.getDuration() + 3);
+                    ability.setSpeedBuff(speedBuff + 20);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",
                 "Light Infusion - Master Upgrade",
-                "Each Avenger's Strike casted in the last\n3 seconds will increase the energy given\nfrom Light Infusion by 30\n\nWarning: WIP",
+                "Each Avenger's Strike casted in while\nLight Infusion is active will refund 30\nenergy when Light Infusion ends.",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }

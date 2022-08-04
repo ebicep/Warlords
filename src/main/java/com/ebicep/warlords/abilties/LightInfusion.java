@@ -2,8 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
@@ -13,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LightInfusion extends AbstractAbility {
+    private boolean pveUpgrade = false;
 
     private int duration = 3;
     private int speedBuff = 40;
     private int energyGiven = 120;
+    private int strikesUsed = 0;
 
     public LightInfusion(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
@@ -40,13 +44,14 @@ public class LightInfusion extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        strikesUsed = 0;
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusion tempLightInfusion = new LightInfusion(cooldown);
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusion>(
                 name,
                 "INF",
                 LightInfusion.class,
@@ -69,8 +74,21 @@ public class LightInfusion extends AbstractAbility {
                                 500
                         );
                     }
+
+                    if (pveUpgrade) {
+                        wp.addEnergy(wp, name, 30 * strikesUsed);
+                    }
                 }
-        );
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (pveUpgrade) {
+                    if (event.getAbility().equals("Avenger's Strike")) {
+                        strikesUsed++;
+                    }
+                }
+            }
+        });
 
         for (int i = 0; i < 10; i++) {
             ParticleEffect.SPELL.display(
@@ -109,5 +127,13 @@ public class LightInfusion extends AbstractAbility {
 
     public void setEnergyGiven(int energyGiven) {
         this.energyGiven = energyGiven;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

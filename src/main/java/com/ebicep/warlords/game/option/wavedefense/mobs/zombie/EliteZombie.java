@@ -43,8 +43,6 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        Location loc = receiver.getLocation();
-        Utils.playGlobalSound(loc, Sound.PORTAL_TRAVEL, 1, 1.5f);
         receiver.subtractEnergy(25);
     }
 
