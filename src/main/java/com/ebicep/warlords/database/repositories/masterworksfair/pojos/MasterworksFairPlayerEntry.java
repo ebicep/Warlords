@@ -1,20 +1,25 @@
 package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import org.springframework.data.annotation.Id;
+
+import java.util.UUID;
 
 public class MasterworksFairPlayerEntry {
 
-    private String uuid;
+    @Id
+    protected String id;
+    private UUID uuid;
     private AbstractWeapon weapon;
 
     public MasterworksFairPlayerEntry() {
     }
 
-    public MasterworksFairPlayerEntry(String uuid) {
+    public MasterworksFairPlayerEntry(UUID uuid) {
         this.uuid = uuid;
     }
 
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 

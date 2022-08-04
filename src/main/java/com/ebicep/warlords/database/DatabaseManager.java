@@ -16,7 +16,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.mongodb.client.MongoClient;
@@ -52,11 +51,11 @@ public class DatabaseManager {
 
     public static void init() {
         if (!enabled) {
-            NPCManager.createGameNPCs();
+            NPCManager.createGameJoinNPCs();
             return;
         }
         if (!LeaderboardManager.enabled) {
-            NPCManager.createGameNPCs();
+            NPCManager.createGameJoinNPCs();
         }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -68,10 +67,11 @@ public class DatabaseManager {
             masterworksFairService = context.getBean("masterworksFairService", MasterworksFairService.class);
             guildService = context.getBean("guildService", GuildService.class);
         } catch (Exception e) {
-            NPCManager.createGameNPCs();
             e.printStackTrace();
             return;
         }
+
+        NPCManager.createDatabaseRequiredNPCs();
 
         try {
             for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
@@ -95,8 +95,6 @@ public class DatabaseManager {
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms"))
                 .execute();
-
-        MasterworksFairManager.init();
 
         //runnable that updates all player that need updating every 10 seconds (prevents spam update)
         new BukkitRunnable() {

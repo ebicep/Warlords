@@ -428,7 +428,9 @@ public class Warlords extends JavaPlugin {
             //updates all queues, locks main thread to ensure update is complete before disabling
             if (DatabaseManager.enabled) {
                 DatabaseManager.updateQueue();
-                DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                if (MasterworksFairManager.currentFair != null) {
+                    DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                }
                 GuildManager.updateGuilds();
             }
         } catch (Exception e) {

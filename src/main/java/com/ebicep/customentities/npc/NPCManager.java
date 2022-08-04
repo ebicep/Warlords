@@ -6,6 +6,7 @@ import com.ebicep.customentities.npc.traits.PveStartTrait;
 import com.ebicep.customentities.npc.traits.SupplyDropTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -28,7 +29,7 @@ public class NPCManager {
     public static NPC supplyDropNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
-    public static void createGameNPCs() {
+    public static void createGameJoinNPCs() {
         if (!Warlords.citizensEnabled) return;
 
         Warlords.newChain()
@@ -36,6 +37,15 @@ public class NPCManager {
                     //for reloading
                     createGameNPC();
                     createPvENPC();
+                })
+                .execute();
+    }
+
+    public static void createDatabaseRequiredNPCs() {
+        if (!Warlords.citizensEnabled) return;
+
+        Warlords.newChain()
+                .sync(() -> {
                     createMasterworksFairNPC();
                 })
                 .execute();
@@ -82,6 +92,7 @@ public class NPCManager {
     }
 
     public static void createMasterworksFairNPC() {
+        if (!MasterworksFairManager.enabled) return;
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
         masterworksFairNPC = npcRegistry.createNPC(EntityType.VILLAGER, "masterworks-fair");
