@@ -21,6 +21,7 @@ public class AbilityTree {
     private final List<UpgradeLog> upgradeLog = new ArrayList<>();
 
     private int maxMasterUpgrades = 3;
+    private int freeUpgrades = 0;
 
     public AbilityTree(WarlordsPlayer player) {
         this.player = player;
@@ -62,7 +63,6 @@ public class AbilityTree {
         }
     }
 
-
     public WarlordsPlayer getPlayer() {
         return player;
     }
@@ -81,6 +81,10 @@ public class AbilityTree {
 
     public void setMaxMasterUpgrades(int maxMasterUpgrades) {
         this.maxMasterUpgrades = maxMasterUpgrades;
+    }
+
+    public void addFreeUpgrades(int amount) {
+        this.freeUpgrades += amount;
     }
 
     public static class UpgradeLog {

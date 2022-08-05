@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsPlayerUpgradePurchaseEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -62,6 +64,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 return;
                             }
                         }
+                        //TODO free upgrade check
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
                             player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
                             return;
@@ -75,7 +78,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         upgrade.setUnlocked(true);
                         maxUpgrades--;
 
-                        player.subtractCurrency(upgrade.getCurrencyCost());
+                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
 
                         globalAnnouncement(player.getGame(), upgrade, ability);

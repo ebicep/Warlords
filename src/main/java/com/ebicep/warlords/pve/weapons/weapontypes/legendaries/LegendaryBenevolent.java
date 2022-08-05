@@ -1,6 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
@@ -24,6 +28,21 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Increase healing provided by 10%.";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onEvent(WarlordsDamageHealingEvent event) {
+                if (event.isHealingInstance() && event.getPlayer() == player) {
+                    event.setMin(event.getMin() * 1.1f);
+                    event.setMax(event.getMax() * 1.1f);
+                }
+            }
+        });
     }
 
     @Override

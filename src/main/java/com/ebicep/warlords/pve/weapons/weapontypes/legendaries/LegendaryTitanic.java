@@ -1,6 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.events.WarlordsPlayerUpgradePurchaseEvent;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
@@ -22,6 +26,20 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Increase maximum health by 0.5% per upgrade purchased.";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onEvent(WarlordsPlayerUpgradePurchaseEvent event) {
+                if (event.getPlayer() == player) {
+                    player.setMaxHealth(player.getMaxHealth() * 1.05f);
+                }
+            }
+        });
     }
 
     @Override

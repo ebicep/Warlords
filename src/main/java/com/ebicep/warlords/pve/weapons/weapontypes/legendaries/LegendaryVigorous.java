@@ -20,6 +20,9 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     public static final int SPEED_BONUS = 10;
     public static final int ENERGY_PER_SECOND_BONUS = 2;
 
+    private static final int PASSIVE_EFFECT_DURATION = 10;
+    private static final int PASSIVE_EFFECT_COOLDOWN = 20;
+
     public LegendaryVigorous() {
     }
 
@@ -51,7 +54,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                 }
                 energyUsed[0] += event.getEnergyUsed();
                 if (energyUsed[0] >= 500) {
-                    cooldown[0] = 30;
+                    cooldown[0] = PASSIVE_EFFECT_COOLDOWN;
                     energyUsed[0] = 0;
                     player.getCooldownManager().addCooldown(new RegularCooldown<LegendaryVigorous>(
                             "LegendaryVigorous",
@@ -62,7 +65,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
                             },
-                            10 * 20
+                            PASSIVE_EFFECT_DURATION * 20
                     ) {
                         @Override
                         public float addEnergyGainPerTick(float energyGainPerTick) {

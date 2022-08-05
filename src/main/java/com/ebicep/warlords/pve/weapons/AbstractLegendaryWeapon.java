@@ -53,6 +53,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
+        player.getAbilityTree().addFreeUpgrades(1);
+
         AbstractPlayerClass playerClass = player.getSpec();
         playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + getEnergyPerHitBonus());
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
