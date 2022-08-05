@@ -20,10 +20,7 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.SkillBoosts;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
@@ -32,9 +29,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.block.banner.Pattern;
@@ -71,9 +71,8 @@ public abstract class WarlordsEntity {
     public static final String GIVE_ARROW_RED = ChatColor.RED + "\u00BB";
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
     public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
-
+    private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
-    protected boolean spawnGrave = true;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats;
     private final PlayerStatisticsSecond secondStats;
@@ -82,16 +81,19 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
-    private Vector currentVector;
-    protected CalculateSpeed speed;
     private final Location deathLocation;
     private final CooldownManager cooldownManager = new CooldownManager(this);
+    protected boolean spawnGrave = true;
+    protected CalculateSpeed speed;
     protected String name;
     protected UUID uuid;
-    private Team team;
     protected AbstractPlayerClass spec;
-    private Specializations specClass;
     protected Weapons weaponSkin;
+    protected float walkspeed = 1;
+    protected LivingEntity entity;
+    private Vector currentVector;
+    private Team team;
+    private Specializations specClass;
     private float health;
     private float maxHealth;
     private int regenTimer;
@@ -107,8 +109,6 @@ public abstract class WarlordsEntity {
     private int hitCooldown;
     private int currency;
     private boolean wasSneaking = false;
-    // We have to store these in here as the new player might logout midgame
-    protected float walkspeed = 1;
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
@@ -118,7 +118,6 @@ public abstract class WarlordsEntity {
     private boolean canCrit = true;
     private double flagDamageMultiplier = 0;
     private boolean teamFlagCompass = true;
-    protected LivingEntity entity;
     @Nullable
     private FlagInfo carriedFlag = null;
     @Nullable
@@ -1696,36 +1695,68 @@ public abstract class WarlordsEntity {
         this.minuteStats.addAbsorbed((long) amount);
     }
 
-    public String getStatString(String name) {
-        StringBuilder stringBuilder = new StringBuilder(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
-        List<PlayerStatisticsMinute.Entry> entries = this.minuteStats.getEntries();
-        int length = entries.size();
-        for (int i = 0; i < length; i++) {
-            PlayerStatisticsMinute.Entry entry = entries.get(length - i - 1);
-            stringBuilder.append("\n");
-            stringBuilder.append(ChatColor.WHITE + "Minute ").append(i + 1).append(": ").append(ChatColor.GOLD);
-            switch (name) {
-                case "Kills":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getKills()));
-                    break;
-                case "Assists":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getAssists()));
-                    break;
-                case "Deaths":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getDeaths()));
-                    break;
-                case "Damage":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getDamage()));
-                    break;
-                case "Healing":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getHealing()));
-                    break;
-                case "Absorbed":
-                    stringBuilder.append(NumberFormat.addCommaAndRound(entry.getAbsorbed()));
-                    break;
+    /**
+     * If minute stats size is greater than SPLITS, seperate hoverable texts into name of minuteStats
+     *
+     * <p>Ex: size of 60 = "Kil" will have first SPLITS mins while "ls" while have last SPLITS mins
+     *
+     * <p>This still has the chance of producing an error depending on how big the size of minuteStats is, how many stats the player has, and what other BaseComponents are on the same line as this. (String length increases).
+     * Point of reference: 300 minutes with 500K damage/healing/absorbed PER minute did not produce an error
+     *
+     * @param minuteStatsType The type of minute stats to get the hoverable text for
+     * @return List of hoverable minute stats that make up minuteStatsType.name
+     */
+    public List<TextComponent> getAllMinuteHoverableStats(MinuteStats minuteStatsType) {
+        List<TextComponentBuilder> components = new ArrayList<>();
+        StringBuilder stringBuilder = new StringBuilder();
+        String minuteStatsTypeName = minuteStatsType.name;
+
+        List<PlayerStatisticsMinute.Entry> entries = minuteStats.getEntries();
+        int size = entries.size();
+        if (size > MINUTE_STATS_SPLITS) {
+            int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
+            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": 50,000" + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
+            int stringLength = 0;
+            for (int i = 0; i < splitString.length; i++) {
+                for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
+                    int index = i * MINUTE_STATS_SPLITS + j;
+                    if (index >= size) {
+                        break;
+                    }
+                    PlayerStatisticsMinute.Entry entry = entries.get(index);
+                    stringBuilder.append(ChatColor.WHITE).append("Minute ").append(index).append(": ").append(ChatColor.GOLD);
+                    stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
+                    stringBuilder.append("\n");
+                }
+                stringBuilder.setLength(stringBuilder.length() - 1);
+                stringLength += stringBuilder.length();
+                components.add(new TextComponentBuilder((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i])
+                        .setHoverText(stringBuilder.toString())
+                );
+                stringBuilder.setLength(0);
             }
+            //this will never happen in reality
+            if (stringLength >= 8000) {
+                for (TextComponentBuilder component : components) {
+                    component.setHoverText(component.getHoverText().replace("Minute", "Min."));
+                }
+            }
+        } else {
+            stringBuilder.append(ChatColor.AQUA).append("Stat Breakdown (").append(name).append("):");
+            for (int i = 0; i < size; i++) {
+                PlayerStatisticsMinute.Entry entry = entries.get(i);
+                stringBuilder.append("\n");
+                stringBuilder.append(ChatColor.WHITE).append("Minute ").append(i + 1).append(": ").append(ChatColor.GOLD);
+                stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
+            }
+            components.add(new TextComponentBuilder(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())))
+                    .setHoverText(stringBuilder.toString())
+            );
         }
-        return stringBuilder.toString();
+
+        return components.stream()
+                .map(TextComponentBuilder::getTextComponent)
+                .collect(Collectors.toList());
     }
 
     public void toggleTeamFlagCompass() {
@@ -1756,6 +1787,10 @@ public abstract class WarlordsEntity {
 
     public CalculateSpeed getSpeed() {
         return speed;
+    }
+
+    public void setSpeed(CalculateSpeed speed) {
+        this.speed = speed;
     }
 
     public Location getDeathLocation() {
@@ -2113,12 +2148,12 @@ public abstract class WarlordsEntity {
         this.spawnGrave = spawnGrave;
     }
 
-    public void setCurrentVector(Vector currentVector) {
-        this.currentVector = currentVector;
-    }
-
     public Vector getCurrentVector() {
         return currentVector;
+    }
+
+    public void setCurrentVector(Vector currentVector) {
+        this.currentVector = currentVector;
     }
 
     public int getCurrency() {
@@ -2146,9 +2181,5 @@ public abstract class WarlordsEntity {
 
     public void setInPve(boolean inPve) {
         isInPve = inPve;
-    }
-
-    public void setSpeed(CalculateSpeed speed) {
-        this.speed = speed;
     }
 }

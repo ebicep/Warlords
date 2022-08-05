@@ -42,6 +42,7 @@ public class TestCommand extends BaseCommand {
 //            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
 //            warlordsPlayer.addCurrency(10000000);
 
+
         ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }
 

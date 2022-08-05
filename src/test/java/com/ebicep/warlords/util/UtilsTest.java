@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import static com.ebicep.warlords.util.warlords.Utils.formatTimeLeft;
@@ -87,6 +88,11 @@ public class UtilsTest {
 //        }
 //        System.out.println("Min: " + min);
 //        System.out.println("Max: " + max);
+    }
+
+    @Test
+    public void splitString() {
+        System.out.println(Arrays.toString(com.ebicep.warlords.util.java.StringUtils.splitStringNTimes("Kills", 6)));
     }
 
 

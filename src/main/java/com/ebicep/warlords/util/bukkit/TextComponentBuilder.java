@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public class TextComponentBuilder {
 
     private final TextComponent textComponent;
+    private String hoverText = "";
 
     public TextComponentBuilder() {
         textComponent = new TextComponent();
@@ -19,7 +20,12 @@ public class TextComponentBuilder {
         this.textComponent = new TextComponent(text);
     }
 
+    public String getHoverText() {
+        return hoverText;
+    }
+
     public TextComponentBuilder setHoverText(String text) {
+        this.hoverText = text;
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(text).create()));
         return this;
     }

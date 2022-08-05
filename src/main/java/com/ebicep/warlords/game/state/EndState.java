@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
@@ -80,44 +81,33 @@ public class EndState implements State, TimerDebugAble {
         }
 
         //PLAYER STATS
+
+        sendGlobalMessage(game, "", false);
         sendGlobalEventMessage(game, Collections.singletonList(new TextComponentBuilder(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚")
                 .setHoverText(
                         ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum()) + "\n" +
-                        ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum()) + "\n" +
-                        ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum()))
+                                ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum()) + "\n" +
+                                ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum()))
                 .getTextComponent()));
 
         for (WarlordsEntity wp : PlayerFilter.playingGameWarlordsPlayers(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 
-            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(
-                    new TextComponentBuilder(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getKills()))
-                            .setHoverText(wp.getStatString("Kills"))
-                            .getTextComponent(),
-                    ChatUtils.SPACER,
-                    new TextComponentBuilder(ChatColor.WHITE + "Assists: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getAssists()))
-                            .setHoverText(wp.getStatString("Assists"))
-                            .getTextComponent(),
-                    ChatUtils.SPACER,
-                    new TextComponentBuilder(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getDeaths()))
-                            .setHoverText(wp.getStatString("Deaths"))
-                            .getTextComponent())
-            );
+            List<TextComponent> textComponents = new ArrayList<>(wp.getAllMinuteHoverableStats(MinuteStats.KILLS));
+            textComponents.add(ChatUtils.SPACER);
+            textComponents.addAll(wp.getAllMinuteHoverableStats(MinuteStats.ASSISTS));
+            textComponents.add(ChatUtils.SPACER);
+            textComponents.addAll(wp.getAllMinuteHoverableStats(MinuteStats.DEATHS));
+            ChatUtils.sendCenteredMessageWithEvents(player, textComponents);
 
-            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(
-                    new TextComponentBuilder(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getDamage()))
-                            .setHoverText(wp.getStatString("Damage"))
-                            .getTextComponent(),
-                    ChatUtils.SPACER,
-                    new TextComponentBuilder(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getHealing()))
-                            .setHoverText(wp.getStatString("Healing"))
-                            .getTextComponent(),
-                    ChatUtils.SPACER,
-                    new TextComponentBuilder(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getMinuteStats().total().getAbsorbed()))
-                            .setHoverText(wp.getStatString("Absorbed"))
-                            .getTextComponent())
-            );
+            textComponents.clear();
+            textComponents.addAll(wp.getAllMinuteHoverableStats(MinuteStats.DAMAGE));
+            textComponents.add(ChatUtils.SPACER);
+            textComponents.addAll(wp.getAllMinuteHoverableStats(MinuteStats.HEALING));
+            textComponents.add(ChatUtils.SPACER);
+            textComponents.addAll(wp.getAllMinuteHoverableStats(MinuteStats.ABSORBED));
+            ChatUtils.sendCenteredMessageWithEvents(player, textComponents);
 
             ChatUtils.sendMessage(player, false, "");
 
