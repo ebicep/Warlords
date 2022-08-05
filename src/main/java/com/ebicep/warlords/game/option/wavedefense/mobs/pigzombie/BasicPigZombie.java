@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -13,6 +14,7 @@ public class BasicPigZombie extends AbstractPigZombie implements BasicMob {
         super(
                 spawnLocation,
                 "Lunar Disciple",
+                MobTier.BASE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.WOOD, 1, (short) 3),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),

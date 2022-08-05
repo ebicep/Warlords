@@ -25,55 +25,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
     }
 
     int radius = ability.getRadius();
-    @Override
-    public void a1() {
-        ability.setRadius(radius + 4);
-    }
-
-    @Override
-    public void a2() {
-        ability.setRadius(radius + 8);
-    }
-
-    @Override
-    public void a3() {
-        ability.setRadius(radius + 16);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.85f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.7f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.4f);
-    }
-
-    @Override
-    public void master() {
-
-    }
 }

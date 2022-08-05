@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
-import com.ebicep.warlords.abilties.FreezingBreath;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,6 +14,7 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Warlock",
+                MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.CARPET, 1, (short) 1),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
@@ -41,8 +42,6 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        attacker.getSpec().setBlue(new FreezingBreath());
-        attacker.getSpec().getBlue().onActivate(attacker, null);
     }
 
     @Override

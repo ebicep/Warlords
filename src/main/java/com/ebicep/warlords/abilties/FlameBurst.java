@@ -20,6 +20,9 @@ public class FlameBurst extends AbstractProjectileBase {
     private boolean pveUpgrade = false;
 
     private float hitbox = 5;
+    private double acceleration = 1.0275;
+
+    private double projectileWidth = 0.24D;
 
     public FlameBurst() {
         super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
@@ -45,7 +48,7 @@ public class FlameBurst extends AbstractProjectileBase {
 
     @Override
     protected void updateSpeed(Vector speedVector, int ticksLived) {
-        speedVector.multiply(1.0275);
+        speedVector.multiply(acceleration);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class FlameBurst extends AbstractProjectileBase {
 
         for (float i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
-            double width = 0.24D;
+            double width = projectileWidth;
             ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                     center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
         }
@@ -103,10 +106,10 @@ public class FlameBurst extends AbstractProjectileBase {
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.6),
-                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.5),
+                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.8),
+                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.8),
+                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.8),
+                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.8),
                         false
                 );
             } else {
@@ -139,5 +142,21 @@ public class FlameBurst extends AbstractProjectileBase {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public double getAcceleration() {
+        return acceleration;
+    }
+
+    public void setAcceleration(double acceleration) {
+        this.acceleration = acceleration;
+    }
+
+    public double getProjectileWidth() {
+        return projectileWidth;
+    }
+
+    public void setProjectileWidth(double projectileWidth) {
+        this.projectileWidth = projectileWidth;
     }
 }

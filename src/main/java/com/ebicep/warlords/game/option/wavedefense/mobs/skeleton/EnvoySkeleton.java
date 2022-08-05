@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense.mobs.irongolem;
+package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -6,31 +6,36 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.util.Vector;
+import org.bukkit.*;
+import org.bukkit.inventory.ItemStack;
 
-public class IronGolem extends AbstractIronGolem implements EliteMob {
-
-    public IronGolem(Location spawnLocation) {
+public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
+    public EnvoySkeleton(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Apprentice",
+                "Envoy Entropy",
                 MobTier.ELITE,
-                null,
-                5000,
-                0.4f,
-                20,
-                400,
-                600
+                new Utils.SimpleEntityEquipment(
+                        new ItemStack(Material.CARPET, 1, (short) 6),
+                        new ItemStack(Material.DIAMOND_HELMET),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.DIAMOND_PICKAXE)
+                ),
+                3000,
+                0.35f,
+                10,
+                0,
+                0
         );
     }
 
     @Override
     public void onSpawn() {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
+            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
+        });
     }
 
     @Override
@@ -40,8 +45,6 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ITEM_BREAK, 1, 0.5f);
-        receiver.setVelocity(new Vector(0, 0.5, 0), false);
     }
 
     @Override
@@ -52,6 +55,6 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
                 .with(FireworkEffect.Type.BURST)
                 .withTrail()
                 .build());
-        Utils.playGlobalSound(deathLocation, Sound.IRONGOLEM_DEATH, 2, 0.4f);
+        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.4f);
     }
 }

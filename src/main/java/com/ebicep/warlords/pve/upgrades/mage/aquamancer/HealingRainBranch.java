@@ -27,60 +27,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
     int radius = ability.getRadius();
 
-    @Override
-    public void a1() {
-        ability.setRadius(radius + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setRadius(radius + 4);
-    }
-
-    @Override
-    public void a3() {
-        ability.setRadius(radius + 8);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
-    }
-
-    @Override
-    public void master() {
-        ability.setDuration(ability.getDuration() + 8);
-        ability.setPveUpgrade(true);
-    }
 }

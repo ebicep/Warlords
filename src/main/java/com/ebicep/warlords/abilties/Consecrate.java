@@ -28,6 +28,8 @@ public class Consecrate extends AbstractAbility {
     protected float radius;
     protected Location location;
 
+    private int duration = 5;
+
     public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
@@ -88,7 +90,7 @@ public class Consecrate extends AbstractAbility {
                 cooldownManager -> {
                     effectTask.cancel();
                 },
-                5 * 20,
+                duration * 20,
                 (cooldown, ticksLeft, counter) -> {
                     if (counter % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
@@ -133,5 +135,13 @@ public class Consecrate extends AbstractAbility {
 
     public void setStrikeDamageBoost(int strikeDamageBoost) {
         this.strikeDamageBoost = strikeDamageBoost;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

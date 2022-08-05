@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
+    private boolean pveUpgrade = false;
 
     private int markRadius = 15;
     private int markDuration = 8;
@@ -51,12 +53,24 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     @Override
     public boolean chain(WarlordsEntity wp, Player player) {
+        if (pveUpgrade) {
+            for (WarlordsEntity circleTarget : PlayerFilter
+                    .entitiesAround(wp, 8, 8, 8)
+                    .aliveEnemiesOf(wp)
+            ) {
+                emitMarkRadiance(wp, circleTarget);
+            }
+
+            return true;
+        }
+
         for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
+            if (pveUpgrade) return true;
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
@@ -90,6 +104,17 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         }
                 ) {
                     @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        if (pveUpgrade) {
+                            if (event.getAbility().equals("Avenger's Strike")) {
+                                return currentDamageValue * 1.4f;
+                            }
+                            return currentDamageValue;
+                        }
+                        return currentDamageValue;
+                    }
+
+                    @Override
                     public float addEnergyGainPerTick(float energyGainPerTick) {
                         return energyGainPerTick + energyPerSecond / 20f;
                     }
@@ -115,6 +140,44 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
         return false;
     }
 
+    private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
+        HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
+                minDamageHeal,
+                maxDamageHeal,
+                cooldown,
+                energyCost,
+                critChance,
+                critMultiplier
+        );
+        target.getCooldownManager().addCooldown(new RegularCooldown<HolyRadianceAvenger>(
+                name,
+                "AVE MARK",
+                HolyRadianceAvenger.class,
+                tempMark,
+                giver,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                (cooldown, ticksLeft, counter) -> {
+                    if (counter % 10 == 0) {
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
+                    }
+                }
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveUpgrade) {
+                    if (event.getAbility().equals("Avenger's Strike")) {
+                        return currentDamageValue * 1.4f;
+                    }
+                    return currentDamageValue;
+                }
+                return currentDamageValue;
+            }
+        });
+    }
+
     public int getMarkRadius() {
         return markRadius;
     }
@@ -129,5 +192,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     public void setEnergyPerSecond(int energyPerSecond) {
         this.energyPerSecond = energyPerSecond;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,6 +15,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     public Narmer(Location spawnLocation) {
         super(spawnLocation,
                 "Narmer",
+                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         Utils.getMobSkull(SkullType.WITHER),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),

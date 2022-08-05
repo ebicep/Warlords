@@ -27,63 +27,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     int damageReduction = ability.getDamageReduction();
     int projectileDamageReduction = ability.getProjectileDamageReduction();
 
-    @Override
-    public void a1() {
-        ability.setDamageReduction(damageReduction + 5);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 5);
-    }
-
-    @Override
-    public void a2() {
-        ability.setDamageReduction(damageReduction + 10);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 10);
-    }
-
-    @Override
-    public void a3() {
-        ability.setDamageReduction(damageReduction + 20);
-        ability.setProjectileDamageReduction(projectileDamageReduction + 20);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
-    @Override
-    public void c1() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.1f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.25f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.25f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setBubbleHealing((int) (bubbleHealing * 1.5f));
-        ability.setBubbleMissingHealing(bubbleMissingHealing * 1.5f);
-    }
-
-    @Override
-    public void master() {
-        ability.setProjectileDamageReduction(100);
-        ability.setBubbleRadius(ability.getBubbleRadius() * 2);
-    }
 }

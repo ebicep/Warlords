@@ -31,65 +31,9 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minDamage * 1.1f);
-        ability.setMaxDamageHeal(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minDamage * 1.2f);
-        ability.setMaxDamageHeal(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minDamage * 1.4f);
-        ability.setMaxDamageHeal(maxDamage * 1.4f);
-    }
-
     float energyCost = ability.getEnergyCost();
-
-    @Override
-    public void b1() {
-        ability.setEnergyCost(energyCost - 5);
-    }
-
-    @Override
-    public void b2() {
-        ability.setEnergyCost(energyCost - 10);
-    }
-
-    @Override
-    public void b3() {
-        ability.setEnergyCost(energyCost - 15);
-    }
 
     int minConversion = ability.getMinConvert();
     int maxConversion = ability.getMaxConvert();
 
-    @Override
-    public void c1() {
-        ability.setMinConvert(minConversion + 20);
-        ability.setMaxConvert(maxConversion + 20);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinConvert(minConversion + 40);
-        ability.setMaxConvert(maxConversion + 40);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinConvert(minConversion + 80);
-        ability.setMaxConvert(maxConversion + 80);
-    }
-
-    @Override
-    public void master() {
-        ability.setMaxAllies(ability.getMaxAllies() + 2);
-        ability.setPveUpgrade(true);
-    }
 }

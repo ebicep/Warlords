@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Boulder extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int playersHit = 0;
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;
@@ -62,7 +64,12 @@ public class Boulder extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(boulderSpeed);
+        Vector speed;
+        if (pveUpgrade) {
+            speed = player.getLocation().getDirection().add(new Vector(0, 1.5, 0).multiply(boulderSpeed));
+        } else {
+            speed = player.getLocation().getDirection().multiply(boulderSpeed);
+        }
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -241,5 +248,13 @@ public class Boulder extends AbstractAbility {
 
     public void setHitbox(double hitbox) {
         this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

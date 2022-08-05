@@ -18,6 +18,8 @@ import java.util.Optional;
 
 public abstract class AbstractStrikeBase extends AbstractAbility {
 
+    private double hitbox = 4.8;
+
     public AbstractStrikeBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
@@ -26,7 +28,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        PlayerFilter.entitiesAround(wp, 4.8, 4.8, 4.8)
+        PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
                 .requireLineOfSight(wp)
@@ -124,4 +126,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
     }
 
+    public double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(double hitbox) {
+        this.hitbox = hitbox;
+    }
 }

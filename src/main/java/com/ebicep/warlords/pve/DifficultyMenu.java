@@ -60,7 +60,8 @@ public class DifficultyMenu {
                                 startNormalGame(player, false);
                                 break;
                             case 1:
-                                startNormalGame(player, true);
+                                player.sendMessage(ChatColor.RED + "Endless is currently unavailable. Reason: WIP");
+                                //startNormalGame(player, true);
                                 break;
                         }
                     });
@@ -89,7 +90,7 @@ public class DifficultyMenu {
                 .setGamemode(GameMode.WAVE_DEFENSE)
                 .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
                 .setPriority(0)
-                .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
+                .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME, GameAddon.PVE)
                 .setOnResult((result, game) -> {
                     if (game == null) {
                         player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);

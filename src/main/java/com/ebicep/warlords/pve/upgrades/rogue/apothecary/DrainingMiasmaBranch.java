@@ -26,55 +26,6 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
 
     int duration = ability.getDuration();
 
-    @Override
-    public void a1() {
-        ability.setDuration(duration + 1);
-    }
-
-    @Override
-    public void a2() {
-        ability.setDuration(duration + 2);
-    }
-
-    @Override
-    public void a3() {
-        ability.setDuration(duration + 3);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     int hitRadius = ability.getEnemyHitRadius();
 
-    @Override
-    public void c1() {
-        ability.setEnemyHitRadius(hitRadius + 2);
-    }
-
-    @Override
-    public void c2() {
-        ability.setEnemyHitRadius(hitRadius + 4);
-    }
-
-    @Override
-    public void c3() {
-        ability.setEnemyHitRadius(hitRadius + 6);
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

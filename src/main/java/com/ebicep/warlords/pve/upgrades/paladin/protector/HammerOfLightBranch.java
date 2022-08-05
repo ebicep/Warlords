@@ -26,67 +26,9 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
 
     int duration = ability.getDuration();
 
-    @Override
-    public void a1() {
-        ability.setDuration(duration + 1);
-    }
-
-    @Override
-    public void a2() {
-        ability.setDuration(duration + 2);
-    }
-
-    @Override
-    public void a3() {
-        ability.setDuration(duration + 4);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
     float minDamage = ability.getMinDamage();
     float maxDamage = ability.getMaxDamage();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
-        ability.setMinDamage(minDamage * 1.1f);
-        ability.setMaxDamage(maxDamage * 1.1f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
-        ability.setMinDamage(minDamage * 1.2f);
-        ability.setMaxDamage(maxDamage * 1.2f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
-        ability.setMinDamage(minDamage * 1.4f);
-        ability.setMaxDamage(maxDamage * 1.4f);
-    }
-
-    @Override
-    public void master() {
-
-    }
 }

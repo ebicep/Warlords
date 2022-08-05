@@ -7,72 +7,94 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
 
+    float weaponDamage = ability.getWeaponDamage();
+    float cooldown = ability.getCooldown();
+    int procChance = ability.getProcChance();
+    int maxHits = ability.getMaxHits();
+
     public WindfuryBranch(AbilityTree abilityTree, Windfury ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Weapon Damage - Tier I", "+20% Weapon Damage", 5000));
-        treeA.add(new Upgrade("Weapon Damage - Tier II", "+40% Weapon Damage", 10000));
-        treeA.add(new Upgrade("Weapon Damage - Tier III", "+80% Weapon Damage", 20000));
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+15% Weapon damage\n-5% Cooldown reduction",
+                5000,
+                () -> {
+                    ability.setWeaponDamage(weaponDamage + 15);
+                    ability.setCooldown(cooldown * 0.95f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+30% Weapon damage\n-10% Cooldown reduction",
+                10000,
+                () -> {
+                    ability.setWeaponDamage(weaponDamage + 30);
+                    ability.setCooldown(cooldown * 0.9f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+45% Weapon damage\n-15% Cooldown reduction",
+                15000,
+                () -> {
+                    ability.setWeaponDamage(weaponDamage + 45);
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+60% Weapon Damage\n-20% Cooldown reduction",
+                20000,
+                () -> {
+                    ability.setWeaponDamage(weaponDamage + 60);
+                    ability.setCooldown(cooldown * 0.8f);
+                }
+        ));
 
-        treeC.add(new Upgrade("Proc Chance - Tier I", "+5% Proc chance", 5000));
-        treeC.add(new Upgrade("Proc Chance - Tier II", "+10% Proc chance", 10000));
-        treeC.add(new Upgrade("Proc Chance - Tier III", "+20% Proc chance", 20000));
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "+4% Proc chance\n",
+                5000,
+                () -> {
+                    ability.setProcChance(procChance + 4);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "+8% Proc chance",
+                10000,
+                () -> {
+                    ability.setProcChance(procChance + 8);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "+12% Proc chance",
+                15000,
+                () -> {
+                    ability.setProcChance(procChance + 12);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "+16% Proc chance\n+1 Windfury hit",
+                20000,
+                () -> {
+                    ability.setProcChance(procChance + 16);
+                    ability.setMaxHits(maxHits + 1);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "Windfury now procs an additional 2 times.",
-                50000
+                "Shredding Fury",
+                "Windfury - Master Upgrade",
+                "+100% Additional weapon damage\n\nHits on an enemy will permanently reduce their\ndamage reduction by 2% for each Windfury additional\nproc.",
+                50000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                    ability.setWeaponDamage(ability.getWeaponDamage() + 100);
+                }
         );
     }
 
-    float weaponDamage = ability.getWeaponDamage();
-
-    @Override
-    public void a1() {
-        ability.setWeaponDamage(weaponDamage + 20);
-    }
-
-    @Override
-    public void a2() {
-        ability.setWeaponDamage(weaponDamage + 40);
-    }
-
-    @Override
-    public void a3() {
-        ability.setWeaponDamage(weaponDamage + 80);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    @Override
-    public void c1() {
-        ability.setProcChance(ability.getProcChance() + 5);
-    }
-
-    @Override
-    public void c2() {
-        ability.setProcChance(ability.getProcChance() + 5);
-    }
-
-    @Override
-    public void c3() {
-        ability.setProcChance(ability.getProcChance() + 10);
-    }
-
-    @Override
-    public void master() {
-        ability.setMaxHits(ability.getMaxHits() + 2);
-    }
 }

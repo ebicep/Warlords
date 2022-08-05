@@ -27,59 +27,6 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void a1() {
-        ability.setMinDamageHeal(minHealing * 1.1f);
-        ability.setMaxDamageHeal(maxHealing * 1.1f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setMinDamageHeal(minHealing * 1.2f);
-        ability.setMaxDamageHeal(maxHealing * 1.2f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setMinDamageHeal(minHealing * 1.4f);
-        ability.setMaxDamageHeal(maxHealing * 1.4f);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void master() {
-        ability.setDuration((int) (ability.getDuration() * 1.5f));
-        ability.setPveUpgrade(true);
-    }
 }

@@ -26,57 +26,6 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
 
     int vitalityRange = ability.getVitalityRange();
 
-    @Override
-    public void a1() {
-        ability.setVitalityRange(vitalityRange + 2);
-    }
-
-    @Override
-    public void a2() {
-        ability.setVitalityRange(vitalityRange + 4);
-    }
-
-    @Override
-    public void a3() {
-        ability.setVitalityRange(vitalityRange + 6);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void master() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 2);
-        ability.setMinDamageHeal(ability.getMaxDamageHeal() * 2);
-        ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 2);
-    }
 }

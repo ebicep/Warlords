@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.wolf;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
@@ -10,6 +11,7 @@ public class Wolf extends AbstractWolf implements BasicMob {
         super(
                 spawnLocation,
                 "Lunar Hound",
+                MobTier.BASE,
                 null,
                 900,
                 0.5f,

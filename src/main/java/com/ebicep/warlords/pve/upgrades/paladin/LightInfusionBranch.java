@@ -7,75 +7,89 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
 
-    public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Speed - Tier I", "+10% Speed", 5000));
-        treeA.add(new Upgrade("Speed - Tier II", "+20% Speed", 10000));
-        treeA.add(new Upgrade("Speed - Tier III", "+30% Speed", 20000));
+    int speedBuff = ability.getSpeedBuff();
+    float cooldown = ability.getCooldown();
+    int duration = ability.getDuration();
 
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
+    public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
+
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Zeal - Tier I",
+                "+1.5s Duration",
+                2500,
+                () -> {
+                    ability.setDuration(duration + 1);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Zeal - Tier II",
+                "+3s Duration",
+                5000,
+                () -> {
+                    ability.setDuration(duration + 3);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Zeal - Tier III",
+                "+4.5s Duration",
+                7500,
+                () -> {
+                    ability.setDuration(duration + 5);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Zeal - Tier IV",
+                "+6s Duration\n+20 Energy given",
+                10000,
+                () -> {
+                    ability.setDuration(duration + 6);
+                    ability.setEnergyGiven(ability.getEnergyGiven() + 20);
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "-7.5% Cooldown reduction",
+                5000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.925f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-15% Cooldown reduction",
+                10000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "-22.5% Cooldown reduction",
+                15000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.775f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "-30% Cooldown reduction\n+20% Speed",
+                20000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.7f);
+                    ability.setSpeedBuff(speedBuff + 20);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "+50% Energy given\n+100% Duration\n\nReduce all knockback by 20% while Light Infusion is active.",
-                50000
+                "Holy Imbusion",
+                "Light Infusion - Master Upgrade",
+                "Each Avenger's Strike casted while\nLight Infusion is active will refund 30 energy\nwhen Light Infusion ends.",
+                50000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                }
         );
-    }
-
-    int speedBuff = ability.getSpeedBuff();
-
-    @Override
-    public void a1() {
-        ability.setSpeedBuff(speedBuff + 10);
-    }
-
-    @Override
-    public void a2() {
-        ability.setSpeedBuff(speedBuff + 20);
-    }
-
-    @Override
-    public void a3() {
-        ability.setSpeedBuff(speedBuff + 30);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
-    float cooldown = ability.getCooldown();
-
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
-    @Override
-    public void master() {
-        ability.setEnergyGiven((int) (ability.getEnergyGiven() * 1.5f));
-        ability.setDuration(ability.getDuration() * 2);
     }
 }

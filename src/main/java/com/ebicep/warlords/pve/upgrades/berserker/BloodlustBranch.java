@@ -26,55 +26,6 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
     int conversion = ability.getDamageConvertPercent();
 
-    @Override
-    public void a1() {
-        ability.setDamageConvertPercent(conversion + 5);
-    }
-
-    @Override
-    public void a2() {
-        ability.setDamageConvertPercent(conversion + 10);
-    }
-
-    @Override
-    public void a3() {
-        ability.setDamageConvertPercent(conversion + 20);
-    }
-
-    @Override
-    public void b1() {
-
-    }
-
-    @Override
-    public void b2() {
-
-    }
-
-    @Override
-    public void b3() {
-
-    }
-
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void c1() {
-        ability.setCooldown(cooldown * 0.95f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void master() {
-        ability.setPveUpgrade(true);
-    }
 }

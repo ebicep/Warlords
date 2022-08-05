@@ -14,50 +14,53 @@ import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
+public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
 
-    public ElitePigZombie(Location spawnLocation) {
+    public EnvoyPigZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Shaman",
+                "Envoy Alleviator",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.WOOD, 1, (short) 3),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        new ItemStack(Material.DIAMOND_HELMET),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.COOKIE)
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.BAKED_POTATO)
                 ),
-                4000,
-                0.35f,
-                10,
-                200,
-                300
+                6000,
+                0.38f,
+                20,
+                300,
+                400
         );
     }
 
     @Override
     public void onSpawn() {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
+            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
+        });
     }
 
     @Override
     public void whileAlive() {
         Location location = getWarlordsNPC().getLocation();
         Utils.playGlobalSound(location, Sound.ZOMBIE_PIG_ANGRY, 1, 0.5f);
-        Utils.playGlobalSound(location, "paladin.holyradiance.activation", 0.8f, 0.6f);
+        Utils.playGlobalSound(location, "paladin.holyradiance.activation", 1, 0.5f);
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we == null) return;
-        EffectUtils.playCylinderAnimation(location, 6, ParticleEffect.FIREWORKS_SPARK, 1);
+        EffectUtils.playStarAnimation(location, 8, ParticleEffect.FLAME);
         for (WarlordsEntity ally : PlayerFilter
-                .entitiesAround(we, 6, 6, 6)
+                .entitiesAround(we, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(we)
         ) {
             ally.addHealingInstance(
                     we,
                     "Healing",
-                    150,
-                    150,
+                    300,
+                    300,
                     -1,
                     100,
                     false,
@@ -68,7 +71,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.2).setY(0.2);
+        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.25).setY(0.5);
         receiver.setVelocity(v, false);
     }
 

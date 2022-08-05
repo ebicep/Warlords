@@ -217,6 +217,9 @@ public abstract class AbstractPlayerClass {
     }
 
     public int getDamageResistance() {
+        if (damageResistance < 0) {
+            damageResistance = 0;
+        }
         return damageResistance;
     }
 

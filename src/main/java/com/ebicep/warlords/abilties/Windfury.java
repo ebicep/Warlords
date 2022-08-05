@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Windfury extends AbstractAbility {
+    private boolean pveUpgrade = false;
     protected int timesProcd = 0;
 
     private int procChance = 35;
@@ -123,6 +124,10 @@ public class Windfury extends AbstractAbility {
                                     );
                                 }
 
+                                if (pveUpgrade) {
+                                    victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 2);
+                                }
+
                                 counter++;
                                 if (counter == maxHits) {
                                     this.cancel();
@@ -159,5 +164,13 @@ public class Windfury extends AbstractAbility {
 
     public void setWeaponDamage(float weaponDamage) {
         this.weaponDamage = weaponDamage;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

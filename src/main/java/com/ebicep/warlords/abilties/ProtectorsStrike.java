@@ -79,8 +79,8 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                         healthFraction = 0;
                     }
 
-                    float allyHealing = 0.75f + healthFraction * 0.25f;
-                    float ownHealing = 0.5f + (1 - healthFraction) * 0.25f;
+                    float allyHealing = (minConvert / 100f) + healthFraction * 0.25f;
+                    float ownHealing = ((maxConvert / 100f) / 2f) + (1 - healthFraction) * 0.25f;
                     // Self Heal
                     wp.addHealingInstance(
                             wp,

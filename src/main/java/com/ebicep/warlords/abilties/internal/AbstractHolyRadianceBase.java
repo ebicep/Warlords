@@ -17,7 +17,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
     protected int playersHealed = 0;
     protected int playersMarked = 0;
 
-    private final int radius;
+    private int radius;
 
     public AbstractHolyRadianceBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, int radius) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -59,6 +59,14 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
 
         return true;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 
     public class FlyingArmorStand extends BukkitRunnable {

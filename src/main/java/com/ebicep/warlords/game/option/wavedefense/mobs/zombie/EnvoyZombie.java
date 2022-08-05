@@ -9,31 +9,35 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 
-public class EliteZombie extends AbstractZombie implements EliteMob {
+public class EnvoyZombie extends AbstractZombie implements EliteMob {
 
-    public EliteZombie(Location spawnLocation) {
+    public EnvoyZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Swordsman",
+                "Envoy Vanguard",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.PRISMARINE_SHARD)
+                        new ItemStack(Material.WOOD_STEP, 1, (short) 4),
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.COOKED_FISH, 1, (short) 1)
                 ),
-                4000,
-                0.38f,
-                10,
-                300,
-                500
+                7000,
+                0.4f,
+                20,
+                450,
+                600
         );
     }
 
     @Override
     public void onSpawn() {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
+            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
+        });
     }
 
     @Override
@@ -43,14 +47,14 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
-        receiver.subtractEnergy(15, false);
+        Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
+        receiver.getSpeed().addSpeedModifier("Envoy Slowness", -20, 2 * 20);
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        super.onDeath(killer, deathLocation, waveDefenseOption);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
+                .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BURST)
                 .withTrail()
                 .build());

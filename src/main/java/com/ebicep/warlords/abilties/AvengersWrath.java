@@ -21,7 +21,7 @@ public class AvengersWrath extends AbstractAbility {
     protected int extraPlayersStruck = 0;
     private boolean pveUpgrade = false;
     private int duration = 12;
-    private int energyPerSecond = 20;
+    private float energyPerSecond = 20;
     private int maxTargets = 2;
 
     public AvengersWrath() {
@@ -35,7 +35,7 @@ public class AvengersWrath extends AbstractAbility {
                 "§7hit up to §e" + maxTargets + " §7additional enemies\n" +
                 "§7that are within §e5 §7blocks of your\n" +
                 "§7target. Your energy per second is\n" +
-                "§7increased by §e" + energyPerSecond + " §7for the duration\n" +
+                "§7increased by §e" + format(energyPerSecond) + " §7for the duration\n" +
                 "§7of the effect. Lasts §6" + duration + " §7seconds.";
     }
 
@@ -87,9 +87,6 @@ public class AvengersWrath extends AbstractAbility {
                             .excluding(event.getPlayer())
                             .limit(maxTargets)
                     ) {
-                        if (pveUpgrade) {
-                            wp.addEnergy(wp, name, 2);
-                        }
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
 
                         Optional<Consecrate> standingOnConsecrate = AbstractStrikeBase.getStandingOnConsecrate(wp, wrathTarget);
@@ -141,11 +138,11 @@ public class AvengersWrath extends AbstractAbility {
         this.duration = duration;
     }
 
-    public int getEnergyPerSecond() {
+    public float getEnergyPerSecond() {
         return energyPerSecond;
     }
 
-    public void setEnergyPerSecond(int energyPerSecond) {
+    public void setEnergyPerSecond(float energyPerSecond) {
         this.energyPerSecond = energyPerSecond;
     }
 

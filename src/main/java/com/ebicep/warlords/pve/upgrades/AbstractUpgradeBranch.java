@@ -32,6 +32,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     protected List<Upgrade> treeC = new ArrayList<>();
     protected Upgrade masterUpgrade;
 
+    private int maxUpgrades = 6;
+
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
         this.abilityTree = abilityTree;
         this.ability = ability;
@@ -64,28 +66,23 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         }
                         //TODO free upgrade check
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
                             return;
                         }
-                        switch (finalI) {
-                            case 0:
-                                a1();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 1:
-                                a2();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 2:
-                                a3();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
+                        if (maxUpgrades <= 0) {
+                            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
+                            return;
                         }
+
+                        upgrade.getOnUpgrade().run();
+                        upgrade.setUnlocked(true);
+                        maxUpgrades--;
+
                         Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+
                         globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
-                        upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
                         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
@@ -101,7 +98,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             Upgrade upgrade = treeB.get(i);
             int finalI = i;
             menu.setItem(
-                    4,
+                    6,
                     4 - i,
                     branchItem(upgrade),
                     (m, e) -> {
@@ -117,79 +114,24 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
                         if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
                             return;
                         }
-                        switch (finalI) {
-                            case 0:
-                                b1();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 1:
-                                b2();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 2:
-                                b3();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
+                        if (maxUpgrades <= 0) {
+                            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
+                            return;
                         }
+
+                        upgrade.getOnUpgrade().run();
+                        upgrade.setUnlocked(true);
+                        maxUpgrades--;
+
+                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
+                        player.subtractCurrency(upgrade.getCurrencyCost());
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+
                         globalAnnouncement(player.getGame(), upgrade, ability);
                         updateInventory(player);
-                        upgrade.setUnlocked(true);
-                        openUpgradeBranchMenu();
-
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
-                                upgrade.getName(),
-                                upgrade.getDescription())
-                        );
-                    }
-            );
-        }
-
-        for (int i = 0; i < treeC.size(); i++) {
-            Upgrade upgrade = treeC.get(i);
-            int finalI = i;
-            menu.setItem(
-                    6,
-                    4 - i,
-                    branchItem(upgrade),
-                    (m, e) -> {
-                        updateInventory(player);
-                        if (upgrade.isUnlocked()) {
-                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
-                            return;
-                        }
-                        if (finalI != 0) {
-                            if (!treeC.get(finalI - 1).isUnlocked()) {
-                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
-                                return;
-                            }
-                        }
-                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
-                            return;
-                        }
-                        switch (finalI) {
-                            case 0:
-                                c1();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 1:
-                                c2();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                            case 2:
-                                c3();
-                                player.subtractCurrency(upgrade.getCurrencyCost());
-                                break;
-                        }
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
-                        globalAnnouncement(player.getGame(), upgrade, ability);
-                        updateInventory(player);
-                        upgrade.setUnlocked(true);
                         openUpgradeBranchMenu();
 
                         abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
@@ -206,16 +148,12 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 0,
                 masterBranchItem(masterUpgrade),
                 (m, e) -> {
-                    if (
-                        !treeA.stream().allMatch(Upgrade::isUnlocked) ||
-                        !treeB.stream().allMatch(Upgrade::isUnlocked) ||
-                        !treeC.stream().allMatch(Upgrade::isUnlocked)
-                    ) {
-                        player.sendMessage(ChatColor.RED + "You need to unlock a full upgrade branch before unlocking the master upgrade!");
+                    if (player.getAbilityTree().getMaxMasterUpgrades() <= 0) {
+                        player.sendMessage(ChatColor.RED + "You cannot unlock this master upgrade, maximum master upgrades reached.");
                         return;
                     }
                     if (player.getCurrency() < masterUpgrade.getCurrencyCost()) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
+                        player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
                         return;
                     }
                     if (masterUpgrade.isUnlocked()) {
@@ -223,13 +161,22 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         return;
                     }
 
-                    master();
-                    player.subtractCurrency(masterUpgrade.getCurrencyCost());
-                    globalAnnouncement(player.getGame(), masterUpgrade, ability);
-                    Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500f, 0.8f);
-                    masterUpgrade.setUnlocked(true);
-                    ability.updateDescription((Player) player.getEntity());
+                    if (maxUpgrades <= 0) {
+                        masterUpgrade.getOnUpgrade().run();
+                        masterUpgrade.setUnlocked(true);
 
+                        player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
+                        player.subtractCurrency(masterUpgrade.getCurrencyCost());
+                        Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500f, 0.8f);
+
+                        globalAnnouncement(player.getGame(), masterUpgrade, ability);
+                    } else {
+                        String s = maxUpgrades == 1 ? "" : "s";
+                        player.sendMessage(ChatColor.RED + "You need to unlock " + maxUpgrades + " more upgrade" + s + " before unlocking the master upgrade!");
+                        return;
+                    }
+
+                    ability.updateDescription((Player) player.getEntity());
                     openUpgradeBranchMenu();
                 });
 
@@ -238,6 +185,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }
+
+        menu.setItem(4, 3, new ItemBuilder(Material.DIAMOND).name(ChatColor.GRAY + "Upgrades remaining: " + ChatColor.GREEN + maxUpgrades).get(), ACTION_DO_NOTHING);
     }
 
     private ItemStack masterBranchItem(Upgrade upgrade) {
@@ -265,32 +214,20 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability) {
         game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
-                p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - §c§l" + upgrade.getName() + "§e!");
+                p.sendMessage(
+                        ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
+                        ability.getName() + " - §c§l" +
+                        upgrade.getName() + "§e!"
+                );
             } else {
-                p.sendMessage(ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" + ability.getName() + " - " + upgrade.getName() + "§e!");
+                p.sendMessage(
+                        ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
+                        ability.getName() + " - " +
+                        upgrade.getName() + "§e!"
+                );
             }
         });
     }
-
-    public abstract void a1();
-
-    public abstract void a2();
-
-    public abstract void a3();
-
-    public abstract void b1();
-
-    public abstract void b2();
-
-    public abstract void b3();
-
-    public abstract void c1();
-
-    public abstract void c2();
-
-    public abstract void c3();
-
-    public abstract void master();
 
     public ItemStack getItemStack() {
         return itemStack;
@@ -307,5 +244,13 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         wp.updateBlueItem();
         wp.updateOrangeItem();
         ability.updateDescription((Player) wp.getEntity());
+    }
+
+    public int getMaxUpgrades() {
+        return maxUpgrades;
+    }
+
+    public void setMaxUpgrades(int maxUpgrades) {
+        this.maxUpgrades = maxUpgrades;
     }
 }

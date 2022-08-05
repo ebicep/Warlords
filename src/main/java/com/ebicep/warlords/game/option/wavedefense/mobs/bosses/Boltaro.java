@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -13,6 +14,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
     public Boltaro(Location spawnLocation) {
         super(spawnLocation,
                 "Boltaro",
+                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         Utils.getPlayerSkull("ChybaWonsz"),
                         new ItemStack(Material.DIAMOND_CHESTPLATE),

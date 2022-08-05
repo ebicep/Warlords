@@ -30,63 +30,9 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
     float cooldown = ability.getCooldown();
 
-    @Override
-    public void a1() {
-        ability.setCooldown(cooldown * 0.9f);
-    }
-
-    @Override
-    public void a2() {
-        ability.setCooldown(cooldown * 0.8f);
-    }
-
-    @Override
-    public void a3() {
-        ability.setCooldown(cooldown * 0.6f);
-    }
-
     double velocity = ability.getVelocity();
-
-    @Override
-    public void b1() {
-        ability.setVelocity(velocity + .1);
-    }
-
-    @Override
-    public void b2() {
-        ability.setVelocity(velocity + .25);
-    }
-
-    @Override
-    public void b3() {
-        ability.setVelocity(velocity + .5);
-    }
 
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
-    @Override
-    public void c1() {
-        ability.setMinDamageHeal(minHealing * 1.15f);
-        ability.setMaxDamageHeal(maxHealing * 1.15f);
-    }
-
-    @Override
-    public void c2() {
-        ability.setMinDamageHeal(minHealing * 1.3f);
-        ability.setMaxDamageHeal(maxHealing * 1.3f);
-    }
-
-    @Override
-    public void c3() {
-        ability.setMinDamageHeal(minHealing * 1.6f);
-        ability.setMaxDamageHeal(maxHealing * 1.6f);
-    }
-
-    @Override
-    public void master() {
-        ability.setHitbox(15);
-        ability.setMaxAnimationTime(24);
-        ability.setPveUpgrade(true);
-    }
 }
