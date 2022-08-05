@@ -119,20 +119,20 @@ public class PlayerHotBarItemListener implements Listener {
         setItem(player, 5, SPECTATE_MENU);
 
         if (DatabaseManager.enabled) {
-            updateWeaponManagerItem(player, selectedSpec);
+            updateWeaponManagerItem(player);
             setItem(player, 7, new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get());
             setItem(player, 8, REWARD_INVENTORY_MENU);
         }
     }
 
-    public static void updateWeaponManagerItem(Player player, Specializations selectedSpec) {
+    public static void updateWeaponManagerItem(Player player) {
         UUID uuid = player.getUniqueId();
         if (DatabaseManager.playerService != null) {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
             List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
             Optional<AbstractWeapon> optionalWeapon = weapons.stream()
                     .filter(AbstractWeapon::isBound)
-                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == selectedSpec)
+                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
                     .findFirst();
             if (optionalWeapon.isPresent()) {
                 setItem(player, 6, optionalWeapon.get().generateItemStack());

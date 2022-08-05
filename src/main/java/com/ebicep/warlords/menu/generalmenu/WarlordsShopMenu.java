@@ -149,7 +149,7 @@ public class WarlordsShopMenu {
 
                         if (DatabaseManager.playerService == null) return;
                         if (player.getWorld().getName().equals("MainLobby")) {
-                            PlayerHotBarItemListener.updateWeaponManagerItem(player, spec);
+                            PlayerHotBarItemListener.updateWeaponManagerItem(player);
                         }
 
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());

@@ -100,7 +100,7 @@ public class WeaponBindMenu {
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, selectedWeapon);
-                                    PlayerHotBarItemListener.updateWeaponManagerItem(player, spec);
+                                    PlayerHotBarItemListener.updateWeaponManagerItem(player);
                                 }
                         );
                     } else {

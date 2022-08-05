@@ -19,7 +19,7 @@ public class ClassCommand extends BaseCommand {
         PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
         settings.setSelectedSpec(spec);
         player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + spec);
-        PlayerHotBarItemListener.updateWeaponManagerItem(player, spec);
+        PlayerHotBarItemListener.updateWeaponManagerItem(player);
     }
 
 }
