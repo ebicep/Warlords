@@ -126,6 +126,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         upgrade.setUnlocked(true);
                         maxUpgrades--;
 
+                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
                         player.subtractCurrency(upgrade.getCurrencyCost());
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
 
@@ -141,49 +142,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     }
             );
         }
-
-        /*for (int i = 0; i < treeC.size(); i++) {
-            Upgrade upgrade = treeC.get(i);
-            int finalI = i;
-            menu.setItem(
-                    6,
-                    4 - i,
-                    branchItem(upgrade),
-                    (m, e) -> {
-                        updateInventory(player);
-                        if (upgrade.isUnlocked()) {
-                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
-                            return;
-                        }
-                        if (finalI != 0) {
-                            if (!treeC.get(finalI - 1).isUnlocked()) {
-                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
-                                return;
-                            }
-                        }
-                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia's (❂) to buy this upgrade!");
-                            return;
-                        }
-
-                        upgrade.getOnUpgrade().run();
-                        upgrade.setUnlocked(true);
-
-                        player.subtractCurrency(upgrade.getCurrencyCost());
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
-
-                        globalAnnouncement(player.getGame(), upgrade, ability);
-                        updateInventory(player);
-                        openUpgradeBranchMenu();
-
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
-                                upgrade.getName(),
-                                upgrade.getDescription())
-                        );
-                    }
-            );
-        }*/
 
         menu.setItem(
                 4,
