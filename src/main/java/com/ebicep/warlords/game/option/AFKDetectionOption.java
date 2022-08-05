@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -42,7 +43,8 @@ public class AFKDetectionOption implements Option, Listener {
             @Override
             public void run() {
                 if (!enabled) return;
-                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME)) return;
+                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE)
+                    return;
 
                 //skips right after unfreeze
                 if (wasFrozen) {
