@@ -28,35 +28,33 @@ public class AbilityTree {
     }
 
     public void openAbilityTree() {
-        Menu menu = new Menu("Upgrades", 9 * 4);
+        Menu menu = new Menu("Upgrades", 9 * 5);
 
         for (int i = 0; i < upgradeBranches.size(); i++) {
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(i);
             menu.setItem(
                     i + 2,
-                    1,
+                    2,
                     new ItemBuilder(upgradeBranch.getItemStack())
                             .name(ChatColor.GOLD + upgradeBranch.getItemName())
-                            .lore(ChatColor.GRAY + ">> Click to open ability upgrade tree. <<")
+                            .lore(
+                                    ChatColor.GRAY + ">> Click to open ability upgrade tree. <<",
+                                    "",
+                                    ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + upgradeBranches.get(i).getMaxUpgrades()
+                            )
                             .get(),
                     (m, e) -> upgradeBranch.openUpgradeBranchMenu()
             );
-            menu.setItem(
-                    i + 2,
-                    2,
-                    new ItemBuilder(Material.QUARTZ_BLOCK)
-                            .name(ChatColor.GOLD + upgradeBranches.get(i).getItemName() + " Branch")
-                            .lore(ChatColor.GRAY + "Upgrades remaining: " + ChatColor.GREEN + upgradeBranches.get(i).getMaxUpgrades())
-                            .get(),
-                    ACTION_DO_NOTHING
-            );
         }
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.setItem(4, 0, new ItemBuilder(Material.GOLD_INGOT)
-                .name(ChatColor.GRAY + "Master upgrades remaining: " + ChatColor.GOLD + maxMasterUpgrades)
-                .get(),
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.GOLD_INGOT)
+                        .name(ChatColor.GRAY + "Master Upgrades Remaining: " + ChatColor.GOLD + maxMasterUpgrades)
+                        .lore(ChatColor.GRAY + "Free Upgrades Remaining: " + ChatColor.GOLD + freeUpgrades)
+                        .get(),
                 ACTION_DO_NOTHING
         );
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+
 
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
@@ -83,8 +81,16 @@ public class AbilityTree {
         this.maxMasterUpgrades = maxMasterUpgrades;
     }
 
+    public int getFreeUpgrades() {
+        return freeUpgrades;
+    }
+
     public void addFreeUpgrades(int amount) {
         this.freeUpgrades += amount;
+    }
+
+    public void subtractFreeUpgrades(int amount) {
+        this.freeUpgrades -= amount;
     }
 
     public static class UpgradeLog {

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.events.WarlordsPlayerUpgradePurchaseEvent;
+import com.ebicep.warlords.events.WarlordsPlayerUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
@@ -45,103 +45,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         WarlordsPlayer player = abilityTree.getPlayer();
         Menu menu = new Menu("Upgrades", 9 * 6);
 
-        for (int i = 0; i < treeA.size(); i++) {
-            Upgrade upgrade = treeA.get(i);
-            int finalI = i;
-            menu.setItem(
-                    2,
-                    4 - i,
-                    branchItem(upgrade),
-                    (m, e) -> {
-                        updateInventory(player);
-                        if (upgrade.isUnlocked()) {
-                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
-                            return;
-                        }
-                        if (finalI != 0) {
-                            if (!treeA.get(finalI - 1).isUnlocked()) {
-                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
-                                return;
-                            }
-                        }
-                        //TODO free upgrade check
-                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
-                            return;
-                        }
-                        if (maxUpgrades <= 0) {
-                            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
-                            return;
-                        }
-
-                        upgrade.getOnUpgrade().run();
-                        upgrade.setUnlocked(true);
-                        maxUpgrades--;
-
-                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
-
-                        globalAnnouncement(player.getGame(), upgrade, ability);
-                        updateInventory(player);
-                        openUpgradeBranchMenu();
-
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
-                                upgrade.getName(),
-                                upgrade.getDescription())
-                        );
-                    }
-            );
-        }
-
-        for (int i = 0; i < treeB.size(); i++) {
-            Upgrade upgrade = treeB.get(i);
-            int finalI = i;
-            menu.setItem(
-                    6,
-                    4 - i,
-                    branchItem(upgrade),
-                    (m, e) -> {
-                        updateInventory(player);
-                        if (upgrade.isUnlocked()) {
-                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
-                            return;
-                        }
-                        if (finalI != 0) {
-                            if (!treeB.get(finalI - 1).isUnlocked()) {
-                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
-                                return;
-                            }
-                        }
-                        if (player.getCurrency() < upgrade.getCurrencyCost()) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
-                            return;
-                        }
-                        if (maxUpgrades <= 0) {
-                            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
-                            return;
-                        }
-
-                        upgrade.getOnUpgrade().run();
-                        upgrade.setUnlocked(true);
-                        maxUpgrades--;
-
-                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradePurchaseEvent(player, upgrade));
-                        player.subtractCurrency(upgrade.getCurrencyCost());
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
-
-                        globalAnnouncement(player.getGame(), upgrade, ability);
-                        updateInventory(player);
-                        openUpgradeBranchMenu();
-
-                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
-                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
-                                upgrade.getName(),
-                                upgrade.getDescription())
-                        );
-                    }
-            );
-        }
+        addBranchToMenu(menu, treeA, 2, 4);
+        addBranchToMenu(menu, treeB, 6, 4);
 
         menu.setItem(
                 4,
@@ -180,13 +85,74 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     openUpgradeBranchMenu();
                 });
 
+        menu.setItem(4, 3,
+                new ItemBuilder(Material.DIAMOND)
+                        .name(ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + maxUpgrades)
+                        .get(),
+                ACTION_DO_NOTHING
+        );
         menu.setItem(3, 5, MENU_BACK, (m, e) -> abilityTree.openAbilityTree());
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         if (player.getEntity() instanceof Player) {
             menu.openForPlayer((Player) player.getEntity());
         }
+    }
 
-        menu.setItem(4, 3, new ItemBuilder(Material.DIAMOND).name(ChatColor.GRAY + "Upgrades remaining: " + ChatColor.GREEN + maxUpgrades).get(), ACTION_DO_NOTHING);
+    private void addBranchToMenu(Menu menu, List<Upgrade> tree, int x, int y) {
+        WarlordsPlayer player = abilityTree.getPlayer();
+        for (int i = 0; i < tree.size(); i++) {
+            Upgrade upgrade = tree.get(i);
+            int finalI = i;
+            menu.setItem(
+                    x,
+                    y - i,
+                    branchItem(upgrade),
+                    (m, e) -> {
+                        updateInventory(player);
+                        if (upgrade.isUnlocked()) {
+                            player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
+                            return;
+                        }
+                        if (finalI != 0) {
+                            if (!tree.get(finalI - 1).isUnlocked()) {
+                                player.sendMessage(ChatColor.RED + "You need to unlock the previous upgrade first!");
+                                return;
+                            }
+                        }
+
+                        if (player.getCurrency() < upgrade.getCurrencyCost() && abilityTree.getFreeUpgrades() <= 0) {
+                            player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
+                            return;
+                        }
+                        if (maxUpgrades <= 0) {
+                            player.sendMessage(ChatColor.RED + "You cannot unlock this upgrade, maximum upgrades reached.");
+                            return;
+                        }
+
+                        upgrade.getOnUpgrade().run();
+                        upgrade.setUnlocked(true);
+                        maxUpgrades--;
+
+                        if (abilityTree.getFreeUpgrades() > 0) {
+                            abilityTree.subtractFreeUpgrades(1);
+                        } else {
+                            player.subtractCurrency(upgrade.getCurrencyCost());
+                        }
+                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 1.3f);
+
+                        Bukkit.getPluginManager().callEvent(new WarlordsPlayerUpgradeUnlockEvent(player, upgrade));
+                        globalAnnouncement(player.getGame(), upgrade, ability);
+                        updateInventory(player);
+                        openUpgradeBranchMenu();
+
+                        abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
+                                upgrade.getName(),
+                                upgrade.getDescription())
+                        );
+                    }
+            );
+        }
     }
 
     private ItemStack masterBranchItem(Upgrade upgrade) {
@@ -216,14 +182,14 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
                 p.sendMessage(
                         ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                        ability.getName() + " - §c§l" +
-                        upgrade.getName() + "§e!"
+                                ability.getName() + " - §c§l" +
+                                upgrade.getName() + "§e!"
                 );
             } else {
                 p.sendMessage(
                         ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                        ability.getName() + " - " +
-                        upgrade.getName() + "§e!"
+                                ability.getName() + " - " +
+                                upgrade.getName() + "§e!"
                 );
             }
         });

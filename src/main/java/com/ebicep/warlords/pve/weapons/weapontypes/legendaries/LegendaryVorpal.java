@@ -24,6 +24,11 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "Vorpal";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
     }

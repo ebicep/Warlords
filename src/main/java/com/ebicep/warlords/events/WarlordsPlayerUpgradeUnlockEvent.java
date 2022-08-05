@@ -6,12 +6,12 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
-public class WarlordsPlayerUpgradePurchaseEvent extends AbstractWarlordsPlayerEvent {
+public class WarlordsPlayerUpgradeUnlockEvent extends AbstractWarlordsPlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final Upgrade upgrade;
 
-    public WarlordsPlayerUpgradePurchaseEvent(@Nonnull WarlordsEntity player, Upgrade upgrade) {
+    public WarlordsPlayerUpgradeUnlockEvent(@Nonnull WarlordsEntity player, Upgrade upgrade) {
         super(player);
         this.upgrade = upgrade;
     }

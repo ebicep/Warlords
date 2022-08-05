@@ -148,12 +148,11 @@ public class WarlordsShopMenu {
                         openClassMenu(player, selectedGroup);
 
                         if (DatabaseManager.playerService == null) return;
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.setLastSpec(spec);
                         if (player.getWorld().getName().equals("MainLobby")) {
                             PlayerHotBarItemListener.updateWeaponManagerItem(player);
                         }
-
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.setLastSpec(spec);
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );

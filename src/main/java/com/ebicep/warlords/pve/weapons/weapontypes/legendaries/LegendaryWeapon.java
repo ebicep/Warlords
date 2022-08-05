@@ -21,6 +21,11 @@ public class LegendaryWeapon extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "";
     }

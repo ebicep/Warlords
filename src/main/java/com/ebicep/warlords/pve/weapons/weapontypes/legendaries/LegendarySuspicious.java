@@ -49,6 +49,11 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "Suspicious";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "Plays an Amogus sound whenever you land a melee crit.";
     }

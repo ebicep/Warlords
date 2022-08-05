@@ -26,6 +26,11 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "Benevolent";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "Increase healing provided by 10%.";
     }

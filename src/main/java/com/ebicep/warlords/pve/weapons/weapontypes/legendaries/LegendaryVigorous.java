@@ -31,6 +31,11 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "Vigorous";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "+2 Energy per Second for 10 seconds after using 500 energy. Can be triggered once per 30 seconds.";
     }

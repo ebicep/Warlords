@@ -23,6 +23,11 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public String getTitle() {
+        return "Divine";
+    }
+
+    @Override
     public String getPassiveEffect() {
         return "Increase the next ability damage by 1% per targets hit.";
     }

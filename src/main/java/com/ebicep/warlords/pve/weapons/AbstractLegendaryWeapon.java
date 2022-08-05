@@ -48,6 +48,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
+    public abstract String getTitle();
+
     public abstract String getPassiveEffect();
 
     @Override
@@ -87,12 +89,17 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         if (!passiveEffect.isEmpty()) {
             lore.addAll(Arrays.asList(
                     "",
-                    ChatColor.GREEN + "Passive Effect:",
+                    ChatColor.GREEN + "Passive Effect (" + getTitle() + "):",
                     ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
             ));
         }
 
         return lore;
+    }
+
+    @Override
+    public String getName() {
+        return ChatColor.GOLD + getTitle() + " " + super.getName();
     }
 
     @Override
