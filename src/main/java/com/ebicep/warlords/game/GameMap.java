@@ -1215,26 +1215,26 @@ public enum GameMap {
                             //envoy
                             .add(0.05, Mobs.ENVOY_ZOMBIE)
                             .add(0.05, Mobs.ENVOY_SKELETON)
-                            .add(0.05, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.02, Mobs.ENVOY_PIG_ZOMBIE)
                     )
                     .add(45, new SimpleWave(30, 10 * SECOND, null)
                             //basic
-                            .add(0, Mobs.BASIC_ZOMBIE)
+                            .add(0.2, Mobs.BASIC_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.2, Mobs.BASIC_SLIME)
                             .add(0.2, Mobs.SPIDER)
                             .add(0, Mobs.WOLF)
                             //elite
-                            .add(0.7, Mobs.ELITE_ZOMBIE)
-                            .add(0.2, Mobs.ELITE_SKELETON)
+                            .add(0.6, Mobs.ELITE_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_SKELETON)
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
                             .add(0.15, Mobs.IRON_GOLEM)
                             //envoy
                             .add(0.07, Mobs.ENVOY_ZOMBIE)
                             .add(0.07, Mobs.ENVOY_SKELETON)
-                            .add(0.07, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.02, Mobs.ENVOY_PIG_ZOMBIE)
                     )
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
@@ -1368,7 +1368,7 @@ public enum GameMap {
                             .add(0.5, Mobs.ENVOY_SKELETON)
                             .add(0.5, Mobs.ENVOY_PIG_ZOMBIE)
                     ),
-                    5000
+                    50
             ));
 
             return options;

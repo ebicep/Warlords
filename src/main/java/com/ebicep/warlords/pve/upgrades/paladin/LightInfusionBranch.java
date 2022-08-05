@@ -85,7 +85,7 @@ public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",
                 "Light Infusion - Master Upgrade",
-                "Each Avenger's Strike casted in while\nLight Infusion is active will refund 30\nenergy when Light Infusion ends.",
+                "Each Avenger's Strike casted while\nLight Infusion is active will refund 30 energy\nwhen Light Infusion ends.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

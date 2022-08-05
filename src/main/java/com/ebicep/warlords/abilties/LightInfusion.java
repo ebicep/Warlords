@@ -60,6 +60,10 @@ public class LightInfusion extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     cancelSpeed.run();
+
+                    if (pveUpgrade) {
+                        wp.addEnergy(wp, name, 30 * strikesUsed);
+                    }
                 },
                 duration * 20,
                 (cooldown, ticksLeft, counter) -> {
@@ -73,10 +77,6 @@ public class LightInfusion extends AbstractAbility {
                                 wp.getLocation().add(0, 1.2, 0),
                                 500
                         );
-                    }
-
-                    if (pveUpgrade) {
-                        wp.addEnergy(wp, name, 30 * strikesUsed);
                     }
                 }
         ) {

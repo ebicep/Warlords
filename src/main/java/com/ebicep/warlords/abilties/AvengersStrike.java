@@ -40,17 +40,15 @@ public class AvengersStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
         if (nearPlayer instanceof WarlordsNPC) {
-            if (!pveUpgrade) return;
-            switch (((WarlordsNPC) nearPlayer).getMobTier()) {
-                case BASE:
-                    multiplier = 1.4f;
-                    break;
-                case ELITE:
-                    multiplier = 1.2f;
-                    break;
-                default:
-                    multiplier = 1;
-                    break;
+            if (pveUpgrade) {
+                switch (((WarlordsNPC) nearPlayer).getMobTier()) {
+                    case BASE:
+                        multiplier = 1.4f;
+                        break;
+                    case ELITE:
+                        multiplier = 1.2f;
+                        break;
+                }
             }
         }
 
