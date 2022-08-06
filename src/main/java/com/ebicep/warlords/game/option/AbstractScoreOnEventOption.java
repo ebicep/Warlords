@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
+import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;

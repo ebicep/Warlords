@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

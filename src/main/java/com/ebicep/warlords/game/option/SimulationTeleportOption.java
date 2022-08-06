@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;

@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilties.pve;
 import com.ebicep.warlords.abilties.OrderOfEviscerate;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.ingame.cooldowns.instances;
 
-import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 
 public interface DamageInstance extends Instance {
 

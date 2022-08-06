@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

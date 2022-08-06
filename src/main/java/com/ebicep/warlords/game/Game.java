@@ -1,10 +1,10 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
-import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
+import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
+import com.ebicep.warlords.events.game.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.GameMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;

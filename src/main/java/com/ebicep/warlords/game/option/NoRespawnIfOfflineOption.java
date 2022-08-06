@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

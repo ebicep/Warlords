@@ -1,14 +1,13 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.game;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
 
 public class WarlordsGameTriggerWinEvent extends AbstractWarlordsGameEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

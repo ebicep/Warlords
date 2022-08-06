@@ -1,13 +1,11 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.game;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-
-import java.util.Objects;
-
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Thrown when the points of the game changes

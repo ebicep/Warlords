@@ -11,6 +11,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;

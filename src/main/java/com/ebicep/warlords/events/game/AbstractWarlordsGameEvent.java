@@ -1,10 +1,10 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.game;
 
 import com.ebicep.warlords.game.Game;
-
-import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.bukkit.event.Event;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Base event for all warlord game based events

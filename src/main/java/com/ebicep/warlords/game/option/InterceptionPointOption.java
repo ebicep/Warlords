@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
+import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;

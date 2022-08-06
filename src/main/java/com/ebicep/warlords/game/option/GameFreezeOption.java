@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
+import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;

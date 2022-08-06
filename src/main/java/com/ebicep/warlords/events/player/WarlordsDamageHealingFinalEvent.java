@@ -1,4 +1,4 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.player;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;

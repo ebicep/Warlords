@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF
 import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
-import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.PlayerSettings;

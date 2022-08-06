@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.warlords.events.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

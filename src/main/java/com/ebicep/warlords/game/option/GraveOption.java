@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.events.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.game;
 
 import com.ebicep.warlords.game.option.InterceptionPointOption;
 import org.bukkit.event.HandlerList;
