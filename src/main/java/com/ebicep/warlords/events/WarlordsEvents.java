@@ -97,6 +97,7 @@ public class WarlordsEvents implements Listener {
             Warlords.newChain()
                     .async(() -> {
                         DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                            PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
                             HeadUtils.updateHead(e.getPlayer());
 
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());

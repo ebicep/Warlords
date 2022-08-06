@@ -316,7 +316,6 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
 
         CommandManager.init(this);
-//        registerCommands();
 
         HeadUtils.updateHeads();
 
@@ -328,6 +327,13 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.teleport(getRejoinPoint(player.getUniqueId()));
+            player.getInventory().clear();
+            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+            PlayerHotBarItemListener.giveLobbyHotBar(player, false);
+        });
 
         //connects to the database
         Warlords.newChain()
@@ -342,24 +348,7 @@ public class Warlords extends JavaPlugin {
             }
         }
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            player.teleport(getRejoinPoint(player.getUniqueId()));
-            player.getInventory().clear();
-        });
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.getOnlinePlayers().forEach(player -> {
-                    playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-                    PlayerHotBarItemListener.giveLobbyHotBar(player, false);
-                });
-            }
-        }.runTaskLater(Warlords.getInstance(), 60);
-
-
         ProtocolManager protocolManager;
-
         protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.removePacketListeners(this);
         protocolManager.addPacketListener(

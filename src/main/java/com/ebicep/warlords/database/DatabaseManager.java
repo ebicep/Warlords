@@ -15,6 +15,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
@@ -85,6 +86,7 @@ public class DatabaseManager {
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
             });
         });
 

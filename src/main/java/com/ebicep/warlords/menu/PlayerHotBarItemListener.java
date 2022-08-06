@@ -124,6 +124,14 @@ public class PlayerHotBarItemListener implements Listener {
         }
     }
 
+    public static void giveLobbyHotBarDatabase(Player player) {
+        if (DatabaseManager.enabled) {
+            updateWeaponManagerItem(player);
+            setItem(player, 7, new ItemBuilder(HeadUtils.getHead(player.getUniqueId())).name("§aLevel Rewards").get());
+            setItem(player, 8, REWARD_INVENTORY_MENU);
+        }
+    }
+
     public static void updateWeaponManagerItem(Player player) {
         UUID uuid = player.getUniqueId();
         if (DatabaseManager.playerService != null) {
