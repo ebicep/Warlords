@@ -43,18 +43,20 @@ public enum RewardTypes {
             new ItemStack(Material.FIREWORK_CHARGE),
             (databasePlayer, amount) -> databasePlayer.getPveStats().addSupplyDropToken(amount.intValue())
     ),
-
-
-    ;
+    COIN(
+            "Coin",
+            new ItemStack(Material.GOLD_NUGGET),
+            (databasePlayer, amount) -> databasePlayer.getPveStats().addCoins(amount.intValue())
+    );
 
     public final String name;
     public final ItemStack item;
-    public final BiConsumer<DatabasePlayer, Float> biConsumer;
+    public final BiConsumer<DatabasePlayer, Float> give;
 
 
-    RewardTypes(String name, ItemStack item, BiConsumer<DatabasePlayer, Float> biConsumer) {
+    RewardTypes(String name, ItemStack item, BiConsumer<DatabasePlayer, Float> give) {
         this.name = name;
         this.item = item;
-        this.biConsumer = biConsumer;
+        this.give = give;
     }
 }

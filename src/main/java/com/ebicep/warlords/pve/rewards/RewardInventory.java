@@ -50,7 +50,7 @@ public class RewardInventory {
                     menu.setItem(i % 9, i / 9,
                             masterworksFairReward.getItem(),
                             (m, e) -> {
-                                masterworksFairReward.getReward().biConsumer.accept(databasePlayer, masterworksFairReward.getAmount());
+                                masterworksFairReward.getReward().give.accept(databasePlayer, masterworksFairReward.getAmount());
                                 masterworksFairReward.setTimeClaimed();
                                 sendRewardMessage(
                                         player.getUniqueId(),
@@ -74,7 +74,7 @@ public class RewardInventory {
                             .get(),
                     (m, e) -> {
                         for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
-                            masterworksFairReward.getReward().biConsumer.accept(databasePlayer, masterworksFairReward.getAmount());
+                            masterworksFairReward.getReward().give.accept(databasePlayer, masterworksFairReward.getAmount());
                             masterworksFairReward.setTimeClaimed();
 
                             sendRewardMessage(

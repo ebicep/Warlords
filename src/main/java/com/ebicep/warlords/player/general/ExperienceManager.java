@@ -219,7 +219,7 @@ public class ExperienceManager {
                             if (claimed.get()) {
                                 player.sendMessage(ChatColor.RED + "You already claimed this reward!");
                             } else {
-                                rewardForLevel.getA().biConsumer.accept(databasePlayer, rewardForLevel.getB());
+                                rewardForLevel.getA().give.accept(databasePlayer, rewardForLevel.getB());
                                 databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel.getA(), rewardForLevel.getB(), menuLevel, selectedPrestige));
                                 player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
