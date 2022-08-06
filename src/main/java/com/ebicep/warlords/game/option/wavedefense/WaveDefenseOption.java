@@ -281,11 +281,12 @@ public class WaveDefenseOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
+
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
-                        .map(e -> e.getName() + ": " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills()
-                                + ChatColor.RESET + " / " + ChatColor.AQUA + "❂ " + e.getCurrency())
+                        .map(e -> e.getName() + ": " + (e.isDead() ? ChatColor.DARK_RED + "DEAD" : ChatColor.RED + "❤ " + (int) e.getHealth()) +
+                                ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills())
                         .collect(Collectors.toList());
             }
         });

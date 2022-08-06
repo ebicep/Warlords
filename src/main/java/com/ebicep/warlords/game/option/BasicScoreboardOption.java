@@ -84,5 +84,4 @@ public class BasicScoreboardOption implements Option {
             }
         };
     }
-
 }

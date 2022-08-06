@@ -272,19 +272,31 @@ public class PlayingState implements State, TimerDebugAble {
     private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-            if (warlordsPlayer instanceof WarlordsPlayer) {
-                if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
-                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
-                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                    temp.addEntry(warlordsPlayer.getName());
-                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
+            WarlordsEntity wp = Warlords.getPlayer(player);
+            if (wp instanceof WarlordsPlayer) {
+                if (scoreboard.getTeam(wp.getName()) == null) {
+                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(wp.getName());
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.addEntry(wp.getName());
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) + ChatColor.DARK_GRAY + "]");
                 } else {
-                    scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                    if (warlordsPlayer.getCarriedFlag() != null) {
-                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
+                    scoreboard.getTeam(wp.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    if (wp.getCarriedFlag() != null) {
+                        scoreboard.getTeam(wp.getName()).setSuffix(
+                                ChatColor.DARK_GRAY + "[" +
+                                ChatColor.GRAY + "Lv" +
+                                ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) +
+                                ChatColor.DARK_GRAY + "]" +
+                                ChatColor.WHITE + "⚑"
+                        );
                     } else {
-                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
+                        String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + wp.getMinuteStats().total().getKills();
+                        scoreboard.getTeam(wp.getName()).setSuffix(
+                                ChatColor.DARK_GRAY + " [" +
+                                ChatColor.GRAY + "Lv" +
+                                ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) +
+                                ChatColor.DARK_GRAY + "]"
+                        );
                     }
                 }
             }
