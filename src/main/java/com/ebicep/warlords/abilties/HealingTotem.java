@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -113,6 +114,10 @@ public class HealingTotem extends AbstractTotemBase {
                 },
                 duration * 20,
                 (cooldown, ticksLeft, counter) -> {
+                    if (pveUpgrade && counter % 10 == 0) {
+                        EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
+                    }
+
                     if (counter % 20 == 0) {
                         cooldownCounter.set(counter);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
@@ -183,7 +188,7 @@ public class HealingTotem extends AbstractTotemBase {
                                         ) {
                                             @Override
                                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                return currentDamageValue * .75f;
+                                                return currentDamageValue * .5f;
                                             }
                                         });
                                     });

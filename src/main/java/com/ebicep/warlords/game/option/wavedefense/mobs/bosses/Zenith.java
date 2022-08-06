@@ -6,6 +6,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.pve.SkullID;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,17 +21,17 @@ public class Zenith extends AbstractZombie implements BossMob {
                 "Zenith",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        Utils.getPlayerSkull("4oot"),
+                        SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 255),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         new ItemStack(Material.DIAMOND_SPADE)
                 ),
                 20000,
-                0.45f,
-                10,
-                800,
-                1000
+                0.465f,
+                20,
+                900,
+                1100
         );
     }
 
@@ -54,4 +56,8 @@ public class Zenith extends AbstractZombie implements BossMob {
         receiver.setVelocity(v, false);
     }
 
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
 }

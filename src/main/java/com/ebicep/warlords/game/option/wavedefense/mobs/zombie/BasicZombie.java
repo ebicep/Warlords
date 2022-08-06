@@ -46,4 +46,9 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
 
     }
 
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
+
 }

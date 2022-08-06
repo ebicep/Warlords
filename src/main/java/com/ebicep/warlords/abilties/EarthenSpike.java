@@ -3,16 +3,17 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -34,7 +35,7 @@ public class EarthenSpike extends AbstractAbility {
     };
     private boolean pveUpgrade = false;
 
-    private final int radius = 10;
+    private int radius = 10;
     private int playersSpiked = 0;
     private int carrierSpiked = 0;
     private float speed = 1;
@@ -164,22 +165,20 @@ public class EarthenSpike extends AbstractAbility {
                                 }
 
                                 if (pveUpgrade) {
-                                    spikeTarget.getCooldownManager().addCooldown(new RegularCooldown<EarthenSpike>(
-                                            "KB Increase",
-                                            "KB INC",
-                                            EarthenSpike.class,
-                                            new EarthenSpike(),
-                                            wp,
-                                            CooldownTypes.DEBUFF,
-                                            cooldownManager -> {
-                                            },
-                                            10 * 20
-                                    ) {
+                                    new GameRunnable(wp.getGame()) {
                                         @Override
-                                        public void multiplyKB(Vector currentVector) {
-                                            currentVector.multiply(1.5);
+                                        public void run() {
+                                            for (WarlordsEntity wave : PlayerFilter
+                                                    .entitiesAround(targetLocation, 4, 4, 4)
+                                                    .aliveEnemiesOf(wp)
+                                            ) {
+                                                wave.addDamageInstance(wp, "Earthen Rupture", 778, 1103, -1, 100, false);
+                                            }
+                                            new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 5, 1, Material.DIRT, (byte) 0).play();
+                                            Utils.playGlobalSound(targetLocation, Sound.DIG_GRAVEL, 2, 0.5f);
+                                            ParticleEffect.EXPLOSION_LARGE.display(1, 1, 1, 0.01f, 2, targetLocation, 500);
                                         }
-                                    });
+                                    }.runTaskLater(12);
                                 }
                             }
 
@@ -298,6 +297,14 @@ public class EarthenSpike extends AbstractAbility {
 
     public void setSpikeHitbox(double spikeHitbox) {
         this.spikeHitbox = spikeHitbox;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 
     public class EarthenSpikeBlock {

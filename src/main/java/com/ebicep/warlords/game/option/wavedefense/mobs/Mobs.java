@@ -29,7 +29,7 @@ public enum Mobs {
     SPIDER(Spider::new),
     WOLF(Wolf::new),
 
-    // Elite Tier 2
+    // Elite Tier 1
     ELITE_ZOMBIE(EliteZombie::new),
     ELITE_SKELETON(EliteSkeleton::new),
     ELITE_PIG_ZOMBIE(ElitePigZombie::new),

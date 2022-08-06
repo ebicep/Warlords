@@ -232,6 +232,12 @@ public class WaveDefenseOption implements Option {
                         mob.onAttack(attacker, receiver);
                     }
                 }
+
+                for (AbstractMob<?> mob : mobs) {
+                    if (mob.getWarlordsNPC().equals(receiver) && event.isDamageInstance()) {
+                        mob.onDamageTaken(receiver, attacker);
+                    }
+                }
             }
 
             @EventHandler

@@ -133,24 +133,6 @@ public class Earthliving extends AbstractAbility {
                                     );
                                 }
 
-                                if (pveUpgrade) {
-//                                    WarlordsNPC npc = new WarlordsNPC(
-//                                            UUID.randomUUID(),
-//                                            name,
-//                                            MobTier.BASE,
-//                                            Weapons.ABBADON,
-//                                            ,
-//                                            wp.getGame(),
-//                                            Team.BLUE,
-//                                            Specializations.PYROMANCER,
-//                                            2000,
-//                                            0.5f,
-//                                            0,
-//                                            500,
-//                                            750
-//                                    );
-                                }
-
                                 counter++;
                                 if (counter == maxHits) {
                                     this.cancel();

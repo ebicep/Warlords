@@ -36,4 +36,9 @@ public class Spider extends AbstractSpider implements BasicMob {
 
     }
 
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
+
 }

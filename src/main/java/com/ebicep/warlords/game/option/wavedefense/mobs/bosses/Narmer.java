@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +18,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                 "Narmer",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        Utils.getMobSkull(SkullType.WITHER),
+                        SkullUtils.getMobSkull(SkullType.WITHER),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_LEGGINGS),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -43,6 +44,11 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
 
     }
 

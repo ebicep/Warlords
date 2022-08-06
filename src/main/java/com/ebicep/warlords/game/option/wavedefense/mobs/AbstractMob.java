@@ -116,6 +116,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver);
 
+    public abstract void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker);
+
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         dropWeapon(killer);
     }

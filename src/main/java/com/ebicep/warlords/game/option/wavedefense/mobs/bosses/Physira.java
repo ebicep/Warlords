@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,13 +17,13 @@ public class Physira extends AbstractZombie implements BossMob {
                 "Physira",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        Utils.getPlayerSkull("ChybaWonsz"),
+                        SkullUtils.getPlayerSkull("ChybaWonsz"),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
                         new ItemStack(Material.BLAZE_POWDER)
                 ),
-                17000,
+                18000,
                 0.45f,
                 0,
                 600,
@@ -42,6 +43,11 @@ public class Physira extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
 
     }
 

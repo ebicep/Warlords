@@ -54,6 +54,11 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
+
+    @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.WHITE)

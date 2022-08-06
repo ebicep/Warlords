@@ -89,8 +89,8 @@ public class ChainHeal extends AbstractChainBase {
                     bounceTarget.addHealingInstance(
                             wp,
                             name,
-                            minDamageHeal * (pveUpgrade ? 1.15f : 0.8f),
-                            maxDamageHeal * (pveUpgrade ? 1.15f : 0.8f),
+                            minDamageHeal * (pveUpgrade ? 1 : 0.8f),
+                            maxDamageHeal * (pveUpgrade ? 1 : 0.8f),
                             critChance,
                             critMultiplier,
                             false,

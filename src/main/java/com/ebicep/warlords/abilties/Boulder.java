@@ -66,7 +66,7 @@ public class Boulder extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed;
         if (pveUpgrade) {
-            speed = player.getLocation().getDirection().add(new Vector(0, 1.5, 0).multiply(boulderSpeed));
+            speed = player.getLocation().getDirection().add(new Vector(0, 0.5, 0).multiply(boulderSpeed));
         } else {
             speed = player.getLocation().getDirection().multiply(boulderSpeed);
         }

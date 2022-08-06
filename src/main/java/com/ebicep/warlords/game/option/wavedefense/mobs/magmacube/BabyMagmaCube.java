@@ -36,6 +36,11 @@ public class BabyMagmaCube extends AbstractMagmaCube {
     }
 
     @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
+
+    @Override
     public int dropRate() {
         return 0;
     }

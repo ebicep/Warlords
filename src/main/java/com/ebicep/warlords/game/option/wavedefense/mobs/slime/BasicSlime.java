@@ -88,6 +88,11 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
+
+    @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
         super.onDeath(killer, deathLocation, waveDefenseOption);
         WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
