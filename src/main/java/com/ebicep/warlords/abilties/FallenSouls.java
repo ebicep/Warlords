@@ -137,10 +137,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     wp.getSpec().getBlue().subtractCooldown(1.5F);
                     wp.getSpec().getOrange().subtractCooldown(1.5F);
 
-                    wp.updateRedItem();
-                    wp.updatePurpleItem();
-                    wp.updateBlueItem();
-                    wp.updateOrangeItem();
+                    wp.updateItems();
 
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
@@ -155,10 +152,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                         teammate.getSpec().getBlue().subtractCooldown(1);
                         teammate.getSpec().getOrange().subtractCooldown(1);
 
-                        teammate.updateRedItem();
-                        teammate.updatePurpleItem();
-                        teammate.updateBlueItem();
-                        teammate.updateOrangeItem();
+                        teammate.updateItems();
                     }
                 });
     }

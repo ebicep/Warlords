@@ -133,10 +133,7 @@ public class InspiringPresence extends AbstractAbility {
             we.getSpec().getOrange().setCurrentCooldown(0);
         }
 
-        we.updateRedItem();
-        we.updatePurpleItem();
-        we.updateBlueItem();
-        we.updateOrangeItem();
+        we.updateItems();
     }
 
     public int getDuration() {

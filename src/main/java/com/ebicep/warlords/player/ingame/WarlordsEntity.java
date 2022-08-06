@@ -162,6 +162,9 @@ public abstract class WarlordsEntity {
         this.cooldownModifier = 1;
         this.hitCooldown = 20;
         this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed, 13, true) : new CalculateSpeed(this::setWalkSpeed, 13);
+        if (specClass == Specializations.APOTHECARY) {
+            this.speed.addBaseModifier(10);
+        }
         this.entity = entity;
         this.weaponSkin = weaponSkin;
         this.deathLocation = this.entity.getLocation();
@@ -1316,6 +1319,16 @@ public abstract class WarlordsEntity {
             return new ItemStack(Material.INK_SACK, 1, (byte) 14);
         }
         return null;
+    }
+
+    public void updateItems() {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            updateRedItem(player);
+            updatePurpleItem(player);
+            updateBlueItem(player);
+            updateOrangeItem(player);
+        }
     }
 
     public void updateRedItem() {
