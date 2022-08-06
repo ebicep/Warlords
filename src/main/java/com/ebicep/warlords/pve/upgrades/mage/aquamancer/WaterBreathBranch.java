@@ -7,32 +7,104 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
-    public WaterBreathBranch(AbilityTree abilityTree, WaterBreath ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown Reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown Reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown Reduction", 20000));
-
-        treeB.add(new Upgrade("Utility - Tier I", "+10% Knockback", 5000));
-        treeB.add(new Upgrade("Utility - Tier II", "+25% Knockback", 10000));
-        treeB.add(new Upgrade("Utility - Tier III", "+50% Knockback", 20000));
-
-        treeC.add(new Upgrade("Healing - Tier I", "+15% Healing", 5000));
-        treeC.add(new Upgrade("Healing - Tier II", "+30% Healing", 10000));
-        treeC.add(new Upgrade("Healing - Tier III", "+60% Healing", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "+30% Cone Range\n\nAll allies hit by Water Breath are healed of their\n1% max health per second for 5 seconds.",
-                50000
-        );
-    }
-
     float cooldown = ability.getCooldown();
-
     double velocity = ability.getVelocity();
-
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
+    int coneRange = ability.getMaxAnimationTime();
+    float hitbox = ability.getHitbox();
 
+    public WaterBreathBranch(AbilityTree abilityTree, WaterBreath ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+7.5% Healing",
+                5000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.075f);
+                    ability.setMaxDamageHeal(maxHealing * 1.075f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+15% Healing",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.15f);
+                    ability.setMaxDamageHeal(maxHealing * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+22.5% Healing",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.225f);
+                    ability.setMaxDamageHeal(maxHealing * 1.225f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+30% Healing",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(maxHealing * 1.3f);
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "+15% Knockback\n+15% Cone range",
+                5000,
+                () -> {
+                    ability.setVelocity(velocity * 1.15);
+                    ability.setHitbox(hitbox + 2);
+                    ability.setMaxAnimationTime(coneRange + 4);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "+30% Knockback\n+30% Cone range",
+                10000,
+                () -> {
+                    ability.setVelocity(velocity * 1.3);
+                    ability.setHitbox(hitbox + 3);
+                    ability.setMaxAnimationTime(coneRange + 8);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "+45% Knockback\n+45% Cone range",
+                15000,
+                () -> {
+                    ability.setVelocity(velocity * 1.45);
+                    ability.setHitbox(hitbox + 4);
+                    ability.setMaxAnimationTime(coneRange + 12);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "+60% Knockback\n+60% Cone range",
+                20000,
+                () -> {
+                    ability.setVelocity(velocity * 1.6);
+                    ability.setHitbox(hitbox + 5);
+                    ability.setMaxAnimationTime(coneRange + 16);
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "Typhoon",
+                "Water Breath - Master Upgrade",
+                "+100% Additional cone range\n\nAll allies hit by Water Breath are healed for\n1% of their max health per second for 5 seconds.",
+                50000,
+                () -> {
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
+                    ability.setHitbox(ability.getHitbox() * 2);
+                    ability.setMaxAnimationEffects(8);
+                    ability.setPveUpgrade(true);
+                }
+        );
+    }
 }

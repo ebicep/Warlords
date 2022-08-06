@@ -25,6 +25,7 @@ public class WaterBreath extends AbstractAbility {
     protected int debuffsRemoved = 0;
 
     private int maxAnimationTime = 12;
+    private int maxAnimationEffects = 4;
     private float hitbox = 10;
     private double velocity = 1.1;
 
@@ -80,7 +81,7 @@ public class WaterBreath extends AbstractAbility {
                     this.cancel();
                 }
 
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < maxAnimationEffects; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
                     ParticleEffect.DRIP_WATER.display(0, 0, 0, 0, 1,
@@ -203,5 +204,13 @@ public class WaterBreath extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getMaxAnimationEffects() {
+        return maxAnimationEffects;
+    }
+
+    public void setMaxAnimationEffects(int maxAnimationEffects) {
+        this.maxAnimationEffects = maxAnimationEffects;
     }
 }
