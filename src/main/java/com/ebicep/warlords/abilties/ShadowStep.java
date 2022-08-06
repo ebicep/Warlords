@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -13,6 +14,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -20,8 +22,8 @@ import java.util.List;
 
 public class ShadowStep extends AbstractAbility {
     private boolean pveUpgrade = false;
-    protected int totalPlayersHit = 0;
 
+    private int totalPlayersHit = 0;
     private int fallDamageNegation = 10;
 
     public ShadowStep() {
@@ -88,6 +90,7 @@ public class ShadowStep extends AbstractAbility {
             double y = playerLoc.getY();
             boolean wasOnGround = true;
             int counter = 0;
+
             @Override
             public void run() {
                 counter++;
@@ -136,7 +139,7 @@ public class ShadowStep extends AbstractAbility {
 
     private void buffOnLanding(WarlordsEntity we) {
         we.getSpeed().addSpeedModifier(name, 20, 3 * 20);
-        we.getCooldownManager().addRegularCooldown(
+        we.getCooldownManager().addCooldown(new RegularCooldown<ShadowStep>(
                 "STEP KB",
                 "STEP KB",
                 ShadowStep.class,
@@ -146,7 +149,12 @@ public class ShadowStep extends AbstractAbility {
                 cooldownManager -> {
                 },
                 3 * 20
-        );
+        ) {
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                currentVector.multiply(0.8);
+            }
+        });
     }
 
     public void setFallDamageNegation(int fallDamageNegation) {

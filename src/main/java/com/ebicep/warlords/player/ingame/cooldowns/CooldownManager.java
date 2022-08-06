@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,8 +288,21 @@ public class CooldownManager {
             }
         }
         incrementCooldown(
-                new RegularCooldown<Void>("KB Resistance", "KB", null, null, this.warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
-                }, counter * 20),
+                new RegularCooldown<Void>("KB Resistance",
+                        "KB",
+                        null,
+                        null,
+                        this.warlordsPlayer,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        counter * 20
+                ) {
+                    @Override
+                    public void multiplyKB(Vector currentVector) {
+                        currentVector.multiply(0.75);
+                    }
+                },
                 (int) (counter * 1.2 * 20),
                 (int) (3.6 * 20)
         );

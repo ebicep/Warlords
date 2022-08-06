@@ -34,7 +34,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         this.consumers = new ArrayList<>();
     }
 
-    @SafeVarargs
+    @SafeVarargs //(cooldown, ticksLeft, counter)
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;

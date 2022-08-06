@@ -2000,17 +2000,8 @@ public abstract class WarlordsEntity {
     public void setVelocity(Vector v, boolean kbAfterHorse, boolean ignoreModifications) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (!ignoreModifications) {
-                if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-                    v.multiply(0.75);
-                }
-                if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
-                    v.multiply(0.5);
-                }
-                if (cooldownManager.hasCooldownFromName("KB Increase")) {
-                    v.multiply(1.5);
-                }
-                if (cooldownManager.hasCooldownFromName("STEP KB")) {
-                    v.multiply(0.8);
+                for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldownsDistinct()) {
+                    abstractCooldown.multiplyKB(v);
                 }
             }
             this.entity.setVelocity(v);

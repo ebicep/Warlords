@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -25,21 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    protected int playersSpiked = 0;
-    protected int carrierSpiked = 0;
-
-    private final int radius = 10;
-    private float speed = 1;
-    private double spikeHitbox = 2.5;
-    private double verticalVelocity = .625;
-
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
             "shaman.earthenspike.animation.b",
             "shaman.earthenspike.animation.c",
             "shaman.earthenspike.animation.d",
     };
+    private boolean pveUpgrade = false;
+
+    private final int radius = 10;
+    private int playersSpiked = 0;
+    private int carrierSpiked = 0;
+    private float speed = 1;
+    private double spikeHitbox = 2.5;
+    private double verticalVelocity = .625;
 
     public EarthenSpike() {
         super("Earthen Spike", 404, 562, 0, 100, 15, 175);
@@ -86,6 +86,7 @@ public class EarthenSpike extends AbstractAbility {
                 new GameRunnable(wp.getGame()) {
                     private final float SPEED_SQUARED = speed * speed;
                     private final Location spikeLoc = location;
+
                     {
                         spikeLoc.setY(spikeLoc.getBlockY());
                     }
@@ -163,7 +164,7 @@ public class EarthenSpike extends AbstractAbility {
                                 }
 
                                 if (pveUpgrade) {
-                                    spikeTarget.getCooldownManager().addRegularCooldown(
+                                    spikeTarget.getCooldownManager().addCooldown(new RegularCooldown<EarthenSpike>(
                                             "KB Increase",
                                             "KB INC",
                                             EarthenSpike.class,
@@ -173,7 +174,12 @@ public class EarthenSpike extends AbstractAbility {
                                             cooldownManager -> {
                                             },
                                             10 * 20
-                                    );
+                                    ) {
+                                        @Override
+                                        public void multiplyKB(Vector currentVector) {
+                                            currentVector.multiply(1.5);
+                                        }
+                                    });
                                 }
                             }
 
@@ -262,11 +268,43 @@ public class EarthenSpike extends AbstractAbility {
         return newBlock;
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
+
+    public double getVerticalVelocity() {
+        return verticalVelocity;
+    }
+
+    public void setVerticalVelocity(double verticalVelocity) {
+        this.verticalVelocity = verticalVelocity;
+    }
+
+    public double getSpikeHitbox() {
+        return spikeHitbox;
+    }
+
+    public void setSpikeHitbox(double spikeHitbox) {
+        this.spikeHitbox = spikeHitbox;
+    }
+
     public class EarthenSpikeBlock {
 
-        private List<CustomFallingBlock> fallingBlocks = new ArrayList<>();
         private final WarlordsEntity target;
         private final WarlordsEntity user;
+        private List<CustomFallingBlock> fallingBlocks = new ArrayList<>();
         private int duration;
         private int removed;
 
@@ -302,16 +340,16 @@ public class EarthenSpike extends AbstractAbility {
             return duration;
         }
 
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
+
         public void addRemoved() {
             this.removed++;
         }
 
         public int getRemoved() {
             return removed;
-        }
-
-        public void setDuration(int duration) {
-            this.duration = duration;
         }
     }
 
@@ -339,37 +377,5 @@ public class EarthenSpike extends AbstractAbility {
         public void setyLevelToRemove(double yLevelToRemove) {
             this.yLevelToRemove = yLevelToRemove;
         }
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
-
-    public double getVerticalVelocity() {
-        return verticalVelocity;
-    }
-
-    public void setVerticalVelocity(double verticalVelocity) {
-        this.verticalVelocity = verticalVelocity;
-    }
-
-    public double getSpikeHitbox() {
-        return spikeHitbox;
-    }
-
-    public void setSpikeHitbox(double spikeHitbox) {
-        this.spikeHitbox = spikeHitbox;
     }
 }

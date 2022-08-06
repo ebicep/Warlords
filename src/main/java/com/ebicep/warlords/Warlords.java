@@ -630,12 +630,6 @@ public class Warlords extends JavaPlugin {
                             wp.setHealth(wp.getMaxHealth());
                         }
 
-                        // Checks whether the player has Vindicate active.
-                        if (wp.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
-                            wp.getSpeed().removeSlownessModifiers();
-                            wp.getCooldownManager().removeDebuffCooldowns();
-                        }
-
                         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
                         float newHealth = wp.getHealth() / wp.getMaxHealth() * 40;
 

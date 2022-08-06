@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -22,8 +21,8 @@ import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
     private boolean pveUpgrade = false;
-    protected int timesUsedWithFlag = 0;
 
+    private int timesUsedWithFlag = 0;
     private int radius = 15;
     private int verticalRadius = 15;
     private int vindDuration = 6;
@@ -80,37 +79,13 @@ public class HeartToHeart extends AbstractAbility {
             Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 
             HeartToHeart tempHeartToHeart = new HeartToHeart();
-
-            // remove other instances of vindicate buff to override
-            wp.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-            wp.getCooldownManager().addRegularCooldown(
-                    "Vindicate Debuff Immunity",
-                    "VIND",
-                    HeartToHeart.class,
-                    tempHeartToHeart,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    vindDuration * 20
-            );
-
-            heartTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-            heartTarget.getCooldownManager().addRegularCooldown(
-                    "Vindicate Debuff Immunity",
-                    "VIND",
-                    HeartToHeart.class,
-                    tempHeartToHeart,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    vindDuration * 20
-            );
+            Vindicate.giveVindicateCooldown(wp, wp, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
+            Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
 
             new BukkitRunnable() {
                 final Location playerLoc = wp.getLocation();
                 int timer = 0;
+
                 @Override
                 public void run() {
                     timer++;

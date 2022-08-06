@@ -22,15 +22,40 @@ import java.util.List;
 
 public class Vindicate extends AbstractAbility {
     private boolean pveUpgrade = false;
-    protected int debuffsRemovedOnCast = 0;
 
     private final int radius = 8;
+    private int debuffsRemovedOnCast = 0;
     private int vindicateDuration = 12;
     private int vindicateSelfDuration = 8;
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
+    }
+
+    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
+        // remove other instances of vindicate buff to override
+        target.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+        target.getCooldownManager().addCooldown(new RegularCooldown<T>(
+                "Vindicate Debuff Immunity",
+                "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration,
+                (cooldown, ticksLeft, counter) -> {
+                    target.getSpeed().removeSlownessModifiers();
+                    target.getCooldownManager().removeDebuffCooldowns();
+                }
+        ) {
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                currentVector.multiply(0.5);
+            }
+        });
     }
 
     @Override
@@ -98,17 +123,7 @@ public class Vindicate extends AbstractAbility {
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
             debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
-            vindicateTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-            vindicateTarget.getCooldownManager().addRegularCooldown(
-                    "Vindicate Debuff Immunity",
-                    "VIND",
-                    Vindicate.class,
-                    tempVindicate,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    vindicateDuration * 20
-            );
+            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindicateDuration * 20);
         }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
@@ -118,7 +133,8 @@ public class Vindicate extends AbstractAbility {
                 tempVindicate,
                 wp,
                 CooldownTypes.BUFF,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 vindicateSelfDuration * 20
         ) {
             @Override
