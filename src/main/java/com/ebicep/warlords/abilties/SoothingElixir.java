@@ -156,6 +156,7 @@ public class SoothingElixir extends AbstractAbility {
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
                             .aliveTeammatesOf(wp)
                     ) {
+                        playersHealed++;
                         nearEntity.addHealingInstance(
                                 wp,
                                 name,

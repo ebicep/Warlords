@@ -117,6 +117,7 @@ public class DrainingMiasma extends AbstractAbility {
                         }
                     }
             );
+            playersHit += hitCounter;
 
             miasmaTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
             miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
