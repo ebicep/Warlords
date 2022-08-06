@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent {
     private static final HandlerList handlers = new HandlerList();
 
+    private final WarlordsDamageHealingEvent warlordsDamageHealingEvent;
     private final List<CooldownRecord> playerCooldowns = new ArrayList<>();
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
     private final WarlordsEntity attacker;
@@ -35,7 +36,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
     private int inGameTick;
 
     public WarlordsDamageHealingFinalEvent(
-            WarlordsEntity player,
+            WarlordsDamageHealingEvent warlordsDamageHealingEvent, WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
             float initialHealth,
@@ -49,6 +50,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsPlayerEvent
             boolean isDamageInstance
     ) {
         super(player);
+        this.warlordsDamageHealingEvent = warlordsDamageHealingEvent;
         this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
                 .map(CooldownRecord::new)
                 .collect(Collectors.toList())

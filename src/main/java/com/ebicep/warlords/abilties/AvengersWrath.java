@@ -14,10 +14,13 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class AvengersWrath extends AbstractAbility {
+
+    private static final String WRATH_SKIP = "wrath_skip";
     protected int extraPlayersStruck = 0;
     private boolean pveUpgrade = false;
     private int duration = 12;
@@ -79,7 +82,7 @@ public class AvengersWrath extends AbstractAbility {
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().equals("Avenger's Strike")) {
+                if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(WRATH_SKIP)) {
                     for (WarlordsEntity wrathTarget : PlayerFilter
                             .entitiesAround(event.getPlayer(), 5, 4, 5)
                             .aliveEnemiesOf(wp)
@@ -94,22 +97,24 @@ public class AvengersWrath extends AbstractAbility {
                             wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
                             wrathTarget.addDamageInstance(
                                     wp,
-                                    "Avenger's Strìke",
+                                    "Avenger's Strike",
                                     event.getMin() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
                                     event.getMax() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
-                                    false
+                                    false,
+                                    Collections.singletonList(WRATH_SKIP)
                             );
                         } else {
                             wrathTarget.addDamageInstance(
                                     wp,
-                                    "Avenger's Strìke",
+                                    "Avenger's Strike",
                                     event.getMin(),
                                     event.getMax(),
                                     event.getCritChance(),
                                     event.getCritMultiplier(),
-                                    false
+                                    false,
+                                    Collections.singletonList(WRATH_SKIP)
                             );
                         }
                         wrathTarget.subtractEnergy(10, true);

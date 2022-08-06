@@ -186,7 +186,7 @@ public abstract class WarlordsEntity {
                 '}';
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> addHealingDamageInstance(WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return Optional.empty();
@@ -222,7 +222,20 @@ public abstract class WarlordsEntity {
             float critMultiplier,
             boolean ignoreReduction
     ) {
-        return this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true, Collections.emptyList()));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean ignoreReduction,
+            List<String> flags
+    ) {
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true, flags));
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(WarlordsDamageHealingEvent event) {
@@ -443,7 +456,7 @@ public abstract class WarlordsEntity {
                     }
 
                     cooldownManager.removeCooldownByObject(arcaneShield);
-                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 1, false, true, true));
+                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 1, false, true, true, new ArrayList<>(0)));
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
@@ -481,6 +494,7 @@ public abstract class WarlordsEntity {
                 removeHorse();
 
                 finalEvent = new WarlordsDamageHealingFinalEvent(
+                        event,
                         this,
                         attacker,
                         ability,
@@ -544,6 +558,7 @@ public abstract class WarlordsEntity {
                 attacker.getRecordDamage().add(damageValue);
 
                 finalEvent = new WarlordsDamageHealingFinalEvent(
+                        event,
                         this,
                         attacker,
                         ability,
@@ -637,7 +652,21 @@ public abstract class WarlordsEntity {
             boolean ignoreReduction,
             boolean isLastStandFromShield
     ) {
-        return this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false, Collections.emptyList()));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean ignoreReduction,
+            boolean isLastStandFromShield,
+            List<String> flags
+    ) {
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false, flags));
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(WarlordsDamageHealingEvent event) {
@@ -725,6 +754,7 @@ public abstract class WarlordsEntity {
         //attacker.sendMessage(ChatColor.GREEN + "Total Healing: " + attacker.getMinuteStats().total().getHealing());
 
         finalEvent = new WarlordsDamageHealingFinalEvent(
+                event,
                 this,
                 attacker,
                 ability,

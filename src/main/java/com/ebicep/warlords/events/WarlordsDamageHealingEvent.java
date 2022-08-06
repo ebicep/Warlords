@@ -5,6 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import java.util.List;
+
 /**
  *
  */
@@ -21,6 +23,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
     private boolean isLastStandFromShield;
     private boolean isDamageInstance;
 
+    private List<String> flags;
     private boolean cancelled;
 
     public WarlordsDamageHealingEvent(
@@ -33,7 +36,8 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
             float critMultiplier,
             boolean ignoreReduction,
             boolean isLastStandFromShield,
-            boolean isDamageInstance
+            boolean isDamageInstance,
+            List<String> flags
     ) {
         super(player);
         this.attacker = attacker;
@@ -45,6 +49,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
         this.ignoreReduction = ignoreReduction;
         this.isLastStandFromShield = isLastStandFromShield;
         this.isDamageInstance = isDamageInstance;
+        this.flags = flags;
     }
 
     public WarlordsEntity getAttacker() {
@@ -125,6 +130,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsPlayerEvent impl
 
     public void setIsHealingInstance(boolean isHealingInstance) {
         this.isDamageInstance = !isHealingInstance;
+    }
+
+    public List<String> getFlags() {
+        return flags;
     }
 
     @Override

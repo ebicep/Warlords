@@ -94,6 +94,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (DatabaseManager.playerService != null) {
             Warlords.newChain()
+                    .delay(40)
                     .async(() -> game.forEachOfflineWarlordsPlayer((player, team) -> {
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -104,13 +105,6 @@ public class PlayingState implements State, TimerDebugAble {
                         DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
                         });
                     })).execute();
-
-            //APPLYING WEAPON STATS
-            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
-                game.warlordsPlayers().forEach(warlordsPlayer -> {
-
-                });
-            }
         } else {
             System.out.println("ATTENTION - playerService is null");
         }
