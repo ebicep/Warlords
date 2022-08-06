@@ -119,7 +119,6 @@ public class PlayerHotBarItemListener implements Listener {
         setItem(player, 5, SPECTATE_MENU);
 
         if (DatabaseManager.enabled) {
-            updateWeaponManagerItem(player);
             setItem(player, 7, new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get());
             setItem(player, 8, REWARD_INVENTORY_MENU);
         }
