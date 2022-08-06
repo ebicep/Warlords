@@ -59,7 +59,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost\n+0.25 Blocks hit radius",
+                "-2.5 Energy cost\n+0.25 Blocks strike hit radius",
                 5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 2.5f);
@@ -68,7 +68,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy cost\n+0.5 Blocks hit radius",
+                "-5 Energy cost\n+0.5 Blocks strike hit radius",
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);
@@ -77,7 +77,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost\n+0.75 Blocks hit radius",
+                "-7.5 Energy cost\n+0.75 Blocks strike hit radius",
                 15000,
                 () -> {
                     ability.setEnergyCost(energyCost - 7.5f);
@@ -86,7 +86,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+1 Blocks hit radius",
+                "-10 Energy cost\n+1 Blocks strike hit radius",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);

@@ -4,8 +4,8 @@ import org.bukkit.ChatColor;
 
 public enum MobTier {
         BASE(ChatColor.YELLOW + "✻"),
-        ELITE(ChatColor.GOLD.toString() + ChatColor.BOLD + "❈"),
-        BOSS(ChatColor.RED.toString() + ChatColor.BOLD + "✪")
+        ELITE(ChatColor.GOLD.toString() + ChatColor.BOLD + "❈❈"),
+        BOSS(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "✪✪✪")
 
         ;
 

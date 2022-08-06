@@ -3,6 +3,8 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.pve.SkullID;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +18,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
                 "Lunar Mage",
                 MobTier.BASE,
                 new Utils.SimpleEntityEquipment(
-                        Utils.getPlayerSkull("4oot"),
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                         Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),

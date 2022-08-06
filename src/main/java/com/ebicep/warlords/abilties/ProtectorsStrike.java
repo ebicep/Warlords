@@ -34,7 +34,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + minDamageHeal + " §7- " + maxDamageHeal + " §7damage\n" +
+                "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
                 "§7and healing two nearby allies for\n" +
                 "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
                 "§7heals yourself by §a50-75% §7of the\n" +

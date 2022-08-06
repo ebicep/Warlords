@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 
 public enum DifficultyIndex {
 
-    NORMAL("Normal", "Fight off 30 waves of monsters to earn rewards.", ChatColor.GOLD),
+    NORMAL("Normal", "Fight off 50 waves of monsters to earn rewards.", ChatColor.GOLD),
     ENDLESS("Endless", "Fight to the death against endless waves of\nmonsters to earn greater rewards.",  ChatColor.RED)
 
     ;

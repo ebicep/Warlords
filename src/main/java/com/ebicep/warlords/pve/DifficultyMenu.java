@@ -60,8 +60,7 @@ public class DifficultyMenu {
                                 startNormalGame(player, false);
                                 break;
                             case 1:
-                                player.sendMessage(ChatColor.RED + "Endless is currently unavailable. Reason: WIP");
-                                //startNormalGame(player, true);
+                                startNormalGame(player, true);
                                 break;
                         }
                     });

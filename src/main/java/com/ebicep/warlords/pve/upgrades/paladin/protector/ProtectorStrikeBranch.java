@@ -42,7 +42,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+15% Damage\n+1 Block hit radius",
+                "+15% Damage\n+1 Block strike hit radius",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.15f);

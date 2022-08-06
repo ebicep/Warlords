@@ -290,10 +290,14 @@ public class Warlords extends JavaPlugin {
 
         // WAVE DEFENSE
         gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
-        gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
-        //gameManager.addGameHolder("Enchanted-0", GameMap.ENCHANTED, new LocationFactory(Bukkit.getWorld("Enchanted-0")));
-        //gameManager.addGameHolder("Viveric-0", GameMap.VIVERIC, new LocationFactory(Bukkit.getWorld("Viveric-0")));
+        //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
+        //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
 
+        gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
+        //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
+        //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
+
+        // PRACTICE
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));
         gameManager.addGameHolder("Debug-1", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-1")));
         gameManager.addGameHolder("Debug-2", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-2")));
