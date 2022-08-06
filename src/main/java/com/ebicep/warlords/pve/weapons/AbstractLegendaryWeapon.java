@@ -99,7 +99,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     @Override
     public String getName() {
-        return ChatColor.GOLD + getTitle() + " " + super.getName();
+        if (getTitle().isEmpty()) {
+            return super.getName();
+        } else {
+            return ChatColor.GOLD + getTitle() + " " + super.getName();
+        }
     }
 
     @Override
