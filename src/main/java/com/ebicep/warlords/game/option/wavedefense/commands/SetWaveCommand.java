@@ -8,7 +8,7 @@ import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-@CommandAlias("setwave")
+@CommandAlias("wave")
 public class SetWaveCommand extends BaseCommand {
 
     @Subcommand("set")

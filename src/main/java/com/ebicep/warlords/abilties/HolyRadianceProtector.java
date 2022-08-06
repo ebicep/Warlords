@@ -23,6 +23,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     private final int markRadius = 15;
     private int markDuration = 6;
+    private float markHealing = 50;
 
     public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
@@ -38,7 +39,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
                 "§7optimal range of §e" + markRadius + " §7blocks. Your marked\n" +
                 "§7ally will emit a second Holy Radiance\n" +
-                "§7for §a50% §7of the original healing amount\n" +
+                "§7for §a" + markHealing + "% §7of the original healing amount\n" +
                 "§7after the mark ends.";
     }
 
@@ -130,8 +131,8 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                                         waveTarget,
                                         giver,
                                         1.1,
-                                        minDamageHeal * 0.5f,
-                                        maxDamageHeal * 0.5f
+                                        minDamageHeal * (markHealing / 100f),
+                                        maxDamageHeal * (markHealing / 100f)
                                 ).runTaskTimer(Warlords.getInstance(), 1, 1)
                         );
                     }
@@ -167,5 +168,13 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public float getMarkHealing() {
+        return markHealing;
+    }
+
+    public void setMarkHealing(float markHealing) {
+        this.markHealing = markHealing;
     }
 }

@@ -294,4 +294,12 @@ public abstract class AbstractPlayerClass {
         this.purple.runEverySecond();
         this.weapon.runEverySecond();
     }
+
+    public void runEveryTick() {
+        this.red.runEveryTick();
+        this.blue.runEveryTick();
+        this.orange.runEveryTick();
+        this.purple.runEveryTick();
+        this.weapon.runEveryTick();
+    }
 }

@@ -216,6 +216,9 @@ public abstract class AbstractAbility {
     public void runEverySecond() {
     }
 
+    public void runEveryTick() {
+    }
+
     public static class SecondaryAbility {
 
         private final Runnable runnable;

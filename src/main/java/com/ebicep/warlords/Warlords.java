@@ -508,6 +508,7 @@ public class Warlords extends JavaPlugin {
                     wp.updateHealth();
                     // Updating all player speed.
                     wp.getSpeed().updateSpeed();
+                    wp.runEveryTick();
 
                     // Setting the flag tracking compass.
                     if (player != null && wp.getCompassTarget() != null) {

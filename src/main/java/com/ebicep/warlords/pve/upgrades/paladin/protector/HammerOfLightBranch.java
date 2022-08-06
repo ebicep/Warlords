@@ -7,28 +7,105 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
 
-    public HammerOfLightBranch(AbilityTree abilityTree, HammerOfLight ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Duration - Tier I", "+1s Duration", 5000));
-        treeA.add(new Upgrade("Duration - Tier II", "+2s Duration", 10000));
-        treeA.add(new Upgrade("Duration - Tier III", "+4s Duration", 20000));
-
-        treeC.add(new Upgrade("Damage/Healing - Tier I", "+10% Damage and Healing", 5000));
-        treeC.add(new Upgrade("Damage/Healing - Tier II", "+20% Damage and Healing", 10000));
-        treeC.add(new Upgrade("Damage/Healing - Tier III", "+40% Damage and Healing", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "For each ally within the Hammer of Light (including\nyourself), increase damage dealt by Protector's\nStrike by 10%.\n\nFor each ally within the Crown of Light radius,\nincrease the healing of the caster's abilities\nby 20% (maximum 4 allies.)",
-                50000
-        );
-    }
-
     int duration = ability.getDuration();
-
+    float cooldown = ability.getCooldown();
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
     float minDamage = ability.getMinDamage();
     float maxDamage = ability.getMaxDamage();
 
+    public HammerOfLightBranch(AbilityTree abilityTree, HammerOfLight ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+7.5% Healing\n+7.5% Damage",
+                5000,
+                () -> {
+                    ability.setMinDamage(minDamage * 1.075f);
+                    ability.setMaxDamage(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minHealing * 1.075f);
+                    ability.setMaxDamageHeal(minHealing * 1.075f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+15% Healing\n+15% Damage",
+                10000,
+                () -> {
+                    ability.setMinDamage(minDamage * 1.15f);
+                    ability.setMaxDamage(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minHealing * 1.15f);
+                    ability.setMaxDamageHeal(minHealing * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+22.5% Healing\n+22.5% Damage",
+                15000,
+                () -> {
+                    ability.setMinDamage(minDamage * 1.225f);
+                    ability.setMaxDamage(maxDamage * 1.225f);
+                    ability.setMinDamageHeal(minHealing * 1.225f);
+                    ability.setMaxDamageHeal(minHealing * 1.225f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+30% Healing\n+30% Damage",
+                20000,
+                () -> {
+                    ability.setMinDamage(minDamage * 1.3f);
+                    ability.setMaxDamage(maxDamage * 1.3f);
+                    ability.setMinDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(minHealing * 1.3f);
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Zeal - Tier I",
+                "-5% Cooldown reduction",
+                5000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.95f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier II",
+                "-10% Cooldown reduction",
+                10000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.9f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier III",
+                "-15% Cooldown reduction",
+                15000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier IV",
+                "-20% Cooldown reduction\n+2s Duration",
+                20000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.8f);
+                    ability.setDuration(duration + 2);
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "Hammer of Illusion",
+                "Hammer of Light - Master Upgrade",
+                "PLACEHOLDER: +100% Damage / +100% Healing",
+                50000,
+                () -> {
+                    ability.setMinDamage(minDamage * 2);
+                    ability.setMaxDamage(maxDamage * 2);
+                    ability.setMinDamageHeal(minHealing * 2);
+                    ability.setMaxDamageHeal(minHealing * 2);
+                }
+        );
+    }
 }

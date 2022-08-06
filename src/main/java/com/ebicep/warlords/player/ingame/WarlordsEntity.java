@@ -2165,6 +2165,10 @@ public abstract class WarlordsEntity {
         this.decrementRespawnTimer();
     }
 
+    public void runEveryTick() {
+        this.spec.runEveryTick();
+    }
+
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();

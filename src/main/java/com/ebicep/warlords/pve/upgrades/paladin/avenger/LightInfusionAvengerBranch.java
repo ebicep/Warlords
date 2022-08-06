@@ -1,17 +1,17 @@
-package com.ebicep.warlords.pve.upgrades.paladin;
+package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
-import com.ebicep.warlords.abilties.LightInfusion;
+import com.ebicep.warlords.abilties.LightInfusionAvenger;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class LightInfusionBranch extends AbstractUpgradeBranch<LightInfusion> {
+public class LightInfusionAvengerBranch extends AbstractUpgradeBranch<LightInfusionAvenger> {
 
     int speedBuff = ability.getSpeedBuff();
     float cooldown = ability.getCooldown();
     int duration = ability.getDuration();
 
-    public LightInfusionBranch(AbilityTree abilityTree, LightInfusion ability) {
+    public LightInfusionAvengerBranch(AbilityTree abilityTree, LightInfusionAvenger ability) {
 
         super(abilityTree, ability);
         treeA.add(new Upgrade(

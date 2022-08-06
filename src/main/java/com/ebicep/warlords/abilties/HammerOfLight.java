@@ -31,13 +31,14 @@ import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
     private boolean pveUpgrade = false;
-    private static final int radius = 6;
-    private int duration = 10;
+
     protected int playersHealed = 0;
     protected int playersDamaged = 0;
     private boolean isCrownOfLight = false;
     private Location location;
 
+    private static final int radius = 6;
+    private int duration = 10;
     private float minDamage = 178;
     private float maxDamage = 244;
 

@@ -52,9 +52,6 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        if (pveUpgrade) {
-            tripleHit(wp, nearPlayer);
-        }
         wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<ProtectorsStrike>(
                 "Protectors Strike",
                 "",
@@ -93,35 +90,57 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             false
                     );
                     // Ally Heal
-                    for (WarlordsEntity ally : PlayerFilter
-                            .entitiesAround(wp, 10, 10, 10)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                            .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                    .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                            .limit(maxAllies)
-                    ) {
-                        if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
+                    if (pveUpgrade) {
+                        for (WarlordsEntity ally : PlayerFilter
+                                .entitiesAround(wp, 10, 10, 10)
+                                .aliveTeammatesOfExcludingSelf(wp)
+                                .limit(maxAllies)
+                                .leastAliveFirst()
+                        ) {
+                            boolean isLeastAlive = ally.getHealth() < ally.getHealth();
+                            float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.7f : 1);
                             ally.addHealingInstance(
                                     wp,
                                     ability,
-                                    currentDamageValue * allyHealing * 1.2f,
-                                    currentDamageValue * allyHealing * 1.2f,
+                                    healing,
+                                    healing,
                                     isCrit ? 100 : -1,
                                     100,
                                     false,
                                     false
                             );
-                        } else {
-                            ally.addHealingInstance(
-                                    wp,
-                                    ability,
-                                    currentDamageValue * allyHealing,
-                                    currentDamageValue * allyHealing,
-                                    isCrit ? 100 : -1,
-                                    100,
-                                    false,
-                                    false
-                            );
+                        }
+                    } else {
+                        for (WarlordsEntity ally : PlayerFilter
+                                .entitiesAround(wp, 10, 10, 10)
+                                .aliveTeammatesOfExcludingSelf(wp)
+                                .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+                                        .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                                .limit(maxAllies)
+                        ) {
+                            if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
+                                ally.addHealingInstance(
+                                        wp,
+                                        ability,
+                                        currentDamageValue * allyHealing * 1.2f,
+                                        currentDamageValue * allyHealing * 1.2f,
+                                        isCrit ? 100 : -1,
+                                        100,
+                                        false,
+                                        false
+                                );
+                            } else {
+                                ally.addHealingInstance(
+                                        wp,
+                                        ability,
+                                        currentDamageValue * allyHealing,
+                                        currentDamageValue * allyHealing,
+                                        isCrit ? 100 : -1,
+                                        100,
+                                        false,
+                                        false
+                                );
+                            }
                         }
                     }
                 }
