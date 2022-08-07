@@ -79,7 +79,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20 Energy cost\n+50% Spike speed",
+                "-20 Energy cost",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 20);
@@ -89,15 +89,15 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         masterUpgrade = new Upgrade(
                 "Terrestrial Meteor",
                 "Boulder - Master Upgrade",
-                "Boulder throws upwards and deals 8x times the\ndamage and increased hit range at the cost of\nhigher energy cost, cooldown and reduced\nknockback",
+                "Boulder throws upwards, deals 5x times the\ndamage and increased hit range at the cost of\nhigher energy cost, cooldown and reduced\nknockback",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.setCooldown(ability.getCooldown() * 3);
-                    ability.setEnergyCost(ability.getEnergyCost() + 120);
-                    ability.setMinDamageHeal(minDamage * 8);
-                    ability.setMaxDamageHeal(maxDamage * 8);
+                    ability.setEnergyCost(ability.getEnergyCost() + 80);
+                    ability.setMinDamageHeal(minDamage * 5);
+                    ability.setMaxDamageHeal(maxDamage * 5);
                     ability.setHitbox(hitbox + 3);
                 }
         );

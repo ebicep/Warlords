@@ -25,10 +25,18 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                    .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
-                    .lore(ChatColor.YELLOW + "Click to select your team!")
-                    .get(), (g, p) -> openTeamMenu(p)));
+            switch (game.getGameMode()) {
+                case CAPTURE_THE_FLAG:
+                case INTERCEPTION:
+                case TEAM_DEATHMATCH:
+                case DEBUG:
+                case SIMULATION_TRIAL:
+                    game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
+                            .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
+                            .lore(ChatColor.YELLOW + "Click to select your team!")
+                            .get(), (g, p) -> openTeamMenu(p)));
+                    break;
+            }
             game.getOptions().add(new AFKDetectionOption());
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
@@ -153,6 +161,7 @@ public enum GameAddon {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setInPve(true);
+            player.setTeam(Team.BLUE);
         }
     }
 

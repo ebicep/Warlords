@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,22 +39,21 @@ public class CurrencyOnEventOption implements Option, Listener {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
 
-                return Collections.singletonList("Insignia: " + (player != null ? ChatColor.AQUA + "❂ " + player.getCurrency() : ""));
+                return Collections.singletonList("Insignia: " + (player != null ? ChatColor.GOLD + "❂ " + player.getCurrency() : ""));
             }
         });
     }
 
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
-        if (event.getKiller() != null) {
-            event.getKiller().sendMessage(ChatColor.AQUA + "+" + currencyToAdd + " ❂ Insignia");
-            event.getKiller().addCurrency(currencyToAdd);
-        }
-
-        for (WarlordsEntity we : event.getPlayer().getHitBy().keySet()) {
-            if (we instanceof WarlordsPlayer) {
-                we.sendMessage(ChatColor.AQUA + "+" + currencyToAdd + " ❂ Insignia");
-                we.addCurrency(currencyToAdd);
+        WarlordsEntity mob = event.getPlayer();
+        for (WarlordsEntity player : PlayerFilter
+                .playingGame(mob.getGame())
+                .aliveEnemiesOf(mob)
+        ) {
+            if (player instanceof WarlordsPlayer) {
+                player.sendMessage(ChatColor.GOLD + "+" + currencyToAdd + " ❂ Insignia");
+                player.addCurrency(currencyToAdd);
             }
         }
     }

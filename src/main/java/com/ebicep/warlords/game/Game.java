@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * An instance of an Warlords game. It depends on a state for its behavior. You
+ * An instance of a Warlords game. It depends on a state for its behavior. You
  * can also attach GameAddons to modify its global behavior, and attach options
  * to add specific small things.
  *
@@ -360,13 +360,13 @@ public final class Game implements Runnable, AutoCloseable {
         }
         /*
         if (!asSpectator && !this.acceptsPlayers) {
-            throw new IllegalStateException("This game does not accepts player at the moment");
+            throw new IllegalStateException("This game does not accept player at the moment");
         }
         if (asSpectator && !this.acceptsSpectators) {
-            throw new IllegalStateException("This game does not accepts spectators at the moment");
+            throw new IllegalStateException("This game does not accept spectators at the moment");
         }
          */
-        this.players.put(entity.getUuid(), entity.getTeam());
+        //this.players.put(entity.getUuid(), entity.getTeam());
         Warlords.addPlayer(entity);
         return entity;
     }
@@ -375,7 +375,7 @@ public final class Game implements Runnable, AutoCloseable {
      * Adds a player into the game
      *
      * @param player      The player to add
-     * @param asSpectator If the player should be added as an spectator
+     * @param asSpectator If the player should be added as a spectator
      * @see #acceptsPeople()
      * @see #acceptsSpectators()
      */
@@ -389,10 +389,10 @@ public final class Game implements Runnable, AutoCloseable {
         }
         /*
         if (!asSpectator && !this.acceptsPlayers) {
-            throw new IllegalStateException("This game does not accepts player at the moment");
+            throw new IllegalStateException("This game does not accept player at the moment");
         }
         if (asSpectator && !this.acceptsSpectators) {
-            throw new IllegalStateException("This game does not accepts spectators at the moment");
+            throw new IllegalStateException("This game does not accept spectators at the moment");
         }
          */
         this.players.put(player.getUniqueId(), null);

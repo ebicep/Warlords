@@ -20,6 +20,4 @@ public class WaveCommand extends BaseCommand {
                 .get();
         waveDefenseOption.setWaveCounter(amount);
     }
-
-
 }

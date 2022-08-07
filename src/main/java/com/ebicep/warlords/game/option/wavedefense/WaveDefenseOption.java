@@ -73,6 +73,19 @@ public class WaveDefenseOption implements Option {
             return;
         }
 
+        int playerCount = game.playersCount();
+        switch (playerCount) {
+            case 2:
+                spawnCount *= 1.2f;
+                break;
+            case 3:
+                spawnCount *= 1.3f;
+                break;
+            case 4:
+                spawnCount *= 1.4f;
+                break;
+        }
+
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
             int counter = 0;
@@ -106,6 +119,7 @@ public class WaveDefenseOption implements Option {
                 mobs.add(abstractMob);
                 return abstractMob.toNPC(game, team, UUID.randomUUID());
             }
+
 
             @Override
             public void run() {
@@ -158,6 +172,19 @@ public class WaveDefenseOption implements Option {
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
+                int playerCount = game.playersCount();
+                switch (playerCount) {
+                    case 2:
+                        spawnCount *= 1.2f;
+                        break;
+                    case 3:
+                        spawnCount *= 1.3f;
+                        break;
+                    case 4:
+                        spawnCount *= 1.4f;
+                        break;
+                }
+
                 sendMessage(
                         entry.getKey(),
                         false,
@@ -230,9 +257,7 @@ public class WaveDefenseOption implements Option {
                     if (mob.getWarlordsNPC().equals(attacker) && event.isDamageInstance()) {
                         mob.onAttack(attacker, receiver);
                     }
-                }
 
-                for (AbstractMob<?> mob : mobs) {
                     if (mob.getWarlordsNPC().equals(receiver) && event.isDamageInstance()) {
                         mob.onDamageTaken(receiver, attacker);
                     }
@@ -324,7 +349,7 @@ public class WaveDefenseOption implements Option {
                                     currency = 100;
                                 }
                                 we.addCurrency(currency);
-                                we.sendMessage(ChatColor.AQUA + "+" + currency + " ❂ Insignia");
+                                we.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
                             }
                         });
                     }
@@ -333,7 +358,6 @@ public class WaveDefenseOption implements Option {
                 for (AbstractMob<?> mob : mobs) {
                     mob.whileAlive(counter);
                 }
-
 
                 if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));

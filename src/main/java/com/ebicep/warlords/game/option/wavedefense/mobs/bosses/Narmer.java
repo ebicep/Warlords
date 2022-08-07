@@ -24,11 +24,11 @@ public class Narmer extends AbstractZombie implements BossMob {
                         new ItemStack(Material.CHAINMAIL_BOOTS),
                         new ItemStack(Material.STICK)
                 ),
-                12000,
-                0.5f,
-                0,
-                400,
-                600
+                18000,
+                0.25f,
+                20,
+                300,
+                400
         );
     }
 

@@ -54,7 +54,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+2% Proc chance\n",
+                "+2% Proc chance",
                 5000,
                 () -> {
                     ability.setProcChance(procChance + 2);

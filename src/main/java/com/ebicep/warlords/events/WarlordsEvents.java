@@ -177,9 +177,11 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Currently playable specs - PVE:");
             ChatUtils.sendMessage(player, false,ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Thunderlord");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Avenger");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Earthwarden");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Aquamancer");
             ChatUtils.sendMessage(player, false, "");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "In Progress: Protector");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "NEXT UP: Earthwarden, Pyromancer");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "NEXT UP: Pyromancer");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
 //            ChatUtils.sendCenteredMessage(player, "");

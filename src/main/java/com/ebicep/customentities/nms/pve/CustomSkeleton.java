@@ -49,6 +49,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
 
         //should just use arrow mechanic - https://gist.github.com/Minikloon/4f53ea780350c7b86761318ca313a9ed
         public static Location predictFutureLocation(WarlordsEntity self, WarlordsEntity target) {
+            if (target == null) return null;
             Location location = target.getLocation().clone();
             Vector oldVectorToSubtract = target.getCurrentVector().clone();
             if (oldVectorToSubtract == null) return location;

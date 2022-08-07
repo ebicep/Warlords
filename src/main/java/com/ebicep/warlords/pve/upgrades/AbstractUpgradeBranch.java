@@ -162,7 +162,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             lore.add("");
         }
         lore.add((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + upgrade.getCurrencyCost());
+                "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost());
         return new ItemBuilder(masterUpgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL))
                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + masterUpgrade.getName())
                 .lore(lore)
@@ -173,7 +173,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         return new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.WOOL, 1, (short) 1) : new ItemStack(Material.WOOL, 1, (short) 8))
                 .name((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED) + upgrade.getName())
                 .lore((upgrade.isUnlocked() ? ChatColor.GREEN : ChatColor.GRAY) + upgrade.getDescription() +
-                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.AQUA + "❂ " + upgrade.getCurrencyCost())
+                        "\n\n" + ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "❂ " + upgrade.getCurrencyCost())
                 .get();
     }
 

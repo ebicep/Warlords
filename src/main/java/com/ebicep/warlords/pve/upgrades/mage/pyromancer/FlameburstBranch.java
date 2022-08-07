@@ -12,87 +12,89 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
     float maxDamage = ability.getMaxDamageHeal();
     float energyCost = ability.getEnergyCost();
     float critMultiplier = ability.getCritMultiplier();
+    float hitbox = ability.getHitbox();
 
     public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "",
+                "Zeal - Tier I",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "",
+                "+0.5 Blocks hit radius",
                 5000,
                 () -> {
-
+                    ability.setHitbox(hitbox + 0.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "",
+                "+1 Block hit radius",
                 10000,
                 () -> {
-
+                    ability.setHitbox(hitbox + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "",
+                "+1.5 Blocks hit radius",
                 15000,
                 () -> {
-
+                    ability.setHitbox(hitbox + 1.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "",
+                "+2 Blocks hit radius\n+15% Crit multiplier",
                 20000,
                 () -> {
-
+                    ability.setHitbox(hitbox + 2f);
+                    ability.setCritMultiplier(critMultiplier + 15);
                 }
         ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "PLACEHOLDER",
+                "Flame Awakening",
+                "Flame Burst - Master Upgrade",
+                "Flame Burst deals significantly more damage and ramps up\ncrit chance, crit damage and damage very quickly per blocks\ntraveled at the cost of heavily reduced projectile\nspeed, cooldown and increased energy cost.",
                 50000,
                 () -> {
                     ability.setProjectileWidth(0.72D);
-                    ability.setAcceleration(1.005);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
                     ability.setEnergyCost(energyCost + 90);
                     ability.setMinDamageHeal(minDamage * 2);
                     ability.setMaxDamageHeal(maxDamage * 2);
-                    ability.setCooldown(cooldown * 2);
+                    ability.setCooldown(ability.getCooldown() * 2);
                     ability.setHitbox(ability.getHitbox() + 5);
                     ability.setPveUpgrade(true);
                 }

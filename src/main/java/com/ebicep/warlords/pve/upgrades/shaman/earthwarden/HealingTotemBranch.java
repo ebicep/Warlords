@@ -86,10 +86,10 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         masterUpgrade = new Upgrade(
                 "Healing Obelisk",
                 "Healing Totem - Master Upgrade",
-                "+2s Additional duration\n\nAll enemies within the radius of Healing Totem are\nperpetually crippled, reducing their damage dealt\nby 50%",
+                "-25% Cooldown reduction\n\nAll enemies within the radius of Healing Totem are\nperpetually crippled, reducing their damage dealt\nby 50%",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() + 2);
+                    ability.setCooldown(cooldown * 0.75f);
                     ability.setPveUpgrade(true);
                 }
         );
