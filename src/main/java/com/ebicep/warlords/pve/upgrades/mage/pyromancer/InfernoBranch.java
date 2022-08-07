@@ -79,9 +79,13 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "PLACEHOLDER",
-                50000
+                "Dante’s Inferno",
+                "Inferno - Master Upgrade",
+                "WIP",
+                50000,
+                () -> {
+
+                }
         );
     }
 
