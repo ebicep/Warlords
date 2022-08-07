@@ -73,17 +73,20 @@ public class WaveDefenseOption implements Option {
             return;
         }
 
-        int playerCount = game.playersCount();
-        switch (playerCount) {
-            case 2:
-                spawnCount *= 1.2f;
-                break;
-            case 3:
-                spawnCount *= 1.3f;
-                break;
-            case 4:
-                spawnCount *= 1.4f;
-                break;
+        // temp
+        if (currentWave.getMessage() == null) {
+            int playerCount = (int) game.warlordsPlayers().count();
+            switch (playerCount) {
+                case 2:
+                    spawnCount *= 1.2f;
+                    break;
+                case 3:
+                    spawnCount *= 1.3f;
+                    break;
+                case 4:
+                    spawnCount *= 1.4f;
+                    break;
+            }
         }
 
         spawner = new GameRunnable(game) {
@@ -147,6 +150,13 @@ public class WaveDefenseOption implements Option {
     }
 
     public void newWave() {
+
+        for (WarlordsEntity we : PlayerFilter.playingGame(getGame())) {
+            if (we.isDead()) {
+                we.respawn();
+            }
+        }
+
         if (currentWave != null) {
             String message;
             if (currentWave.getMessage() != null) {
@@ -172,7 +182,7 @@ public class WaveDefenseOption implements Option {
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
-                int playerCount = game.playersCount();
+                int playerCount = (int) game.warlordsPlayers().count();
                 switch (playerCount) {
                     case 2:
                         spawnCount *= 1.2f;
@@ -187,10 +197,10 @@ public class WaveDefenseOption implements Option {
 
                 sendMessage(
                         entry.getKey(),
-                        false,
-                        ChatColor.YELLOW + "A wave of §c§l" +
-                                spawnCount + "§e monsters will spawn in §c" +
-                                currentWave.getDelay() / 20 + " §eseconds!"
+                false,
+                ChatColor.YELLOW + "A wave of §c§l" +
+                        spawnCount + "§e monsters will spawn in §c" +
+                        currentWave.getDelay() / 20 + " §eseconds!"
                 );
             }
 
@@ -302,6 +312,7 @@ public class WaveDefenseOption implements Option {
                 return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
             }
         });
+
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
@@ -309,7 +320,8 @@ public class WaveDefenseOption implements Option {
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
-                        .map(e -> e.getName() + ": " + (e.isDead() ? ChatColor.DARK_RED + "DEAD" : ChatColor.RED + "❤ " + (int) e.getHealth()) +
+                        .map(e -> (e.getName().length() >= 16 ? e.getName().substring(7) : e.getName()) + ": " +
+                                (e.isDead() ? ChatColor.DARK_RED + "DEAD" : ChatColor.RED + "❤ " + (int) e.getHealth()) +
                                 ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills())
                         .collect(Collectors.toList());
             }
@@ -363,6 +375,7 @@ public class WaveDefenseOption implements Option {
                     game.setNextState(new EndState(game, null));
                     this.cancel();
                 }
+
                 counter++;
             }
         }.runTaskTimer(20, 0);

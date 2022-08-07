@@ -164,6 +164,7 @@ public enum GameAddon {
             player.setInPve(true);
             if (player.getEntity() instanceof Player) {
                 player.setTeam(Team.BLUE);
+                player.updateArmor();
             }
         }
     }

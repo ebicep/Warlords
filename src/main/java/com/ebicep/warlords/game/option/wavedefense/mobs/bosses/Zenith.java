@@ -6,11 +6,15 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -40,13 +44,25 @@ public class Zenith extends AbstractZombie implements BossMob {
         for (int i = 0; i < 6; i++) {
             getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
         }
+        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        ChatColor.DARK_PURPLE + getWarlordsNPC().getName(),
+                        ChatColor.LIGHT_PURPLE + "Leader of the Illusion Vanguard",
+                        20, 50, 20
+                );
+            }
+        }
     }
 
     @Override
     public void whileAlive(int ticksElapsed) {
-        Location loc = getWarlordsNPC().getLocation();
-        Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
-        EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
+        if (ticksElapsed % 40 == 0) {
+            Location loc = getWarlordsNPC().getLocation();
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
+            EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
+        }
     }
 
     @Override

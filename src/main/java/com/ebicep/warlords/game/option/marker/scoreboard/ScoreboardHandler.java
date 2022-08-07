@@ -30,11 +30,11 @@ public interface ScoreboardHandler extends GameMarker {
 
     /**
      * Registers an onchange handler for the scoreboard, scoreboard should call
-     * all onchange handlers if their content changes. This prevent unneeded
+     * all onchange handlers if their content changes. This prevents unneeded
      * re-rendering
      *
      * @param onChange The onchange handler to register
-     * @return An function to unregister this registration
+     * @return A function to unregister this registration
      */
     @Nonnull
     Runnable registerChangeHandler(@Nonnull Consumer<ScoreboardHandler> onChange);

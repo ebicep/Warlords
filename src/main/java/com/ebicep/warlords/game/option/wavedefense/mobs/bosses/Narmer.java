@@ -4,11 +4,15 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Narmer extends AbstractZombie implements BossMob {
@@ -34,7 +38,16 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn() {
-
+        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+            if (we.getEntity() instanceof Player) {
+                PacketUtils.sendTitle(
+                        (Player) we.getEntity(),
+                        ChatColor.GOLD + getWarlordsNPC().getName(),
+                        ChatColor.YELLOW + "Unifier of Worlds",
+                        20, 40, 20
+                );
+            }
+        }
     }
 
     @Override

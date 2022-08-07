@@ -1026,7 +1026,6 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
-            options.add(new RespawnWaveOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -1073,7 +1072,7 @@ public enum GameMap {
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                     )
                     .add(10, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.NARMER)
+                            .add(Mobs.BOLTARO)
                     )
                     .add(11, new SimpleWave(12, 10 * SECOND, null)
                             //basic
@@ -1155,7 +1154,7 @@ public enum GameMap {
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                     )
                     .add(30, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.MITHRA)
+                            .add(Mobs.NARMER)
                     )
                     .add(31, new SimpleWave(22, 10 * SECOND, null)
                             //basic
@@ -1195,8 +1194,9 @@ public enum GameMap {
                             .add(0.03, Mobs.ENVOY_SKELETON)
                             .add(0.02, Mobs.ENVOY_PIG_ZOMBIE)
                     )
-                    .add(40, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(40, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.PHYSIRA)
+                            .add(Mobs.MITHRA)
                     )
                     .add(41, new SimpleWave(28, 10 * SECOND, null)
                             //basic

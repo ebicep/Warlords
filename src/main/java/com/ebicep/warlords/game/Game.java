@@ -366,7 +366,7 @@ public final class Game implements Runnable, AutoCloseable {
             throw new IllegalStateException("This game does not accept spectators at the moment");
         }
          */
-        //this.players.put(entity.getUuid(), entity.getTeam());
+        this.players.put(entity.getUuid(), entity.getTeam());
         Warlords.addPlayer(entity);
         return entity;
     }
@@ -468,10 +468,6 @@ public final class Game implements Runnable, AutoCloseable {
 
     public int playersCount() {
         return (int) this.players.values().stream().filter(Objects::nonNull).count();
-    }
-
-    public int spectatorsCount() {
-        return (int) this.players.values().stream().filter(Objects::isNull).count();
     }
 
     public Stream<WarlordsEntity> warlordsEntities() {

@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -99,9 +98,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 .get();
 
         double scale = 600.0;
-        int playerCount = game.playersCount();
+        long playerCount = game.warlordsPlayers().count();
         double modifiedScale = scale - (playerCount > 1 ? 50 * playerCount : 0);
-        Bukkit.broadcastMessage("scale: " + modifiedScale);
         int health = (int) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
         warlordsNPC.setMaxHealth(health);
         warlordsNPC.setHealth(health);

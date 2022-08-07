@@ -8,6 +8,8 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.pve.SkullID;
+import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -22,7 +24,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
                 "Illusion Shaman",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.WOOD, 1, (short) 3),
+                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
