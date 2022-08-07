@@ -41,7 +41,7 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
 
     }
 

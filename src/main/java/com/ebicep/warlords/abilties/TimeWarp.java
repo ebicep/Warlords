@@ -79,8 +79,8 @@ public class TimeWarp extends AbstractAbility {
                     warpTrail.clear();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 4 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
                         }

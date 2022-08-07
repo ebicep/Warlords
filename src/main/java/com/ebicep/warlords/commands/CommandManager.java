@@ -19,7 +19,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
-import com.ebicep.warlords.game.option.wavedefense.commands.SetWaveCommand;
+import com.ebicep.warlords.game.option.wavedefense.commands.SpawnMobCommand;
+import com.ebicep.warlords.game.option.wavedefense.commands.WaveCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -117,7 +118,8 @@ public class CommandManager {
         manager.registerCommand(new QueueCommand());
 
         manager.registerCommand(new EditCurrencyCommand());
-        manager.registerCommand(new SetWaveCommand());
+        manager.registerCommand(new SpawnMobCommand());
+        manager.registerCommand(new WaveCommand());
 
         manager.registerCommand(new GuildCommand());
 

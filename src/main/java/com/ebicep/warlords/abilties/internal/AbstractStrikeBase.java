@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractStrikeBase extends AbstractAbility {
 
@@ -24,17 +25,25 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
+    public static Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
+        return new CooldownFilter<>(owner, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
+                .filter(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius())
+                .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
+    }
+
     protected abstract void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        AtomicBoolean hitPlayer = new AtomicBoolean(false);
         PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
                 .first((nearPlayer) -> {
-                    if (Utils.isLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                    if (Utils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && Utils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
                         addTimesUsed();
                         AbstractPlayerClass.sendRightClickPacket(player);
 
@@ -78,10 +87,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         }
 
                         onHit(wp, player, nearPlayer);
+                        hitPlayer.set(true);
                     }
                 });
 
-        return true;
+        return hitPlayer.get();
     }
 
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
@@ -117,13 +127,6 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                     500);
 
         }
-    }
-
-    public static Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
-        return new CooldownFilter<>(owner, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                .filter(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius())
-                .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
     }
 
     public double getHitbox() {

@@ -67,8 +67,8 @@ public class Windfury extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 4 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
                         ParticleEffect.CRIT.display(
                                 0.2f,
                                 0,

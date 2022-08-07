@@ -243,7 +243,7 @@ public class DebugMenuPlayerOptions {
                             .name(ChatColor.AQUA + "Clear All Cooldowns")
                             .get(),
                     (m, e) -> {
-                        target.getCooldownManager().clearCooldowns();
+                        target.getCooldownManager().clearAllCooldowns();
                         sendDebugMessage(player, ChatColor.GREEN + "Cleared " + coloredName + ChatColor.GREEN + "'s Cooldowns", true);
                     }
             );

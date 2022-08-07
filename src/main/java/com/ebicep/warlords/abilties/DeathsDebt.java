@@ -155,9 +155,9 @@ public class DeathsDebt extends AbstractTotemBase {
                                 }
                             },
                             6 * 20,
-                            (cooldown, ticksLeft, counter) -> {
+                            (cooldown, ticksLeft, ticksElapsed) -> {
                                 //6 self damage ticks
-                                if (counter % 20 == 0) {
+                                if (ticksElapsed % 20 == 0) {
                                     onDebtTick(wp, totemStand, tempDeathsDebt);
                                 }
                             }
@@ -169,7 +169,7 @@ public class DeathsDebt extends AbstractTotemBase {
                     totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
                 },
                 duration,
-                (cooldown, ticksLeft, counter) -> {
+                (cooldown, ticksLeft, ticksElapsed) -> {
                     if (wp.getWorld() != totemStand.getWorld()) {
                         cooldown.setTicksLeft(0);
                         return;
@@ -183,7 +183,7 @@ public class DeathsDebt extends AbstractTotemBase {
                         return;
                     }
 
-                    if (counter % 20 == 0) {
+                    if (ticksElapsed % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                         wp.sendMessage(ChatColor.GREEN + WarlordsEntity.GIVE_ARROW_GREEN + " §2Spirit's Respite §7delayed §c" +
                                 Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" +

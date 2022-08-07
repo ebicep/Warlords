@@ -168,11 +168,15 @@ public class CalculateSpeed {
         this.changed = changed || isChanged;
     }
 
+    public void reset() {
+        this.modifiers.clear();
+        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
+    }
+
     public void addBaseModifier(float add) {
         this.baseModifier += add;
         this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
-        this.modifiers.clear();
-        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
+        reset();
     }
 
     private static class Modifier {

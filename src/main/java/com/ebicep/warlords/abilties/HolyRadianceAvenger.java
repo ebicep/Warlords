@@ -97,8 +97,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         cooldownManager -> {
                         },
                         markDuration * 20,
-                        (cooldown, ticksLeft, counter) -> {
-                            if (counter % 10 == 0) {
+                        (cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 10 == 0) {
                                 EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
                             }
                         }
@@ -159,8 +159,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 cooldownManager -> {
                 },
                 markDuration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 10 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
                     }
                 }

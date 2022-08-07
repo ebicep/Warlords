@@ -42,7 +42,10 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
+        if (ticksElapsed % 60 != 0) {
+            return;
+        }
         Location location = getWarlordsNPC().getLocation();
         Utils.playGlobalSound(location, Sound.ZOMBIE_PIG_ANGRY, 1, 0.5f);
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 0.8f, 0.6f);

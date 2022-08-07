@@ -68,8 +68,8 @@ public class InspiringPresence extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 4 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
                         ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);

@@ -113,13 +113,13 @@ public class HealingTotem extends AbstractTotemBase {
                             });
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (pveUpgrade && counter % 10 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (pveUpgrade && ticksElapsed % 10 == 0) {
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
                     }
 
-                    if (counter % 20 == 0) {
-                        cooldownCounter.set(counter);
+                    if (ticksElapsed % 20 == 0) {
+                        cooldownCounter.set(ticksElapsed);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
 
                         ParticleEffect.VILLAGER_HAPPY.display(
@@ -156,7 +156,7 @@ public class HealingTotem extends AbstractTotemBase {
                         circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                        float healMultiplier = 1 + (.35f * (counter / 20f));
+                        float healMultiplier = 1 + (.35f * (ticksElapsed / 20f));
                         PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
                                 .forEach(teammate -> {

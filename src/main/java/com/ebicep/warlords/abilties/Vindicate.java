@@ -46,7 +46,7 @@ public class Vindicate extends AbstractAbility {
                 cooldownManager -> {
                 },
                 tickDuration,
-                (cooldown, ticksLeft, counter) -> {
+                (cooldown, ticksLeft, ticksElapsed) -> {
                     target.getSpeed().removeSlownessModifiers();
                     target.getCooldownManager().removeDebuffCooldowns();
                 }

@@ -58,8 +58,8 @@ public class LightInfusionProtector extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 4 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3f,
                                 0.1f,

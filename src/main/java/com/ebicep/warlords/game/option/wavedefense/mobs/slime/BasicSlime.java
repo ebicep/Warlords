@@ -78,7 +78,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
 
     }
 

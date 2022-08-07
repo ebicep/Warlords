@@ -135,8 +135,8 @@ public class Intervene extends AbstractAbility {
                         );
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, counter) -> {
-                        if (counter % 20 == 0 && ticksLeft > 0) {
+                    (cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 20 == 0 && ticksLeft > 0) {
                             int timeLeft = Math.round(ticksLeft / 20f);
                             if (timeLeft == 1) {
                                 veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
@@ -168,7 +168,7 @@ public class Intervene extends AbstractAbility {
                         );
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, counter) -> {
+                    (cooldown, ticksLeft, ticksElapsed) -> {
                         if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
                             cooldown.setTicksLeft(0);
                             interveneCooldownVeneTarget.setTicksLeft(0);

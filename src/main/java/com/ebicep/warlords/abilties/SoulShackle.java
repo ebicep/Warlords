@@ -138,8 +138,8 @@ public class SoulShackle extends AbstractAbility {
                 cooldownManager -> {
                 },
                 silenceDuration,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 10 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
                         Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
 
                         Location playerLoc = shackleTarget.getLocation();

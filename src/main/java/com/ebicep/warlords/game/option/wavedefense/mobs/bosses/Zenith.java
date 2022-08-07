@@ -43,7 +43,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
         Location loc = getWarlordsNPC().getLocation();
         Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
         EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);

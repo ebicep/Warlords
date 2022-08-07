@@ -151,8 +151,8 @@ public class HammerOfLight extends AbstractAbility {
                     particleTask.cancel();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 20 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
                         if (tempHammerOfLight.isCrownOfLight()) {
                             if (wp.isAlive()) {
                                 for (WarlordsEntity allyTarget : PlayerFilter
@@ -219,8 +219,8 @@ public class HammerOfLight extends AbstractAbility {
                         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
                         Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
 
-                        hammerOfLightCooldown.addTriConsumer((cooldown, ticksLeft, counter) -> {
-                            if (counter % 6 == 0) {
+                        hammerOfLightCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 6 == 0) {
                                 double angle = 0;
                                 for (int i = 0; i < 9; i++) {
                                     double x = .4 * Math.cos(angle);

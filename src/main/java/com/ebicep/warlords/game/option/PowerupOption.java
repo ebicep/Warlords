@@ -305,7 +305,7 @@ public class PowerupOption implements Option {
                         CooldownTypes.BUFF,
                         cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20,
-                        (cooldown, ticksLeft, counter) -> {
+                        (cooldown, ticksLeft, ticksElapsed) -> {
                         }
                 ) {
                     @Override

@@ -26,7 +26,7 @@ public class BabyMagmaCube extends AbstractMagmaCube {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
 
     }
 

@@ -85,8 +85,8 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         cooldownManager -> {
                         },
                         markDuration * 20,
-                        (cooldown, ticksLeft, counter) -> {
-                            if (counter % 10 == 0) {
+                        (cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 10 == 0) {
                                 Location playerLoc = markTarget.getLocation();
                                 Location particleLoc = playerLoc.clone();
                                 for (int i = 0; i < 4; i++) {

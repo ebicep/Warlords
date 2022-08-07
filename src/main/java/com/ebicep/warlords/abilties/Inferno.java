@@ -60,8 +60,8 @@ public class Inferno extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter % 3 == 0) {
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation().add(0, 1.2, 0);
                         ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
                         ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);

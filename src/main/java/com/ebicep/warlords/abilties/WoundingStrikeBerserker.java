@@ -68,7 +68,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                             nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
                         }
                     },
-                    woundingDuration * 200
+                    woundingDuration * 20
             ) {
                 @Override
                 public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
@@ -90,7 +90,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 cooldownManager -> {
                 },
                 woundingDuration * 20,
-                (cooldown, ticksLeft, counter) -> {
+                (cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.01f;
                         hit.addDamageInstance(

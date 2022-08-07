@@ -180,6 +180,9 @@ public abstract class AbstractPlayerClass {
     }
 
     public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
     }

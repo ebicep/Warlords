@@ -39,16 +39,16 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
     private final Set<AbstractMob<?>> mobs = new HashSet<>();
+    private final Team team;
+    private final WaveList waves;
+    SimpleScoreboardHandler scoreboard;
     private int waveCounter = 0;
     private int maxWave = 10000;
     private int spawnCount = 0;
     private Wave currentWave;
-    private final Team team;
-    private final WaveList waves;
     @Nonnull
     private Game game;
     private Location lastLocation = new Location(null, 0, 0, 0);
-    SimpleScoreboardHandler scoreboard;
     @Nullable
     private BukkitTask spawner;
 
@@ -75,6 +75,7 @@ public class WaveDefenseOption implements Option {
 
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
+            int counter = 0;
 
             private Location getSpawnLocation(WarlordsEntity entity) {
                 List<Location> candidates = new ArrayList<>();
@@ -105,8 +106,6 @@ public class WaveDefenseOption implements Option {
                 mobs.add(abstractMob);
                 return abstractMob.toNPC(game, team, UUID.randomUUID());
             }
-
-            int counter = 0;
 
             @Override
             public void run() {
@@ -155,16 +154,16 @@ public class WaveDefenseOption implements Option {
             if (currentWave.getMessage() != null) {
                 sendMessage(
                         entry.getKey(),
-                false,
-                ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        false,
+                        ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
                 sendMessage(
                         entry.getKey(),
-                false,
-                ChatColor.YELLOW + "A wave of §c§l" +
-                        spawnCount + "§e monsters will spawn in §c" +
-                        currentWave.getDelay() / 20 + " §eseconds!"
+                        false,
+                        ChatColor.YELLOW + "A wave of §c§l" +
+                                spawnCount + "§e monsters will spawn in §c" +
+                                currentWave.getDelay() / 20 + " §eseconds!"
                 );
             }
 
@@ -331,17 +330,16 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
-                //test
-                if (counter++ % 60 == 0) {
-                    for (AbstractMob<?> mob : mobs) {
-                        mob.whileAlive();
-                    }
+                for (AbstractMob<?> mob : mobs) {
+                    mob.whileAlive(counter);
                 }
+
 
                 if (waveCounter > maxWave) {
                     game.setNextState(new EndState(game, null));
                     this.cancel();
                 }
+                counter++;
             }
         }.runTaskTimer(20, 0);
     }
@@ -354,17 +352,17 @@ public class WaveDefenseOption implements Option {
         return waveCounter;
     }
 
+    public void setWaveCounter(int waveCounter) {
+        this.waveCounter = waveCounter - 1;
+        newWave();
+    }
+
     public Wave getCurrentWave() {
         return currentWave;
     }
 
     public WaveList getWaves() {
         return waves;
-    }
-
-    public void setWaveCounter(int waveCounter) {
-        this.waveCounter = waveCounter - 1;
-        newWave();
     }
 
     @Nonnull
@@ -378,5 +376,13 @@ public class WaveDefenseOption implements Option {
 
     public void setMaxWave(int maxWave) {
         this.maxWave = maxWave;
+    }
+
+    public int getSpawnCount() {
+        return spawnCount;
+    }
+
+    public void setSpawnCount(int spawnCount) {
+        this.spawnCount = spawnCount;
     }
 }

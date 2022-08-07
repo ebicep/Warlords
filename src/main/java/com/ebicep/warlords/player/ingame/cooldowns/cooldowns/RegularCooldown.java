@@ -19,11 +19,11 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     protected int startingTicks;
     protected int ticksLeft;
-    protected int counter;
+    protected int ticksElapsed;
     /**
-     * cooldown = this
-     * ticksLeft = ticksLeft of cooldown
-     * counter = counter incrementing every tick, separate from ticksLeft
+     * <p>cooldown = this
+     * <p>ticksLeft = ticksLeft of cooldown
+     * <p>counter = counter incrementing every tick, separate from ticksLeft
      */
     protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers;
 
@@ -34,7 +34,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         this.consumers = new ArrayList<>();
     }
 
-    @SafeVarargs //(cooldown, ticksLeft, counter)
+    @SafeVarargs //(cooldown, ticksLeft, ticksElapsed)
     public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.startingTicks = ticksLeft;
@@ -63,8 +63,8 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public void onTick() {
-        consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft, counter));
-        counter++;
+        consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft, ticksElapsed));
+        ticksElapsed++;
         subtractTime(1);
     }
 

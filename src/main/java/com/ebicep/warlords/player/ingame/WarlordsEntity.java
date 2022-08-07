@@ -1097,7 +1097,11 @@ public abstract class WarlordsEntity {
     private void setWalkSpeed(float walkspeed) {
         this.walkspeed = walkspeed;
         Player player = Bukkit.getPlayer(uuid);
-        if (player != null) player.setWalkSpeed(this.walkspeed);
+        if (player != null) {
+            player.setWalkSpeed(this.walkspeed);
+        } else {
+            //((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(walkspeed);
+        }
     }
 
     public void displayActionBar() {

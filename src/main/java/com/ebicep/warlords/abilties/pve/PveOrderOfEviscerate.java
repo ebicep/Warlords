@@ -86,10 +86,10 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                     removeCloak(wp, true);
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
+                (cooldown, ticksLeft, ticksElapsed) -> {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
-                    if (counter % 10 == 0) {
+                    if (ticksElapsed % 10 == 0) {
                         ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
                     }
                 }
@@ -195,8 +195,8 @@ public class PveOrderOfEviscerate extends AbstractAbility {
                         }
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, counter) -> {
-                        if (counter % 5 == 0) {
+                    (cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 5 == 0) {
                             wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
 
                             LivingEntity wpEntity = wp.getEntity();

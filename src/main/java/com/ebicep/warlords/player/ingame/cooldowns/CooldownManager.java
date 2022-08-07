@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -198,6 +200,19 @@ public class CooldownManager {
         addCooldown(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck, triConsumers));
     }
 
+    @SafeVarargs
+    public final <T> void addPermanentCooldown(String name,
+                                               String actionBarName,
+                                               Class<T> cooldownClass,
+                                               T cooldownObject,
+                                               WarlordsEntity from,
+                                               CooldownTypes cooldownType,
+                                               boolean removeOnDeath,
+                                               BiConsumer<PermanentCooldown<T>, Integer>... biConsumers
+    ) {
+        addCooldown(new PermanentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, removeOnDeath, biConsumers));
+    }
+
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {
         if (hasCooldownFromName("Vindicate Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
             return;
@@ -246,8 +261,9 @@ public class CooldownManager {
 
     public void clearCooldowns() {
         List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream().filter(cd ->
-                //these cooldowns are still active on death
-                cd.getCooldownClass() != OrbsOfLife.class &&
+                !(cd instanceof PermanentCooldown && !((PermanentCooldown<?>) cd).isRemoveOnDeath()) &&
+                        //these cooldowns are still active on death
+                        cd.getCooldownClass() != OrbsOfLife.class &&
                         !(cd.getCooldownClass() == HammerOfLight.class && ((HammerOfLight) cd.getCooldownObject()).isHammer()) &&
                         cd.getCooldownClass() != HealingRain.class &&
                         cd.getCooldownClass() != HealingTotem.class &&

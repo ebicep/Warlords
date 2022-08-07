@@ -37,7 +37,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
 
     }
 

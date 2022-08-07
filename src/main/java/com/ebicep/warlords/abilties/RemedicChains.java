@@ -143,14 +143,14 @@ public class RemedicChains extends AbstractAbility {
                             }
                         },
                         duration * 20,
-                        (cooldown, ticksLeft, counter) -> {
+                        (cooldown, ticksLeft, ticksElapsed) -> {
                             boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
 
-                            if (counter % 20 == 0 && !outOfRange) {
+                            if (ticksElapsed % 20 == 0 && !outOfRange) {
                                 timeLinked.getAndIncrement();
                             }
 
-                            if (counter % 8 == 0) {
+                            if (ticksElapsed % 8 == 0) {
                                 if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
                                     EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
                                     // Ally is out of range, break link

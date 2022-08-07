@@ -41,7 +41,10 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
+        if (ticksElapsed % 60 != 0) {
+            return;
+        }
         Location loc = getWarlordsNPC().getLocation();
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we == null) return;

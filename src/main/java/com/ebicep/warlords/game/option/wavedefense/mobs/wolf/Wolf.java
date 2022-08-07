@@ -27,7 +27,7 @@ public class Wolf extends AbstractWolf implements BasicMob {
     }
 
     @Override
-    public void whileAlive() {
+    public void whileAlive(int ticksElapsed) {
 
     }
 

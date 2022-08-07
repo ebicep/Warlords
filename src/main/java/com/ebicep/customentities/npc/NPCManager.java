@@ -57,9 +57,18 @@ public class NPCManager {
         npcRegistry.deregisterAll();
         npcRegistry.despawnNPCs(DespawnReason.RELOAD);
 
-        gameStartNPC.destroy();
-        pveStartNPC.destroy();
-        masterworksFairNPC.destroy();
+        if (gameStartNPC != null) {
+            gameStartNPC.destroy();
+        }
+        if (gameStartNPC != null) {
+            gameStartNPC.destroy();
+        }
+        if (pveStartNPC != null) {
+            pveStartNPC.destroy();
+        }
+        if (masterworksFairNPC != null) {
+            masterworksFairNPC.destroy();
+        }
     }
 
     private static void registerTrait(Class<? extends Trait> trait, String traitName) {

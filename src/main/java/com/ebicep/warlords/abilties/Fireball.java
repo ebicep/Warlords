@@ -119,7 +119,7 @@ public class Fireball extends AbstractProjectileBase {
                         CooldownTypes.DEBUFF,
                         cooldownManager -> {},
                         5 * 20,
-                        (cooldown, ticksLeft, counter) -> {
+                        (cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = hit.getMaxHealth() * 0.01f;
                                 hit.addDamageInstance(

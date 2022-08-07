@@ -131,10 +131,10 @@ public class PrismGuard extends AbstractAbility {
                     }
                 },
                 duration * 20,
-                (cooldown, ticksLeft, counter) -> {
-                    if (counter < 5) return;
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed < 5) return;
 
-                    if (counter % 3 == 0) {
+                    if (ticksElapsed % 3 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
                         Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
 
