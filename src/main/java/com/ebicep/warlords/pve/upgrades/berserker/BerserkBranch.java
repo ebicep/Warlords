@@ -61,8 +61,8 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 "+6% Speed\n+2s Duration",
                 10000,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 3);
-                    ability.setDuration(duration + 1);
+                    ability.setSpeedBuff(speedBuff + 6);
+                    ability.setDuration(duration + 2);
                 }
         ));
         treeB.add(new Upgrade(
@@ -70,8 +70,8 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 "+9% Speed\n+3s Duration",
                 15000,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 3);
-                    ability.setDuration(duration + 1);
+                    ability.setSpeedBuff(speedBuff + 9);
+                    ability.setDuration(duration + 3);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,8 +79,8 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 "+12% Speed\n+4s Duration",
                 20000,
                 () -> {
-                    ability.setSpeedBuff(speedBuff + 3);
-                    ability.setDuration(duration + 1);
+                    ability.setSpeedBuff(speedBuff + 12);
+                    ability.setDuration(duration + 4);
                 }
         ));
 

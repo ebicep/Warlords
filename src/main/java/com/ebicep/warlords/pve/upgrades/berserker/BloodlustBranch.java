@@ -82,7 +82,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
         masterUpgrade = new Upgrade(
                 "Sanguineous",
                 "Blood Lust - Master Upgrade",
-                "+3s Duration\n\nWhile Blood Lust is active, increase all damage against bleeding or wounded targets by 20%",
+                "+3s Duration\n\nWhile Blood Lust is active, increase all damage\nagainst bleeding or wounded targets by 20%",
                 50000,
                 () -> {
                     ability.setDuration(ability.getDuration() + 3);

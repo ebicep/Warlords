@@ -6,11 +6,11 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -156,13 +156,13 @@ public enum GameAddon {
     ),
     PVE(
             "PVE",
-                    null,
-                    "Test"
+            null,
+            "Test"
     ) {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setInPve(true);
-            if (player instanceof WarlordsPlayer) {
+            if (player.getEntity() instanceof Player) {
                 player.setTeam(Team.BLUE);
             }
         }
