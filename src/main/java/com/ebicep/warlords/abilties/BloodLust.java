@@ -17,7 +17,7 @@ import java.util.List;
 public class BloodLust extends AbstractAbility {
     private boolean pveUpgrade = false;
 
-    private final int duration = 15;
+    private int duration = 15;
     private int damageConvertPercent = 65;
 
     public BloodLust() {
@@ -116,5 +116,13 @@ public class BloodLust extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

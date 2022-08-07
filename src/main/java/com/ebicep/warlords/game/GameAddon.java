@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -161,7 +162,9 @@ public enum GameAddon {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setInPve(true);
-            player.setTeam(Team.BLUE);
+            if (player instanceof WarlordsPlayer) {
+                player.setTeam(Team.BLUE);
+            }
         }
     }
 

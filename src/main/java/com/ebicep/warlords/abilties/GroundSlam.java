@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -52,21 +53,43 @@ public class GroundSlam extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
-        activateAbility(wp, player);
+        activateAbility(wp, player, 1);
 
         if (pveUpgrade) {
+            wp.setVelocity(new Vector(0, 1.2, 0), false);
             new GameRunnable(wp.getGame()) {
+                boolean wasOnGround = true;
+                int counter = 0;
+
                 @Override
                 public void run() {
-                    Utils.playGlobalSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
-                    activateAbility(wp, player);
+                    counter++;
+                    // if player never lands in the span of 10 seconds, remove damage.
+                    if (counter == 200 || wp.isDead()) {
+                        this.cancel();
+                    }
+
+                    boolean hitGround = player.isOnGround();
+
+                    if (wasOnGround && !hitGround) {
+                        wasOnGround = false;
+                    }
+
+                    if (!wasOnGround && hitGround) {
+                        wasOnGround = true;
+
+                        Utils.playGlobalSound(wp.getLocation(), Sound.IRONGOLEM_DEATH, 2, 0.2f);
+                        Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
+                        activateAbility(wp, player, 0.3f);
+                        this.cancel();
+                    }
                 }
-            }.runTaskLater(16);
+            }.runTaskTimer(0, 0);
         }
         return true;
     }
 
-    private void activateAbility(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    private void activateAbility(@Nonnull WarlordsEntity wp, @Nonnull Player player, float damageMultiplier) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
@@ -111,8 +134,8 @@ public class GroundSlam extends AbstractAbility {
                             slamTarget.addDamageInstance(
                                     wp,
                                     name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
+                                    minDamageHeal * damageMultiplier,
+                                    maxDamageHeal * damageMultiplier,
                                     critChance,
                                     critMultiplier,
                                     false

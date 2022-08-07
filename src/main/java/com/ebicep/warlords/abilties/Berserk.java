@@ -20,7 +20,7 @@ public class Berserk extends AbstractAbility {
     protected int hitsDoneAmplified = 0;
     protected int hitsTakenAmplified = 0;
 
-    private final int duration = 18;
+    private int duration = 18;
     private int speedBuff = 30;
     private float damageIncrease = 30;
     private float damageTakenIncrease = 10;
@@ -158,5 +158,13 @@ public class Berserk extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

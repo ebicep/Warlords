@@ -92,7 +92,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 woundingDuration * 20,
                 (cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
-                        float healthDamage = hit.getMaxHealth() * 0.01f;
+                        float healthDamage = hit.getMaxHealth() * 0.0025f;
                         hit.addDamageInstance(
                                 giver,
                                 "Bleed",
