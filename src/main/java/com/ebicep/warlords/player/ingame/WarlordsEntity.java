@@ -1121,7 +1121,7 @@ public abstract class WarlordsEntity {
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation());
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(" ");
             }
         }
         if (entity instanceof Player) {

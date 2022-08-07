@@ -23,7 +23,7 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public String getNameAbbreviation() {
-        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + text + " ";
+        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + text;
     }
 
     @Override

@@ -58,7 +58,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
                 nameAbbreviation.equals("AVE MARK") ||
                 nameAbbreviation.equals("SILENCE")
 
-                ? ChatColor.RED : ChatColor.GREEN) + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1) + " ";
+                ? ChatColor.RED : ChatColor.GREEN) + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1);
     }
 
     @Override

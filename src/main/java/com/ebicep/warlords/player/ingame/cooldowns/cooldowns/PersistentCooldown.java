@@ -31,7 +31,7 @@ public class PersistentCooldown<T> extends RegularCooldown<T> {
     @Override
     public String getNameAbbreviation() {
         if (hidden) return "";
-        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1) + " ";
+        return ChatColor.GREEN + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1);
     }
 
     @Override
