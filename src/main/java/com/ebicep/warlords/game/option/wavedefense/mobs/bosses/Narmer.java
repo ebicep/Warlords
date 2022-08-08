@@ -52,7 +52,9 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed) {
+        if (ticksElapsed % 300 == 0) {
 
+        }
     }
 
     @Override
@@ -64,6 +66,4 @@ public class Narmer extends AbstractZombie implements BossMob {
     public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
 
     }
-
-
 }

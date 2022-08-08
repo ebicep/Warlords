@@ -2,11 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
 
@@ -20,7 +19,6 @@ public class LightInfusionCrusader extends AbstractAbility {
     private int duration = 3;
     private int speedBuff = 40;
     private int energyGiven = 120;
-    private int strikesUsed = 0;
 
     public LightInfusionCrusader(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
@@ -44,14 +42,13 @@ public class LightInfusionCrusader extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        strikesUsed = 0;
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusionCrusader tempLightInfusion = new LightInfusionCrusader(cooldown);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<LightInfusionCrusader>(
+        wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
                 LightInfusionCrusader.class,
@@ -60,10 +57,6 @@ public class LightInfusionCrusader extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     cancelSpeed.run();
-
-                    if (pveUpgrade) {
-                        wp.addEnergy(wp, name, 30 * strikesUsed);
-                    }
                 },
                 duration * 20,
                 (cooldown, ticksLeft, ticksElapsed) -> {
@@ -79,16 +72,41 @@ public class LightInfusionCrusader extends AbstractAbility {
                         );
                     }
                 }
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveUpgrade) {
-                    if (event.getAbility().equals("Avenger's Strike")) {
-                        strikesUsed++;
-                    }
-                }
+        );
+
+        if (pveUpgrade) {
+            for (WarlordsEntity infusionTarget : PlayerFilter
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveTeammatesOfExcludingSelf(wp)
+            ) {
+                infusionTarget.addEnergy(wp, name, energyGiven / 2f);
+                infusionTarget.getCooldownManager().addRegularCooldown(
+                        name,
+                        "INF",
+                        LightInfusionCrusader.class,
+                        tempLightInfusion,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                            cancelSpeed.run();
+                        },
+                        duration * 20,
+                        (cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 4 == 0) {
+                                ParticleEffect.SPELL.display(
+                                        0.3f,
+                                        0.1f,
+                                        0.3f,
+                                        0.2f,
+                                        2,
+                                        wp.getLocation().add(0, 1.2, 0),
+                                        500
+                                );
+                            }
+                        }
+                );
             }
-        });
+        }
 
         for (int i = 0; i < 10; i++) {
             ParticleEffect.SPELL.display(

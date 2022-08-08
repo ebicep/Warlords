@@ -31,7 +31,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
                         new ItemStack(Material.BAKED_POTATO)
                 ),
                 6000,
-                0.38f,
+                0.25f,
                 20,
                 300,
                 400

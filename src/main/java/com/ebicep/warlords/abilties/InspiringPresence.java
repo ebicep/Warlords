@@ -20,7 +20,7 @@ import java.util.List;
 public class InspiringPresence extends AbstractAbility {
     private boolean pveUpgrade = false;
     private final int speedBuff = 30;
-    private final int radius = 10;
+    private double radius = 10;
     protected int playersHit = 0;
     private int duration = 12;
     private int energyPerSecond = 10;
@@ -162,5 +162,13 @@ public class InspiringPresence extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 }

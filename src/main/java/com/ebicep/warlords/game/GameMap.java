@@ -1035,7 +1035,7 @@ public enum GameMap {
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(8, 5 * SECOND, null)
                             //basic
-                            .add(1, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.BASIC_ZOMBIE)
                             .add(0.05, Mobs.BASIC_SKELETON)
                             .add(0.01, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.01, Mobs.BASIC_SLIME)
@@ -1051,6 +1051,8 @@ public enum GameMap {
                             .add(0, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(1, Mobs.VOID_ZOMBIE)
                     )
                     .add(5, new SimpleWave(10, 5 * SECOND, null)
                             //basic
