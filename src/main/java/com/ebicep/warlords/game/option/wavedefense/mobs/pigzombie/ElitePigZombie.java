@@ -72,7 +72,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
         Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.2).setY(0.2);
         receiver.setVelocity(v, false);
     }

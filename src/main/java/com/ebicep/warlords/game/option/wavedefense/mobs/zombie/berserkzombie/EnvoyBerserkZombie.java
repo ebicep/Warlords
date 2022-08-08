@@ -18,7 +18,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
     public EnvoyBerserkZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Envoy Berserker Zombie",
+                "Envoy Berserker Vanguard",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.WOOD_STEP, 1, (short) 4),

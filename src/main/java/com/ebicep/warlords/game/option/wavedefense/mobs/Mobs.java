@@ -16,6 +16,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EliteZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EnvoyZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.VoidZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.EnvoyBerserkZombie;
 import org.bukkit.Location;
 
 import java.util.function.Function;
@@ -40,6 +41,7 @@ public enum Mobs {
     ENVOY_ZOMBIE(EnvoyZombie::new),
     ENVOY_SKELETON(EnvoySkeleton::new),
     ENVOY_PIG_ZOMBIE(EnvoyPigZombie::new),
+    ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie::new),
 
     // Elite Tier 3 - Void
     VOID_ZOMBIE(VoidZombie::new),

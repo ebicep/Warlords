@@ -79,7 +79,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
         receiver.getSpeed().addSpeedModifier("Envoy Slowness", -20, 2 * 20);
     }

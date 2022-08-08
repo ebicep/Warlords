@@ -42,7 +42,7 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
 
     }
 

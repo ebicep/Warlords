@@ -78,13 +78,13 @@ public class WaveDefenseOption implements Option {
             int playerCount = (int) game.warlordsPlayers().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.2f;
+                    spawnCount *= 1.04f;
                     break;
                 case 3:
-                    spawnCount *= 1.3f;
+                    spawnCount *= 1.08f;
                     break;
                 case 4:
-                    spawnCount *= 1.4f;
+                    spawnCount *= 1.12f;
                     break;
             }
         }
@@ -185,13 +185,13 @@ public class WaveDefenseOption implements Option {
                 int playerCount = (int) game.warlordsPlayers().count();
                 switch (playerCount) {
                     case 2:
-                        spawnCount *= 1.2f;
+                        spawnCount *= 1.04f;
                         break;
                     case 3:
-                        spawnCount *= 1.3f;
+                        spawnCount *= 1.08f;
                         break;
                     case 4:
-                        spawnCount *= 1.4f;
+                        spawnCount *= 1.12f;
                         break;
                 }
 
@@ -265,7 +265,7 @@ public class WaveDefenseOption implements Option {
                 WarlordsEntity receiver = event.getPlayer();
                 for (AbstractMob<?> mob : mobs) {
                     if (mob.getWarlordsNPC().equals(attacker) && event.isDamageInstance()) {
-                        mob.onAttack(attacker, receiver);
+                        mob.onAttack(attacker, receiver, event.getAbility());
                     }
 
                     if (mob.getWarlordsNPC().equals(receiver) && event.isDamageInstance()) {

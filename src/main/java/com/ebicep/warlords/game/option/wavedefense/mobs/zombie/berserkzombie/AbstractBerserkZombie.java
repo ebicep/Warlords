@@ -43,7 +43,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
 
     }
 }

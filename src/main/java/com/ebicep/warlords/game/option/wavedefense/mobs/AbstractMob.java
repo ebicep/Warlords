@@ -116,7 +116,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void whileAlive(int ticksElapsed);
 
-    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver);
+    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability);
 
     public abstract void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker);
 

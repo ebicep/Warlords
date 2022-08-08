@@ -42,7 +42,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
         receiver.subtractEnergy(15, false);
     }
 

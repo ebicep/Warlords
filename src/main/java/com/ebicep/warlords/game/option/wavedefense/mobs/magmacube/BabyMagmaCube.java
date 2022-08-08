@@ -31,7 +31,7 @@ public class BabyMagmaCube extends AbstractMagmaCube {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
 
     }
 

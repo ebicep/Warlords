@@ -64,11 +64,11 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                         },
-                        2 * 20
+                        3 * 20
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * .6f;
+                        return currentDamageValue * .5f;
                     }
                 });
             }
@@ -76,7 +76,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
 
     }
 

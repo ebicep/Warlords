@@ -44,7 +44,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
     }
 
     @Override
