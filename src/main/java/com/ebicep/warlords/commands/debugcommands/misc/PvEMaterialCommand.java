@@ -17,7 +17,7 @@ public class PvEMaterialCommand extends BaseCommand {
 
     @Subcommand("add")
     @Description("Add pve materials to your inventory, you can only 1 star piece at a time")
-    public void add(Player player, RewardTypes type, @Conditions("limits:min=0") Integer amount) {
+    public void add(Player player, RewardTypes type, @Conditions("limits:min=1") Integer amount) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         type.give.accept(databasePlayer, amount.floatValue());
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

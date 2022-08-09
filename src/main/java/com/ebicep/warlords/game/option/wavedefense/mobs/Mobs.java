@@ -16,6 +16,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EliteZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EnvoyZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.VoidZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.BasicBerserkZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.EliteBerserkZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.EnvoyBerserkZombie;
 import org.bukkit.Location;
 
@@ -24,6 +26,7 @@ import java.util.function.Function;
 public enum Mobs {
     // Base
     BASIC_ZOMBIE(BasicZombie::new),
+    BASIC_BERSERK_ZOMBIE(BasicBerserkZombie::new),
     BASIC_SKELETON(BasicSkeleton::new),
     BASIC_PIG_ZOMBIE(BasicPigZombie::new),
     BASIC_SLIME(BasicSlime::new),
@@ -32,6 +35,7 @@ public enum Mobs {
 
     // Elite Tier 1
     ELITE_ZOMBIE(EliteZombie::new),
+    ELITE_BERSERK_ZOMBIE(EliteBerserkZombie::new),
     ELITE_SKELETON(EliteSkeleton::new),
     ELITE_PIG_ZOMBIE(ElitePigZombie::new),
     MAGMA_CUBE(MagmaCube::new),
@@ -39,6 +43,7 @@ public enum Mobs {
 
     // Elite Tier 2 - Envoy
     ENVOY_ZOMBIE(EnvoyZombie::new),
+    ENVOY_BERSERK_ZOMBIE(EnvoyBerserkZombie::new),
     ENVOY_SKELETON(EnvoySkeleton::new),
     ENVOY_PIG_ZOMBIE(EnvoyPigZombie::new),
     ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie::new),

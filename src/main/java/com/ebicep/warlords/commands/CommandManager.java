@@ -19,8 +19,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.wavedefense.commands.EditCurrencyCommand;
-import com.ebicep.warlords.game.option.wavedefense.commands.SpawnMobCommand;
+import com.ebicep.warlords.game.option.wavedefense.commands.MobCommand;
 import com.ebicep.warlords.game.option.wavedefense.commands.WaveCommand;
+import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -118,7 +119,7 @@ public class CommandManager {
         manager.registerCommand(new QueueCommand());
 
         manager.registerCommand(new EditCurrencyCommand());
-        manager.registerCommand(new SpawnMobCommand());
+        manager.registerCommand(new MobCommand());
         manager.registerCommand(new WaveCommand());
 
         manager.registerCommand(new GuildCommand());
@@ -172,7 +173,6 @@ public class CommandManager {
                 String arg = command.popFirstArg();
                 target = arg == null ? name : arg;
             }
-
             Optional<WarlordsPlayer> optionalWarlordsPlayer = Warlords.getPlayers().values()
                     .stream()
                     .filter(WarlordsPlayer.class::isInstance)
@@ -361,6 +361,9 @@ public class CommandManager {
             }
             return null;
         });
+        commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
+                .map(Mobs::name)
+                .collect(Collectors.toList()));
 
     }
 
