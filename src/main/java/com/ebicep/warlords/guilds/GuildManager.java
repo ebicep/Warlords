@@ -27,14 +27,23 @@ public class GuildManager {
     static {
         new BukkitRunnable() {
 
+            int secondsElapsed = 0;
             @Override
             public void run() {
-                Warlords.newChain()
-                        .async(GuildManager::updateGuilds)
-                        .sync(GUILDS_TO_UPDATE::clear)
-                        .execute();
+                //check for guilds to update
+                if (secondsElapsed % 20 == 0) {
+                    Warlords.newChain()
+                            .async(GuildManager::updateGuilds)
+                            .sync(GUILDS_TO_UPDATE::clear)
+                            .execute();
+                }
+                //check for guild temp upgrades expiring
+                for (Guild guild : GUILDS) {
+
+                }
+                secondsElapsed++;
             }
-        }.runTaskTimer(Warlords.getInstance(), 60, 20 * 20);
+        }.runTaskTimer(Warlords.getInstance(), 60, 20);
     }
 
     public static void updateGuilds() {

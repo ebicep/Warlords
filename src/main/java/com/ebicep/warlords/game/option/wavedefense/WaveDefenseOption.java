@@ -1,5 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
@@ -19,6 +22,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -51,6 +55,7 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
+    private HashMap<UUID, DatabasePlayer> databasePlayers = new HashMap<>();
 
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
@@ -344,6 +349,15 @@ public class WaveDefenseOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         new GameRunnable(game) {
+            @Override
+            public void run() {
+                if (DatabaseManager.playerService != null) {
+                    //cache players
+                    game.warlordsPlayers().forEach(warlordsPlayer -> databasePlayers.put(warlordsPlayer.getUuid(), DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid())));
+                }
+            }
+        }.runTaskLater(20);
+        new GameRunnable(game) {
             int counter = 0;
 
             @Override
@@ -364,6 +378,7 @@ public class WaveDefenseOption implements Option {
                                 we.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
                             }
                         });
+                        Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }
                 }
 

@@ -16,6 +16,7 @@ public class GuildPlayer {
     private UUID uuid;
     @Field("join_date")
     private Instant joinDate = Instant.now();
+    private long experience = 0;
 
     public GuildPlayer() {
     }
@@ -51,6 +52,18 @@ public class GuildPlayer {
 
     public UUID getUUID() {
         return uuid;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
+    }
+
+    public void addExperience(long experience) {
+        this.experience += experience;
     }
 
     @Override

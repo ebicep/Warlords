@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -342,14 +343,41 @@ public class EndState implements State, TimerDebugAble {
             ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
                     new TextComponentBuilder(
                             ChatColor.GRAY + "+" +
-                            ChatColor.DARK_AQUA + NumberFormat.addCommaAndRound(experienceEarnedUniversal) + " " +
-                            ChatColor.GOLD + "Universal Experience ")
-                    .setHoverText(universalExpSummary.toString())
-                    .getTextComponent())
+                                    ChatColor.DARK_AQUA + NumberFormat.addCommaAndRound(experienceEarnedUniversal) + " " +
+                                    ChatColor.GOLD + "Universal Experience ")
+                            .setHoverText(universalExpSummary.toString())
+                            .getTextComponent())
             );
 
             ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
+
+
+            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp);
+            StringBuilder expFromWaveDefenseSummary = new StringBuilder();
+            expFromWaveDefense.forEach((s, aLong) -> {
+                expFromWaveDefenseSummary.append(ChatColor.AQUA)
+                        .append(s)
+                        .append(ChatColor.WHITE)
+                        .append(": ")
+                        .append(ChatColor.DARK_GRAY)
+                        .append("+")
+                        .append(ChatColor.DARK_GREEN)
+                        .append(aLong)
+                        .append("\n");
+            });
+            expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
+
+            if (expFromWaveDefense.size() > 0) {
+                ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
+                        new TextComponentBuilder(
+                                ChatColor.GRAY + "+" +
+                                        ChatColor.GREEN + NumberFormat.addCommaAndRound(expFromWaveDefense.values().stream().mapToLong(Long::longValue).sum()) + " " +
+                                        ChatColor.DARK_GREEN + "Guild Experience")
+                                .setHoverText(expFromWaveDefenseSummary.toString())
+                                .getTextComponent())
+                );
+            }
         }
     }
 

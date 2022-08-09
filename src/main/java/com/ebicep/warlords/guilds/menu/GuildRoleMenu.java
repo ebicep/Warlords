@@ -1,10 +1,12 @@
-package com.ebicep.warlords.guilds;
+package com.ebicep.warlords.guilds.menu;
 
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildPermissions;
+import com.ebicep.warlords.guilds.GuildRole;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.*;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLogPermissionAdd;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLogPermissionRemove;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import org.bukkit.ChatColor;
@@ -15,64 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.ebicep.warlords.menu.Menu.*;
+import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
-public class GuildMenu {
-
-    public static void openGuildMenu(Guild guild, Player player, int page) {
-        Menu menu = new Menu(guild.getName(), 9 * 6);
-
-        if (player.getUniqueId().equals(guild.getCurrentMaster())) {
-            menu.setItem(4, 0,
-                    new ItemBuilder(Material.LEVER)
-                            .name(ChatColor.GREEN + "Edit Permissions")
-                            .get(),
-                    (m, e) -> openRoleSelectorMenu(guild, player));
-        }
-
-        int playerPerPage = 36;
-        List<GuildPlayer> guildPlayers = guild.getPlayers();
-        for (int i = 0; i < playerPerPage; i++) {
-            int index = ((page - 1) * playerPerPage) + i;
-            if (index < guildPlayers.size()) {
-                GuildPlayer guildPlayer = guildPlayers.get(index);
-                menu.setItem(i % 9, i / 9 + 1,
-                        new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID())) //TODO check if this lags
-                                .name(ChatColor.GREEN + guildPlayer.getName())
-                                .lore(ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName())
-                                .get(),
-                        (m, e) -> {
-
-                        });
-            } else {
-                break;
-            }
-        }
-
-        if (page - 1 > 0) {
-            menu.setItem(0, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                            .get(),
-                    (m, e) -> openGuildMenu(guild, player, page - 1)
-            );
-        }
-        if (guild.getPlayers().size() > (page * playerPerPage)) {
-            menu.setItem(8, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                            .get(),
-                    (m, e) -> openGuildMenu(guild, player, page + 1)
-            );
-        }
-
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
+public class GuildRoleMenu {
     public static void openRoleSelectorMenu(Guild guild, Player player) {
         Menu menu = new Menu("Role Selector", 9 * 5);
 
@@ -119,7 +67,7 @@ public class GuildMenu {
             );
         }
 
-        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildMenu(guild, player, 1));
+        menu.setItem(4, 4, MENU_BACK, (m, e) -> GuildMenu.openGuildMenu(guild, player, 1));
         menu.openForPlayer(player);
     }
 

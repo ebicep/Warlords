@@ -27,6 +27,7 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.commands.GuildCommand;
+import com.ebicep.warlords.guilds.commands.GuildDebugCommand;
 import com.ebicep.warlords.guilds.commands.GuildPlayerWrapper;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
@@ -123,6 +124,7 @@ public class CommandManager {
         manager.registerCommand(new WaveCommand());
 
         manager.registerCommand(new GuildCommand());
+        manager.registerCommand(new GuildDebugCommand());
 
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
@@ -164,6 +166,7 @@ public class CommandManager {
                 return onlinePlayer != null ? onlinePlayer.getPlayer() : null;
             }
         });
+        //TODO fix syntax/completion when this is issuer
         manager.getCommandContexts().registerIssuerAwareContext(WarlordsPlayer.class, command -> {
             String target;
             String name = command.getSender().getName();

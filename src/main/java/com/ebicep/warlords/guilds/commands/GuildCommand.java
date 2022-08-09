@@ -6,8 +6,12 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.guilds.*;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPermissions;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
+import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -249,6 +253,21 @@ public class GuildCommand extends BaseCommand {
         );
     }
 
+    @Subcommand("open")
+    @Description("Opens your guild so not invites are required to join")
+    public void open(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        guild.setOpen(true);
+    }
+
+    @Subcommand("close")
+    @Description("Closes your guild so an invite is required to join")
+    public void close(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        guild.setOpen(false);
+    }
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {

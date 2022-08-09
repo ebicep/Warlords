@@ -8,6 +8,7 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogDemote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
+import com.ebicep.warlords.guilds.upgrades.temporary.TempGuildUpgrade;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,6 +55,9 @@ public class Guild {
     @Field("player_limit")
     private int playerLimit = 10;
     private long coins = 0;
+    private long experience = 0;
+    @Field("temporary_upgrades")
+    private List<TempGuildUpgrade> temporaryUpgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
 
@@ -242,6 +246,10 @@ public class Guild {
         return open;
     }
 
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
     public boolean isMuted() {
         return muted;
     }
@@ -293,6 +301,30 @@ public class Guild {
 
     public int getPlayerLimit() {
         return playerLimit;
+    }
+
+    public long getCoins() {
+        return coins;
+    }
+
+    public void setCoins(long coins) {
+        this.coins = coins;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
+    }
+
+    public void addExperience(long experience) {
+        this.experience += experience;
+    }
+
+    public List<TempGuildUpgrade> getTemporaryUpgrades() {
+        return temporaryUpgrades;
     }
 
     public List<AbstractGuildLog> getAuditLog() {
