@@ -34,7 +34,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
 
     }
 
@@ -50,8 +50,8 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        super.onDeath(killer, deathLocation, waveDefenseOption);
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.PURPLE)
                 .with(FireworkEffect.Type.BURST)

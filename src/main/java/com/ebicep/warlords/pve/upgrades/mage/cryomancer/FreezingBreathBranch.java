@@ -7,6 +7,9 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> {
 
+    float cooldown = ability.getCooldown();
+    int slowness = ability.getSlowness();
+
     public FreezingBreathBranch(AbilityTree abilityTree, FreezingBreath ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
@@ -27,9 +30,4 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 50000
         );
     }
-
-    float cooldown = ability.getCooldown();
-
-    int slowness = ability.getSlowness();
-
 }

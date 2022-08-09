@@ -13,7 +13,6 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -42,44 +41,31 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
     @Override
     public void onSpawn() {
-        WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
-        if (we == null) return;
-        new GameRunnable(we.getGame()) {
-            int counter = 0;
-            @Override
-            public void run() {
-                if (counter % 4 == 0) {
-                    new CircleEffect(
-                            we.getGame(),
-                            we.getTeam(),
-                            we.getLocation(),
-                            hitRadius,
-                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(0.75),
-                            new DoubleLineEffect(ParticleEffect.SPELL)
-                    ).playEffects();
-                }
-
-                if (counter % 8 == 0) {
-                    for (WarlordsEntity enemy : PlayerFilter
-                            .entitiesAround(we, hitRadius, hitRadius, hitRadius)
-                            .aliveEnemiesOf(we)
-                    ) {
-                        enemy.addDamageInstance(we, "Shimmer", 400, 400, -1, 100, false);
-                    }
-                }
-
-                counter++;
-
-                if (we.isDead()) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 0);
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
+        if (we == null) return;
+        if (ticksElapsed % 4 == 0) {
+            new CircleEffect(
+                    we.getGame(),
+                    we.getTeam(),
+                    we.getLocation(),
+                    hitRadius,
+                    new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(0.75),
+                    new DoubleLineEffect(ParticleEffect.SPELL)
+            ).playEffects();
+        }
 
+        if (ticksElapsed % 8 == 0) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(we, hitRadius, hitRadius, hitRadius)
+                    .aliveEnemiesOf(we)
+            ) {
+                enemy.addDamageInstance(we, "Shimmer", 400, 400, -1, 100, false);
+            }
+        }
     }
 
     @Override
@@ -93,8 +79,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
-        super.onDeath(killer, deathLocation, waveDefenseOption);
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        super.onDeath(killer, deathLocation, option);
         WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
         if (we == null) return;
         for (WarlordsEntity enemy : PlayerFilter

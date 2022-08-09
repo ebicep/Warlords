@@ -156,12 +156,6 @@ public class WaveDefenseOption implements Option {
 
     public void newWave() {
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getGame())) {
-            if (we.isDead()) {
-                we.respawn();
-            }
-        }
-
         if (currentWave != null) {
             String message;
             if (currentWave.getMessage() != null) {
@@ -383,7 +377,7 @@ public class WaveDefenseOption implements Option {
                 }
 
                 for (AbstractMob<?> mob : mobs) {
-                    mob.whileAlive(counter);
+                    mob.whileAlive(counter, WaveDefenseOption.this);
                 }
 
                 if (waveCounter > maxWave) {

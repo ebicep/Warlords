@@ -30,6 +30,7 @@ public class TestCommand extends BaseCommand {
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
 
+
         ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }
 

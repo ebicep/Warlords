@@ -60,7 +60,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+2 Block rain radius",
+                "+2 Blocks rain radius",
                 10000,
                 () -> {
                     ability.setRadius(radius + 2);
@@ -68,7 +68,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+3 Block rain radius",
+                "+3 Blocks rain radius",
                 15000,
                 () -> {
                     ability.setRadius(radius + 3);
@@ -76,7 +76,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+4 Block rain radius\n+4s Duration",
+                "+4 Blocks rain radius\n+4s Duration",
                 20000,
                 () -> {
                     ability.setRadius(radius + 4);
@@ -87,7 +87,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         masterUpgrade = new Upgrade(
                 "Electrifying Storm",
                 "Healing Rain - Master Upgrade",
-                "+4s Addtional duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 124 - 277 (+1% of their max health)\ndamage every 2 seconds.",
+                "+4s Additional duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 124 - 277 (+1% of their max health)\ndamage every 2 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

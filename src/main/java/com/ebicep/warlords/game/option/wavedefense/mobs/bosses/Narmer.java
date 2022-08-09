@@ -1,17 +1,18 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +23,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                 "Narmer",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getMobSkull(SkullType.WITHER),
+                        SkullUtils.getSkullFrom(SkullID.DEMON),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_LEGGINGS),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -51,7 +52,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 300 == 0) {
 
         }

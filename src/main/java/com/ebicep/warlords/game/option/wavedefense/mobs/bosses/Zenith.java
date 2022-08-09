@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
@@ -57,7 +58,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 40 == 0) {
             Location loc = getWarlordsNPC().getLocation();
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.pigzombie;
 
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -38,7 +39,7 @@ public class BasicPigZombie extends AbstractPigZombie implements BasicMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
     }
 
     @Override

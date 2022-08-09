@@ -25,7 +25,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Zeal - Tier II",
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
@@ -33,7 +33,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
@@ -41,7 +41,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-20% Cooldown reduction",
                 20000,
                 () -> {
@@ -78,7 +78,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "+2 Blocks hit radius\n+15% Crit multiplier",
                 20000,
                 () -> {
-                    ability.setHitbox(hitbox + 2f);
+                    ability.setHitbox(hitbox + 2);
                     ability.setCritMultiplier(critMultiplier + 15);
                 }
         ));
@@ -86,7 +86,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         masterUpgrade = new Upgrade(
                 "Flame Awakening",
                 "Flame Burst - Master Upgrade",
-                "Flame Burst deals significantly more damage and ramps up\ncrit chance, crit damage and damage very quickly per blocks\ntraveled at the cost of heavily reduced projectile\nspeed, cooldown and increased energy cost.",
+                "Flame Burst deals significantly more damage and ramps up\ncrit chance, crit damage and damage very quickly per blocks\ntraveled at the cost of heavily reduced projectile\nspeed and increased energy cost/cooldown.",
                 50000,
                 () -> {
                     ability.setProjectileWidth(0.72D);

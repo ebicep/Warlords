@@ -171,7 +171,7 @@ public enum GameMode {
         }
     },
     WAVE_DEFENSE(
-            "[WIP] Wave Defense",
+            "[WIP] USE NPC TO START PVE - Wave Defense",
             null,
             null,
             null

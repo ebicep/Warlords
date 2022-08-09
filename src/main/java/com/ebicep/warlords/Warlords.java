@@ -290,12 +290,12 @@ public class Warlords extends JavaPlugin {
 
         // WAVE DEFENSE
         gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
-        //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
-        //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
+        //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
+        //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
 
         gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
-        //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
-        //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
+        //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));
+        //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-2")));
 
         // PRACTICE
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));

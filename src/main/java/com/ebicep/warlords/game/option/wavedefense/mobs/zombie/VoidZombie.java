@@ -52,7 +52,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
         if (we == null) return;
         if (ticksElapsed % 10 == 0) {
@@ -90,7 +90,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption waveDefenseOption) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BURST)

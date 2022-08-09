@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -91,11 +92,13 @@ public class IceBarrier extends AbstractAbility {
                         );
 
                         if (pveUpgrade) {
-                            for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 5, 5, 5)
+                            for (WarlordsEntity we : PlayerFilter
+                                    .entitiesAround(wp, 6, 6, 6)
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
-                                // TODO: Taunt on activation
+                                Vector v = wp.getLocation().toVector().subtract(we.getLocation().toVector()).normalize().multiply(-1.3).setY(0.15);
+                                we.setVelocity(v, false);
                                 we.getSpeed().addSpeedModifier("Ice Barrier Taunt", -20, 5, "BASE");
                             }
                         }

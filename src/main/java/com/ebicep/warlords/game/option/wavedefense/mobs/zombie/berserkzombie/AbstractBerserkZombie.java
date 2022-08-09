@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
@@ -25,7 +26,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
     }
 
     @Override
-    public void whileAlive(int ticksElapsed) {
+    public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (strikeTickDelay > 0) {
             strikeTickDelay--;
             return;
