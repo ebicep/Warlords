@@ -17,7 +17,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
 
     public BoltaroShadow(Location spawnLocation) {
         super(spawnLocation,
-                "Boltaro's Shadow",
+                "Shadow Boltaro",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.END_MONSTER),
@@ -27,7 +27,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
                         Weapons.DEMONBLADE.getItem()
                 ),
                 6000,
-                0.45f,
+                0.42f,
                 10,
                 200,
                 400

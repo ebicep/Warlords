@@ -353,7 +353,6 @@ public class WaveDefenseOption implements Option {
         }.runTaskLater(20);
         new GameRunnable(game) {
             int counter = 0;
-
             @Override
             public void run() {
                 if (mobs.isEmpty() && spawnCount == 0) {

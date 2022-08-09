@@ -4,6 +4,11 @@ import javax.annotation.Nonnull;
 
 // https://minecraft-heads.com/
 public enum SkullID {
+    // https://prnt.sc/6xLQRUy0lPko
+    RED_EYE(
+            "f327a9fc-26d1-4e2f-84c1-18741c587adf",
+            "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjBhYzkwNzcxNzM5MzU4MDVhMzc5OTAzYmQ1OGQxMjc0NGViNDQyNjcwYmE5ZTAwNDMzMTI4ZDFjZDUyNjA5ZSJ9fX0="
+    ),
     // https://prnt.sc/S2-LbZk0XORu
     DEMON(
             "db805929-f851-4067-82a9-f9c4fef1d42b",

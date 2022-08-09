@@ -329,6 +329,16 @@ public class EffectUtils {
         }
     }
 
+    public static void playRandomHitEffect(Location loc, int red, int green, int blue, int amount) {
+        for (int i = 0; i < amount; i++) {
+            ParticleEffect.REDSTONE.display(
+                    new ParticleEffect.OrdinaryColor(red, green, blue),
+                    loc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                    500
+            );
+        }
+    }
+
     public static Vector rotateAroundAxisX(Vector v, double angle) {
         double y, z, cos, sin;
         cos = Math.cos(angle);

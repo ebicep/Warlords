@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
@@ -38,7 +39,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                         Weapons.DRAKEFANG.getItem()
                 ),
                 12500,
-                0.5f,
+                0.465f,
                 20,
                 350,
                 500
@@ -53,7 +54,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                         (Player) we.getEntity(),
                         ChatColor.RED + getWarlordsNPC().getName(),
                         ChatColor.GOLD + "Right Hand of the Illusion Vanguard",
-                        20, 40, 20
+                        20, 30, 20
                 );
             }
         }
@@ -72,6 +73,11 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 minionBoltaro.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
                 option.getGame().addNPC(minionBoltaro.getWarlordsNPC());
                 option.getMobs().add(minionBoltaro);
+
+                BoltaroExiled exiled = new BoltaroExiled(warlordsNPC.getLocation());
+                exiled.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
+                option.getGame().addNPC(exiled.getWarlordsNPC());
+                option.getMobs().add(exiled);
             }
             warlordsNPC.die(warlordsNPC);
         }
@@ -79,9 +85,6 @@ public class Boltaro extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
-        receiver.setVelocity(v, false);
-
         if (!ability.equals("Multi Hit")) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
@@ -89,7 +92,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 public void run() {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
-                    Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(1).setY(0.05);
+                    Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-0.7).setY(0.1);
                     receiver.setVelocity(v, false);
                     receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, -1, 100, false);
 
@@ -104,18 +107,16 @@ public class Boltaro extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
         Utils.playGlobalSound(mob.getLocation(), "warrior.intervene.block", 2, 0.3f);
-        EffectUtils.playCylinderAnimation(mob.getLocation(), 1.1, ParticleEffect.FIREWORKS_SPARK, 1);
+        EffectUtils.playRandomHitEffect(mob.getLocation(), 255, 0, 0, 4);
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3);
-        for (int i = 0; i < 3; i++) {
-            FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                    .withColor(Color.WHITE)
-                    .with(FireworkEffect.Type.STAR)
-                    .withTrail()
-                    .build());
-        }
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                .withColor(Color.WHITE)
+                .with(FireworkEffect.Type.STAR)
+                .withTrail()
+                .build());
     }
 }
