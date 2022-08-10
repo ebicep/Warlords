@@ -21,7 +21,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
@@ -94,8 +93,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 public void run() {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
-                    Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-0.7).setY(0.1);
-                    receiver.setVelocity(v, false);
+                    Utils.addKnockback(attacker.getLocation(), receiver, -0.7, 0.2);
                     receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, -1, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {
