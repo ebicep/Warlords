@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -23,7 +24,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                         new ItemStack(Material.DIAMOND_PICKAXE)
                 ),
                 3000,
-                0.35f,
+                0.05f,
                 10,
                 0,
                 0
@@ -32,7 +33,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn() {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
             we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
         });

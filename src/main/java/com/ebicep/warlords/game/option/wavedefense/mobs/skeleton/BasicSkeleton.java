@@ -26,7 +26,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
                         new ItemStack(Material.BOW)
                 ),
                 1600,
-                0.25f,
+                0.05f,
                 0,
                 0,
                 0

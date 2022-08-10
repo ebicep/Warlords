@@ -1514,7 +1514,7 @@ public abstract class WarlordsEntity {
         } else if (respawnTimer > 0) {
             minuteStats.addTotalRespawnTime();
             respawnTimer--;
-            if (respawnTimer <= 11) {
+            if (respawnTimer <= 30) {
                 if (entity instanceof Player) {
                     PacketUtils.sendTitle((Player) entity, "", team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer, 0, 40, 0);
                 }

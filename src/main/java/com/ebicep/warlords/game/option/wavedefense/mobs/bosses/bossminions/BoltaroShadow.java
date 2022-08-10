@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -36,7 +37,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onSpawn() {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 
     @Override

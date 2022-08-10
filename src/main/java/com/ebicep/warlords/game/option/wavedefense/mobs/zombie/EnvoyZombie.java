@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -33,8 +34,7 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn() {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
         getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
             we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
         });

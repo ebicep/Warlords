@@ -31,7 +31,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
                         new ItemStack(Material.COOKIE)
                 ),
                 4000,
-                0.35f,
+                0.25f,
                 10,
                 200,
                 300

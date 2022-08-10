@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
-import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -13,7 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 
-public class BoltaroExiled extends AbstractZombie implements BossMob {
+public class BoltaroExiled extends AbstractZombie implements EliteMob {
 
     public BoltaroExiled(Location spawnLocation) {
         super(spawnLocation,

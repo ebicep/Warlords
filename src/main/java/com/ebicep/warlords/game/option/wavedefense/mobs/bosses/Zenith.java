@@ -42,9 +42,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn() {
-        for (int i = 0; i < 6; i++) {
-            getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        }
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
@@ -68,7 +66,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(receiver.getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.35).setY(0.3);
         receiver.setVelocity(v, false);
     }

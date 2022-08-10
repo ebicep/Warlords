@@ -73,7 +73,9 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 minionBoltaro.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
                 option.getGame().addNPC(minionBoltaro.getWarlordsNPC());
                 option.getMobs().add(minionBoltaro);
+            }
 
+            for (int i = 0; i < 6; i++) {
                 BoltaroExiled exiled = new BoltaroExiled(warlordsNPC.getLocation());
                 exiled.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
                 option.getGame().addNPC(exiled.getWarlordsNPC());

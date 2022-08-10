@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class VoidZombie extends AbstractZombie implements EliteMob {
 
-    int voidRadius = 5;
+    private int voidRadius = 5;
 
     public VoidZombie(Location spawnLocation) {
         super(

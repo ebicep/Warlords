@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.skeleton;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -22,8 +23,8 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
                         new ItemStack(Material.CHAINMAIL_BOOTS),
                         new ItemStack(Material.BOW)
                 ),
-                2000,
-                0.3f,
+                2200,
+                0.05f,
                 0,
                 0,
                 0
@@ -32,7 +33,7 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void onSpawn() {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
     }
 
     @Override

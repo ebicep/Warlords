@@ -32,7 +32,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
-    private final MobTier mobTier;
+    protected final MobTier mobTier;
     protected final EntityEquipment ee;
     protected final int maxHealth;
     protected final float walkSpeed;

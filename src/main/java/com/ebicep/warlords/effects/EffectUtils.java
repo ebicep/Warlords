@@ -199,26 +199,7 @@ public class EffectUtils {
      * @param effect     which particle effect should be displayed.
      */
     public static void playStarAnimation(Player player, float starRadius, ParticleEffect effect) {
-        Location location = player.getLocation();
-        int spikesHalf = 3;
-        float spikeHeight = 3.5f;
-        int particles = 30;
-        float radius = 3 * starRadius / 1.73205f;
-        for (int i = 0; i < spikesHalf * 2; i++) {
-            double xRotation = i * Math.PI / spikesHalf;
-            for (int x = 0; x < particles; x++) {
-                double angle = 2 * Math.PI * x / particles;
-                final Random random = new Random(System.nanoTime());
-                float height = random.nextFloat() * spikeHeight;
-                Vector v = new Vector(Math.cos(angle), 0, Math.sin(angle));
-                v.multiply((spikeHeight - height) * radius / spikeHeight);
-                v.setY(starRadius + height);
-                EffectUtils.rotateAroundAxisX(v, xRotation);
-                location.add(v);
-                effect.display(0, 0, 0, 0, 1, location, 500);
-                location.subtract(v);
-            }
-        }
+        playStarAnimation(player.getLocation(), starRadius, effect);
     }
 
     /**
@@ -336,6 +317,16 @@ public class EffectUtils {
                     loc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
                     500
             );
+        }
+    }
+
+    public static void strikeLightning(Location location, boolean isSilent) {
+        location.getWorld().spigot().strikeLightningEffect(location, isSilent);
+    }
+
+    public static void strikeLightning(Location location, boolean isSilent, int amount) {
+        for (int i = 0; i < amount; i++) {
+            strikeLightning(location, isSilent);
         }
     }
 
