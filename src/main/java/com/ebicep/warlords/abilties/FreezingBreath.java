@@ -2,7 +2,10 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -93,18 +96,20 @@ public class FreezingBreath extends AbstractAbility {
 
         Vector viewDirection = playerLoc.getDirection();
 
+        int counter = 0;
         for (WarlordsEntity breathTarget : PlayerFilter
                 .entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .aliveEnemiesOf(wp)
         ) {
+            counter++;
             playersHit++;
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (viewDirection.dot(direction) > .68) {
                 breathTarget.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal,
-                        maxDamageHeal,
+                        minDamageHeal * (pveUpgrade ? 1.5f : 1),
+                        maxDamageHeal * (pveUpgrade ? 1.5f : 1),
                         critChance,
                         critMultiplier,
                         false
@@ -113,7 +118,34 @@ public class FreezingBreath extends AbstractAbility {
             }
         }
 
+        if (pveUpgrade) {
+            if (counter > 5) {
+                counter = 5;
+            }
+            damageReductionOnHit(wp, counter);
+        }
+
         return true;
+    }
+
+    private void damageReductionOnHit(WarlordsEntity we, int counter) {
+        we.getCooldownManager().removeCooldown(FreezingBreath.class);
+        we.getCooldownManager().addCooldown(new RegularCooldown<FreezingBreath>(
+                name,
+                "FRZ RES",
+                FreezingBreath.class,
+                new FreezingBreath(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                4 * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (100 - (0.04f * counter));
+            }
+        });
     }
 
     public float getHitbox() {

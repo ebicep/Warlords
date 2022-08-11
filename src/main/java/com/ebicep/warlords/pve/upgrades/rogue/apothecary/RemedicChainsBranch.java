@@ -7,26 +7,91 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
-    public RemedicChainsBranch(AbilityTree abilityTree, RemedicChains ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Healing - Tier I", "+10% Healing", 5000));
-        treeA.add(new Upgrade("Healing - Tier II", "+20% Healing", 10000));
-        treeA.add(new Upgrade("Healing - Tier III", "+40% Healing", 20000));
-
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown Reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown Reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown Reduction", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "+10 Blocks cast and break range.\n\nIncrease the damage boost provided by\nRemedic Chains by 30%",
-                50000
-        );
-    }
-
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
-
     float cooldown = ability.getCooldown();
 
+    public RemedicChainsBranch(AbilityTree abilityTree, RemedicChains ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Alleviating - Tier I",
+                "+7.5% Healing",
+                5000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.075f);
+                    ability.setMaxDamageHeal(maxHealing * 1.075f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Alleviating - Tier II",
+                "+15% Healing",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.15f);
+                    ability.setMaxDamageHeal(maxHealing * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Alleviating - Tier III",
+                "+22.5% Healing",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.225f);
+                    ability.setMaxDamageHeal(maxHealing * 1.225f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Alleviating - Tier IV",
+                "+30% Healing",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(maxHealing * 1.3f);
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "-5% Cooldown reduction",
+                5000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.95f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-10% Cooldown reduction",
+                10000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.9f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "-15% Cooldown reduction",
+                15000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "-20% Cooldown reduction",
+                20000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.8f);
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "Crystallizing Chains",
+                "Remedic Chains - Master Upgrade",
+                "Raise damage bonus of Remedic Chains to 30%. Temporarily increase all linked allies' max health by 30%.",
+                50000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                    ability.setAllyDamageIncrease(30);
+                }
+        );
+    }
 }

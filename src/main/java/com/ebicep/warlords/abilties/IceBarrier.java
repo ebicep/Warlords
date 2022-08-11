@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,8 +11,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class IceBarrier extends AbstractAbility {
 
     private int duration = 6;
     private int damageReductionPercent = 50;
+    private int slownessOnMeleeHit = 20;
 
     public float getDamageReduction() {
         return (100 - damageReductionPercent) / 100f;
@@ -42,7 +44,7 @@ public class IceBarrier extends AbstractAbility {
                 "§7of cold air, reducing damage taken by\n" +
                 "§c" + damageReductionPercent + "%§7, While active, taking melee\n" +
                 "§7damage reduces the attacker's movement\n" +
-                "§7speed by §e20% §7for §62 §7seconds. Lasts\n" +
+                "§7speed by §e" + slownessOnMeleeHit + "% §7for §62 §7seconds. Lasts\n" +
                 "§6" + duration + " §7seconds.";
     }
 
@@ -92,14 +94,22 @@ public class IceBarrier extends AbstractAbility {
                         );
 
                         if (pveUpgrade) {
+                            Utils.playGlobalSound(particleLoc, Sound.GLASS, 1, 1.35f);
+                            EffectUtils.playHelixAnimation(
+                                    particleLoc.add(0, -1.25, 0),
+                                    6,
+                                    ParticleEffect.FIREWORKS_SPARK,
+                                    1,
+                                    15
+                            );
+
                             for (WarlordsEntity we : PlayerFilter
                                     .entitiesAround(wp, 6, 6, 6)
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
-                                Vector v = wp.getLocation().toVector().subtract(we.getLocation().toVector()).normalize().multiply(-1.3).setY(0.15);
-                                we.setVelocity(v, false);
-                                we.getSpeed().addSpeedModifier("Ice Barrier Taunt", -20, 5, "BASE");
+                                we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
+                                we.getSpeed().addSpeedModifier("Ice Barrier Slowness", -80, 20);
                             }
                         }
                     }
@@ -138,5 +148,13 @@ public class IceBarrier extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public int getSlownessOnMeleeHit() {
+        return slownessOnMeleeHit;
+    }
+
+    public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
+        this.slownessOnMeleeHit = slownessOnMeleeHit;
     }
 }

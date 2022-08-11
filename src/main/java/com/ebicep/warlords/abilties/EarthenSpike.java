@@ -171,8 +171,9 @@ public class EarthenSpike extends AbstractAbility {
                                             for (WarlordsEntity wave : PlayerFilter
                                                     .entitiesAround(targetLocation, 4, 4, 4)
                                                     .aliveEnemiesOf(wp)
+                                                    .limit(1)
                                             ) {
-                                                wave.addDamageInstance(wp, "Earthen Rupture", 778, 1103, -1, 100, false);
+                                                wave.addDamageInstance(wp, "Earthen Rupture", 778, 1103, critChance, critMultiplier, false);
                                             }
                                             new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 5, 1, Material.DIRT, (byte) 0).play();
                                             Utils.playGlobalSound(targetLocation, Sound.DIG_GRAVEL, 2, 0.5f);

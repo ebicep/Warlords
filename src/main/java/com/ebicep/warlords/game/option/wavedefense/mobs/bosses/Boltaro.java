@@ -66,7 +66,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
         }
 
         if (warlordsNPC.getHealth() < 6000) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3);
+            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
             for (int i = 0; i < 2; i++) {
                 BoltaroShadow minionBoltaro = new BoltaroShadow(warlordsNPC.getLocation());
                 minionBoltaro.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
@@ -112,7 +112,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                 .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.STAR)

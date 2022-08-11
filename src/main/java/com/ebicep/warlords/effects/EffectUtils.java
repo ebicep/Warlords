@@ -105,18 +105,17 @@ public class EffectUtils {
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
-    public static void playHelixAnimation(Player player, double helixRadius, ParticleEffect effect, int particleCount) {
-        playHelixAnimation(player.getLocation(), helixRadius, effect, particleCount);
+    public static void playHelixAnimation(Player player, double helixRadius, ParticleEffect effect, int particleCount, int helixDots) {
+        playHelixAnimation(player.getLocation(), helixRadius, effect, particleCount, helixDots);
     }
 
-    public static void playHelixAnimation(Location location, double helixRadius, ParticleEffect effect, int particleCount) {
+    public static void playHelixAnimation(Location location, double helixRadius, ParticleEffect effect, int particleCount, int helixDots) {
         double rotation = Math.PI / 4;
-        int particles = 20;
-        int strands = 4;
+        int strands = 8;
         int curve = 10;
         for (int i = 1; i <= strands; i++) {
-            for (int j = 1; j <= particles; j++) {
-                float ratio = (float) j / particles;
+            for (int j = 1; j <= helixDots; j++) {
+                float ratio = (float) j / helixDots;
                 double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
                 double x = Math.cos(angle) * ratio * helixRadius;
                 double z = Math.sin(angle) * ratio * helixRadius;

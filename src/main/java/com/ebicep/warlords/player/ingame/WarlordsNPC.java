@@ -89,10 +89,12 @@ public final class WarlordsNPC extends WarlordsEntity {
             float maxMeleeDamage
     ) {
         super(uuid, name, weapon, entity, game, team, specClass);
+        this.setInPve(true);
         this.mobTier = mobTier;
-        this.walkspeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.speed = new CalculateSpeed(this::setWalkSpeed, 13, true);
+        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -112,8 +114,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateEntity() {
         entity.setCustomName((mobTier != null ? ChatColor.GOLD + mobTier.getSymbol() + " §7- " : "") + ChatColor.RED + Math.round(this.getHealth()) + "❤");
+        entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);
     }
 

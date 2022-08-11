@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;
-    private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f / 113 * 100 / BASE_SPEED;
+    private float baseSpeedToWalkingSpeed = 0.2825f / 113 * 100 / BASE_SPEED;
     private float baseModifier;
     private float minSpeed;
     private final float maxSpeed;
@@ -26,7 +26,6 @@ public class CalculateSpeed {
     }
 
     public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifier, boolean isPve) {
-        // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
         this.baseModifier = baseModifier;
         this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
         this.maxSpeed = BASE_SPEED * 2;
@@ -112,7 +111,7 @@ public class CalculateSpeed {
             }
 
             if (speed != lastSpeed) {
-                float walkSpeed = speed * BASE_SPEED_TO_WALKING_SPEED;
+                float walkSpeed = speed * baseSpeedToWalkingSpeed;
                 //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
                 for (Modifier mod : appliedEffects.values()) {
                     //Bukkit.broadcastMessage(String.valueOf(mod));
@@ -175,8 +174,11 @@ public class CalculateSpeed {
 
     public void addBaseModifier(float add) {
         this.baseModifier += add;
-        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
         reset();
+    }
+
+    public void setBaseSpeedToWalkingSpeed(float baseSpeedToWalkingSpeed) {
+        this.baseSpeedToWalkingSpeed = baseSpeedToWalkingSpeed / 113 * 100 / BASE_SPEED;
     }
 
     private static class Modifier {

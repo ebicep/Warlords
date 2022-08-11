@@ -182,11 +182,13 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Crusader");
             ChatUtils.sendMessage(player, false, "");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Playable but still has WIP:");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Cryomancer");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Apothecary");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Aquamancer");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Pyromancer");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Protector");
             ChatUtils.sendMessage(player, false, "");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Next up: Vindicator, Cryomancer");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Next up: Vindicator, Assassin");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
 //            ChatUtils.sendCenteredMessage(player, "");

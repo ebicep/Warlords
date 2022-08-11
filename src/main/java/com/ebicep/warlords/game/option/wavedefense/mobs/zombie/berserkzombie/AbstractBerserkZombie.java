@@ -47,4 +47,9 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
 
     }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+
+    }
 }

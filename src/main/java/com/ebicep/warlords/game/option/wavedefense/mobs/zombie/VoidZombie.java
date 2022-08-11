@@ -56,7 +56,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
         WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
         if (we == null) return;
         if (ticksElapsed % 10 == 0) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1);
+            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 30);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(we, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(we)

@@ -9,25 +9,96 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
 
     float cooldown = ability.getCooldown();
     int slowness = ability.getSlowness();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
 
     public FreezingBreathBranch(AbilityTree abilityTree, FreezingBreath ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeA.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeA.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+7.5% Damage",
+                5000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+15% Damage",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+22.5% Damage",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+30% Damage",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
+                }
+        ));
 
-        treeB.add(new Upgrade("Range - Tier I", "+10% Cone range", 5000));
-        treeB.add(new Upgrade("Range - Tier II", "+20% Cone range", 10000));
-        treeB.add(new Upgrade("Range - Tier III", "+30% Cone range", 20000));
-
-        treeC.add(new Upgrade("Slowness - Tier I", "+10% Slowness", 5000));
-        treeC.add(new Upgrade("Slowness - Tier II", "+20% Slowness", 10000));
-        treeC.add(new Upgrade("Slowness - Tier III", "+40% Slowness", 20000));
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "-5% Cooldown reduction\n+5% Slowness",
+                5000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setSlowness(slowness + 5);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-10% Cooldown reduction\n+10% Slowness",
+                10000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.9f);
+                    ability.setSlowness(slowness + 10);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "-15% Cooldown reduction\n+15% Slowness",
+                15000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.85f);
+                    ability.setSlowness(slowness + 15);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "-20% Cooldown reduction\n+20% Slowness",
+                20000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.8f);
+                    ability.setSlowness(slowness + 20);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "+30% Damage\n\nEnemies hit have a chance to be frozen for 2 seconds.",
-                50000
+                "Blizzard",
+                "Freezing Breath - Master Upgrade",
+                "Unleash a blizzard typhoon in front of you, dealing\n50% more damage and slow all enemies\nhit by 75% for 3 seconds.\n\nAdditionally, gain 4% damage reduction for each\nenemy hit, lasts 4 seconds. (up to 20%)",
+                50000,
+                () -> {
+                    ability.setSlowness(75);
+                    ability.setHitbox(ability.getHitbox() * 1.5f);
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
+                    ability.setPveUpgrade(true);
+                }
         );
     }
 }

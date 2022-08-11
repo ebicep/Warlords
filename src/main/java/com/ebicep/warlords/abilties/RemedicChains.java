@@ -20,9 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int playersLinked = 0;
     protected int numberOfBrokenLinks = 0;
-
     // Percent
     private float healingMultiplier = 12.5f;
     private float allyDamageIncrease = 12;
@@ -94,6 +95,10 @@ public class RemedicChains extends AbstractAbility {
                                 false,
                                 false
                         );
+
+                        if (pveUpgrade) {
+                            wp.setMaxHealth(wp.getSpec().getMaxHealth());
+                        }
                     },
                     duration * 20
             ) {
@@ -140,6 +145,10 @@ public class RemedicChains extends AbstractAbility {
                                         false,
                                         false
                                 );
+                            }
+
+                            if (pveUpgrade) {
+                                chainTarget.setMaxHealth(chainTarget.getSpec().getMaxHealth());
                             }
                         },
                         duration * 20,
@@ -195,6 +204,11 @@ public class RemedicChains extends AbstractAbility {
                         ChatColor.GOLD + duration +
                         ChatColor.GRAY + " seconds!"
                 );
+
+                if (pveUpgrade) {
+                    wp.setMaxHealth(wp.getSpec().getMaxHealth() * 1.3f);
+                    chainTarget.setMaxHealth(chainTarget.getSpec().getMaxHealth() * 1.3f);
+                }
             }
 
             return true;
@@ -250,5 +264,13 @@ public class RemedicChains extends AbstractAbility {
 
     public void setAllyDamageIncrease(float allyDamageIncrease) {
         this.allyDamageIncrease = allyDamageIncrease;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

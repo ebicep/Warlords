@@ -8,39 +8,44 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
     float cooldown = ability.getCooldown();
+    int shieldPercentage = ability.getShieldPercentage();
 
     public ArcaneShieldBranch(AbilityTree abilityTree, ArcaneShield ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "",
+                "+5% Shield health",
                 5000,
                 () -> {
-
+                    ability.setShieldPercentage(shieldPercentage + 5);
+                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "",
+                "+10% Shield health",
                 10000,
                 () -> {
-
+                    ability.setShieldPercentage(shieldPercentage + 10);
+                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "",
+                "+15% Shield health",
                 15000,
                 () -> {
-
+                    ability.setShieldPercentage(shieldPercentage + 15);
+                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "",
+                "+20% Shield health",
                 20000,
                 () -> {
-
+                    ability.setShieldPercentage(shieldPercentage + 20);
+                    ability.updateShieldHealth(abilityTree.getPlayer().getSpec());
                 }
         ));
 

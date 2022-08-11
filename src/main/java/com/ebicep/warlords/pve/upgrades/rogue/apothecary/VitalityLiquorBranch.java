@@ -7,25 +7,105 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> {
 
+    int energyPerSecond = ability.getEnergyPerSecond();
+    float cooldown = ability.getCooldown();
+    float minHealing = ability.getMinDamageHeal();
+    float maxHealing = ability.getMaxDamageHeal();
+    float minWaveHealing = ability.getMinWaveHealing();
+    float maxWaveHealing = ability.getMaxWaveHealing();
+
     public VitalityLiquorBranch(AbilityTree abilityTree, VitalityLiquor ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Range - Tier I", "+2 Blocks radius", 5000));
-        treeA.add(new Upgrade("Range - Tier II", "+4 Blocks radius", 10000));
-        treeA.add(new Upgrade("Range - Tier III", "+6 Blocks radius", 20000));
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+10% Healing",
+                5000,
+                () -> {
+                    ability.setMinWaveHealing(minWaveHealing * 1.1f);
+                    ability.setMaxWaveHealing(maxWaveHealing * 1.1f);
+                    ability.setMinDamageHeal(minHealing * 1.1f);
+                    ability.setMaxDamageHeal(maxHealing * 1.1f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+20% Healing",
+                10000,
+                () -> {
+                    ability.setMinWaveHealing(minWaveHealing * 1.2f);
+                    ability.setMaxWaveHealing(maxWaveHealing * 1.2f);
+                    ability.setMinDamageHeal(minHealing * 1.2f);
+                    ability.setMaxDamageHeal(maxHealing * 1.2f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+30% Healing",
+                15000,
+                () -> {
+                    ability.setMinWaveHealing(minWaveHealing * 1.3f);
+                    ability.setMaxWaveHealing(maxWaveHealing * 1.3f);
+                    ability.setMinDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(maxHealing * 1.3f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+40% Healing",
+                20000,
+                () -> {
+                    ability.setMinWaveHealing(minWaveHealing * 1.4f);
+                    ability.setMaxWaveHealing(maxWaveHealing * 1.4f);
+                    ability.setMinDamageHeal(minHealing * 1.4f);
+                    ability.setMaxDamageHeal(maxHealing * 1.4f);
+                }
+        ));
 
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown Reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown Reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown Reduction", 20000));
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "-5% Cooldown reduction\n+2 Energy per second",
+                5000,
+                () -> {
+                    ability.setEnergyPerSecond(energyPerSecond + 2);
+                    ability.setCooldown(cooldown * 0.95f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-10% Cooldown reduction\n+4 Energy per second",
+                10000,
+                () -> {
+                    ability.setEnergyPerSecond(energyPerSecond + 4);
+                    ability.setCooldown(cooldown * 0.9f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "-15% Cooldown reduction\n+6 Energy per second",
+                15000,
+                () -> {
+                    ability.setEnergyPerSecond(energyPerSecond + 6);
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "-20% Cooldown reduction\n+8 Energy per second",
+                20000,
+                () -> {
+                    ability.setEnergyPerSecond(energyPerSecond + 8);
+                    ability.setCooldown(cooldown * 0.8f);
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "PLACEHOLDER: +100% Healing",
-                50000
+                "Liquor Of Life",
+                "Vitality Liquor - Master Upgrade",
+                "WIP",
+                50000,
+                () -> {
+
+                }
         );
     }
-
-    int vitalityRange = ability.getVitalityRange();
-
-    float cooldown = ability.getCooldown();
-
 }
