@@ -24,7 +24,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                     ability.setMinDamage(minDamage * 1.075f);
                     ability.setMaxDamage(maxDamage * 1.075f);
                     ability.setMinDamageHeal(minHealing * 1.075f);
-                    ability.setMaxDamageHeal(minHealing * 1.075f);
+                    ability.setMaxDamageHeal(maxHealing * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -35,7 +35,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                     ability.setMinDamage(minDamage * 1.15f);
                     ability.setMaxDamage(maxDamage * 1.15f);
                     ability.setMinDamageHeal(minHealing * 1.15f);
-                    ability.setMaxDamageHeal(minHealing * 1.15f);
+                    ability.setMaxDamageHeal(maxHealing * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -46,7 +46,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                     ability.setMinDamage(minDamage * 1.225f);
                     ability.setMaxDamage(maxDamage * 1.225f);
                     ability.setMinDamageHeal(minHealing * 1.225f);
-                    ability.setMaxDamageHeal(minHealing * 1.225f);
+                    ability.setMaxDamageHeal(maxHealing * 1.225f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -57,7 +57,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                     ability.setMinDamage(minDamage * 1.3f);
                     ability.setMaxDamage(maxDamage * 1.3f);
                     ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(maxHealing * 1.3f);
                 }
         ));
 
@@ -98,13 +98,10 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
         masterUpgrade = new Upgrade(
                 "Hammer of Illusion",
                 "Hammer of Light - Master Upgrade",
-                "PLACEHOLDER: +100% Damage / +100% Healing",
+                "Upon activating Crown of Light, release 3 additional\nlight rays that deals quintuple the damage to all nearby\nenemies and heal allies for the same amount.",
                 50000,
                 () -> {
-                    ability.setMinDamage(minDamage * 2);
-                    ability.setMaxDamage(maxDamage * 2);
-                    ability.setMinDamageHeal(minHealing * 2);
-                    ability.setMaxDamageHeal(minHealing * 2);
+                    ability.setPveUpgrade(true);
                 }
         );
     }

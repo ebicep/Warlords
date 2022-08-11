@@ -80,7 +80,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
         ));
 
         masterUpgrade = new Upgrade(
-                "",
+                "Light Imbusion",
                 "Light Infusion - Master Upgrade",
                 "WIP",
                 50000,

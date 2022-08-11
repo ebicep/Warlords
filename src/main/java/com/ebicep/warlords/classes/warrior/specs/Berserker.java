@@ -5,7 +5,7 @@ import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.berserker.*;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.*;
 
 import java.util.List;
 

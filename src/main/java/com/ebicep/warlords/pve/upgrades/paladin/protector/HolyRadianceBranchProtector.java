@@ -88,7 +88,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         masterUpgrade = new Upgrade(
                 "Edifying Radiance",
                 "Holy Radiance - Master Upgrade",
-                "Protector's Mark is now AoE.\n\nWarning: WIP",
+                "Protector's Mark is now AoE and has no target limit.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

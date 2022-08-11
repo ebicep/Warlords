@@ -1,48 +1,52 @@
-package com.ebicep.warlords.pve.upgrades.berserker;
+package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
-import com.ebicep.warlords.abilties.BloodLust;
+import com.ebicep.warlords.abilties.SeismicWave;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
+public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
 
-    int conversion = ability.getDamageConvertPercent();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
 
-    public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
+    public SeismicWaveBranch(AbilityTree abilityTree, SeismicWave ability) {
         super(abilityTree, ability);
-
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+3% Damage conversion to healing",
+                "Impair - Tier I",
+                "+3.75% Damage",
                 5000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 3);
+                    ability.setMinDamageHeal(minDamage * 1.0375f);
+                    ability.setMaxDamageHeal(maxDamage * 1.0375f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+6% Damage conversion to healing",
+                "Impair - Tier II",
+                "+8% Damage",
                 10000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 6);
+                    ability.setMinDamageHeal(minDamage * 1.08f);
+                    ability.setMaxDamageHeal(maxDamage * 1.08f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+9% Damage conversion to healing",
+                "Impair - Tier III",
+                "+11.25% Damage",
                 15000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 9);
+                    ability.setMinDamageHeal(minDamage * 1.1125f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1125f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+12% Damage conversion to healing",
+                "Impair - Tier IV",
+                "+15% Damage",
                 20000,
                 () -> {
-                    ability.setDamageConvertPercent(conversion + 12);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
 
@@ -80,13 +84,14 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Sanguineous",
-                "Blood Lust - Master Upgrade",
-                "+3s Duration\n\nWhile Blood Lust is active, increase all damage\nagainst bleeding or wounded targets by 20%",
+                "Seismic Smash",
+                "Seismic Wave - Master Upgrade",
+                "Increase energy cost by 50% but increase the\nsize of Seismic Wave by 100%",
                 50000,
                 () -> {
-                    ability.setDuration(ability.getDuration() + 3);
-                    ability.setPveUpgrade(true);
+                    ability.setEnergyCost(ability.getEnergyCost() * 1.5f);
+                    ability.setWaveSize(ability.getWaveSize() * 2);
+                    ability.setWaveWidth(ability.getWaveWidth() * 2);
                 }
         );
     }

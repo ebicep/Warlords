@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.berserker;
+package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

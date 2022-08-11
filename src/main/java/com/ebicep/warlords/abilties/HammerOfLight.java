@@ -1,16 +1,17 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -244,6 +245,12 @@ public class HammerOfLight extends AbstractAbility {
 
                         tempHammerOfLight.setCrownOfLight(true);
                         hammerOfLightCooldown.setNameAbbreviation("CROWN");
+
+                        if (pveUpgrade) {
+                            pulseHeal(wp, 20, 1.5);
+                            pulseHeal(wp, 40, 2);
+                            pulseHeal(wp, 60, 2.5);
+                        }
                     }
                 },
                 false,
@@ -251,6 +258,56 @@ public class HammerOfLight extends AbstractAbility {
         );
 
         return true;
+    }
+
+    private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier) {
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.4f);
+                EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
+                EffectUtils.playHelixAnimation(wp.getLocation(), radius * radiusMultiplier, ParticleEffect.SPELL_WITCH, 1, 20);
+                new CircleEffect(
+                        wp.getGame(),
+                        wp.getTeam(),
+                        wp.getLocation().add(0, 0.75f, 0),
+                        radius * radiusMultiplier,
+                        new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(1)
+                ).playEffects();
+
+                for (WarlordsEntity allyTarget : PlayerFilter
+                        .entitiesAround(wp.getLocation(), radius * radiusMultiplier, radius * radiusMultiplier, radius * radiusMultiplier)
+                        .aliveTeammatesOf(wp)
+                ) {
+                    playersHealed++;
+                    allyTarget.addHealingInstance(
+                            wp,
+                            "Hammer of Illusion",
+                            minDamageHeal * 5,
+                            maxDamageHeal * 5,
+                            critChance,
+                            critMultiplier,
+                            false,
+                            false
+                    );
+                }
+
+                for (WarlordsEntity enemyTarget : PlayerFilter
+                        .entitiesAround(wp.getLocation(), radius * radiusMultiplier, radius * radiusMultiplier, radius * radiusMultiplier)
+                        .aliveEnemiesOf(wp)
+                ) {
+                    enemyTarget.addDamageInstance(
+                            wp,
+                            "Hammer of Illusion",
+                            minDamage * 5,
+                            maxDamage * 5,
+                            critChance,
+                            critMultiplier,
+                            false
+                    );
+                }
+            }
+        }.runTaskLater(delay);
     }
 
     public ArmorStand spawnHammer(Location location) {
@@ -271,26 +328,6 @@ public class HammerOfLight extends AbstractAbility {
         hammer.setMarker(true);
 
         return hammer;
-    }
-
-    private void boostOnUse(WarlordsEntity we) {
-        we.getCooldownManager().addCooldown(new RegularCooldown<HammerOfLight>(
-                name,
-                null,
-                HammerOfLight.class,
-                new HammerOfLight(),
-                we,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {},
-                duration * 20
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().equals("Protector's Strike")) {
-                    // TODO
-                }
-            }
-        });
     }
 
     public boolean isHammer() {
