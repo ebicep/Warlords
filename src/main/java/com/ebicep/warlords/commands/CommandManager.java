@@ -14,6 +14,7 @@ import com.ebicep.warlords.commands.debugcommands.ingame.*;
 import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
@@ -110,6 +111,8 @@ public class CommandManager {
         manager.registerCommand(new ShoutCommand());
         manager.registerCommand(new SpectateCommand());
         manager.registerCommand(new MessageCommand());
+
+        manager.registerCommand(new LeaderboardCommand());
 
         manager.registerCommand(new PartyCommand());
         manager.registerCommand(new StreamCommand());
