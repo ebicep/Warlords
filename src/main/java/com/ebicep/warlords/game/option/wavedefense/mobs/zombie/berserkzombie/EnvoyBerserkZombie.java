@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilties.BloodLust;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -21,7 +22,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 "Envoy Berserker Vanguard",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.WOOD_STEP, 1, (short) 4),
+                        ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
                         new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),

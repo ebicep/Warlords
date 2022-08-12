@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -19,7 +20,7 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 "Elite Berserker Zombie",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET),
+                        ArmorManager.Helmets.GREATER_WARRIOR_HELMET.itemRed,
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_LEGGINGS),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
