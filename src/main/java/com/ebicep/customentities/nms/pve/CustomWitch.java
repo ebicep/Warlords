@@ -9,7 +9,9 @@ public class CustomWitch extends EntityWitch implements CustomEntity<CustomWitch
     public CustomWitch(World world) {
         super(world);
         resetAI(world);
-        giveBaseAI();
+        aiWander(1);
+        aiLookAtPlayer();
+        aiTargetHitBy();
     }
 
     public CustomWitch(org.bukkit.World world) {

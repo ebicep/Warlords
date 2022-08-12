@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs;
 
+import com.ebicep.warlords.game.option.wavedefense.mobs.blaze.Blaze;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.*;
 import com.ebicep.warlords.game.option.wavedefense.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.EliteSkeleton;
 import com.ebicep.warlords.game.option.wavedefense.mobs.skeleton.EnvoySkeleton;
 import com.ebicep.warlords.game.option.wavedefense.mobs.slime.BasicSlime;
 import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
+import com.ebicep.warlords.game.option.wavedefense.mobs.witch.Witch;
 import com.ebicep.warlords.game.option.wavedefense.mobs.wolf.Wolf;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EliteZombie;
@@ -33,17 +35,18 @@ public enum Mobs {
     SPIDER(Spider::new),
     WOLF(Wolf::new),
 
-    // Elite Tier 1
+    // Elite Tier 1 - Elite
     ELITE_ZOMBIE(EliteZombie::new),
     ELITE_BERSERK_ZOMBIE(EliteBerserkZombie::new),
     ELITE_SKELETON(EliteSkeleton::new),
     ELITE_PIG_ZOMBIE(ElitePigZombie::new),
     MAGMA_CUBE(MagmaCube::new),
     IRON_GOLEM(IronGolem::new),
+    BLAZE(Blaze::new),
+    WITCH(Witch::new),
 
     // Elite Tier 2 - Envoy
     ENVOY_ZOMBIE(EnvoyZombie::new),
-    ENVOY_BERSERK_ZOMBIE(EnvoyBerserkZombie::new),
     ENVOY_SKELETON(EnvoySkeleton::new),
     ENVOY_PIG_ZOMBIE(EnvoyPigZombie::new),
     ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie::new),
@@ -52,8 +55,8 @@ public enum Mobs {
     VOID_ZOMBIE(VoidZombie::new),
 
     // Boss
-    NARMER(Narmer::new),
     BOLTARO(Boltaro::new),
+    NARMER(Narmer::new),
     MITHRA(Mithra::new),
     PHYSIRA(Physira::new),
     ZENITH(Zenith::new)
