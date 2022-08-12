@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie;
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -37,7 +38,7 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
                 "Berserk",
                 "BERS",

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.slime;
 
 import com.ebicep.customentities.nms.pve.CustomSlime;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -23,7 +22,7 @@ import org.bukkit.Sound;
 public class BasicSlime extends AbstractSlime implements BasicMob {
 
     private final double hitRadius = 2.5;
-    private final double shimmerRadius = 6;
+    private final double shimmerRadius = 5;
 
     public BasicSlime(Location spawnLocation) {
         super(
@@ -40,18 +39,16 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
-        if (we == null) return;
         if (ticksElapsed % 4 == 0) {
             new CircleEffect(
-                    we.getGame(),
-                    we.getTeam(),
-                    we.getLocation(),
+                    warlordsNPC.getGame(),
+                    warlordsNPC.getTeam(),
+                    warlordsNPC.getLocation(),
                     hitRadius,
                     new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(0.75),
                     new DoubleLineEffect(ParticleEffect.SPELL)
@@ -60,10 +57,10 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
         if (ticksElapsed % 8 == 0) {
             for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(we, hitRadius, hitRadius, hitRadius)
-                    .aliveEnemiesOf(we)
+                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
+                    .aliveEnemiesOf(warlordsNPC)
             ) {
-                enemy.addDamageInstance(we, "Shimmer", 400, 400, -1, 100, false);
+                enemy.addDamageInstance(warlordsNPC, "Shimmer", 400, 400, -1, 100, false);
             }
         }
     }
@@ -80,19 +77,16 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
-        super.onDeath(killer, deathLocation, option);
-        WarlordsEntity we = Warlords.getPlayer(this.getWarlordsNPC().getEntity());
-        if (we == null) return;
         for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(we, shimmerRadius, shimmerRadius, shimmerRadius)
-                .aliveEnemiesOf(we)
+                .entitiesAround(warlordsNPC, shimmerRadius, shimmerRadius, shimmerRadius)
+                .aliveEnemiesOf(warlordsNPC)
         ) {
             enemy.getCooldownManager().addRegularCooldown(
                     "Shimmer",
                     "SHM",
                     CustomSlime.class,
                     new CustomSlime(spawnLocation.getWorld()),
-                    we,
+                    warlordsNPC,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                     },
@@ -108,7 +102,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                         if (ticksLeft % 20 == 0) {
                             float healthDamage = enemy.getMaxHealth() * 0.04f;
                             enemy.addDamageInstance(
-                                    we,
+                                    warlordsNPC,
                                     "Shimmer",
                                     healthDamage,
                                     healthDamage,

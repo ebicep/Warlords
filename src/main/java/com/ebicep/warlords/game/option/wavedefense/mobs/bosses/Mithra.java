@@ -34,7 +34,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
 
     }
 
