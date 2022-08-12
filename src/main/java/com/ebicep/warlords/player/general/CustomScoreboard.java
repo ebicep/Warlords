@@ -2,9 +2,9 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
-import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
+import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.sections.LeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -16,8 +16,9 @@ import org.bukkit.scoreboard.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeSet;
 
-import static com.ebicep.warlords.database.leaderboards.LeaderboardManager.*;
+import static com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager.*;
 
 public class CustomScoreboard {
 
@@ -137,42 +138,22 @@ public class CustomScoreboard {
         if (loaded) {
             LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
             if (leaderboardCategory == null) return;
+            validatePlayerHolograms(player);
+            PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+            GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
+            Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
+            PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
 
             Leaderboard leaderboard = leaderboardCategory.leaderboards.get(0);
-            List<DatabasePlayer> databasePlayerList;
-            switch (playerLeaderboardTime.getOrDefault(player.getUniqueId(), PlayersCollections.LIFETIME)) {
-                case LIFETIME:
-                    databasePlayerList = leaderboard.getSortedAllTime();
-                    break;
-                case SEASON_6:
-                    databasePlayerList = leaderboard.getSortedSeason6();
-                    break;
-                case SEASON_5:
-                    databasePlayerList = leaderboard.getSortedSeason5();
-                    break;
-                case SEASON_4:
-                    databasePlayerList = leaderboard.getSortedSeason4();
-                    break;
-                case WEEKLY:
-                    databasePlayerList = leaderboard.getSortedWeekly();
-                    break;
-                case DAILY:
-                    databasePlayerList = leaderboard.getSortedDaily();
-                    break;
-                default:
-                    databasePlayerList = leaderboard.getSortedAllTime();
-                    break;
-            }
-            LeaderboardManager.GameType selectedType = playerLeaderboardGameType.get(player.getUniqueId());
-            LeaderboardManager.Category selectedCategory = playerLeaderboardCategory.get(player.getUniqueId());
-            PlayersCollections selectedCollection = playerLeaderboardTime.get(player.getUniqueId());
-            if (selectedType == null) selectedType = GameType.ALL;
+            TreeSet<DatabasePlayer> databasePlayerList = leaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
+
+            if (selectedGameType == null) selectedGameType = GameType.ALL;
             if (selectedCollection == null) selectedCategory = Category.ALL;
             if (selectedCollection == null) selectedCollection = PlayersCollections.LIFETIME;
 
             String scoreboardSelection = "";
-            if (!selectedType.shortName.isEmpty()) {
-                scoreboardSelection += selectedType.shortName + "/";
+            if (!selectedGameType.shortName.isEmpty()) {
+                scoreboardSelection += selectedGameType.shortName + "/";
             }
             if (!selectedCategory.shortName.isEmpty()) {
                 scoreboardSelection += selectedCategory.shortName + "/";
@@ -180,7 +161,7 @@ public class CustomScoreboard {
             scoreboardSelection += selectedCollection.name;
 
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
-                    .filter(databasePlayer -> databasePlayer.getUuid().equalsIgnoreCase(player.getUniqueId().toString()))
+                    .filter(databasePlayer -> databasePlayer.getUUID2().equals(player.getUniqueId()))
                     .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();

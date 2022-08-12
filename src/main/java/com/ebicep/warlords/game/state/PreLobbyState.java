@@ -137,8 +137,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                         });*/
                     });
 
-                    HashMap<String, Integer> playersSR = new HashMap<>();
-                    SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
+                    HashMap<UUID, Integer> playersSR = new HashMap<>();
+                    SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUUID2(), value1 == null ? 500 : value1));
 
                     HashMap<Player, Team> bestTeam = new HashMap<>();
                     int bestBlueSR = 0;

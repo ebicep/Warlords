@@ -2,7 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -38,14 +39,14 @@ import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sen
 
 public abstract class DatabaseGameBase {
 
-    public static final Location LAST_GAME_STATS_LOCATION = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
-    public static final Location TOP_DAMAGE_LOCATION = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
-    public static final Location TOP_HEALING_LOCATION = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
-    public static final Location TOP_ABSORBED_LOCATION = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
-    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
-    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
-    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
-    public static final Location GAME_SWITCH_LOCATION = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
+    public static final Location LAST_GAME_STATS_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2532.5, 56, 766.5);
+    public static final Location TOP_DAMAGE_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2540.5, 58, 785.5);
+    public static final Location TOP_HEALING_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2546.5, 58, 785.5);
+    public static final Location TOP_ABSORBED_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2552.5, 58, 785.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2530.5, 59.5, 781.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2572.5, 58, 778.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
+    public static final Location GAME_SWITCH_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
     @Id
@@ -195,7 +196,12 @@ public abstract class DatabaseGameBase {
             Warlords.newChain()
                     .delay(4, TimeUnit.SECONDS)
                     .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
-                    .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false))
+                    .sync(() -> {
+                        for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
+                            LeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
+                        }
+                        LeaderboardManager.setLeaderboardHologramVisibilityToAll();
+                    })
                     .execute();
             //}
         }
@@ -231,31 +237,26 @@ public abstract class DatabaseGameBase {
             return;
         }
 
-        DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
-        DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.SEASON_6);
-        DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
-        DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.DAILY);
-
-        if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
-            if (databasePlayerAllTime != null) {
-                databasePlayerAllTime.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerAllTime);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
-            if (databasePlayerSeason != null) {
-                databasePlayerSeason.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
-            if (databasePlayerWeekly != null) {
-                databasePlayerWeekly.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in WEEKLY");
-            if (databasePlayerDaily != null) {
-                databasePlayerDaily.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in DAILY");
-        } else {
-            if (databasePlayerAllTime != null) {
-                databasePlayerAllTime.updateStats(databaseGame, gamePlayer, add);
+        HashMap<PlayersCollections, DatabasePlayer> playerInCollectionMap = new HashMap<>();
+        for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
+            playerInCollectionMap.put(activeCollection, DatabaseManager.playerService.findByUUID(gamePlayer.getUuid(), activeCollection));
+        }
+        playerInCollectionMap.forEach((collections, databasePlayer) -> {
+            if (databasePlayer == null) {
+                System.out.println("WARNING - " + gamePlayer.getName() + " was not found in " + collections.name());
+            } else {
+                if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
+                    databasePlayer.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
+                } else {
+                    databasePlayer.updateStats(databaseGame, gamePlayer, add);
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
+                }
+                Set<DatabasePlayer> databasePlayers = LeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections, v -> new HashSet<>());
+                databasePlayers.remove(databasePlayer);
+                databasePlayers.add(databasePlayer);
+            }
+        });
 //            databasePlayerAllTime.addAchievements(
 //                    Arrays.stream(TieredAchievements.values())
 //                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
@@ -263,21 +264,6 @@ public abstract class DatabaseGameBase {
 //                            .map(TieredAchievements.TieredAchievementRecord::new)
 //                            .collect(Collectors.toList())
 //            );
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerAllTime);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
-            if (databasePlayerSeason != null) {
-                databasePlayerSeason.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_6);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
-            if (databasePlayerWeekly != null) {
-                databasePlayerWeekly.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in WEEKLY");
-            if (databasePlayerDaily != null) {
-                databasePlayerDaily.updateStats(databaseGame, gamePlayer, add);
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
-            } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in DAILY");
-        }
     }
 
     private static int getGameBefore(int currentGame) {
@@ -295,13 +281,9 @@ public abstract class DatabaseGameBase {
     }
 
     public static void setGameHologramVisibility(Player player) {
-        if (!LeaderboardManager.playerGameHolograms.containsKey(player.getUniqueId()) ||
-                LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) == null ||
-                LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) < 0
-        ) {
-            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
-        }
-        int selectedGame = LeaderboardManager.playerGameHolograms.get(player.getUniqueId());
+        LeaderboardManager.validatePlayerHolograms(player);
+
+        int selectedGame = LeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()).getGameHologram();
         for (int i = 0; i < previousGames.size(); i++) {
             List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
             if (i == selectedGame) {
@@ -323,7 +305,8 @@ public abstract class DatabaseGameBase {
         gameSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.getLines().appendText("");
 
-        int selectedGame = LeaderboardManager.playerGameHolograms.get(player.getUniqueId());
+        PlayerLeaderboardInfo playerLeaderboardInfo = LeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+        int selectedGame = playerLeaderboardInfo.getGameHologram();
         int gameBefore = getGameBefore(selectedGame);
         int gameAfter = getGameAfter(selectedGame);
 
@@ -352,12 +335,12 @@ public abstract class DatabaseGameBase {
         }
 
         beforeLine.setClickListener((clicker) -> {
-            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), gameBefore);
+            playerLeaderboardInfo.setGameHologram(gameBefore);
             setGameHologramVisibility(player);
         });
 
         afterLine.setClickListener((clicker) -> {
-            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), gameAfter);
+            playerLeaderboardInfo.setGameHologram(gameAfter);
             setGameHologramVisibility(player);
         });
 

@@ -6,16 +6,16 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 public class SRCalculator {
 
     public static final HashMap<Function<DatabasePlayer, Double>, Double> totalValues = new HashMap<>();
     public static final HashMap<DatabasePlayer, Integer> playersSR = new HashMap<>();
-    public static List<DatabasePlayer> databasePlayerCache = new ArrayList<>();
+    public static Set<DatabasePlayer> databasePlayerCache = new HashSet<>();
     public static int numberOfActualPlayers = 40;
 
     public static void recalculateSR() {

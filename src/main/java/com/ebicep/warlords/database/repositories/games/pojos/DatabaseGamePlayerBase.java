@@ -11,13 +11,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
     @Id
     private String id;
-    protected String uuid;
+    protected UUID uuid;
     protected String name;
     protected Specializations spec;
     @Field("blocks_travelled")
@@ -56,7 +57,7 @@ public class DatabaseGamePlayerBase {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
         long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
-        this.uuid = warlordsPlayer.getUuid().toString();
+        this.uuid = warlordsPlayer.getUuid();
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
         this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
@@ -78,7 +79,7 @@ public class DatabaseGamePlayerBase {
         this.experienceEarnedUniversal = experienceEarnedUniversal;
     }
 
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 

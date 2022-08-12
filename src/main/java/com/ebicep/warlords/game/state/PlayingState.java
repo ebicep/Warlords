@@ -45,6 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -201,7 +202,7 @@ public class PlayingState implements State, TimerDebugAble {
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
                     .syncLast(databasePlayers -> {
-                        SRCalculator.databasePlayerCache = databasePlayers;
+                        SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
                         SRCalculator.recalculateSR();
                     })
                     .execute();

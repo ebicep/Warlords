@@ -4,7 +4,8 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -112,7 +113,7 @@ public class DatabaseManager {
 
         System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
         Warlords.newChain()
-                .async(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true))
+                .async(() -> LeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
@@ -122,7 +123,7 @@ public class DatabaseManager {
                 .syncLast((games) -> {
                     System.out.println("Loaded Last Games");
                     previousGames.addAll(games);
-                    LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1));
+                    LeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
                     System.out.println("Set Game Hologram Visibility");
                 })

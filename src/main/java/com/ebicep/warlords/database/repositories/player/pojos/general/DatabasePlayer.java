@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Document(collection = "Players_Information")
@@ -72,19 +73,27 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Field("particle_quality")
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
 
-    private List<Achievement.AbstractAchievementRecord> achievements = new ArrayList<>();
+    private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
 
     public DatabasePlayer() {
-    }
-
-    public DatabasePlayer(String uuid, String name) {
-        this.uuid = uuid;
-        this.name = name;
     }
 
     public DatabasePlayer(UUID uuid, String name) {
         this.uuid = uuid.toString();
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DatabasePlayer that = (DatabasePlayer) o;
+        return uuid.equals(that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 
     @Override
@@ -209,6 +218,10 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getUUID2() {
+        return UUID.fromString(uuid);
     }
 
     public String getUuid() {
@@ -367,15 +380,15 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         this.particleQuality = particleQuality;
     }
 
-    public void addAchievement(Achievement.AbstractAchievementRecord achievementRecord) {
+    public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {
         this.achievements.add(achievementRecord);
     }
 
-    public void addAchievements(List<Achievement.AbstractAchievementRecord> achievements) {
+    public void addAchievements(List<Achievement.AbstractAchievementRecord<?>> achievements) {
         this.achievements.addAll(achievements);
     }
 
-    public List<Achievement.AbstractAchievementRecord> getAchievements() {
+    public List<Achievement.AbstractAchievementRecord<?>> getAchievements() {
         return achievements;
     }
 

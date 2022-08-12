@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.leaderboards;
+package com.ebicep.warlords.database.leaderboards.stats;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -6,10 +6,7 @@ import org.bukkit.Location;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,21 +14,36 @@ public class Leaderboard {
 
     private final String title;
     private final Location location;
-    private final List<DatabasePlayer> sortedAllTime = new ArrayList<>();
-    private final List<DatabasePlayer> sortedSeason6 = new ArrayList<>();
-    private final List<DatabasePlayer> sortedSeason5 = new ArrayList<>();
-    private final List<DatabasePlayer> sortedSeason4 = new ArrayList<>();
-    private final List<DatabasePlayer> sortedWeekly = new ArrayList<>();
-    private final List<DatabasePlayer> sortedDaily = new ArrayList<>();
+    private final TreeSet<DatabasePlayer> sortedAllTime;
+    private final TreeSet<DatabasePlayer> sortedSeason6;
+    private final TreeSet<DatabasePlayer> sortedSeason5;
+    private final TreeSet<DatabasePlayer> sortedSeason4;
+    private final TreeSet<DatabasePlayer> sortedWeekly;
+    private final TreeSet<DatabasePlayer> sortedDaily;
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
-
 
     public Leaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
         this.location = location;
         this.valueFunction = valueFunction;
         this.stringFunction = stringFunction;
+        Comparator<DatabasePlayer> comparator = (o1, o2) -> {
+            if (o1.getUUID2().equals(o2.getUUID2())) return 0;
+            BigDecimal value1 = new BigDecimal(valueFunction.apply(o1).toString());
+            BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
+            return value2.compareTo(value1);
+        };
+        this.sortedAllTime = new TreeSet<>(comparator);
+        this.sortedSeason6 = new TreeSet<>(comparator);
+        this.sortedSeason5 = new TreeSet<>(comparator);
+        this.sortedSeason4 = new TreeSet<>(comparator);
+        this.sortedWeekly = new TreeSet<>(comparator);
+        this.sortedDaily = new TreeSet<>(comparator);
+    }
+
+    public static int compare(Number a, Number b) {
+        return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
     }
 
     @Override
@@ -47,7 +59,7 @@ public class Leaderboard {
         return Objects.hash(title, location);
     }
 
-    public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
+    public TreeSet<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
         switch (collections) {
             case LIFETIME:
                 return sortedAllTime;
@@ -62,41 +74,18 @@ public class Leaderboard {
             case DAILY:
                 return sortedDaily;
         }
-        return new ArrayList<>();
+        return null;
     }
 
-    public void resetSortedPlayers(List<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
-        switch (collections) {
-            case LIFETIME:
-                this.sortedAllTime.clear();
-                this.sortedAllTime.addAll(newSortedPlayers);
-                return;
-            case SEASON_6:
-                this.sortedSeason6.clear();
-                this.sortedSeason6.addAll(newSortedPlayers);
-                return;
-            case SEASON_5:
-                this.sortedSeason5.clear();
-                this.sortedSeason5.addAll(newSortedPlayers);
-                return;
-            case SEASON_4:
-                this.sortedSeason4.clear();
-                this.sortedSeason4.addAll(newSortedPlayers);
-                return;
-            case WEEKLY:
-                this.sortedWeekly.clear();
-                this.sortedWeekly.addAll(newSortedPlayers);
-                return;
-            case DAILY:
-                this.sortedDaily.clear();
-                this.sortedDaily.addAll(newSortedPlayers);
-                return;
-        }
+    public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
+        TreeSet<DatabasePlayer> sortedPlayers = getSortedPlayers(collections);
+        sortedPlayers.removeAll(newSortedPlayers);
+        sortedPlayers.addAll(newSortedPlayers);
     }
 
     public <T extends Number> T[] getTopThreeValues() {
         //current top value to compare to
-        Number topValue = valueFunction.apply(sortedWeekly.get(0));
+        Number topValue = valueFunction.apply(sortedWeekly.first());
 
         Class<T> clazz = (Class<T>) topValue.getClass();
         //ouput array of type clazz
@@ -108,15 +97,16 @@ public class Leaderboard {
         int counter = 0;
         //looping to get the next top two numbers
         //filtering out all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
-        boolean filter = sortedWeekly.get(0).getPlays() >= 10;
+        boolean filter = sortedWeekly.first().getPlays() >= 10;
         List<DatabasePlayer> databasePlayers;
         if (filter) {
             databasePlayers = sortedWeekly.stream()
                     .filter(databasePlayer -> databasePlayer.getPlays() > 3)
                     .collect(Collectors.toList());
         } else {
-            databasePlayers = sortedWeekly;
+            databasePlayers = new ArrayList<>(sortedWeekly);
         }
+
         for (DatabasePlayer databasePlayer : databasePlayers) {
             //must have more than 3 plays to get awarded
             if (databasePlayer.getPlays() <= 3) continue;
@@ -167,10 +157,6 @@ public class Leaderboard {
         return topThreePlayers;
     }
 
-    public static int compare(Number a, Number b) {
-        return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
-    }
-
     public String getTitle() {
         return title;
     }
@@ -179,27 +165,27 @@ public class Leaderboard {
         return location;
     }
 
-    public List<DatabasePlayer> getSortedAllTime() {
+    public TreeSet<DatabasePlayer> getSortedAllTime() {
         return sortedAllTime;
     }
 
-    public List<DatabasePlayer> getSortedSeason6() {
+    public TreeSet<DatabasePlayer> getSortedSeason6() {
         return sortedSeason6;
     }
 
-    public List<DatabasePlayer> getSortedSeason5() {
+    public TreeSet<DatabasePlayer> getSortedSeason5() {
         return sortedSeason5;
     }
 
-    public List<DatabasePlayer> getSortedSeason4() {
+    public TreeSet<DatabasePlayer> getSortedSeason4() {
         return sortedSeason4;
     }
 
-    public List<DatabasePlayer> getSortedWeekly() {
+    public TreeSet<DatabasePlayer> getSortedWeekly() {
         return sortedWeekly;
     }
 
-    public List<DatabasePlayer> getSortedDaily() {
+    public TreeSet<DatabasePlayer> getSortedDaily() {
         return sortedDaily;
     }
 

@@ -5,7 +5,7 @@ import com.ebicep.customentities.npc.traits.MasterworksFairTrait;
 import com.ebicep.customentities.npc.traits.PveStartTrait;
 import com.ebicep.customentities.npc.traits.SupplyDropTrait;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
@@ -86,7 +86,7 @@ public class NPCManager {
         gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
         gameStartNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        gameStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 741.5, 90, 0));
+        gameStartNPC.spawn(new Location(LeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 741.5, 90, 0));
     }
 
     private static void createPvENPC() {
@@ -97,7 +97,7 @@ public class NPCManager {
         pveStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         pveStartNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        pveStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 747.5, 90, 0));
+        pveStartNPC.spawn(new Location(LeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 747.5, 90, 0));
     }
 
     public static void createMasterworksFairNPC() {
@@ -110,7 +110,7 @@ public class NPCManager {
         masterworksFairNPC.data().set(NPC.VILLAGER_BLOCK_TRADES, true);
         masterworksFairNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        masterworksFairNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2542, 50, 754.5, 135, 0));
+        masterworksFairNPC.spawn(new Location(LeaderboardManager.SPAWN_POINT.getWorld(), -2542, 50, 754.5, 135, 0));
     }
 
     public static void createSupplyDropFairNPC() {
@@ -125,7 +125,7 @@ public class NPCManager {
 
         supplyDropNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
 
-        supplyDropNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2538, 50, 751, 135, 0));
+        supplyDropNPC.spawn(new Location(LeaderboardManager.SPAWN_POINT.getWorld(), -2538, 50, 751, 135, 0));
     }
 
 

@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -26,10 +27,23 @@ public class TestCommand extends BaseCommand {
         System.out.println("CACHE - " + cache.asMap());
     }
 
+    public static void doTest(CommandIssuer issuer) {
+        long start = System.nanoTime();
+        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
+        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
+        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId(), PlayersCollections.LIFETIME));
+        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        System.out.println(DatabaseManager.playerService.findByNameIgnoreCase("sumSmash"));
+        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        printCache();
+    }
+
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-
+        doTest(issuer);
 
         ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }

@@ -1,6 +1,6 @@
-package com.ebicep.warlords.database.leaderboards.sections;
+package com.ebicep.warlords.database.leaderboards.stats.sections;
 
-import com.ebicep.warlords.database.leaderboards.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;

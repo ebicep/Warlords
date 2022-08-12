@@ -1,14 +1,16 @@
-package com.ebicep.warlords.database.leaderboards.sections.subsections;
+package com.ebicep.warlords.database.leaderboards.stats.sections.subsections;
 
-import com.ebicep.warlords.database.leaderboards.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
-import com.ebicep.warlords.database.leaderboards.sections.LeaderboardGameType;
+import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.sections.LeaderboardCategory;
+import com.ebicep.warlords.database.leaderboards.stats.sections.LeaderboardGameType;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Location;
 
 import java.util.List;
+
+import static com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager.MAIN_LOBBY;
 
 public class LeaderboardCTF extends LeaderboardGameType<DatabasePlayerCTF> {
 
@@ -29,26 +31,26 @@ public class LeaderboardCTF extends LeaderboardGameType<DatabasePlayerCTF> {
     @Override
     public void addExtraLeaderboards(LeaderboardCategory<DatabasePlayerCTF> leaderboardCategory) {
         List<Leaderboard> leaderboards = leaderboardCategory.getLeaderboards();
-        leaderboards.add(new Leaderboard("Flags Captured", new Location(world, -2540.5, 56, 712.5),
+        leaderboards.add(new Leaderboard("Flags Captured", new Location(MAIN_LOBBY, -2540.5, 56, 712.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getFlagsCaptured(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getFlagsCaptured())));
-        leaderboards.add(new Leaderboard("Flags Returned", new Location(world, -2608.5, 52, 737.5),
+        leaderboards.add(new Leaderboard("Flags Returned", new Location(MAIN_LOBBY, -2608.5, 52, 737.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned())));
 
-        leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2523.5, 58, 734.5),
+        leaderboards.add(new Leaderboard("Mage Experience", new Location(MAIN_LOBBY, -2523.5, 58, 734.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience())));
-        leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2520.5, 58, 739.5),
+        leaderboards.add(new Leaderboard("Warrior Experience", new Location(MAIN_LOBBY, -2520.5, 58, 739.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience())));
-        leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2516.5, 58, 744.5),
+        leaderboards.add(new Leaderboard("Paladin Experience", new Location(MAIN_LOBBY, -2516.5, 58, 744.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience())));
-        leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 749.5),
+        leaderboards.add(new Leaderboard("Shaman Experience", new Location(MAIN_LOBBY, -2520.5, 58, 749.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience())));
-        leaderboards.add(new Leaderboard("Rogue Experience", new Location(world, -2523.5, 58, 754.5),
+        leaderboards.add(new Leaderboard("Rogue Experience", new Location(MAIN_LOBBY, -2523.5, 58, 754.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getRogue().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getRogue().getExperience())));
     }

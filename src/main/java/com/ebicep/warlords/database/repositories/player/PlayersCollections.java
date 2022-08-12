@@ -1,33 +1,32 @@
 package com.ebicep.warlords.database.repositories.player;
 
-import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 public enum PlayersCollections {
 
-    LIFETIME("Lifetime", "Players_Information", "playersAllTime", LeaderboardCategory::getLifeTimeHolograms),
-    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6", LeaderboardCategory::getSeason6Holograms),
-    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5", LeaderboardCategory::getSeason5Holograms),
-    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4", LeaderboardCategory::getSeason4Holograms),
-    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly", LeaderboardCategory::getWeeklyHolograms),
-    DAILY("Daily", "Players_Information_Daily", "playersDaily", LeaderboardCategory::getDailyHolograms),
+    LIFETIME("Lifetime", "Players_Information", "playersAllTime"),
+    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6"),
+    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5"),
+    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4"),
+    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly"),
+    DAILY("Daily", "Players_Information_Daily", "playersDaily"),
     //TEMP2("TEMP2", "TEMP2", "TEMP2", null),
 
     ;
 
-    public String name;
-    public String collectionName;
-    public String cacheName;
-    public Function<LeaderboardCategory<?>, List<Hologram>> function;
+    public final String name;
+    public final String collectionName;
+    public final String cacheName;
 
-    PlayersCollections(String name, String collectionName, String cacheName, Function<LeaderboardCategory<?>, List<Hologram>> function) {
+    PlayersCollections(String name, String collectionName, String cacheName) {
         this.name = name;
         this.collectionName = collectionName;
         this.cacheName = cacheName;
-        this.function = function;
+    }
+
+    public static List<PlayersCollections> getActiveCollections() {
+        return Arrays.asList(LIFETIME, SEASON_6, WEEKLY, DAILY);
     }
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {

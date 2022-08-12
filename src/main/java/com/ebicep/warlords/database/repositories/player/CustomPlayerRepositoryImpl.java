@@ -47,7 +47,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
 
     @Override
     public DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection) {
-        return mongoTemplate.findOne(new Query().addCriteria(Criteria.where("uuid").is(uuid.toString())), DatabasePlayer.class, collection.collectionName);
+        return mongoTemplate.findOne(new Query().addCriteria(Criteria.where("uuid").is(uuid)), DatabasePlayer.class, collection.collectionName);
     }
 
     @Override

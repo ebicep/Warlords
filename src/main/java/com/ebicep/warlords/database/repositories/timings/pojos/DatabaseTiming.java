@@ -2,8 +2,10 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
@@ -15,11 +17,27 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Document(collection = "Timings")
 public class DatabaseTiming {
 
+    private static final String[] WEEKLY_EXPERIENCE_LEADERBOARDS = new String[]{
+            "Wins",
+            "Losses",
+            "Kills",
+            "Assists",
+            "Deaths",
+            "DHP",
+            "DHP Per Game",
+            "Damage",
+            "Healing",
+            "Absorbed",
+            "Flags Captured",
+            "Flags Returned",
+    };
     @Id
     protected String id;
     private String title;
@@ -58,15 +76,13 @@ public class DatabaseTiming {
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                             try {
                                 //adding new document with top weekly players
-                                org.bson.Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+                                org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
                                 MongoCollection<org.bson.Document> weeklyLeaderboards = DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards");
                                 weeklyLeaderboards.insertOne(topPlayers);
 
                                 ExperienceManager.awardWeeklyExperience(topPlayers);
                                 //clearing weekly
                                 DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
-                                //reloading boards
-                                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
                             } catch (Exception e) {
                                 System.out.println("[Timings] ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
                             }
@@ -77,6 +93,11 @@ public class DatabaseTiming {
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
                         }
                     }
+                })
+                .sync(() -> {
+                    //reloading boards
+                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
                 })
                 .execute();
         //DAILY
@@ -96,16 +117,40 @@ public class DatabaseTiming {
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
-
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
                         }
                     }
                 })
+                .sync(() -> {
+                    //reloading boards
+                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                })
                 .execute();
     }
 
-    public void setLastReset(Instant lastReset) {
-        this.lastReset = lastReset;
+    public static org.bson.Document getTopPlayersOnLeaderboard() {
+        List<Leaderboard> leaderboards = LeaderboardManager.LEADERBOARD_CTF.getComps().getLeaderboards();
+        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        for (String title : WEEKLY_EXPERIENCE_LEADERBOARDS) {
+            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
+                Number[] numbers = leaderboard.getTopThreeValues();
+                String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
+                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, databasePlayer -> databasePlayer.getUUID2().toString());
+                List<org.bson.Document> topList = new ArrayList<>();
+                for (int i = 0; i < numbers.length; i++) {
+                    topList.add(new org.bson.Document("names", names[i]).append("uuids", uuids[i]).append("amount", numbers[i]));
+                }
+                org.bson.Document totalDocument = new org.bson.Document();
+                if (numbers[0] instanceof Integer) {
+                    totalDocument = new org.bson.Document("total", Arrays.stream(numbers).mapToInt(Number::intValue).sum());
+                } else if (numbers[0] instanceof Long) {
+                    totalDocument = new org.bson.Document("total", Arrays.stream(numbers).mapToLong(Number::longValue).sum());
+                }
+                document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
+            });
+        }
+        return document;
     }
 
     public String getTitle() {
@@ -114,6 +159,10 @@ public class DatabaseTiming {
 
     public Instant getLastReset() {
         return lastReset;
+    }
+
+    public void setLastReset(Instant lastReset) {
+        this.lastReset = lastReset;
     }
 
     public Timing getTiming() {
