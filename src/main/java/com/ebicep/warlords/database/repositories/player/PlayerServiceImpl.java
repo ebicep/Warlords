@@ -4,7 +4,6 @@ package com.ebicep.warlords.database.repositories.player;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -21,28 +20,28 @@ public class PlayerServiceImpl implements PlayerService {
     @Autowired
     PlayerRepository playerRepository;
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", condition = "#player != null")
+    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid")//, condition = "#player != null")
     @Override
     public void create(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.insert(player);
         System.out.println("[PlayerService] Created: - " + p);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", condition = "#player != null", unless = "#player == null")
+    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void create(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.create(player, collection);
         System.out.println("[PlayerService] Created: - " + player + " in " + collection);
     }
 
-    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", condition = "#player != null", unless = "#player == null")
+    //@CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null", condition = "#player != null")
     @Override
     public void update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
         System.out.println("[PlayerService] Updated: - " + p);
     }
 
-    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", condition = "#player != null", unless = "#player == null")
+    //@CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null", condition = "#player != null")
     @Override
     public void update(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.save(player, collection);
@@ -71,19 +70,19 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.deleteAll(collection);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#criteria.criteriaObject", condition = "#result != null", unless = "#result == null")
+    @Cacheable(cacheResolver = "cacheResolver", key = "#criteria.criteriaObject", unless = "#result == null")
     @Override
     public DatabasePlayer findOne(Criteria criteria, PlayersCollections collection) {
         return playerRepository.findOne(new Query().addCriteria(criteria), collection);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", condition = "#result != null", unless = "#result == null")
+    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", unless = "#result == null")
     @Override
     public DatabasePlayer findByUUID(UUID uuid) {
         return playerRepository.findByUUID(uuid);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", condition = "#result != null", unless = "#result == null")
+    @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", unless = "#result == null")
     @Override
     public DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection) {
         return playerRepository.findByUUID(uuid, collection);

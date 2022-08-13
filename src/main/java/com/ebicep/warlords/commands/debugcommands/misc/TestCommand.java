@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -23,23 +24,28 @@ public class TestCommand extends BaseCommand {
 
     public static void printCache() {
         for (PlayersCollections value : PlayersCollections.values()) {
-            System.out.println(value.cacheName);
+            System.out.println(value.name);
             Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
+            cache.asMap().forEach((o, o2) -> {
+                System.out.println(o.getClass());
+                System.out.println(o2.getClass());
+            });
             System.out.println("CACHE - " + cache.asMap());
             System.out.println(cache.stats());
+            break;
         }
 
     }
 
     public static void doTest(CommandIssuer issuer) {
-//        long start = System.nanoTime();
-//        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
-//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        System.out.println("--------------");
+        long start = System.nanoTime();
+        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
+        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
 //        System.out.println(DatabaseManager.playerService.findOne(Criteria.where("uuid").is(issuer.getUniqueId()), PlayersCollections.LIFETIME));
 //        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-//        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId(), PlayersCollections.LIFETIME) == null);
-//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-//        //printCache();
+        printCache();
+        System.out.println("--------------");
 
 //        for (PlayersCollections value : PlayersCollections.values()) {
 //            if(value == PlayersCollections.LIFETIME) continue;;
