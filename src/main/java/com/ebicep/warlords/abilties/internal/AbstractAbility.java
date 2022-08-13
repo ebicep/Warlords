@@ -195,12 +195,12 @@ public abstract class AbstractAbility {
                 .name(ChatColor.GOLD + getName())
                 .lore(
                         getCooldown() == 0 ? null :
-                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalHundredths(getCooldown()) + " seconds",
+                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalTenths(getCooldown()) + " seconds",
                         getEnergyCost() == 0 ? null :
-                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getEnergyCost()),
+                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalTenths(getEnergyCost()),
                         getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritChance()) + "%" + "\n" +
-                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(getCritMultiplier()) + "%",
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + "\n" +
+                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%",
                         "",
                         getDescription()
                 )

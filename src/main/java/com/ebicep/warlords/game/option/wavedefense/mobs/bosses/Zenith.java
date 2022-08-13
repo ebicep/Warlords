@@ -35,8 +35,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                 20000,
                 0.465f,
                 20,
-                900,
-                1100
+                1500,
+                2200
         );
     }
 

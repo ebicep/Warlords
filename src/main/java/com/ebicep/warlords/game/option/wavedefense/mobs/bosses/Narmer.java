@@ -9,6 +9,8 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.NarmerAcolyte;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -18,30 +20,30 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
     private int acolytesAlive = 0;
+    private int timeUntilNewAcolyte = 0;
 
     public Narmer(Location spawnLocation) {
         super(spawnLocation,
                 "Narmer",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
+                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
+                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
                         Weapons.WALKING_STICK.getItem()
                 ),
                 18000,
-                0.2f,
-                25,
-                1200,
-                1600
+                0.17f,
+                20,
+                1600,
+                2000
         );
     }
 
@@ -70,10 +72,11 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 300 == 0) {
+        if (ticksElapsed % 200 == 0) {
             Bukkit.broadcastMessage("earthquake");
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
+            EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), 12, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 12, ParticleEffect.FIREWORKS_SPARK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, 12, 12, 12)
@@ -82,8 +85,8 @@ public class Narmer extends AbstractZombie implements BossMob {
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
-                        328,
-                        497,
+                        600,
+                        900,
                         -1,
                         100,
                         false
@@ -102,14 +105,18 @@ public class Narmer extends AbstractZombie implements BossMob {
             if (warlordsNPC.getHealth() < executeHealth && acolyte.isAlive()) {
                 warlordsNPC.setHealth(executeHealth);
                 option.getGame().forEachOnlineWarlordsEntity(we -> {
-                    we.sendMessage(ChatColor.RED + "Narmer is invincible while his acolytes are still among the living!");
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLAZE_HIT, 2, 0.2f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), "mage.arcaneshield.activation", 2, 0.3f);
+                    we.sendMessage(ChatColor.RED + "Narmer is invincible while his acolytes are still alive!");
                 });
             }
 
+            // todo: FIX I hate this boss
             if (acolyte.isDead()) {
+                acolytesAlive--;
                 Bukkit.broadcastMessage("acolyte died");
                 Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.4f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation().add(0, 0.1, 0), 12, ParticleEffect.SPELL, 3, 60);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation().add(0, 0.15, 0), 12, ParticleEffect.SPELL, 3, 60);
                 for (WarlordsEntity enemy : PlayerFilter
                         .entitiesAround(warlordsNPC, 12, 12, 12)
                         .aliveEnemiesOf(warlordsNPC)
@@ -124,19 +131,41 @@ public class Narmer extends AbstractZombie implements BossMob {
                             false
                     );
                 }
+                timeUntilNewAcolyte = 500;
+            }
+
+            // todo: FIX
+            if (acolytesAlive < 4 && timeUntilNewAcolyte <= 0) {
+                Bukkit.broadcastMessage("spawned new acolyte");
+                NarmerAcolyte newAcolyte = new NarmerAcolyte(warlordsNPC.getLocation());
+                newAcolyte.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
+                warlordsNPC.getGame().addNPC(newAcolyte.getWarlordsNPC());
+                option.getMobs().add(newAcolyte);
+                acolytesAlive++;
+                timeUntilNewAcolyte = 500;
+
+                for (int i = 0; i < 3; i++) {
+                    BasicZombie basicZombie = new BasicZombie(warlordsNPC.getLocation());
+                    basicZombie.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
+                    warlordsNPC.getGame().addNPC(basicZombie.getWarlordsNPC());
+                    option.getMobs().add(basicZombie);
+                }
             }
         }
 
+        // todo: FIX
         for (WarlordsEntity ally : PlayerFilter
-                .playingGame(warlordsNPC.getGame())
+                .entitiesAround(warlordsNPC, 15, 15, 15)
                 .aliveTeammatesOfExcludingSelf(warlordsNPC)
         ) {
-            if (ally.isDead()) {
+            if (ally.getHealth() < 1) {
                 float currentHealth = warlordsNPC.getHealth() * 0.2f;
                 warlordsNPC.setHealth(warlordsNPC.getHealth() + currentHealth);
                 Bukkit.broadcastMessage("healed 20% hp");
             }
         }
+
+        timeUntilNewAcolyte--;
     }
 
     @Override

@@ -64,7 +64,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy cost\n+1 Blocks hit radius",
+                "-5 Energy cost\n+1 Block hit radius",
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);

@@ -384,6 +384,15 @@ public class WaveDefenseOption implements Option {
                     this.cancel();
                 }
 
+//                for (WarlordsEntity player : PlayerFilter
+//                        .playingGame(getGame())
+//                ) {
+//                    if (player.isDead()) {
+//                        game.setNextState(new EndState(game, null));
+//                        this.cancel();
+//                    }
+//                }
+
                 counter++;
             }
         }.runTaskTimer(20, 0);

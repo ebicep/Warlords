@@ -108,8 +108,8 @@ public class FreezingBreath extends AbstractAbility {
                 breathTarget.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal * (pveUpgrade ? 1.5f : 1),
-                        maxDamageHeal * (pveUpgrade ? 1.5f : 1),
+                        minDamageHeal * (pveUpgrade ? 1.8f : 1),
+                        maxDamageHeal * (pveUpgrade ? 1.8f : 1),
                         critChance,
                         critMultiplier,
                         false
@@ -143,7 +143,7 @@ public class FreezingBreath extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (100 - (0.04f * counter));
+                return currentDamageValue * (1 - (0.04f * counter));
             }
         });
     }

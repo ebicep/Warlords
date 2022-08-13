@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -106,14 +107,14 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateHealth() {
         if (!isDead()) {
             String oldName = getEntity().getCustomName();
-            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(getHealth()) + "❤";
+            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤";
             getEntity().setCustomName(newName);
         }
     }
     
     @Override
     public void updateEntity() {
-        entity.setCustomName((mobTier != null ? ChatColor.GOLD + mobTier.getSymbol() + " §7- " : "") + ChatColor.RED + Math.round(this.getHealth()) + "❤");
+        entity.setCustomName((mobTier != null ? ChatColor.GOLD + mobTier.getSymbol() + " §7- " : "") + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤");
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);

@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -96,6 +99,9 @@ public class Earthliving extends AbstractAbility {
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < procChance) {
+                        if (pveUpgrade) {
+                            energyPulseOnHit(attacker, victim);
+                        }
                         new BukkitRunnable() {
                             int counter = 0;
 
@@ -145,6 +151,47 @@ public class Earthliving extends AbstractAbility {
         });
 
         return true;
+    }
+
+    private void energyPulseOnHit(WarlordsEntity giver, WarlordsEntity target) {
+        target.getCooldownManager().addRegularCooldown(
+                "Earthliving PvE",
+                "",
+                Earthliving.class,
+                new Earthliving(),
+                giver,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                    Utils.playGlobalSound(target.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.2f);
+                    new FallingBlockWaveEffect(target.getLocation(), 6, 1, Material.SAPLING, (byte) 2).play();
+                    for (WarlordsEntity ally : PlayerFilter
+                            .entitiesAround(target, 6, 6, 6)
+                            .aliveTeammatesOf(giver)
+                            .closestFirst(target)
+                    ) {
+                        float missingHealth = (ally.getMaxHealth() - ally.getHealth()) * 0.05f;
+                        ally.addHealingInstance(
+                                giver,
+                                "Loamliving Weapon",
+                                missingHealth,
+                                missingHealth,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
+                        ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 40);
+                    }
+                },
+                2 * 20,
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    target.getSpeed().addSpeedModifier("Earthliving Slow", -99, 1, "BASE");
+
+                    if (ticksElapsed % 5 == 0) {
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                    }
+                }
+        );
     }
 
     public int getProcChance() {

@@ -171,15 +171,16 @@ public class EarthenSpike extends AbstractAbility {
                                             for (WarlordsEntity wave : PlayerFilter
                                                     .entitiesAround(targetLocation, 4, 4, 4)
                                                     .aliveEnemiesOf(wp)
-                                                    .limit(1)
+                                                    .limit(4)
                                             ) {
                                                 wave.addDamageInstance(wp, "Earthen Rupture", 778, 1103, critChance, critMultiplier, false);
+                                                wave.getSpeed().addSpeedModifier("Spike Slow", -50, 20);
                                             }
-                                            new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 5, 1, Material.DIRT, (byte) 0).play();
+                                            new FallingBlockWaveEffect(targetLocation.add(0, 1, 0), 6, 0.9, Material.DIRT, (byte) 0).play();
                                             Utils.playGlobalSound(targetLocation, Sound.DIG_GRAVEL, 2, 0.5f);
                                             ParticleEffect.EXPLOSION_LARGE.display(1, 1, 1, 0.01f, 2, targetLocation, 500);
                                         }
-                                    }.runTaskLater(12);
+                                    }.runTaskLater(15);
                                 }
                             }
 

@@ -34,7 +34,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
+        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
     }
 
     @Override
@@ -62,17 +62,17 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     @Override
     public List<String> getUpgradeLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(critChance) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalHundredths(critChance * getUpgradeMultiplier()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalHundredths(critMultiplier * getUpgradeMultiplier()) + "%",
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
+                        ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
+                        ChatColor.RED + NumberFormat.formatOptionalTenths(critChance * getUpgradeMultiplier()) + "%",
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
+                        ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier * getUpgradeMultiplier()) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(healthBonus) + " > " +
-                        "+" + NumberFormat.formatOptionalHundredths(healthBonus * getUpgradeMultiplier()),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(speedBonus) + "%" + " > " +
-                        "+" + NumberFormat.formatOptionalHundredths(speedBonus * getUpgradeMultiplier()) + "%"
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(healthBonus) + " > " +
+                        "+" + NumberFormat.formatOptionalTenths(healthBonus * getUpgradeMultiplier()),
+                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(speedBonus) + "%" + " > " +
+                        "+" + NumberFormat.formatOptionalTenths(speedBonus * getUpgradeMultiplier()) + "%"
         );
     }
 

@@ -74,16 +74,16 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     public List<String> getLore() {
         List<String> lore = new ArrayList<>(super.getLore());
         if (energyPerSecondBonus != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
+            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
         }
         if (energyPerHitBonus != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
+            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
         }
         if (skillCritChanceBonus != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
+            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
         }
         if (skillCritMultiplierBonus != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
+            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
         }
         String passiveEffect = getPassiveEffect();
         if (!passiveEffect.isEmpty()) {
@@ -134,16 +134,16 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     public List<String> getUpgradeLore() {
         List<String> upgradeLore = new ArrayList<>(super.getUpgradeLore());
         if (energyPerSecondBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(energyPerSecondBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerSecondBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(energyPerSecondBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerSecondBonus * getUpgradeMultiplier()));
         }
         if (energyPerHitBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(energyPerHitBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerHitBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(energyPerHitBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerHitBonus * getUpgradeMultiplier()));
         }
         if (skillCritChanceBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(skillCritChanceBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritChanceBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(skillCritChanceBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritChanceBonus * getUpgradeMultiplier()));
         }
         if (skillCritMultiplierBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalHundredths(skillCritMultiplierBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritMultiplierBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(skillCritMultiplierBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritMultiplierBonus * getUpgradeMultiplier()));
         }
         return upgradeLore;
     }

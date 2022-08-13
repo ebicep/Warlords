@@ -83,7 +83,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
         masterUpgrade = new Upgrade(
                 "Aggravating Hailstorm",
                 "Ice Barrier - Master Upgrade",
-                "Surround yourself in a glacial super shield,\nslowing all nearby enemies by 90% for 1 second.\nAdditionally, reduce their damage reduction\nby 3% for each second in your glacial shield.",
+                "Surround yourself in a glacial super shield,\nslowing all nearby enemies by 80% for 1 second.\nAdditionally, reduce their damage reduction\nby 3% for each second in your glacial shield.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

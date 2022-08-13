@@ -53,49 +53,48 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-5% Cooldown reduction\n+5% Slowness",
+                "-5% Cooldown reduction\n+4% Slowness",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
-                    ability.setSlowness(slowness + 5);
+                    ability.setSlowness(slowness + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10% Cooldown reduction\n+10% Slowness",
+                "-10% Cooldown reduction\n+6% Slowness",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
-                    ability.setSlowness(slowness + 10);
+                    ability.setSlowness(slowness + 6);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-15% Cooldown reduction\n+15% Slowness",
+                "-15% Cooldown reduction\n+8% Slowness",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
-                    ability.setSlowness(slowness + 15);
+                    ability.setSlowness(slowness + 7);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20% Cooldown reduction\n+20% Slowness",
+                "-20% Cooldown reduction\n+10% Slowness",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
-                    ability.setSlowness(slowness + 20);
+                    ability.setSlowness(slowness + 10);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Blizzard",
                 "Freezing Breath - Master Upgrade",
-                "Unleash a blizzard typhoon in front of you, dealing\n50% more damage and slow all enemies\nhit by 75% for 3 seconds.\n\nAdditionally, gain 4% damage reduction for each\nenemy hit, lasts 4 seconds. (up to 20%)",
+                "Unleash a blizzard typhoon in front of you,\ndealing 80% more damage.\n\nAdditionally, gain 4% damage reduction for each\nenemy hit, lasts 4 seconds. (up to 20%)",
                 50000,
                 () -> {
-                    ability.setSlowness(75);
-                    ability.setHitbox(ability.getHitbox() * 1.5f);
+                    ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                     ability.setPveUpgrade(true);
                 }
