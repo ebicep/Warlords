@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -15,6 +16,7 @@ public class PlayerLeaderboardInfo {
     private LeaderboardManager.Category statsCategory = LeaderboardManager.Category.ALL;
     private PlayersCollections statsTime = PlayersCollections.LIFETIME;
     private List<Hologram> holograms = new ArrayList<>();
+    private int page = 0;
 
     public int getGameHologram() {
         return gameHologram;
@@ -52,11 +54,33 @@ public class PlayerLeaderboardInfo {
         this.statsTime = statsTime;
     }
 
-    public List<Hologram> getHolograms() {
-        return holograms;
+    public void clearHolograms() {
+        this.holograms.forEach(Hologram::delete);
+        this.holograms.clear();
     }
 
     public void setHolograms(List<Hologram> holograms) {
         this.holograms = holograms;
     }
+
+    public int getPage() {
+        return page;
+    }
+
+    public int getPageBefore() {
+        return page == 0 ? Leaderboard.MAX_PAGES - 1 : page - 1;
+    }
+
+    public int getPageAfter() {
+        return page + 1 == Leaderboard.MAX_PAGES ? 0 : page + 1;
+    }
+
+    public String getPageRange(int page) {
+        return page * Leaderboard.PLAYERS_PER_PAGE + 1 + " - " + (page + 1) * Leaderboard.PLAYERS_PER_PAGE;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
 }

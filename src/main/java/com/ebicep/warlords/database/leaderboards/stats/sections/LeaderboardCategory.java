@@ -9,28 +9,49 @@ import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * <p>ALL
+ * <p>Comps
+ * <p>Pubs
+ */
 public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
 
     public final Function<DatabasePlayer, T> statFunction;
+    public final String categoryName;
 
     public final List<Leaderboard> leaderboards = new ArrayList<>();
 
-    public final List<Hologram> lifeTimeHolograms = new ArrayList<>();
-    public final List<Hologram> season6Holograms = new ArrayList<>();
-    public final List<Hologram> season5Holograms = new ArrayList<>();
-    public final List<Hologram> season4Holograms = new ArrayList<>();
-    public final List<Hologram> weeklyHolograms = new ArrayList<>();
-    public final List<Hologram> dailyHolograms = new ArrayList<>();
+    public final List<List<Hologram>> lifeTimeHolograms = new ArrayList<>();
+    public final List<List<Hologram>> season6Holograms = new ArrayList<>();
+    public final List<List<Hologram>> season5Holograms = new ArrayList<>();
+    public final List<List<Hologram>> season4Holograms = new ArrayList<>();
+    public final List<List<Hologram>> weeklyHolograms = new ArrayList<>();
+    public final List<List<Hologram>> dailyHolograms = new ArrayList<>();
 
-    public LeaderboardCategory(Function<DatabasePlayer, T> statFunction) {
+    public LeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName) {
         this.statFunction = statFunction;
+        this.categoryName = categoryName;
     }
 
-    public List<Hologram> getCollectionHologram(PlayersCollections collections) {
+    public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
+        for (Leaderboard leaderboard : leaderboards) {
+            //resetting sort then adding new sorted values
+            leaderboard.resetSortedPlayers(databasePlayers, collection);
+            //creating leaderboard
+            List<Hologram> holograms = new ArrayList<>();
+            for (int i = 0; i < Leaderboard.MAX_PAGES; i++) {
+                holograms.add(leaderboard.createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
+            }
+            getCollectionHologramPaged(collection).add(holograms);
+        }
+    }
+
+    public List<List<Hologram>> getCollectionHologramPaged(PlayersCollections collections) {
         if (collections == PlayersCollections.LIFETIME) return this.lifeTimeHolograms;
         if (collections == PlayersCollections.SEASON_6) return this.season6Holograms;
         if (collections == PlayersCollections.SEASON_5) return this.season5Holograms;
@@ -40,7 +61,13 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
         return null;
     }
 
-    public List<Hologram> getAllHolograms() {
+    public void deleteHolograms(PlayersCollections collection) {
+        List<List<Hologram>> hologramPaged = getCollectionHologramPaged(collection);
+        hologramPaged.forEach(holograms -> holograms.forEach(Hologram::delete));
+        hologramPaged.clear();
+    }
+
+    public List<List<Hologram>> getAllHologramsPaged() {
         return Stream.of(lifeTimeHolograms,
                         season6Holograms,
                         season5Holograms,
@@ -51,35 +78,20 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
                 .collect(Collectors.toList());
     }
 
-    public Function<DatabasePlayer, T> getStatFunction() {
-        return statFunction;
+    public List<Hologram> getAllHolograms() {
+        return Stream.of(lifeTimeHolograms,
+                        season6Holograms,
+                        season5Holograms,
+                        season4Holograms,
+                        weeklyHolograms,
+                        dailyHolograms)
+                .flatMap(Collection::stream)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     public List<Leaderboard> getLeaderboards() {
         return leaderboards;
     }
 
-    public List<Hologram> getLifeTimeHolograms() {
-        return lifeTimeHolograms;
-    }
-
-    public List<Hologram> getSeason6Holograms() {
-        return season6Holograms;
-    }
-
-    public List<Hologram> getSeason5Holograms() {
-        return season5Holograms;
-    }
-
-    public List<Hologram> getSeason4Holograms() {
-        return season4Holograms;
-    }
-
-    public List<Hologram> getWeeklyHolograms() {
-        return weeklyHolograms;
-    }
-
-    public List<Hologram> getDailyHolograms() {
-        return dailyHolograms;
-    }
 }

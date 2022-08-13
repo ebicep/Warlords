@@ -1,7 +1,13 @@
 package com.ebicep.warlords.database.leaderboards.stats;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 import java.lang.reflect.Array;
@@ -12,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class Leaderboard {
 
+    public static final int MAX_PAGES = 5;
+    public static final int PLAYERS_PER_PAGE = 10;
     private final String title;
     private final Location location;
     private final TreeSet<DatabasePlayer> sortedAllTime;
@@ -57,6 +65,22 @@ public class Leaderboard {
     @Override
     public int hashCode() {
         return Objects.hash(title, location);
+    }
+
+    public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
+        List<DatabasePlayer> databasePlayers = new ArrayList<>(getSortedPlayers(collection));
+
+        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+        HologramLines hologramLines = hologram.getLines();
+        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + collection.name + " " + title);
+        hologramLines.appendText(ChatColor.GRAY + subTitle);
+        for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
+            DatabasePlayer databasePlayer = databasePlayers.get(i);
+            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer));
+        }
+        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+
+        return hologram;
     }
 
     public TreeSet<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
@@ -165,32 +189,8 @@ public class Leaderboard {
         return location;
     }
 
-    public TreeSet<DatabasePlayer> getSortedAllTime() {
-        return sortedAllTime;
-    }
-
-    public TreeSet<DatabasePlayer> getSortedSeason6() {
-        return sortedSeason6;
-    }
-
-    public TreeSet<DatabasePlayer> getSortedSeason5() {
-        return sortedSeason5;
-    }
-
-    public TreeSet<DatabasePlayer> getSortedSeason4() {
-        return sortedSeason4;
-    }
-
     public TreeSet<DatabasePlayer> getSortedWeekly() {
         return sortedWeekly;
-    }
-
-    public TreeSet<DatabasePlayer> getSortedDaily() {
-        return sortedDaily;
-    }
-
-    public Function<DatabasePlayer, Number> getValueFunction() {
-        return valueFunction;
     }
 
     public Function<DatabasePlayer, String> getStringFunction() {
