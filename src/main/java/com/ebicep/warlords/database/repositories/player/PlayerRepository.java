@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface PlayerRepository extends MongoRepository<DatabasePlayer, String>, CustomPlayerRepository {
 
-    @Query("{uuid:'?0'}")
+    @Query("{uuid:?0}")
     DatabasePlayer findByUUID(UUID uuid);
 
     DatabasePlayer findByNameIgnoreCase(String name);

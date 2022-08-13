@@ -11,7 +11,7 @@ public enum PlayersCollections {
     SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4"),
     WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly"),
     DAILY("Daily", "Players_Information_Daily", "playersDaily"),
-    //TEMP2("TEMP2", "TEMP2", "TEMP2", null),
+    //TEMP2("TEMP2", "TEMP2", "TEMP2"),
 
     ;
 

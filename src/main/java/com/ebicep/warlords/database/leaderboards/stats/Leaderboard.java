@@ -29,7 +29,7 @@ public class Leaderboard {
         this.valueFunction = valueFunction;
         this.stringFunction = stringFunction;
         Comparator<DatabasePlayer> comparator = (o1, o2) -> {
-            if (o1.getUUID2().equals(o2.getUUID2())) return 0;
+            if (o1.getUuid().equals(o2.getUuid())) return 0;
             BigDecimal value1 = new BigDecimal(valueFunction.apply(o1).toString());
             BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
             return value2.compareTo(value1);

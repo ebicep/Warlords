@@ -35,7 +35,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private String id;
 
     @Indexed(unique = true)
-    private String uuid = "";
+    private UUID uuid;
     private String name;
     @Field("skin_base_64")
     private String skinBase64;
@@ -79,7 +79,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     public DatabasePlayer(UUID uuid, String name) {
-        this.uuid = uuid.toString();
+        this.uuid = uuid;
         this.name = name;
     }
 
@@ -220,11 +220,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         this.name = name;
     }
 
-    public UUID getUUID2() {
-        return UUID.fromString(uuid);
-    }
-
-    public String getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 

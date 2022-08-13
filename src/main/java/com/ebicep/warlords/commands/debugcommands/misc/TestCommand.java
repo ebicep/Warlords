@@ -6,7 +6,6 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -23,21 +22,32 @@ import org.springframework.cache.caffeine.CaffeineCache;
 public class TestCommand extends BaseCommand {
 
     public static void printCache() {
-        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.LIFETIME.cacheName)).getNativeCache();
-        System.out.println("CACHE - " + cache.asMap());
+        for (PlayersCollections value : PlayersCollections.values()) {
+            System.out.println(value.cacheName);
+            Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
+            System.out.println("CACHE - " + cache.asMap());
+            System.out.println(cache.stats());
+        }
+
     }
 
     public static void doTest(CommandIssuer issuer) {
-        long start = System.nanoTime();
-        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId(), PlayersCollections.LIFETIME));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-        System.out.println(DatabaseManager.playerService.findByNameIgnoreCase("sumSmash"));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-        printCache();
+//        long start = System.nanoTime();
+//        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
+//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+//        System.out.println(DatabaseManager.playerService.findOne(Criteria.where("uuid").is(issuer.getUniqueId()), PlayersCollections.LIFETIME));
+//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+//        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId(), PlayersCollections.LIFETIME) == null);
+//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+//        //printCache();
+
+//        for (PlayersCollections value : PlayersCollections.values()) {
+//            if(value == PlayersCollections.LIFETIME) continue;;
+//            List<DatabasePlayer> players = DatabaseManager.playerService.findAll(value);
+//            for (DatabasePlayer player : players) {
+//                DatabaseManager.playerService.update(player, value);
+//            }
+//        }
     }
 
     @Default

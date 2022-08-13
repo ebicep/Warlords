@@ -136,7 +136,7 @@ public class DatabaseTiming {
             leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();
                 String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
-                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, databasePlayer -> databasePlayer.getUUID2().toString());
+                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, databasePlayer -> databasePlayer.getUuid().toString());
                 List<org.bson.Document> topList = new ArrayList<>();
                 for (int i = 0; i < numbers.length; i++) {
                     topList.add(new org.bson.Document("names", names[i]).append("uuids", uuids[i]).append("amount", numbers[i]));

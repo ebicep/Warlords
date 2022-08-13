@@ -161,7 +161,7 @@ public class CustomScoreboard {
             scoreboardSelection += selectedCollection.name;
 
             Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
-                    .filter(databasePlayer -> databasePlayer.getUUID2().equals(player.getUniqueId()))
+                    .filter(databasePlayer -> databasePlayer.getUuid().equals(player.getUniqueId()))
                     .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();

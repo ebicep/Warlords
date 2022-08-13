@@ -299,7 +299,7 @@ public class LeaderboardManager {
                 List<DatabasePlayer> databasePlayers = new ArrayList<>(leaderboard.getSortedPlayers(selectedTime));
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
-                    if (databasePlayer.getUUID2().equals(player.getUniqueId())) {
+                    if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
