@@ -15,15 +15,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SupplyDropManager {
 
-    private static HashMap<UUID, Boolean> playerRollCooldown = new HashMap<>();
+    private static final ConcurrentHashMap<UUID, Boolean> PLAYER_ROLL_COOLDOWN = new ConcurrentHashMap<>();
 
     public static void sendSupplyDropMessage(UUID uuid, String message) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -59,7 +59,7 @@ public class SupplyDropManager {
                     }
                     databasePlayerPvE.addCoins(-10000);
                     databasePlayerPvE.addSupplyDropToken(1);
-
+                    openSupplyDropMenu(player);
                 });
 
         menu.setItem(
@@ -75,7 +75,7 @@ public class SupplyDropManager {
                         )
                         .get(),
                 (m, e) -> {
-                    if (playerRollCooldown.getOrDefault(player.getUniqueId(), false)) {
+                    if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
@@ -99,7 +99,7 @@ public class SupplyDropManager {
                         )
                         .get(),
                 (m, e) -> {
-                    if (playerRollCooldown.getOrDefault(player.getUniqueId(), false)) {
+                    if (PLAYER_ROLL_COOLDOWN.getOrDefault(player.getUniqueId(), false)) {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
@@ -137,7 +137,7 @@ public class SupplyDropManager {
     }
 
     public static void supplyDropRoll(Player player, int amount, boolean instant) {
-        playerRollCooldown.put(player.getUniqueId(), true);
+        PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), true);
         sendSupplyDropMessage(player.getUniqueId(), ChatColor.GREEN + "Called " + ChatColor.YELLOW + amount + ChatColor.GREEN + " supply drop" + (amount > 1 ? "s" : "") + "!");
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
@@ -184,7 +184,7 @@ public class SupplyDropManager {
                         sendSupplyDropMessage(player.getUniqueId(), ChatColor.GREEN + "Won: " + reward.getChatColor() + reward.name + "");
                         databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
                         if (rewardsGained == amount) {
-                            playerRollCooldown.put(player.getUniqueId(), false);
+                            PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), false);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             cancel();
                         }
