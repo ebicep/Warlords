@@ -23,7 +23,7 @@ public class Spider extends AbstractSpider implements BasicMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
 
     }
 

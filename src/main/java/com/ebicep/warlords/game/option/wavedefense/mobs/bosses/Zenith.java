@@ -41,7 +41,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {

@@ -39,7 +39,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
     }
 

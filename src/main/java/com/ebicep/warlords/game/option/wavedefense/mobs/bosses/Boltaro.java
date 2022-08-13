@@ -38,7 +38,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                         Weapons.DRAKEFANG.getItem()
                 ),
                 12500,
-                0.465f,
+                0.475f,
                 20,
                 350,
                 500
@@ -46,7 +46,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(

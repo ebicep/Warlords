@@ -29,7 +29,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
     }
 

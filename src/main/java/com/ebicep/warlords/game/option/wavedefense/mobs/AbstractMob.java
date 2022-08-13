@@ -87,16 +87,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 minMeleeDamage,
                 maxMeleeDamage
         );
-        onSpawn();
-        game.addNPC(warlordsNPC);
 
-        // temp
         WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions()
                 .stream()
                 .filter(option -> option instanceof WaveDefenseOption)
                 .findFirst()
                 .get();
 
+        onSpawn(waveDefenseOption);
+        game.addNPC(warlordsNPC);
+
+        // temp
         double scale = 600.0;
         long playerCount = game.warlordsPlayers().count();
         double modifiedScale = scale - (playerCount > 1 ? 50 * playerCount : 0);
@@ -112,7 +113,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return this;
     }
 
-    public abstract void onSpawn();
+    public abstract void onSpawn(WaveDefenseOption option);
 
     public abstract void whileAlive(int ticksElapsed, WaveDefenseOption option);
 

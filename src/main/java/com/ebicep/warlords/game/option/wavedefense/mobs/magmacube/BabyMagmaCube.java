@@ -23,7 +23,7 @@ public class BabyMagmaCube extends AbstractMagmaCube implements EliteMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
 
     }
 

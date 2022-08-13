@@ -34,7 +34,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
 
     }
 

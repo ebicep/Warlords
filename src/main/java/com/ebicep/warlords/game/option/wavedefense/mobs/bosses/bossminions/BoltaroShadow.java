@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.util.Vector;
 
 public class BoltaroShadow extends AbstractSkeleton implements BossMob {
 
@@ -36,7 +35,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 
@@ -47,8 +46,7 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
-        receiver.setVelocity(v, false);
+        Utils.addKnockback(attacker.getLocation(), receiver, -1.1, 0.3);
     }
 
     @Override

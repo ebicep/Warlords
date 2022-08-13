@@ -34,7 +34,7 @@ public class BasicPigZombie extends AbstractPigZombie implements BasicMob {
     }
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
 
     }
 

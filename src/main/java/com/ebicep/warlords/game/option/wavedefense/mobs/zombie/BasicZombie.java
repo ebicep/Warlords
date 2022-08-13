@@ -35,7 +35,7 @@ public class BasicZombie extends AbstractZombie implements BasicMob {
 
 
     @Override
-    public void onSpawn() {
+    public void onSpawn(WaveDefenseOption option) {
     }
 
     @Override
