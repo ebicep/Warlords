@@ -224,6 +224,12 @@ public class PartyCommand extends BaseCommand {
         partyPlayerWrapper.getParty().transfer(player.getUniqueId());
     }
 
+    @Subcommand("transfer")
+    @Description("Transfers party to another party")
+    public void transfer(@Conditions("party:true") Player player, @Flags("leader") PartyPlayerWrapper partyPlayerWrapper, @Conditions("lowerRank") PartyPlayer targetPartyPlayer) {
+        partyPlayerWrapper.getParty().transfer(targetPartyPlayer.getUUID());
+    }
+
     @Subcommand("forcejoin")
     @CommandPermission("warlords.party.forcejoin")
     @Description("Forces a player to join the party")
