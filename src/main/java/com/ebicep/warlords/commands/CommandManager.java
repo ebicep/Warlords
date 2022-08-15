@@ -41,6 +41,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
+import com.ebicep.warlords.pve.commands.MyStatsCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -129,6 +130,7 @@ public class CommandManager {
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());
 
+        manager.registerCommand(new MyStatsCommand());
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
     }
