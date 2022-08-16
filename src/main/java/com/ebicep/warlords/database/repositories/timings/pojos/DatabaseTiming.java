@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.ExperienceManager;
@@ -96,8 +96,8 @@ public class DatabaseTiming {
                 })
                 .sync(() -> {
                     //reloading boards
-                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                    StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+                    StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
                 })
                 .execute();
         //DAILY
@@ -123,17 +123,17 @@ public class DatabaseTiming {
                 })
                 .sync(() -> {
                     //reloading boards
-                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                    StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+                    StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
                 })
                 .execute();
     }
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
-        List<Leaderboard> leaderboards = LeaderboardManager.LEADERBOARD_CTF.getComps().getLeaderboards();
-        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.LEADERBOARD_CTF.getComps().getLeaderboards();
+        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", statsLeaderboards.get(0).getSortedWeekly().size());
         for (String title : WEEKLY_EXPERIENCE_LEADERBOARDS) {
-            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
+            statsLeaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();
                 String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
                 String[] uuids = leaderboard.getTopThreePlayerNames(numbers, databasePlayer -> databasePlayer.getUuid().toString());

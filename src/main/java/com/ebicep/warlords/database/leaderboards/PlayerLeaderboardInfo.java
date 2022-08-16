@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.leaderboards;
 
-import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -12,8 +12,8 @@ import java.util.List;
 public class PlayerLeaderboardInfo {
 
     private int gameHologram = 0;
-    private LeaderboardManager.GameType statsGameType = LeaderboardManager.GameType.ALL;
-    private LeaderboardManager.Category statsCategory = LeaderboardManager.Category.ALL;
+    private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.ALL;
+    private StatsLeaderboardManager.Category statsCategory = StatsLeaderboardManager.Category.ALL;
     private PlayersCollections statsTime = PlayersCollections.LIFETIME;
     private List<Hologram> holograms = new ArrayList<>();
     private int page = 0;
@@ -30,19 +30,19 @@ public class PlayerLeaderboardInfo {
         this.gameHologram = DatabaseGameBase.previousGames.size() - 1;
     }
 
-    public LeaderboardManager.GameType getStatsGameType() {
+    public StatsLeaderboardManager.GameType getStatsGameType() {
         return statsGameType;
     }
 
-    public void setStatsGameType(LeaderboardManager.GameType statsGameType) {
+    public void setStatsGameType(StatsLeaderboardManager.GameType statsGameType) {
         this.statsGameType = statsGameType;
     }
 
-    public LeaderboardManager.Category getStatsCategory() {
+    public StatsLeaderboardManager.Category getStatsCategory() {
         return statsCategory;
     }
 
-    public void setStatsCategory(LeaderboardManager.Category statsCategory) {
+    public void setStatsCategory(StatsLeaderboardManager.Category statsCategory) {
         this.statsCategory = statsCategory;
     }
 
@@ -68,15 +68,15 @@ public class PlayerLeaderboardInfo {
     }
 
     public int getPageBefore() {
-        return page == 0 ? Leaderboard.MAX_PAGES - 1 : page - 1;
+        return page == 0 ? StatsLeaderboard.MAX_PAGES - 1 : page - 1;
     }
 
     public int getPageAfter() {
-        return page + 1 == Leaderboard.MAX_PAGES ? 0 : page + 1;
+        return page + 1 == StatsLeaderboard.MAX_PAGES ? 0 : page + 1;
     }
 
     public String getPageRange(int page) {
-        return page * Leaderboard.PLAYERS_PER_PAGE + 1 + " - " + (page + 1) * Leaderboard.PLAYERS_PER_PAGE;
+        return page * StatsLeaderboard.PLAYERS_PER_PAGE + 1 + " - " + (page + 1) * StatsLeaderboard.PLAYERS_PER_PAGE;
     }
 
     public void setPage(int page) {

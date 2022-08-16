@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Leaderboard {
+public class StatsLeaderboard {
 
     public static final int MAX_PAGES = 5;
     public static final int PLAYERS_PER_PAGE = 10;
@@ -31,7 +31,7 @@ public class Leaderboard {
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
 
-    public Leaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
+    public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
         this.location = location;
         this.valueFunction = valueFunction;
@@ -58,7 +58,7 @@ public class Leaderboard {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Leaderboard that = (Leaderboard) o;
+        StatsLeaderboard that = (StatsLeaderboard) o;
         return Objects.equals(title, that.title) && Objects.equals(location, that.location);
     }
 

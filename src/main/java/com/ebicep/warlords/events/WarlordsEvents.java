@@ -5,7 +5,7 @@ import com.ebicep.warlords.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.Spiritguard;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -103,8 +103,8 @@ public class WarlordsEvents implements Listener {
 
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
                             if (Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
-                                if (LeaderboardManager.loaded) {
-                                    LeaderboardManager.setLeaderboardHologramVisibility(player);
+                                if (StatsLeaderboardManager.loaded) {
+                                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                                     DatabaseGameBase.setGameHologramVisibility(player);
                                     Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
 
@@ -259,7 +259,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+        StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));

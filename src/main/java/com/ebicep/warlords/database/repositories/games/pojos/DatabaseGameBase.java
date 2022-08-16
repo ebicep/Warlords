@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -39,14 +39,14 @@ import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sen
 
 public abstract class DatabaseGameBase {
 
-    public static final Location LAST_GAME_STATS_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2532.5, 56, 766.5);
-    public static final Location TOP_DAMAGE_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2540.5, 58, 785.5);
-    public static final Location TOP_HEALING_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2546.5, 58, 785.5);
-    public static final Location TOP_ABSORBED_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2552.5, 58, 785.5);
-    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2530.5, 59.5, 781.5);
-    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2572.5, 58, 778.5);
-    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
-    public static final Location GAME_SWITCH_LOCATION = new Location(LeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
+    public static final Location LAST_GAME_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2532.5, 56, 766.5);
+    public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2540.5, 58, 785.5);
+    public static final Location TOP_HEALING_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2546.5, 58, 785.5);
+    public static final Location TOP_ABSORBED_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2552.5, 58, 785.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2530.5, 59.5, 781.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2572.5, 58, 778.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
+    public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
     @Id
@@ -198,9 +198,9 @@ public abstract class DatabaseGameBase {
                     .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
                     .sync(() -> {
                         for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
-                            LeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
+                            StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
                         }
-                        LeaderboardManager.setLeaderboardHologramVisibilityToAll();
+                        StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
                     })
                     .execute();
             //}
@@ -252,7 +252,7 @@ public abstract class DatabaseGameBase {
                     databasePlayer.updateStats(databaseGame, gamePlayer, add);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 }
-                Set<DatabasePlayer> databasePlayers = LeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections, v -> new HashSet<>());
+                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections, v -> new HashSet<>());
                 databasePlayers.remove(databasePlayer);
                 databasePlayers.add(databasePlayer);
             }
@@ -281,9 +281,9 @@ public abstract class DatabaseGameBase {
     }
 
     public static void setGameHologramVisibility(Player player) {
-        LeaderboardManager.validatePlayerHolograms(player);
+        StatsLeaderboardManager.validatePlayerHolograms(player);
 
-        int selectedGame = LeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()).getGameHologram();
+        int selectedGame = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()).getGameHologram();
         for (int i = 0; i < previousGames.size(); i++) {
             List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
             if (i == selectedGame) {
@@ -305,7 +305,7 @@ public abstract class DatabaseGameBase {
         gameSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.getLines().appendText("");
 
-        PlayerLeaderboardInfo playerLeaderboardInfo = LeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         int selectedGame = playerLeaderboardInfo.getGameHologram();
         int gameBefore = getGameBefore(selectedGame);
         int gameAfter = getGameAfter(selectedGame);

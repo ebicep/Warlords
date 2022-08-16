@@ -4,7 +4,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -25,6 +27,28 @@ import java.util.stream.Collectors;
 @CommandAlias("guild|g")
 @Conditions("database:guild|database:player")
 public class GuildCommand extends BaseCommand {
+
+    @Subcommand("leaderboard")
+    public class GuildLeaderboardCommand extends BaseCommand {
+
+        @Subcommand("EXP|exp")
+        public void experience(CommandIssuer issuer) {
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.guildsSortedByExp, "Experience"));
+        }
+
+        @Subcommand("coins")
+        public void coins(CommandIssuer issuer) {
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.guildsSortedByCoins, "Coins"));
+        }
+
+        @Subcommand("refresh")
+        @CommandPermission("warlords.leaderboard.interaction")
+        public void refresh(CommandIssuer issuer) {
+            GuildLeaderboardManager.recalculateLeaderboards();
+            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
+        }
+
+    }
 
     @Subcommand("create")
     @Description("Creates a guild")

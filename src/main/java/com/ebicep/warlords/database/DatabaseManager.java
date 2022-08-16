@@ -5,7 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -56,7 +56,7 @@ public class DatabaseManager {
             NPCManager.createGameJoinNPCs();
             return;
         }
-        if (!LeaderboardManager.enabled) {
+        if (!StatsLeaderboardManager.enabled) {
             NPCManager.createGameJoinNPCs();
         }
 
@@ -111,9 +111,9 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
+        System.out.println("[Warlords] Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
-                .async(() -> LeaderboardManager.addHologramLeaderboards(true))
+                .async(() -> StatsLeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
@@ -123,7 +123,7 @@ public class DatabaseManager {
                 .syncLast((games) -> {
                     System.out.println("Loaded Last Games");
                     previousGames.addAll(games);
-                    LeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
+                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
                     System.out.println("Set Game Hologram Visibility");
                 })
