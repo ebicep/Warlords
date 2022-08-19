@@ -67,7 +67,7 @@ public class DatabaseTiming {
         //WEEKLY
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Weekly Stats"))
-                .asyncLast(timing -> {
+                .async(timing -> {
                     if (timing == null) {
                         System.out.println("[Timings] Could not find Weekly Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Weekly Stats", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
@@ -93,19 +93,23 @@ public class DatabaseTiming {
                             DatabaseManager.timingsService.update(timing);
 
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Weekly player information reset");
+                            return true;
                         }
                     }
+                    return false;
                 })
-                .sync(() -> {
-                    //reloading boards
-                    StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-                    StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                .syncLast((reset) -> {
+                    if (reset) {
+                        //reloading boards
+                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                    }
                 })
                 .execute();
         //DAILY
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Daily Stats"))
-                .asyncLast(timing -> {
+                .async(timing -> {
                     if (timing == null) {
                         System.out.println("[Timings] Could not find Daily Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Daily Stats", DateUtil.getResetDateToday(), Timing.DAILY));
@@ -120,13 +124,17 @@ public class DatabaseTiming {
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Daily player information reset");
+                            return true;
                         }
                     }
+                    return false;
                 })
-                .sync(() -> {
-                    //reloading boards
-                    StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-                    StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                .syncLast((reset) -> {
+                    if (reset) {
+                        //reloading boards
+                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                    }
                 })
                 .execute();
     }
@@ -135,7 +143,7 @@ public class DatabaseTiming {
         Instant now = Instant.now();
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Guilds"))
-                .asyncLast(timing -> {
+                .async(timing -> {
                     if (timing == null) {
                         System.out.println("[Timings] Could not find Guilds timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Guilds", DateUtil.getResetDateToday(), Timing.DAILY));
@@ -148,13 +156,17 @@ public class DatabaseTiming {
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Guilds daily counters reset");
+                            return true;
                         }
                     }
+                    return false;
                 })
-                .sync(() -> {
-                    for (Guild guild : GuildManager.GUILDS) {
-                        guild.setDailyExperience(0);
-                        GuildManager.queueUpdateGuild(guild);
+                .syncLast((reset) -> {
+                    if (reset) {
+                        for (Guild guild : GuildManager.GUILDS) {
+                            guild.setDailyExperience(0);
+                            GuildManager.queueUpdateGuild(guild);
+                        }
                     }
                 })
                 .execute();
