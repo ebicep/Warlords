@@ -56,6 +56,10 @@ public class Guild {
     private int playerLimit = 10;
     private long coins = 0;
     private long experience = 0;
+    @Field("daily_coins")
+    private long dailyCoins = 0;
+    @Field("daily_experience")
+    private long dailyExperience = 0;
     @Field("temporary_upgrades")
     private List<TempGuildUpgrade> temporaryUpgrades = new ArrayList<>();
     @Field("audit_log")
@@ -311,6 +315,14 @@ public class Guild {
         this.coins = coins;
     }
 
+    public long getDailyCoins() {
+        return dailyCoins;
+    }
+
+    public void setDailyCoins(long dailyCoins) {
+        this.dailyCoins = dailyCoins;
+    }
+
     public long getExperience() {
         return experience;
     }
@@ -321,6 +333,15 @@ public class Guild {
 
     public void addExperience(long experience) {
         this.experience += experience;
+        this.dailyExperience += experience;
+    }
+
+    public long getDailyExperience() {
+        return dailyExperience;
+    }
+
+    public void setDailyExperience(long dailyExperience) {
+        this.dailyExperience = dailyExperience;
     }
 
     public List<TempGuildUpgrade> getTemporaryUpgrades() {

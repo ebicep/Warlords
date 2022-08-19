@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
@@ -60,7 +62,7 @@ public class DatabaseTiming {
         this.timing = timing;
     }
 
-    public static void checkTimings() {
+    public static void checkStatsTimings() {
         Instant currentDate = Instant.now();
         //WEEKLY
         Warlords.newChain()
@@ -72,7 +74,7 @@ public class DatabaseTiming {
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
                         System.out.println("[Timings] Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //30 min buffer
+                        //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                             try {
                                 //adding new document with top weekly players
@@ -90,7 +92,7 @@ public class DatabaseTiming {
                             timing.setLastReset(DateUtil.getResetDateLatestMonday());
                             DatabaseManager.timingsService.update(timing);
 
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Weekly player information reset");
                         }
                     }
                 })
@@ -110,14 +112,14 @@ public class DatabaseTiming {
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
                         System.out.println("[Timings] Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //30 min buffer
-                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
+                        //10 min buffer
+                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
                             //clearing daily
                             DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Daily player information reset");
                         }
                     }
                 })
@@ -125,6 +127,35 @@ public class DatabaseTiming {
                     //reloading boards
                     StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
                     StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                })
+                .execute();
+    }
+
+    public static void checkGuildsTimings() {
+        Instant now = Instant.now();
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Guilds"))
+                .asyncLast(timing -> {
+                    if (timing == null) {
+                        System.out.println("[Timings] Could not find Guilds timing in database. Creating new timing.");
+                        DatabaseManager.timingsService.create(new DatabaseTiming("Guilds", DateUtil.getResetDateToday(), Timing.DAILY));
+                    } else {
+                        long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), now);
+                        System.out.println("[Timings] Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
+                        //10 min buffer
+                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
+                            //updating date to current
+                            timing.setLastReset(DateUtil.getResetDateToday());
+                            DatabaseManager.timingsService.update(timing);
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Guilds daily counters reset");
+                        }
+                    }
+                })
+                .sync(() -> {
+                    for (Guild guild : GuildManager.GUILDS) {
+                        guild.setDailyExperience(0);
+                        GuildManager.queueUpdateGuild(guild);
+                    }
                 })
                 .execute();
     }

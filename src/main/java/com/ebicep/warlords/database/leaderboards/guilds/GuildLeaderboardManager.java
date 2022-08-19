@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class GuildLeaderboardManager {
 
+    //TODO refactor to treeset whatever
     public static List<Guild> guildsSortedByExp = new ArrayList<>();
     public static List<Guild> guildsSortedByCoins = new ArrayList<>();
 
@@ -18,10 +19,10 @@ public class GuildLeaderboardManager {
         guildsSortedByCoins.clear();
 
         guildsSortedByExp = GuildManager.GUILDS.stream()
-                .sorted((o1, o2) -> Long.compare(o2.getExperience(), o1.getExperience()))
+                .sorted((o1, o2) -> Long.compare(o2.getDailyExperience(), o1.getDailyExperience()))
                 .collect(Collectors.toList());
         guildsSortedByCoins = GuildManager.GUILDS.stream()
-                .sorted((o1, o2) -> Long.compare(o2.getCoins(), o1.getCoins()))
+                .sorted((o1, o2) -> Long.compare(o2.getDailyCoins(), o1.getDailyCoins()))
                 .collect(Collectors.toList());
     }
 

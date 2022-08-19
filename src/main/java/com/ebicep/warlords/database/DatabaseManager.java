@@ -15,6 +15,7 @@ import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
+import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
@@ -96,7 +97,11 @@ public class DatabaseManager {
         Warlords.newChain()
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
-                .sync(() -> System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms"))
+                .sync(() -> {
+                    System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
+                    DatabaseTiming.checkGuildsTimings();
+
+                })
                 .execute();
 
         //runnable that updates all player that need updating every 10 seconds (prevents spam update)

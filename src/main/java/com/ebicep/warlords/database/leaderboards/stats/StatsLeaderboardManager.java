@@ -96,7 +96,7 @@ public class StatsLeaderboardManager {
                         System.out.println("[Leaderboards] Set Leaderboard Hologram Visibility");
 
                         if (init) {
-                            DatabaseTiming.checkTimings();
+                            DatabaseTiming.checkStatsTimings();
                             NPCManager.createGameJoinNPCs();
                         }
                         this.cancel();
