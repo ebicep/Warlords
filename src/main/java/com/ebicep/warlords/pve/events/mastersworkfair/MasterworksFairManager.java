@@ -46,16 +46,16 @@ public class MasterworksFairManager {
         resetFair(masterworksFair, true, 5);
     }
 
-    public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutes) {
-        if (currentFair == null) {
-            System.out.println("[MasterworksFairManager] Current fair is null, cannot reset fair");
+    public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutesTillStart) {
+        if (masterworksFair == null) {
+            System.out.println("[MasterworksFairManager] Supplied fair is null. Cannot reset fair.");
             return;
         }
         System.out.println("[MasterworksFairManager] Resetting fair");
         //give out rewards
         awardEntries(masterworksFair, throughRewardsInventory);
         //reset fair
-        MasterworksFairTrait.startTime = Instant.now().plus(minutes, ChronoUnit.MINUTES);
+        MasterworksFairTrait.startTime = Instant.now().plus(minutesTillStart, ChronoUnit.MINUTES);
         MasterworksFairTrait.PAUSED.set(false);
     }
 
@@ -89,7 +89,7 @@ public class MasterworksFairManager {
 
     public static void awardEntries(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
         Warlords.newChain()
-                .async(() -> DatabaseManager.masterworksFairService.update(currentFair))
+                .async(() -> DatabaseManager.masterworksFairService.update(masterworksFair))
                 .sync(() -> {
                     currentFair = null;
 

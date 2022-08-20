@@ -105,7 +105,7 @@ public class MasterworksFairTrait extends Trait {
     public void checkForReset(MasterworksFair masterworksFair) {
         //check if week past
         long minutesBetween = ChronoUnit.MINUTES.between(masterworksFair.getStartDate(), Instant.now());
-        //System.out.println("[MasterworksFairManager] Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
+        System.out.println("[MasterworksFairManager] Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
         if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
             System.out.println("[MasterworksFairManager] Masterworks Fair reset time has passed");
             resetFair(masterworksFair);
