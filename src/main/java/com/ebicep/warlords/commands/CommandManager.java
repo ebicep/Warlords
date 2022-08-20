@@ -14,7 +14,7 @@ import com.ebicep.warlords.commands.debugcommands.ingame.*;
 import com.ebicep.warlords.commands.debugcommands.misc.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardCommand;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.*;
@@ -41,6 +41,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
+import com.ebicep.warlords.pve.commands.MyStatsCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -112,7 +113,7 @@ public class CommandManager {
         manager.registerCommand(new SpectateCommand());
         manager.registerCommand(new MessageCommand());
 
-        manager.registerCommand(new LeaderboardCommand());
+        manager.registerCommand(new StatsLeaderboardCommand());
 
         manager.registerCommand(new PartyCommand());
         manager.registerCommand(new StreamCommand());
@@ -129,6 +130,7 @@ public class CommandManager {
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());
 
+        manager.registerCommand(new MyStatsCommand());
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
     }

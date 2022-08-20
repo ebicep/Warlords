@@ -19,6 +19,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     private long mostDamageInRound;
     @Field("most_damage_in_wave")
     private long mostDamageInWave;
+    @Field("total_waves_cleared")
+    private int totalWavesCleared;
 
     //TODO KILLS ASSISTS DEATH PER MOB
 
@@ -34,19 +36,45 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
-        if (((DatabaseGamePvE) databaseGame).getWavesCleared() > highestWaveCleared) {
-            this.highestWaveCleared = ((DatabaseGamePvE) databaseGame).getWavesCleared();
+        DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) databaseGame;
+        DatabaseGamePlayerPvE databaseGamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
+
+        if (databaseGamePvE.getWavesCleared() > highestWaveCleared) {
+            this.highestWaveCleared = databaseGamePvE.getWavesCleared();
         }
-        if (((DatabaseGamePlayerPvE) gamePlayer).getLongestTimeInCombat() > longestTimeInCombat) {
-            this.longestTimeInCombat = ((DatabaseGamePlayerPvE) gamePlayer).getLongestTimeInCombat();
+        if (databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
+            this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
         }
-        if (((DatabaseGamePlayerPvE) gamePlayer).getMostDamageInRound() > mostDamageInRound) {
-            this.mostDamageInRound = ((DatabaseGamePlayerPvE) gamePlayer).getMostDamageInRound();
+        if (databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
+            this.mostDamageInRound = databaseGamePlayerPvE.getMostDamageInRound();
         }
-        if (((DatabaseGamePlayerPvE) gamePlayer).getMostDamageInWave() > mostDamageInWave) {
-            this.mostDamageInWave = ((DatabaseGamePlayerPvE) gamePlayer).getMostDamageInWave();
+        if (databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
+            this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
         }
+        this.totalWavesCleared += databaseGamePvE.getWavesCleared();
     }
 
+    public int getHighestWaveCleared() {
+        return highestWaveCleared;
+    }
 
+    public int getLongestTimeInCombat() {
+        return longestTimeInCombat;
+    }
+
+    public long getMostDamageInRound() {
+        return mostDamageInRound;
+    }
+
+    public long getMostDamageInWave() {
+        return mostDamageInWave;
+    }
+
+    public int getTotalWavesCleared() {
+        return totalWavesCleared;
+    }
+
+    public long getTotalTimePlayed() {
+        return totalTimePlayed;
+    }
 }

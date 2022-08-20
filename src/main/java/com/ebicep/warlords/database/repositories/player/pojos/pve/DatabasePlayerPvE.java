@@ -71,7 +71,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     }
 
     @Override
-    public AbstractDatabaseStatInformation getSpec(Specializations specializations) {
+    public PvEDatabaseStatInformation getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -108,7 +108,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     }
 
     @Override
-    public AbstractDatabaseStatInformation getClass(Classes classes) {
+    public PvEDatabaseStatInformation getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;

@@ -2,10 +2,12 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
@@ -60,19 +62,19 @@ public class DatabaseTiming {
         this.timing = timing;
     }
 
-    public static void checkTimings() {
+    public static void checkStatsTimings() {
         Instant currentDate = Instant.now();
         //WEEKLY
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Weekly Stats"))
-                .asyncLast(timing -> {
+                .async(timing -> {
                     if (timing == null) {
                         System.out.println("[Timings] Could not find Weekly Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Weekly Stats", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
                         System.out.println("[Timings] Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //30 min buffer
+                        //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                             try {
                                 //adding new document with top weekly players
@@ -90,50 +92,91 @@ public class DatabaseTiming {
                             timing.setLastReset(DateUtil.getResetDateLatestMonday());
                             DatabaseManager.timingsService.update(timing);
 
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Weekly player information reset");
+                            return true;
                         }
                     }
+                    return false;
                 })
-                .sync(() -> {
-                    //reloading boards
-                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                .syncLast((reset) -> {
+                    if (reset) {
+                        //reloading boards
+                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                    }
                 })
                 .execute();
         //DAILY
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Daily Stats"))
-                .asyncLast(timing -> {
+                .async(timing -> {
                     if (timing == null) {
                         System.out.println("[Timings] Could not find Daily Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Daily Stats", DateUtil.getResetDateToday(), Timing.DAILY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
                         System.out.println("[Timings] Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //30 min buffer
-                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
+                        //10 min buffer
+                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
                             //clearing daily
                             DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Daily player information reset");
+                            return true;
                         }
                     }
+                    return false;
                 })
-                .sync(() -> {
-                    //reloading boards
-                    LeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-                    LeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                .syncLast((reset) -> {
+                    if (reset) {
+                        //reloading boards
+                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                    }
+                })
+                .execute();
+    }
+
+    public static void checkGuildsTimings() {
+        Instant now = Instant.now();
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Guilds"))
+                .async(timing -> {
+                    if (timing == null) {
+                        System.out.println("[Timings] Could not find Guilds timing in database. Creating new timing.");
+                        DatabaseManager.timingsService.create(new DatabaseTiming("Guilds", DateUtil.getResetDateToday(), Timing.DAILY));
+                    } else {
+                        long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), now);
+                        System.out.println("[Timings] Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
+                        //10 min buffer
+                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
+                            //updating date to current
+                            timing.setLastReset(DateUtil.getResetDateToday());
+                            DatabaseManager.timingsService.update(timing);
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Timings] Guilds daily counters reset");
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .syncLast((reset) -> {
+                    if (reset) {
+                        for (Guild guild : GuildManager.GUILDS) {
+                            guild.setDailyExperience(0);
+                            GuildManager.queueUpdateGuild(guild);
+                        }
+                    }
                 })
                 .execute();
     }
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
-        List<Leaderboard> leaderboards = LeaderboardManager.LEADERBOARD_CTF.getComps().getLeaderboards();
-        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.LEADERBOARD_CTF.getComps().getLeaderboards();
+        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", statsLeaderboards.get(0).getSortedWeekly().size());
         for (String title : WEEKLY_EXPERIENCE_LEADERBOARDS) {
-            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
+            statsLeaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();
                 String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
                 String[] uuids = leaderboard.getTopThreePlayerNames(numbers, databasePlayer -> databasePlayer.getUuid().toString());

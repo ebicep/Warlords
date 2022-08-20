@@ -14,13 +14,13 @@ import org.bukkit.entity.Player;
 
 @CommandAlias("leaderboard|lb")
 @CommandPermission("warlords.leaderboard.interaction")
-public class LeaderboardCommand extends BaseCommand {
+public class StatsLeaderboardCommand extends BaseCommand {
 
     @Subcommand("toggle")
     public void toggle(CommandIssuer issuer) {
-        LeaderboardManager.enabled = !LeaderboardManager.enabled;
-        LeaderboardManager.addHologramLeaderboards(false);
-        if (LeaderboardManager.enabled) {
+        StatsLeaderboardManager.enabled = !StatsLeaderboardManager.enabled;
+        StatsLeaderboardManager.addHologramLeaderboards(false);
+        if (StatsLeaderboardManager.enabled) {
             ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled", true);
         } else {
             ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled", true);
@@ -29,21 +29,21 @@ public class LeaderboardCommand extends BaseCommand {
 
     @Subcommand("reload")
     public void reload(CommandIssuer issuer) {
-        LeaderboardManager.addHologramLeaderboards(false);
+        StatsLeaderboardManager.addHologramLeaderboards(false);
         ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded", true);
     }
 
     @Subcommand("refresh")
     public void refresh(CommandIssuer issuer) {
-        LeaderboardManager.setLeaderboardHologramVisibilityToAll();
+        StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
         ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players", true);
     }
 
     @Subcommand("page")
     public void page(Player player) {
-        PlayerLeaderboardInfo playerLeaderboardInfo = LeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         playerLeaderboardInfo.setPage(playerLeaderboardInfo.getPageAfter());
-        LeaderboardManager.setLeaderboardHologramVisibility(player);
+        StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
     }
 
     @HelpCommand

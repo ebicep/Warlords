@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
-import com.ebicep.warlords.database.leaderboards.stats.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -19,12 +19,12 @@ import java.util.stream.Stream;
  * <p>Comps
  * <p>Pubs
  */
-public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
+public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation> {
 
     public final Function<DatabasePlayer, T> statFunction;
     public final String categoryName;
 
-    public final List<Leaderboard> leaderboards = new ArrayList<>();
+    public final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
 
     public final List<List<Hologram>> lifeTimeHolograms = new ArrayList<>();
     public final List<List<Hologram>> season6Holograms = new ArrayList<>();
@@ -33,19 +33,19 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
     public final List<List<Hologram>> weeklyHolograms = new ArrayList<>();
     public final List<List<Hologram>> dailyHolograms = new ArrayList<>();
 
-    public LeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName) {
+    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName) {
         this.statFunction = statFunction;
         this.categoryName = categoryName;
     }
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
-        for (Leaderboard leaderboard : leaderboards) {
+        for (StatsLeaderboard statsLeaderboard : statsLeaderboards) {
             //resetting sort then adding new sorted values
-            leaderboard.resetSortedPlayers(databasePlayers, collection);
+            statsLeaderboard.resetSortedPlayers(databasePlayers, collection);
             //creating leaderboard
             List<Hologram> holograms = new ArrayList<>();
-            for (int i = 0; i < Leaderboard.MAX_PAGES; i++) {
-                holograms.add(leaderboard.createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
+            for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
+                holograms.add(statsLeaderboard.createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
             }
             getCollectionHologramPaged(collection).add(holograms);
         }
@@ -90,8 +90,8 @@ public class LeaderboardCategory<T extends AbstractDatabaseStatInformation> {
                 .collect(Collectors.toList());
     }
 
-    public List<Leaderboard> getLeaderboards() {
-        return leaderboards;
+    public List<StatsLeaderboard> getLeaderboards() {
+        return statsLeaderboards;
     }
 
 }

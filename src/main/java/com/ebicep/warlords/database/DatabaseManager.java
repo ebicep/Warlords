@@ -5,7 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
-import com.ebicep.warlords.database.leaderboards.stats.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -15,6 +15,7 @@ import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
+import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
@@ -56,7 +57,7 @@ public class DatabaseManager {
             NPCManager.createGameJoinNPCs();
             return;
         }
-        if (!LeaderboardManager.enabled) {
+        if (!StatsLeaderboardManager.enabled) {
             NPCManager.createGameJoinNPCs();
         }
 
@@ -96,7 +97,11 @@ public class DatabaseManager {
         Warlords.newChain()
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
-                .sync(() -> System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms"))
+                .sync(() -> {
+                    System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
+                    DatabaseTiming.checkGuildsTimings();
+
+                })
                 .execute();
 
         //runnable that updates all player that need updating every 10 seconds (prevents spam update)
@@ -111,9 +116,9 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms - " + LeaderboardManager.enabled);
+        System.out.println("[Warlords] Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
-                .async(() -> LeaderboardManager.addHologramLeaderboards(true))
+                .async(() -> StatsLeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
@@ -123,7 +128,7 @@ public class DatabaseManager {
                 .syncLast((games) -> {
                     System.out.println("Loaded Last Games");
                     previousGames.addAll(games);
-                    LeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
+                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
                     System.out.println("Set Game Hologram Visibility");
                 })
