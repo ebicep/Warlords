@@ -78,7 +78,7 @@ public class CripplingStrike extends AbstractStrikeBase {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                            wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
                     },
                     crippleDuration * 20
@@ -98,7 +98,7 @@ public class CripplingStrike extends AbstractStrikeBase {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                            wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                            nearPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
                     }, crippleDuration * 20
             ) {
