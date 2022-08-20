@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
@@ -24,6 +25,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -100,7 +102,7 @@ public class DatabaseManager {
                 .sync(() -> {
                     System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkGuildsTimings();
-
+                    GuildLeaderboardManager.recalculateLeaderboards();
                 })
                 .execute();
 
@@ -122,15 +124,15 @@ public class DatabaseManager {
                 .execute();
 
         //Loading last 5 games
-        System.out.println("[Warlords] Loading Last Games");
+        System.out.println("[GameService] Loading Last Games");
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
-                    System.out.println("Loaded Last Games");
+                    System.out.println("[GameService] Loaded Last Games");
                     previousGames.addAll(games);
                     StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    System.out.println("Set Game Hologram Visibility");
+                    System.out.println("[GameService] Set Game Hologram Visibility");
                 })
                 .execute();
     }
@@ -142,7 +144,7 @@ public class DatabaseManager {
                     .syncFirst(() -> {
                         Player player = Bukkit.getPlayer(uuid);
                         if (player == null) {
-                            System.out.println("[WARNING] Player " + uuid + " name was not found");
+                            System.out.println(ChatColor.RED + "[WARNING] Player " + uuid + " name was not found");
                             return null;
                         }
                         return player.getName();
@@ -160,7 +162,7 @@ public class DatabaseManager {
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.run();
-                            System.out.println("Loaded Player " + uuid);
+                            System.out.println("[PlayerService] Loaded Player " + uuid);
                         }).execute();
             }
         }

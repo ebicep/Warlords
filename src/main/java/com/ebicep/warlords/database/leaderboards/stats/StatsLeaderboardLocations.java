@@ -10,7 +10,7 @@ public class StatsLeaderboardLocations {
     public static final Location STATS_GAME_TYPE_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2558.5, 53, 719.5);
     public static final Location STATS_CATEGORY_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2552.5, 53, 719.5);
     public static final Location STATS_TIME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2546.5, 53, 719.5);
-    public static final Location STATS_PAGE_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2571.5, 53.5, 720.5);
+    public static final Location STATS_PAGE_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2571.5, 54.5, 720.5);
     public static final Location CENTER = new LocationBuilder(StatsLeaderboardManager.SPAWN_POINT.clone()).forward(.5f).left(21).addY(2);
     //infront of spawn
     public static final Location CENTER_BOARD = new Location(MAIN_LOBBY, -2526.5, 57, 744.5);

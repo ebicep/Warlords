@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -167,6 +168,7 @@ public class DatabaseTiming {
                             guild.setDailyExperience(0);
                             GuildManager.queueUpdateGuild(guild);
                         }
+                        GuildLeaderboardManager.recalculateLeaderboards();
                     }
                 })
                 .execute();

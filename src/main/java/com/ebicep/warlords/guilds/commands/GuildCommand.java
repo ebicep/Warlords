@@ -31,14 +31,14 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("leaderboard")
     public class GuildLeaderboardCommand extends BaseCommand {
 
-        @Subcommand("EXP|exp")
+        @Subcommand("experience|EXP|exp")
         public void experience(CommandIssuer issuer) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.guildsSortedByExp, "Experience"));
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.DAILY_EXP, "Experience"));
         }
 
         @Subcommand("coins")
         public void coins(CommandIssuer issuer) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.guildsSortedByCoins, "Coins"));
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.DAILY_COINS, "Coins"));
         }
 
         @Subcommand("refresh")
