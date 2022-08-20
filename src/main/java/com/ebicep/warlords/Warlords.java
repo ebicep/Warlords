@@ -36,6 +36,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -814,7 +815,7 @@ public class Warlords extends JavaPlugin {
 
                         // Natural Regen
                         if (wps.getRegenTimer() != 0) {
-                            if (wps instanceof Player) {
+                            if (wps instanceof WarlordsPlayer) {
                                 wps.setRegenTimer(wps.getRegenTimer() - 1);
                             }
                             if (wps.getRegenTimer() == 0) {
