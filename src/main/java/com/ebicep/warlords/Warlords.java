@@ -814,7 +814,9 @@ public class Warlords extends JavaPlugin {
 
                         // Natural Regen
                         if (wps.getRegenTimer() != 0) {
-                            wps.setRegenTimer(wps.getRegenTimer() - 1);
+                            if (wps instanceof Player) {
+                                wps.setRegenTimer(wps.getRegenTimer() - 1);
+                            }
                             if (wps.getRegenTimer() == 0) {
                                 wps.getHitBy().clear();
                             }

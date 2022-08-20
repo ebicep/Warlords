@@ -3,10 +3,12 @@ package com.ebicep.warlords.game;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.state.ClosedState;
+import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -165,6 +167,19 @@ public enum GameAddon {
             if (player.getEntity() instanceof Player) {
                 player.setTeam(Team.BLUE);
                 player.updateArmor();
+            }
+        }
+
+        @Override
+        public void stateHasChanged(@Nonnull Game game, State oldState, @Nonnull State newState) {
+            if (newState instanceof ClosedState) {
+                return;
+            }
+            if (newState instanceof PlayingState) {
+                PlayingState playingState = (PlayingState) newState;
+                for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
+                    playingState.updatePlayerName(we);
+                }
             }
         }
     }

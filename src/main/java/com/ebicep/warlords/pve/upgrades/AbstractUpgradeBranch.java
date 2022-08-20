@@ -178,18 +178,18 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability) {
-        game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
+        game.forEachOnlineWarlordsEntity((p) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
                 p.sendMessage(
                         ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                                ability.getName() + " - §c§l" +
-                                upgrade.getName() + "§e!"
+                        ability.getName() + " - §c§l" +
+                        upgrade.getName() + "§e!"
                 );
             } else {
                 p.sendMessage(
                         ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                                ability.getName() + " - " +
-                                upgrade.getName() + "§e!"
+                        ability.getName() + " - " +
+                        upgrade.getName() + "§e!"
                 );
             }
         });
