@@ -14,9 +14,9 @@ import java.util.UUID;
 @Repository
 public interface CustomPlayerRepository {
 
-    void create(DatabasePlayer player, PlayersCollections collection);
+    DatabasePlayer create(DatabasePlayer player, PlayersCollections collection);
 
-    void save(DatabasePlayer player, PlayersCollections collection);
+    DatabasePlayer save(DatabasePlayer player, PlayersCollections collection);
 
     void delete(DatabasePlayer player, PlayersCollections collection);
 

@@ -25,7 +25,6 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -141,15 +140,7 @@ public class DatabaseManager {
         if (playerService == null || !enabled) return;
         if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
-                    .syncFirst(() -> {
-                        Player player = Bukkit.getPlayer(uuid);
-                        if (player == null) {
-                            System.out.println(ChatColor.RED + "[WARNING] Player " + uuid + " name was not found");
-                            return null;
-                        }
-                        return player.getName();
-                    })
-                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
+                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
                     .sync(() -> {
                         if (collections == PlayersCollections.LIFETIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));

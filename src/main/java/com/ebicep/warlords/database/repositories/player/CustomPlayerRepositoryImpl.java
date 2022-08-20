@@ -20,13 +20,13 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     MongoTemplate mongoTemplate;
 
     @Override
-    public void create(DatabasePlayer player, PlayersCollections collection) {
-        mongoTemplate.insert(player, collection.collectionName);
+    public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {
+        return mongoTemplate.insert(player, collection.collectionName);
     }
 
     @Override
-    public void save(DatabasePlayer player, PlayersCollections collection) {
-        mongoTemplate.save(player, collection.collectionName);
+    public DatabasePlayer save(DatabasePlayer player, PlayersCollections collection) {
+        return mongoTemplate.save(player, collection.collectionName);
     }
 
     @Override

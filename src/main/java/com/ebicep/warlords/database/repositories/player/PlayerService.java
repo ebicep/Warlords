@@ -13,13 +13,13 @@ import java.util.UUID;
 @Service
 public interface PlayerService {
 
-    void create(DatabasePlayer player);
+    DatabasePlayer create(DatabasePlayer player);
 
-    void create(DatabasePlayer player, PlayersCollections collection);
+    DatabasePlayer create(DatabasePlayer player, PlayersCollections collection);
 
-    void update(DatabasePlayer player);
+    DatabasePlayer update(DatabasePlayer player);
 
-    void update(DatabasePlayer player, PlayersCollections collection);
+    DatabasePlayer update(DatabasePlayer player, PlayersCollections collection);
 
     void delete(DatabasePlayer player);
 
