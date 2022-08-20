@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -15,6 +14,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +45,7 @@ public class GuildCommand extends BaseCommand {
         @CommandPermission("warlords.leaderboard.interaction")
         public void refresh(CommandIssuer issuer) {
             GuildLeaderboardManager.recalculateLeaderboards();
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
         }
 
     }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.util.chat;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -15,6 +16,36 @@ public class ChatUtils {
     public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
 
     private static final int CENTER_PX = 164;
+
+    public enum MessageTypes {
+
+        WARLORDS("Warlords", ChatColor.GREEN),
+        PLAYER_SERVICE("PlayerService", ChatColor.AQUA),
+        GAME_SERVICE("GameService", ChatColor.YELLOW),
+        GUILD_SERVICE("GuildService", ChatColor.GOLD),
+        LEADERBOARDS("Leaderboards", ChatColor.BLUE),
+        TIMINGS("Timings", ChatColor.DARK_GRAY),
+        MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
+
+        ;
+
+        public final String name;
+        public final ChatColor chatColor;
+
+        MessageTypes(String name, ChatColor chatColor) {
+            this.name = name;
+            this.chatColor = chatColor;
+        }
+
+        public void sendMessage(String message) {
+            Bukkit.getServer().getConsoleSender().sendMessage(chatColor + "[" + name + "] " + message);
+        }
+
+        public void sendErrorMessage(String message) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[" + name + "] " + message);
+        }
+
+    }
 
     public static void sendMessage(Player player, boolean centered, String message) {
         if (centered) {

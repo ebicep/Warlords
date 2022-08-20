@@ -7,8 +7,8 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.HelpCommand;
 import co.aikar.commands.annotation.Subcommand;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -21,22 +21,22 @@ public class StatsLeaderboardCommand extends BaseCommand {
         StatsLeaderboardManager.enabled = !StatsLeaderboardManager.enabled;
         StatsLeaderboardManager.addHologramLeaderboards(false);
         if (StatsLeaderboardManager.enabled) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled", true);
         } else {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled", true);
         }
     }
 
     @Subcommand("reload")
     public void reload(CommandIssuer issuer) {
         StatsLeaderboardManager.addHologramLeaderboards(false);
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded", true);
     }
 
     @Subcommand("refresh")
     public void refresh(CommandIssuer issuer) {
         StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players", true);
     }
 
     @Subcommand("page")

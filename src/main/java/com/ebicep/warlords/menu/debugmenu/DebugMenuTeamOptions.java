@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.menu.Menu.*;
+import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 public class DebugMenuTeamOptions {
 

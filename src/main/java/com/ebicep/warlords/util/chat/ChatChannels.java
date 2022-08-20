@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.chat;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
 import com.ebicep.warlords.game.state.EndState;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -264,6 +266,32 @@ public enum ChatChannels {
     public static String getChatFormat(String prefixWithColor) {
         return prefixWithColor + "%1$s" + ChatColor.WHITE + ": %2$s";
     }
+
+    public static void sendDebugMessage(Player player, String message, boolean asyncPlayerChat) {
+        ChatChannels.playerSendMessage(player, message, ChatChannels.DEBUG, asyncPlayerChat);
+    }
+
+    public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, String message, boolean asyncPlayerChat) {
+        if (warlordsPlayer.getEntity() instanceof Player) {
+            ChatChannels.playerSendMessage((Player) warlordsPlayer.getEntity(), message, ChatChannels.DEBUG, asyncPlayerChat);
+        }
+    }
+
+    public static void sendDebugMessage(CommandIssuer commandIssuer, String message, boolean asyncPlayerChat) {
+        if (commandIssuer != null && commandIssuer.getIssuer() instanceof Player) {
+            sendDebugMessage((Player) commandIssuer.getIssuer(), message, asyncPlayerChat);
+        } else {
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                if (Permissions.isAdmin(onlinePlayer)) {
+                    onlinePlayer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
+                }
+            }
+            if (commandIssuer != null) {
+                commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            }
+        }
+    }
+
 
     public abstract String getFormat(Player player, String prefixWithColor);
 

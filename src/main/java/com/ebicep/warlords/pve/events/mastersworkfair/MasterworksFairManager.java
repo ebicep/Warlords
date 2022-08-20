@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -48,10 +49,10 @@ public class MasterworksFairManager {
 
     public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutesTillStart) {
         if (masterworksFair == null) {
-            System.out.println("[MasterworksFairManager] Supplied fair is null. Cannot reset fair.");
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
             return;
         }
-        System.out.println("[MasterworksFairManager] Resetting fair");
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Resetting fair");
         //give out rewards
         awardEntries(masterworksFair, throughRewardsInventory);
         //reset fair
@@ -66,7 +67,7 @@ public class MasterworksFairManager {
     }
 
     public static void initializeFair(MasterworksFair masterworksFair) {
-        System.out.println("[MasterworksFairManager] Initialize masterworks fair: " + masterworksFair.getStartDate());
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Initialize masterworks fair: " + masterworksFair.getStartDate());
         currentFair = masterworksFair;
         MasterworksFairTrait.PAUSED.set(false);
         //runnable that updates fair every 30 seconds if there has been a change
@@ -160,9 +161,9 @@ public class MasterworksFairManager {
                         }
                     }
                     if (throughRewardsInventory) {
-                        System.out.println("[Masterworks Fair] Awarded entries through reward inventory");
+                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
                     } else {
-                        System.out.println("[MasterworksFairManager] Awarded entries directly");
+                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
                     }
                 }).
                 execute();

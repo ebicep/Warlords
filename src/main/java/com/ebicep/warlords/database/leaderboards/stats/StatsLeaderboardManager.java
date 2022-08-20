@@ -12,6 +12,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.sr.SRCalculator;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -60,7 +61,7 @@ public class StatsLeaderboardManager {
 
         if (enabled) {
             loaded = false;
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Leaderboards] Adding Holograms");
+            ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("[Leaderboards] Adding Holograms");
 
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
@@ -85,15 +86,13 @@ public class StatsLeaderboardManager {
                     if (loadedBoards.get() == 6) {
                         loaded = true;
 
-                        long endTime = System.nanoTime();
-                        long timeToLoad = (endTime - startTime) / 1000000;
-                        System.out.println("[Leaderboards] Time it took for LB to load (ms): " + timeToLoad);
+                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
-                        System.out.println("[Leaderboards] Set Leaderboard Hologram Visibility");
+                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
                         if (init) {
                             DatabaseTiming.checkStatsTimings();
@@ -101,7 +100,7 @@ public class StatsLeaderboardManager {
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
-                        System.out.println("[Leaderboards] Holograms did not load within 5 minutes");
+                        ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage("Holograms did not load within 5 minutes");
                         this.cancel();
                     }
                 }
@@ -120,7 +119,7 @@ public class StatsLeaderboardManager {
         LEADERBOARD_GENERAL.resetLeaderboards(playersCollections, databasePlayers);
         LEADERBOARD_CTF.resetLeaderboards(playersCollections, databasePlayers);
 
-        System.out.println("[Leaderboards] Loaded " + playersCollections.name + " leaderboards");
+        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
         if (playersCollections == PlayersCollections.SEASON_5 && init) {
             SRCalculator.databasePlayerCache = databasePlayers;

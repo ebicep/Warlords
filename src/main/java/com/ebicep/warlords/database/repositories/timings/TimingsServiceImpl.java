@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.timings;
 
 
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,19 @@ public class TimingsServiceImpl implements TimingsService {
     @Override
     public void create(DatabaseTiming databaseTiming) {
         DatabaseTiming timing = timingsRepository.insert(databaseTiming);
-        System.out.println("[TimingService] Created: - " + timing);
+        ChatUtils.MessageTypes.TIMINGS.sendMessage("Created: - " + timing);
     }
 
     @Override
     public void update(DatabaseTiming databaseTiming) {
         DatabaseTiming timing = timingsRepository.save(databaseTiming);
-        System.out.println("[TimingService] Updated: - " + timing);
+        ChatUtils.MessageTypes.TIMINGS.sendMessage("Updated: - " + timing);
     }
 
     @Override
     public void delete(DatabaseTiming databaseTiming) {
         timingsRepository.delete(databaseTiming);
-        System.out.println("[TimingService] Deleted: - " + databaseTiming);
+        ChatUtils.MessageTypes.TIMINGS.sendMessage("Deleted: - " + databaseTiming);
     }
 
     @Override

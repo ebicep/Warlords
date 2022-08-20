@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
+import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 import static com.ebicep.warlords.util.warlords.Utils.*;
 
 public class GameStartCommand extends BaseCommand {

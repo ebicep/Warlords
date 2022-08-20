@@ -38,8 +38,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
 import static com.ebicep.warlords.menu.Menu.*;
+import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
 
 public class DebugMenuPlayerOptions {

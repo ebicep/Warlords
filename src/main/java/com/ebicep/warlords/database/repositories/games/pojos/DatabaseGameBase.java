@@ -14,6 +14,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -35,7 +36,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand.sendDebugMessage;
+import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 public abstract class DatabaseGameBase {
 
@@ -82,7 +83,7 @@ public abstract class DatabaseGameBase {
             //checking for inflated stats
             if (highestDamage > 750000 || highestHealing > 750000) {
                 updatePlayerStats = false;
-                System.out.println(ChatColor.GREEN + "[Warlords] NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
             }
             //check for private + untracked gamemodes
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
@@ -106,14 +107,14 @@ public abstract class DatabaseGameBase {
                     case COOLDOWN_MODE:
                     case TRIPLE_HEALTH:
                     case INTERCHANGE_MODE:
-                        System.out.println(ChatColor.GREEN + "[Warlords] NOT UPDATING PLAYER STATS - Some addon detected");
+                        ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
                         updatePlayerStats = false;
                         break;
                 }
             }
 
             if (updatePlayerStats) {
-                System.out.println(ChatColor.GREEN + "[Warlords] UPDATING PLAYER STATS " + game.getGameId());
+                ChatUtils.MessageTypes.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
 
                 //if(!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 //CHALLENGE ACHIEVEMENTS
@@ -126,7 +127,7 @@ public abstract class DatabaseGameBase {
 
             DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
             if (databaseGame == null) {
-                System.out.println(ChatColor.GREEN + "[Warlords] Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageTypes.WARLORDS.sendMessage("Cannot add game to database - the collection has not been configured");
                 return;
             }
 

@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 import static com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager.currentFair;
@@ -18,10 +18,10 @@ public class MasterworksFairCommand extends BaseCommand {
     @Description("Ends the current masterworks fair event")
     public void end(CommandIssuer issuer, Boolean awardThroughRewardsInventory, @Optional @Default("5") @Conditions("limits:min=1,max=5") Integer startMinuteDelay) {
         if (currentFair == null) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end", true);
             return;
         }
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay, true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay, true);
         resetFair(currentFair, awardThroughRewardsInventory, startMinuteDelay);
     }
 

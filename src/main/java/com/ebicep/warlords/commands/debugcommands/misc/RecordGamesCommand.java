@@ -6,7 +6,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("recordgames|countgames")
@@ -20,10 +20,10 @@ public class RecordGamesCommand extends BaseCommand {
     public void recordGames(CommandIssuer issuer) {
         if (recordGames) {
             recordGames = false;
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "All games from now on will not be recorded!", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "All games from now on will not be recorded!", true);
         } else {
             recordGames = true;
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "All games from now on will be recorded!", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "All games from now on will be recorded!", true);
         }
     }
 }

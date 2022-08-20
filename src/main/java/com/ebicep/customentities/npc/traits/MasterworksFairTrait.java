@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
@@ -85,8 +86,8 @@ public class MasterworksFairTrait extends Trait {
                             .asyncFirst(() -> DatabaseManager.masterworksFairService.findFirstByOrderByStartDateDesc())
                             .asyncLast(masterworksFair -> {
                                 if (masterworksFair == null) {
-                                    System.out.println("[MasterworksFairManager] Could not find masterworks fair in database");
-                                    System.out.println("[MasterworksFairManager] Creating new masterworks fair.");
+                                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
+                                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
                                     MasterworksFair newFair = new MasterworksFair();
                                     initializeFair(newFair);
                                     createFair(newFair);
@@ -105,9 +106,9 @@ public class MasterworksFairTrait extends Trait {
     public void checkForReset(MasterworksFair masterworksFair) {
         //check if week past
         long minutesBetween = ChronoUnit.MINUTES.between(masterworksFair.getStartDate(), Instant.now());
-        System.out.println("[MasterworksFairManager] Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
         if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
-            System.out.println("[MasterworksFairManager] Masterworks Fair reset time has passed");
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
             resetFair(masterworksFair);
         } else {
             initializeFair(masterworksFair);

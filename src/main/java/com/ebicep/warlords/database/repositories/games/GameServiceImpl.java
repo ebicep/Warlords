@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -37,21 +38,21 @@ public class GameServiceImpl implements GameService {
     @Override
     public void create(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.insert(game, collection.collectionName);
-        System.out.println("[GameService] " + game.getDate() + " - was created in " + collection.collectionName);
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + collection.collectionName);
         mongoTemplate.insert(game, GamesCollections.ALL.collectionName);
-        System.out.println("[GameService] " + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
     }
 
     @Override
     public void save(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.save(game, collection.collectionName);
-        System.out.println("[GameService] Updated " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void delete(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.remove(game, collection.collectionName);
-        System.out.println("[GameService] Deleted " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override

@@ -4,12 +4,12 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class ImposterCommand extends BaseCommand {
         for (Option option : warlordsPlayer.getGame().getOptions()) {
             if (option instanceof ImposterModeOption) {
                 ((ImposterModeOption) option).assignImpostersWithAnimation(0);
-                ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Imposters assigned", true);
+                ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Imposters assigned", true);
                 return;
             }
         }

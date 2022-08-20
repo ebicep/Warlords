@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.masterworksfair;
 
 
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,19 @@ public class MasterworksFairServiceImpl implements MasterworksFairService {
     @Override
     public void create(MasterworksFair masterworksFair) {
         MasterworksFair fair = masterworksFairRepository.insert(masterworksFair);
-        System.out.println("[MasterworksFairService] Created: - " + fair);
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Created: - " + fair);
     }
 
     @Override
     public void update(MasterworksFair masterworksFair) {
         MasterworksFair fair = masterworksFairRepository.save(masterworksFair);
-        System.out.println("[MasterworksFairService] Updated: - " + fair);
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Updated: - " + fair);
     }
 
     @Override
     public void delete(MasterworksFair masterworksFair) {
         masterworksFairRepository.delete(masterworksFair);
-        System.out.println("[MasterworksFairService] Deleted: - " + masterworksFair);
+        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Deleted: - " + masterworksFair);
     }
 
     @Override

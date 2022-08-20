@@ -5,7 +5,6 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.Berserk;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -14,6 +13,7 @@ import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -61,7 +61,7 @@ public class TestCommand extends BaseCommand {
     public void test(CommandIssuer issuer) {
         doTest(issuer);
 
-        ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }
 
     @CommandAlias("testgame")
@@ -106,7 +106,7 @@ public class TestCommand extends BaseCommand {
         });
 
 
-        ChatCommand.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
+        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }
 
     @HelpCommand

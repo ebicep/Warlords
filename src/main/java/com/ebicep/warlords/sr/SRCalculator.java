@@ -3,8 +3,7 @@ package com.ebicep.warlords.sr;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ public class SRCalculator {
         totalValues.clear();
         playersSR.clear();
         numberOfActualPlayers = 40;
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculating player SR PUBS");
+        ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculating player SR PUBS");
         Warlords.newChain()
                 .async(() -> {
                     numberOfActualPlayers = (int) databasePlayerCache.stream().filter(databasePlayer -> databasePlayer.getPubStats().getPlays() > 5).count();
@@ -36,8 +35,8 @@ public class SRCalculator {
 //                    SRCalculator.playersSR.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(databasePlayerIntegerEntry -> {
 //                        System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
 //                    });
-                    System.out.println("Number of actual players = " + numberOfActualPlayers);
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Recalculated player SR PUBS");
+                    ChatUtils.MessageTypes.WARLORDS.sendMessage("Number of actual players = " + numberOfActualPlayers);
+                    ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculated player SR PUBS");
                 })
                 .execute();
     }

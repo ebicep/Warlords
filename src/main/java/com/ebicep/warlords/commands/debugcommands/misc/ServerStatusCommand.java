@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 @CommandAlias("serverstatus")
@@ -18,9 +18,9 @@ public class ServerStatusCommand extends BaseCommand {
     public void serverStatus(CommandIssuer issuer, @Values("@enabledisable") String option) {
         ServerStatusCommand.enabled = option.equals("enable");
         if (ServerStatusCommand.enabled) {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Server status is now enabled.", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Server status is now enabled.", true);
         } else {
-            ChatCommand.sendDebugMessage(issuer, ChatColor.RED + "Server status is now disabled.", true);
+            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Server status is now disabled.", true);
         }
     }
 

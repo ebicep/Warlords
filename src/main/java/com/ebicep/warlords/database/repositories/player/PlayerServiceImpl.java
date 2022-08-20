@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player;
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -25,7 +26,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public DatabasePlayer create(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.insert(player);
-        System.out.println("[PlayerService] Created: - " + p);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Created: - " + p);
         return p;
     }
 
@@ -33,7 +34,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.create(player, collection);
-        System.out.println("[PlayerService] Created: - " + p + " in " + collection);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Created: - " + p + " in " + collection);
         return p;
     }
 
@@ -41,7 +42,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public DatabasePlayer update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
-        System.out.println("[PlayerService] Updated: - " + p);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Updated: - " + p);
         return p;
     }
 
@@ -49,20 +50,20 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public DatabasePlayer update(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.save(player, collection);
-        System.out.println("[PlayerService] Updated: - " + player + " in " + collection);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Updated: - " + player + " in " + collection);
         return p;
     }
 
     @Override
     public void delete(DatabasePlayer player) {
         playerRepository.delete(player);
-        System.out.println("[PlayerService] Deleted: - " + player);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Deleted: - " + player);
     }
 
     @Override
     public void delete(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.delete(player, collection);
-        System.out.println("[PlayerService] Deleted: - " + player + " in " + collection);
+        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Deleted: - " + player + " in " + collection);
     }
 
     @Override

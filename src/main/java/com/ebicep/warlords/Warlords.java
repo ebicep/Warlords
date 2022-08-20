@@ -45,6 +45,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -402,7 +403,7 @@ public class Warlords extends JavaPlugin {
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
 
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
+        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is enabled");
     }
 
     @Override
@@ -485,7 +486,7 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
 
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
+        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
     }
 
     private void startMainLoop() {

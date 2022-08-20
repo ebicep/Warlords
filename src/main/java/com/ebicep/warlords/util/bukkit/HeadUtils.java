@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -23,7 +24,7 @@ public class HeadUtils {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             updateHead(onlinePlayer);
         }
-        System.out.println("[Warlords] Heads updated");
+        ChatUtils.MessageTypes.WARLORDS.sendMessage("Heads updated");
     }
 
     public static void updateHead(Player player) {

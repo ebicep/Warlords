@@ -22,6 +22,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bukkit.Bukkit;
@@ -81,7 +82,7 @@ public class DatabaseManager {
             for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
                 Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
             }
-            System.out.println("[Warlords] Cleared all players cache");
+            ChatUtils.MessageTypes.WARLORDS.sendMessage("Cleared all players cache");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,13 +94,13 @@ public class DatabaseManager {
             });
         });
 
-        System.out.println("[Warlords] Storing all guilds");
+        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Storing all guilds");
         long guildStart = System.nanoTime();
         Warlords.newChain()
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> {
-                    System.out.println("[Warlords] Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
+                    ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkGuildsTimings();
                     GuildLeaderboardManager.recalculateLeaderboards();
                 })
@@ -117,21 +118,22 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20 * 10);
 
-        System.out.println("[Warlords] Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
+        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> StatsLeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
-        System.out.println("[GameService] Loading Last Games");
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loading Last Games");
+        long gameStart = System.nanoTime();
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
-                    System.out.println("[GameService] Loaded Last Games");
+                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
                     previousGames.addAll(games);
                     StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    System.out.println("[GameService] Set Game Hologram Visibility");
+                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
                 })
                 .execute();
     }
@@ -153,7 +155,7 @@ public class DatabaseManager {
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.run();
-                            System.out.println("[PlayerService] Loaded Player " + uuid);
+                            ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
                         }).execute();
             }
         }

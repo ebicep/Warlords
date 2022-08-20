@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.guild;
 
 
 import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +18,19 @@ public class GuildServiceImpl implements GuildService {
     @Override
     public void create(Guild guild) {
         guildRepository.insert(guild);
-        System.out.println("[GuildService] Created: - " + guild);
+        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Created: - " + guild);
     }
 
     @Override
     public void update(Guild guild) {
         guildRepository.save(guild);
-        System.out.println("[GuildService] Updated: - " + guild);
+        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Updated: - " + guild);
     }
 
     @Override
     public void delete(Guild guild) {
         guildRepository.delete(guild);
-        System.out.println("[GuildService] Deleted: - " + guild);
+        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Deleted: - " + guild);
     }
 
     @Override

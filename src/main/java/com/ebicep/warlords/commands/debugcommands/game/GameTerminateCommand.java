@@ -5,13 +5,13 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.miscellaneouscommands.ChatCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -43,17 +43,17 @@ public class GameTerminateCommand extends BaseCommand {
             }
             if (gamePredicate.test(gameHolder)) {
                 game.setNextState(new EndState(game, null));
-                ChatCommand.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"), true);
+                ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Killed game from " + from + ": " + gameHolder.getName() + " | " + gameHolder.getMap().getMapName() + " | " + game.playersCount() + " player" + (game.playersCount() == 1 ? "" : "s"), true);
             }
         }
-        ChatCommand.sendDebugMessage(
+        ChatChannels.sendDebugMessage(
                 issuer,
                 ChatColor.RED + "(" + inactiveGames.size() + ") Skipped Inactive terminate game from " + from + ": " +
                         inactiveGames.stream()
                                 .map(GameHolder::getName)
                                 .collect(Collectors.joining(", ")),
                 true);
-        ChatCommand.sendDebugMessage(
+        ChatChannels.sendDebugMessage(
                 issuer,
                 ChatColor.RED + "(" + otherStateGames.size() + ") Skipped Other State terminate game from " + from + ": " +
                         otherStateGames.stream()
@@ -70,7 +70,7 @@ public class GameTerminateCommand extends BaseCommand {
             Game game = gameHolder.getGame();
             if (Objects.equals(game, playerGame)) {
                 game.setNextState(new EndState(game, null));
-                ChatCommand.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName(), true);
+                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Terminated own game " + gameHolder.getName(), true);
                 break;
             }
         }
