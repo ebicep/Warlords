@@ -208,14 +208,18 @@ public enum ChatChannels {
      *                        If false, the message will be sent synchronously through player.sendMessage(message) to each online player.
      */
     public static void playerSendMessage(Player player, String message, ChatChannels chatChannel, boolean asyncPlayerChat) {
+        if (message.startsWith("/")) {
+            message = "§r" + message;
+        }
         if (asyncPlayerChat) {
             UUID uuid = player.getUniqueId();
+            String finalMessage = message;
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     ChatChannels oldChatChannel = Warlords.playerChatChannels.getOrDefault(uuid, ALL);
                     Warlords.playerChatChannels.put(uuid, chatChannel == null ? ALL : chatChannel);
-                    player.chat(message);
+                    player.chat(finalMessage);
                     Warlords.playerChatChannels.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
                 }
             }.runTaskAsynchronously(Warlords.getInstance());
