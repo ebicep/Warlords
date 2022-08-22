@@ -1,11 +1,13 @@
 package com.ebicep.warlords.game.option.marker;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,9 +95,17 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
 
     static boolean dropFlagForPlayer(WarlordsEntity player) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
-            if (holder.update(i -> i.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player)
-                    ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag())
-                    : null) != null) {
+            FlagInfo info = holder.getInfo();
+            boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
+            if (drop) {
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        holder.update(i -> i.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null);
+                    }
+
+                }.runTaskLater(Warlords.getInstance(), 1);
                 return true;
             }
         }

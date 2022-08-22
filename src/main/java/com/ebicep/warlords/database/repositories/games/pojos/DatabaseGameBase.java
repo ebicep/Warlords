@@ -72,7 +72,7 @@ public abstract class DatabaseGameBase {
         this.date = DateUtil.formatCurrentDateEST(DATE_FORMAT);
         this.map = game.getMap();
         this.gameMode = game.getGameMode();
-        this.gameAddons = Arrays.asList(game.getAddons().toArray(new GameAddon[0]));
+        this.gameAddons = new ArrayList<>(game.getAddons());
         this.counted = counted;
     }
 
@@ -139,6 +139,11 @@ public abstract class DatabaseGameBase {
             databaseGame.createHolograms();
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+                addGameToDatabase(databaseGame);
+            } else if (game.playersCount() >= 16 && game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                Warlords.newChain()
+                        .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
+                        .execute();
                 addGameToDatabase(databaseGame, null);
             }
 
@@ -162,11 +167,12 @@ public abstract class DatabaseGameBase {
 
     public static void addGameToDatabase(DatabaseGameBase databaseGame, Player player) {
         if (DatabaseManager.gameService == null) return;
-        GamesCollections collection = databaseGame.getGameMode().gamesCollections;
-        databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
-        //game in the database
-        if (DatabaseManager.gameService.exists(databaseGame, collection)) {
-            if (player != null) {
+        try {
+            GamesCollections collection = databaseGame.getGameMode().gamesCollections;
+            databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
+            //game in the database
+            if (DatabaseManager.gameService.exists(databaseGame, collection)) {
+                if (player != null) {
                 sendDebugMessage(player, ChatColor.GREEN + "Game Found", true);
             }
             //if not counted then update player stats then set counted to true, else do nothing
@@ -179,7 +185,7 @@ public abstract class DatabaseGameBase {
                 DatabaseManager.updateGameAsync(databaseGame);
             }
         } else {
-            if (player != null) {
+                if (player != null) {
                 sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
             }
             //game not in database then add game and update player stats if counted
@@ -187,9 +193,9 @@ public abstract class DatabaseGameBase {
                 if (player != null) {
                     sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                 }
-                databaseGame.updatePlayerStatsFromGame(databaseGame, true);
-            }
-            if (player != null) {
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                }
+                if (player != null) {
                 sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
             }
             //only add game if comps
@@ -203,8 +209,14 @@ public abstract class DatabaseGameBase {
                         }
                         StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
                     })
+                        .execute();
+                //}
+            }
+        } catch (Exception e) {
+            Warlords.newChain()
+                    .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
-            //}
+            e.printStackTrace();
         }
     }
 

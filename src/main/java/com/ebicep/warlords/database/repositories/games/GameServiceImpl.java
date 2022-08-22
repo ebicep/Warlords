@@ -44,6 +44,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public void createBackup(DatabaseGameBase game) {
+        mongoTemplate.insert(game, "Games_Backup");
+        System.out.println("[GameService] " + game.getDate() + " - was created in Games_Backup");
+    }
+
+    @Override
     public void save(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.save(game, collection.collectionName);
         ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);

@@ -160,7 +160,7 @@ public class PrismGuard extends AbstractAbility {
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
                                     },
-                                    20
+                                    10
                             ) {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
