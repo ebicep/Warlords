@@ -61,7 +61,7 @@ public class StatsLeaderboardManager {
 
         if (enabled) {
             loaded = false;
-            ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("[Leaderboards] Adding Holograms");
+            ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Adding Holograms");
 
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();

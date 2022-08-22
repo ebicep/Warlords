@@ -139,7 +139,7 @@ public abstract class DatabaseGameBase {
             databaseGame.createHolograms();
 
             if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
-                addGameToDatabase(databaseGame);
+                addGameToDatabase(databaseGame, null);
             } else if (game.playersCount() >= 16 && game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 Warlords.newChain()
                         .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
