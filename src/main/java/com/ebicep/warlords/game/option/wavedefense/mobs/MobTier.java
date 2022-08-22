@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 import org.bukkit.ChatColor;
 
 public enum MobTier {
+
         BASE(ChatColor.YELLOW + "✻"),
         ELITE(ChatColor.GOLD.toString() + ChatColor.BOLD + "❈❈"),
         BOSS(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "✪✪✪")

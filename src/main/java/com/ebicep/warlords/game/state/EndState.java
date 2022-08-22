@@ -76,6 +76,9 @@ public class EndState implements State, TimerDebugAble {
                 showTopDamage(players);
                 showTopHealing(players);
                 break;
+            case WAVE_DEFENSE:
+                showTopDamage(players);
+                break;
             default:
                 sendGlobalMessage(game, "", false);
                 break;

@@ -14,7 +14,7 @@ public class BabyMagmaCube extends AbstractMagmaCube implements EliteMob {
                 "Illusion Illuminati",
                 MobTier.ELITE,
                 null,
-                2500,
+                3200,
                 0.35f,
                 0,
                 50,

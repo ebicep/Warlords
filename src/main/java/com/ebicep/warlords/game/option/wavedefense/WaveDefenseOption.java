@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
@@ -52,6 +53,7 @@ public class WaveDefenseOption implements Option {
     private Wave currentWave;
     @Nonnull
     private Game game;
+    private WarlordsGameTriggerWinEvent winEvent;
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
@@ -83,13 +85,13 @@ public class WaveDefenseOption implements Option {
             int playerCount = (int) game.warlordsPlayers().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.04f;
+                    spawnCount *= 1.06f;
                     break;
                 case 3:
-                    spawnCount *= 1.08f;
+                    spawnCount *= 1.1f;
                     break;
                 case 4:
-                    spawnCount *= 1.12f;
+                    spawnCount *= 1.16f;
                     break;
             }
         }
@@ -184,13 +186,13 @@ public class WaveDefenseOption implements Option {
                 int playerCount = (int) game.warlordsPlayers().count();
                 switch (playerCount) {
                     case 2:
-                        spawnCount *= 1.04f;
+                        spawnCount *= 1.06f;
                         break;
                     case 3:
-                        spawnCount *= 1.08f;
+                        spawnCount *= 1.1f;
                         break;
                     case 4:
-                        spawnCount *= 1.12f;
+                        spawnCount *= 1.16f;
                         break;
                 }
 
@@ -315,12 +317,11 @@ public class WaveDefenseOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-
                 return PlayerFilter.playingGame(game)
                         .filter(e -> e instanceof WarlordsPlayer)
                         .stream()
-                        .map(e -> (e.getName().length() >= 16 ? e.getName().substring(7) : e.getName()) + ": " +
-                                (e.isDead() ? ChatColor.DARK_RED + "DEAD" : ChatColor.RED + "❤ " + (int) e.getHealth()) +
+                        .map(e -> e.getName() + ": " +
+                                (e.isDead() ? ChatColor.DARK_RED + "DEAD" : (e.getHealth() > (e.getMaxHealth() * 0.25f) ? ChatColor.GREEN : ChatColor.RED) + "❤" + (int) e.getHealth()) +
                                 ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills())
                         .collect(Collectors.toList());
             }
@@ -384,14 +385,14 @@ public class WaveDefenseOption implements Option {
                     this.cancel();
                 }
 
-//                for (WarlordsEntity player : PlayerFilter
-//                        .playingGame(getGame())
-//                ) {
-//                    if (player.isDead()) {
-//                        game.setNextState(new EndState(game, null));
-//                        this.cancel();
-//                    }
-//                }
+                for (WarlordsEntity player : PlayerFilter
+                        .playingGame(getGame())
+                ) {
+                    if (player.isDead() && player instanceof WarlordsPlayer) {
+                        game.setNextState(new EndState(game, null));
+                        this.cancel();
+                    }
+                }
 
                 counter++;
             }

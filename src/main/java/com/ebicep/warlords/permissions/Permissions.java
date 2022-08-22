@@ -10,7 +10,7 @@ import static com.ebicep.warlords.util.chat.ChatChannels.DEBUG;
 public enum Permissions {
 
     ADMIN("ADMIN", ChatColor.DARK_AQUA, "group.administrator"),
-    COORDIANTOR("HGS", ChatColor.GOLD, "group.coordinator"),
+    COORDINATOR("HGS", ChatColor.GOLD, "group.coordinator"),
     CONTENT_CREATOR("CT", ChatColor.LIGHT_PURPLE, "group.contentcreator"),
     GAME_STARTER("GS", ChatColor.YELLOW, "group.gamestarter"),
     GAME_TESTER("T", ChatColor.YELLOW, "group.gametester"),
@@ -42,7 +42,7 @@ public enum Permissions {
     }
 
     public static boolean isCoordinator(Player player) {
-        return player.hasPermission(COORDIANTOR.permission);
+        return player.hasPermission(COORDINATOR.permission);
     }
 
     public static boolean isContentCreator(Player player) {

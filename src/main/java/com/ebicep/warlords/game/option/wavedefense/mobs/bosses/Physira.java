@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -14,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class Physira extends AbstractZombie implements BossMob {
 
@@ -23,17 +23,17 @@ public class Physira extends AbstractZombie implements BossMob {
                 "Physira",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.BLAZE_POWDER)
+                        SkullUtils.getSkullFrom(SkullID.DEMON_KING),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
+                        Weapons.SILVER_PHANTASM_STAFF_2.getItem()
                 ),
                 18000,
-                0.45f,
-                0,
-                600,
-                800
+                0.35f,
+                20,
+                2000,
+                2600
         );
     }
 
@@ -43,9 +43,9 @@ public class Physira extends AbstractZombie implements BossMob {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Mithra & Physira",
+                        ChatColor.LIGHT_PURPLE + "Physira & Mithra",
                         ChatColor.WHITE + "The Envoy King and Queen of Illusion",
-                        20, 40, 20
+                        20, 30, 20
                 );
             }
         }

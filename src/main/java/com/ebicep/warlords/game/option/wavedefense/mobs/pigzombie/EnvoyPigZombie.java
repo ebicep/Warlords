@@ -41,9 +41,6 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
     @Override
     public void onSpawn(WaveDefenseOption option) {
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
-            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
-        });
     }
 
     @Override

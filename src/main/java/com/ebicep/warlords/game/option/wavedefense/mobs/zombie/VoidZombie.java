@@ -36,7 +36,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                 ),
                 10000,
                 0.1f,
-                20,
+                10,
                 1500,
                 2000
         );

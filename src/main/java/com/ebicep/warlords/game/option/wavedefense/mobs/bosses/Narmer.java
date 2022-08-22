@@ -28,6 +28,9 @@ import java.util.UUID;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
+    private final int earthQuakeRadius = 12;
+    private final int executeRadius = 40;
+
     private int acolytesAlive = 0;
     private int timeUntilNewAcolyte = 0; // ticks
     private int acolyteDeathWindow = 0; // ticks
@@ -85,7 +88,6 @@ public class Narmer extends AbstractZombie implements BossMob {
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
                 float currentHealth = warlordsNPC.getHealth() * 0.15f;
-
                 if (event.getPlayer().isTeammate(warlordsNPC)) {
                     warlordsNPC.setHealth(warlordsNPC.getHealth() + currentHealth);
                     //Bukkit.broadcastMessage("healed 15% current hp");
@@ -93,9 +95,6 @@ public class Narmer extends AbstractZombie implements BossMob {
 
                 if (event.getPlayer().getName().equals("Acolyte of Narmer")) {
                     acolytesAlive--;
-
-                    //Bukkit.broadcastMessage("acolyte died");
-
                     Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.4f);
                     EffectUtils.playHelixAnimation(
                             warlordsNPC.getLocation().add(0, 0.15, 0),
@@ -111,7 +110,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 12);
                         for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(warlordsNPC, 40, 40, 40)
+                                .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             enemy.addDamageInstance(
@@ -158,10 +157,10 @@ public class Narmer extends AbstractZombie implements BossMob {
             //Bukkit.broadcastMessage("earthquake");
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, 12, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, 12, ParticleEffect.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, 12, 12, 12)
+                    .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 enemy.addDamageInstance(
@@ -222,7 +221,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
-        Utils.addKnockback(attacker.getLocation(), receiver, -2.5, 0.25f);
+        Utils.addKnockback(attacker.getLocation(), receiver, -2.5, 0.25);
     }
 
     @Override
