@@ -24,9 +24,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
@@ -40,18 +40,18 @@ import static java.util.Collections.singletonList;
  * Module for spawning a flag
  */
 public class FlagSpawnPointOption implements Option {
-    
+
     public static final boolean DEFAULT_REGISTER_COMPASS_MARKER = true;
 
     @Nonnull
     private final FlagInfo info;
     @Nonnull
     private final FlagRenderer renderer;
+    private final boolean registerCompassMarker;
     @Nonnull
     private SimpleScoreboardHandler scoreboard;
     @Nonnull
     private Game game;
-    private final boolean registerCompassMarker;
 
     public FlagSpawnPointOption(@Nonnull Location loc, @Nonnull Team team) {
         this(loc, team, DEFAULT_REGISTER_COMPASS_MARKER);
@@ -114,14 +114,17 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-            @EventHandler(priority = EventPriority.LOW)
-            public void onPotentialFlagInteract(PlayerInteractEntityEvent event) {
-                onPotentialFlagInteract((PlayerEvent)event);
-            }
+//            @EventHandler(priority = EventPriority.LOW)
+//            public void onPotentialFlagInteract(PlayerInteractEntityEvent event) {
+//                onPotentialFlagInteract((PlayerEvent) event);
+//            }
 
             @EventHandler(priority = EventPriority.LOW)
             public void onPotentialFlagInteract(PlayerInteractEvent event) {
-                onPotentialFlagInteract((PlayerEvent)event);
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                    return;
+                }
+                onPotentialFlagInteract((PlayerEvent) event);
             }
 
             private void onPotentialFlagInteract(PlayerEvent event) {
@@ -145,7 +148,7 @@ public class FlagSpawnPointOption implements Option {
 
             private void checkFlagInteract(Location playerLocation, WarlordsPlayer wp, Vec3D from, Vec3D to, FlagRenderer render) {
                 Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
-                for(Entity stand : render.getRenderedArmorStands()) {
+                for (Entity stand : render.getRenderedArmorStands()) {
                     stand.getLocation(entityLoc);
                     if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
                         AxisAlignedBB aabb = new AxisAlignedBB(
@@ -157,7 +160,7 @@ public class FlagSpawnPointOption implements Option {
                                 entityLoc.getZ() + 0.5
                         );
                         MovingObjectPosition mop = aabb.a(from, to);
-                        if(mop != null) {
+                        if (mop != null) {
                             onFlagInteract(wp);
                             break;
                         }
@@ -209,7 +212,8 @@ public class FlagSpawnPointOption implements Option {
                                 null,
                                 wp,
                                 CooldownTypes.BUFF,
-                                cooldownManager -> {},
+                                cooldownManager -> {
+                                },
                                 15 * 20
                         ) {
                             @Override
@@ -270,10 +274,10 @@ public class FlagSpawnPointOption implements Option {
         }.runTaskTimer(0, 1);
     }
 
-	@Override
-	public void onGameCleanup(Game game) {
-		this.renderer.reset();
-	}
+    @Override
+    public void onGameCleanup(Game game) {
+        this.renderer.reset();
+    }
 
     public FlagInfo getInfo() {
         return info;
