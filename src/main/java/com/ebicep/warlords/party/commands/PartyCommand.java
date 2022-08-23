@@ -3,6 +3,7 @@ package com.ebicep.warlords.party.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.jda.queuesystem.QueueManager;
 import com.ebicep.warlords.party.Party;
@@ -301,6 +302,7 @@ public class PartyCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 

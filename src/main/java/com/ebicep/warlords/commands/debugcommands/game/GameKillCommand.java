@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.game;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
@@ -13,10 +14,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 @CommandAlias("killgame")
@@ -85,6 +83,7 @@ public class GameKillCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.stats;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.HelpCommand;
@@ -11,6 +12,8 @@ import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.Comparator;
 
 @CommandAlias("leaderboard|lb")
 @CommandPermission("warlords.leaderboard.interaction")
@@ -48,6 +51,7 @@ public class StatsLeaderboardCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 

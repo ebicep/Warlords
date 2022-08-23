@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Flags;
@@ -62,6 +63,7 @@ public class MessageCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 }

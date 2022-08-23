@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.Berserk;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -17,6 +18,8 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.Comparator;
 
 @CommandAlias("test")
 @CommandPermission("warlords.game.test")
@@ -111,6 +114,7 @@ public class TestCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 }

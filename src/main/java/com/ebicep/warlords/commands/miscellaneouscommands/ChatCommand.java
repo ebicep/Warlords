@@ -3,9 +3,12 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.entity.Player;
+
+import java.util.Comparator;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.switchChannels;
 
@@ -50,6 +53,7 @@ public class ChatCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 

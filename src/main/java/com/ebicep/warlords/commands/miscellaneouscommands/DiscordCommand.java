@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
@@ -14,6 +15,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -100,6 +102,7 @@ public class DiscordCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 }

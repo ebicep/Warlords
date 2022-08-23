@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
@@ -12,6 +13,8 @@ import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.Comparator;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
@@ -126,6 +129,7 @@ public class DebugCommand extends BaseCommand {
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
     }
 }
