@@ -34,6 +34,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         put(3, new Pair<>(1502f, 1599f));
         put(4, new Pair<>(1744f, 1859f));
     }};
+    private boolean skipNextAttack = false;
 
     public Ghoulcaller(Location spawnLocation) {
         super(spawnLocation,
@@ -73,37 +74,46 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 20 == 0) {
             getWarlordsNPC().getSecondStats().advanceSecond();
+            if (getWarlordsNPC().getCooldownManager().hasCooldown(SoulShackle.class) && !skipNextAttack) {
+                skipNextAttack = true;
+            }
         }
         //every 5 seconds. [this mob’s fury] deals (Damage values depending on total players in game) * 0.95 ^ x damage, where x is the amount of attacks that hit this mob in the past 5s.
         if (ticksElapsed % 100 == 0) {
-            List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = getWarlordsNPC().getSecondStats().getEventsAsSelfFromLastSecondStream(5)
-                    .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
-                    .collect(Collectors.toList());
-            int attacksInLast5Seconds = (int) (eventsInLast5Seconds.size() - eventsInLast5Seconds.stream()
-                    .filter(event -> event.getAbility().equals("Windfury Weapon"))
-                    .count() / 2
-            );
-            if (attacksInLast5Seconds > 20) {
-                attacksInLast5Seconds = 20;
+            if (skipNextAttack) {
+                PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
+                        .aliveEnemiesOf(getWarlordsNPC())
+                        .forEach(enemyPlayer -> enemyPlayer.sendMessage(ChatColor.RED + "Ghoulcaller's Fury has been silenced!"));
+                skipNextAttack = false;
+            } else {
+                List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = getWarlordsNPC().getSecondStats().getEventsAsSelfFromLastSecondStream(5)
+                        .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
+                        .collect(Collectors.toList());
+                int attacksInLast5Seconds = (int) (eventsInLast5Seconds.size() - eventsInLast5Seconds.stream()
+                        .filter(event -> event.getAbility().equals("Windfury Weapon"))
+                        .count() / 2
+                );
+                if (attacksInLast5Seconds > 20) {
+                    attacksInLast5Seconds = 20;
+                }
+                int playerCount = (int) option.getGame().warlordsPlayers().count();
+
+                float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds));
+                float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds));
+                PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
+                        .aliveEnemiesOf(getWarlordsNPC())
+                        .forEach(enemyPlayer -> {
+                            enemyPlayer.addDamageInstance(
+                                    getWarlordsNPC(),
+                                    "Ghoulcaller’s Fury",
+                                    minDamage,
+                                    maxDamage,
+                                    -1,
+                                    100,
+                                    false
+                            );
+                        });
             }
-            int playerCount = (int) option.getGame().warlordsPlayers().count();
-
-            float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds));
-            float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds));
-            PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
-                    .aliveEnemiesOf(getWarlordsNPC())
-                    .forEach(enemyPlayer -> {
-                        enemyPlayer.addDamageInstance(
-                                getWarlordsNPC(),
-                                "Ghoulcaller’s Fury",
-                                minDamage,
-                                maxDamage,
-                                -1,
-                                100,
-                                false
-                        );
-                    });
-
         }
         //Spawn 5 * (The number of players in the game) Tormented Souls every 20 seconds
         if (ticksElapsed % 400 == 0) {
@@ -116,6 +126,10 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         //silence player for 10s per melee
         if (event.getAbility().isEmpty()) {
             SoulShackle.shacklePlayer(attacker, receiver, 200);
+            PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
+                    .aliveEnemiesOf(getWarlordsNPC())
+                    .excluding(attacker)
+                    .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 200));
         }
     }
 
