@@ -35,6 +35,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     private int acolytesAlive = 0;
     private int timeUntilNewAcolyte = 0; // ticks
     private int acolyteDeathWindow = 0; // ticks
+    private int timesMegaEarthQuakeActivated = 0;
 
     public Narmer(Location spawnLocation) {
         super(spawnLocation,
@@ -105,10 +106,11 @@ public class Narmer extends AbstractZombie implements BossMob {
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 12);
-                        for (WarlordsEntity enemy : PlayerFilter
+                        List<WarlordsEntity> warlordsEntities = PlayerFilter
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
                                 .aliveEnemiesOf(warlordsNPC)
-                        ) {
+                                .toList();
+                        for (WarlordsEntity enemy : warlordsEntities) {
                             enemy.addDamageInstance(
                                     warlordsNPC,
                                     "Acolyte Revenge",
@@ -119,6 +121,11 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     false
                             );
                         }
+                        for (WarlordsEntity warlordsEntity : warlordsEntities) {
+                            ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
+                            break;
+                        }
+                        timesMegaEarthQuakeActivated++;
                     } else {
                         for (WarlordsEntity enemy : PlayerFilter
                                 .entitiesAround(warlordsNPC, 12, 12, 12)
@@ -155,11 +162,10 @@ public class Narmer extends AbstractZombie implements BossMob {
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
-            List<WarlordsEntity> warlordsEntities = PlayerFilter
+            for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
-                    .toList();
-            for (WarlordsEntity enemy : warlordsEntities) {
+            ) {
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
@@ -169,9 +175,6 @@ public class Narmer extends AbstractZombie implements BossMob {
                         100,
                         false
                 );
-            }
-            for (WarlordsEntity warlordsEntity : warlordsEntities) {
-                ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
             }
         }
 
@@ -234,5 +237,12 @@ public class Narmer extends AbstractZombie implements BossMob {
                 .with(FireworkEffect.Type.STAR)
                 .withTrail()
                 .build());
+
+        ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);
+
+    }
+
+    public int getTimesMegaEarthQuakeActivated() {
+        return timesMegaEarthQuakeActivated;
     }
 }

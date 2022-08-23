@@ -579,7 +579,10 @@ public abstract class WarlordsEntity {
                 secondStats.addDamageHealingEventAsSelf(finalEvent);
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
                 if (shouldCheckForAchievements()) {
-//                checkForAchievementsDamage(attacker);
+                    checkForAchievementsDamage();
+                }
+                if (attacker.shouldCheckForAchievements()) {
+                    checkForAchievementsDamageAttacker(attacker);
                 }
 
                 // The player died.
@@ -776,7 +779,10 @@ public abstract class WarlordsEntity {
         secondStats.addDamageHealingEventAsSelf(finalEvent);
         attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
         if (shouldCheckForAchievements()) {
-            //        checkForAchievementsHealing(attacker);
+            checkForAchievementsHealing();
+        }
+        if (attacker.shouldCheckForAchievements()) {
+            checkForAchievementsHealingAttacker(attacker);
         }
 
         return Optional.of(finalEvent);
@@ -1049,34 +1055,40 @@ public abstract class WarlordsEntity {
         return false;
     }
 
-    private void checkForAchievementsDamage(WarlordsEntity attacker) {
-        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.BLITZKRIEG);
-        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SNIPE_SHOT);
-        ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.DUCK_TANK);
-        ChallengeAchievements.checkForAchievement(this, ChallengeAchievements.SPLIT_SECOND);
-        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.REVENGE_BLAST);
+    private void checkForAchievementsDamage() {
+        for (ChallengeAchievements challengeAchievements : ChallengeAchievements.DAMAGE_ACHIEVEMENTS_SELF) {
+            ChallengeAchievements.checkForAchievement(this, challengeAchievements);
+        }
         if (hasFlag()) {
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ASSASSINATE);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.SILENCE_PEON);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ORBIFICATOR);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.HOUR_OF_RECKONING);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.TALENT_SHREDDER);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.PERSISTENT_THREAT);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.WHERE_ARE_YOU_GOING);
-
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.EXTENDED_COMBAT); //NEED TEST
 
         }
-        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.ROADBLOCK);
-
     }
 
-    private void checkForAchievementsHealing(WarlordsEntity attacker) {
-        ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.LYCHEESIS);
-
+    private void checkForAchievementsDamageAttacker(WarlordsEntity attacker) {
+        for (ChallengeAchievements challengeAchievements : ChallengeAchievements.DAMAGE_ACHIEVEMENTS_ATTACKER) {
+            ChallengeAchievements.checkForAchievement(attacker, challengeAchievements);
+        }
         if (hasFlag()) {
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.REJUVENATION);
-            ChallengeAchievements.checkForAchievement(attacker, ChallengeAchievements.CLERICAL_PRODIGY);
+            for (ChallengeAchievements challengeAchievements : ChallengeAchievements.DAMAGE_ACHIEVEMENTS_ATTACKER_FLAG) {
+                ChallengeAchievements.checkForAchievement(attacker, challengeAchievements);
+            }
+        }
+    }
+
+    private void checkForAchievementsHealing() {
+        if (hasFlag()) {
+
+        }
+    }
+
+    private void checkForAchievementsHealingAttacker(WarlordsEntity attacker) {
+        for (ChallengeAchievements challengeAchievements : ChallengeAchievements.HEALING_ACHIEVEMENTS_ATTACKER) {
+            ChallengeAchievements.checkForAchievement(attacker, challengeAchievements);
+        }
+        if (hasFlag()) {
+            for (ChallengeAchievements challengeAchievements : ChallengeAchievements.HEALING_ACHIEVEMENTS_ATTACKER_FLAG) {
+                ChallengeAchievements.checkForAchievement(attacker, challengeAchievements);
+            }
         }
     }
 

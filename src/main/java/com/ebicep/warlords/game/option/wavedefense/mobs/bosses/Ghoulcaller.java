@@ -99,6 +99,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                     attacksInLast5Seconds = 20;
                     timesInARowDamageMaxReduced++;
                     PlayerFilterGeneric.playingGameWarlordsPlayers(getWarlordsNPC().getGame())
+                            .limit(1)
                             .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.CONTROLLED_FURY));
                 } else {
                     timesInARowDamageMaxReduced = 0;

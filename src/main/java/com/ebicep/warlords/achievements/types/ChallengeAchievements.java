@@ -5,6 +5,7 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Ghoulcaller;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Narmer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -72,8 +73,13 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
-            },
-            true),
+            }
+    ) {
+        @Override
+        public boolean checkTeammates() {
+            return true;
+        }
+    },
     BLITZKRIEG("Blitzkrieg",
             "Kill the enemy flag carrier within 2 seconds.",
             GameMode.CAPTURE_THE_FLAG,
@@ -116,8 +122,13 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
-            },
-            true),
+            }
+    ) {
+        @Override
+        public boolean checkTeammates() {
+            return true;
+        }
+    },
     SNIPE_SHOT("Snipe Shot",
             "Kill the enemy flag carrier while being at least 30 blocks away from them.",
             GameMode.CAPTURE_THE_FLAG,
@@ -125,8 +136,8 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer().getLocation().distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
-            },
-            false),
+            }
+    ),
     DUCK_TANK("Duck Tank",
             "Tank 9000 damage without losing health while holding the flag.",
             GameMode.CAPTURE_THE_FLAG,
@@ -150,14 +161,14 @@ public enum ChallengeAchievements implements Achievement {
                     }
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     CLERICAL_PRODIGY("Clerical Prodigy",
             "Heal your carrier for over 80k damage within a game.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AQUAMANCER,
-            warlordsEntity -> warlordsEntity.getMinuteStats().total().getHealingOnCarrier() >= 80000,
-            false),
+            warlordsEntity -> warlordsEntity.getMinuteStats().total().getHealingOnCarrier() >= 80000
+    ),
     ASSASSINATE("Assassinate",
             "Land 7 critical hits on the enemy carrier in a row.",
             GameMode.CAPTURE_THE_FLAG,
@@ -176,8 +187,8 @@ public enum ChallengeAchievements implements Achievement {
                     }
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     SILENCE_PEON("Silence, peon!",
             "Kill the enemy flag carrier (that you silenced) while the silence duration is still up. ",
             GameMode.CAPTURE_THE_FLAG,
@@ -192,8 +203,8 @@ public enum ChallengeAchievements implements Achievement {
                             .isPresent();
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     LYCHEESIS("Lycheesis",
             "Generate over 3k healing by inflicting one instance of LEECH on the enemy flag carrier.",
             GameMode.CAPTURE_THE_FLAG,
@@ -207,8 +218,8 @@ public enum ChallengeAchievements implements Achievement {
                                 .anyMatch(impalingStrike -> impalingStrike.getHealingDoneFromEnemyCarrier() >= 3000))
                         .findAny()
                         .isPresent();
-            },
-            false),
+            }
+    ),
     EXTENDED_COMBAT("Extended Combat",
             "Stay in combat for over 40 seconds and deal 10k damage to the enemy carrier.",
             GameMode.CAPTURE_THE_FLAG,
@@ -227,8 +238,8 @@ public enum ChallengeAchievements implements Achievement {
                 }
 
                 return totalDamageToCarrier >= 10000;
-            },
-            false),
+            }
+    ),
     SPLIT_SECOND("Split Second",
             "Prevent over 2k damage dealt to the flag carrier within 1s of the ability activating.",
             GameMode.CAPTURE_THE_FLAG,
@@ -239,8 +250,8 @@ public enum ChallengeAchievements implements Achievement {
                         .filter(regularCooldown -> regularCooldown.getStartingTicks() - regularCooldown.getTicksLeft() <= 20)
                         .filterCooldownClassAndMapToObjectsOfClass(Intervene.class)
                         .anyMatch(intervene -> intervene.getDamagePrevented() >= 2000);
-            },
-            false),
+            }
+    ),
     ORBIFICATOR("Orbificator",
             "Return the flag while being popped from your Undying Army.",
             GameMode.CAPTURE_THE_FLAG,
@@ -253,8 +264,8 @@ public enum ChallengeAchievements implements Achievement {
                             .anyMatch(undyingArmy -> undyingArmy.getPlayersPopped().getOrDefault(warlordsEntity, false));
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     REVENGE_BLAST("Revenge Blast",
             "Kill 3 enemies within 5s of your flag carrier dying. ",
             GameMode.CAPTURE_THE_FLAG,
@@ -284,8 +295,8 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
-            },
-            false),
+            }
+    ),
     HOUR_OF_RECKONING("Hour of Reckoning",
             "Kill the enemy carrier while 4 or more allies are affected by your Inspiring Presence.",
             GameMode.CAPTURE_THE_FLAG,
@@ -298,8 +309,8 @@ public enum ChallengeAchievements implements Achievement {
                             .anyMatch(inspiringPresence -> inspiringPresence.getPlayersAffected().size() >= 4);
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     TALENT_SHREDDER("Talent Shredder",
             "Deal 3k damage to the enemy carrier while they have an active shield/damage reduction.",
             GameMode.CAPTURE_THE_FLAG,
@@ -339,8 +350,8 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
-            },
-            false),
+            }
+    ),
     ROADBLOCK("Roadblock?!",
             "Proc your Capacitor Totem three (or more) times after your carrier passes through the totem.",
             GameMode.CAPTURE_THE_FLAG,
@@ -354,8 +365,8 @@ public enum ChallengeAchievements implements Achievement {
                         .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(), CapacitorTotem.class))
                         .map(regularCooldown -> ((CapacitorTotem) regularCooldown.getCooldownObject()))
                         .anyMatch(capacitorTotem -> capacitorTotem.getNumberOfProcsAfterCarrierPassed() >= 3);
-            },
-            false),
+            }
+    ),
     PERSISTENT_THREAT("Persistent Threat",
             "Proc soulbinding healing/cooldown reduction 10 times on the enemy carrier within 20 seconds.",
             GameMode.CAPTURE_THE_FLAG,
@@ -377,8 +388,8 @@ public enum ChallengeAchievements implements Achievement {
                     }
                 }
                 return false;
-            },
-            false),
+            }
+    ),
     WHERE_ARE_YOU_GOING("Where are you going?",
             "Kill the enemy flag carrier after landing 5 or more abilities on them.",
             GameMode.CAPTURE_THE_FLAG,
@@ -418,8 +429,8 @@ public enum ChallengeAchievements implements Achievement {
                 } else {
                     return false;
                 }
-            },
-            false),
+            }
+    ),
     CONTROLLED_FURY("Controlled Fury",
             "Reduce the damage of Ghoulcaller's Fury by the maximum amount three times in a row.",
             GameMode.WAVE_DEFENSE,
@@ -430,8 +441,13 @@ public enum ChallengeAchievements implements Achievement {
                         .stream()
                         .map(warlordsNPC -> (Ghoulcaller) warlordsNPC.getMob())
                         .anyMatch(ghoulcaller -> ghoulcaller.getTimesInARowDamageMaxReduced() >= 3);
-            },
-            true),
+            }
+    ) {
+        @Override
+        public boolean autoGiveToTeammates() {
+            return true;
+        }
+    },
     FISSURED_END("Fissured End",
             "Get teamwiped by Narmer's mega-earthquake.",
             GameMode.WAVE_DEFENSE,
@@ -442,30 +458,112 @@ public enum ChallengeAchievements implements Achievement {
                         .stream()
                         .allMatch(entity -> entity.getSecondStats().getLastEventAsSelf().isDead());
 
-            },
-            false),
+            }
+    ) {
+        @Override
+        public boolean autoGiveToTeammates() {
+            return true;
+        }
+    },
+    SIRE("Sire?",
+            "Trigger Boltaro's splitting phase without killing any other mobs.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    NEAR_DEATH_EXPERIENCE("Near-Death Experience",
+            "Defeat Narmer after triggering his mega-earthquake twice.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                return PlayerFilterGeneric.playingGameWarlordsNPCs(warlordsEntity.getGame())
+                        .filter(warlordsNPC -> warlordsNPC.getMob() instanceof Narmer)
+                        .stream()
+                        .map(warlordsNPC -> (Narmer) warlordsNPC.getMob())
+                        .anyMatch(narmer -> narmer.getTimesMegaEarthQuakeActivated() >= 2);
+            }
+    ) {
+        @Override
+        public boolean autoGiveToTeammates() {
+            return true;
+        }
+    },
+    LASER_FOCUSED("Laser Focused",
+            "Land 10 critical hits in a row while Inferno is active.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                List<WarlordsDamageHealingFinalEvent> lastEventsAsAttacker = warlordsEntity.getSecondStats().getLastEventsAsAttacker(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
+                return lastEventsAsAttacker.size() >= 10 && lastEventsAsAttacker
+                        .stream()
+                        .allMatch(event -> event.getAttackerCooldowns().stream().anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), Inferno.class)) && event.isCrit());
+            }
+    ),
+    DUCK_TANK_PVE("Duck Tank",
+            "Tank 8,000 damage within the duration of 1 Ice Barrier.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    CLEANSING_RITUAL("Cleansing Ritual",
+            "Clear 7 debuffs in 1 Water Breath activation.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            WARLORDS_ENTITY -> {
+                return true;
+            }
+    ),
+    LAWNMOWER("Lawnmower",
+            "Land 40 strikes and kill 12 enemies in 1 wrath activation.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
 
     ;
+
+    //TODO test EXTENDED_COMBAT
+    public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
+            BLITZKRIEG, SNIPE_SHOT, REVENGE_BLAST, ROADBLOCK, LASER_FOCUSED
+    };
+    public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER_FLAG = new ChallengeAchievements[]{
+            ASSASSINATE, SILENCE_PEON, ORBIFICATOR, HOUR_OF_RECKONING, TALENT_SHREDDER, PERSISTENT_THREAT, WHERE_ARE_YOU_GOING, EXTENDED_COMBAT
+    };
+    public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_SELF = new ChallengeAchievements[]{
+            DUCK_TANK, SPLIT_SECOND
+    };
+    public static final ChallengeAchievements[] HEALING_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
+            LYCHEESIS
+    };
+    public static final ChallengeAchievements[] HEALING_ACHIEVEMENTS_ATTACKER_FLAG = new ChallengeAchievements[]{
+            REJUVENATION, CLERICAL_PRODIGY
+    };
 
     public final String name;
     public final String description;
     public final GameMode gameMode;
     public final Specializations spec;
     public final Predicate<WarlordsEntity> warlordsEntityPredicate;
-    public final boolean checkTeammates;
 
-    ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsEntity> warlordsEntityPredicate, boolean checkTeammates) {
+    ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsEntity> warlordsEntityPredicate) {
         this.name = name;
         this.description = description;
         this.gameMode = gameMode;
         this.spec = spec;
         this.warlordsEntityPredicate = warlordsEntityPredicate;
-        this.checkTeammates = checkTeammates;
     }
 
     public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        if (achievement.warlordsEntityPredicate.test(player)) {
-            if (achievement.checkTeammates) {
+        if (achievement.gameMode == player.getGame().getGameMode() && achievement.warlordsEntityPredicate.test(player)) {
+            if (achievement.autoGiveToTeammates()) {
+                ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
+            } else if (achievement.checkTeammates()) {
                 ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
             } else {
                 //if(!player.hasAchievement(achievement)) {
@@ -475,12 +573,27 @@ public enum ChallengeAchievements implements Achievement {
         }
     }
 
+    public static void giveTeammatesSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
+        player.getGame().warlordsPlayers()
+                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
+                //.filter(warlordsEntity -> !warlordsEntity.hasAchievement(achievement))
+                .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
+    }
+
     public static void checkTeammatesForSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
         player.getGame().warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
                 //.filter(warlordsEntity -> !warlordsEntity.hasAchievement(achievement))
                 .filter(achievement.warlordsEntityPredicate)
                 .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
+    }
+
+    public boolean checkTeammates() {
+        return false;
+    }
+
+    public boolean autoGiveToTeammates() {
+        return false;
     }
 
     @Override
