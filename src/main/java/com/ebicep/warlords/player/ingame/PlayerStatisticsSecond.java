@@ -57,6 +57,15 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
                 .collect(Collectors.toList());
     }
 
+    public List<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecond(int seconds, Predicate<WarlordsDamageHealingFinalEvent> filter) {
+        return entries
+                .subList(Math.max(0, entries.size() - seconds), entries.size())
+                .stream()
+                .flatMap(entry -> entry.getEventsAsSelf().stream())
+                .filter(filter)
+                .collect(Collectors.toList());
+    }
+
     public Stream<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecondStream(int seconds) {
         return entries
                 .subList(Math.max(0, entries.size() - seconds), entries.size())

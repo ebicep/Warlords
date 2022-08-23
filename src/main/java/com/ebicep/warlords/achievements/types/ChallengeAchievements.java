@@ -143,9 +143,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.CRYOMANCER,
             warlordsEntity -> {
-                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsSelfFromLastSecond(10).stream()
-                        .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
-                        .collect(Collectors.toList());
+                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsSelfFromLastSecond(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
                 if (events.isEmpty()) return false;
                 float lastHealth = events.get(0).getFinalHealth();
                 float totalAbsorbed = 0;
@@ -278,9 +276,8 @@ public enum ChallengeAchievements implements Achievement {
                         .stream()
                         .collect(Collectors.toList())
                 ) {
-                    if (player.getSecondStats().getEventsAsSelfFromLastSecond(5)
+                    if (player.getSecondStats().getEventsAsSelfFromLastSecond(5, WarlordsDamageHealingFinalEvent::isHasFlag)
                             .stream()
-                            .filter(WarlordsDamageHealingFinalEvent::isHasFlag)
                             .anyMatch(WarlordsDamageHealingFinalEvent::isDead)
                     ) {
                         carrierDeadLast5Seconds = true;
@@ -506,7 +503,21 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             warlordsEntity -> {
-                return true;
+                WarlordsDamageHealingFinalEvent lastEventAsSelf = warlordsEntity.getSecondStats().getLastEventAsSelf();
+                for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
+                    if (Objects.equals(playerCooldown.getAbstractCooldown().getCooldownClass(), IceBarrier.class)) {
+                        int secondsLeft = playerCooldown.getTicksLeft() / 20;
+                        int totalDamage = 0;
+                        for (WarlordsDamageHealingFinalEvent event : warlordsEntity.getSecondStats().getEventsAsSelfFromLastSecond(secondsLeft, WarlordsDamageHealingFinalEvent::isDamageInstance)) {
+                            if (event.getPlayerCooldowns().stream().anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), IceBarrier.class))) {
+                                totalDamage += event.getValue();
+                            }
+                        }
+                        System.out.println(totalDamage);
+                        return totalDamage >= 8000;
+                    }
+                }
+                return false;
             }
     ),
     CLEANSING_RITUAL("Cleansing Ritual",
@@ -536,7 +547,7 @@ public enum ChallengeAchievements implements Achievement {
             ASSASSINATE, SILENCE_PEON, ORBIFICATOR, HOUR_OF_RECKONING, TALENT_SHREDDER, PERSISTENT_THREAT, WHERE_ARE_YOU_GOING, EXTENDED_COMBAT
     };
     public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_SELF = new ChallengeAchievements[]{
-            DUCK_TANK, SPLIT_SECOND
+            DUCK_TANK, SPLIT_SECOND, DUCK_TANK_PVE
     };
     public static final ChallengeAchievements[] HEALING_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
             LYCHEESIS
