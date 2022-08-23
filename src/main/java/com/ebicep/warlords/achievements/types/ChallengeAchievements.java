@@ -424,12 +424,12 @@ public enum ChallengeAchievements implements Achievement {
 
     ;
 
-    public String name;
-    public String description;
-    public GameMode gameMode;
-    public Specializations spec;
-    public Predicate<WarlordsEntity> warlordsPlayerPredicate;
-    public boolean checkTeammates;
+    public final String name;
+    public final String description;
+    public final GameMode gameMode;
+    public final Specializations spec;
+    public final Predicate<WarlordsEntity> warlordsPlayerPredicate;
+    public final boolean checkTeammates;
 
     ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsEntity> warlordsPlayerPredicate, boolean checkTeammates) {
         this.name = name;
@@ -456,7 +456,7 @@ public enum ChallengeAchievements implements Achievement {
         player.getGame().warlordsEntities()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
                 //.filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(achievement))
-                .filter(warlordsPlayer -> achievement.warlordsPlayerPredicate.test(warlordsPlayer))
+                .filter(achievement.warlordsPlayerPredicate)
                 .forEachOrdered(warlordsPlayer -> warlordsPlayer.unlockAchievement(achievement));
     }
 
