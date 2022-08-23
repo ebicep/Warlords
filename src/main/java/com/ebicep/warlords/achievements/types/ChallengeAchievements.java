@@ -490,7 +490,7 @@ public enum ChallengeAchievements implements Achievement {
     LASER_FOCUSED("Laser Focused",
             "Land 10 critical hits in a row while Inferno is active.",
             GameMode.WAVE_DEFENSE,
-            null,
+            Specializations.PYROMANCER,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> lastEventsAsAttacker = warlordsEntity.getSecondStats().getLastEventsAsAttacker(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
                 return lastEventsAsAttacker.size() >= 10 && lastEventsAsAttacker
@@ -501,7 +501,7 @@ public enum ChallengeAchievements implements Achievement {
     DUCK_TANK_PVE("Duck Tank",
             "Tank 8,000 damage within the duration of 1 Ice Barrier.",
             GameMode.WAVE_DEFENSE,
-            null,
+            Specializations.CRYOMANCER,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEventAsSelf = warlordsEntity.getSecondStats().getLastEventAsSelf();
                 for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
