@@ -530,9 +530,11 @@ public enum ChallengeAchievements implements Achievement {
     LAWNMOWER("Lawnmower",
             "Land 40 strikes and kill 12 enemies in 1 wrath activation.",
             GameMode.WAVE_DEFENSE,
-            null,
+            Specializations.AVENGER,
             warlordsEntity -> {
-                return true;
+                return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
+                        .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
             }
     ),
 
@@ -540,7 +542,7 @@ public enum ChallengeAchievements implements Achievement {
 
     //TODO test EXTENDED_COMBAT
     public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
-            BLITZKRIEG, SNIPE_SHOT, REVENGE_BLAST, ROADBLOCK, LASER_FOCUSED
+            BLITZKRIEG, SNIPE_SHOT, REVENGE_BLAST, ROADBLOCK, LASER_FOCUSED, LAWNMOWER
     };
     public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER_FLAG = new ChallengeAchievements[]{
             ASSASSINATE, SILENCE_PEON, ORBIFICATOR, HOUR_OF_RECKONING, TALENT_SHREDDER, PERSISTENT_THREAT, WHERE_ARE_YOU_GOING, EXTENDED_COMBAT

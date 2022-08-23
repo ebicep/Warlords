@@ -26,6 +26,8 @@ public class AvengersWrath extends AbstractAbility {
     private int duration = 12;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
+    private int playersStruckDuringWrath = 0;
+    private int playersKilledDuringWrath = 0;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
@@ -83,6 +85,7 @@ public class AvengersWrath extends AbstractAbility {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(WRATH_SKIP)) {
+                    tempAvengersWrath.addPlayersStruckDuringWrath();
                     for (WarlordsEntity wrathTarget : PlayerFilter
                             .entitiesAround(event.getPlayer(), 5, 4, 5)
                             .aliveEnemiesOf(wp)
@@ -91,6 +94,7 @@ public class AvengersWrath extends AbstractAbility {
                             .limit(maxTargets)
                     ) {
                         wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
+                        tempAvengersWrath.addPlayersStruckDuringWrath();
 
                         Optional<Consecrate> standingOnConsecrate = AbstractStrikeBase.getStandingOnConsecrate(wp, wrathTarget);
                         if (standingOnConsecrate.isPresent()) {
@@ -123,6 +127,13 @@ public class AvengersWrath extends AbstractAbility {
             }
 
             @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (isKiller) {
+                    tempAvengersWrath.addPlayersKilledDuringWrath();
+                }
+            }
+
+            @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
                 return energyGainPerTick + energyPerSecond / 20f;
             }
@@ -133,6 +144,22 @@ public class AvengersWrath extends AbstractAbility {
 
     public void addExtraPlayersStruck() {
         extraPlayersStruck++;
+    }
+
+    public void addPlayersStruckDuringWrath() {
+        playersStruckDuringWrath++;
+    }
+
+    public void addPlayersKilledDuringWrath() {
+        playersKilledDuringWrath++;
+    }
+
+    public int getPlayersStruckDuringWrath() {
+        return playersStruckDuringWrath;
+    }
+
+    public int getPlayersKilledDuringWrath() {
+        return playersKilledDuringWrath;
     }
 
     public int getDuration() {
