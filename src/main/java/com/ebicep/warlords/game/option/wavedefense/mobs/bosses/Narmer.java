@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
@@ -35,7 +36,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     private int acolytesAlive = 0;
     private int timeUntilNewAcolyte = 0; // ticks
     private int acolyteDeathWindow = 0; // ticks
-    private int timesMegaEarthQuakeActivated = 0;
+    private final AtomicInteger timesMegaEarthQuakeActivated = new AtomicInteger();
 
     public Narmer(Location spawnLocation) {
         super(spawnLocation,
@@ -102,7 +103,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     if (acolyteDeathWindow > 0) {
-                        //Bukkit.broadcastMessage("mega execute");
+                        Bukkit.broadcastMessage("mega execute");
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 12);
@@ -125,7 +126,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                             ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
                             break;
                         }
-                        timesMegaEarthQuakeActivated++;
+                        timesMegaEarthQuakeActivated.getAndIncrement();
                     } else {
                         for (WarlordsEntity enemy : PlayerFilter
                                 .entitiesAround(warlordsNPC, 12, 12, 12)
@@ -144,10 +145,10 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     if (acolyteDeathWindow <= 0) {
-                        acolyteDeathWindow = 20;
+                        acolyteDeathWindow = 200;
                     }
 
-                    timeUntilNewAcolyte = 300;
+                    timeUntilNewAcolyte = 30;//0;
                 }
             }
         });
@@ -201,7 +202,7 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        if (acolytesAlive < option.getGame().warlordsPlayers().count() && timeUntilNewAcolyte <= 0) {
+        if (acolytesAlive < option.getGame().warlordsPlayers().count() + 2 && timeUntilNewAcolyte <= 0) {
             //Bukkit.broadcastMessage("spawned new acolyte");
             option.spawnNewMob(new NarmerAcolyte(loc));
             acolytesAlive++;
@@ -243,6 +244,6 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     public int getTimesMegaEarthQuakeActivated() {
-        return timesMegaEarthQuakeActivated;
+        return timesMegaEarthQuakeActivated.get();
     }
 }

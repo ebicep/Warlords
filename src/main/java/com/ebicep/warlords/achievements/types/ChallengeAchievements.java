@@ -188,7 +188,7 @@ public enum ChallengeAchievements implements Achievement {
             }
     ),
     SILENCE_PEON("Silence, peon!",
-            "Kill the enemy flag carrier (that you silenced) while the silence duration is still up. ",
+            "Kill the enemy flag carrier (that you silenced) while the silence duration is still up.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.VINDICATOR,
             warlordsEntity -> {
@@ -513,7 +513,6 @@ public enum ChallengeAchievements implements Achievement {
                                 totalDamage += event.getValue();
                             }
                         }
-                        System.out.println(totalDamage);
                         return totalDamage >= 8000;
                     }
                 }
