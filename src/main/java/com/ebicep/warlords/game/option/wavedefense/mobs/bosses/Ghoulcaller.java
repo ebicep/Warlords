@@ -73,7 +73,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 20 == 0) {
-            getWarlordsNPC().getSecondStats().advanceSecond();
             if (getWarlordsNPC().getCooldownManager().hasCooldown(SoulShackle.class) && !skipNextAttack) {
                 skipNextAttack = true;
             }
