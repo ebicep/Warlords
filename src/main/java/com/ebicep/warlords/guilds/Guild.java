@@ -3,6 +3,7 @@ package com.ebicep.warlords.guilds;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogJoin;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogLeave;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogDemote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
@@ -95,6 +96,7 @@ public class Guild {
     public void join(Player player) {
         addPlayer(player, getDefaultRole());
         sendGuildMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " has joined the guild!", true);
+        log(new GuildLogJoin(player.getUniqueId()));
         queueUpdate();
     }
 
