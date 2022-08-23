@@ -522,7 +522,7 @@ public enum ChallengeAchievements implements Achievement {
     CLEANSING_RITUAL("Cleansing Ritual",
             "Clear 7 debuffs in 1 Water Breath activation.",
             GameMode.WAVE_DEFENSE,
-            null,
+            Specializations.AQUAMANCER,
             WARLORDS_ENTITY -> {
                 return true;
             }
