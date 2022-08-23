@@ -253,7 +253,7 @@ public class WaveDefenseOption implements Option {
         abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.add(abstractMob);
-        spawnCount++;
+        //spawnCount++;
     }
 
     @Override

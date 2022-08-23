@@ -24,6 +24,8 @@ import java.util.stream.Stream;
 
 public class Utils {
 
+    // ’
+
     public static final String[] specsOrdered = {
             "Pyromancer",
             "Cryomancer",

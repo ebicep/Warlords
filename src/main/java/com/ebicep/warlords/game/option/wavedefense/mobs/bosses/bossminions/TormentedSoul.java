@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -7,12 +8,12 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 
 public class TormentedSoul extends AbstractZombie implements BossMob {
 
@@ -21,17 +22,17 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
                 "Tormented Soul",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Weapons.DEMONBLADE.getItem()
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+                        Weapons.CLAWS.getItem()
                 ),
                 2000,
                 0.38f,
                 0,
-                414,
-                538
+                214,
+                338
         );
     }
 
@@ -52,8 +53,10 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 200, 200, 200, 1);
+        Utils.playGlobalSound(self.getLocation(), Sound.AMBIENCE_CAVE, 2, 2);
         if (!event.getAbility().isEmpty()) {
-            attacker.getCooldownManager().addTicksToRegularCooldowns(CooldownTypes.ABILITY, 20);
+            attacker.getSpec().increaseAllCooldownTimersBy(0.2f);
         }
     }
 }

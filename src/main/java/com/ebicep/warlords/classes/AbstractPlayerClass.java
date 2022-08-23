@@ -305,4 +305,11 @@ public abstract class AbstractPlayerClass {
         this.purple.runEveryTick();
         this.weapon.runEveryTick();
     }
+
+    public void increaseAllCooldownTimersBy(float amount) {
+        this.red.addCooldown(amount);
+        this.purple.addCooldown(amount);
+        this.blue.addCooldown(amount);
+        this.orange.addCooldown(amount);
+    }
 }

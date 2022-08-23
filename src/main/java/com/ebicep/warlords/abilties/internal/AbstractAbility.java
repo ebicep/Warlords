@@ -130,6 +130,12 @@ public abstract class AbstractAbility {
         }
     }
 
+    public void addCooldown(float cooldown) {
+        if (currentCooldown != 0) {
+            currentCooldown += cooldown;
+        }
+    }
+
     public float getCooldown() {
         return cooldown;
     }

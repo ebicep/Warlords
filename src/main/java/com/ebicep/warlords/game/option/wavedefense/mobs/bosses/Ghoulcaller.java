@@ -1,6 +1,9 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -16,11 +19,8 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,17 +41,17 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 "Ghoulcaller",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        Weapons.DRAKEFANG.getItem()
+                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 170, 170, 170),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 170, 170, 170),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 170, 170, 170),
+                        Weapons.ENDERFIST.getItem()
                 ),
-                20000,
-                0.475f,
+                17000,
+                0.42f,
                 0,
-                477,
-                616
+                277,
+                416
         );
     }
 
@@ -96,16 +96,26 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 if (attacksInLast5Seconds > 20) {
                     attacksInLast5Seconds = 20;
                 }
-                int playerCount = (int) option.getGame().warlordsPlayers().count();
 
-                float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds));
-                float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(playerCount, PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds));
+                int playerCount = (int) option.getGame().warlordsPlayers().count();
+                float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
+                        playerCount,
+                        PLAYER_COUNT_DAMAGE_VALUES.get(1)).getA() * Math.pow(0.95, attacksInLast5Seconds)
+                );
+                float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
+                        playerCount,
+                        PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds)
+                );
+
+                Location loc = warlordsNPC.getLocation();
+                Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
+                EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 50);
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
                         .aliveEnemiesOf(getWarlordsNPC())
                         .forEach(enemyPlayer -> {
                             enemyPlayer.addDamageInstance(
                                     getWarlordsNPC(),
-                                    "Ghoulcaller’s Fury",
+                                    "Fury",
                                     minDamage,
                                     maxDamage,
                                     -1,
@@ -119,26 +129,45 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         if (ticksElapsed % 400 == 0) {
             spawnTormentedSouls(option, (int) (5 * option.getGame().warlordsPlayers().count()));
         }
-    }
 
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        //silence player for 10s per melee
-        if (event.getAbility().isEmpty()) {
-            SoulShackle.shacklePlayer(attacker, receiver, 200);
-            PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
-                    .aliveEnemiesOf(getWarlordsNPC())
-                    .excluding(attacker)
-                    .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 200));
+        if (ticksElapsed % 10 == 0) {
+            EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 1.1, 150, 120, 120);
         }
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        //silence player for 2s per melee
+        if (event.getAbility().isEmpty()) {
+            SoulShackle.shacklePlayer(attacker, receiver, 40);
+            PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
+                    .aliveEnemiesOf(getWarlordsNPC())
+                    .excluding(attacker)
+                    .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 40));
+        }
 
+        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
+                .withColor(Color.BLACK)
+                .with(FireworkEffect.Type.BURST)
+                .build());
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        EffectUtils.playRandomHitEffect(self.getLocation(), 150, 150, 150, 7);
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                .withColor(Color.GRAY)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .withTrail()
+                .build());
     }
 
     private void spawnTormentedSouls(WaveDefenseOption option, int amount) {
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 1.5f);
         for (int i = 0; i < amount; i++) {
             option.spawnNewMob(new TormentedSoul(getWarlordsNPC().getLocation()));
         }
