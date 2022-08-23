@@ -570,7 +570,10 @@ public enum ChallengeAchievements implements Achievement {
     }
 
     public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        if (achievement.gameMode == player.getGame().getGameMode() && achievement.warlordsEntityPredicate.test(player)) {
+        if (achievement.gameMode == player.getGame().getGameMode() &&
+                achievement.spec == player.getSpecClass() &&
+                achievement.warlordsEntityPredicate.test(player)
+        ) {
             if (achievement.autoGiveToTeammates()) {
                 ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
             } else if (achievement.checkTeammates()) {
