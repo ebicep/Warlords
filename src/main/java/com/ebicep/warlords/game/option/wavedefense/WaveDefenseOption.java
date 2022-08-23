@@ -247,6 +247,13 @@ public class WaveDefenseOption implements Option {
         startSpawnTask();
     }
 
+    public void spawnNewMob(AbstractMob<?> abstractMob) {
+        abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
+        game.addNPC(abstractMob.getWarlordsNPC());
+        mobs.add(abstractMob);
+        spawnCount++;
+    }
+
     @Override
     public void register(Game game) {
         this.game = game;
@@ -264,11 +271,11 @@ public class WaveDefenseOption implements Option {
                 WarlordsEntity receiver = event.getPlayer();
                 for (AbstractMob<?> mob : mobs) {
                     if (mob.getWarlordsNPC().equals(attacker) && event.isDamageInstance()) {
-                        mob.onAttack(attacker, receiver, event.getAbility());
+                        mob.onAttack(attacker, receiver, event);
                     }
 
                     if (mob.getWarlordsNPC().equals(receiver) && event.isDamageInstance()) {
-                        mob.onDamageTaken(receiver, attacker);
+                        mob.onDamageTaken(receiver, attacker, event);
                     }
                 }
             }
@@ -375,7 +382,7 @@ public class WaveDefenseOption implements Option {
                     }
                 }
 
-                for (AbstractMob<?> mob : mobs) {
+                for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
                     mob.whileAlive(counter, WaveDefenseOption.this);
                 }
 

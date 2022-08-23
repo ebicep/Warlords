@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.irongolem;
 
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
@@ -39,13 +40,13 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.ITEM_BREAK, 1, 0.5f);
         receiver.setVelocity(new Vector(0, 0.5, 0), false);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 

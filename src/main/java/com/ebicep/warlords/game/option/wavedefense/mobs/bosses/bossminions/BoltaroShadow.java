@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
@@ -45,12 +46,12 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.addKnockback(attacker.getLocation(), receiver, -1.1, 0.3);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
     }
 
     @Override

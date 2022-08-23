@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
@@ -65,14 +66,14 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.35).setY(0.3);
         receiver.setVelocity(v, false);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 }

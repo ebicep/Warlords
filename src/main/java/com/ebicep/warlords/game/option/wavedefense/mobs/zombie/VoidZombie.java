@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
@@ -79,13 +80,13 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
         receiver.getSpeed().addSpeedModifier("Envoy Slowness", -20, 2 * 20);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 

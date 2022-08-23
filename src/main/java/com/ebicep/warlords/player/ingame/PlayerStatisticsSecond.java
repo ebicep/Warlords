@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.Entry> {
 
@@ -49,15 +50,22 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
 
     public List<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecond(int seconds) {
         return entries
-                .subList(Math.max(0, seconds * 20 - 20), Math.min(entries.size(), seconds * 20))
+                .subList(Math.max(0, entries.size() - seconds), entries.size())
                 .stream()
                 .flatMap(entry -> entry.getEventsAsSelf().stream())
                 .collect(Collectors.toList());
     }
 
+    public Stream<WarlordsDamageHealingFinalEvent> getEventsAsSelfFromLastSecondStream(int seconds) {
+        return entries
+                .subList(Math.max(0, entries.size() - seconds), entries.size())
+                .stream()
+                .flatMap(entry -> entry.getEventsAsSelf().stream());
+    }
+
     public List<WarlordsDamageHealingFinalEvent> getEventsAsAttackerFromLastSecond(int seconds) {
         return entries
-                .subList(Math.max(0, seconds * 20 - 20), Math.min(entries.size(), seconds * 20))
+                .subList(Math.max(0, entries.size() - seconds), entries.size())
                 .stream()
                 .flatMap(entry -> entry.getEventsAsAttacker().stream())
                 .collect(Collectors.toList());

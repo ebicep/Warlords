@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.magmacube;
 
 import com.ebicep.customentities.nms.pve.CustomMagmaCube;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,7 +15,7 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 }

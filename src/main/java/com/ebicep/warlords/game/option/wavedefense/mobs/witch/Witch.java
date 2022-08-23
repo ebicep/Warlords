@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
@@ -59,14 +60,14 @@ public class Witch extends AbstractWitch implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
 
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
-        Utils.playGlobalSound(mob.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.7f);
-        EffectUtils.playRandomHitEffect(mob.getLocation(), 0, 120, 255, 4);
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        Utils.playGlobalSound(self.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.7f);
+        EffectUtils.playRandomHitEffect(self.getLocation(), 0, 120, 255, 4);
         EffectUtils.playRandomHitEffect(attacker.getLocation(), 0, 120, 255, 4);
         attacker.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 5);
     }

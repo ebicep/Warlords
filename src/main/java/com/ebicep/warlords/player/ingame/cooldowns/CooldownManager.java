@@ -109,29 +109,7 @@ public class CooldownManager {
     }
 
     public void subtractTicksOnRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
-        abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
-                .filter(RegularCooldown.class::isInstance)
-                .map(RegularCooldown.class::cast)
-                .forEachOrdered(regularCooldown -> {
-                    regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks);
-                    if (Objects.equals(regularCooldown.getCooldownClass(), Intervene.class)) {
-                        Intervene intervene = (Intervene) regularCooldown.getCooldownObject();
-                        //player is defender that vened, then reduce vened target cooldown
-                        if (regularCooldown.getFrom() == warlordsPlayer) {
-                            new CooldownFilter<>(intervene.getTarget(), RegularCooldown.class)
-                                    .filterCooldownObject(intervene)
-                                    .findFirst()
-                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() - ticks));
-                        }
-                        //player with vene from defender, then reduce defender vene cooldown
-                        else {
-                            new CooldownFilter<>(intervene.getCaster(), RegularCooldown.class)
-                                    .filterCooldownObject(intervene)
-                                    .findFirst()
-                                    .ifPresent(cooldown -> cooldown.setTicksLeft(cooldown.getTicksLeft() - ticks));
-                        }
-                    }
-                });
+        addTicksToRegularCooldowns(cooldownTypes, -ticks);
     }
 
     public List<AbstractCooldown<?>> getBuffCooldowns() {

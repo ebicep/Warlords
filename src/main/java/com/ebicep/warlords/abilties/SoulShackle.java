@@ -21,6 +21,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SoulShackle extends AbstractAbility {
+
+    public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
+        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
+        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            if (shackleTarget.getEntity() instanceof Player) {
+                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, tickDuration, 0);
+            }
+        }
+        shackleTarget.getCooldownManager().addRegularCooldown(
+                "Shackle Silence",
+                "SILENCE",
+                SoulShackle.class,
+                new SoulShackle(),
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                tickDuration,
+                (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
+
+                        Location playerLoc = shackleTarget.getLocation();
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = 1.075;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                            }
+                        }
+                    }
+                }
+        );
+    }
+
     private boolean pveUpgrade = false;
 
     private final int shackleRange = 15;
@@ -107,7 +147,6 @@ public class SoulShackle extends AbstractAbility {
     }
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
-        SoulShackle tempSoulShackle = new SoulShackle();
         EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
         FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
                 .withColor(Color.YELLOW)
@@ -122,42 +161,7 @@ public class SoulShackle extends AbstractAbility {
         }
 
         shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
-        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
-            if (shackleTarget.getEntity() instanceof Player) {
-                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, silenceDuration, 0);
-            }
-        }
-        shackleTarget.getCooldownManager().addRegularCooldown(
-                "Shackle Silence",
-                "SILENCE",
-                SoulShackle.class,
-                tempSoulShackle,
-                wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                silenceDuration,
-                (cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 10 == 0) {
-                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
-
-                        Location playerLoc = shackleTarget.getLocation();
-                        Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 1.075;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
-                            }
-                        }
-                    }
-                }
-        );
+        shacklePlayer(wp, shackleTarget, silenceDuration);
     }
 
     public float getShacklePool() {

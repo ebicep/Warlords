@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
@@ -21,8 +21,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.UUID;
 
 public class Boltaro extends AbstractZombie implements BossMob {
 
@@ -68,27 +66,22 @@ public class Boltaro extends AbstractZombie implements BossMob {
         if (warlordsNPC.getHealth() < 6000) {
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
             for (int i = 0; i < 2; i++) {
-                BoltaroShadow minionBoltaro = new BoltaroShadow(warlordsNPC.getLocation());
-                minionBoltaro.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-                option.getGame().addNPC(minionBoltaro.getWarlordsNPC());
-                option.getMobs().add(minionBoltaro);
+                option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
             }
 
             for (int i = 0; i < 6; i++) {
-                BoltaroExiled exiled = new BoltaroExiled(warlordsNPC.getLocation());
-                exiled.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-                option.getGame().addNPC(exiled.getWarlordsNPC());
-                option.getMobs().add(exiled);
+                option.spawnNewMob(new BoltaroExiled(warlordsNPC.getLocation()));
             }
             warlordsNPC.die(warlordsNPC);
         }
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
-        if (!ability.equals("Multi Hit")) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        if (!event.getAbility().equals("Multi Hit")) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;
@@ -105,9 +98,9 @@ public class Boltaro extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
-        Utils.playGlobalSound(mob.getLocation(), "warrior.intervene.block", 2, 0.3f);
-        EffectUtils.playRandomHitEffect(mob.getLocation(), 255, 0, 0, 4);
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        Utils.playGlobalSound(self.getLocation(), "warrior.intervene.block", 2, 0.3f);
+        EffectUtils.playRandomHitEffect(self.getLocation(), 255, 0, 0, 4);
     }
 
     @Override

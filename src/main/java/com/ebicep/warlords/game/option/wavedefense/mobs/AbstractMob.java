@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -122,9 +123,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void whileAlive(int ticksElapsed, WaveDefenseOption option);
 
-    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability);
+    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
 
-    public abstract void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker);
+    public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         dropWeapon(killer);

@@ -3,8 +3,8 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.NarmerAcolyte;
@@ -23,8 +23,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.UUID;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
@@ -66,18 +64,13 @@ public class Narmer extends AbstractZombie implements BossMob {
 
         for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
             NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
-            acolyte.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-            warlordsNPC.getGame().addNPC(acolyte.getWarlordsNPC());
-            option.getMobs().add(acolyte);
+            option.spawnNewMob(acolyte);
             acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
             acolytesAlive++;
         }
 
         for (int i = 0; i < 12; i++) {
-            BasicZombie basicZombie = new BasicZombie(warlordsNPC.getLocation());
-            basicZombie.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-            warlordsNPC.getGame().addNPC(basicZombie.getWarlordsNPC());
-            option.getMobs().add(basicZombie);
+            option.spawnNewMob(new BasicZombie(warlordsNPC.getLocation()));
         }
 
 
@@ -201,10 +194,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
         if (acolytesAlive < option.getGame().warlordsPlayers().count() && timeUntilNewAcolyte <= 0) {
             //Bukkit.broadcastMessage("spawned new acolyte");
-            NarmerAcolyte newAcolyte = new NarmerAcolyte(loc);
-            newAcolyte.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-            warlordsNPC.getGame().addNPC(newAcolyte.getWarlordsNPC());
-            option.getMobs().add(newAcolyte);
+            option.spawnNewMob(new NarmerAcolyte(loc));
             acolytesAlive++;
             timeUntilNewAcolyte = 300;
         }
@@ -221,13 +211,13 @@ public class Narmer extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.addKnockback(attacker.getLocation(), receiver, -2.5, 0.25f);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
-        EffectUtils.playRandomHitEffect(mob.getLocation(), 255, 255, 255, 7);
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        EffectUtils.playRandomHitEffect(self.getLocation(), 255, 255, 255, 7);
     }
 
     @Override

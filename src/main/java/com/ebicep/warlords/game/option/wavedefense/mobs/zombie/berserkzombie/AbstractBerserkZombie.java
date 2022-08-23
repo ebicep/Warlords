@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;
@@ -44,12 +45,12 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
 
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 }

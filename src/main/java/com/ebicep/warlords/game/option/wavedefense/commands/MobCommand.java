@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
@@ -15,7 +14,6 @@ import org.bukkit.ChatColor;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @CommandAlias("mob")
 public class MobCommand extends BaseCommand {
@@ -32,9 +30,7 @@ public class MobCommand extends BaseCommand {
                 WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                 for (int i = 0; i < amount; i++) {
                     AbstractMob<?> mob = mobType.createMob.apply(warlordsPlayer.getLocation());
-                    mob.toNPC(warlordsPlayer.getGame(), Team.RED, UUID.randomUUID());
-                    waveDefenseOption.getMobs().add(mob);
-                    waveDefenseOption.setSpawnCount(waveDefenseOption.getSpawnCount() + 1);
+                    waveDefenseOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
                 ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Spawned " + amount + " Mobs", true);

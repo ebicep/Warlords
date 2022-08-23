@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.blaze;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
@@ -69,12 +70,12 @@ public class Blaze extends AbstractBlaze implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
 
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIRE_IGNITE, 2, 0.2f);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 20);
     }

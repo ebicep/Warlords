@@ -6,7 +6,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
@@ -19,8 +18,6 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-
-import java.util.UUID;
 
 public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
@@ -79,12 +76,12 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, String ability) {
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
 
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity mob, WarlordsEntity attacker) {
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
 
@@ -101,10 +98,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         }
 
         for (int i = 0; i < 2; i++) {
-            BabyMagmaCube babyMagmaCube = new BabyMagmaCube(warlordsNPC.getLocation());
-            babyMagmaCube.toNPC(warlordsNPC.getGame(), Team.RED, UUID.randomUUID());
-            option.getGame().addNPC(babyMagmaCube.getWarlordsNPC());
-            option.getMobs().add(babyMagmaCube);
+            option.spawnNewMob(new BabyMagmaCube(warlordsNPC.getLocation()));
         }
 
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
