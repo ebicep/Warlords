@@ -27,6 +27,7 @@ import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -181,7 +182,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Game Addons = " + game.getAddons());
         System.out.println(" ----- GAME END ----- ");
 
-        List<WarlordsEntity> players = PlayerFilter.playingGameWarlordsPlayers(game).toList();
+        List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();
         if (players.isEmpty()) {
             return;
         }

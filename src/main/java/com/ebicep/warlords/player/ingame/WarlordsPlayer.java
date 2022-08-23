@@ -266,6 +266,11 @@ public final class WarlordsPlayer extends WarlordsEntity {
         }
     }
 
+    @Override
+    protected boolean shouldCheckForAchievements() {
+        return true;
+    }
+
     public AbilityTree getAbilityTree() {
         return abilityTree;
     }

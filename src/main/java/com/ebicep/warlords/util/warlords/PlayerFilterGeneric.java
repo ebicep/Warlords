@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -25,18 +27,18 @@ import static com.ebicep.warlords.util.warlords.Utils.sortClosestBy;
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
 // Replace: $1PlayerFilter.entitiesAround($2, $3, $4, $5)$1    .enemiesOf($6)$1
 
-public class PlayerFilter implements Iterable<WarlordsEntity> {
+public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T> {
     private static final Location LOCATION_CACHE_ENTITIES_AROUND = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_CLOSEST = new Location(null, 0, 0, 0);
 
-    private final Stream<WarlordsEntity> stream;
+    private final Stream<T> stream;
 
-    protected PlayerFilter(@Nonnull Stream<WarlordsEntity> stream) {
+    protected PlayerFilterGeneric(@Nonnull Stream<T> stream) {
         this.stream = stream;
     }
 
     @Nonnull
-    public Stream<WarlordsEntity> stream() {
+    public Stream<T> stream() {
         return stream;
     }
 
@@ -47,20 +49,21 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
      * @return The new {@code PlayerFilter}
      */
     @Nonnull
-    public PlayerFilter concat(@Nonnull WarlordsEntity... player) {
-        return new PlayerFilter(Stream.concat(stream, Stream.of(player)));
+    public PlayerFilterGeneric<T> concat(@Nonnull T... player) {
+        return new PlayerFilterGeneric<>(Stream.concat(stream, Stream.of(player)));
     }
 
     /**
      * Limits the amount of internalPlayers iterated over.
-     * @see #closestFirst
-     * @see #sorted
+     *
      * @param maxSize limit
      * @return new instance of this class
+     * @see #closestFirst
+     * @see #sorted
      */
     @Nonnull
-    public PlayerFilter limit(long maxSize) {
-        return new PlayerFilter(stream.limit(maxSize));
+    public PlayerFilterGeneric<T> limit(long maxSize) {
+        return new PlayerFilterGeneric<>(stream.limit(maxSize));
     }
 
     /**
@@ -70,64 +73,64 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
      * @return
      */
     @Nonnull
-    public PlayerFilter filter(@Nonnull Predicate<? super WarlordsEntity> filter) {
-        return new PlayerFilter(stream.filter(filter));
+    public PlayerFilterGeneric<T> filter(@Nonnull Predicate<? super T> filter) {
+        return new PlayerFilterGeneric<>(stream.filter(filter));
     }
 
     @Nonnull
-    public PlayerFilter skip(long n) {
-        return new PlayerFilter(stream.skip(n));
+    public PlayerFilterGeneric<T> skip(long n) {
+        return new PlayerFilterGeneric<>(stream.skip(n));
     }
 
     @Nonnull
-    public PlayerFilter sorted(@Nonnull Comparator<? super WarlordsEntity> comparator) {
-        return new PlayerFilter(stream.sorted(comparator));
+    public PlayerFilterGeneric<T> sorted(@Nonnull Comparator<? super T> comparator) {
+        return new PlayerFilterGeneric<>(stream.sorted(comparator));
     }
 
     @Nonnull
-    public PlayerFilter closestFirst(@Nonnull Location loc) {
+    public PlayerFilterGeneric<T> closestFirst(@Nonnull Location loc) {
         return sorted(sortClosestBy(WarlordsEntity::getLocation, loc));
     }
 
     @Nonnull
-    public PlayerFilter closestFirst(@Nonnull WarlordsEntity loc) {
+    public PlayerFilterGeneric<T> closestFirst(@Nonnull T loc) {
         loc.getLocation(LOCATION_CACHE_CLOSEST);
         return sorted(sortClosestBy(WarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
     }
 
     @Nonnull
-    public PlayerFilter closestFirst(@Nonnull Entity loc) {
+    public PlayerFilterGeneric<T> closestFirst(@Nonnull Entity loc) {
         loc.getLocation(LOCATION_CACHE_CLOSEST);
         return sorted(sortClosestBy(WarlordsEntity::getLocation, LOCATION_CACHE_CLOSEST));
     }
 
     @Nonnull
-    public PlayerFilter leastAliveFirst() {
+    public PlayerFilterGeneric<T> leastAliveFirst() {
         return sorted(Comparator.comparing(wp -> wp.getHealth() / wp.getMaxHealth()));
     }
 
     @Nonnull
-    public PlayerFilter mostAliveFirst() {
+    public PlayerFilterGeneric<T> mostAliveFirst() {
         return sorted(Comparator.<WarlordsEntity, Float>comparing(wp -> wp.getHealth() / wp.getMaxHealth()).reversed());
     }
 
     @Nonnull
-    public PlayerFilter leastEnergeticFirst() {
+    public PlayerFilterGeneric<T> leastEnergeticFirst() {
         return sorted(Comparator.comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
     }
 
     @Nonnull
-    public PlayerFilter mostEnergeticFirst() {
+    public PlayerFilterGeneric<T> mostEnergeticFirst() {
         return sorted(Comparator.<WarlordsEntity, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()).reversed());
     }
 
     @Nonnull
-    public PlayerFilter soulBindedFirst(WarlordsEntity owner) {
+    public PlayerFilterGeneric<T> soulBindedFirst(T owner) {
         return sorted(Comparator.comparing(wp -> !owner.getCooldownManager().hasBoundPlayer(wp)));
     }
 
     @Nonnull
-    public PlayerFilter lookingAtFirst(WarlordsEntity user) {
+    public PlayerFilterGeneric<T> lookingAtFirst(T user) {
         return sorted((wp1, wp2) -> {
             int output;
             double wp1Dot = -Utils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
@@ -144,78 +147,78 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter isAlive() {
+    public PlayerFilterGeneric<T> isAlive() {
         return filter(WarlordsEntity::isAlive);
     }
 
     @Nonnull
-    public PlayerFilter isDead() {
+    public PlayerFilterGeneric<T> isDead() {
         return filter(WarlordsEntity::isAlive);
     }
 
     @Nonnull
-    public PlayerFilter enemiesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isEnemy(wp));
+    public PlayerFilterGeneric<T> enemiesOf(@Nonnull T player) {
+        return filter(player::isEnemy);
     }
 
     @Nonnull
-    public PlayerFilter aliveEnemiesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isEnemyAlive(wp));
+    public PlayerFilterGeneric<T> aliveEnemiesOf(@Nonnull T player) {
+        return filter(player::isEnemyAlive);
     }
 
     @Nonnull
-    public PlayerFilter teammatesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isTeammate(wp));
+    public PlayerFilterGeneric<T> teammatesOf(@Nonnull T player) {
+        return filter(player::isTeammate);
     }
 
     @Nonnull
-    public PlayerFilter aliveTeammatesOf(@Nonnull WarlordsEntity player) {
-        return filter(wp -> player.isTeammateAlive(wp));
+    public PlayerFilterGeneric<T> aliveTeammatesOf(@Nonnull T player) {
+        return filter(player::isTeammateAlive);
     }
 
     @Nonnull
-    public PlayerFilter teammatesOfExcludingSelf(@Nonnull WarlordsEntity player) {
+    public PlayerFilterGeneric<T> teammatesOfExcludingSelf(@Nonnull T player) {
         return filter(wp -> player != wp && player.isTeammate(wp));
     }
 
     @Nonnull
-    public PlayerFilter aliveTeammatesOfExcludingSelf(@Nonnull WarlordsEntity player) {
+    public PlayerFilterGeneric<T> aliveTeammatesOfExcludingSelf(@Nonnull T player) {
         return filter(wp -> player != wp && player.isTeammateAlive(wp));
     }
 
     @Nonnull
-    public PlayerFilter aliveMatchingTeam(@Nonnull Team team) {
+    public PlayerFilterGeneric<T> aliveMatchingTeam(@Nonnull Team team) {
         return filter(wp -> wp.getTeam() == team && wp.isAlive());
     }
 
     @Nonnull
-    public PlayerFilter matchingTeam(@Nonnull Team team) {
+    public PlayerFilterGeneric<T> matchingTeam(@Nonnull Team team) {
         return filter(wp -> wp.getTeam() == team);
     }
 
     @Nonnull
-    public PlayerFilter excluding(@Nonnull WarlordsEntity... exclude) {
+    public PlayerFilterGeneric<T> excluding(@Nonnull T... exclude) {
         return exclude.length == 0 ? this : excluding0(new HashSet<>(Arrays.asList(exclude)));
     }
 
     @Nonnull
-    public PlayerFilter excluding(@Nonnull Collection<WarlordsEntity> exclude) {
-        return exclude.isEmpty() ? this : excluding0(exclude instanceof Set ? (Set<WarlordsEntity>) exclude : new HashSet<>(exclude));
+    public PlayerFilterGeneric<T> excluding(@Nonnull Collection<T> exclude) {
+        return exclude.isEmpty() ? this : excluding0(exclude instanceof Set ? (Set<T>) exclude : new HashSet<>(exclude));
     }
 
     @Nonnull
-    protected PlayerFilter excluding0(@Nonnull Set<WarlordsEntity> exclude) {
+    protected PlayerFilterGeneric<T> excluding0(@Nonnull Set<T> exclude) {
         return filter(p -> !exclude.contains(p));
     }
 
     @Override
-    public void forEach(@Nonnull Consumer<? super WarlordsEntity> action) {
+    public void forEach(@Nonnull Consumer<? super T> action) {
         stream.forEach(action);
         stream.close();
     }
 
-    public boolean first(@Nonnull Consumer<? super WarlordsEntity> action) {
-        Optional<WarlordsEntity> findAny = this.findAny();
+    public boolean first(@Nonnull Consumer<? super T> action) {
+        Optional<T> findAny = this.findAny();
         if (!findAny.isPresent()) {
             return false;
         }
@@ -225,23 +228,23 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     @Override
-    public Iterator<WarlordsEntity> iterator() {
+    public Iterator<T> iterator() {
         return stream.iterator();
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAround(@Nonnull WarlordsEntity entity, double x, double y, double z) {
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAround(@Nonnull WarlordsEntity entity, double x, double y, double z) {
         return entitiesAround(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAround(@Nonnull Entity entity, double x, double y, double z) {
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAround(@Nonnull Entity entity, double x, double y, double z) {
         return entitiesAround(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAround(@Nonnull Location location, double x, double y, double z) {
-        return new PlayerFilter(entitiesAround0(location, x, y, z));
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAround(@Nonnull Location location, double x, double y, double z) {
+        return new PlayerFilterGeneric<>(entitiesAround0(location, x, y, z));
     }
 
     @Nonnull
@@ -251,17 +254,18 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAroundRectangle(@Nonnull WarlordsEntity entity, double x, double y, double z) {
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAroundRectangle(@Nonnull WarlordsEntity entity, double x, double y, double z) {
         return entitiesAroundRectangle(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
 
     @Nonnull
-    public static PlayerFilter entitiesAroundRectangle(@Nonnull Entity entity, double x, double y, double z) {
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAroundRectangle(@Nonnull Entity entity, double x, double y, double z) {
         return entitiesAroundRectangle(entity.getLocation(LOCATION_CACHE_ENTITIES_AROUND), x, y, z);
     }
+
     @Nonnull
-    public static PlayerFilter entitiesAroundRectangle(@Nonnull Location location, double x, double y, double z) {
-        return new PlayerFilter(entitiesAroundRectangle0(location, x, y, z));
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesAroundRectangle(@Nonnull Location location, double x, double y, double z) {
+        return new PlayerFilterGeneric<>(entitiesAroundRectangle0(location, x, y, z));
     }
 
     @Nonnull
@@ -275,114 +279,124 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public static PlayerFilter entitiesInRectangle(@Nonnull World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+    public static PlayerFilterGeneric<WarlordsEntity> entitiesInRectangle(@Nonnull World world, double x1, double y1, double z1, double x2, double y2, double z2) {
         double minX = Math.min(x1, x2);
         double minY = Math.min(y1, y2);
         double minZ = Math.min(z1, z2);
         double maxX = Math.max(x1, x2);
         double maxY = Math.max(y1, y2);
         double maxZ = Math.max(z1, z2);
-        
-        return new PlayerFilter(world.getEntities().stream()
-            .filter(e -> {
-                e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
-                double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
-                double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
-                double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
-                
-                return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
-            })
-                .map(e -> Warlords.getPlayer(e))
+
+        return new PlayerFilterGeneric<>(world.getEntities().stream()
+                .filter(e -> {
+                    e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
+                    double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
+                    double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
+                    double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
+
+                    return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
+                })
+                .map(Warlords::getPlayer)
                 .filter(Objects::nonNull)
         );
     }
 
     @Nonnull
-    public static PlayerFilter playingGame(@Nonnull Game game) {
-        return new PlayerFilter(game.warlordsEntities());
+    public static PlayerFilterGeneric<WarlordsEntity> playingGame(@Nonnull Game game) {
+        return new PlayerFilterGeneric<>(game.warlordsEntities());
     }
 
     @Nonnull
-    public static PlayerFilter entities(@Nonnull Collection<Entity> entities) {
-        return new PlayerFilter(entities0(entities.stream()));
+    public static PlayerFilterGeneric<WarlordsPlayer> playingGameWarlordsPlayers(@Nonnull Game game) {
+        return new PlayerFilterGeneric<>(game.warlordsPlayers());
     }
 
     @Nonnull
-    public static PlayerFilter entities(@Nonnull Iterable<Entity> entities) {
+    public static PlayerFilterGeneric<WarlordsNPC> playingGameWarlordsNPCs(@Nonnull Game game) {
+        return new PlayerFilterGeneric<>(game.warlordsNPCs());
+    }
+
+    @Nonnull
+    public static PlayerFilterGeneric<WarlordsEntity> entities(@Nonnull Collection<Entity> entities) {
+        return new PlayerFilterGeneric<>(entities0(entities.stream()));
+    }
+
+    @Nonnull
+    public static PlayerFilterGeneric<WarlordsEntity> entities(@Nonnull Iterable<Entity> entities) {
         return entities(entities.iterator());
     }
 
     @Nonnull
-    public static PlayerFilter entities(@Nonnull Iterator<Entity> entities) {
-        return new PlayerFilter(entities0(StreamSupport.stream(
-            Spliterators.spliteratorUnknownSize(entities, Spliterator.ORDERED),
-            false
+    public static PlayerFilterGeneric<WarlordsEntity> entities(@Nonnull Iterator<Entity> entities) {
+        return new PlayerFilterGeneric<>(entities0(StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(entities, Spliterator.ORDERED),
+                false
         )));
     }
 
     @Nonnull
-    public static PlayerFilter entities(@Nonnull Entity ... entities) {
-        return new PlayerFilter(entities0(Stream.of(entities)));
+    public static PlayerFilterGeneric<WarlordsEntity> entities(@Nonnull Entity... entities) {
+        return new PlayerFilterGeneric<>(entities0(Stream.of(entities)));
     }
 
     @Nonnull
     protected static Stream<WarlordsEntity> entities0(@Nonnull Stream<Entity> entities) {
         return entities
-                .map(e -> Warlords.getPlayer(e))
+                .map(Warlords::getPlayer)
                 .filter(Objects::nonNull);
     }
 
     @Nonnull
-    public Optional<WarlordsEntity> findAny() {
+    public Optional<T> findAny() {
         return stream.findAny();
     }
 
     @Nonnull
-    public Optional<WarlordsEntity> findFirst() {
+    public Optional<T> findFirst() {
         return stream.findFirst();
     }
 
     @Nullable
-    public WarlordsEntity findAnyOrNull() {
+    public T findAnyOrNull() {
         return findAny().orElse(null);
     }
 
     @Nullable
-    public WarlordsEntity findFirstOrNull() {
+    public T findFirstOrNull() {
         return findFirst().orElse(null);
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSight(@Nonnull WarlordsEntity warlordsPlayer) {
-        return requireLineOfSight(warlordsPlayer.getEntity());
+    public PlayerFilterGeneric<T> requireLineOfSight(@Nonnull T warlordsEntity) {
+        return requireLineOfSight(warlordsEntity.getEntity());
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSight(@Nonnull LivingEntity entity) {
+    public PlayerFilterGeneric<T> requireLineOfSight(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAt(entity, wp.getEntity()) && Utils.hasLineOfSight(entity, wp.getEntity()));
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsEntity warlordsPlayer) {
+    public PlayerFilterGeneric<T> requireLineOfSightIntervene(@Nonnull T warlordsPlayer) {
         return requireLineOfSightIntervene(warlordsPlayer.getEntity());
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
+    public PlayerFilterGeneric<T> requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAtIntervene(entity, wp.getEntity()));
     }
 
     @Nonnull
-    public PlayerFilter lookingAtWave(@Nonnull WarlordsEntity warlordsPlayer) {
-        return lookingAtWave(warlordsPlayer.getEntity());
+    public PlayerFilterGeneric<T> lookingAtWave(@Nonnull T warlordsEntity) {
+        return lookingAtWave(warlordsEntity.getEntity());
     }
 
     @Nonnull
-    public PlayerFilter lookingAtWave(@Nonnull LivingEntity entity) {
+    public PlayerFilterGeneric<T> lookingAtWave(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAtWave(entity, wp.getEntity()));
     }
 
-    public List<WarlordsEntity> toList() {
+    public List<T> toList() {
         return this.stream.collect(Collectors.toCollection(ArrayList::new));
     }
 

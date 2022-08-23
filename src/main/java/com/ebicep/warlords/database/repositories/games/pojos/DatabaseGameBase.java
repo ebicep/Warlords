@@ -14,9 +14,10 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
@@ -150,7 +151,7 @@ public abstract class DatabaseGameBase {
             Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
 
             //sending message if player information remained the same
-            for (WarlordsEntity value : PlayerFilter.playingGameWarlordsPlayers(game)) {
+            for (WarlordsPlayer value : PlayerFilterGeneric.playingGameWarlordsPlayers(game)) {
                 if (updatePlayerStats) {
                     Permissions.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
                 } else {

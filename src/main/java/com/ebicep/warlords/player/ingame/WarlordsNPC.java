@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -32,7 +33,7 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     private float minMeleeDamage;
     private float maxMeleeDamage;
-    private MobTier mobTier;
+    private AbstractMob<?> mob;
 
     public WarlordsNPC(
             UUID uuid,
@@ -77,7 +78,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     public WarlordsNPC(
             UUID uuid,
             String name,
-            MobTier mobTier,
             Weapons weapon,
             LivingEntity entity,
             Game game,
@@ -87,11 +87,12 @@ public final class WarlordsNPC extends WarlordsEntity {
             float walkSpeed,
             int damageResistance,
             float minMeleeDamage,
-            float maxMeleeDamage
+            float maxMeleeDamage,
+            AbstractMob<?> mob
     ) {
         super(uuid, name, weapon, entity, game, team, specClass);
+        this.mob = mob;
         this.setInPve(true);
-        this.mobTier = mobTier;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13, true);
@@ -114,7 +115,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     
     @Override
     public void updateEntity() {
-        entity.setCustomName((mobTier != null ? ChatColor.GOLD + mobTier.getSymbol() + " §7- " : "") + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤");
+        entity.setCustomName((mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " : "") + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤");
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(80);
@@ -194,13 +195,6 @@ public final class WarlordsNPC extends WarlordsEntity {
         return entity;
     }
 
-    @Override
-    public void die(@Nullable WarlordsEntity attacker) {
-        super.die(attacker);
-        //TODO Dropping weapons
-        Location deathLocation = getLocation();
-    }
-
     public float getMinMeleeDamage() {
         return minMeleeDamage;
     }
@@ -217,11 +211,12 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.maxMeleeDamage = maxMeleeDamage;
     }
 
-    public MobTier getMobTier() {
-        return mobTier;
+    public AbstractMob<?> getMob() {
+        return mob;
     }
 
-    public void setMobTier(MobTier mobTier) {
-        this.mobTier = mobTier;
+    public MobTier getMobTier() {
+        return mob.getMobTier();
     }
+
 }

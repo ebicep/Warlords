@@ -477,8 +477,17 @@ public final class Game implements Runnable, AutoCloseable {
     public Stream<WarlordsPlayer> warlordsPlayers() {
         return this.players.keySet().stream()
                 .map(Warlords::getPlayer)
+                .filter(Objects::nonNull)
                 .filter(WarlordsPlayer.class::isInstance)
                 .map(WarlordsPlayer.class::cast);
+    }
+
+    public Stream<WarlordsNPC> warlordsNPCs() {
+        return this.players.keySet().stream()
+                .map(Warlords::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(WarlordsNPC.class::isInstance)
+                .map(WarlordsNPC.class::cast);
     }
 
     public Stream<Map.Entry<UUID, Team>> players() {

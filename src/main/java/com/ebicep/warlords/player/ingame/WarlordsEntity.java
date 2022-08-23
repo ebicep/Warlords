@@ -578,8 +578,9 @@ public abstract class WarlordsEntity {
                         true);
                 secondStats.addDamageHealingEventAsSelf(finalEvent);
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-//
+                if (shouldCheckForAchievements()) {
 //                checkForAchievementsDamage(attacker);
+                }
 
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
@@ -774,8 +775,9 @@ public abstract class WarlordsEntity {
                 false);
         secondStats.addDamageHealingEventAsSelf(finalEvent);
         attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
-
-//        checkForAchievementsHealing(attacker);
+        if (shouldCheckForAchievements()) {
+            //        checkForAchievementsHealing(attacker);
+        }
 
         return Optional.of(finalEvent);
     }
@@ -1041,6 +1043,10 @@ public abstract class WarlordsEntity {
         hitBy.clear();
         regenTimer = 0;
         heal();
+    }
+
+    protected boolean shouldCheckForAchievements() {
+        return false;
     }
 
     private void checkForAchievementsDamage(WarlordsEntity attacker) {
@@ -2147,7 +2153,7 @@ public abstract class WarlordsEntity {
 
     public void unlockAchievement(ChallengeAchievements achievement) {
         achievementsUnlocked.add(new ChallengeAchievements.ChallengeAchievementRecord(achievement));
-        if (entity instanceof Player) {
+        if (entity instanceof Player && DatabaseManager.playerService != null) {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
             //only display achievement if they have never got it before
             if (!databasePlayer.hasAchievement(achievement)) {

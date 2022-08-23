@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -35,6 +37,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         put(4, new Pair<>(1744f, 1859f));
     }};
     private boolean skipNextAttack = false;
+    private int timesInARowDamageMaxReduced = 0;
 
     public Ghoulcaller(Location spawnLocation) {
         super(spawnLocation,
@@ -94,6 +97,11 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 );
                 if (attacksInLast5Seconds > 20) {
                     attacksInLast5Seconds = 20;
+                    timesInARowDamageMaxReduced++;
+                    PlayerFilterGeneric.playingGameWarlordsPlayers(getWarlordsNPC().getGame())
+                            .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.CONTROLLED_FURY));
+                } else {
+                    timesInARowDamageMaxReduced = 0;
                 }
 
                 int playerCount = (int) option.getGame().warlordsPlayers().count();
@@ -170,5 +178,9 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         for (int i = 0; i < amount; i++) {
             option.spawnNewMob(new TormentedSoul(getWarlordsNPC().getLocation()));
         }
+    }
+
+    public int getTimesInARowDamageMaxReduced() {
+        return timesInARowDamageMaxReduced;
     }
 }

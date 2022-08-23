@@ -76,7 +76,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.warlordsNPC = new WarlordsNPC(
                 uuid,
                 name,
-                mobTier,
                 Weapons.ABBADON,
                 livingEntity,
                 game,
@@ -86,7 +85,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage
+                maxMeleeDamage,
+                this
         );
 
         WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions()

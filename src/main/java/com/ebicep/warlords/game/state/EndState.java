@@ -10,11 +10,12 @@ import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -95,7 +96,7 @@ public class EndState implements State, TimerDebugAble {
                                 ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum()))
                 .getTextComponent()));
 
-        for (WarlordsEntity wp : PlayerFilter.playingGameWarlordsPlayers(game)) {
+        for (WarlordsPlayer wp : PlayerFilterGeneric.playingGameWarlordsPlayers(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 
@@ -290,7 +291,7 @@ public class EndState implements State, TimerDebugAble {
     private void showExperienceSummary(Game game) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
-        for (WarlordsEntity wp : PlayerFilter.playingGameWarlordsPlayers(game)) {
+        for (WarlordsPlayer wp : PlayerFilterGeneric.playingGameWarlordsPlayers(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 
