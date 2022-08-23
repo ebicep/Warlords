@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Overheal;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -95,7 +96,7 @@ public class WaterBreath extends AbstractAbility {
                 animationTimer++;
             }
         }.runTaskTimer(0, 1);
-
+        int previousDebuffsRemoved = debuffsRemoved;
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
@@ -139,6 +140,10 @@ public class WaterBreath extends AbstractAbility {
                     breathTarget.setVelocity(v, false);
                 }
             }
+        }
+        int totalDebuffsRemoved = debuffsRemoved - previousDebuffsRemoved;
+        if (totalDebuffsRemoved >= 7) {
+            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.CLEANSING_RITUAL);
         }
 
         return true;

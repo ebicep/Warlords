@@ -524,7 +524,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.AQUAMANCER,
             WARLORDS_ENTITY -> {
-                return true;
+                return true; //logic in WaterBreath.java
             }
     ),
     LAWNMOWER("Lawnmower",
