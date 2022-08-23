@@ -80,6 +80,10 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         return getLastEventsAsSelf(amount, 60); //max last 60 seconds
     }
 
+    public WarlordsDamageHealingFinalEvent getLastEventAsSelf() {
+        return getLastEventsAsSelf(1, 60).get(0); //max last 60 seconds
+    }
+
     public List<WarlordsDamageHealingFinalEvent> getLastEventsAsAttacker(int amount, int timeLimitSeconds) {
         List<WarlordsDamageHealingFinalEvent> events = getEventsAsAttackerFromLastSecond(timeLimitSeconds);
         return events.subList(Math.max(0, events.size() - amount), events.size());
@@ -89,12 +93,8 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         return getLastEventsAsAttacker(amount, 60); //max last 60 seconds
     }
 
-    public WarlordsDamageHealingFinalEvent getLastEventAsSelf() {
-        return getLastEventsAsSelf(1, 1).get(0);
-    }
-
     public WarlordsDamageHealingFinalEvent getLastEventAsAttacker() {
-        return getLastEventsAsAttacker(1, 1).get(0);
+        return getLastEventsAsAttacker(1, 60).get(0); //max last 60 seconds
     }
 
     @NotNull

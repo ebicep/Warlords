@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -23,6 +24,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
@@ -152,10 +155,11 @@ public class Narmer extends AbstractZombie implements BossMob {
             EffectUtils.strikeLightning(loc, false);
             EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
             EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
-            for (WarlordsEntity enemy : PlayerFilter
+            List<WarlordsEntity> warlordsEntities = PlayerFilter
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
-            ) {
+                    .toList();
+            for (WarlordsEntity enemy : warlordsEntities) {
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
@@ -165,6 +169,9 @@ public class Narmer extends AbstractZombie implements BossMob {
                         100,
                         false
                 );
+            }
+            for (WarlordsEntity warlordsEntity : warlordsEntities) {
+                ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
             }
         }
 

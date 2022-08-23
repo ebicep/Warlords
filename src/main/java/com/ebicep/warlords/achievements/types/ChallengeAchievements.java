@@ -431,7 +431,21 @@ public enum ChallengeAchievements implements Achievement {
                         .map(warlordsNPC -> (Ghoulcaller) warlordsNPC.getMob())
                         .anyMatch(ghoulcaller -> ghoulcaller.getTimesInARowDamageMaxReduced() >= 3);
             },
-            true);
+            true),
+    FISSURED_END("Fissured End",
+            "Get teamwiped by Narmer's mega-earthquake.",
+            GameMode.WAVE_DEFENSE,
+            null,
+            warlordsEntity -> {
+                return PlayerFilterGeneric.playingGame(warlordsEntity.getGame())
+                        .teammatesOf(warlordsEntity)
+                        .stream()
+                        .allMatch(entity -> entity.getSecondStats().getLastEventAsSelf().isDead());
+
+            },
+            false),
+
+    ;
 
     public final String name;
     public final String description;
