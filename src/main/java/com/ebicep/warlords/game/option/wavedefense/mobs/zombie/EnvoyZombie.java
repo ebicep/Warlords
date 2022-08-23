@@ -36,9 +36,6 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
-        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
-            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
-        });
     }
 
     @Override

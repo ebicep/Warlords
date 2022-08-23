@@ -33,7 +33,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         new ItemStack(Material.DIAMOND_SPADE)
                 ),
-                20000,
+                30000,
                 0.465f,
                 20,
                 1500,

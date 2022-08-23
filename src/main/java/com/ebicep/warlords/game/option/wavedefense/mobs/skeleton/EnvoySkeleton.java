@@ -35,9 +35,6 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onSpawn(WaveDefenseOption option) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
-        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
-            we.sendMessage(ChatColor.YELLOW + "An §c" + getWarlordsNPC().getName() + " §ehas spawned.");
-        });
     }
 
     @Override

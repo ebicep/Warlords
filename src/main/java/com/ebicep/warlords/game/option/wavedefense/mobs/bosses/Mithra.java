@@ -5,13 +5,13 @@ import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class Mithra extends AbstractZombie implements BossMob {
 
@@ -20,17 +20,17 @@ public class Mithra extends AbstractZombie implements BossMob {
                 "Mithra",
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.NEON_ENDERMAN),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.IRON_AXE)
+                        SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
+                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                17000,
-                0.45f,
-                25,
-                400,
-                600
+                18000,
+                0.2f,
+                20,
+                1000,
+                1300
         );
     }
 

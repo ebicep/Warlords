@@ -654,7 +654,7 @@ public class WarlordsEvents implements Listener {
         }
 
         String prefixWithColor = Permissions.getPrefixWithColor(player);
-        if (prefixWithColor.equals(ChatColor.AQUA.toString())) {
+        if (prefixWithColor.equals(ChatColor.WHITE.toString())) {
             ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
         }
 
