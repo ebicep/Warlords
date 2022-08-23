@@ -61,7 +61,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 PacketUtils.sendTitle(
                         (Player) we.getEntity(),
                         ChatColor.RED + getWarlordsNPC().getName(),
-                        ChatColor.GOLD + "Chained Agony?",
+                        ChatColor.GOLD + "Chained Agony",
                         20, 30, 20
                 );
             }
