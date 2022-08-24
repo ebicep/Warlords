@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -33,6 +34,8 @@ public class HealingTotem extends AbstractTotemBase {
     private int radius = 7;
     private int duration = 6;
     private int crippleDuration = 6;
+
+    private float amountHealed = 0;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -105,12 +108,18 @@ public class HealingTotem extends AbstractTotemBase {
                                 nearPlayer.addHealingInstance(
                                         wp,
                                         name,
-                                        minDamageHeal * healMultiplier,
-                                        maxDamageHeal * healMultiplier,
+                                        minDamageHeal * healMultiplier * 100,
+                                        maxDamageHeal * healMultiplier * 100,
                                         critChance,
                                         critMultiplier,
-                                        false, false);
+                                        false, false
+                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                });
                             });
+                    if (tempHealingTotem.getAmountHealed() >= 20000) {
+                        ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
+                    }
                 },
                 duration * 20,
                 (cooldown, ticksLeft, ticksElapsed) -> {
@@ -168,7 +177,10 @@ public class HealingTotem extends AbstractTotemBase {
                                             maxDamageHeal * healMultiplier,
                                             critChance,
                                             critMultiplier,
-                                            false, false);
+                                            false, false
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 });
 
                         if (pveUpgrade) {
@@ -261,5 +273,13 @@ public class HealingTotem extends AbstractTotemBase {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public void addAmountHealed(float amount) {
+        amountHealed += amount;
+    }
+
+    public float getAmountHealed() {
+        return amountHealed;
     }
 }

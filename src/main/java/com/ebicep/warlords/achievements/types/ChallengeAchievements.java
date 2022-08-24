@@ -606,6 +606,38 @@ public enum ChallengeAchievements implements Achievement {
                 return true; //logic in DeathsDebt.java
             }
     ),
+    JUNGLE_HEALING("Jungle Healing",
+            "Heal allies for 20,000 within the duration of 1 Healing Totem.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.EARTHWARDEN,
+            warlordsEntity -> {
+                return true; //logic in HealingTotem.java
+            }
+    ),
+    SERIAL_KILLER("Serial Killer",
+            "Deal 15,000 damage and kill 6 mobs within the duration of 1 Order of Eviscerate.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.ASSASSIN,
+            warlordsEntity -> {
+                return true; //logic in DeathsDebt.java
+            }
+    ),
+    VENERED_REFRACTION("Venered Refraction",
+            "Prevent 8,000 damage within the duration of 1 Prism Guard.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.VINDICATOR,
+            warlordsEntity -> {
+                return true; //logic in DeathsDebt.java
+            }
+    ),
+    LIFELEECHER("Lifeleecher",
+            "Trigger 50 instances of Leech within the duration of 1 Draining Miasma.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.APOTHECARY,
+            warlordsEntity -> {
+                return true; //logic in DeathsDebt.java
+            }
+    ),
 
     ;
 
