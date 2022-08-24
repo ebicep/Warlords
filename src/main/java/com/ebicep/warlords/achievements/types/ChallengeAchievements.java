@@ -595,7 +595,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.THUNDERLORD,
             warlordsEntity -> {
-                return true;
+                return true; //logic in CapacitorTotem.java
             }
     ),
     RETRIBUTION_OF_THE_DEAD("Retribution of the Deader",

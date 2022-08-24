@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -28,13 +29,14 @@ public class CapacitorTotem extends AbstractTotemBase {
     private int duration = 8;
     private double radius = 6;
 
+    private int playersKilledWithFinalHit = 0;
+
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
     }
 
-    public CapacitorTotem(ArmorStand totem, WarlordsEntity owner, Runnable pulseDamage) {
+    public CapacitorTotem(ArmorStand totem, WarlordsEntity owner) {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200, totem, owner);
-        this.pulseDamage = pulseDamage;
     }
 
     @Override
@@ -69,7 +71,8 @@ public class CapacitorTotem extends AbstractTotemBase {
     protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
         Location totemLocation = wp.getLocation().clone();
 
-        CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp, () -> {
+        CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp);
+        tempCapacitorTotem.setPulseDamage(() -> {
             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                     .aliveEnemiesOf(wp)
                     .forEach(warlordsPlayer -> {
@@ -81,7 +84,14 @@ public class CapacitorTotem extends AbstractTotemBase {
                                 critChance,
                                 critMultiplier,
                                 false
-                        );
+                        ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                            if (warlordsDamageHealingFinalEvent.isDead()) {
+                                tempCapacitorTotem.addPLayersKilledWithFinalHit();
+                                if (tempCapacitorTotem.playersKilledWithFinalHit >= 15) {
+                                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
+                                }
+                            }
+                        });
 
                         if (pveUpgrade) {
                             int damageResistance = warlordsPlayer.getSpec().getDamageResistance();
@@ -124,6 +134,10 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public Runnable getPulseDamage() {
         return pulseDamage;
+    }
+
+    public void setPulseDamage(Runnable pulseDamage) {
+        this.pulseDamage = pulseDamage;
     }
 
     public int getDuration() {
@@ -177,5 +191,13 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public void addPLayersKilledWithFinalHit() {
+        playersKilledWithFinalHit++;
+    }
+
+    public int getPlayersKilledWithFinalHit() {
+        return playersKilledWithFinalHit;
     }
 }

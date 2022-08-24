@@ -103,7 +103,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     if (acolyteDeathWindow > 0) {
-                        Bukkit.broadcastMessage("mega execute");
+                        //Bukkit.broadcastMessage("mega execute");
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 12);
@@ -145,10 +145,10 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     if (acolyteDeathWindow <= 0) {
-                        acolyteDeathWindow = 200;
+                        acolyteDeathWindow = 20;
                     }
 
-                    timeUntilNewAcolyte = 30;//0;
+                    timeUntilNewAcolyte = 300;
                 }
             }
         });
