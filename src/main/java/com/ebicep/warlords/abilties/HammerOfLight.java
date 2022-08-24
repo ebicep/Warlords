@@ -385,7 +385,7 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     public void addAmountHealed(float amount) {
-        this.playersHealed += amount;
+        this.amountHealed += amount;
     }
 
     public float getAmountHealed() {

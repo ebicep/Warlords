@@ -20,6 +20,8 @@ public class BloodLust extends AbstractAbility {
     private int duration = 15;
     private int damageConvertPercent = 65;
 
+    private float amountHealed = 0;
+
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20, 0, 0);
     }
@@ -95,7 +97,9 @@ public class BloodLust extends AbstractAbility {
                         100,
                         false,
                         false
-                );
+                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    tempBloodLust.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                });
             }
         });
 
@@ -124,5 +128,13 @@ public class BloodLust extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public void addAmountHealed(float amountHealed) {
+        this.amountHealed += amountHealed;
+    }
+
+    public float getAmountHealed() {
+        return amountHealed;
     }
 }

@@ -72,9 +72,6 @@ public class InspiringPresence extends AbstractAbility {
                 },
                 duration * 20,
                 (cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 20 == 0) {
-                        System.out.println("energy given: " + tempPresence.energyGivenFromStrikeAndPresence);
-                    }
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);

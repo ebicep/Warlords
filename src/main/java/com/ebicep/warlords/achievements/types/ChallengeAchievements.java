@@ -562,7 +562,9 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.BERSERKER,
             warlordsEntity -> {
-                return true;
+                return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(BloodLust.class)
+                        .anyMatch(bloodLust -> bloodLust.getAmountHealed() >= 18000);
             }
     ),
     HARDENED_SCALES("Hardened Scales",
@@ -602,7 +604,7 @@ public enum ChallengeAchievements implements Achievement {
 
     //TODO test EXTENDED_COMBAT
     public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
-            BLITZKRIEG, SNIPE_SHOT, REVENGE_BLAST, ROADBLOCK, LASER_FOCUSED, LAWNMOWER
+            BLITZKRIEG, SNIPE_SHOT, REVENGE_BLAST, ROADBLOCK, LASER_FOCUSED, LAWNMOWER, BLOODSOAKED_CHAMPION
     };
     public static final ChallengeAchievements[] DAMAGE_ACHIEVEMENTS_ATTACKER_FLAG = new ChallengeAchievements[]{
             ASSASSINATE, SILENCE_PEON, ORBIFICATOR, HOUR_OF_RECKONING, TALENT_SHREDDER, PERSISTENT_THREAT, WHERE_ARE_YOU_GOING, EXTENDED_COMBAT
@@ -611,7 +613,7 @@ public enum ChallengeAchievements implements Achievement {
             DUCK_TANK, SPLIT_SECOND, DUCK_TANK_PVE
     };
     public static final ChallengeAchievements[] HEALING_ACHIEVEMENTS_ATTACKER = new ChallengeAchievements[]{
-            LYCHEESIS
+            LYCHEESIS, CROWN_OF_RESURGENCE
     };
     public static final ChallengeAchievements[] HEALING_ACHIEVEMENTS_ATTACKER_FLAG = new ChallengeAchievements[]{
             REJUVENATION, CLERICAL_PRODIGY
