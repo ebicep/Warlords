@@ -533,6 +533,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.AVENGER,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
                         .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
             }
@@ -543,6 +544,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.CRUSADER,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
                         .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
             }
@@ -553,6 +555,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.PROTECTOR,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                         .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
             }
@@ -563,6 +566,7 @@ public enum ChallengeAchievements implements Achievement {
             Specializations.BERSERKER,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(BloodLust.class)
                         .anyMatch(bloodLust -> bloodLust.getAmountHealed() >= 18000);
             }
@@ -572,7 +576,10 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.DEFENDER,
             warlordsEntity -> {
-                return true;
+                return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filterCooldownClassAndMapToObjectsOfClass(LastStand.class)
+                        .anyMatch(lastStand -> lastStand.getAmountPrevented() >= 30000);
             }
     ),
     ORBIFICATION("Orbification",

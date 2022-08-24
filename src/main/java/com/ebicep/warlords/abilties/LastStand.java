@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
@@ -28,6 +29,8 @@ public class LastStand extends AbstractAbility {
     private final int radius = 7;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
+
+    private float amountPrevented = 0;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40, 0, 0);
@@ -75,12 +78,15 @@ public class LastStand extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
                 selfDuration * 20
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * getSelfDamageReduction();
+                float afterValue = currentDamageValue * getSelfDamageReduction();
+                tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
+                return afterValue;
             }
         });
 
@@ -109,6 +115,7 @@ public class LastStand extends AbstractAbility {
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    tempLastStand.addAmountPrevented(currentDamageValue);
                     wp.addAbsorbed(currentDamageValue);
                     wp.addHealingInstance(
                             wp,
@@ -124,6 +131,7 @@ public class LastStand extends AbstractAbility {
 
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    tempLastStand.addAmountPrevented(currentDamageValue);
                     wp.addAbsorbed(currentDamageValue);
                     wp.addHealingInstance(
                             wp,
@@ -194,5 +202,13 @@ public class LastStand extends AbstractAbility {
 
     public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
         this.teammateDamageReductionPercent = teammateDamageReductionPercent;
+    }
+
+    public void addAmountPrevented(float amountPrevented) {
+        this.amountPrevented += amountPrevented;
+    }
+
+    public float getAmountPrevented() {
+        return amountPrevented;
     }
 }

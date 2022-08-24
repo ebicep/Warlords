@@ -5,8 +5,10 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.DamageHealCompleteCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -88,7 +90,12 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             100,
                             false,
                             false
-                    );
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                    });
                     // Ally Heal
                     if (pveUpgrade) {
                         for (WarlordsEntity ally : PlayerFilter
@@ -108,7 +115,12 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                     100,
                                     false,
                                     false
-                            );
+                            ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                new CooldownFilter<>(wp, RegularCooldown.class)
+                                        .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                        .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                            });
                         }
                     } else {
                         for (WarlordsEntity ally : PlayerFilter
@@ -128,7 +140,12 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                         100,
                                         false,
                                         false
-                                );
+                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    new CooldownFilter<>(wp, RegularCooldown.class)
+                                            .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                                });
                             } else {
                                 ally.addHealingInstance(
                                         wp,
@@ -139,7 +156,12 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                         100,
                                         false,
                                         false
-                                );
+                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    new CooldownFilter<>(wp, RegularCooldown.class)
+                                            .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                                });
                             }
                         }
                     }

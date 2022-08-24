@@ -96,6 +96,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
         }
 
         new CooldownFilter<>(wp, RegularCooldown.class)
+                .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
                 .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
                 .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(energyGivenToPlayers - previousEnergyGiven));
 

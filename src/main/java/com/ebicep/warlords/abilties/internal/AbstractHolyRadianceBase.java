@@ -1,8 +1,11 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilties.HammerOfLight;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -116,7 +119,21 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                 if (distance < speed * speed) {
                     playersHealed++;
 
-                    target.addHealingInstance(owner, name, minHeal, maxHeal, critChance, critMultiplier, false, false);
+                    target.addHealingInstance(
+                            owner,
+                            name,
+                            minHeal,
+                            maxHeal,
+                            critChance,
+                            critMultiplier,
+                            false,
+                            false
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        new CooldownFilter<>(owner, RegularCooldown.class)
+                                .filter(regularCooldown -> regularCooldown.getFrom().equals(owner))
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                    });
                     this.cancel();
                     return;
                 }
