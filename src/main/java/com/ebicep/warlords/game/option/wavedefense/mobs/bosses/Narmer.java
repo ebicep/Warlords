@@ -202,7 +202,7 @@ public class Narmer extends AbstractZombie implements BossMob {
             }
         }
 
-        if (acolytesAlive < option.getGame().warlordsPlayers().count() + 2 && timeUntilNewAcolyte <= 0) {
+        if (acolytesAlive < option.getGame().warlordsPlayers().count() && timeUntilNewAcolyte <= 0) {
             //Bukkit.broadcastMessage("spawned new acolyte");
             option.spawnNewMob(new NarmerAcolyte(loc));
             acolytesAlive++;
