@@ -43,6 +43,8 @@ public class HammerOfLight extends AbstractAbility {
     private float minDamage = 178;
     private float maxDamage = 244;
 
+    private float amountHealed = 0;
+
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
     }
@@ -134,12 +136,10 @@ public class HammerOfLight extends AbstractAbility {
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                 new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
         );
-
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
-
         ArmorStand hammer = spawnHammer(location);
-        HammerOfLight tempHammerOfLight = new HammerOfLight(location);
 
+        HammerOfLight tempHammerOfLight = new HammerOfLight(location);
         RegularCooldown<HammerOfLight> hammerOfLightCooldown = new RegularCooldown<>(
                 name,
                 "HAMMER",
@@ -170,7 +170,9 @@ public class HammerOfLight extends AbstractAbility {
                                             critMultiplier,
                                             false,
                                             false
-                                    );
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 }
                             }
                         } else {
@@ -189,7 +191,9 @@ public class HammerOfLight extends AbstractAbility {
                                             critMultiplier,
                                             false,
                                             false
-                                    );
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                    });
                                 } else {
                                     playersDamaged++;
                                     hammerTarget.addDamageInstance(
@@ -247,9 +251,9 @@ public class HammerOfLight extends AbstractAbility {
                         hammerOfLightCooldown.setNameAbbreviation("CROWN");
 
                         if (pveUpgrade) {
-                            pulseHeal(wp, 20, 1.5);
-                            pulseHeal(wp, 40, 2);
-                            pulseHeal(wp, 60, 2.5);
+                            pulseHeal(wp, 20, 1.5, tempHammerOfLight);
+                            pulseHeal(wp, 40, 2, tempHammerOfLight);
+                            pulseHeal(wp, 60, 2.5, tempHammerOfLight);
                         }
                     }
                 },
@@ -260,7 +264,7 @@ public class HammerOfLight extends AbstractAbility {
         return true;
     }
 
-    private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier) {
+    private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLight tempHammerOfLight) {
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
@@ -289,7 +293,9 @@ public class HammerOfLight extends AbstractAbility {
                             critMultiplier,
                             false,
                             false
-                    );
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                    });
                 }
 
                 for (WarlordsEntity enemyTarget : PlayerFilter
@@ -376,5 +382,13 @@ public class HammerOfLight extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public void addAmountHealed(float amount) {
+        this.playersHealed += amount;
+    }
+
+    public float getAmountHealed() {
+        return amountHealed;
     }
 }

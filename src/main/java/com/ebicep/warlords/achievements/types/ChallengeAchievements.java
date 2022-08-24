@@ -547,6 +547,56 @@ public enum ChallengeAchievements implements Achievement {
                         .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
             }
     ),
+    CROWN_OF_RESURGENCE("Crown of Resurgence",
+            "Heal allies for 15,000 within the duration of 1 Hammer/Crown of Light.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.PROTECTOR,
+            warlordsEntity -> {
+                return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
+            }
+    ),
+    BLOODSOAKED_CHAMPION("Bloodsoaked Champion",
+            "Heal yourself with Blood Lust for 18,000 within the duration of 1 Blood Lust.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.BERSERKER,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    HARDENED_SCALES("Hardened Scales",
+            "Prevent 30,000 damage to your allies within the duration of 1 Last Stand.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.DEFENDER,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    ORBIFICATION("Orbification",
+            "Create 50 Orbs within the duration of 1 Orbs of Life.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.REVENANT,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    LIGHTNING_EXECUTION("Lightning Executioner",
+            "Kill 15 mobs with Capacitor Totem landing the final hit within the duration of 1 Capacitor Totem.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.THUNDERLORD,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
+    RETRIBUTION_OF_THE_DEAD("Retribution of the Deader",
+            "Deal an instance of 5,000 damage to over 5 targets with Death's Debt.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.SPIRITGUARD,
+            warlordsEntity -> {
+                return true;
+            }
+    ),
 
     ;
 
