@@ -619,7 +619,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.ASSASSIN,
             warlordsEntity -> {
-                return true; //logic in DeathsDebt.java
+                return true;
             }
     ),
     VENERED_REFRACTION("Venered Refraction",
@@ -627,7 +627,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.VINDICATOR,
             warlordsEntity -> {
-                return true; //logic in DeathsDebt.java
+                return true; //logic in PrismGuard.java
             }
     ),
     LIFELEECHER("Lifeleecher",
@@ -635,7 +635,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.APOTHECARY,
             warlordsEntity -> {
-                return true; //logic in DeathsDebt.java
+                return true;
             }
     ),
 
