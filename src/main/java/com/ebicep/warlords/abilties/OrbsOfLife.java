@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -34,14 +35,12 @@ import java.util.List;
 import java.util.Random;
 
 public class OrbsOfLife extends AbstractAbility {
-    protected int orbsProduced = 0;
-
     public static final double SPAWN_RADIUS = 1.15;
     public static float ORB_HEALING = 225;
-
     private final List<Orb> spawnedOrbs = new ArrayList<>();
     private final int duration = 14;
     private final int floatingOrbRadius = 20;
+    protected int orbsProduced = 0;
 
     public OrbsOfLife() {
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20, 0, 0);
@@ -116,8 +115,8 @@ public class OrbsOfLife extends AbstractAbility {
         };
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
 
-        tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
-        tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
+        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
+        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
@@ -188,14 +187,18 @@ public class OrbsOfLife extends AbstractAbility {
         return true;
     }
 
-    public void add2OrbsProduced() {
-        this.orbsProduced += 2;
+    public void addOrbProduced(int amount) {
+        this.orbsProduced += amount;
+    }
+
+    public int getOrbsProduced() {
+        return orbsProduced;
     }
 
     public void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
         if (ability.isEmpty() || ability.equals("Intervene")) return;
         if (cooldown.isHidden()) return;
-        owner.doOnStaticAbility(OrbsOfLife.class, OrbsOfLife::add2OrbsProduced);
+        owner.doOnStaticAbility(OrbsOfLife.class, orbsOfLife -> orbsOfLife.addOrbProduced(1));
 
         OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
         Location location = victim.getLocation();
@@ -203,6 +206,11 @@ public class OrbsOfLife extends AbstractAbility {
 
         OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom());
         orbsOfLife.getSpawnedOrbs().add(orb);
+
+        orbsOfLife.addOrbProduced(1);
+        if (cooldown.getCooldownObject().getOrbsProduced() >= 50) {
+            ChallengeAchievements.checkForAchievement(owner, ChallengeAchievements.ORBIFICATION);
+        }
     }
 
     public Location generateSpawnLocation(Location location) {
@@ -236,6 +244,7 @@ public class OrbsOfLife extends AbstractAbility {
     public List<Orb> getSpawnedOrbs() {
         return spawnedOrbs;
     }
+
 
     public static class Orb extends EntityExperienceOrb {
 

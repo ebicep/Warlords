@@ -587,7 +587,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.REVENANT,
             warlordsEntity -> {
-                return true;
+                return true; //logic in OrbsOfLife.java
             }
     ),
     LIGHTNING_EXECUTION("Lightning Executioner",
