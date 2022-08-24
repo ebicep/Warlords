@@ -537,6 +537,16 @@ public enum ChallengeAchievements implements Achievement {
                         .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
             }
     ),
+    PORTABLE_ENERGIZER("Portable Energizer",
+            "Provide 400 total energy to teammates (both strike and presence) within the duration of 1 Inspiring Presence.",
+            GameMode.WAVE_DEFENSE,
+            Specializations.CRUSADER,
+            warlordsEntity -> {
+                return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                        .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
+            }
+    ),
 
     ;
 

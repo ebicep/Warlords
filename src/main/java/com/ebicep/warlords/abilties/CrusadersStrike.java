@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -76,6 +78,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
             tripleHit(wp, nearPlayer);
         }
 
+        int previousEnergyGiven = energyGivenToPlayers;
         // Give energy to nearby allies and check if they have mark active
         for (WarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
@@ -91,6 +94,11 @@ public class CrusadersStrike extends AbstractStrikeBase {
 
             energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven);
         }
+
+        new CooldownFilter<>(wp, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(energyGivenToPlayers - previousEnergyGiven));
+
     }
 
     public int getEnergyGiven() {

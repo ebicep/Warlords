@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -25,6 +26,7 @@ public class InspiringPresence extends AbstractAbility {
     private int duration = 12;
     private int energyPerSecond = 10;
     private List<WarlordsEntity> playersAffected = new ArrayList<>();
+    private double energyGivenFromStrikeAndPresence = 0;
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
@@ -66,9 +68,13 @@ public class InspiringPresence extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     cancelSpeed.run();
+                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
                 },
                 duration * 20,
                 (cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
+                        System.out.println("energy given: " + tempPresence.energyGivenFromStrikeAndPresence);
+                    }
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
@@ -79,6 +85,7 @@ public class InspiringPresence extends AbstractAbility {
         ) {
             @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
+                tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                 return energyGainPerTick + energyPerSecond / 20f;
             }
         });
@@ -117,6 +124,7 @@ public class InspiringPresence extends AbstractAbility {
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
+                    tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                     return energyGainPerTick + energyPerSecond / 20f;
                 }
             });
@@ -170,5 +178,13 @@ public class InspiringPresence extends AbstractAbility {
 
     public void setRadius(double radius) {
         this.radius = radius;
+    }
+
+    public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
+        this.energyGivenFromStrikeAndPresence += energyGivenFromStrikeAndPresence;
+    }
+
+    public double getEnergyGivenFromStrikeAndPresence() {
+        return energyGivenFromStrikeAndPresence;
     }
 }

@@ -1619,10 +1619,10 @@ public abstract class WarlordsEntity {
         }
         if ((int) amount != 0) {
             if (this == giver) {
-                sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
             } else {
-                sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
-                giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
+                giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
             }
         }
 
