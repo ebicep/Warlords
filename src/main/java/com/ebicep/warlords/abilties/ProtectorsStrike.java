@@ -2,12 +2,9 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.DamageHealCompleteCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -18,7 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
@@ -54,144 +51,123 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<ProtectorsStrike>(
-                "Protectors Strike",
-                "",
-                ProtectorsStrike.class,
-                new ProtectorsStrike(),
+        AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
+        AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
+        getStandingOnConsecrate(wp, nearPlayer).ifPresent(consecrate -> {
+            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
+            minDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
+            maxDamage.getAndUpdate(value -> value *= (1 + consecrate.getStrikeDamageBoost() / 100f));
+        });
+        nearPlayer.addDamageInstance(
                 wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                }
-        ) {
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                String ability = event.getAbility();
-                if (ability.equals("Protector's Strike")) {
-                    float healthFraction = lerp(0, 1, wp.getHealth() / wp.getMaxHealth());
+                name,
+                minDamage.get(),
+                maxDamage.get(),
+                critChance,
+                critMultiplier,
+                false
+        ).ifPresent(warlordsDamageHealingFinalEvent -> {
+            float currentDamageValue = warlordsDamageHealingFinalEvent.getValue();
+            boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
 
-                    if (healthFraction > 1) {
-                        healthFraction = 1; // in the case of overheal
-                    }
+            float healthFraction = lerp(0, 1, wp.getHealth() / wp.getMaxHealth());
 
-                    if (healthFraction < 0) {
-                        healthFraction = 0;
-                    }
+            if (healthFraction > 1) {
+                healthFraction = 1; // in the case of overheal
+            }
 
-                    float allyHealing = (minConvert / 100f) + healthFraction * 0.25f;
-                    float ownHealing = ((maxConvert / 100f) / 2f) + (1 - healthFraction) * 0.25f;
-                    // Self Heal
-                    wp.addHealingInstance(
+            if (healthFraction < 0) {
+                healthFraction = 0;
+            }
+
+            float allyHealing = (minConvert / 100f) + healthFraction * 0.25f;
+            float ownHealing = ((maxConvert / 100f) / 2f) + (1 - healthFraction) * 0.25f;
+            // Self Heal
+            wp.addHealingInstance(
+                    wp,
+                    name,
+                    currentDamageValue * ownHealing,
+                    currentDamageValue * ownHealing,
+                    isCrit ? 100 : -1,
+                    100,
+                    false,
+                    false
+            ).ifPresent(event -> {
+                new CooldownFilter<>(wp, RegularCooldown.class)
+                        .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+            });
+            // Ally Heal
+            if (pveUpgrade) {
+                for (WarlordsEntity ally : PlayerFilter
+                        .entitiesAround(wp, 10, 10, 10)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .limit(maxAllies)
+                        .leastAliveFirst()
+                ) {
+                    boolean isLeastAlive = ally.getHealth() < ally.getHealth();
+                    float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.7f : 1);
+                    ally.addHealingInstance(
                             wp,
-                            ability,
-                            currentDamageValue * ownHealing,
-                            currentDamageValue * ownHealing,
+                            name,
+                            healing,
+                            healing,
                             isCrit ? 100 : -1,
                             100,
                             false,
                             false
-                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
                                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                     });
-                    // Ally Heal
-                    if (pveUpgrade) {
-                        for (WarlordsEntity ally : PlayerFilter
-                                .entitiesAround(wp, 10, 10, 10)
-                                .aliveTeammatesOfExcludingSelf(wp)
-                                .limit(maxAllies)
-                                .leastAliveFirst()
-                        ) {
-                            boolean isLeastAlive = ally.getHealth() < ally.getHealth();
-                            float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.7f : 1);
-                            ally.addHealingInstance(
-                                    wp,
-                                    ability,
-                                    healing,
-                                    healing,
-                                    isCrit ? 100 : -1,
-                                    100,
-                                    false,
-                                    false
-                            ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                new CooldownFilter<>(wp, RegularCooldown.class)
-                                        .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
-                                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                        .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
-                            });
-                        }
+                }
+            } else {
+                for (WarlordsEntity ally : PlayerFilter
+                        .entitiesAround(wp, 10, 10, 10)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+                                .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
+                        .limit(maxAllies)
+                ) {
+                    if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
+                        ally.addHealingInstance(
+                                wp,
+                                name,
+                                currentDamageValue * allyHealing * 1.2f,
+                                currentDamageValue * allyHealing * 1.2f,
+                                isCrit ? 100 : -1,
+                                100,
+                                false,
+                                false
+                        ).ifPresent(event -> {
+                            new CooldownFilter<>(wp, RegularCooldown.class)
+                                    .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                    .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+                        });
                     } else {
-                        for (WarlordsEntity ally : PlayerFilter
-                                .entitiesAround(wp, 10, 10, 10)
-                                .aliveTeammatesOfExcludingSelf(wp)
-                                .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                        .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
-                                .limit(maxAllies)
-                        ) {
-                            if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
-                                ally.addHealingInstance(
-                                        wp,
-                                        ability,
-                                        currentDamageValue * allyHealing * 1.2f,
-                                        currentDamageValue * allyHealing * 1.2f,
-                                        isCrit ? 100 : -1,
-                                        100,
-                                        false,
-                                        false
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    new CooldownFilter<>(wp, RegularCooldown.class)
-                                            .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
-                                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
-                                });
-                            } else {
-                                ally.addHealingInstance(
-                                        wp,
-                                        ability,
-                                        currentDamageValue * allyHealing,
-                                        currentDamageValue * allyHealing,
-                                        isCrit ? 100 : -1,
-                                        100,
-                                        false,
-                                        false
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    new CooldownFilter<>(wp, RegularCooldown.class)
-                                            .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
-                                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
-                                });
-                            }
-                        }
+                        ally.addHealingInstance(
+                                wp,
+                                name,
+                                currentDamageValue * allyHealing,
+                                currentDamageValue * allyHealing,
+                                isCrit ? 100 : -1,
+                                100,
+                                false,
+                                false
+                        ).ifPresent(event -> {
+                            new CooldownFilter<>(wp, RegularCooldown.class)
+                                    .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                    .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+                        });
                     }
                 }
             }
         });
-
-        Optional<Consecrate> optionalConsecrate = getStandingOnConsecrate(wp, nearPlayer);
-        if (optionalConsecrate.isPresent()) {
-            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            nearPlayer.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
-                    maxDamageHeal * (1 + optionalConsecrate.get().getStrikeDamageBoost() / 100f),
-                    critChance,
-                    critMultiplier,
-                    false
-            );
-        } else {
-            nearPlayer.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier,
-                    false
-            );
-        }
     }
 
     public int getMinConvert() {

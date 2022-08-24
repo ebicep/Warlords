@@ -45,8 +45,9 @@ public class SpawnTestDummyCommand extends BaseCommand {
 
         testDummy.setTakeDamage(true);
         testDummy.setMaxHealth(1000000);
-        testDummy.setHealth(1000000);
+        testDummy.setHealth(500000);
         testDummy.updateHealth();
+        testDummy.setRegenTimer(1000000);
         testDummy.setTakeDamage(takeDamage);
     }
 
