@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractTotemBase;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -25,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeathsDebt extends AbstractTotemBase {
     protected int playersDamaged = 0;
@@ -139,6 +141,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
                                 wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                 // Final enemy damage tick
+                                AtomicInteger over5000DamageInstances = new AtomicInteger();
                                 for (WarlordsEntity totemTarget : PlayerFilter
                                         .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                         .aliveEnemiesOf(wp)
@@ -151,7 +154,14 @@ public class DeathsDebt extends AbstractTotemBase {
                                             tempDeathsDebt.getDelayedDamage() * .15f,
                                             critChance,
                                             critMultiplier, false
-                                    );
+                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                        if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
+                                            over5000DamageInstances.getAndIncrement();
+                                        }
+                                    });
+                                }
+                                if (over5000DamageInstances.get() >= 5) {
+                                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.RETRIBUTION_OF_THE_DEAD);
                                 }
                             },
                             6 * 20,

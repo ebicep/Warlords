@@ -603,7 +603,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.SPIRITGUARD,
             warlordsEntity -> {
-                return true;
+                return true; //logic in DeathsDebt.java
             }
     ),
 
