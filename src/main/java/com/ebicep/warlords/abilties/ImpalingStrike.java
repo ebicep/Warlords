@@ -2,15 +2,19 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ImpalingStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
@@ -43,8 +47,18 @@ public class ImpalingStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
+                wp,
+                name,
+                minDamageHeal,
+                maxDamageHeal,
+                critChance,
+                critMultiplier,
+                false
+        );
+
+        //if(finalEvent.isPresent()) {
         if (pveUpgrade) {
             // TODO: add leech
             tripleHit(wp, nearPlayer);
@@ -85,6 +99,18 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 });
             }
         });
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return true;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "rogue.apothecarystrike.activation", 2, 0.5f);
+        Utils.playGlobalSound(location, "mage.fireball.activation", 2, 1.8f);
+        randomHitEffect(location, 7, 100, 255, 100);
     }
 
     public int getLeechDuration() {

@@ -2,12 +2,15 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -49,8 +52,8 @@ public class CripplingStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
                 minDamageHeal,
@@ -108,6 +111,14 @@ public class CripplingStrike extends AbstractStrikeBase {
                 }
             });
         }
+
+        return true;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
+        randomHitEffect(location, 7, 255, 0, 0);
     }
 
     public int getConsecutiveStrikeCounter() {

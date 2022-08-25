@@ -5,7 +5,6 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Ghoulcaller;
-import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.Narmer;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -475,11 +474,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             warlordsEntity -> {
-                return PlayerFilterGeneric.playingGameWarlordsNPCs(warlordsEntity.getGame())
-                        .filter(warlordsNPC -> warlordsNPC.getMob() instanceof Narmer)
-                        .stream()
-                        .map(warlordsNPC -> (Narmer) warlordsNPC.getMob())
-                        .anyMatch(narmer -> narmer.getTimesMegaEarthQuakeActivated() >= 2);
+                return true; //logic in Narmer.java
             }
     ) {
         @Override
@@ -673,19 +668,24 @@ public enum ChallengeAchievements implements Achievement {
     }
 
     public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        if (achievement.gameMode == player.getGame().getGameMode() &&
-                achievement.spec == player.getSpecClass() &&
-                achievement.warlordsEntityPredicate.test(player)
-        ) {
-            if (achievement.autoGiveToTeammates()) {
-                ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
-            } else if (achievement.checkTeammates()) {
-                ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
-            } else {
-                //if(!player.hasAchievement(achievement)) {
-                player.unlockAchievement(achievement);
-                //}
-            }
+        if (achievement.gameMode != player.getGame().getGameMode()) {
+            return;
+        }
+        if (achievement.spec != null && achievement.spec == player.getSpecClass()) {
+            return;
+        }
+        if (!achievement.warlordsEntityPredicate.test(player)) {
+            return;
+        }
+
+        if (achievement.autoGiveToTeammates()) {
+            ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
+        } else if (achievement.checkTeammates()) {
+            ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
+        } else {
+            //if(!player.hasAchievement(achievement)) {
+            player.unlockAchievement(achievement);
+            //}
         }
     }
 

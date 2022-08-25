@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilties.internal;
 
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilties.Consecrate;
+import com.ebicep.warlords.abilties.HammerOfLight;
+import com.ebicep.warlords.abilties.ProtectorsStrike;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -32,7 +34,9 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
     }
 
-    protected abstract void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
+    protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
+
+    protected abstract void playSoundAndEffect(Location location);
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
@@ -46,48 +50,18 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                     if (Utils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && Utils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
                         addTimesUsed();
                         AbstractPlayerClass.sendRightClickPacket(player);
+                        playSoundAndEffect(nearPlayer.getLocation());
 
-                        Optional<HammerOfLight> optionalHammer = new CooldownFilter<>(wp, RegularCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                .findAny();
-
-                        if (optionalHammer.isPresent()) {
-                            wp.subtractEnergy(energyCost - (optionalHammer.get().isCrownOfLight() ? 10 : 0), false);
+                        boolean successfulStrike = onHit(wp, player, nearPlayer);
+                        if (this instanceof ProtectorsStrike) {
+                            new CooldownFilter<>(wp, RegularCooldown.class)
+                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                    .findAny()
+                                    .ifPresent(hammerOfLight -> wp.subtractEnergy(energyCost - (hammerOfLight.isCrownOfLight() ? 10 : 0), false));
                         } else {
                             wp.subtractEnergy(energyCost, false);
                         }
-
-                        Location loc = nearPlayer.getLocation();
-                        if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
-                            Utils.playGlobalSound(loc, "paladin.paladinstrike.activation", 2, 1);
-                            randomHitEffect(nearPlayer, 5, 255, 0, 0);
-                            ParticleEffect.SPELL.display(
-                                    (float) ((Math.random() * 2) - 1),
-                                    (float) ((Math.random() * 2) - 1),
-                                    (float) ((Math.random() * 2) - 1),
-                                    1,
-                                    4,
-                                    loc.clone().add(0, 1, 0),
-                                    500);
-                        } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
-                            Utils.playGlobalSound(loc, "warrior.mortalstrike.impact", 2, 1);
-                            randomHitEffect(nearPlayer, 7, 255, 0, 0);
-                        } else if (this instanceof JudgementStrike) {
-                            Utils.playGlobalSound(loc, "warrior.revenant.orbsoflife", 2, 1.7f);
-                            Utils.playGlobalSound(loc, "mage.frostbolt.activation", 2, 2);
-                            randomHitEffect(nearPlayer, 7, 255, 255, 255);
-                        } else if (this instanceof RighteousStrike) {
-                            Utils.playGlobalSound(loc, "rogue.vindicatorstrike.activation", 2, 0.7f);
-                            Utils.playGlobalSound(loc, "shaman.earthenspike.impact", 2, 2);
-                            randomHitEffect(nearPlayer, 7, 255, 255, 255);
-                        } else if (this instanceof ImpalingStrike) {
-                            Utils.playGlobalSound(loc, "rogue.apothecarystrike.activation", 2, 0.5f);
-                            Utils.playGlobalSound(loc, "mage.fireball.activation", 2, 1.8f);
-                            randomHitEffect(nearPlayer, 7, 100, 255, 100);
-                        }
-
-                        onHit(wp, player, nearPlayer);
-                        hitPlayer.set(true);
+                        hitPlayer.set(successfulStrike);
                     }
                 });
 
@@ -119,11 +93,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
         }
     }
 
-    private void randomHitEffect(WarlordsEntity player, int particleAmount, int red, int green, int blue) {
+    protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
             ParticleEffect.REDSTONE.display(
                     new ParticleEffect.OrdinaryColor(red, green, blue),
-                    player.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                    location.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
                     500);
 
         }

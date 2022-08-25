@@ -3,6 +3,8 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -37,15 +39,13 @@ public class JudgementStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         attacksDone++;
         float critChance = this.critChance;
         if (attacksDone == strikeCritInterval) {
             attacksDone = 0;
             critChance = 100;
         }
-
         nearPlayer.addDamageInstance(
                 wp,
                 name,
@@ -59,6 +59,14 @@ public class JudgementStrike extends AbstractStrikeBase {
                 wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
         });
+        return true;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
+        Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
+        randomHitEffect(location, 7, 255, 255, 255);
     }
 
     public int getSpeedOnCrit() {

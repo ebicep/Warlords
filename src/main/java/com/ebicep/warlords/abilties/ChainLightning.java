@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -123,7 +122,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         if (!hasHitTotem) {
             if (firstCheck) {
                 Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
-                if (checkFrom instanceof LivingEntity && optionalTotem.isPresent()) {
+                if (optionalTotem.isPresent()) {
                     ArmorStand totem = optionalTotem.get().getTotem();
                     chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(wp, optionalTotem.get());

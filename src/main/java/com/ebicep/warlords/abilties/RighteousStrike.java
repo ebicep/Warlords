@@ -1,19 +1,22 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RighteousStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
     protected int silencedTargetStruck = 0;
-
+    private boolean pveUpgrade = false;
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
@@ -42,7 +45,17 @@ public class RighteousStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
+                wp,
+                name,
+                minDamageHeal,
+                maxDamageHeal,
+                critChance,
+                critMultiplier,
+                false
+        );
+        //if (finalEvent.isPresent()) {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, (int) (abilityReductionInTicks * 1.6f));
@@ -51,10 +64,21 @@ public class RighteousStrike extends AbstractStrikeBase {
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
-        nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         if (pveUpgrade) {
             knockbackOnHit(wp, nearPlayer, 1.1, 0.15);
         }
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return true;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "rogue.vindicatorstrike.activation", 2, 0.7f);
+        Utils.playGlobalSound(location, "shaman.earthenspike.impact", 2, 2);
+        randomHitEffect(location, 7, 255, 255, 255);
     }
 
     public int getAbilityReductionInTicks() {

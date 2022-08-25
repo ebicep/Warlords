@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -50,7 +52,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
         AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
         getStandingOnConsecrate(wp, nearPlayer).ifPresent(consecrate -> {
@@ -168,6 +170,21 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 }
             }
         });
+        return true;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
+        randomHitEffect(location, 5, 255, 0, 0);
+        ParticleEffect.SPELL.display(
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                1,
+                4,
+                location.clone().add(0, 1, 0),
+                500);
     }
 
     public int getMinConvert() {

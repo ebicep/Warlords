@@ -59,6 +59,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -261,7 +262,7 @@ public abstract class WarlordsEntity {
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
 
-        WarlordsDamageHealingFinalEvent finalEvent = null;
+        AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
 
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
@@ -401,10 +402,24 @@ public abstract class WarlordsEntity {
                 intervenedBy.addDamageInstance(attacker, "Intervene", remainingVeneDamage, remainingVeneDamage, isCrit ? 100 : -1, 100, true);
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
-                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : -1, 100, true);
-
+                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : -1, 100, true)
+                        .ifPresent(finalEvent::set);
             } else {
                 intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+                finalEvent.set(new WarlordsDamageHealingFinalEvent(
+                        event,
+                        this,
+                        attacker,
+                        ability,
+                        initialHealth,
+                        damageHealValueBeforeAllReduction,
+                        damageHealValueBeforeInterveneReduction,
+                        0,
+                        0,
+                        critChance,
+                        critMultiplier,
+                        isCrit,
+                        true));
             }
 
             Location loc = getLocation();
@@ -497,7 +512,7 @@ public abstract class WarlordsEntity {
                 }
                 removeHorse();
 
-                finalEvent = new WarlordsDamageHealingFinalEvent(
+                finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         this,
                         attacker,
@@ -510,9 +525,9 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true);
-                secondStats.addDamageHealingEventAsSelf(finalEvent);
-                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+                        true));
+                secondStats.addDamageHealingEventAsSelf(finalEvent.get());
+                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
 
 //                checkForAchievementsDamage(attacker);
             } else {
@@ -561,7 +576,7 @@ public abstract class WarlordsEntity {
                 playHurtAnimation(this.entity, attacker);
                 attacker.getRecordDamage().add(damageValue);
 
-                finalEvent = new WarlordsDamageHealingFinalEvent(
+                finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         this,
                         attacker,
@@ -574,9 +589,9 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true);
-                secondStats.addDamageHealingEventAsSelf(finalEvent);
-                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
+                        true));
+                secondStats.addDamageHealingEventAsSelf(finalEvent.get());
+                attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
                 if (shouldCheckForAchievements()) {
                     checkForAchievementsDamage();
                 }
@@ -632,7 +647,7 @@ public abstract class WarlordsEntity {
             abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
         }
 
-        return Optional.ofNullable(finalEvent);
+        return Optional.ofNullable(finalEvent.get());
     }
 
     /**
