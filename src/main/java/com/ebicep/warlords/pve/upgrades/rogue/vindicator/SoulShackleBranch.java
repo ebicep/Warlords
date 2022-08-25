@@ -7,33 +7,92 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
-    public SoulShackleBranch(AbilityTree abilityTree, SoulShackle ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Damage - Tier I", "+20% Damage", 5000));
-        treeA.add(new Upgrade("Damage - Tier II", "+40% Damage", 10000));
-        treeA.add(new Upgrade("Damage - Tier III", "+80% Damage", 20000));
-
-        treeB.add(new Upgrade("Silence Duration - Tier I", "+1s Silence duration", 5000));
-        treeB.add(new Upgrade("Silence Duration - Tier II", "+2s Silence duration", 10000));
-        treeB.add(new Upgrade("Silence Duration - Tier III", "+4s Silence duration", 20000));
-
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "Remove energy cost\n\nSoul Shackle now hits up to 5 enemies in a cone.",
-                50000
-        );
-    }
-
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-
     int minTicks = ability.getMinSilenceDurationInTicks();
     int maxTicks = ability.getMaxSilenceDurationInTicks();
-
     float cooldown = ability.getCooldown();
 
+    public SoulShackleBranch(AbilityTree abilityTree, SoulShackle ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "+2.5% Damage",
+                5000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.025f);
+                    ability.setMaxDamageHeal(maxDamage * 1.025f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+5% Damage",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.05f);
+                    ability.setMaxDamageHeal(maxDamage * 1.05f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+7.5% Damage",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+10% Damage",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Zeal - Tier I",
+                "-5% Cooldown reduction",
+                5000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.95f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier II",
+                "-10% Cooldown reduction",
+                10000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.9f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier III",
+                "-15% Cooldown reduction",
+                15000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.85f);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Zeal - Tier IV",
+                "-20% Cooldown reduction",
+                20000,
+                () -> {
+                    ability.setCooldown(cooldown * 0.8f);
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "Conscience Crush",
+                "Soul Shackle - Master Upgrade",
+                "Soul Shackle now hits up to 5 enemies in a cone.",
+                50000,
+                () -> {
+                    ability.setPveUpgrade(true);
+                }
+        );
+    }
 }

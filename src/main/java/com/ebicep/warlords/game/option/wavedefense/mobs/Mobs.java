@@ -14,10 +14,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.slime.BasicSlime;
 import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.witch.Witch;
 import com.ebicep.warlords.game.option.wavedefense.mobs.wolf.Wolf;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.BasicZombie;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EliteZombie;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.EnvoyZombie;
-import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.VoidZombie;
+import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.*;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.BasicBerserkZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.EliteBerserkZombie;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie.EnvoyBerserkZombie;
@@ -53,6 +50,9 @@ public enum Mobs {
 
     // Elite Tier 3 - Void
     VOID_ZOMBIE(VoidZombie::new),
+
+    // Elite Tier 4 - Exiled
+    EXILED_ZOMBIE(ExiledZombie::new),
 
     // Boss
     BOLTARO(Boltaro::new),

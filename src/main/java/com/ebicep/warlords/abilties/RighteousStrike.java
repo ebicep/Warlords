@@ -65,12 +65,10 @@ public class RighteousStrike extends AbstractStrikeBase {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }
         if (pveUpgrade) {
-            knockbackOnHit(wp, nearPlayer, 1.1, 0.15);
+            knockbackOnHit(wp, nearPlayer, 1.15, 0.2);
+            tripleHit(wp, nearPlayer);
         }
-//            return true;
-//        } else {
-//            return false;
-//        }
+
         return true;
     }
 

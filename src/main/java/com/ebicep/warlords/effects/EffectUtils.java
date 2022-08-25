@@ -1,7 +1,9 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -327,6 +329,26 @@ public class EffectUtils {
         for (int i = 0; i < amount; i++) {
             strikeLightning(location, isSilent);
         }
+    }
+
+    public static void strikeLightningInCylinder(Location location, double cylinderRadius, boolean isSilent) {
+        Location particleLoc = location.clone();
+        for (int j = 0; j < 10; j++) {
+            double angle = j / 10D * Math.PI * 2;
+            particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
+            particleLoc.setZ(location.getZ() + Math.cos(angle) * cylinderRadius);
+
+            strikeLightning(particleLoc, isSilent);
+        }
+    }
+
+    public static void strikeLightningInCylinder(Location location, double cylinderRadius, boolean isSilent, int ticksDelay, Game game) {
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                strikeLightningInCylinder(location, cylinderRadius, isSilent);
+            }
+        }.runTaskLater(ticksDelay);
     }
 
     public static Vector rotateAroundAxisX(Vector v, double angle) {

@@ -11,14 +11,15 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
@@ -34,10 +35,10 @@ public class Zenith extends AbstractZombie implements BossMob {
                         new ItemStack(Material.DIAMOND_SPADE)
                 ),
                 30000,
-                0.465f,
+                0.33f,
                 20,
-                1500,
-                2200
+                1200,
+                2400
         );
     }
 
@@ -50,7 +51,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         (Player) we.getEntity(),
                         ChatColor.DARK_PURPLE + getWarlordsNPC().getName(),
                         ChatColor.LIGHT_PURPLE + "Leader of the Illusion Vanguard",
-                        20, 50, 20
+                        20, 40, 20
                 );
             }
         }
@@ -58,8 +59,17 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        Location loc = warlordsNPC.getLocation();
+        if (ticksElapsed % 200 == 0) {
+            EffectUtils.strikeLightningInCylinder(loc, 8, false, 10, warlordsNPC.getGame());
+            shockwave(loc, 8, 10);
+            EffectUtils.strikeLightningInCylinder(loc, 16, false, 15, warlordsNPC.getGame());
+            shockwave(loc, 16, 15);
+            EffectUtils.strikeLightningInCylinder(loc, 24, false, 20, warlordsNPC.getGame());
+            shockwave(loc, 24, 20);
+        }
+
         if (ticksElapsed % 40 == 0) {
-            Location loc = getWarlordsNPC().getLocation();
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
             EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
         }
@@ -68,12 +78,29 @@ public class Zenith extends AbstractZombie implements BossMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
-        Vector v = attacker.getLocation().toVector().subtract(receiver.getLocation().toVector()).normalize().multiply(-1.35).setY(0.3);
-        receiver.setVelocity(v, false);
+        Utils.addKnockback(attacker.getLocation(), receiver, -1, 0.3);
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    private void shockwave(Location loc, double radius, int tickDelay) {
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
+                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(loc, radius, radius, radius)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    we.getSpeed().addSpeedModifier("Zenith Slow", -30, 3 * 30, "BASE");
+                    we.addDamageInstance(warlordsNPC, "Armageddon", 600, 1000, -1, 100, false);
+                    Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
+                }
+            }
+        }.runTaskLater(tickDelay);
     }
 }

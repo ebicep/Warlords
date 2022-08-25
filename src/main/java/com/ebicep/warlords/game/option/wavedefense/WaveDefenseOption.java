@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
@@ -53,7 +52,6 @@ public class WaveDefenseOption implements Option {
     private Wave currentWave;
     @Nonnull
     private Game game;
-    private WarlordsGameTriggerWinEvent winEvent;
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
@@ -392,14 +390,14 @@ public class WaveDefenseOption implements Option {
                     this.cancel();
                 }
 
-                for (WarlordsEntity player : PlayerFilter
-                        .playingGame(getGame())
-                ) {
-                    if (player.isDead() && player instanceof WarlordsPlayer) {
-                        game.setNextState(new EndState(game, null));
-                        this.cancel();
-                    }
-                }
+//                for (WarlordsEntity player : PlayerFilter
+//                        .playingGame(getGame())
+//                ) {
+//                    if (player.isDead() && player instanceof Player) {
+//                        game.setNextState(new EndState(game, null));
+//                        this.cancel();
+//                    }
+//                }
 
                 counter++;
             }

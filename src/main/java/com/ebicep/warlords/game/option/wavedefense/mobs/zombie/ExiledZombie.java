@@ -13,19 +13,16 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 
-public class VoidZombie extends AbstractZombie implements EliteMob {
+public class ExiledZombie extends AbstractZombie implements EliteMob {
 
-    private int voidRadius = 5;
-
-    public VoidZombie(Location spawnLocation) {
+    public ExiledZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Void Singularity",
+                "Exiled Scrupulous",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
@@ -34,52 +31,42 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
                         new ItemStack(Material.GOLDEN_CARROT)
                 ),
-                10000,
-                0.1f,
+                16000,
+                0.42f,
                 10,
-                1500,
-                2000
+                2200,
+                2800
         );
     }
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
-            we.sendMessage(ChatColor.YELLOW + "A §8" + getWarlordsNPC().getName() + " §ehas spawned.");
-        });
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 10 == 0) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 30);
-            for (WarlordsEntity wp : PlayerFilter
-                    .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 200, 300, -1, 100, true);
-                wp.getSpeed().addSpeedModifier("Void Slowness", -70, 10);
-            }
-        }
-
-        if (ticksElapsed % 5 == 0) {
+        if (ticksElapsed % 30 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
-                    voidRadius,
+                    8,
                     new CircumferenceEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(0.75),
                     new DoubleLineEffect(ParticleEffect.SPELL)
             ).playEffects();
+        }
+
+        if (ticksElapsed % 200 == 0) {
+            for (int i = 0; i < 20; i++) {
+                EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), i * 2, false, i + 1, warlordsNPC.getGame());
+            }
         }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
-        receiver.getSpeed().addSpeedModifier("Envoy Slowness", -20, 2 * 20);
     }
 
     @Override

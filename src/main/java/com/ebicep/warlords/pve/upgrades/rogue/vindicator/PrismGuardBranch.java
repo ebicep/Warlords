@@ -26,8 +26,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
     int damageReduction = ability.getDamageReduction();
     int projectileDamageReduction = ability.getProjectileDamageReduction();
-
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
-
 }

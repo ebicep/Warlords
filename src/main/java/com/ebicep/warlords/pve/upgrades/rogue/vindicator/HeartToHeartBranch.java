@@ -7,26 +7,87 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
 
-    public HeartToHeartBranch(AbilityTree abilityTree, HeartToHeart ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Range - Tier I", "+4 Blocks cast radius", 5000));
-        treeA.add(new Upgrade("Range - Tier II", "+8 Blocks cast radius", 10000));
-        treeA.add(new Upgrade("Range - Tier III", "+16 Blocks cast radius", 20000));
-
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "Remove energy cost\n\nIncrease Avenger's Mark cast range by 4 blocks and energy drain by 100%",
-                50000
-        );
-    }
-
     int radius = ability.getRadius();
     int verticalRadius = ability.getVerticalRadius();
-
     float cooldown = ability.getCooldown();
 
+    public HeartToHeartBranch(AbilityTree abilityTree, HeartToHeart ability) {
+        super(abilityTree, ability);
+        
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "",
+                "",
+                "",
+                50000,
+                () -> {
+
+                }
+        );
+    }
 }

@@ -16,6 +16,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
                 "",
                 5000,
                 () -> {
+
                 }
         ));
         treeA.add(new Upgrade(
