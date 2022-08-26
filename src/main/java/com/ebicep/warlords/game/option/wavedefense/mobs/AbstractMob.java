@@ -155,6 +155,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public MobTier getMobTier() {
         return mobTier;
     }

@@ -9,6 +9,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation {
 
     @Field("highest_wave_cleared")
@@ -21,12 +24,14 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     private long mostDamageInWave;
     @Field("total_waves_cleared")
     private int totalWavesCleared;
-
-    //TODO KILLS ASSISTS DEATH PER MOB
-
-
     @Field("total_time_played")
     private long totalTimePlayed = 0;
+    @Field("mob_kills")
+    private Map<String, Long> mobKills = new LinkedHashMap<>();
+    @Field("mob_assists")
+    private Map<String, Long> mobAssists = new LinkedHashMap<>();
+    @Field("mob_deaths")
+    private Map<String, Long> mobDeaths = new LinkedHashMap<>();
 
     public PvEDatabaseStatInformation() {
     }
@@ -52,6 +57,9 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
         }
         this.totalWavesCleared += databaseGamePvE.getWavesCleared();
+        databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong, Long::sum));
+        databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong, Long::sum));
+        databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong, Long::sum));
     }
 
     public int getHighestWaveCleared() {
@@ -76,5 +84,17 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public long getTotalTimePlayed() {
         return totalTimePlayed;
+    }
+
+    public Map<String, Long> getMobKills() {
+        return mobKills;
+    }
+
+    public Map<String, Long> getMobAssists() {
+        return mobAssists;
+    }
+
+    public Map<String, Long> getMobDeaths() {
+        return mobDeaths;
     }
 }

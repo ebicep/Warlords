@@ -40,7 +40,6 @@ public final class WarlordsPlayer extends WarlordsEntity {
     private final AbilityTree abilityTree = new AbilityTree(this);
     private AbstractWeapon weapon;
 
-
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
             @Nonnull Game game,

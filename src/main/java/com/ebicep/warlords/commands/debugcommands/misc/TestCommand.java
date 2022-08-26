@@ -61,7 +61,11 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testgame")
     @Description("In game test command")
     public void testGame(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.setMaxHealth(1000000);
+        System.out.println(warlordsPlayer.getMinuteStats().total().getMobKills());
+        System.out.println("--------------");
+        System.out.println(warlordsPlayer.getMinuteStats().total().getMobAssists());
+        System.out.println("--------------");
+        System.out.println(warlordsPlayer.getMinuteStats().total().getMobDeaths());
 
         ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }

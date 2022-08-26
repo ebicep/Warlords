@@ -3,10 +3,7 @@ package com.ebicep.warlords.player.ingame;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -136,6 +133,33 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         }
     }
 
+    public void addMobKill(String mob) {
+        current.mobKills.putIfAbsent(mob, 0L);
+        current.mobKills.put(mob, current.mobKills.get(mob) + 1);
+        if (this.total != null) {
+            this.total.mobKills.putIfAbsent(mob, 0L);
+            this.total.mobKills.put(mob, this.total.mobKills.get(mob) + 1);
+        }
+    }
+
+    public void addMobAssist(String mob) {
+        current.mobAssists.putIfAbsent(mob, 0L);
+        current.mobAssists.put(mob, current.mobAssists.get(mob) + 1);
+        if (this.total != null) {
+            this.total.mobAssists.putIfAbsent(mob, 0L);
+            this.total.mobAssists.put(mob, this.total.mobAssists.get(mob) + 1);
+        }
+    }
+
+    public void addMobDeath(String mob) {
+        current.mobDeaths.putIfAbsent(mob, 0L);
+        current.mobDeaths.put(mob, current.mobDeaths.get(mob) + 1);
+        if (this.total != null) {
+            this.total.mobDeaths.putIfAbsent(mob, 0L);
+            this.total.mobDeaths.put(mob, this.total.mobDeaths.get(mob) + 1);
+        }
+    }
+
     public Entry recomputeTotal() {
         return entries.stream().reduce(new Entry(), Entry::merge);
     }
@@ -178,9 +202,9 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         private int kills;
         @Nonnegative
         private int assists;
-
         @Nonnegative
         private int deaths;
+
         @Nonnegative
         private long damage;
         @Nonnegative
@@ -204,6 +228,10 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         @Nonnegative
         private long damageTaken;
 
+        private Map<String, Long> mobKills = new LinkedHashMap<>();
+        private Map<String, Long> mobAssists = new LinkedHashMap<>();
+        private Map<String, Long> mobDeaths = new LinkedHashMap<>();
+
         public Entry merge(Entry other) {
             kills += other.kills;
             assists += other.assists;
@@ -218,6 +246,9 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             timeInCombat += other.timeInCombat;
             respawnTimeSpent += other.respawnTimeSpent;
             damageTaken += other.damageTaken;
+            other.mobKills.forEach((s, aLong) -> mobKills.merge(s, aLong, Long::sum));
+            other.mobAssists.forEach((s, aLong) -> mobAssists.merge(s, aLong, Long::sum));
+            other.mobDeaths.forEach((s, aLong) -> mobDeaths.merge(s, aLong, Long::sum));
             return this;
         }
 
@@ -286,22 +317,61 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             return damageTaken;
         }
 
+        public Map<String, Long> getMobKills() {
+            return mobKills;
+        }
+
+        public Map<String, Long> getMobAssists() {
+            return mobAssists;
+        }
+
+        public Map<String, Long> getMobDeaths() {
+            return mobDeaths;
+        }
+
         @Override
         public String toString() {
-            return "{"
-                    + "kills=" + kills
-                    + ", assists=" + assists
-                    + ", deaths=" + deaths
-                    + ", damage=" + damage
-                    + ", healing=" + healing
-                    + ", absorbed=" + absorbed
-                    + ", damageOnCarrier=" + damageOnCarrier
-                    + ", healingOnCarrier=" + healingOnCarrier
-                    + ", flagsCaptured=" + flagsCaptured
-                    + ", flagsReturned=" + flagsReturned
-                    + ", timeInCombat=" + timeInCombat
-                    + ", respawnTimeSpent=" + respawnTimeSpent
-                    + '}';
+            return "Entry{" +
+                    "kills=" + kills +
+                    ", assists=" + assists +
+                    ", deaths=" + deaths +
+                    ", damage=" + damage +
+                    ", healing=" + healing +
+                    ", absorbed=" + absorbed +
+                    ", damageOnCarrier=" + damageOnCarrier +
+                    ", healingOnCarrier=" + healingOnCarrier +
+                    ", flagsCaptured=" + flagsCaptured +
+                    ", flagsReturned=" + flagsReturned +
+                    ", timeInCombat=" + timeInCombat +
+                    ", respawnTimeSpent=" + respawnTimeSpent +
+                    ", damageTaken=" + damageTaken +
+                    ", mobKills=" + mobKills +
+                    ", mobAssists=" + mobAssists +
+                    ", mobDeaths=" + mobDeaths +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Entry entry = (Entry) o;
+            return kills == entry.kills &&
+                    assists == entry.assists &&
+                    deaths == entry.deaths &&
+                    damage == entry.damage &&
+                    healing == entry.healing &&
+                    absorbed == entry.absorbed &&
+                    damageOnCarrier == entry.damageOnCarrier &&
+                    healingOnCarrier == entry.healingOnCarrier &&
+                    flagsCaptured == entry.flagsCaptured &&
+                    flagsReturned == entry.flagsReturned &&
+                    timeInCombat == entry.timeInCombat &&
+                    respawnTimeSpent == entry.respawnTimeSpent &&
+                    damageTaken == entry.damageTaken &&
+                    mobKills.equals(entry.mobKills) &&
+                    mobAssists.equals(entry.mobAssists) &&
+                    mobDeaths.equals(entry.mobDeaths);
         }
 
         @Override
@@ -320,35 +390,10 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             hash = 13 * hash + this.timeInCombat;
             hash = 13 * hash + this.respawnTimeSpent;
             hash = 13 * hash + (int) (this.damageTaken ^ (this.damageTaken >>> 32));
+            hash = 13 * hash + Objects.hashCode(this.mobKills);
+            hash = 13 * hash + Objects.hashCode(this.mobAssists);
+            hash = 13 * hash + Objects.hashCode(this.mobDeaths);
             return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Entry other = (Entry) obj;
-            return this.kills == other.kills
-                    && this.assists == other.assists
-                    && this.deaths == other.deaths
-                    && this.damage == other.damage
-                    && this.healing == other.healing
-                    && this.absorbed == other.absorbed
-                    && this.damageOnCarrier == other.damageOnCarrier
-                    && this.healingOnCarrier == other.healingOnCarrier
-                    && this.flagsCaptured == other.flagsCaptured
-                    && this.flagsReturned == other.flagsReturned
-                    && this.timeInCombat == other.timeInCombat
-                    && this.respawnTimeSpent == other.respawnTimeSpent
-                    && this.damageTaken == other.damageTaken
-                    ;
         }
     }
 }

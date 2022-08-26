@@ -9,7 +9,9 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
@@ -24,6 +26,12 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private AbstractWeapon weapon;
     @Field("upgrade_log")
     private List<AbilityTree.UpgradeLog> upgradeLog;
+    @Field("mob_kills")
+    private Map<String, Long> mobKills = new LinkedHashMap<>();
+    @Field("mob_assists")
+    private Map<String, Long> mobAssists = new LinkedHashMap<>();
+    @Field("mob_deaths")
+    private Map<String, Long> mobDeaths = new LinkedHashMap<>();
 
     public DatabaseGamePlayerPvE(WarlordsEntity warlordsEntity) {
         super(warlordsEntity);
@@ -33,6 +41,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
             this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
             this.weapon = warlordsPlayer.getAbstractWeapon();
             this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
+            this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
+            this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
+            this.mobDeaths = warlordsPlayer.getMinuteStats().total().getMobDeaths();
         }
     }
 
@@ -62,5 +73,17 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public List<AbilityTree.UpgradeLog> getUpgradeLog() {
         return upgradeLog;
+    }
+
+    public Map<String, Long> getMobKills() {
+        return mobKills;
+    }
+
+    public Map<String, Long> getMobAssists() {
+        return mobAssists;
+    }
+
+    public Map<String, Long> getMobDeaths() {
+        return mobDeaths;
     }
 }

@@ -1,7 +1,5 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
@@ -18,6 +16,7 @@ import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -55,7 +54,6 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
-    private HashMap<UUID, DatabasePlayer> databasePlayers = new HashMap<>();
 
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
@@ -196,10 +194,10 @@ public class WaveDefenseOption implements Option {
 
                 sendMessage(
                         entry.getKey(),
-                false,
-                ChatColor.YELLOW + "A wave of §c§l" +
-                        spawnCount + "§e monsters will spawn in §c" +
-                        currentWave.getDelay() / 20 + " §eseconds!"
+                        false,
+                        ChatColor.YELLOW + "A wave of §c§l" +
+                                spawnCount + "§e monsters will spawn in §c" +
+                                currentWave.getDelay() / 20 + " §eseconds!"
                 );
             }
 
@@ -269,37 +267,50 @@ public class WaveDefenseOption implements Option {
             public void onEvent(WarlordsDamageHealingEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
                 WarlordsEntity receiver = event.getPlayer();
-                for (AbstractMob<?> mob : mobs) {
-                    if (mob.getWarlordsNPC().equals(attacker) && event.isDamageInstance()) {
-                        mob.onAttack(attacker, receiver, event);
+
+                if (event.isDamageInstance()) {
+                    if (attacker instanceof WarlordsNPC) {
+                        AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
+                        if (mobs.contains(mob)) {
+                            mob.onAttack(attacker, receiver, event);
+                        }
                     }
 
-                    if (mob.getWarlordsNPC().equals(receiver) && event.isDamageInstance()) {
-                        mob.onDamageTaken(receiver, attacker, event);
+                    if (receiver instanceof WarlordsNPC) {
+                        AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
+                        if (mobs.contains(mob)) {
+                            mob.onDamageTaken(receiver, attacker, event);
+                        }
                     }
                 }
             }
 
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
-                WarlordsEntity we = event.getPlayer();
-                AbstractMob<?> removed = null;
-                for (AbstractMob<?> mob : mobs) {
-                    if (mob.getWarlordsNPC().equals(we)) {
-                        removed = mob;
-                        mobs.remove(mob);
-                        break;
-                    }
-                }
-                if (removed != null) {
-                    AbstractMob<?> finalRemoved = removed;
-                    new GameRunnable(game) {
-                        @Override
-                        public void run() {
-                            finalRemoved.onDeath(event.getKiller(), we.getDeathLocation(), WaveDefenseOption.this);
-                            game.removePlayer(we.getUuid());
+                WarlordsEntity warlordsEntity = event.getPlayer();
+                WarlordsEntity killer = event.getKiller();
+
+                if (warlordsEntity instanceof WarlordsNPC) {
+                    AbstractMob<?> mobToRemove = ((WarlordsNPC) warlordsEntity).getMob();
+                    if (mobs.contains(mobToRemove)) {
+                        mobs.remove(mobToRemove);
+                        new GameRunnable(game) {
+                            @Override
+                            public void run() {
+                                mobToRemove.onDeath(killer, warlordsEntity.getDeathLocation(), WaveDefenseOption.this);
+                                game.removePlayer(warlordsEntity.getUuid());
+                            }
+                        }.runTask();
+
+                        if (killer instanceof WarlordsPlayer) {
+                            killer.getMinuteStats().addMobKill(mobToRemove.getName());
+                            warlordsEntity.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
                         }
-                    }.runTask();
+                    }
+                } else if (warlordsEntity instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
+                    if (mobs.contains(((WarlordsNPC) killer).getMob())) {
+                        warlordsEntity.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
+                    }
                 }
             }
         });
@@ -349,16 +360,8 @@ public class WaveDefenseOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         new GameRunnable(game) {
-            @Override
-            public void run() {
-                if (DatabaseManager.playerService != null) {
-                    //cache players
-                    game.warlordsPlayers().forEach(warlordsPlayer -> databasePlayers.put(warlordsPlayer.getUuid(), DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid())));
-                }
-            }
-        }.runTaskLater(20);
-        new GameRunnable(game) {
             int counter = 0;
+
             @Override
             public void run() {
                 if (mobs.isEmpty() && spawnCount == 0) {
