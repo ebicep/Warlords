@@ -16,8 +16,8 @@ public class MasterworksFairReward extends AbstractReward {
     @Field("time_given")
     private Instant timeGiven;
 
-    public MasterworksFairReward(RewardTypes reward, float amount, Instant timeGiven) {
-        super(reward, amount, "Masterworks Fair");
+    public MasterworksFairReward(Currencies currency, Long amount, Instant timeGiven) {
+        super(currency, amount, "Masterworks Fair");
         this.timeGiven = timeGiven;
     }
 
@@ -34,16 +34,16 @@ public class MasterworksFairReward extends AbstractReward {
         List<String> lore = getLore();
         lore.add("");
         lore.add(ChatColor.YELLOW + "Click to claim!");
-        return new ItemBuilder(reward.item)
-                .name(ChatColor.GREEN + reward.name)
+        return new ItemBuilder(currency.item)
+                .name(ChatColor.GREEN + currency.name)
                 .lore(lore)
                 .flags(ItemFlag.HIDE_POTION_EFFECTS)
                 .get();
     }
 
     public ItemStack getItemWithoutClaim() {
-        return new ItemBuilder(reward.item)
-                .name(ChatColor.GREEN + reward.name)
+        return new ItemBuilder(currency.item)
+                .name(ChatColor.GREEN + currency.name)
                 .lore(getLore())
                 .flags(ItemFlag.HIDE_POTION_EFFECTS)
                 .get();

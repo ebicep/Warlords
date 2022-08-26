@@ -50,12 +50,12 @@ public class RewardInventory {
                     menu.setItem(i % 9, i / 9,
                             masterworksFairReward.getItem(),
                             (m, e) -> {
-                                masterworksFairReward.getReward().give.accept(databasePlayer, masterworksFairReward.getAmount());
+                                databasePlayerPvE.addCurrency(masterworksFairReward.getCurrency(), masterworksFairReward.getAmount());
                                 masterworksFairReward.setTimeClaimed();
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getReward().name)
+                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getCurrency().name)
                                                 .setHoverItem(masterworksFairReward.getItemWithoutClaim())
                                                 .getTextComponent());
 
@@ -74,13 +74,13 @@ public class RewardInventory {
                             .get(),
                     (m, e) -> {
                         for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
-                            masterworksFairReward.getReward().give.accept(databasePlayer, masterworksFairReward.getAmount());
+                            databasePlayerPvE.addCurrency(masterworksFairReward.getCurrency(), masterworksFairReward.getAmount());
                             masterworksFairReward.setTimeClaimed();
 
                             sendRewardMessage(
                                     player.getUniqueId(),
                                     new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getReward().name)
+                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getCurrency().name)
                                             .setHoverItem(masterworksFairReward.getItemWithoutClaim())
                                             .getTextComponent());
                         }

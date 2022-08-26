@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -34,15 +35,14 @@ public class WeaponStarPieceMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayerPvE.getSyntheticShards() < weapon.getStarPieceBonusCost()) {
+                    if (databasePlayerPvE.getCurrencyValue(Currencies.SYNTHETIC_SHARD) < weapon.getStarPieceBonusCost()) {
                         player.sendMessage(ChatColor.RED + "You do not have enough synthetic shards to apply this star piece.");
                     } else {
                         TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
                                 .setHoverItem(weapon.generateItemStack())
                                 .getTextComponent();
-
-                        WeaponsPvE.getWeapon(weapon).subtractStarPiece.accept(databasePlayerPvE);
-                        databasePlayerPvE.addSyntheticShards(-weapon.getStarPieceBonusCost());
+                        databasePlayerPvE.subtractOneCurrency(WeaponsPvE.getWeapon(weapon).starPieceCurrency);
+                        databasePlayerPvE.subtractCurrency(Currencies.SYNTHETIC_SHARD, weapon.getStarPieceBonusCost());
                         weapon.setStarPieceBonus();
 
                         TextComponent weaponAfter = new TextComponentBuilder(weapon.getName())

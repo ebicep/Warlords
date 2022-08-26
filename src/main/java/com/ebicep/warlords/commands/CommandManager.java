@@ -95,7 +95,7 @@ public class CommandManager {
         manager.registerCommand(new GetPlayersCommand());
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new MyLocationCommand());
-        manager.registerCommand(new PvEMaterialCommand());
+        manager.registerCommand(new PvECurrencyCommand());
         manager.registerCommand(new RecordGamesCommand());
         manager.registerCommand(new SeeAllChatsCommand());
         manager.registerCommand(new ServerStatusCommand());

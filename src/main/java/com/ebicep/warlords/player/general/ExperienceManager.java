@@ -10,8 +10,8 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.rewards.LevelUpReward;
-import com.ebicep.warlords.pve.rewards.RewardTypes;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -189,7 +189,7 @@ public class ExperienceManager {
             }
 
             int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
-            Pair<RewardTypes, Float> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
+            Pair<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
             List<String> lore = new ArrayList<>();
             lore.add("");
             lore.add(ChatColor.GRAY + "Reward: " + ChatColor.GOLD + rewardForLevel.getA().name);
@@ -219,7 +219,7 @@ public class ExperienceManager {
                             if (claimed.get()) {
                                 player.sendMessage(ChatColor.RED + "You already claimed this reward!");
                             } else {
-                                rewardForLevel.getA().give.accept(databasePlayer, rewardForLevel.getB());
+                                databasePlayer.getPveStats().addCurrency(rewardForLevel.getA(), rewardForLevel.getB());
                                 databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel.getA(), rewardForLevel.getB(), menuLevel, selectedPrestige));
                                 player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.*;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
@@ -28,6 +29,15 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 
 public class WeaponManagerMenu {
 
+    public static final List<Currencies> CURRENCIES_TO_DISPLAY = Arrays.asList(
+            Currencies.SYNTHETIC_SHARD,
+            Currencies.LEGEND_FRAGMENTS,
+            Currencies.FAIRY_ESSENCE,
+            Currencies.COMMON_STAR_PIECE,
+            Currencies.RARE_STAR_PIECE,
+            Currencies.EPIC_STAR_PIECE,
+            Currencies.LEGENDARY_STAR_PIECE
+    );
     public static HashMap<UUID, PlayerMenuSettings> playerMenuSettings = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player) {
@@ -101,23 +111,9 @@ public class WeaponManagerMenu {
         menu.setItem(1, 5,
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.GREEN + "Your Drops")
-                        .lore(
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getSyntheticShards() + ChatColor.WHITE + " Synthetic Shards",
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendFragments() + ChatColor.GOLD + " Legend Fragments",
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getFairyEssence() + ChatColor.LIGHT_PURPLE + " Fairy Essence",
-//                                "",
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getCommonStarPieces() + ChatColor.GREEN + " Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() != 1 ? "s" : ""),
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getRareStarPieces() + ChatColor.BLUE + " Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() != 1 ? "s" : ""),
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getEpicStarPieces() + ChatColor.DARK_PURPLE + " Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() != 1 ? "s" : ""),
-//                                ChatColor.AQUA.toString() + databasePlayerPvE.getLegendaryStarPieces() + ChatColor.GOLD + " Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() != 1 ? "s" : "")
-                                ChatColor.WHITE.toString() + "Synthetic Shards" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getSyntheticShards(),
-                                ChatColor.GOLD.toString() + "Legend Fragments" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getLegendFragments(),
-                                ChatColor.LIGHT_PURPLE.toString() + "Fairy Essence" + ChatColor.WHITE + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getFairyEssence(),
-                                "",
-                                ChatColor.GREEN.toString() + "Common Star Piece" + (databasePlayerPvE.getCommonStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCommonStarPieces(),
-                                ChatColor.BLUE.toString() + "Rare Star Piece" + (databasePlayerPvE.getRareStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getRareStarPieces(),
-                                ChatColor.DARK_PURPLE.toString() + "Epic Star Piece" + (databasePlayerPvE.getEpicStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getEpicStarPieces(),
-                                ChatColor.GOLD.toString() + "Legendary Star Piece" + (databasePlayerPvE.getLegendaryStarPieces() != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getLegendaryStarPieces()
+                        .lore(CURRENCIES_TO_DISPLAY.stream()
+                                .map(rewardTypes -> rewardTypes.getColoredName() + (databasePlayerPvE.getCurrencyValue(rewardTypes) != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(rewardTypes) + (rewardTypes == Currencies.FAIRY_ESSENCE ? "\n" : ""))
+                                .collect(Collectors.joining("\n"))
                         )
                         .get(),
                 (m, e) -> {
@@ -216,7 +212,7 @@ public class WeaponManagerMenu {
                             .get(),
                     (m, e) -> {
                         WeaponsPvE weaponsPvE = WeaponsPvE.getWeapon(weapon);
-                        if (weaponsPvE.getStarPiece.apply(databasePlayer.getPveStats()) <= 0) {
+                        if (databasePlayer.getPveStats().getCurrencyValue(weaponsPvE.starPieceCurrency) <= 0) {
                             player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
                             return;
                         }

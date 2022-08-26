@@ -9,32 +9,32 @@ public class LevelUpReward extends AbstractReward {
     private int level;
     private int prestige;
 
-    public LevelUpReward(RewardTypes reward, float amount, int level, int prestige) {
-        super(reward, amount, "Level Up");
+    public LevelUpReward(Currencies currency, Long amount, int level, int prestige) {
+        super(currency, amount, "Level Up");
         this.level = level;
         this.prestige = prestige;
         this.timeClaimed = Instant.now();
     }
 
-    public static Pair<RewardTypes, Float> getRewardForLevel(int level) {
+    public static Pair<Currencies, Long> getRewardForLevel(int level) {
         if (level % 10 == 0) {
             if (level == 90) {
-                return new Pair<>(RewardTypes.FAIRY_ESSENCE, 50f);
+                return new Pair<>(Currencies.FAIRY_ESSENCE, 50L);
             } else if (level == 100) {
-                return new Pair<>(RewardTypes.FAIRY_ESSENCE, 100f);
+                return new Pair<>(Currencies.FAIRY_ESSENCE, 100L);
             }
-            return new Pair<>(RewardTypes.FAIRY_ESSENCE, 20f);
+            return new Pair<>(Currencies.FAIRY_ESSENCE, 20L);
         }
         if (level <= 40) {
-            return new Pair<>(RewardTypes.SYNTHETIC_SHARD, 5f);
+            return new Pair<>(Currencies.SYNTHETIC_SHARD, 5L);
         } else if (level <= 60) {
-            return new Pair<>(RewardTypes.SYNTHETIC_SHARD, 10f);
+            return new Pair<>(Currencies.SYNTHETIC_SHARD, 10L);
         } else if (level <= 80) {
-            return new Pair<>(RewardTypes.SYNTHETIC_SHARD, 15f);
+            return new Pair<>(Currencies.SYNTHETIC_SHARD, 15L);
         } else if (level <= 90) {
-            return new Pair<>(RewardTypes.SYNTHETIC_SHARD, 20f);
+            return new Pair<>(Currencies.SYNTHETIC_SHARD, 20L);
         }
-        return new Pair<>(RewardTypes.SYNTHETIC_SHARD, 25f);
+        return new Pair<>(Currencies.SYNTHETIC_SHARD, 25L);
     }
 
     public int getLevel() {

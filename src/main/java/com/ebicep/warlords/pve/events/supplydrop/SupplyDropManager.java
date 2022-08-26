@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -49,16 +50,16 @@ public class SupplyDropManager {
                         .name(ChatColor.GREEN + "Click to buy a supply drop token")
                         .lore(
                                 ChatColor.GREEN + "Cost: " + ChatColor.YELLOW + "10,000 coins",
-                                ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCoins()) + " coins")
+                                ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins")
                         .get(),
                 (m, e) -> {
-                    if (databasePlayerPvE.getCoins() < 10000) {
+                    if (databasePlayerPvE.getCurrencyValue(Currencies.COIN) < 10000) {
                         player.sendMessage(ChatColor.RED + "You do not have enough coins to buy a supply drop token!");
                         player.closeInventory();
                         return;
                     }
-                    databasePlayerPvE.addCoins(-10000);
-                    databasePlayerPvE.addSupplyDropToken(1);
+                    databasePlayerPvE.subtractCurrency(Currencies.COIN, 10000);
+                    databasePlayerPvE.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
                     openSupplyDropMenu(player);
                 });
 
@@ -69,7 +70,7 @@ public class SupplyDropManager {
                         .name(ChatColor.GREEN + "Click to call a supply drop")
                         .lore(
                                 ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + "1 Token",
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getSupplyDropTokens()) + " Token" + (databasePlayerPvE.getSupplyDropTokens() > 1 ? "s" : ""),
+                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call a supply drop"
                         )
@@ -79,7 +80,7 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
-                    if (databasePlayerPvE.getSupplyDropTokens() > 0) {
+                    if (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 0) {
                         supplyDropRoll(player, 1, e.isShiftClick());
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
@@ -92,8 +93,8 @@ public class SupplyDropManager {
                 new ItemBuilder(Material.DIAMOND_BARDING)
                         .name(ChatColor.GREEN + "Click to call all available supply drops")
                         .lore(
-                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getSupplyDropTokens()) + " Token" + (databasePlayerPvE.getSupplyDropTokens() > 1 ? "s" : ""),
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getSupplyDropTokens()) + " Token" + (databasePlayerPvE.getSupplyDropTokens() > 1 ? "s" : ""),
+                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
+                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call all available supply drops"
                         )
@@ -103,8 +104,8 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
-                    if (databasePlayerPvE.getSupplyDropTokens() > 0) {
-                        supplyDropRoll(player, databasePlayerPvE.getSupplyDropTokens(), e.isShiftClick());
+                    if (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 0) {
+                        supplyDropRoll(player, Math.toIntExact(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)), e.isShiftClick());
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
                     }
@@ -142,7 +143,7 @@ public class SupplyDropManager {
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        databasePlayerPvE.setSupplyDropTokens(databasePlayerPvE.getSupplyDropTokens() - amount);
+        databasePlayerPvE.subtractCurrency(Currencies.SUPPLY_DROP_TOKEN, amount);
 
         int slownessIncrementRate = amount == 1 ? 20 : 9;
         int slownessMax = amount == 1 ? 9 : 5;

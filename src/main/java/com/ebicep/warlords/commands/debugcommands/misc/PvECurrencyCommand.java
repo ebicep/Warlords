@@ -7,24 +7,24 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.pve.rewards.RewardTypes;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 
-@CommandAlias("pvematerial")
+@CommandAlias("pvecurrency")
 @Conditions("database:player")
-public class PvEMaterialCommand extends BaseCommand {
+public class PvECurrencyCommand extends BaseCommand {
 
     @Subcommand("add")
-    @Description("Add pve materials to your inventory, you can only 1 star piece at a time")
-    public void add(Player player, RewardTypes type, @Conditions("limits:min=1") Integer amount) {
+    @Description("Add pve currency to your inventory")
+    public void add(Player player, Currencies currency, @Conditions("limits:min=1") Integer amount) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        type.give.accept(databasePlayer, amount.floatValue());
+        databasePlayer.getPveStats().addCurrency(currency, amount);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        ChatChannels.playerSendMessage(player, ChatColor.GREEN + "Gave yourself " + ChatColor.YELLOW + amount + " " + ChatColor.LIGHT_PURPLE + type.name + (amount != 1 ? "s" : ""), ChatChannels.DEBUG, true);
+        ChatChannels.playerSendMessage(player, ChatColor.GREEN + "Gave yourself " + ChatColor.YELLOW + amount + " " + ChatColor.LIGHT_PURPLE + currency.name + (amount != 1 ? "s" : ""), ChatChannels.DEBUG, true);
     }
 
     @HelpCommand

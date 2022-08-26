@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -76,7 +77,7 @@ public class WeaponSkinSelectorMenu {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }
                             } else {
-                                if (databasePlayer.getPveStats().getFairyEssence() < weaponSkin.getCost()) {
+                                if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkin.getCost()) {
                                     player.sendMessage(ChatColor.RED + "You do not have enough Fairy Essence to purchase this skin.");
                                     return;
                                 }
@@ -114,7 +115,7 @@ public class WeaponSkinSelectorMenu {
                 4,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getFairyEssence())
+                        .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getCurrencyValue(Currencies.FAIRY_ESSENCE))
                         .get(),
                 (m, e) -> openWeaponEditor(player, weapon)
         );
@@ -129,7 +130,7 @@ public class WeaponSkinSelectorMenu {
         if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.addFairyEssence(-weaponSkin.getCost());
+            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, -weaponSkin.getCost());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(

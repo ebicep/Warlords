@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 public class NumberFormat {
 
+    public static final DecimalFormat formatCommas = new DecimalFormat("#,###");
     public static final DecimalFormat decimalFormatOptionalHundredths = new DecimalFormat("#.##");
     static final DecimalFormat decimalFormatOptionalTenths = new DecimalFormat("#.#");
     static final DecimalFormat decimalFormatTenths = new DecimalFormat("0.0");
@@ -59,12 +60,10 @@ public class NumberFormat {
 
     public static String addCommaAndRound(double amount) {
         amount = Math.round(amount);
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        return formatter.format(amount);
+        return formatCommas.format(amount);
     }
 
-    public static String addCommas(int amount) {
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        return formatter.format(amount);
+    public static String addCommas(double amount) {
+        return formatCommas.format(amount);
     }
 }

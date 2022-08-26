@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -35,8 +36,8 @@ public class WeaponRerollMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayer.getPveStats().getCoins() >= rerollCost) {
-                        databasePlayer.getPveStats().addCoins(-rerollCost);
+                    if (databasePlayer.getPveStats().getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) >= rerollCost) {
+                        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
                         rerollWeapon(player, weapon);
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have enough coins to reroll this weapon.");

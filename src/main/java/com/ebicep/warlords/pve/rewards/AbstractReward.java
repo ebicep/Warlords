@@ -9,23 +9,23 @@ public abstract class AbstractReward {
 
     @Id
     private String id;
-    protected RewardTypes reward;
-    protected float amount;
+    protected Currencies currency;
+    protected Long amount;
     protected String from;
     @Field("time_claimed")
     protected Instant timeClaimed;
 
-    public AbstractReward(RewardTypes reward, float amount, String from) {
-        this.reward = reward;
+    public AbstractReward(Currencies currency, Long amount, String from) {
+        this.currency = currency;
         this.amount = amount;
         this.from = from;
     }
 
-    public RewardTypes getReward() {
-        return reward;
+    public Currencies getCurrency() {
+        return currency;
     }
 
-    public float getAmount() {
+    public Long getAmount() {
         return amount;
     }
 

@@ -40,43 +40,28 @@ public class TestCommand extends BaseCommand {
         long start = System.nanoTime();
         System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
         System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
-//        System.out.println(DatabaseManager.playerService.findOne(Criteria.where("uuid").is(issuer.getUniqueId()), PlayersCollections.LIFETIME));
-//        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
         printCache();
         System.out.println("--------------");
-
-//        for (PlayersCollections value : PlayersCollections.values()) {
-//            if(value == PlayersCollections.LIFETIME) continue;;
-//            List<DatabasePlayer> players = DatabaseManager.playerService.findAll(value);
-//            for (DatabasePlayer player : players) {
-//                DatabaseManager.playerService.update(player, value);
-//            }
-//        }
     }
 
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-        doTest(issuer);
 
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
+    }
+
+    @CommandAlias("testdatabase")
+    @Description("Database test command")
+    public void testDatabase(CommandIssuer issuer) {
+
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed", true);
     }
 
     @CommandAlias("testgame")
     @Description("In game test command")
     public void testGame(WarlordsPlayer warlordsPlayer) {
-//            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
-//            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
-
-//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED);
-//            warlordsPlayer.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN);
-//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN);
-//            warlordsPlayer.sendMessage(WarlordsEntity.GIVE_ARROW_RED);
-
-//            ((WarlordsPlayer) warlordsPlayer).getAbilityTree().openAbilityTree();
-//            warlordsPlayer.addCurrency(10000000);
         warlordsPlayer.setMaxHealth(1000000);
-
 
         ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }

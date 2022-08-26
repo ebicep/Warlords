@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
@@ -11,12 +10,15 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
 
@@ -28,35 +30,21 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     //GENERAL
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
-    @Field("coins")
-    private int coins = 0;
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
-    @Field("synthetic_shards")
-    private int syntheticShards = 0;
-    @Field("legend_fragments")
-    private int legendFragments = 0;
-    @Field("fairy_essence")
-    private int fairyEssence = 0;
-    @Field("common_star_pieces")
-    private int commonStarPieces = 0;
-    @Field("rare_star_pieces")
-    private int rareStarPieces = 0;
-    @Field("epic_star_pieces")
-    private int epicStarPieces = 0;
-    @Field("legendary_star_pieces")
-    private int legendaryStarPieces = 0;
-    @Field("skill_boost_modifiers")
-    private int skillBoostModifiers = 0;
     //MASTERWORKS FAIR
     @Field("masterworks_fair_submissions")
     private List<MasterworksFairEntry> masterworksFairEntries = new ArrayList<>();
     //SUPPLY DROP
     @Field("supply_drop_rewards")
     private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
-    @Field("supply_drop_tokens")
-    private int supplyDropTokens = 0;
+    //CURRENCIES
+    private Map<Currencies, Long> currencies = new LinkedHashMap<Currencies, Long>() {{
+        for (Currencies value : Currencies.values()) {
+            put(value, 0L);
+        }
+    }};
 
     @Override
     public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
@@ -153,104 +141,12 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return weaponInventory;
     }
 
-    public int getSyntheticShards() {
-        return syntheticShards;
-    }
-
-    public void addSyntheticShards(int amount) {
-        this.syntheticShards += amount;
-    }
-
-    public int getLegendFragments() {
-        return legendFragments;
-    }
-
-    public void addLegendFragments(int amount) {
-        this.legendFragments += amount;
-    }
-
-    public int getFairyEssence() {
-        return fairyEssence;
-    }
-
-    public void addFairyEssence(int amount) {
-        this.fairyEssence += amount;
-    }
-
-    public int getCommonStarPieces() {
-        return commonStarPieces;
-    }
-
-    public int getRareStarPieces() {
-        return rareStarPieces;
-    }
-
-    public int getEpicStarPieces() {
-        return epicStarPieces;
-    }
-
-    public int getLegendaryStarPieces() {
-        return legendaryStarPieces;
-    }
-
-    public void addCommonStarPiece() {
-        this.commonStarPieces += 1;
-    }
-
-    public void addRareStarPiece() {
-        this.rareStarPieces += 1;
-    }
-
-    public void addEpicStarPiece() {
-        this.epicStarPieces += 1;
-    }
-
-    public void addLegendaryStarPiece() {
-        this.legendaryStarPieces += 1;
-    }
-
-    public void subtractCommonStarPiece() {
-        this.commonStarPieces -= 1;
-    }
-
-    public void subtractRareStarPiece() {
-        this.rareStarPieces -= 1;
-    }
-
-    public void subtractEpicStarPiece() {
-        this.epicStarPieces -= 1;
-    }
-
-    public void subtractLegendaryStarPiece() {
-        this.legendaryStarPieces -= 1;
-    }
-
-    public int getSkillBoostModifiers() {
-        return skillBoostModifiers;
-    }
-
-    public void addSkillBoostModifier() {
-        this.skillBoostModifiers += 1;
-    }
-
     public List<MasterworksFairEntry> getMasterworksFairEntries() {
         return masterworksFairEntries;
     }
 
     public void addMasterworksFairEntry(MasterworksFairEntry entry) {
         this.masterworksFairEntries.add(entry);
-    }
-
-    public int getSupplyDropTokens() {
-        return supplyDropTokens;
-    }
-
-    public void setSupplyDropTokens(int supplyDropTokens) {
-        this.supplyDropTokens = supplyDropTokens;
-    }
-
-    public void addSupplyDropToken(int amount) {
-        this.supplyDropTokens += amount;
     }
 
     public List<SupplyDropEntry> getSupplyDropEntries() {
@@ -261,20 +157,47 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.supplyDropEntries.add(entry);
     }
 
-    public int getCoins() {
-        return coins;
-    }
-
-    public void addCoins(int amount) {
-        this.coins += amount;
-    }
-
     public List<MasterworksFairReward> getRewards() {
         return masterworksFairRewards;
     }
 
     public void addReward(MasterworksFairReward reward) {
         this.masterworksFairRewards.add(reward);
+    }
+
+    public Map<Currencies, Long> getCurrencies() {
+        return currencies;
+    }
+
+    public Long getCurrencyValue(Currencies currency) {
+        return this.currencies.getOrDefault(currency, 0L);
+    }
+
+    public void addCurrency(Currencies currency, Long amount) {
+        if (!currencies.containsKey(currency)) {
+            currencies.put(currency, 0L);
+        }
+        this.currencies.put(currency, this.currencies.get(currency) + amount);
+    }
+
+    public void addCurrency(Currencies currency, int amount) {
+        this.addCurrency(currency, (long) amount);
+    }
+
+    public void addOneCurrency(Currencies currency) {
+        this.addCurrency(currency, 1L);
+    }
+
+    public void subtractCurrency(Currencies currency, Long amount) {
+        this.addCurrency(currency, -amount);
+    }
+
+    public void subtractCurrency(Currencies currency, int amount) {
+        this.subtractCurrency(currency, (long) amount);
+    }
+
+    public void subtractOneCurrency(Currencies currency) {
+        this.subtractCurrency(currency, 1L);
     }
 
 }

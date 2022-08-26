@@ -8,8 +8,8 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
-import com.ebicep.warlords.pve.rewards.RewardTypes;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
@@ -112,45 +112,45 @@ public class MasterworksFairManager {
                                             pveStats.addMasterworksFairEntry(playerRecordEntry);
                                             if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
                                                 if (throughRewardsInventory) {
-                                                    pveStats.addReward(new MasterworksFairReward(value.starPieceRewardType, 1, now));
+                                                    pveStats.addReward(new MasterworksFairReward(value.starPieceCurrency, 1L, now));
                                                 } else {
-                                                    value.addStarPiece.accept(pveStats);
+                                                    pveStats.addOneCurrency(value.starPieceCurrency);
                                                 }
                                                 switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                                     case 0:
                                                         if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 10, now));
+                                                            pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 10L, now));
                                                         } else {
-                                                            pveStats.addSupplyDropToken(10);
+                                                            pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 10);
                                                         }
                                                         break;
                                                     case 1:
                                                     case 2:
                                                         if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 7, now));
+                                                            pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 7L, now));
                                                         } else {
-                                                            pveStats.addSupplyDropToken(7);
+                                                            pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 7);
                                                         }
                                                         break;
                                                 }
                                             } else {
                                                 if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 5, now));
+                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 5L, now));
                                                     } else {
-                                                        pveStats.addSupplyDropToken(5);
+                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 5);
                                                     }
                                                 } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 3, now));
+                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 3L, now));
                                                     } else {
-                                                        pveStats.addSupplyDropToken(3);
+                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 3);
                                                     }
                                                 } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
                                                     if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(RewardTypes.SUPPLY_DROP_TOKEN, 1, now));
+                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 1L, now));
                                                     } else {
-                                                        pveStats.addSupplyDropToken(1);
+                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
                                                     }
                                                 }
                                             }
