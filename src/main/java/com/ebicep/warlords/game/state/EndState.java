@@ -152,7 +152,7 @@ public class EndState implements State, TimerDebugAble {
 
         sendGlobalMessage(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);
 
-        if (winEvent != null) {
+        if (true || winEvent != null) {
             this.game.forEachOfflineWarlordsPlayer(wp -> {
                 if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
                     List<StreamChaptersCommand.GameTime> gameTimes = StreamChaptersCommand.gameTimes.get(wp.getUuid());

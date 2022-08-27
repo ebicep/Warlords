@@ -111,6 +111,7 @@ public class CommandManager {
         manager.registerCommand(new ResourcePackCommand());
         manager.registerCommand(new ShoutCommand());
         manager.registerCommand(new SpectateCommand());
+        manager.registerCommand(new StreamChaptersCommand());
         manager.registerCommand(new MessageCommand());
 
         manager.registerCommand(new StatsLeaderboardCommand());
