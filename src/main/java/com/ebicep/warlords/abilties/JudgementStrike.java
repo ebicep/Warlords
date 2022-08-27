@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
+    private boolean pveUpgradeStrikeHeal = false;
+    private boolean pveUpgradeMaster = false;
 
     private int attacksDone = 0;
     private int speedOnCrit = 25;
@@ -59,6 +61,7 @@ public class JudgementStrike extends AbstractStrikeBase {
                 wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
         });
+
         return true;
     }
 
@@ -91,5 +94,21 @@ public class JudgementStrike extends AbstractStrikeBase {
 
     public void setSpeedOnCritDuration(int speedOnCritDuration) {
         this.speedOnCritDuration = speedOnCritDuration;
+    }
+
+    public boolean isPveUpgradeStrikeHeal() {
+        return pveUpgradeStrikeHeal;
+    }
+
+    public void setPveUpgradeStrikeHeal(boolean pveUpgradeStrikeHeal) {
+        this.pveUpgradeStrikeHeal = pveUpgradeStrikeHeal;
+    }
+
+    public boolean isPveUpgradeMaster() {
+        return pveUpgradeMaster;
+    }
+
+    public void setPveUpgradeMaster(boolean pveUpgradeMaster) {
+        this.pveUpgradeMaster = pveUpgradeMaster;
     }
 }

@@ -58,7 +58,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "",
+                "+2s Duration",
                 10000,
                 () -> {
                     ability.setVindicateDuration(duration + 2);
@@ -67,7 +67,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "",
+                "+3s Duration",
                 15000,
                 () -> {
                     ability.setVindicateDuration(duration + 3);
@@ -76,7 +76,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "",
+                "+4s Duration",
                 20000,
                 () -> {
                     ability.setVindicateDuration(duration + 4);
