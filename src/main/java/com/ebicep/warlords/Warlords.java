@@ -1006,6 +1006,7 @@ public class Warlords extends JavaPlugin {
         new ServerStatusCommand().register(this);
         new UnstuckCommand().register(this);
         new ToggleOfflineFreezeCommand().register(this);
+        new StreamChaptersCommand().register(this);
     }
 
     private Map<UUID, Game> getPlayersToGame() {

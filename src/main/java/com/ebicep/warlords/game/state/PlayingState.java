@@ -4,6 +4,7 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -43,6 +44,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -131,6 +133,12 @@ public class PlayingState implements State, TimerDebugAble {
         game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
             counter += delay / GameRunnable.SECOND;
             timer += delay;
+        });
+
+        this.game.forEachOfflineWarlordsPlayer(wp -> {
+            if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
+                StreamChaptersCommand.gameTimes.get(wp.getUuid()).add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass()));
+            }
         });
 
         Warlords.getInstance().hideAndUnhidePeople();

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.state;
 
 import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -208,6 +210,15 @@ public class EndState implements State, TimerDebugAble {
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);
+
+        if (winEvent != null) {
+            this.game.forEachOfflineWarlordsPlayer(wp -> {
+                if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
+                    List<StreamChaptersCommand.GameTime> gameTimes = StreamChaptersCommand.gameTimes.get(wp.getUuid());
+                    gameTimes.get(gameTimes.size() - 1).setEnd(Instant.now());
+                }
+            });
+        }
     }
 
     @Override
