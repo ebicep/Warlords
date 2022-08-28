@@ -276,6 +276,9 @@ public class CommandManager {
             if (!optionalPoll.isPresent()) {
                 throw new InvalidCommandArgument(ChatColor.RED + "Could not find a poll with that ID");
             }
+            if (!optionalPoll.get().getUUIDsAllowedToVote().contains(command.getPlayer().getUniqueId())) {
+                throw new ConditionFailedException(ChatColor.RED + "You can't vote in this poll!");
+            }
             return optionalPoll.get();
         });
     }
