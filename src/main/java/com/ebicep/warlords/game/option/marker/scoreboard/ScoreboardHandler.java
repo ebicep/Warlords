@@ -48,4 +48,12 @@ public interface ScoreboardHandler extends GameMarker {
      */
     @Nullable
     String getGroup();
+
+    /**
+     * @return Whether the lines should have empty line separating this from other groups above and blow this
+     */
+    default boolean emptyLinesBetween() {
+        return true;
+    }
+
 }
