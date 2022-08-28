@@ -73,7 +73,7 @@ public class ImposterCommand implements CommandExecutor {
                 imposterModeOption.getVoters().computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>()).add(warlordsPlayer);
 
                 int votesNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == warlordsPlayer.getTeam()).count() * .75 + 1);
-                if (votesNeeded >= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
+                if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                     Team team = warlordsPlayer.getTeam();
                     imposterModeOption.sendPoll(team);
                     warlordsPlayer.getGame().addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
