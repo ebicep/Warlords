@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -77,11 +76,19 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
     public abstract int getNumberOfPlayersThatCanVote();
 
-    public abstract List<Player> getPlayersAllowedToVote();
+    public abstract List<UUID> getUUIDsAllowedToVote();
 
     public abstract boolean sendNonVoterMessage(Player player);
 
     public abstract void onPollEnd();
+
+    public List<Player> getPlayersAllowedToVote() {
+        List<UUID> uuids = getUUIDsAllowedToVote();
+        return Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> uuids.contains(player.getUniqueId()))
+                .collect(Collectors.toList());
+    }
 
     private void sendPollAnnouncement(boolean first) {
         getPlayersAllowedToVote().forEach(player -> {
@@ -111,6 +118,13 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     }
 
     private void sendPollResults() {
+        sendPollResultsToPlayers(getPlayersAllowedToVote());
+        if (onPollEnd != null) {
+            onPollEnd.accept((T) this);
+        }
+    }
+
+    public void sendPollResultsToPlayers(List<Player> players) {
         int[] numberOfVote = new int[options.size()];
         String[] squareRatio = new String[options.size()];
         for (int i = 0; i < options.size(); i++) {
@@ -127,7 +141,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                 squareRatio[i] += "■";
             }
         }
-        getPlayersAllowedToVote().forEach(player -> {
+        players.forEach(player -> {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
@@ -137,7 +151,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                         ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
                 );
             }
-            Set<UUID> nonVoters = getPlayersAllowedToVote().stream().map(Entity::getUniqueId).collect(Collectors.toSet());
+            Set<UUID> nonVoters = new HashSet<>(getUUIDsAllowedToVote());
             nonVoters.removeAll(playerAnsweredWithOption.keySet());
             StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
             for (UUID nonVoter : nonVoters) {
@@ -150,9 +164,6 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
-        if (onPollEnd != null) {
-            onPollEnd.accept((T) this);
-        }
     }
 
     public HashMap<String, Integer> getOptionsWithVotes() {

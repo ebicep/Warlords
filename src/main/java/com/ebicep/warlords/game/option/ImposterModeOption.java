@@ -42,20 +42,25 @@ public class ImposterModeOption implements Option {
             imposters.put(team, new ArrayList<>());
         }
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(30, "imposter") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(Integer.MAX_VALUE - 15, "imposter") {
                     @Override
                     public List<String> computeLines(@Nullable WarlordsEntity warlordsPlayer) {
                         if (warlordsPlayer == null) {
-                            return Collections.emptyList();
+                            return Collections.singletonList("");
                         }
                         if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
-                            return Collections.emptyList();
+                            return Collections.singletonList("");
                         }
                         if (imposters.entrySet().stream().anyMatch(teamListEntry -> teamListEntry.getValue().contains(warlordsPlayer))) {
                             return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
                         }
 
                         return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
+                    }
+
+                    @Override
+                    public boolean emptyLinesBetween() {
+                        return false;
                     }
                 }
         );

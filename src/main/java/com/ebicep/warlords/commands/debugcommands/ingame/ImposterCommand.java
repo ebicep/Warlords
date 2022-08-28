@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 
 
@@ -49,6 +50,12 @@ public class ImposterCommand extends BaseCommand {
                     warlordsPlayer.sendMessage(ChatColor.GREEN + "There is an ongoing poll!");
                     return;
                 }
+
+                if (imposterModeOption.getImposters().values().stream().flatMap(Collection::stream).anyMatch(wp -> wp.equals(warlordsPlayer))) {
+                    warlordsPlayer.sendMessage(ChatColor.RED + "You cannot request to vote when you are an imposter!");
+                    return;
+                }
+
                 if (imposterModeOption.getVoters().values().stream().anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer))) {
                     warlordsPlayer.sendMessage(ChatColor.RED + "You already voted to vote!");
                     return;

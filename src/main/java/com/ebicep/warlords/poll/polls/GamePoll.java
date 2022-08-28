@@ -2,10 +2,12 @@ package com.ebicep.warlords.poll.polls;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.poll.AbstractPoll;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GamePoll extends AbstractPoll<GamePoll> {
@@ -18,10 +20,12 @@ public class GamePoll extends AbstractPoll<GamePoll> {
     }
 
     @Override
-    public List<Player> getPlayersAllowedToVote() {
+    public List<UUID> getUUIDsAllowedToVote() {
         return game.onlinePlayers()
+                .filter(playerTeamEntry -> playerTeamEntry.getValue() != null)
                 .filter(playerTeamEntry -> !excludedPlayers.contains(playerTeamEntry.getKey().getUniqueId()))
                 .map(Map.Entry::getKey)
+                .map(Player::getUniqueId)
                 .collect(Collectors.toList());
     }
 
@@ -32,7 +36,18 @@ public class GamePoll extends AbstractPoll<GamePoll> {
 
     @Override
     public void onPollEnd() {
+        //send poll results to other team/spectators
+        List<UUID> allowedToVote = getUUIDsAllowedToVote();
+        List<UUID> otherUUIDs = game.onlinePlayers()
+                .map(Map.Entry::getKey)
+                .map(Entity::getUniqueId)
+                .filter(uuid -> !allowedToVote.contains(uuid))
+                .collect(Collectors.toList());
 
+        sendPollResultsToPlayers(game.onlinePlayers()
+                .filter(playerTeamEntry -> otherUUIDs.contains(playerTeamEntry.getKey().getUniqueId()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList()));
     }
 
     public Game getGame() {

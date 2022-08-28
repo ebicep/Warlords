@@ -45,24 +45,25 @@ public class BasicScoreboardOption implements Option {
             @Override
             public void run() {
                 simpleScoreboardHandler.markChanged();
-            } 
+            }
         }.runTaskTimer(GameRunnable.SECOND, GameRunnable.SECOND);
         return simpleScoreboardHandler;
     }
-    
-    private static SimpleScoreboardHandler getVersionScoreboard(Game game) {
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
+
+    private static SimpleScoreboardHandler getSpecScoreboard(Game game) {
+        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 20, "spec") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList(ChatColor.YELLOW + Warlords.VERSION);
+                return player == null ? Collections.singletonList("")
+                        : Collections.singletonList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
             }
         };
     }
-    
+
     private static SimpleScoreboardHandler getStatsScoreboard(Game game) {
         // TODO trigger scoreboard update when the kills/assists changes
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 1, "player-stats") {
+        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 10, "player-stats") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
@@ -73,15 +74,15 @@ public class BasicScoreboardOption implements Option {
             }
         };
     }
-    
-    private static SimpleScoreboardHandler getSpecScoreboard(Game game) {
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 2, "spec") {
+
+    private static SimpleScoreboardHandler getVersionScoreboard(Game game) {
+        return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return player == null ? Collections.singletonList("")
-                        : Collections.singletonList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
+                return Collections.singletonList(ChatColor.YELLOW + Warlords.VERSION);
             }
         };
     }
+
 }
