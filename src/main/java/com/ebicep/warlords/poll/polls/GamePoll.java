@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GamePoll extends AbstractPoll<GamePoll> {
@@ -18,11 +19,12 @@ public class GamePoll extends AbstractPoll<GamePoll> {
     }
 
     @Override
-    public List<Player> getPlayersAllowedToVote() {
+    public List<UUID> getUUIDsAllowedToVote() {
         return game.onlinePlayers()
                 .filter(playerTeamEntry -> playerTeamEntry.getValue() != null)
                 .filter(playerTeamEntry -> !excludedPlayers.contains(playerTeamEntry.getKey().getUniqueId()))
                 .map(Map.Entry::getKey)
+                .map(Player::getUniqueId)
                 .collect(Collectors.toList());
     }
 

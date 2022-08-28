@@ -41,6 +41,10 @@ public class PollCommand implements CommandExecutor {
         }
 
         AbstractPoll<?> poll = optionalPoll.get();
+        if (!poll.getUUIDsAllowedToVote().contains(player.getUniqueId())) {
+            ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You can't vote in this poll!", ChatColor.BLUE, true);
+            return true;
+        }
 
         switch (input) {
             case "answer": {

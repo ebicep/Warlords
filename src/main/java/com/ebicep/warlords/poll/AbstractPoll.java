@@ -7,7 +7,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -76,11 +75,19 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
     public abstract int getNumberOfPlayersThatCanVote();
 
-    public abstract List<Player> getPlayersAllowedToVote();
+    public abstract List<UUID> getUUIDsAllowedToVote();
 
     public abstract boolean sendNonVoterMessage(Player player);
 
     public abstract void onPollEnd();
+
+    public List<Player> getPlayersAllowedToVote() {
+        List<UUID> uuids = getUUIDsAllowedToVote();
+        return Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> uuids.contains(player.getUniqueId()))
+                .collect(Collectors.toList());
+    }
 
     private void sendPollAnnouncement(boolean first) {
         getPlayersAllowedToVote().forEach(player -> {
@@ -131,7 +138,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                         ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
                 );
             }
-            Set<UUID> nonVoters = getPlayersAllowedToVote().stream().map(Entity::getUniqueId).collect(Collectors.toSet());
+            Set<UUID> nonVoters = new HashSet<>(getUUIDsAllowedToVote());
             nonVoters.removeAll(playerAnsweredWithOption.keySet());
             StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
             for (UUID nonVoter : nonVoters) {
