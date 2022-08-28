@@ -20,6 +20,7 @@ public class GamePoll extends AbstractPoll<GamePoll> {
     @Override
     public List<Player> getPlayersAllowedToVote() {
         return game.onlinePlayers()
+                .filter(playerTeamEntry -> playerTeamEntry.getValue() != null)
                 .filter(playerTeamEntry -> !excludedPlayers.contains(playerTeamEntry.getKey().getUniqueId()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
