@@ -137,7 +137,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
-                StreamChaptersCommand.gameTimes.get(wp.getUuid()).add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass()));
+                StreamChaptersCommand.gameTimes.get(wp.getUuid()).add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
             }
         });
 
