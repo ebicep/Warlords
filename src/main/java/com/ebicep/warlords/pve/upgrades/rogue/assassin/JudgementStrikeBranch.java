@@ -9,47 +9,49 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float energyCost = ability.getEnergyCost();
-    int speedOnCrit = ability.getSpeedOnCrit();
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "",
+                "+15% Damage",
                 5000,
                 () -> {
-
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "",
+                "+30% Damage",
                 10000,
                 () -> {
-
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "",
+                "+45% Damage",
                 15000,
                 () -> {
-
+                    ability.setMinDamageHeal(minDamage * 1.45f);
+                    ability.setMaxDamageHeal(maxDamage * 1.45f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "",
+                "+60% Damage",
                 20000,
                 () -> {
-
+                    ability.setMinDamageHeal(minDamage * 1.6f);
+                    ability.setMaxDamageHeal(maxDamage * 1.6f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "",
+                "+75 Healing on strike kill.",
                 5000,
                 () -> {
 
@@ -57,7 +59,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "",
+                "+150 Healing on strike kill.",
                 10000,
                 () -> {
 
@@ -65,7 +67,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "",
+                "+225 Healing on strike kill.",
                 15000,
                 () -> {
 
@@ -73,7 +75,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "",
+                "+300 Healing on strike kill.",
                 20000,
                 () -> {
 
@@ -81,9 +83,9 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         ));
 
         masterUpgrade = new Upgrade(
-                "",
-                "",
-                "",
+                "Death Strike",
+                "Judgement Strike - Master Upgrade",
+                "If the enemy hit by Judgement Strike drop below\n20% max health they get executed. (Excluding boss mobs.)",
                 50000,
                 () -> {
 
