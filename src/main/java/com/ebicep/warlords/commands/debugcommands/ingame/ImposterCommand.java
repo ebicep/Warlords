@@ -12,6 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ImposterCommand implements CommandExecutor {
 
@@ -62,6 +63,11 @@ public class ImposterCommand implements CommandExecutor {
 
                 if (imposterModeOption.getPoll() != null) {
                     sender.sendMessage(ChatColor.GREEN + "There is an ongoing poll!");
+                    return true;
+                }
+
+                if (imposterModeOption.getImposters().values().stream().flatMap(Collection::stream).anyMatch(wp -> wp.equals(warlordsPlayer))) {
+                    sender.sendMessage(ChatColor.RED + "You cannot request to vote when you are an imposter!");
                     return true;
                 }
 
