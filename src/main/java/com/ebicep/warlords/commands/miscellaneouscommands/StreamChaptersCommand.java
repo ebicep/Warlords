@@ -59,7 +59,7 @@ public class StreamChaptersCommand extends BaseCommand {
             Instant gameEndTime = gameTime.getEnd();
             if (gameEndTime != null && ChronoUnit.SECONDS.between(gameStartTime, gameEndTime) > 10) {
                 appendTime(chapters, startTime, gameStartTime);
-                chapters.append(" - ").append(gameTime.getMap().getMapName()).append(" - ").append(gameTime.getSpec().name);
+                chapters.append(" - ").append(gameTime.getMap().getMapName()).append(" - ").append(gameTime.getSpec().name).append(" - ").append(gameTime.getPlayerCount()).append(" players");
                 appendTime(chapters, startTime, gameEndTime);
                 chapters.append(" - Lobby");
             }
@@ -81,11 +81,13 @@ public class StreamChaptersCommand extends BaseCommand {
         private Instant end;
         private GameMap map;
         private Specializations spec;
+        private int playerCount;
 
-        public GameTime(Instant start, GameMap map, Specializations spec) {
+        public GameTime(Instant start, GameMap map, Specializations spec, int playerCount) {
             this.start = start;
             this.map = map;
             this.spec = spec;
+            this.playerCount = playerCount;
         }
 
         public Instant getStart() {
@@ -106,6 +108,10 @@ public class StreamChaptersCommand extends BaseCommand {
 
         public Specializations getSpec() {
             return spec;
+        }
+
+        public int getPlayerCount() {
+            return playerCount;
         }
     }
 
