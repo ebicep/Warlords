@@ -112,6 +112,13 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     }
 
     private void sendPollResults() {
+        sendPollResultsToPlayers(getPlayersAllowedToVote());
+        if (onPollEnd != null) {
+            onPollEnd.accept((T) this);
+        }
+    }
+
+    public void sendPollResultsToPlayers(List<Player> players) {
         int[] numberOfVote = new int[options.size()];
         String[] squareRatio = new String[options.size()];
         for (int i = 0; i < options.size(); i++) {
@@ -128,7 +135,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                 squareRatio[i] += "■";
             }
         }
-        getPlayersAllowedToVote().forEach(player -> {
+        players.forEach(player -> {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
@@ -151,9 +158,6 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
-        if (onPollEnd != null) {
-            onPollEnd.accept((T) this);
-        }
     }
 
     public HashMap<String, Integer> getOptionsWithVotes() {

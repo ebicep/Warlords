@@ -30,7 +30,8 @@ public class PartyPoll extends AbstractPoll<PartyPoll> {
 
     @Override
     public boolean sendNonVoterMessage(Player player) {
-        return (getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()))));
+        return getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() &&
+                (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())));
     }
 
     @Override
