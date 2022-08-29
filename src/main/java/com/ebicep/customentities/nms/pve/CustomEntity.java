@@ -91,7 +91,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetHitBy() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false));
+            entity.targetSelector.a(1, new PathfinderGoalHurtByTarget((EntityCreature) entity, false, EntityHuman.class));
         }
     }
 
