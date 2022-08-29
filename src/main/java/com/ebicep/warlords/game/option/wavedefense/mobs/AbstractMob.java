@@ -18,6 +18,7 @@ import net.minecraft.server.v1_8_R3.EntityInsentient;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -132,7 +133,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void dropWeapon(WarlordsEntity killer) {
-        if (ThreadLocalRandom.current().nextInt(0, 100) < dropRate() && DatabaseManager.playerService != null) {
+        if (DatabaseManager.playerService != null && ThreadLocalRandom.current().nextInt(0, 100) < dropRate()) {
             UUID uuid = killer.getUuid();
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
             AbstractWeapon weapon = generateWeapon(uuid);
@@ -149,6 +150,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 );
             });
         }
+    }
+
+    public void setTarget(WarlordsEntity target) {
+        this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
     }
 
     public WarlordsNPC getWarlordsNPC() {

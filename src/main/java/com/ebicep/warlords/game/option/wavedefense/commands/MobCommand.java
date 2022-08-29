@@ -51,6 +51,14 @@ public class MobCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs", true);
     }
 
+    @Subcommand("target")
+    public void target(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, WarlordsPlayer target) {
+        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+            spawnedMob.setTarget(target);
+        }
+        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs", true);
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));

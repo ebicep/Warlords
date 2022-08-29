@@ -8,8 +8,19 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityTargetEvent;
 
 public interface CustomEntity<T extends EntityInsentient> {
+
+    default void setTarget(Player player) {
+        get().setGoalTarget((EntityLiving) ((CraftEntity) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
+    }
+
+    default void setTarget(EntityLiving entityLiving) {
+        get().setGoalTarget(entityLiving, EntityTargetEvent.TargetReason.CUSTOM, true);
+    }
 
     default void resetAI(World world) {
         resetGoalAI(world);
