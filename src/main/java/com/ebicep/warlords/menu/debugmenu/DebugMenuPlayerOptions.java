@@ -205,7 +205,7 @@ public class DebugMenuPlayerOptions {
             if (player.getUniqueId() == target.getUuid()) {
                 DebugMenu.openDebugMenu(player);
             } else {
-                DebugMenuTeamOptions.openTeamMenu(player, target.getGame());
+                DebugMenuTeamOptions.openTeamSelectorMenu(player, target.getGame());
             }
         });
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);

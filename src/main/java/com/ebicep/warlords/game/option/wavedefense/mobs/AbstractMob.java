@@ -167,4 +167,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public MobTier getMobTier() {
         return mobTier;
     }
+
+    public EntityEquipment getEe() {
+        return ee;
+    }
 }

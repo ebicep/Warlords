@@ -253,12 +253,12 @@ public class DebugMenuGameOptions {
                             .name(ChatColor.GREEN + "Team Options")
                             .get(),
                     (m, e) -> {
-                        DebugMenuTeamOptions.openTeamMenu(player, game);
+                        DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                         new BukkitRunnable() {
                             @Override
                             public void run() {
                                 if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
-                                    DebugMenuTeamOptions.openTeamMenu(player, game);
+                                    DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
                                 } else {
                                     this.cancel();
                                 }
