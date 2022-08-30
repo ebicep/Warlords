@@ -22,12 +22,12 @@ public class StatsLeaderboard {
     public static final int PLAYERS_PER_PAGE = 10;
     private final String title;
     private final Location location;
-    private final TreeSet<DatabasePlayer> sortedAllTime;
-    private final TreeSet<DatabasePlayer> sortedSeason6;
-    private final TreeSet<DatabasePlayer> sortedSeason5;
-    private final TreeSet<DatabasePlayer> sortedSeason4;
-    private final TreeSet<DatabasePlayer> sortedWeekly;
-    private final TreeSet<DatabasePlayer> sortedDaily;
+    private final HashMap<PlayersCollections, TreeSet<DatabasePlayer>> sortedTimedPlayers = new HashMap<>();
+    private final HashMap<PlayersCollections, List<List<Hologram>>> sortedTimedHolograms = new HashMap<>() {{
+        for (PlayersCollections value : PlayersCollections.values()) {
+            put(value, new ArrayList<>());
+        }
+    }};
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
 
@@ -42,12 +42,9 @@ public class StatsLeaderboard {
             BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
             return value2.compareTo(value1);
         };
-        this.sortedAllTime = new TreeSet<>(comparator);
-        this.sortedSeason6 = new TreeSet<>(comparator);
-        this.sortedSeason5 = new TreeSet<>(comparator);
-        this.sortedSeason4 = new TreeSet<>(comparator);
-        this.sortedWeekly = new TreeSet<>(comparator);
-        this.sortedDaily = new TreeSet<>(comparator);
+        for (PlayersCollections value : PlayersCollections.values()) {
+            sortedTimedPlayers.put(value, new TreeSet<>(comparator));
+        }
     }
 
     public static int compare(Number a, Number b) {
@@ -67,6 +64,18 @@ public class StatsLeaderboard {
         return Objects.hash(title, location);
     }
 
+    public void resetHolograms(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String categoryName, String subTitle) {
+        //resetting sort then adding new sorted values
+        resetSortedPlayers(databasePlayers, collection);
+        //creating leaderboard
+        List<Hologram> holograms = new ArrayList<>();
+        for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
+            holograms.add(createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
+        }
+        getSortedHolograms(collection).clear();
+        getSortedHolograms(collection).add(holograms);
+    }
+
     public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
         List<DatabasePlayer> databasePlayers = new ArrayList<>(getSortedPlayers(collection));
 
@@ -84,21 +93,11 @@ public class StatsLeaderboard {
     }
 
     public TreeSet<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
-        switch (collections) {
-            case LIFETIME:
-                return sortedAllTime;
-            case SEASON_6:
-                return sortedSeason6;
-            case SEASON_5:
-                return sortedSeason5;
-            case SEASON_4:
-                return sortedSeason4;
-            case WEEKLY:
-                return sortedWeekly;
-            case DAILY:
-                return sortedDaily;
-        }
-        return null;
+        return sortedTimedPlayers.get(collections);
+    }
+
+    public List<List<Hologram>> getSortedHolograms(PlayersCollections collections) {
+        return sortedTimedHolograms.get(collections);
     }
 
     public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
@@ -109,6 +108,7 @@ public class StatsLeaderboard {
 
     public <T extends Number> T[] getTopThreeValues() {
         //current top value to compare to
+        TreeSet<DatabasePlayer> sortedWeekly = sortedTimedPlayers.get(PlayersCollections.WEEKLY);
         Number topValue = valueFunction.apply(sortedWeekly.first());
 
         Class<T> clazz = (Class<T>) topValue.getClass();
@@ -124,9 +124,7 @@ public class StatsLeaderboard {
         boolean filter = sortedWeekly.first().getPlays() >= 10;
         List<DatabasePlayer> databasePlayers;
         if (filter) {
-            databasePlayers = sortedWeekly.stream()
-                    .filter(databasePlayer -> databasePlayer.getPlays() > 3)
-                    .collect(Collectors.toList());
+            databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).collect(Collectors.toList());
         } else {
             databasePlayers = new ArrayList<>(sortedWeekly);
         }
@@ -162,7 +160,7 @@ public class StatsLeaderboard {
         //matching top value with players
         for (int i = 0; i < numbers.length; i++) {
             Number topValue = numbers[i];
-            for (DatabasePlayer databasePlayer : sortedWeekly) {
+            for (DatabasePlayer databasePlayer : sortedTimedPlayers.get(PlayersCollections.WEEKLY)) {
                 if (Objects.equals(valueFunction.apply(databasePlayer), topValue)) {
                     topThreePlayers[i] = topThreePlayers[i] + function.apply(databasePlayer) + ",";
                 }
@@ -189,8 +187,8 @@ public class StatsLeaderboard {
         return location;
     }
 
-    public TreeSet<DatabasePlayer> getSortedWeekly() {
-        return sortedWeekly;
+    public HashMap<PlayersCollections, List<List<Hologram>>> getSortedTimedHolograms() {
+        return sortedTimedHolograms;
     }
 
     public Function<DatabasePlayer, String> getStringFunction() {

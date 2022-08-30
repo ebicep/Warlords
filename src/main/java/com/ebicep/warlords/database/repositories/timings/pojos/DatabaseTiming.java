@@ -169,7 +169,7 @@ public class DatabaseTiming {
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
         List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.CTF).getComps().getLeaderboards();
-        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", statsLeaderboards.get(0).getSortedWeekly().size());
+        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", statsLeaderboards.get(0).getSortedPlayers(PlayersCollections.WEEKLY).size());
         for (String title : WEEKLY_EXPERIENCE_LEADERBOARDS) {
             statsLeaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();

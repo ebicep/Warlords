@@ -115,7 +115,6 @@ public class StatsLeaderboardManager {
         if (!DatabaseManager.enabled) return;
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) return;
 
-        getAllLeaderboardCategories().forEach(leaderboardCategory -> leaderboardCategory.deleteHolograms(playersCollections));
         Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections, databasePlayers));

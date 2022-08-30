@@ -25,6 +25,9 @@ public enum PlayersCollections {
         this.cacheName = cacheName;
     }
 
+    //publiPlayersCollections[] values = PlayersCollections.values();
+
+
     public static List<PlayersCollections> getActiveCollections() {
         return Arrays.asList(LIFETIME, SEASON_6, WEEKLY, DAILY);
     }
