@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogJoin;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogLeave;
@@ -20,10 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -56,12 +54,16 @@ public class Guild {
     private List<GuildPlayer> players = new ArrayList<>();
     @Field("player_limit")
     private int playerLimit = 10;
-    private long coins = 0;
-    private long experience = 0;
-    @Field("daily_coins")
-    private long dailyCoins = 0;
-    @Field("daily_experience")
-    private long dailyExperience = 0;
+    private Map<Timing, Long> coins = new HashMap<Timing, Long>() {{
+        for (Timing value : Timing.values()) {
+            put(value, 0L);
+        }
+    }};
+    private Map<Timing, Long> experience = new HashMap<Timing, Long>() {{
+        for (Timing value : Timing.values()) {
+            put(value, 0L);
+        }
+    }};
     @Field("temporary_upgrades")
     private List<TempGuildUpgrade> temporaryUpgrades = new ArrayList<>();
     @Field("audit_log")
@@ -157,7 +159,7 @@ public class Guild {
 
     public void disband() {
         this.disbandDate = Instant.now();
-        GuildManager.GUILDS.remove(this);
+        GuildManager.removeGuild(this);
         sendGuildMessageToOnlinePlayers(ChatColor.RED + "The guild has been disbanded!", true);
         queueUpdate();
     }
@@ -310,41 +312,28 @@ public class Guild {
         return playerLimit;
     }
 
-    public long getCoins() {
-        return coins;
+    public long getCoins(Timing timing) {
+        return coins.getOrDefault(timing, 0L);
     }
 
-    public void setCoins(long coins) {
-        this.coins = coins;
+    public void setCoins(Timing timing, long coins) {
+        this.coins.put(timing, coins);
     }
 
-    public long getDailyCoins() {
-        return dailyCoins;
+    public void addCoins(long coins) {
+        this.coins.forEach((timing, amount) -> this.coins.put(timing, amount + coins));
     }
 
-    public void setDailyCoins(long dailyCoins) {
-        this.dailyCoins = dailyCoins;
+    public long getExperience(Timing timing) {
+        return experience.getOrDefault(timing, 0L);
     }
 
-    public long getExperience() {
-        return experience;
-    }
-
-    public void setExperience(long experience) {
-        this.experience = experience;
+    public void setExperience(Timing timing, long experience) {
+        this.experience.put(timing, experience);
     }
 
     public void addExperience(long experience) {
-        this.experience += experience;
-        this.dailyExperience += experience;
-    }
-
-    public long getDailyExperience() {
-        return dailyExperience;
-    }
-
-    public void setDailyExperience(long dailyExperience) {
-        this.dailyExperience = dailyExperience;
+        this.experience.forEach((timing, aLong) -> this.experience.put(timing, aLong + experience));
     }
 
     public List<TempGuildUpgrade> getTemporaryUpgrades() {

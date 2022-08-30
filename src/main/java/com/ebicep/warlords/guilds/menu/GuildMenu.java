@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.menu;
 
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.menu.Menu;
@@ -22,7 +23,7 @@ public class GuildMenu {
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLD_BLOCK)
                         .name(ChatColor.GREEN + "Guild Bank")
-                        .lore(ChatColor.GRAY + "Coins: " + ChatColor.GREEN + guild.getCoins())
+                        .lore(ChatColor.GRAY + "Coins: " + ChatColor.GREEN + guild.getCoins(Timing.LIFETIME))
                         .get(),
                 (m, e) -> GuildBankMenu.openGuildBankMenu(player, guild)
         );

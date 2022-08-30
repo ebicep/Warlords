@@ -95,7 +95,7 @@ public class StatsLeaderboardManager {
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
                         if (init) {
-                            DatabaseTiming.checkStatsTimings();
+                            DatabaseTiming.checkLeaderboardResets();
                             NPCManager.createGameJoinNPCs();
                         }
                         this.cancel();

@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,15 +18,15 @@ public class GuildDebugCommand extends BaseCommand {
 
     @Subcommand("experience")
     @Description("Sets the experience of the guild")
-    public void setExperience(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper, Integer amount) {
-        guildPlayerWrapper.getGuild().setExperience(amount);
+    public void setExperience(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper, Timing timing, Integer amount) {
+        guildPlayerWrapper.getGuild().setExperience(timing, amount);
         ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild().getName() + " experience to " + ChatColor.YELLOW + amount, true);
     }
 
     @Subcommand("coins")
     @Description("Sets the coins of the guild")
-    public void setCoins(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper, Integer amount) {
-        guildPlayerWrapper.getGuild().setCoins(amount);
+    public void setCoins(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper, Timing timing, Integer amount) {
+        guildPlayerWrapper.getGuild().setCoins(timing, amount);
         ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Set guild " + guildPlayerWrapper.getGuild().getName() + " coins to " + ChatColor.YELLOW + amount, true);
     }
 

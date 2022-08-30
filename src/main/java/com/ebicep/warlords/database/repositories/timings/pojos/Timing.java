@@ -2,15 +2,18 @@ package com.ebicep.warlords.database.repositories.timings.pojos;
 
 public enum Timing {
 
-    WEEKLY(10080, 604800),
-    DAILY(1440, 86400),
+    LIFETIME("Lifetime", 0, 0),
+    WEEKLY("Weekly", 10080, 604800),
+    DAILY("Daily", 1440, 86400),
 
     ;
 
+    public final String name;
     public final long minuteDuration;
     public final long secondDuration;
 
-    Timing(long minuteDuration, long secondDuration) {
+    Timing(String name, long minuteDuration, long secondDuration) {
+        this.name = name;
         this.minuteDuration = minuteDuration;
         this.secondDuration = secondDuration;
     }

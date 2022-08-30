@@ -101,8 +101,8 @@ public class DatabaseManager {
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> {
                     ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
-                    DatabaseTiming.checkGuildsTimings();
-                    GuildLeaderboardManager.recalculateLeaderboards();
+                    DatabaseTiming.checkStatsTimings();
+                    GuildLeaderboardManager.recalculateAllLeaderboards();
                 })
                 .execute();
 

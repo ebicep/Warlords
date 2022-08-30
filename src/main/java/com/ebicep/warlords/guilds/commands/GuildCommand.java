@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -29,28 +30,6 @@ import java.util.stream.Collectors;
 @CommandAlias("guild|g")
 @Conditions("database:guild|database:player")
 public class GuildCommand extends BaseCommand {
-
-    @Subcommand("leaderboard")
-    public class GuildLeaderboardCommand extends BaseCommand {
-
-        @Subcommand("experience|EXP|exp")
-        public void experience(CommandIssuer issuer) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.DAILY_EXP, "Experience"));
-        }
-
-        @Subcommand("coins")
-        public void coins(CommandIssuer issuer) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.DAILY_COINS, "Coins"));
-        }
-
-        @Subcommand("refresh")
-        @CommandPermission("warlords.leaderboard.interaction")
-        public void refresh(CommandIssuer issuer) {
-            GuildLeaderboardManager.recalculateLeaderboards();
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
-        }
-
-    }
 
     @Subcommand("create")
     @Description("Creates a guild")
@@ -299,6 +278,28 @@ public class GuildCommand extends BaseCommand {
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
+    }
+
+    @Subcommand("leaderboard")
+    public class GuildLeaderboardCommand extends BaseCommand {
+
+        @Subcommand("experience|EXP|exp")
+        public void experience(CommandIssuer issuer, @Default("DAILY") Timing timing) {
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.get(timing), timing.name + " Experience"));
+        }
+
+        @Subcommand("coins")
+        public void coins(CommandIssuer issuer, @Default("DAILY") Timing timing) {
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.COINS_LEADERBOARD.get(timing), timing.name + " Coins"));
+        }
+
+        @Subcommand("refresh")
+        @CommandPermission("warlords.leaderboard.interaction")
+        public void refresh(CommandIssuer issuer) {
+            GuildLeaderboardManager.recalculateAllLeaderboards();
+            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Recalculated Guild Leaderboards", true);
+        }
+
     }
 
 }

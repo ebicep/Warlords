@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Document(collection = "Timings")
 public class DatabaseTiming {
@@ -40,6 +41,8 @@ public class DatabaseTiming {
             "Flags Captured",
             "Flags Returned",
     };
+    public static AtomicBoolean resetWeekly = new AtomicBoolean(false);
+    public static AtomicBoolean resetDaily = new AtomicBoolean(false);
     @Id
     protected String id;
     private String title;
@@ -76,23 +79,10 @@ public class DatabaseTiming {
                         ChatUtils.MessageTypes.TIMINGS.sendMessage("Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
                         //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
-                            try {
-                                //adding new document with top weekly players
-                                org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
-                                MongoCollection<org.bson.Document> weeklyLeaderboards = DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards");
-                                weeklyLeaderboards.insertOne(topPlayers);
-
-                                ExperienceManager.awardWeeklyExperience(topPlayers);
-                                //clearing weekly
-                                DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
-                            } catch (Exception e) {
-                                ChatUtils.MessageTypes.TIMINGS.sendMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
-                            }
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateLatestMonday());
                             DatabaseManager.timingsService.update(timing);
-
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Weekly player information reset");
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Weekly information reset");
                             return true;
                         }
                     }
@@ -100,9 +90,14 @@ public class DatabaseTiming {
                 })
                 .syncLast((reset) -> {
                     if (reset) {
-                        //reloading boards
-                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
-                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+                        resetWeekly.set(true);
+
+                        //guilds
+                        for (Guild guild : GuildManager.GUILDS) {
+                            guild.setExperience(Timing.DAILY, 0);
+                            GuildManager.queueUpdateGuild(guild);
+                        }
+                        GuildLeaderboardManager.recalculateLeaderboard(Timing.WEEKLY);
                     }
                 })
                 .execute();
@@ -118,12 +113,10 @@ public class DatabaseTiming {
                         ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
                         //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
-                            //clearing daily
-                            DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily player information reset");
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily information reset");
                             return true;
                         }
                     }
@@ -131,46 +124,47 @@ public class DatabaseTiming {
                 })
                 .syncLast((reset) -> {
                     if (reset) {
-                        //reloading boards
-                        StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
-                        StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+                        resetDaily.set(true);
+
+                        //guilds
+                        for (Guild guild : GuildManager.GUILDS) {
+                            guild.setExperience(Timing.DAILY, 0);
+                            GuildManager.queueUpdateGuild(guild);
+                        }
+                        GuildLeaderboardManager.recalculateLeaderboard(Timing.DAILY);
                     }
                 })
                 .execute();
     }
 
-    public static void checkGuildsTimings() {
-        Instant now = Instant.now();
-        Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Guilds"))
-                .async(timing -> {
-                    if (timing == null) {
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Could not find Guilds timing in database. Creating new timing.");
-                        DatabaseManager.timingsService.create(new DatabaseTiming("Guilds", DateUtil.getResetDateToday(), Timing.DAILY));
-                    } else {
-                        long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), now);
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
-                        //10 min buffer
-                        if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
-                            //updating date to current
-                            timing.setLastReset(DateUtil.getResetDateToday());
-                            DatabaseManager.timingsService.update(timing);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Guilds daily counters reset");
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .syncLast((reset) -> {
-                    if (reset) {
-                        for (Guild guild : GuildManager.GUILDS) {
-                            guild.setDailyExperience(0);
-                            GuildManager.queueUpdateGuild(guild);
-                        }
-                        GuildLeaderboardManager.recalculateLeaderboards();
-                    }
-                })
-                .execute();
+    public static void checkLeaderboardResets() {
+        if (resetWeekly.get()) {
+            resetWeekly.set(false);
+            try {
+                //adding new document with top weekly players
+                org.bson.Document topPlayers = getTopPlayersOnLeaderboard();
+                MongoCollection<org.bson.Document> weeklyLeaderboards = DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards");
+                weeklyLeaderboards.insertOne(topPlayers);
+
+                ExperienceManager.awardWeeklyExperience(topPlayers);
+                //clearing weekly
+                DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
+            } catch (Exception e) {
+                ChatUtils.MessageTypes.TIMINGS.sendMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+            }
+            //reloading boards
+            StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
+            StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.WEEKLY, false);
+        }
+        if (resetDaily.get()) {
+            resetDaily.set(false);
+
+            //clearing daily
+            DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
+            //reloading boards
+            StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
+            StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
+        }
     }
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {

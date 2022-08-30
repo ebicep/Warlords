@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogInvite;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
@@ -63,6 +64,15 @@ public class GuildManager {
 
     public static void addGuild(Guild guild) {
         GUILDS.add(guild);
+        GuildLeaderboardManager.COINS_LEADERBOARD.forEach((timing, guilds) -> guilds.add(guild));
+        GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.forEach((timing, guilds) -> guilds.add(guild));
+        queueUpdateGuild(guild);
+    }
+
+    public static void removeGuild(Guild guild) {
+        GUILDS.remove(guild);
+        GuildLeaderboardManager.COINS_LEADERBOARD.forEach((timing, guilds) -> guilds.remove(guild));
+        GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.forEach((timing, guilds) -> guilds.remove(guild));
         queueUpdateGuild(guild);
     }
 
