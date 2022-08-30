@@ -4,9 +4,11 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
+import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardCTF;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardGeneral;
+import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.StatsLeaderboardPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -26,16 +28,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StatsLeaderboardManager {
 
     public static final World MAIN_LOBBY = Bukkit.getWorld("MainLobby");
     public static final Location SPAWN_POINT = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
     public static final HashMap<UUID, PlayerLeaderboardInfo> PLAYER_LEADERBOARD_INFOS = new HashMap<>();
-    public static final StatsLeaderboardGeneral LEADERBOARD_GENERAL = new StatsLeaderboardGeneral();
-    public static final StatsLeaderboardCTF LEADERBOARD_CTF = new StatsLeaderboardCTF();
+    public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?>> STATS_LEADERBOARDS = new HashMap<GameType, AbstractStatsLeaderboardGameType<?>>() {{
+        for (GameType value : GameType.values()) {
+            put(value, value.createStatsLeaderboardGameType.get());
+        }
+    }};
     public static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> CACHED_PLAYERS = new ConcurrentHashMap<>();
 
     public static boolean enabled = true;
@@ -47,17 +54,12 @@ public class StatsLeaderboardManager {
         }
     }
 
-    public static void putLeaderboards() {
-        LEADERBOARD_GENERAL.addLeaderboards();
-        LEADERBOARD_CTF.addLeaderboards();
-    }
-
     public static void addHologramLeaderboards(boolean init) {
         if (!Warlords.holographicDisplaysEnabled) return;
         if (!DatabaseManager.enabled) return;
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) return;
 
-        putLeaderboards();
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.addLeaderboards());
 
         if (enabled) {
             loaded = false;
@@ -116,8 +118,7 @@ public class StatsLeaderboardManager {
         getAllLeaderboardCategories().forEach(leaderboardCategory -> leaderboardCategory.deleteHolograms(playersCollections));
         Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
 
-        LEADERBOARD_GENERAL.resetLeaderboards(playersCollections, databasePlayers);
-        LEADERBOARD_CTF.resetLeaderboards(playersCollections, databasePlayers);
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections, databasePlayers));
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
@@ -135,23 +136,7 @@ public class StatsLeaderboardManager {
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
         Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
-        if (selectedGameType == GameType.ALL) {
-            if (selectedCategory == Category.ALL) {
-                return LEADERBOARD_GENERAL.getGeneral();
-            } else if (selectedCategory == Category.COMPS) {
-                return LEADERBOARD_GENERAL.getComps();
-            } else {
-                return LEADERBOARD_GENERAL.getPubs();
-            }
-        } else {
-            if (selectedCategory == Category.ALL) {
-                return LEADERBOARD_CTF.getGeneral();
-            } else if (selectedCategory == Category.COMPS) {
-                return LEADERBOARD_CTF.getComps();
-            } else {
-                return LEADERBOARD_CTF.getPubs();
-            }
-        }
+        return selectedCategory.getCategory.apply(STATS_LEADERBOARDS.get(selectedGameType));
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
@@ -182,91 +167,66 @@ public class StatsLeaderboardManager {
         Bukkit.getOnlinePlayers().forEach(StatsLeaderboardManager::setLeaderboardHologramVisibility);
     }
 
+    private static <T> void createLeaderboardSwitcherHologram(Player player, Location location, T selected, T before, T after, Function<T, String> getName, Consumer<T> set) {
+        Hologram switchHologram = createSwitchHologram(location);
+        if (selected != before) {
+            switchHologram.getLines().appendText(ChatColor.GRAY + getName.apply(before)).setClickListener(p -> {
+                set.accept(before);
+                setLeaderboardHologramVisibility(player);
+            });
+        }
+        switchHologram.getLines().appendText(ChatColor.GREEN + getName.apply(selected));
+        if (selected != after) {
+            switchHologram.getLines().appendText(ChatColor.GRAY + getName.apply(after)).setClickListener(p -> {
+                set.accept(after);
+                setLeaderboardHologramVisibility(player);
+            });
+        }
+
+        switchHologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        switchHologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+    }
+
     private static void createLeaderboardSwitcherHologram(Player player) {
         if (!Warlords.holographicDisplaysEnabled) return;
         removePlayerSpecificHolograms(player);
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
         //GAME TYPE
-        Hologram gameTypeSwitch = createSwitchHologram(StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION);
-        //GameType beforeType = GameType.getBefore(playerLeaderboardGameType.get(uuid));
         GameType selectedType = playerLeaderboardInfo.getStatsGameType();
-//        GameType afterType = GameType.getAfter(playerLeaderboardGameType.get(uuid));
-//        gameTypeSwitch.getLines().appendText((selectedType == beforeType ? ChatColor.GREEN : ChatColor.GRAY) + beforeType.name).setClickListener(p -> {
-//            playerLeaderboardGameType.put(uuid, beforeType);
-//            setLeaderboardHologramVisibility(p.getPlayer());
-//        });
-        if (selectedType == GameType.ALL) {
-            gameTypeSwitch.getLines().appendText(ChatColor.GREEN + GameType.ALL.name);
-            gameTypeSwitch.getLines().appendText(ChatColor.GRAY + GameType.CTF.name).setClickListener(p -> {
-                playerLeaderboardInfo.setStatsGameType(GameType.CTF);
-                setLeaderboardHologramVisibility(p.getPlayer());
-            });
-        } else {
-            gameTypeSwitch.getLines().appendText(ChatColor.GRAY + GameType.ALL.name).setClickListener(p -> {
-                playerLeaderboardInfo.setStatsGameType(GameType.ALL);
-                setLeaderboardHologramVisibility(p.getPlayer());
-            });
-            gameTypeSwitch.getLines().appendText(ChatColor.GREEN + GameType.CTF.name);
-        }
-        gameTypeSwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        gameTypeSwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
-
+        createLeaderboardSwitcherHologram(player,
+                StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION,
+                selectedType,
+                GameType.getBefore(selectedType),
+                GameType.getAfter(selectedType),
+                gameType -> gameType.name,
+                playerLeaderboardInfo::setStatsGameType);
         //CATEGORY
-        Hologram categorySwitch = createSwitchHologram(StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION);
         Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
-        Category beforeCategory = Category.getBefore(selectedCategory);
-        Category afterCategory = Category.getAfter(selectedCategory);
-        if (selectedCategory != beforeCategory) {
-            categorySwitch.getLines().appendText(ChatColor.GRAY + beforeCategory.name).setClickListener(p -> {
-                playerLeaderboardInfo.setStatsCategory(beforeCategory);
-                setLeaderboardHologramVisibility(p.getPlayer());
-            });
-        }
-        categorySwitch.getLines().appendText(ChatColor.GREEN + selectedCategory.name);
-        if (selectedCategory != afterCategory) {
-            categorySwitch.getLines().appendText(ChatColor.GRAY + afterCategory.name).setClickListener(p -> {
-                playerLeaderboardInfo.setStatsCategory(afterCategory);
-                setLeaderboardHologramVisibility(p.getPlayer());
-            });
-        }
-        categorySwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        categorySwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
-
+        createLeaderboardSwitcherHologram(player,
+                StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
+                selectedCategory,
+                selectedType == GameType.PVE ? selectedCategory : Category.getBefore(selectedCategory),
+                selectedType == GameType.PVE ? selectedCategory : Category.getAfter(selectedCategory),
+                category -> category.name,
+                playerLeaderboardInfo::setStatsCategory);
         //TIME
-        Hologram timeSwitch = createSwitchHologram(StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION);
-        PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
-        PlayersCollections beforeCollection = PlayersCollections.getBeforeCollection(selectedCollection);
-        PlayersCollections afterCollection = PlayersCollections.getAfterCollection(selectedCollection);
-        timeSwitch.getLines().appendText(ChatColor.GRAY + beforeCollection.name).setClickListener(p -> {
-            playerLeaderboardInfo.setStatsTime(beforeCollection);
-            setLeaderboardHologramVisibility(p.getPlayer());
-        });
-
-        timeSwitch.getLines().appendText(ChatColor.GREEN + selectedCollection.name);
-        timeSwitch.getLines().appendText(ChatColor.GRAY + afterCollection.name).setClickListener(p -> {
-            playerLeaderboardInfo.setStatsTime(afterCollection);
-            setLeaderboardHologramVisibility(p.getPlayer());
-        });
-        timeSwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        timeSwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
-
+        PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
+        createLeaderboardSwitcherHologram(player,
+                StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION,
+                selectedTime,
+                PlayersCollections.getBeforeCollection(selectedTime),
+                PlayersCollections.getAfterCollection(selectedTime),
+                playersCollections -> playersCollections.name,
+                playerLeaderboardInfo::setStatsTime);
         //PAGE
-        Hologram pageSelector = createSwitchHologram(StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION);
-        int selectedPage = playerLeaderboardInfo.getPage();
-        int beforePage = playerLeaderboardInfo.getPageBefore();
-        int afterPage = playerLeaderboardInfo.getPageAfter();
-        pageSelector.getLines().appendText(ChatColor.GRAY + playerLeaderboardInfo.getPageRange(beforePage)).setClickListener(p -> {
-            playerLeaderboardInfo.setPage(beforePage);
-            setLeaderboardHologramVisibility(p.getPlayer());
-        });
-        pageSelector.getLines().appendText(ChatColor.GREEN + playerLeaderboardInfo.getPageRange(selectedPage));
-        pageSelector.getLines().appendText(ChatColor.GRAY + playerLeaderboardInfo.getPageRange(afterPage)).setClickListener(p -> {
-            playerLeaderboardInfo.setPage(afterPage);
-            setLeaderboardHologramVisibility(p.getPlayer());
-        });
-        pageSelector.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        pageSelector.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+        createLeaderboardSwitcherHologram(player,
+                StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
+                playerLeaderboardInfo.getPage(),
+                playerLeaderboardInfo.getPageBefore(),
+                playerLeaderboardInfo.getPageAfter(),
+                playerLeaderboardInfo::getPageRange,
+                playerLeaderboardInfo::setPage);
     }
 
     private static Hologram createSwitchHologram(Location location) {
@@ -331,26 +291,24 @@ public class StatsLeaderboardManager {
     }
 
     public static List<StatsLeaderboardCategory<?>> getAllLeaderboardCategories() {
-        return Stream.of(
-                LEADERBOARD_GENERAL.getGeneral(),
-                LEADERBOARD_GENERAL.getComps(),
-                LEADERBOARD_GENERAL.getPubs(),
-                LEADERBOARD_CTF.getGeneral(),
-                LEADERBOARD_CTF.getComps(),
-                LEADERBOARD_CTF.getPubs()
-        ).collect(Collectors.toList());
+        return STATS_LEADERBOARDS.values().stream()
+                .flatMap(statsLeaderboardCategory -> statsLeaderboardCategory.getCategories().stream())
+                .collect(Collectors.toList());
     }
 
     public enum GameType {
-        ALL("All Modes", ""),
-        CTF("Capture The Flag", "CTF");
+        ALL("All Modes", "", StatsLeaderboardGeneral::new),
+        CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
+        PVE("Player vs Environment", "PvE", StatsLeaderboardPvE::new);
 
         public final String name;
         public final String shortName;
+        public final Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType;
 
-        GameType(String name, String shortName) {
+        GameType(String name, String shortName, Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType) {
             this.name = name;
             this.shortName = shortName;
+            this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;
         }
 
         public static GameType getAfter(GameType gameType) {
@@ -358,6 +316,8 @@ public class StatsLeaderboardManager {
                 case ALL:
                     return CTF;
                 case CTF:
+                    return PVE;
+                case PVE:
                     return ALL;
             }
             return ALL;
@@ -366,31 +326,35 @@ public class StatsLeaderboardManager {
         public static GameType getBefore(GameType gameType) {
             switch (gameType) {
                 case ALL:
-                    return CTF;
+                    return PVE;
                 case CTF:
                     return ALL;
+                case PVE:
+                    return CTF;
             }
             return ALL;
         }
     }
 
     public enum Category {
-        ALL("All Queues", "") {
+        ALL("All Queues", "", AbstractStatsLeaderboardGameType::getGeneral) {
 
         },
-        COMPS("Competitive Queue", "Comps") {
+        COMPS("Competitive Queue", "Comps", AbstractStatsLeaderboardGameType::getComps) {
 
         },
-        PUBS("Public Queue", "Pubs") {
+        PUBS("Public Queue", "Pubs", AbstractStatsLeaderboardGameType::getPubs) {
 
         };
 
         public final String name;
         public final String shortName;
+        public final Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory;
 
-        Category(String name, String shortName) {
+        Category(String name, String shortName, Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory) {
             this.name = name;
             this.shortName = shortName;
+            this.getCategory = getCategory;
         }
 
         public static Category getAfter(Category category) {

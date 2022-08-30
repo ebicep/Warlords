@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
+import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
@@ -17,12 +17,6 @@ public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<Ab
 
     public StatsLeaderboardGeneral() {
         super(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer, ""), new StatsLeaderboardCategory<>(DatabasePlayer::getCompStats, "Comps"), new StatsLeaderboardCategory<>(DatabasePlayer::getPubStats, "Pubs"));
-    }
-
-    public void addLeaderboards() {
-        addBaseLeaderboards(general);
-        addBaseLeaderboards(comps);
-        addBaseLeaderboards(pubs);
     }
 
     @Override

@@ -3,34 +3,34 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 
 import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
-public class StatsLeaderboardCTF extends AbstractStatsLeaderboardGameType<DatabasePlayerCTF> {
+public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvE> {
 
-    public StatsLeaderboardCTF() {
+    public StatsLeaderboardPvE() {
         super(
-                new StatsLeaderboardCategory<>(DatabasePlayer::getCtfStats, "All Queues"),
-                new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getCompStats().getCtfStats(), "Comps"),
-                new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPubStats().getCtfStats(), "Pubs")
+                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues"),
+                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues"),
+                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues")
         );
     }
 
     @Override
     public String getSubTitle() {
-        return "CTF";
+        return "PvE";
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerCTF> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvE> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
-        statsLeaderboards.add(new StatsLeaderboard("Flags Captured", LEAD_5, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getFlagsCaptured(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getFlagsCaptured())));
-        statsLeaderboards.add(new StatsLeaderboard("Flags Returned", CIRCULAR_1_OUTER_2, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getFlagsReturned())));
+        statsLeaderboards.add(new StatsLeaderboard("Clear Rate", LEAD_5, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getWinRate(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getWinRate() * 100) + "%"));
+        statsLeaderboards.add(new StatsLeaderboard("Waves Cleared", CIRCULAR_1_OUTER_2, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getTotalWavesCleared(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getTotalWavesCleared())));
 
         statsLeaderboards.add(new StatsLeaderboard("Mage Experience", CENTER_BOARD_1, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience())));
         statsLeaderboards.add(new StatsLeaderboard("Warrior Experience", CENTER_BOARD_2, databasePlayer -> statsLeaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience())));

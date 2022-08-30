@@ -30,6 +30,12 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
         this.pubs = pubs;
     }
 
+    public void addLeaderboards() {
+        addBaseLeaderboards(general);
+        addBaseLeaderboards(comps);
+        addBaseLeaderboards(pubs);
+    }
+
     public abstract String getSubTitle();
 
     public abstract void addExtraLeaderboards(StatsLeaderboardCategory<T> statsLeaderboardCategory);

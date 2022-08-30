@@ -120,6 +120,13 @@ public abstract class AbstractDatabaseStatInformation {
         this.wins = wins;
     }
 
+    public double getWinRate() {
+        if (plays == 0) {
+            return 0;
+        }
+        return (double) wins / plays;
+    }
+
     public int getLosses() {
         return losses;
     }
