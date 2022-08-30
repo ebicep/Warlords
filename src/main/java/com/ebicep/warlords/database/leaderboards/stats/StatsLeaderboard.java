@@ -22,7 +22,7 @@ public class StatsLeaderboard {
     public static final int PLAYERS_PER_PAGE = 10;
     private final String title;
     private final Location location;
-    private final HashMap<PlayersCollections, TreeSet<DatabasePlayer>> sortedTimedPlayers = new HashMap<>();
+    private final HashMap<PlayersCollections, List<DatabasePlayer>> sortedTimedPlayers = new HashMap<>();
     private final HashMap<PlayersCollections, List<List<Hologram>>> sortedTimedHolograms = new HashMap<>() {{
         for (PlayersCollections value : PlayersCollections.values()) {
             put(value, new ArrayList<>());
@@ -30,20 +30,21 @@ public class StatsLeaderboard {
     }};
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
+    private final Comparator<DatabasePlayer> comparator;
 
     public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
         this.location = location;
         this.valueFunction = valueFunction;
         this.stringFunction = stringFunction;
-        Comparator<DatabasePlayer> comparator = (o1, o2) -> {
-            if (o1.getUuid().equals(o2.getUuid())) return 0;
+        this.comparator = (o1, o2) -> {
+            //if (o1.getUuid().equals(o2.getUuid())) return 0;
             BigDecimal value1 = new BigDecimal(valueFunction.apply(o1).toString());
             BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
             return value2.compareTo(value1);
         };
         for (PlayersCollections value : PlayersCollections.values()) {
-            sortedTimedPlayers.put(value, new TreeSet<>(comparator));
+            sortedTimedPlayers.put(value, new ArrayList<>());
         }
     }
 
@@ -77,7 +78,7 @@ public class StatsLeaderboard {
     }
 
     public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
-        List<DatabasePlayer> databasePlayers = new ArrayList<>(getSortedPlayers(collection));
+        List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
 
         Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
         HologramLines hologramLines = hologram.getLines();
@@ -92,7 +93,7 @@ public class StatsLeaderboard {
         return hologram;
     }
 
-    public TreeSet<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
+    public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
         return sortedTimedPlayers.get(collections);
     }
 
@@ -101,15 +102,15 @@ public class StatsLeaderboard {
     }
 
     public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
-        TreeSet<DatabasePlayer> sortedPlayers = getSortedPlayers(collections);
-        sortedPlayers.removeAll(newSortedPlayers);
-        sortedPlayers.addAll(newSortedPlayers);
+        List<DatabasePlayer> databasePlayers = new ArrayList<>(newSortedPlayers);
+        databasePlayers.sort(comparator);
+        sortedTimedPlayers.put(collections, databasePlayers);
     }
 
     public <T extends Number> T[] getTopThreeValues() {
         //current top value to compare to
-        TreeSet<DatabasePlayer> sortedWeekly = sortedTimedPlayers.get(PlayersCollections.WEEKLY);
-        Number topValue = valueFunction.apply(sortedWeekly.first());
+        List<DatabasePlayer> sortedWeekly = sortedTimedPlayers.get(PlayersCollections.WEEKLY);
+        Number topValue = valueFunction.apply(sortedWeekly.get(0));
 
         Class<T> clazz = (Class<T>) topValue.getClass();
         //ouput array of type clazz
@@ -121,7 +122,7 @@ public class StatsLeaderboard {
         int counter = 0;
         //looping to get the next top two numbers
         //filtering out all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
-        boolean filter = sortedWeekly.first().getPlays() >= 10;
+        boolean filter = sortedWeekly.get(0).getPlays() >= 10;
         List<DatabasePlayer> databasePlayers;
         if (filter) {
             databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).collect(Collectors.toList());

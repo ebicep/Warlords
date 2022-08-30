@@ -252,7 +252,7 @@ public class StatsLeaderboardManager {
 
                 Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
 
-                List<DatabasePlayer> databasePlayers = new ArrayList<>(statsLeaderboard.getSortedPlayers(selectedTime));
+                List<DatabasePlayer> databasePlayers = statsLeaderboard.getSortedPlayers(selectedTime);
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {

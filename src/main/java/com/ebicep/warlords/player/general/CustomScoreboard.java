@@ -16,7 +16,6 @@ import org.bukkit.scoreboard.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.*;
 
@@ -145,7 +144,7 @@ public class CustomScoreboard {
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
 
             StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.statsLeaderboards.get(0);
-            TreeSet<DatabasePlayer> databasePlayerList = statsLeaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
+            List<DatabasePlayer> databasePlayerList = statsLeaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
 
             if (selectedGameType == null) selectedGameType = GameType.ALL;
             if (selectedCollection == null) selectedCategory = Category.ALL;
