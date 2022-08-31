@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
  */
 public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation> {
 
-    public final Function<DatabasePlayer, T> statFunction;
-    public final String categoryName;
-    public final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
+    private final Function<DatabasePlayer, T> statFunction;
+    private final String categoryName;
+    private final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
 
     public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName) {
         this.statFunction = statFunction;
@@ -30,26 +30,26 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
     }
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
-        for (StatsLeaderboard statsLeaderboard : statsLeaderboards) {
-            statsLeaderboard.resetHolograms(collection, databasePlayers, categoryName, subTitle);
+        for (StatsLeaderboard statsLeaderboard : getStatsLeaderboards()) {
+            statsLeaderboard.resetHolograms(collection, databasePlayers, getCategoryName(), subTitle);
         }
     }
 
     public List<List<Hologram>> getCollectionHologramPaged(PlayersCollections collections) {
-        return statsLeaderboards.stream()
+        return getStatsLeaderboards().stream()
                 .flatMap(statsLeaderboard -> statsLeaderboard.getSortedHolograms(collections).stream())
                 .collect(Collectors.toList());
     }
 
     public List<List<Hologram>> getAllHologramsPaged() {
-        return statsLeaderboards.stream()
+        return getStatsLeaderboards().stream()
                 .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
     public List<Hologram> getAllHolograms() {
-        return statsLeaderboards.stream()
+        return getStatsLeaderboards().stream()
                 .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
                 .flatMap(Collection::stream)
                 .flatMap(Collection::stream)
@@ -57,7 +57,18 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
     }
 
     public List<StatsLeaderboard> getLeaderboards() {
-        return statsLeaderboards;
+        return getStatsLeaderboards();
     }
 
+    public Function<DatabasePlayer, T> getStatFunction() {
+        return statFunction;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public List<StatsLeaderboard> getStatsLeaderboards() {
+        return statsLeaderboards;
+    }
 }

@@ -247,7 +247,8 @@ public class StatsLeaderboardManager {
             StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromPlayer(player);
             if (statsLeaderboardCategory == null) return;
             List<Hologram> playerHolograms = new ArrayList<>();
-            for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.statsLeaderboards) {
+            for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.getStatsLeaderboards()) {
+                if (statsLeaderboard.isHidden()) continue;
                 Location location = statsLeaderboard.getLocation().clone().add(0, -3.5, 0);
 
                 Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);

@@ -37,11 +37,13 @@ import com.ebicep.warlords.party.PartyPlayerType;
 import com.ebicep.warlords.party.commands.PartyCommand;
 import com.ebicep.warlords.party.commands.PartyPlayerWrapper;
 import com.ebicep.warlords.party.commands.StreamCommand;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
-import com.ebicep.warlords.pve.commands.MyStatsCommand;
+import com.ebicep.warlords.pve.commands.MyPositionCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -131,7 +133,7 @@ public class CommandManager {
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());
 
-        manager.registerCommand(new MyStatsCommand());
+        manager.registerCommand(new MyPositionCommand());
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
     }
@@ -376,6 +378,8 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
                 .map(Mobs::name)
                 .collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
+        commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
 
     }
 

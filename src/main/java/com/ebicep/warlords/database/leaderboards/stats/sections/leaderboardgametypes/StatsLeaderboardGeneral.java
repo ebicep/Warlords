@@ -28,7 +28,7 @@ public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<Ab
     public void addExtraLeaderboards(StatsLeaderboardCategory<AbstractDatabaseStatInformation> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
-        Class<?> databasePlayerClass = statsLeaderboardCategory.statFunction.apply(new DatabasePlayer()).getClass();
+        Class<?> databasePlayerClass = statsLeaderboardCategory.getStatFunction().apply(new DatabasePlayer()).getClass();
         if (DatabasePlayer.class.equals(databasePlayerClass)) {
             statsLeaderboards.add(new StatsLeaderboard("Mage Experience", CENTER_BOARD_1, databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getMage().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getMage().getExperience())));
             statsLeaderboards.add(new StatsLeaderboard("Warrior Experience", CENTER_BOARD_2, databasePlayer -> applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getWarrior().getExperience(), databasePlayer -> NumberFormat.addCommaAndRound(applyAndCast(statsLeaderboardCategory, databasePlayer, DatabasePlayer.class).getWarrior().getExperience())));
@@ -51,7 +51,7 @@ public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<Ab
     }
 
     private <T> T applyAndCast(StatsLeaderboardCategory<AbstractDatabaseStatInformation> statsLeaderboardCategory, DatabasePlayer databasePlayer, Class<T> clazz) {
-        return clazz.cast(statsLeaderboardCategory.statFunction.apply(databasePlayer));
+        return clazz.cast(statsLeaderboardCategory.getStatFunction().apply(databasePlayer));
     }
 
 }

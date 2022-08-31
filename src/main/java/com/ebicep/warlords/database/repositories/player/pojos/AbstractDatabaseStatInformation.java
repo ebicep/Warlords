@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.general.ExperienceManager;
 
 public abstract class AbstractDatabaseStatInformation {
 
@@ -181,6 +182,10 @@ public abstract class AbstractDatabaseStatInformation {
 
     public void setExperience(long experience) {
         this.experience = experience;
+    }
+
+    public int getLevel() {
+        return ExperienceManager.getLevelFromExp(experience);
     }
 
 }

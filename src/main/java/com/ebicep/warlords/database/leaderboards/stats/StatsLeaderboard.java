@@ -31,6 +31,7 @@ public class StatsLeaderboard {
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
     private final Comparator<DatabasePlayer> comparator;
+    private boolean hidden = false;
 
     public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
@@ -46,6 +47,12 @@ public class StatsLeaderboard {
         for (PlayersCollections value : PlayersCollections.VALUES) {
             sortedTimedPlayers.put(value, new ArrayList<>());
         }
+
+    }
+
+    public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction, boolean hidden) {
+        this(title, location, valueFunction, stringFunction);
+        this.hidden = hidden;
     }
 
     public static int compare(Number a, Number b) {
@@ -68,6 +75,8 @@ public class StatsLeaderboard {
     public void resetHolograms(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String categoryName, String subTitle) {
         //resetting sort then adding new sorted values
         resetSortedPlayers(databasePlayers, collection);
+        //skip hologram creation for hidden leaderboards
+        if (hidden) return;
         //creating leaderboard
         List<Hologram> holograms = new ArrayList<>();
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
@@ -195,5 +204,9 @@ public class StatsLeaderboard {
 
     public Function<DatabasePlayer, String> getStringFunction() {
         return stringFunction;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 }

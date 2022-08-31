@@ -143,7 +143,7 @@ public class CustomScoreboard {
             Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
 
-            StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.statsLeaderboards.get(0);
+            StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.getStatsLeaderboards().get(0);
             List<DatabasePlayer> databasePlayerList = statsLeaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
 
             if (selectedGameType == null) selectedGameType = GameType.ALL;
@@ -164,7 +164,7 @@ public class CustomScoreboard {
                     .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
-                AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.statFunction.apply(databasePlayer);
+                AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
                 giveNewSideBar(true,
                         ChatColor.GRAY + scoreboardSelection,
                         "",
