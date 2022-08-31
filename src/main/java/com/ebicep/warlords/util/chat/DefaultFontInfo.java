@@ -99,6 +99,7 @@ public enum DefaultFontInfo {
     SPACE(' ', 3),
     DEFAULT('a', 4);
 
+    public static final DefaultFontInfo[] VALUES = values();
     private final char character;
     private final int length;
 
@@ -121,7 +122,7 @@ public enum DefaultFontInfo {
     }
 
     public static DefaultFontInfo getDefaultFontInfo(char c) {
-        for (DefaultFontInfo dFI : DefaultFontInfo.values()) {
+        for (DefaultFontInfo dFI : VALUES) {
             if (dFI.getCharacter() == c) return dFI;
         }
         return DefaultFontInfo.DEFAULT;

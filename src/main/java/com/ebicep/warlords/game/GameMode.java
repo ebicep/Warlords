@@ -220,6 +220,7 @@ public enum GameMode {
 
     ;
 
+    public static final GameMode[] VALUES = values();
     private final String name;
     private final ItemStack itemStack;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
@@ -289,7 +290,7 @@ public enum GameMode {
     public static void openPlayerSpecInfoMenu(Game game, Player player) {
         Menu menu = new Menu("Player Specs", 9 * 4);
         int x = 3;
-        for (SpecType value : SpecType.values()) {
+        for (SpecType value : SpecType.VALUES) {
             ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
                     .name(value.chatColor + value.name);
             StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
@@ -298,7 +299,7 @@ public enum GameMode {
                             .map(PlayerSettings::getSelectedSpec)
                             .filter(c -> c.specType == value)
                             .count() + "\n\n");
-            Arrays.stream(Specializations.values())
+            Arrays.stream(Specializations.VALUES)
                     .filter(classes -> classes.specType == value)
                     .forEach(classes -> {
                         int playersOnSpec = (int) game.getPlayers().keySet().stream()

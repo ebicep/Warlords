@@ -114,6 +114,7 @@ public enum TieredAchievements implements Achievement {
 
     ;
 
+    public static final TieredAchievements[] VALUES = values();
     public final String name;
     public final String description;
     public final GameMode gameMode;

@@ -211,7 +211,7 @@ public class WarlordsEvents implements Listener {
                             .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
                             .abortIfNull()
                             .syncLast(databasePlayer -> {
-                                for (Specializations value : Specializations.values()) {
+                                for (Specializations value : Specializations.VALUES) {
                                     int level = ExperienceManager.getLevelForSpec(uuid, value);
                                     if (level >= ExperienceManager.LEVEL_TO_PRESTIGE) {
                                         databasePlayer.getSpec(value).addPrestige();

@@ -47,7 +47,7 @@ public class MyStatsCommand extends BaseCommand {
             stats.append("\n").append(ChatColor.GREEN).append("Masterworks Fair Wins: ").append(rarityWins.values().stream()
                     .mapToInt(AtomicInteger::intValue)
                     .sum());
-            for (WeaponsPvE value : WeaponsPvE.values()) {
+            for (WeaponsPvE value : WeaponsPvE.VALUES) {
                 if (value.getPlayerEntries != null) {
                     stats.append("\n").append(ChatColor.GREEN).append("Masterworks Fair ").append(value.name).append(" Wins: ").append(rarityWins.getOrDefault(value, new AtomicInteger(0)).intValue());
                 }

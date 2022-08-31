@@ -24,7 +24,7 @@ public class StatsLeaderboard {
     private final Location location;
     private final HashMap<PlayersCollections, List<DatabasePlayer>> sortedTimedPlayers = new HashMap<>();
     private final HashMap<PlayersCollections, List<List<Hologram>>> sortedTimedHolograms = new HashMap<>() {{
-        for (PlayersCollections value : PlayersCollections.values()) {
+        for (PlayersCollections value : PlayersCollections.VALUES) {
             put(value, new ArrayList<>());
         }
     }};
@@ -43,7 +43,7 @@ public class StatsLeaderboard {
             BigDecimal value2 = new BigDecimal(valueFunction.apply(o2).toString());
             return value2.compareTo(value1);
         };
-        for (PlayersCollections value : PlayersCollections.values()) {
+        for (PlayersCollections value : PlayersCollections.VALUES) {
             sortedTimedPlayers.put(value, new ArrayList<>());
         }
     }
@@ -73,6 +73,7 @@ public class StatsLeaderboard {
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
             holograms.add(createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
         }
+        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::delete);
         getSortedHolograms(collection).clear();
         getSortedHolograms(collection).add(holograms);
     }

@@ -80,7 +80,7 @@ public class GuildRoleMenu {
         int row = 1;
 
         Set<GuildPermissions> permissions = role.getPermissions();
-        for (GuildPermissions value : GuildPermissions.values()) {
+        for (GuildPermissions value : GuildPermissions.VALUES) {
             menu.setItem(column, row,
                     value.getItemStack(permissions.contains(value)),
                     (m, e) -> {

@@ -40,8 +40,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     @Field("supply_drop_rewards")
     private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
     //CURRENCIES
-    private Map<Currencies, Long> currencies = new LinkedHashMap<Currencies, Long>() {{
-        for (Currencies value : Currencies.values()) {
+    private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
+        for (Currencies value : Currencies.VALUES) {
             put(value, 0L);
         }
     }};

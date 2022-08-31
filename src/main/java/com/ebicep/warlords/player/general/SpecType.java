@@ -12,6 +12,7 @@ public enum SpecType {
 
     ;
 
+    public static final SpecType[] VALUES = values();
     public final String name;
     public final ItemStack itemStack;
     public final String symbol;

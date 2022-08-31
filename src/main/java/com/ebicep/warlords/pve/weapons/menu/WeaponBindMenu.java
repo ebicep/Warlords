@@ -51,7 +51,7 @@ public class WeaponBindMenu {
                 }
         );
 
-        for (Classes value : Classes.values()) {
+        for (Classes value : Classes.VALUES) {
             Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
 
             int column = menuLocation.getA();

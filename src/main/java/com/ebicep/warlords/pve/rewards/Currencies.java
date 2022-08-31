@@ -60,6 +60,7 @@ public enum Currencies {
 
     ;
 
+    public static final Currencies[] VALUES = values();
     public final String name;
     public final ChatColor chatColor;
     public final ItemStack item;

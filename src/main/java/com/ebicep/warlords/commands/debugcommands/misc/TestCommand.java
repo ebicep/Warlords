@@ -21,7 +21,7 @@ import java.util.Comparator;
 public class TestCommand extends BaseCommand {
 
     public static void printCache() {
-        for (PlayersCollections value : PlayersCollections.values()) {
+        for (PlayersCollections value : PlayersCollections.VALUES) {
             System.out.println(value.name);
             Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(value.cacheName)).getNativeCache();
             cache.asMap().forEach((o, o2) -> {

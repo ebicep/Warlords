@@ -104,6 +104,7 @@ public enum Specializations {
 
     ;
 
+    public static final Specializations[] VALUES = values();
     public final String name;
     public final Supplier<AbstractPlayerClass> create;
     public final String description;
@@ -122,7 +123,7 @@ public enum Specializations {
         if (name == null) {
             return PYROMANCER;
         }
-        for (Specializations value : Specializations.values()) {
+        for (Specializations value : Specializations.VALUES) {
             if (value.name.equalsIgnoreCase(name)) {
                 return value;
             }
@@ -131,11 +132,11 @@ public enum Specializations {
     }
 
     public static Classes getClass(Specializations selected) {
-        return Arrays.stream(Classes.values()).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
+        return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
     public static Classes getClass(String specName) {
-        return Arrays.stream(Classes.values()).filter(o -> o.subclasses.stream().anyMatch(subClass -> subClass.name.equalsIgnoreCase(specName))).collect(Collectors.toList()).get(0);
+        return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.stream().anyMatch(subClass -> subClass.name.equalsIgnoreCase(specName))).collect(Collectors.toList()).get(0);
     }
 
 }

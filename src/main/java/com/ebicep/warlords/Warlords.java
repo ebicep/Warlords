@@ -222,7 +222,7 @@ public class Warlords extends JavaPlugin {
     public void saveWeaponConfig() {
         try {
             YamlConfiguration config = new YamlConfiguration();
-            for (Weapons weapons : Weapons.values()) {
+            for (Weapons weapons : Weapons.VALUES) {
                 config.set(weapons.getName(), weapons.isUnlocked);
             }
             config.save(new File(this.getDataFolder(), "weapons.yml"));

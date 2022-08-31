@@ -28,15 +28,6 @@ public class Settings {
             this.item = item;
         }
 
-        public static Powerup getPowerup(String name) {
-            for (Powerup value : Powerup.values()) {
-                if (value.name().equals(name)) {
-                    return value;
-                }
-            }
-            return DAMAGE;
-        }
-
         public static Powerup getSelected(Player player) {
             return player.getMetadata("selected-powerup").stream()
                     .map(v -> v.value() instanceof Powerup ? (Powerup) v.value() : null)
@@ -72,15 +63,6 @@ public class Settings {
             this.item = item;
         }
 
-        public static HotkeyMode getHotkeyMode(String name) {
-            for (HotkeyMode value : HotkeyMode.values()) {
-                if (value.name().equals(name)) {
-                    return value;
-                }
-            }
-            return NEW_MODE;
-        }
-
         public static HotkeyMode getSelected(Player player) {
             return player.getMetadata("selected-hotkeymode").stream()
                     .map(v -> v.value() instanceof HotkeyMode ? (HotkeyMode) v.value() : null)
@@ -112,15 +94,6 @@ public class Settings {
             this.item = item;
             this.description = description;
             this.particleReduction = particleReduction;
-        }
-
-        public static ParticleQuality getParticleQuality(String name) {
-            for (ParticleQuality value : ParticleQuality.values()) {
-                if (value.name().equals(name)) {
-                    return value;
-                }
-            }
-            return HIGH;
         }
 
         public static ParticleQuality getSelected(Player player) {

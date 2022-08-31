@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.ebicep.warlords.database.repositories.player.PlayersCollections.LIFETIME;
-import static com.ebicep.warlords.database.repositories.player.PlayersCollections.values;
 
 
 public class MultipleCacheResolver implements CacheResolver {
@@ -31,7 +30,7 @@ public class MultipleCacheResolver implements CacheResolver {
     public Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context) {
         Collection<Cache> caches = new ArrayList<>();
         List<Object> list = Arrays.asList(context.getArgs());
-        for (PlayersCollections value : values()) {
+        for (PlayersCollections value : PlayersCollections.VALUES) {
             if (list.contains(value)) {
                 caches.add(playersCacheManager.getCache(value.cacheName));
                 break;

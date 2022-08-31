@@ -1432,6 +1432,7 @@ public enum GameMap {
 
     ;
 
+    public static final GameMap[] VALUES = values();
     private final String mapName;
     private final int maxPlayers;
     private final int minPlayers;
@@ -1488,7 +1489,7 @@ public enum GameMap {
     }
 
     public static GameMap getGameMap(String mapName) {
-        for (GameMap value : GameMap.values()) {
+        for (GameMap value : GameMap.VALUES) {
             if (value.mapName.equalsIgnoreCase(mapName)) {
                 return value;
             }

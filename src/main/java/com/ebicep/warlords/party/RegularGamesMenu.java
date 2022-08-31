@@ -59,8 +59,8 @@ public class RegularGamesMenu {
         }
 
         //two columns of class icons
-        for (int i = 0; i < Classes.values().length; i++) {
-            Classes spec = Classes.values()[i];
+        for (int i = 0; i < Classes.VALUES.length; i++) {
+            Classes spec = Classes.VALUES[i];
             menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
             });
             menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
@@ -68,8 +68,8 @@ public class RegularGamesMenu {
         }
 
         //row of spec icons
-        for (int i = 0; i < SpecType.values().length; i++) {
-            SpecType specType = SpecType.values()[i];
+        for (int i = 0; i < SpecType.VALUES.length; i++) {
+            SpecType specType = SpecType.VALUES[i];
             menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(specType.chatColor + specType.name).get(), (m, e) -> {
             });
         }
@@ -97,7 +97,7 @@ public class RegularGamesMenu {
 
         //showing general list of spec and respective players
         List<String> playerOnSpecs = new ArrayList<>();
-        for (Specializations value : Specializations.values()) {
+        for (Specializations value : Specializations.VALUES) {
             Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedSpec() == value).findFirst();
             if (playerOptional.isPresent()) {
                 playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName());
@@ -173,7 +173,7 @@ public class RegularGamesMenu {
                 }
             }
             for (RegularGamePlayer p : playersToReassign) {
-                for (Specializations value : Specializations.values()) {
+                for (Specializations value : Specializations.VALUES) {
                     if (!assignedClasses.contains(value)) {
                         p.setSelectedSpec(value);
                         assignedClasses.add(value);
@@ -241,7 +241,7 @@ public class RegularGamesMenu {
             );
         }
         //fillers
-        Arrays.stream(Specializations.values())
+        Arrays.stream(Specializations.VALUES)
                 .filter(classes -> !assignedClasses.contains(classes)).collect(Collectors.toList())
                 .forEach(selectedSpec -> {
                     Classes classes = Specializations.getClass(selectedSpec);

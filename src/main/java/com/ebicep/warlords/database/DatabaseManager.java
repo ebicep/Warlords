@@ -40,7 +40,7 @@ import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame
 public class DatabaseManager {
 
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>>() {{
-        for (PlayersCollections value : PlayersCollections.values()) {
+        for (PlayersCollections value : PlayersCollections.VALUES) {
             put(value, new HashSet<>());
         }
     }};
@@ -171,7 +171,7 @@ public class DatabaseManager {
 
         //check weapon inventory
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-        for (Specializations value : Specializations.values()) {
+        for (Specializations value : Specializations.VALUES) {
             int count = (int) weaponInventory.stream().filter(w -> w.getSpecializations() == value).count();
             if (count == 0) {
                 weaponInventory.add(new StarterWeapon(player.getUniqueId(), value));

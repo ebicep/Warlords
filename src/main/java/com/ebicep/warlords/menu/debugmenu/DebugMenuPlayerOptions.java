@@ -434,7 +434,7 @@ public class DebugMenuPlayerOptions {
 
         public static void openSpecMenu(Player player, WarlordsEntity target) {
             Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 6);
-            Classes[] values = Classes.values();
+            Classes[] values = Classes.VALUES;
             for (int i = 0; i < values.length; i++) {
                 Classes group = values[i];
                 menu.setItem(2, i,

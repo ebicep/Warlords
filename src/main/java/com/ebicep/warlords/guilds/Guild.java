@@ -54,13 +54,13 @@ public class Guild {
     private List<GuildPlayer> players = new ArrayList<>();
     @Field("player_limit")
     private int playerLimit = 10;
-    private Map<Timing, Long> coins = new HashMap<Timing, Long>() {{
-        for (Timing value : Timing.values()) {
+    private Map<Timing, Long> coins = new HashMap<>() {{
+        for (Timing value : Timing.VALUES) {
             put(value, 0L);
         }
     }};
-    private Map<Timing, Long> experience = new HashMap<Timing, Long>() {{
-        for (Timing value : Timing.values()) {
+    private Map<Timing, Long> experience = new HashMap<>() {{
+        for (Timing value : Timing.VALUES) {
             put(value, 0L);
         }
     }};
@@ -76,7 +76,7 @@ public class Guild {
         this.name = name;
         this.createdBy = player.getUniqueId();
         this.currentMaster = player.getUniqueId();
-        GuildRole masterRole = new GuildRole("Master", GuildPermissions.values());
+        GuildRole masterRole = new GuildRole("Master", GuildPermissions.VALUES);
         masterRole.addPlayer(player.getUniqueId());
         GuildRole officerRole = new GuildRole("Officer", GuildPermissions.INVITE, GuildPermissions.KICK);
         GuildRole memberRole = new GuildRole("Member");

@@ -11,12 +11,12 @@ import java.util.TreeSet;
 public class GuildLeaderboardManager {
 
     public static final HashMap<Timing, TreeSet<Guild>> EXPERIENCE_LEADERBOARD = new HashMap<Timing, TreeSet<Guild>>() {{
-        for (Timing value : Timing.values()) {
+        for (Timing value : Timing.VALUES) {
             put(value, new TreeSet<>((g1, g2) -> Long.compare(g2.getExperience(value), g1.getExperience(value))));
         }
     }};
     public static final HashMap<Timing, TreeSet<Guild>> COINS_LEADERBOARD = new HashMap<Timing, TreeSet<Guild>>() {{
-        for (Timing value : Timing.values()) {
+        for (Timing value : Timing.VALUES) {
             put(value, new TreeSet<>((g1, g2) -> Long.compare(g2.getCoins(value), g1.getCoins(value))));
         }
     }};

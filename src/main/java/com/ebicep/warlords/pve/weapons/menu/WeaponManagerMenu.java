@@ -134,7 +134,7 @@ public class WeaponManagerMenu {
         menu.setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
                         .name(ChatColor.GREEN + "Filter By")
-                        .lore(Arrays.stream(WeaponsPvE.values())
+                        .lore(Arrays.stream(WeaponsPvE.VALUES)
                                 .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                 .collect(Collectors.joining("\n"))
                         )
@@ -147,7 +147,7 @@ public class WeaponManagerMenu {
         menu.setItem(6, 5,
                 new ItemBuilder(Material.REDSTONE_COMPARATOR)
                         .name(ChatColor.GREEN + "Sort By")
-                        .lore(Arrays.stream(SortOptions.values())
+                        .lore(Arrays.stream(SortOptions.VALUES)
                                 .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
                                 .collect(Collectors.joining("\n"))
                         )
@@ -314,6 +314,7 @@ public class WeaponManagerMenu {
     }
 
     public enum SortOptions {
+
         DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
         RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
         WEAPON_SCORE("Weapon Score", (o1, o2) -> {
@@ -333,7 +334,8 @@ public class WeaponManagerMenu {
         }),
 
         ;
-        private static final SortOptions[] vals = values();
+
+        private static final SortOptions[] VALUES = values();
         public final String name;
         public final Comparator<AbstractWeapon> comparator;
 
@@ -343,7 +345,7 @@ public class WeaponManagerMenu {
         }
 
         public SortOptions next() {
-            return vals[(this.ordinal() + 1) % vals.length];
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
         }
     }
 

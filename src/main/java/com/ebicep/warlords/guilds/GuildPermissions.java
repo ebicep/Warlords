@@ -17,6 +17,7 @@ public enum GuildPermissions {
 
     ;
 
+    public static final GuildPermissions[] VALUES = values();
     public final String name;
     public final String description;
     public final Material material;

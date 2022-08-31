@@ -46,6 +46,7 @@ public enum WeaponsPvE {
             null,
             Currencies.LEGENDARY_STAR_PIECE);
 
+    public static final WeaponsPvE[] VALUES = values();
     public final String name;
     public final Class<?> weaponClass;
     public final ChatColor chatColor;
@@ -61,8 +62,6 @@ public enum WeaponsPvE {
         this.glassItem = glassItem;
         this.starPieceCurrency = starPieceCurrency;
     }
-
-    private static final WeaponsPvE[] VALUES = values();
 
     public WeaponsPvE next() {
         return VALUES[(this.ordinal() + 1) % VALUES.length];

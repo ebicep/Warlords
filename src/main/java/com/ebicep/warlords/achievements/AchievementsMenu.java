@@ -41,8 +41,8 @@ public class AchievementsMenu {
                         .get(),
                 (m, e) -> openAchievementTypeMenu(player, null)
         );
-        for (int i = 0; i < GameMode.values().length; i++) {
-            GameMode gameMode = GameMode.values()[i];
+        for (int i = 0; i < GameMode.VALUES.length; i++) {
+            GameMode gameMode = GameMode.VALUES[i];
             if (gameMode.getItemStack() == null) continue;
             menu.setItem(
                     i + 1,
@@ -93,7 +93,7 @@ public class AchievementsMenu {
                 .map(Achievement.AbstractAchievementRecord::getAchievement)
                 .map(ChallengeAchievements.class::cast)
                 .collect(Collectors.toList());
-        List<ChallengeAchievements> challengeAchievements = Arrays.stream(ChallengeAchievements.values())
+        List<ChallengeAchievements> challengeAchievements = Arrays.stream(ChallengeAchievements.VALUES)
                 .filter(achievements -> achievements.gameMode == gameMode)
                 .collect(Collectors.toList());
 
@@ -175,7 +175,7 @@ public class AchievementsMenu {
                 .map(Achievement.AbstractAchievementRecord::getAchievement)
                 .map(TieredAchievements.class::cast)
                 .collect(Collectors.toList());
-        List<TieredAchievements> tieredAchievements = Arrays.stream(TieredAchievements.values())
+        List<TieredAchievements> tieredAchievements = Arrays.stream(TieredAchievements.VALUES)
                 .filter(achievements -> achievements.gameMode == gameMode)
                 .collect(Collectors.toList());
 

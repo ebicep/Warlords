@@ -18,6 +18,7 @@ public enum Permissions {
 
     ;
 
+    public static final Permissions[] VALUES = values();
     public final String prefix;
     public final ChatColor prefixColor;
     public final String permission;
@@ -29,7 +30,7 @@ public enum Permissions {
     }
 
     public static String getPrefixWithColor(Player player) {
-        for (Permissions value : Permissions.values()) {
+        for (Permissions value : VALUES) {
             if (player.hasPermission(value.permission)) {
                 return value == DEFAULT ? value.prefixColor.toString() : value.prefixColor + "[" + value.prefix + "] ";
             }

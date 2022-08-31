@@ -97,6 +97,7 @@ public enum Weapons {
 
     ;
 
+    public static final Weapons[] VALUES = values();
     private final String name;
     private final ItemStack item;
     public final WeaponsRarity rarity;
@@ -136,7 +137,7 @@ public enum Weapons {
         if(name == null) {
             return FELFLAME_BLADE;
         }
-        for (Weapons value : Weapons.values()) {
+        for (Weapons value : Weapons.VALUES) {
             if (value.name.equalsIgnoreCase(name)) {
                 return value;
             }
@@ -146,7 +147,7 @@ public enum Weapons {
 
     public static Weapons getRandomWeaponFromRarity(WeaponsRarity rarity) {
         List<Weapons> weapons = new ArrayList<>();
-        for (Weapons value : Weapons.values()) {
+        for (Weapons value : Weapons.VALUES) {
             if (value.rarity == rarity) {
                 weapons.add(value);
             }

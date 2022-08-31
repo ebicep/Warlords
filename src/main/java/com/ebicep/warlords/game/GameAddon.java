@@ -171,6 +171,7 @@ public enum GameAddon {
 
     ;
 
+    public static final GameAddon[] VALUES = values();
     private final String name;
     @Nullable
     private final String permission;

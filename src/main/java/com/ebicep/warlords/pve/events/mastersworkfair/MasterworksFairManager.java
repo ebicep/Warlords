@@ -95,7 +95,7 @@ public class MasterworksFairManager {
                     currentFair = null;
 
                     Instant now = Instant.now();
-                    for (WeaponsPvE value : WeaponsPvE.values()) {
+                    for (WeaponsPvE value : WeaponsPvE.VALUES) {
                         if (value.getPlayerEntries != null) {
                             List<MasterworksFairPlayerEntry> playerEntries = value.getPlayerEntries.apply(masterworksFair);
                             playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
@@ -185,7 +185,7 @@ public class MasterworksFairManager {
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
         List<AbstractWeapon> weaponInventory = databasePlayerPvE.getWeaponInventory();
 
-        WeaponsPvE[] values = WeaponsPvE.values();
+        WeaponsPvE[] values = WeaponsPvE.VALUES;
         int column = 2;
         for (WeaponsPvE value : values) {
             if (value.getPlayerEntries != null) {

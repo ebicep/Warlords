@@ -66,7 +66,7 @@ public class DebugMenuGameOptions {
 
         public static void openGamemodeMenu(Player player) {
             Menu menu = new Menu("Gamemode Picker", 9 * 4);
-            GameMode[] values = GameMode.values();
+            GameMode[] values = GameMode.VALUES;
             for (int i = 0; i < values.length; i++) {
                 GameMode gm = values[i];
                 menu.setItem(9 / 2 - values.length / 2 + i, 1,
@@ -87,7 +87,7 @@ public class DebugMenuGameOptions {
 
         public static void openMapMenu(Player player, GameMode gm) {
             Menu menu = new Menu(gm.getName(), 9 * 5);
-            GameMap[] values = GameMap.values();
+            GameMap[] values = GameMap.VALUES;
             int i = -1;
             for (GameMap map : values) {
                 if (!map.getGameModes().contains(gm)) continue;
@@ -113,11 +113,11 @@ public class DebugMenuGameOptions {
         }
 
         public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, GameMode selectedGameMode, EnumSet<GameAddon> addons) {
-            int menuHeight = (4 + GameAddon.values().length / 7);
+            int menuHeight = (4 + GameAddon.VALUES.length / 7);
             Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedGameMode.getName(), 9 * menuHeight);
 
-            for (int i = 0; i < GameAddon.values().length; i++) {
-                GameAddon gameAddon = GameAddon.values()[i];
+            for (int i = 0; i < GameAddon.VALUES.length; i++) {
+                GameAddon gameAddon = GameAddon.VALUES[i];
 
                 if (!player.isOp() && gameAddon == GameAddon.TOURNAMENT_MODE) {
                     continue;

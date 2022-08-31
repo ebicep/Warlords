@@ -35,7 +35,7 @@ public class WeaponSkinSelectorMenu {
                 }
         );
 
-        List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.values()));
+        List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {

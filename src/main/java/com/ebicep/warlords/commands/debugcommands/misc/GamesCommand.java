@@ -202,8 +202,8 @@ public class GamesCommand extends BaseCommand {
                 }
         );
 
-        for (int i = 0; i < GameAddon.values().length; i++) {
-            GameAddon gameAddon = GameAddon.values()[i];
+        for (int i = 0; i < GameAddon.VALUES.length; i++) {
+            GameAddon gameAddon = GameAddon.VALUES[i];
 
             boolean isASelectedAddon = addons.contains(gameAddon);
             ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])

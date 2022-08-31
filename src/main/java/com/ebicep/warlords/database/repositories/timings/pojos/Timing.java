@@ -8,6 +8,7 @@ public enum Timing {
 
     ;
 
+    public static final Timing[] VALUES = values();
     public final String name;
     public final long minuteDuration;
     public final long secondDuration;

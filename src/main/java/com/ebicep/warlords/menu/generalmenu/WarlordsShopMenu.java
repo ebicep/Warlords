@@ -67,7 +67,7 @@ public class WarlordsShopMenu {
         Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
 
         Menu menu = new Menu("Warlords Shop", 9 * 6);
-        Classes[] values = Classes.values();
+        Classes[] values = Classes.VALUES;
         for (int i = 0; i < values.length; i++) {
             Classes group = values[i];
             List<String> lore = new ArrayList<>();
@@ -241,7 +241,7 @@ public class WarlordsShopMenu {
         Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         Weapons selectedWeapon = Weapons.getSelected(player, selectedSpec);
         Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
-        List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.values()));
+        List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
             Weapons weapon = values.get(i);
             ItemBuilder builder;
@@ -323,14 +323,14 @@ public class WarlordsShopMenu {
         List<Helmets> selectedHelmet = Helmets.getSelected(player);
         List<ArmorSets> selectedArmorSet = ArmorSets.getSelected(player);
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
-        List<Helmets> helmets = Arrays.asList(Helmets.values());
+        List<Helmets> helmets = Arrays.asList(Helmets.VALUES);
         for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.size(); i++) {
             Helmets helmet = helmets.get(i);
             ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(helmetDescription);
+            lore.add(HELMET_DESCRIPTION);
             lore.add("");
             if (selectedHelmet.contains(helmet)) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
@@ -397,7 +397,7 @@ public class WarlordsShopMenu {
                     }
             );
         }
-        List<ArmorSets> armorSets = Arrays.asList(ArmorSets.values());
+        List<ArmorSets> armorSets = Arrays.asList(ArmorSets.VALUES);
         int xPosition = 1;
         for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
             if (pageNumber == 3 && i == 15) {
@@ -408,7 +408,7 @@ public class WarlordsShopMenu {
                     .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(armorDescription);
+            lore.add(ARMOR_DESCRIPTION);
             lore.add("");
             if (selectedArmorSet.contains(armorSet)) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");

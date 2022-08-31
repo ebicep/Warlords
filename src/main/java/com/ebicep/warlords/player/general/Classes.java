@@ -41,6 +41,7 @@ public enum Classes {
             ASSASSIN, VINDICATOR, APOTHECARY
     );
 
+    public static final Classes[] VALUES = values();
     public final String name;
     public final ItemStack item;
     public final String description;

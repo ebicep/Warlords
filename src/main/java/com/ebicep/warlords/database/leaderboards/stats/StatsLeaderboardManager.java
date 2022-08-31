@@ -38,7 +38,7 @@ public class StatsLeaderboardManager {
     public static final World MAIN_LOBBY = Bukkit.getWorld("MainLobby");
     public static final Location SPAWN_POINT = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
     public static final HashMap<UUID, PlayerLeaderboardInfo> PLAYER_LEADERBOARD_INFOS = new HashMap<>();
-    public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?>> STATS_LEADERBOARDS = new HashMap<GameType, AbstractStatsLeaderboardGameType<?>>() {{
+    public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?>> STATS_LEADERBOARDS = new HashMap<>() {{
         for (GameType value : GameType.values()) {
             put(value, value.createStatsLeaderboardGameType.get());
         }
@@ -68,7 +68,7 @@ public class StatsLeaderboardManager {
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
-            for (PlayersCollections value : PlayersCollections.values()) {
+            for (PlayersCollections value : PlayersCollections.VALUES) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
                         .syncLast((databasePlayers) -> {

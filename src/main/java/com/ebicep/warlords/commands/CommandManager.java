@@ -318,11 +318,11 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("enabledisable", command -> Arrays.asList("enable", "disable"));
         commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
         commandCompletions.registerAsyncCompletion("maps", command ->
-                Arrays.stream(GameMap.values())
+                Arrays.stream(GameMap.VALUES)
                         .map(GameMap::name)
                         .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
-                Arrays.stream(GameMode.values())
+                Arrays.stream(GameMode.VALUES)
                         .map(GameMode::name)
                         .collect(Collectors.toList()));
         commandCompletions.registerAsyncCompletion("gameids", command ->

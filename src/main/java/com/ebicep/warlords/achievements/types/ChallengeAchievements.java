@@ -653,6 +653,7 @@ public enum ChallengeAchievements implements Achievement {
             REJUVENATION, CLERICAL_PRODIGY
     };
 
+    public static final ChallengeAchievements[] VALUES = values();
     public final String name;
     public final String description;
     public final GameMode gameMode;

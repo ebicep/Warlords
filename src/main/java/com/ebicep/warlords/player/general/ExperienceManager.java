@@ -96,7 +96,7 @@ public class ExperienceManager {
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
 
-        for (Classes value : Classes.values()) {
+        for (Classes value : Classes.VALUES) {
             Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
 
             List<String> specLore = new ArrayList<>();

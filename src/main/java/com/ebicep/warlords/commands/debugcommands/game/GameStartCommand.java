@@ -36,9 +36,9 @@ public class GameStartCommand extends BaseCommand {
         //ArrayList<OfflinePlayer> selectedPeople = null;
         ArrayList<OfflinePlayer> selectedPeople = new ArrayList<>(Bukkit.getOnlinePlayers());
 
-        GameMap[] maps = GameMap.values();
-        GameMode[] categories = GameMode.values();
-        GameAddon[] addons = GameAddon.values();
+        GameMap[] maps = GameMap.VALUES;
+        GameMode[] categories = GameMode.VALUES;
+        GameAddon[] addons = GameAddon.VALUES;
 
         boolean isValid = true;
         boolean seenMapOrCategory = false;
@@ -173,7 +173,7 @@ public class GameStartCommand extends BaseCommand {
             }
         }
         if (category != null && map != null && !map.getGameModes().contains(category)) {
-            sendDebugMessage(player, ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.values()), false);
+            sendDebugMessage(player, ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.VALUES), false);
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
