@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.warrior.berserker;
+package com.ebicep.warlords.pve.upgrades.warrior;
 
 import com.ebicep.warlords.abilties.SeismicWave;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

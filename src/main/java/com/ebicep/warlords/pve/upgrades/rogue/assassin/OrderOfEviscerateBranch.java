@@ -9,21 +9,81 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade("Mark Damage - Tier I", "+20% Damage against marked targets", 5000));
-        treeA.add(new Upgrade("Mark Damage - Tier II", "+40% Damage against marked targets", 10000));
-        treeA.add(new Upgrade("Mark Damage - Tier III", "+80% Damage against marked targets", 20000));
 
-        treeC.add(new Upgrade("Duration - Tier I", "+2s Duration", 5000));
-        treeC.add(new Upgrade("Duration - Tier II", "+4s Duration", 10000));
-        treeC.add(new Upgrade("Duration - Tier III", "+8s Duration", 20000));
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
 
         masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "Gain 0.2% Crit chance and Crit Multiplier for\neach instance of damage you deal to an enemy\nwhile Berserk is active. (Max 30%)",
-                50000
+                "",
+                "",
+                "",
+                50000,
+                () -> {
+
+                }
         );
     }
-
-    // WIP
-
 }

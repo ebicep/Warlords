@@ -2,10 +2,6 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.zombie;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
-import com.ebicep.warlords.effects.circle.CircleEffect;
-import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -46,27 +42,12 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 30 == 0) {
-            new CircleEffect(
-                    warlordsNPC.getGame(),
-                    warlordsNPC.getTeam(),
-                    warlordsNPC.getLocation(),
-                    8,
-                    new CircumferenceEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
-            ).playEffects();
-        }
 
-        if (ticksElapsed % 200 == 0) {
-            for (int i = 0; i < 20; i++) {
-                EffectUtils.strikeLightningInCylinder(warlordsNPC.getLocation(), i * 2, false, i + 1, warlordsNPC.getGame());
-            }
-        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.7f);
+
     }
 
     @Override

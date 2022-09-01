@@ -7,25 +7,85 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
-    public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
-        super(abilityTree, ability);
-        treeA.add(new Upgrade("Range - Tier I", "+4 Block radius", 5000));
-        treeA.add(new Upgrade("Range - Tier II", "+8 Block radius", 10000));
-        treeA.add(new Upgrade("Range - Tier III", "+16 Block radius", 20000));
-
-        treeC.add(new Upgrade("Cooldown - Tier I", "-10% Cooldown reduction", 5000));
-        treeC.add(new Upgrade("Cooldown - Tier II", "-20% Cooldown reduction", 10000));
-        treeC.add(new Upgrade("Cooldown - Tier III", "-40% Cooldown reduction", 20000));
-
-        masterUpgrade = new Upgrade(
-                "Master Upgrade",
-                "PLACEHOLDER",
-                50000
-        );
-    }
-
     int radius = ability.getRadius();
-
     float cooldown = ability.getCooldown();
 
+    public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
+        super(abilityTree, ability);
+        treeA.add(new Upgrade(
+                "Impair - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
+
+        treeB.add(new Upgrade(
+                "Spark - Tier I",
+                "",
+                5000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "",
+                10000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier III",
+                "",
+                15000,
+                () -> {
+
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Spark - Tier IV",
+                "",
+                20000,
+                () -> {
+
+                }
+        ));
+
+        masterUpgrade = new Upgrade(
+                "",
+                "",
+                "",
+                50000,
+                () -> {
+
+                }
+        );
+    }
 }

@@ -5,7 +5,11 @@ import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.berserker.*;
+import com.ebicep.warlords.pve.upgrades.warrior.GroundSlamBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.SeismicWaveBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBers;
 
 import java.util.List;
 

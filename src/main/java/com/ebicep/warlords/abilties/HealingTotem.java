@@ -108,11 +108,12 @@ public class HealingTotem extends AbstractTotemBase {
                                 nearPlayer.addHealingInstance(
                                         wp,
                                         name,
-                                        minDamageHeal * healMultiplier * 100,
-                                        maxDamageHeal * healMultiplier * 100,
+                                        minDamageHeal * healMultiplier,
+                                        maxDamageHeal * healMultiplier,
                                         critChance,
                                         critMultiplier,
-                                        false, false
+                                        false,
+                                        false
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                     tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });

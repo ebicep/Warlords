@@ -1,12 +1,12 @@
-package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
+package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
-import com.ebicep.warlords.abilties.Repentance;
+import com.ebicep.warlords.abilties.RecklessCharge;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
-    public RepentanceBranch(AbilityTree abilityTree, Repentance ability) {
+public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> {
+    public RecklessChargeBranch(AbilityTree abilityTree, RecklessCharge ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

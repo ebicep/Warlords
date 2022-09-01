@@ -57,10 +57,13 @@ public class DifficultyMenu {
                     (m, e) -> {
                         switch (finalI) {
                             case 0:
-                                startNormalGame(player, false);
+                                startNormalGame(player, false, false);
                                 break;
                             case 1:
-                                startNormalGame(player, true);
+                                startNormalGame(player, false, true);
+                                break;
+                            case 2:
+                                startNormalGame(player, true, false);
                                 break;
                         }
                     });
@@ -71,7 +74,7 @@ public class DifficultyMenu {
     }
 
     // TODO: random map
-    private static void startNormalGame(Player player, boolean endless) {
+    private static void startNormalGame(Player player, boolean endless, boolean hardMode) {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);
         if (partyPlayerPair != null) {
@@ -84,10 +87,16 @@ public class DifficultyMenu {
             }
         }
 
+        GameMap map;
+        if (endless) {
+            map = GameMap.ILLUSION_CROSSFIRE;
+        } else {
+            map = hardMode ? GameMap.ILLUSION_APERTURE : GameMap.ILLUSION_RIFT;
+        }
         Warlords.getGameManager()
                 .newEntry(people)
                 .setGamemode(GameMode.WAVE_DEFENSE)
-                .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
+                .setMap(map)
                 .setPriority(0)
                 .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME, GameAddon.PVE)
                 .setOnResult((result, game) -> {

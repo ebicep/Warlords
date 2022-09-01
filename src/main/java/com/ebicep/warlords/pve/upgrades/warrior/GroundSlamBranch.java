@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.warrior.berserker;
+package com.ebicep.warlords.pve.upgrades.warrior;
 
 import com.ebicep.warlords.abilties.GroundSlam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

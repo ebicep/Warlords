@@ -263,7 +263,6 @@ public abstract class WarlordsEntity {
         boolean isFallDamage = ability.equals("Fall");
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
-
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
@@ -284,7 +283,6 @@ public abstract class WarlordsEntity {
                 critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
             }
         }
-
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
@@ -297,14 +295,18 @@ public abstract class WarlordsEntity {
         addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
 
         if (attacker == this && (isFallDamage || isMeleeHit)) {
-
             if (isMeleeHit) {
                 // True damage
                 sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle(
+                                (Player) entity,
+                                ChatColor.RED + "YOU DIED!",
+                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage and died.",
+                                0, 40, 0
+                        );
                     }
                     health = 0;
                     die(attacker);
@@ -313,14 +315,18 @@ public abstract class WarlordsEntity {
                     playHurtAnimation(this.entity, attacker);
                 }
             } else {
-
                 // Fall Damage
                 sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     // Title card "YOU DIED!"
                     if (entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle(
+                                (Player) entity,
+                                ChatColor.RED + "YOU DIED!",
+                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.",
+                                0, 40, 0
+                        );
                     }
                     health = 0;
                     die(attacker);
@@ -338,24 +344,16 @@ public abstract class WarlordsEntity {
 
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
-            cancelHealingPowerUp();
 
+            cancelHealingPowerUp();
             return Optional.empty();
         }
-
         // Reduction before Intervene.
         if (!ignoreReduction) {
-
             // Flag carrier multiplier.
-
             damageValue *= getFlagDamageMultiplier();
-
             // Checks whether the player is standing in a Hammer of Light.
             if (!HammerOfLight.isStandingInHammer(attacker, this)) {
-
-                // Damage Increase
-                // Example: 1.1 = 10% increase.
-
                 for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
                 }
@@ -363,12 +361,10 @@ public abstract class WarlordsEntity {
                 for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
                     damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 }
-
             }
         }
 
         final float damageHealValueBeforeInterveneReduction = damageValue;
-
         // Intervene
         Optional<RegularCooldown> optionalInterveneCooldown = new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClass(Intervene.class)
@@ -381,13 +377,11 @@ public abstract class WarlordsEntity {
         ) {
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
-
             damageValue *= .5;
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
             intervene.addDamagePrevented(damageValue);
-
-            //breaking vene if above damage threshold
+            // Break Intervene if above damage threshold
             if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
                 //defender
                 new CooldownFilter<>(intervenedBy, RegularCooldown.class)
@@ -396,7 +390,6 @@ public abstract class WarlordsEntity {
                         .ifPresent(regularCooldown -> regularCooldown.setTicksLeft(0));
                 //vene target
                 optionalInterveneCooldown.get().setTicksLeft(0);
-
                 //remaining vene prevent damage
                 float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
                 intervenedBy.addDamageInstance(attacker, "Intervene", remainingVeneDamage, remainingVeneDamage, isCrit ? 100 : -1, 100, true);
@@ -428,10 +421,7 @@ public abstract class WarlordsEntity {
             playHitSound(attacker);
             entity.playEffect(EntityEffect.HURT);
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
-
-            // Red line particle if the player gets hit
             EffectUtils.playParticleLinkAnimation(getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
-
             // Remove horses.
             removeHorse();
             intervenedBy.removeHorse();
@@ -439,9 +429,7 @@ public abstract class WarlordsEntity {
             for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
                 abstractCooldown.onInterveneFromAttacker(event, damageValue);
             }
-
         } else {
-
             // Damage reduction after Intervene
             if (!ignoreReduction) {
                 if (!HammerOfLight.isStandingInHammer(attacker, this)) {
@@ -458,12 +446,10 @@ public abstract class WarlordsEntity {
             }
 
             final float damageHealValueBeforeShieldReduction = damageValue;
-
             // Arcane Shield
             List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
                     .collect(Collectors.toList());
-
             if (!arcaneShields.isEmpty() && isEnemy(attacker) && !HammerOfLight.isStandingInHammer(attacker, this)) {
                 ArcaneShield arcaneShield = arcaneShields.get(0);
                 //adding dmg to shield
@@ -533,12 +519,9 @@ public abstract class WarlordsEntity {
             } else {
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
-
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
-
                     cancelHealingPowerUp();
-
                     removeHorse();
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
@@ -557,10 +540,7 @@ public abstract class WarlordsEntity {
                 }
 
                 regenTimer = 10;
-
                 updateHealth();
-
-                // Adding/subtracting health
 
                 // debt and healing
                 if (!debt && takeDamage) {
@@ -598,7 +578,6 @@ public abstract class WarlordsEntity {
                 if (attacker.shouldCheckForAchievements()) {
                     checkForAchievementsDamageAttacker(attacker);
                 }
-
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
@@ -625,7 +604,6 @@ public abstract class WarlordsEntity {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
                         }
                     }
-
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
@@ -672,7 +650,19 @@ public abstract class WarlordsEntity {
             boolean ignoreReduction,
             boolean isLastStandFromShield
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false, Collections.emptyList()));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
+                this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                ignoreReduction,
+                isLastStandFromShield,
+                false,
+                Collections.emptyList())
+        );
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
@@ -686,7 +676,18 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield,
             List<String> flags
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false, flags));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
+                this,
+                attacker,
+                ability,
+                min, max,
+                critChance,
+                critMultiplier,
+                ignoreReduction,
+                isLastStandFromShield,
+                false,
+                flags)
+        );
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(WarlordsDamageHealingEvent event) {
@@ -701,14 +702,12 @@ public abstract class WarlordsEntity {
         boolean isMeleeHit = ability.isEmpty();
 
         WarlordsDamageHealingFinalEvent finalEvent = null;
-
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
         }
 
         float initialHealth = health;
-
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
@@ -724,7 +723,6 @@ public abstract class WarlordsEntity {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
         }
-
         // Self Healing
         if (this == attacker) {
 
@@ -742,12 +740,9 @@ public abstract class WarlordsEntity {
             if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
                 playHitSound(attacker);
             }
-
         } else {
-
             // Teammate Healing
             if (isTeammate(attacker)) {
-
                 float maxHealth = this.maxHealth;
                 if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
                     maxHealth *= 1.1;
@@ -770,8 +765,6 @@ public abstract class WarlordsEntity {
                 }
             }
         }
-
-        //attacker.sendMessage(ChatColor.GREEN + "Total Healing: " + attacker.getMinuteStats().total().getHealing());
 
         finalEvent = new WarlordsDamageHealingFinalEvent(
                 event,
@@ -806,7 +799,14 @@ public abstract class WarlordsEntity {
      * @param isCrit                whether if it's a critical hit message.
      * @param isLastStandFromShield whether the message is last stand healing.
      */
-    private void sendHealingMessage(@Nonnull WarlordsEntity player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
+    private void sendHealingMessage(
+            @Nonnull WarlordsEntity player,
+            float healValue,
+            String ability,
+            boolean isCrit,
+            boolean isLastStandFromShield,
+            boolean isOverHeal
+    ) {
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
                 .append(" Your ").append(ability);
@@ -901,7 +901,6 @@ public abstract class WarlordsEntity {
         }
 
         allyFeed.append(ChatColor.GRAY).append(" health.");
-
         receiver.sendMessage(allyFeed.toString());
     }
 
@@ -962,8 +961,8 @@ public abstract class WarlordsEntity {
         if (isMeleeHit) {
             ownFeed.append(ChatColor.GRAY).append(" melee");
         }
-        ownFeed.append(ChatColor.GRAY).append(" damage.");
 
+        ownFeed.append(ChatColor.GRAY).append(" damage.");
         sender.sendMessage(ownFeed.toString());
     }
 
@@ -1169,6 +1168,10 @@ public abstract class WarlordsEntity {
     }
 
     public void applySkillBoost(Player player) {
+        switch (this.getGame().getGameMode()) {
+            case WAVE_DEFENSE:
+                return;
+        }
         SkillBoosts selectedBoost = Warlords.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId()).getSkillBoostForClass();
         if (selectedBoost != null) {
             if (spec.getWeapon().getClass() == selectedBoost.ability) {
