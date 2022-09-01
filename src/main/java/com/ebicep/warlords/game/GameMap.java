@@ -1032,7 +1032,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
-            options.add(new CurrencyOnEventOption(250));
+            options.add(new CurrencyOnEventOption(500));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(15, 5 * SECOND, null)
                             //basic
@@ -1182,16 +1182,16 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(584.5, 18, 235.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(584.5, 18, 235.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 18, 227.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 18, 240.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(608, 17, 250.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 17, 255.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(584.5, 18, 235.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(593.5, 19, 242.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 19, 232.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
             options.add(new RespawnWaveOption(0, 30, 30));

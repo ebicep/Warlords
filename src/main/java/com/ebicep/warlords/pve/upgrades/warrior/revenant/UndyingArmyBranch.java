@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
+
     public UndyingArmyBranch(AbilityTree abilityTree, UndyingArmy ability) {
         super(abilityTree, ability);
 
