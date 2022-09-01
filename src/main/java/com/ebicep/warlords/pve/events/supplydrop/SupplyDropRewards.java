@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.events.supplydrop;
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
@@ -11,23 +12,106 @@ import java.util.function.Consumer;
 
 public enum SupplyDropRewards {
 
-    SYNTHETIC_SHARDS_3("3 Synthetic Shards", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3), 150),
-    SYNTHETIC_SHARDS_5("5 Synthetic Shards", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5), 200),
-    SYNTHETIC_SHARDS_10("10 Synthetic Shards", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10), 100),
-    SYNTHETIC_SHARDS_20("20 Synthetic Shards", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20), 50),
-    SYNTHETIC_SHARDS_50("50 Synthetic Shards", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50), 20),
-    COMMON_STAR_PIECE("Common Star Piece", databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE), 10),
-    RARE_STAR_PIECE("Rare Star Piece", databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE), 3),
-    EPIC_STAR_PIECE("Epic Star Piece", databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE), 1),
-    SKILL_BOOST_MODIFIER("Skill Boost Modifier", databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER), 1),
-    COINS_1000("1,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000), 100),
-    COINS_2000("2,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000), 150),
-    COINS_5000("5,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000), 100),
-    COINS_10000("10,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000), 50),
-    COINS_50000("50,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000), 20),
-    COINS_100000("100,000 Coins", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000), 10),
-    FAIRY_ESSENCE_20("20 Fairy Essence", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20), 50),
-    FAIRY_ESSENCE_40("40 Fairy Essence", databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40), 20),
+    SYNTHETIC_SHARDS_3("3 Synthetic Shards",
+                       databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
+                       150,
+                       WeaponsPvE.COMMON
+    ),
+    SYNTHETIC_SHARDS_5("5 Synthetic Shards",
+                       databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
+                       200,
+                       WeaponsPvE.COMMON
+    ),
+    SYNTHETIC_SHARDS_10("10 Synthetic Shards",
+                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
+                        100,
+                        WeaponsPvE.COMMON
+    ),
+    SYNTHETIC_SHARDS_20("20 Synthetic Shards",
+                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20),
+                        50,
+                        WeaponsPvE.RARE
+    ),
+    SYNTHETIC_SHARDS_50("50 Synthetic Shards",
+                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50),
+                        20,
+                        WeaponsPvE.EPIC
+    ),
+    COMMON_STAR_PIECE("Common Star Piece",
+                      databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE),
+                      10,
+                      WeaponsPvE.COMMON
+    ) {
+        @Override
+        public String getDropMessage() {
+            return getStarPieceDropMessage();
+        }
+    },
+    RARE_STAR_PIECE("Rare Star Piece",
+                    databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
+                    30,
+                    WeaponsPvE.RARE
+    ) {
+        @Override
+        public String getDropMessage() {
+            return getStarPieceDropMessage();
+        }
+    },
+    EPIC_STAR_PIECE("Epic Star Piece",
+                    databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE),
+                    10,
+                    WeaponsPvE.EPIC
+    ) {
+        @Override
+        public String getDropMessage() {
+            return getStarPieceDropMessage();
+        }
+    },
+    SKILL_BOOST_MODIFIER("Skill Boost Modifier",
+                         databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER),
+                         1,
+                         WeaponsPvE.EPIC
+    ),
+    COINS_1000("1,000 Coins",
+               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000),
+               100,
+               WeaponsPvE.COMMON
+    ),
+    COINS_2000("2,000 Coins",
+               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000),
+               150,
+               WeaponsPvE.COMMON
+    ),
+    COINS_5000("5,000 Coins",
+               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000),
+               100,
+               WeaponsPvE.COMMON
+    ),
+    COINS_10000("10,000 Coins",
+                databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000),
+                50,
+                WeaponsPvE.COMMON
+    ),
+    COINS_50000("50,000 Coins",
+                databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000),
+                20,
+                WeaponsPvE.RARE
+    ),
+    COINS_100000("100,000 Coins",
+                 databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000),
+                 10,
+                 WeaponsPvE.EPIC
+    ),
+    FAIRY_ESSENCE_20("20 Fairy Essence",
+                     databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20),
+                     50,
+                     WeaponsPvE.RARE
+    ),
+    FAIRY_ESSENCE_40("40 Fairy Essence",
+                     databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
+                     20,
+                     WeaponsPvE.RARE
+    ),
 
     ;
 
@@ -42,29 +126,39 @@ public enum SupplyDropRewards {
     public final String name;
     public final Consumer<DatabasePlayerPvE> giveReward;
     public final int dropChance;
+    public final WeaponsPvE rarity; //using for convenience
 
-    SupplyDropRewards(String name, Consumer<DatabasePlayerPvE> giveReward, int dropChance) {
+    SupplyDropRewards(String name, Consumer<DatabasePlayerPvE> giveReward, int dropChance, WeaponsPvE rarity) {
         this.name = name;
         this.giveReward = giveReward;
         this.dropChance = dropChance;
+        this.rarity = rarity;
     }
 
     public static SupplyDropRewards getRandomReward() {
         return RANDOM_COLLECTION.next();
     }
 
+    public String getDropMessage() {
+        return ChatColor.GREEN + "You received " + name + " from the supply drop.";
+    }
+
+    protected String getStarPieceDropMessage() {
+        return ChatColor.GREEN + "A " + getChatColor() + getType() + " Star Piece " + ChatColor.GREEN + "has been bestowed upon you.";
+    }
+
     public String getType() {
-        return dropChance <= 10 ? "RARE" : "COMMON";
+        return rarity.name;
     }
 
     public ChatColor getChatColor() {
-        return dropChance <= 10 ? ChatColor.BLUE : ChatColor.GREEN;
+        return rarity.chatColor;
     }
 
     public void givePlayerRewardTitle(Player player) {
         PacketUtils.sendTitle(
                 player.getUniqueId(),
-                getChatColor() + getType() + "!",
+                getChatColor() + getType().toUpperCase() + "!",
                 ChatColor.GOLD + name,
                 0, 40, 0
         );

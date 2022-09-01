@@ -182,7 +182,7 @@ public class SupplyDropManager {
                         slowness = 1;
                         rewardsGained++;
                         cooldown = instant ? 3 : 13;
-                        sendSupplyDropMessage(player.getUniqueId(), ChatColor.GREEN + "Won: " + reward.getChatColor() + reward.name + "");
+                        sendSupplyDropMessage(player.getUniqueId(), reward.getDropMessage());
                         databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
                         if (rewardsGained == amount) {
                             PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), false);
