@@ -49,7 +49,7 @@ public enum SupplyDropRewards {
     },
     RARE_STAR_PIECE("Rare Star Piece",
                     databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
-                    30,
+                    3,
                     WeaponsPvE.RARE
     ) {
         @Override
@@ -59,7 +59,7 @@ public enum SupplyDropRewards {
     },
     EPIC_STAR_PIECE("Epic Star Piece",
                     databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE),
-                    10,
+                    1,
                     WeaponsPvE.EPIC
     ) {
         @Override

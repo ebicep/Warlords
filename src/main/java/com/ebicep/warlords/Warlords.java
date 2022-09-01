@@ -295,7 +295,7 @@ public class Warlords extends JavaPlugin {
         //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
         //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
 
-        gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
+        //gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
 
         gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
         //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));
