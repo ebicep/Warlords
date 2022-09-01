@@ -61,12 +61,14 @@ public class GuildCommand extends BaseCommand {
     @Description("Joins a guild")
     public void join(@Conditions("guild:false") Player player, String guildName) {
         Optional<Guild> optionalGuild = GuildManager.getGuildFromName(guildName);
-        if (!optionalGuild.isPresent()) {
+        if (optionalGuild.isEmpty()) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " does not exist.");
             return;
         }
-        if (!optionalGuild.get().isOpen() && !GuildManager.getGuildFromInvite(player, guildName).isPresent()) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it.");
+        if (!optionalGuild.get().isOpen() && GuildManager.getGuildFromInvite(player, guildName).isEmpty()) {
+            Guild.sendGuildMessage(player,
+                                   ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
+            );
             return;
         }
         if (optionalGuild.get().getPlayers().size() >= optionalGuild.get().getPlayerLimit()) {
@@ -92,7 +94,11 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("invite")
     @CommandCompletion("@players")
     @Description("Invites a player to your guild")
-    public void invite(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=INVITE") GuildPlayerWrapper guildPlayerWrapper, @Flags("other") Player target) {
+    public void invite(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=INVITE") GuildPlayerWrapper guildPlayerWrapper,
+            @Flags("other") Player target
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.getUniqueId().equals(player.getUniqueId())) {
@@ -109,14 +115,17 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.addInvite(player, target, guild);
         Guild.sendGuildMessage(player,
-                ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
-                        ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
+                               ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
+                                       ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
         );
     }
 
     @Subcommand("mute")
     @Description("Mutes the guild")
-    public void mute(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=MUTE") GuildPlayerWrapper guildPlayerWrapper) {
+    public void mute(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MUTE") GuildPlayerWrapper guildPlayerWrapper
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE)) {
@@ -132,7 +141,10 @@ public class GuildCommand extends BaseCommand {
 
     @Subcommand("disband")
     @Description("Disbands your guild")
-    public void disband(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper) {
+    public void disband(
+            @Conditions("guild:true") Player player,
+            @Flags("master") GuildPlayerWrapper guildPlayerWrapper
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         String guildName = guild.getName();
@@ -141,7 +153,9 @@ public class GuildCommand extends BaseCommand {
             if (confirmation.equals(guildName)) {
                 guild.disband();
             } else {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Guild was not disbanded because your input did not match your guild name.");
+                Guild.sendGuildMessage(player,
+                                       ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
+                );
             }
         });
     }
@@ -152,7 +166,9 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getCurrentMaster().equals(player.getUniqueId())) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You can only leave through disbanding or transferring the guild!");
+            Guild.sendGuildMessage(player,
+                                   ChatColor.RED + "You can only leave through disbanding or transferring the guild!"
+            );
             return;
         }
         guild.leave(player);
@@ -161,7 +177,11 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("transfer")
     @CommandCompletion("@guildmembers")
     @Description("Transfers ownership of your guild")
-    public void transfer(@Conditions("guild:true") Player player, @Flags("master") GuildPlayerWrapper guildPlayerWrapper, GuildPlayer target) {
+    public void transfer(
+            @Conditions("guild:true") Player player,
+            @Flags("master") GuildPlayerWrapper guildPlayerWrapper,
+            GuildPlayer target
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.equals(guildPlayer)) {
@@ -173,7 +193,9 @@ public class GuildCommand extends BaseCommand {
             if (confirmation.equals("CONFIRM")) {
                 guild.transfer(target);
             } else {
-                Guild.sendGuildMessage(player, ChatColor.RED + "Guild was not transferred because you did not input CONFIRM");
+                Guild.sendGuildMessage(player,
+                                       ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
+                );
             }
         });
     }
@@ -181,7 +203,11 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("kick|remove")
     @CommandCompletion("@guildmembers")
     @Description("Kicks a player from your guild")
-    public void kick(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=KICK") GuildPlayerWrapper guildPlayerWrapper, @Conditions("lowerRank") GuildPlayer target) {
+    public void kick(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=KICK") GuildPlayerWrapper guildPlayerWrapper,
+            @Conditions("lowerRank") GuildPlayer target
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (target.equals(guildPlayer)) {
@@ -199,11 +225,17 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("promote")
     @CommandCompletion("@guildmembers")
     @Description("Promotes a player in your guild")
-    public void promote(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper, @Conditions("lowerRank") GuildPlayer target) {
+    public void promote(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper,
+            @Conditions("lowerRank") GuildPlayer target
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoleLevel(guildPlayer) + 1 == guild.getRoleLevel(target)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!");
+            Guild.sendGuildMessage(player,
+                                   ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!"
+            );
             return;
         }
         guild.promote(guildPlayer, target);
@@ -212,11 +244,17 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("demote")
     @CommandCompletion("@guildmembers")
     @Description("Demotes a player in your guild")
-    public void demote(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper, @Conditions("lowerRank") GuildPlayer target) {
+    public void demote(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=CHANGE_ROLE") GuildPlayerWrapper guildPlayerWrapper,
+            @Conditions("lowerRank") GuildPlayer target
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoles().get(guild.getRoles().size() - 1).getPlayers().contains(target.getUUID())) {
-            Guild.sendGuildMessage(player, ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!");
+            Guild.sendGuildMessage(player,
+                                   ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!"
+            );
             return;
         }
         guild.demote(guildPlayer, target);
@@ -224,7 +262,11 @@ public class GuildCommand extends BaseCommand {
 
     @Subcommand("rename")
     @Description("Renames your guild")
-    public void rename(@Conditions("guild:true") Player player, @Conditions("requirePerm:perm=CHANGE_NAME") GuildPlayerWrapper guildPlayerWrapper, String newName) {
+    public void rename(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=CHANGE_NAME") GuildPlayerWrapper guildPlayerWrapper,
+            String newName
+    ) {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (newName.length() > 15) {
@@ -251,8 +293,8 @@ public class GuildCommand extends BaseCommand {
         ChatUtils.sendMessageToPlayer(
                 player,
                 guild.getAuditLog().stream()
-                        .map(AbstractGuildLog::getFormattedLog)
-                        .collect(Collectors.joining("\n")),
+                     .map(AbstractGuildLog::getFormattedLog)
+                     .collect(Collectors.joining("\n")),
                 ChatColor.GREEN,
                 false
         );
@@ -285,12 +327,14 @@ public class GuildCommand extends BaseCommand {
 
         @Subcommand("experience|EXP|exp")
         public void experience(CommandIssuer issuer, @Default("DAILY") Timing timing) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.get(timing), timing.name + " Experience"));
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.EXPERIENCE_LEADERBOARD.get(
+                    timing), timing.name + " Experience"));
         }
 
         @Subcommand("coins")
         public void coins(CommandIssuer issuer, @Default("DAILY") Timing timing) {
-            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.COINS_LEADERBOARD.get(timing), timing.name + " Coins"));
+            issuer.sendMessage(GuildLeaderboardManager.getLeaderboardList(GuildLeaderboardManager.COINS_LEADERBOARD.get(
+                    timing), timing.name + " Coins"));
         }
 
         @Subcommand("refresh")

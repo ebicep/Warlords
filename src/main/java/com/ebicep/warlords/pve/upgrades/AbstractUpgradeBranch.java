@@ -204,8 +204,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     public void updateInventory(WarlordsPlayer wp) {
-        wp.weaponRightClick();
-        wp.updateItems();
+        wp.updateInventory();
         ability.updateDescription((Player) wp.getEntity());
     }
 

@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.FlagInfo;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
@@ -50,7 +51,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -62,6 +62,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public abstract class WarlordsEntity {
 
@@ -163,7 +165,10 @@ public abstract class WarlordsEntity {
         this.flagPickCooldown = 0;
         this.cooldownModifier = 1;
         this.hitCooldown = 20;
-        this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed, 13, true) : new CalculateSpeed(this::setWalkSpeed, 13);
+        this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed,
+                                                    13,
+                                                    true
+        ) : new CalculateSpeed(this::setWalkSpeed, 13);
         if (specClass == Specializations.APOTHECARY) {
             this.speed.addBaseModifier(10);
         }
@@ -198,11 +203,13 @@ public abstract class WarlordsEntity {
         }
         if (event.isHealingInstance()) {
             Optional<WarlordsDamageHealingFinalEvent> eventOptional = addHealingInstance(event);
-            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
+            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager()
+                                                                             .callEvent(warlordsDamageHealingFinalEvent));
             return eventOptional;
         } else {
             Optional<WarlordsDamageHealingFinalEvent> eventOptional = addDamageInstance(event);
-            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
+            eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager()
+                                                                             .callEvent(warlordsDamageHealingFinalEvent));
             return eventOptional;
         }
     }
@@ -227,7 +234,18 @@ public abstract class WarlordsEntity {
             float critMultiplier,
             boolean ignoreReduction
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true, Collections.emptyList()));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
+                                                                            attacker,
+                                                                            ability,
+                                                                            min,
+                                                                            max,
+                                                                            critChance,
+                                                                            critMultiplier,
+                                                                            ignoreReduction,
+                                                                            false,
+                                                                            true,
+                                                                            Collections.emptyList()
+        ));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -240,7 +258,18 @@ public abstract class WarlordsEntity {
             boolean ignoreReduction,
             List<String> flags
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true, flags));
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
+                                                                            attacker,
+                                                                            ability,
+                                                                            min,
+                                                                            max,
+                                                                            critChance,
+                                                                            critMultiplier,
+                                                                            ignoreReduction,
+                                                                            false,
+                                                                            true,
+                                                                            flags
+        ));
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(WarlordsDamageHealingEvent event) {
@@ -392,13 +421,27 @@ public abstract class WarlordsEntity {
                 optionalInterveneCooldown.get().setTicksLeft(0);
                 //remaining vene prevent damage
                 float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
-                intervenedBy.addDamageInstance(attacker, "Intervene", remainingVeneDamage, remainingVeneDamage, isCrit ? 100 : -1, 100, true);
+                intervenedBy.addDamageInstance(attacker,
+                                               "Intervene",
+                                               remainingVeneDamage,
+                                               remainingVeneDamage,
+                                               isCrit ? 100 : -1,
+                                               100,
+                                               true
+                );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
                 addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : -1, 100, true)
                         .ifPresent(finalEvent::set);
             } else {
-                intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+                intervenedBy.addDamageInstance(attacker,
+                                               "Intervene",
+                                               damageValue,
+                                               damageValue,
+                                               isCrit ? 100 : -1,
+                                               100,
+                                               false
+                );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         this,
@@ -412,7 +455,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true));
+                        true
+                ));
             }
 
             Location loc = getLocation();
@@ -461,7 +505,18 @@ public abstract class WarlordsEntity {
                     }
 
                     cooldownManager.removeCooldownByObject(arcaneShield);
-                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 1, false, true, true, new ArrayList<>(0)));
+                    addDamageInstance(new WarlordsDamageHealingEvent(this,
+                                                                     attacker,
+                                                                     ability,
+                                                                     -arcaneShield.getShieldHealth(),
+                                                                     -arcaneShield.getShieldHealth(),
+                                                                     isCrit ? 100 : -1,
+                                                                     1,
+                                                                     false,
+                                                                     true,
+                                                                     true,
+                                                                     new ArrayList<>(0)
+                    ));
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
@@ -511,7 +566,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true));
+                        true
+                ));
                 secondStats.addDamageHealingEventAsSelf(finalEvent.get());
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
 
@@ -569,7 +625,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true));
+                        true
+                ));
                 secondStats.addDamageHealingEventAsSelf(finalEvent.get());
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
                 if (shouldCheckForAchievements()) {
@@ -597,8 +654,8 @@ public abstract class WarlordsEntity {
                     });
 
                     for (WarlordsEntity enemy : PlayerFilter.playingGame(game)
-                            .enemiesOf(this)
-                            .stream().collect(Collectors.toList())
+                                                            .enemiesOf(this)
+                                                            .stream().collect(Collectors.toList())
                     ) {
                         for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
@@ -606,7 +663,13 @@ public abstract class WarlordsEntity {
                     }
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player) entity,
+                                              ChatColor.RED + "YOU DIED!",
+                                              ChatColor.GRAY + attacker.getName() + " killed you.",
+                                              0,
+                                              40,
+                                              0
+                        );
                     }
                     die(attacker);
                 } else {
@@ -651,17 +714,18 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                this,
-                attacker,
-                ability,
-                min,
-                max,
-                critChance,
-                critMultiplier,
-                ignoreReduction,
-                isLastStandFromShield,
-                false,
-                Collections.emptyList())
+                                                     this,
+                                                     attacker,
+                                                     ability,
+                                                     min,
+                                                     max,
+                                                     critChance,
+                                                     critMultiplier,
+                                                     ignoreReduction,
+                                                     isLastStandFromShield,
+                                                     false,
+                                                     Collections.emptyList()
+                                             )
         );
     }
 
@@ -677,16 +741,17 @@ public abstract class WarlordsEntity {
             List<String> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                this,
-                attacker,
-                ability,
-                min, max,
-                critChance,
-                critMultiplier,
-                ignoreReduction,
-                isLastStandFromShield,
-                false,
-                flags)
+                                                     this,
+                                                     attacker,
+                                                     ability,
+                                                     min, max,
+                                                     critChance,
+                                                     critMultiplier,
+                                                     ignoreReduction,
+                                                     isLastStandFromShield,
+                                                     false,
+                                                     flags
+                                             )
         );
     }
 
@@ -730,7 +795,9 @@ public abstract class WarlordsEntity {
                 healValue = this.maxHealth - this.health;
             }
 
-            if (healValue <= 0) return Optional.empty();
+            if (healValue <= 0) {
+                return Optional.empty();
+            }
 
             // Displays the healing message.
             sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield, false);
@@ -752,7 +819,9 @@ public abstract class WarlordsEntity {
                     healValue = maxHealth - this.health;
                 }
 
-                if (healValue <= 0) return Optional.empty();
+                if (healValue <= 0) {
+                    return Optional.empty();
+                }
 
                 boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
                 sendHealingMessage(attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
@@ -779,7 +848,8 @@ public abstract class WarlordsEntity {
                 critChance,
                 critMultiplier,
                 isCrit,
-                false);
+                false
+        );
         secondStats.addDamageHealingEventAsSelf(finalEvent);
         attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);
         if (shouldCheckForAchievements()) {
@@ -809,7 +879,7 @@ public abstract class WarlordsEntity {
     ) {
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-                .append(" Your ").append(ability);
+               .append(" Your ").append(ability);
         if (isCrit) {
             ownFeed.append(" critically");
         }
@@ -847,7 +917,7 @@ public abstract class WarlordsEntity {
         // Own Message
         StringBuilder ownFeed = new StringBuilder();
         ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-                .append(" Your ").append(ability);
+               .append(" Your ").append(ability);
 
         if (isCrit) {
             ownFeed.append(" critically");
@@ -1116,6 +1186,7 @@ public abstract class WarlordsEntity {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass().equals(abilityClass)) {
                 consumer.accept(abilityClass.cast(ability));
+                break;
             }
         }
     }
@@ -1130,7 +1201,8 @@ public abstract class WarlordsEntity {
         if (player != null) {
             player.setWalkSpeed(this.walkspeed);
         } else {
-            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.walkspeed);
+            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                                                               .setValue(this.walkspeed);
         }
     }
 
@@ -1147,7 +1219,12 @@ public abstract class WarlordsEntity {
             actionBarMessage.append(ChatColor.RED);
 
         }
-        actionBarMessage.append("§l").append(Math.round(health)).append(ChatColor.GOLD).append("§l/§l").append(Math.round(maxHealth)).append("    ");
+        actionBarMessage.append("§l")
+                        .append(Math.round(health))
+                        .append(ChatColor.GOLD)
+                        .append("§l/§l")
+                        .append(Math.round(maxHealth))
+                        .append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
             if (abstractCooldown.getNameAbbreviation() != null) {
@@ -1168,27 +1245,14 @@ public abstract class WarlordsEntity {
     }
 
     public void applySkillBoost(Player player) {
-        switch (this.getGame().getGameMode()) {
-            case WAVE_DEFENSE:
-                return;
-        }
         SkillBoosts selectedBoost = Warlords.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId()).getSkillBoostForClass();
         if (selectedBoost != null) {
-            if (spec.getWeapon().getClass() == selectedBoost.ability) {
-                spec.getWeapon().boostSkill(selectedBoost, spec);
-                spec.getWeapon().updateDescription(player);
-            } else if (spec.getRed().getClass() == selectedBoost.ability) {
-                spec.getRed().boostSkill(selectedBoost, spec);
-                spec.getRed().updateDescription(player);
-            } else if (spec.getPurple().getClass() == selectedBoost.ability) {
-                spec.getPurple().boostSkill(selectedBoost, spec);
-                spec.getPurple().updateDescription(player);
-            } else if (spec.getBlue().getClass() == selectedBoost.ability) {
-                spec.getBlue().boostSkill(selectedBoost, spec);
-                spec.getBlue().updateDescription(player);
-            } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-                spec.getOrange().boostSkill(selectedBoost, spec);
-                spec.getOrange().updateDescription(player);
+            for (AbstractAbility ability : spec.getAbilities()) {
+                if (ability.getClass() == selectedBoost.ability) {
+                    ability.boostSkill(selectedBoost, spec);
+                    ability.updateDescription(player);
+                    break;
+                }
             }
         }
     }
@@ -1220,112 +1284,8 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void assignItemLore(Player player) {
-        //§
-        ItemStack weapon = new ItemStack(this.weaponSkin.getItem());
-        ItemMeta weaponMeta = weapon.getItemMeta();
-        weaponMeta.setDisplayName("§cWarlord's Felflame of the " + spec.getWeapon().getName());
-        ArrayList<String> weaponLore = new ArrayList<>();
-        weaponLore.add("§7Damage: §c132 §7- §c179");
-        weaponLore.add("§7Crit Chance: §c25%");
-        weaponLore.add("§7Crit Multiplier: §c200%");
-        weaponLore.add("");
-        String classNamePath = spec.getClass().getGenericSuperclass().getTypeName();
-        weaponLore.add("§a" + classNamePath.substring(classNamePath.indexOf("Abstract") + 8) + " (" + spec.getClass().getSimpleName() + "):");
-        weaponLore.add("§aIncreases the damage you");
-        weaponLore.add("§adeal with " + spec.getWeapon().getName() + " by §c20%");
-        weaponLore.add("");
-        weaponLore.add("§7Health: §a+800");
-        weaponLore.add("§7Max Energy: §a+35");
-        weaponLore.add("§7Cooldown Reduction: §a+13%");
-        weaponLore.add("§7Speed: §a+13%");
-        weaponLore.add("");
-        weaponLore.add("§6Skill Boost Unlocked");
-        weaponLore.add("§3Crafted");
-        weaponLore.add("§dVoid Forged [4/4]");
-        weaponLore.add("§aEQUIPPED");
-        weaponLore.add("§bBOUND");
-        weaponMeta.setLore(weaponLore);
-        weapon.setItemMeta(weaponMeta);
-        weaponMeta.spigot().setUnbreakable(true);
-        player.getInventory().setItem(0, weapon);
-        weaponLeftClick();
+    public void updateInventory() {
 
-        updateRedItem(player);
-        updatePurpleItem(player);
-        updateBlueItem(player);
-        updateOrangeItem(player);
-        updateHorseItem(player);
-    }
-
-    public void assignFlagCompass(Player player) {
-        ItemStack compass = new ItemStack(Material.COMPASS);
-        ItemMeta compassMeta = compass.getItemMeta();
-        compassMeta.setDisplayName(ChatColor.GREEN + "Flag Finder");
-        compass.setItemMeta(compassMeta);
-        compassMeta.spigot().setUnbreakable(true);
-        switch (this.getGame().getGameMode()) {
-            case CAPTURE_THE_FLAG:
-                player.getInventory().setItem(8, compass);
-                break;
-            default:
-                player.getInventory().setItem(8, null);
-                break;
-        }
-    }
-
-    public void weaponLeftClick() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-            player.getInventory().setItem(
-                    0,
-                    new ItemBuilder(weaponSkin.getItem())
-                            .name(ChatColor.GOLD + "Warlord's " + weaponSkin.getName() + " of the " + spec.getClass().getSimpleName())
-                            .lore(
-                                    ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
-                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
-                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
-                                    "",
-                                    ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                    Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass().selectedDescription,
-                                    "",
-                                    ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
-                                    ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
-                                    ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
-                                    ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
-                                    "",
-                                    ChatColor.GOLD + "Skill Boost Unlocked",
-                                    ChatColor.DARK_AQUA + "Crafted",
-                                    ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
-                                    ChatColor.GREEN + "EQUIPPED",
-                                    ChatColor.AQUA + "BOUND",
-                                    "",
-                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
-                                    ChatColor.GREEN + "stats!")
-                            .unbreakable()
-                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                            .get());
-        }
-    }
-
-    public void weaponRightClick() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-            player.getInventory().setItem(
-                    0,
-                    new ItemBuilder(weaponSkin.getItem())
-                            .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
-                            .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(spec.getWeapon().getEnergyCost()),
-                                    ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(spec.getWeapon().getCritChance()) + "%",
-                                    ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(spec.getWeapon().getCritMultiplier()) + "%",
-                                    "",
-                                    spec.getWeapon().getDescription(),
-                                    "",
-                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!")
-                            .unbreakable()
-                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                            .get());
-        }
     }
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
@@ -1348,13 +1308,13 @@ public abstract class WarlordsEntity {
         if (ability == spec.getWeapon()) {
             return weaponSkin.getItem();
         } else if (ability == spec.getRed()) {
-            return new ItemStack(Material.INK_SACK, 1, (byte) 1);
+            return RED_ABILITY;
         } else if (ability == spec.getPurple()) {
-            return new ItemStack(Material.GLOWSTONE_DUST);
+            return PURPLE_ABILITY;
         } else if (ability == spec.getBlue()) {
-            return new ItemStack(Material.INK_SACK, 1, (byte) 10);
+            return BLUE_ABILITY;
         } else if (ability == spec.getOrange()) {
-            return new ItemStack(Material.INK_SACK, 1, (byte) 14);
+            return ORANGE_ABILITY;
         }
         return null;
     }
@@ -1376,7 +1336,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), new ItemStack(Material.INK_SACK, 1, (byte) 1));
+        updateItem(player, 1, spec.getRed(), RED_ABILITY);
     }
 
     public void updatePurpleItem() {
@@ -1386,7 +1346,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), new ItemStack(Material.GLOWSTONE_DUST));
+        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
     }
 
     public void updateBlueItem() {
@@ -1396,7 +1356,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), new ItemStack(Material.INK_SACK, 1, (byte) 10));
+        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
     }
 
     public void updateOrangeItem() {
@@ -1406,49 +1366,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), new ItemStack(Material.INK_SACK, 1, (byte) 14));
-    }
-
-    public void updateHorseItem() {
-        if (entity instanceof Player) {
-            updateHorseItem((Player) entity);
-        }
-    }
-
-    public void updateHorseItem(Player player) {
-        if (horseCooldown > 0) {
-            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) horseCooldown + 1);
-            player.getInventory().setItem(7, cooldown);
-        } else {
-            ItemStack horse = new ItemStack(Material.GOLD_BARDING);
-            ItemMeta horseMeta = horse.getItemMeta();
-            horseMeta.setDisplayName(ChatColor.GREEN + "Mount " + ChatColor.GRAY + "- §eRight-Click!");
-            ArrayList<String> horseLore = new ArrayList<>();
-            horseLore.add(ChatColor.GRAY + "Cooldown: §b15 seconds");
-            horseLore.add("");
-            horseLore.add(ChatColor.GRAY + "Call your steed to assists you in battle");
-            horseMeta.setLore(horseLore);
-            horse.setItemMeta(horseMeta);
-            horseMeta.spigot().setUnbreakable(true);
-            switch (this.getGame().getGameMode()) {
-                case CAPTURE_THE_FLAG:
-                case TEAM_DEATHMATCH:
-                case INTERCEPTION:
-                case SIMULATION_TRIAL:
-                case DEBUG:
-                    player.getInventory().setItem(7, horse);
-                    break;
-                case WAVE_DEFENSE:
-                    player.getInventory().setItem(
-                            7,
-                            new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Menu").get()
-                    );
-                    break;
-                default:
-                    player.getInventory().setItem(7, null);
-                    break;
-            }
-        }
+        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
     }
 
     public String getName() {
@@ -1480,30 +1398,34 @@ public abstract class WarlordsEntity {
     }
 
     public void setSpec(AbstractPlayerClass spec, SkillBoosts skillBoost) {
-        Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
-        Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
-        Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
-        this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
-        this.weaponSkin = Weapons.getSelected(player, this.specClass);
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
-        ArmorManager.resetArmor(player, specClass, team);
-        applySkillBoost(player);
-        this.spec.getWeapon().updateDescription(player);
-        this.spec.getRed().updateDescription(player);
-        this.spec.getPurple().updateDescription(player);
-        this.spec.getBlue().updateDescription(player);
-        this.spec.getOrange().updateDescription(player);
-        assignItemLore(Bukkit.getPlayer(uuid));
-        assignFlagCompass(Bukkit.getPlayer(uuid));
+        if (this instanceof WarlordsPlayer) {
+            Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
+            Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
+            Player player = Bukkit.getPlayer(uuid);
+            ArmorManager.resetArmor(player, specClass, team);
+            this.weaponSkin = Weapons.getSelected(player, this.specClass);
+            this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
 
-        if (DatabaseManager.playerService == null) return;
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            for (Option option : game.getOptions()) {
+                option.onSpecChange(this);
+            }
+            for (AbstractAbility ability : this.spec.getAbilities()) {
+                ability.updateDescription(player);
+            }
+            updateInventory();
+
+            if (DatabaseManager.playerService == null) {
+                return;
+            }
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+            databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        }
     }
 
     public float getHealth() {
@@ -1550,7 +1472,13 @@ public abstract class WarlordsEntity {
             respawnTimer--;
             if (respawnTimer <= 30) {
                 if (entity instanceof Player) {
-                    PacketUtils.sendTitle((Player) entity, "", team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer, 0, 40, 0);
+                    PacketUtils.sendTitle((Player) entity,
+                                          "",
+                                          team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer,
+                                          0,
+                                          40,
+                                          0
+                    );
                 }
             }
         }
@@ -1796,7 +1724,8 @@ public abstract class WarlordsEntity {
         int size = entries.size();
         if (size > MINUTE_STATS_SPLITS) {
             int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
-            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": 50,000" + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
+            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": 50,000" + NumberFormat.addCommaAndRound(
+                    minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
             int stringLength = 0;
             for (int i = 0; i < splitString.length; i++) {
                 for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
@@ -1805,14 +1734,18 @@ public abstract class WarlordsEntity {
                         break;
                     }
                     PlayerStatisticsMinute.Entry entry = entries.get(index);
-                    stringBuilder.append(ChatColor.WHITE).append("Minute ").append(index).append(": ").append(ChatColor.GOLD);
+                    stringBuilder.append(ChatColor.WHITE)
+                                 .append("Minute ")
+                                 .append(index)
+                                 .append(": ")
+                                 .append(ChatColor.GOLD);
                     stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
                     stringBuilder.append("\n");
                 }
                 stringBuilder.setLength(stringBuilder.length() - 1);
                 stringLength += stringBuilder.length();
                 components.add(new TextComponentBuilder((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i])
-                        .setHoverText(stringBuilder.toString())
+                                       .setHoverText(stringBuilder.toString())
                 );
                 stringBuilder.setLength(0);
             }
@@ -1827,17 +1760,22 @@ public abstract class WarlordsEntity {
             for (int i = 0; i < size; i++) {
                 PlayerStatisticsMinute.Entry entry = entries.get(i);
                 stringBuilder.append("\n");
-                stringBuilder.append(ChatColor.WHITE).append("Minute ").append(i + 1).append(": ").append(ChatColor.GOLD);
+                stringBuilder.append(ChatColor.WHITE)
+                             .append("Minute ")
+                             .append(i + 1)
+                             .append(": ")
+                             .append(ChatColor.GOLD);
                 stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
             }
-            components.add(new TextComponentBuilder(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())))
-                    .setHoverText(stringBuilder.toString())
+            components.add(new TextComponentBuilder(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
+                    minuteStatsType.getValue.apply(minuteStats.total())))
+                                   .setHoverText(stringBuilder.toString())
             );
         }
 
         return components.stream()
-                .map(TextComponentBuilder::getTextComponent)
-                .collect(Collectors.toList());
+                         .map(TextComponentBuilder::getTextComponent)
+                         .collect(Collectors.toList());
     }
 
     public void toggleTeamFlagCompass() {
@@ -1919,6 +1857,10 @@ public abstract class WarlordsEntity {
 
     public Weapons getWeaponSkin() {
         return weaponSkin;
+    }
+
+    public void setWeaponSkin(Weapons weaponSkin) {
+        this.weaponSkin = weaponSkin;
     }
 
     public Team getTeam() {
@@ -2171,10 +2113,10 @@ public abstract class WarlordsEntity {
 
     public boolean hasAchievement(ChallengeAchievements achievements) {
         return achievementsUnlocked.stream()
-                .filter(ChallengeAchievements.ChallengeAchievementRecord.class::isInstance)
-                .map(ChallengeAchievements.ChallengeAchievementRecord.class::cast)
-                .map(ChallengeAchievements.ChallengeAchievementRecord::getAchievement)
-                .anyMatch(achievement -> achievement == achievements);
+                                   .filter(ChallengeAchievements.ChallengeAchievementRecord.class::isInstance)
+                                   .map(ChallengeAchievements.ChallengeAchievementRecord.class::cast)
+                                   .map(ChallengeAchievements.ChallengeAchievementRecord::getAchievement)
+                                   .anyMatch(achievement -> achievement == achievements);
     }
 
     public void unlockAchievement(ChallengeAchievements achievement) {

@@ -413,7 +413,10 @@ public class WarlordsEvents implements Listener {
                                 } else {
                                     player.playSound(player.getLocation(), "mountup", 1, 1);
                                     wp.getHorse().spawn();
-                                    wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
+                                    if (!wp.isDisableCooldowns()) {
+                                        wp.setHorseCooldown((float) (wp.getHorse()
+                                                                       .getCooldown() * wp.getCooldownModifier()));
+                                    }
                                 }
                             }
                         }
@@ -514,17 +517,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        if (e.getSlot() == 0) {
-            Player player = (Player) e.getWhoClicked();
-            WarlordsEntity wp = Warlords.getPlayer(player);
-            if (wp != null) {
-                if (e.isLeftClick()) {
-                    wp.weaponLeftClick();
-                } else if (e.isRightClick()) {
-                    wp.weaponRightClick();
-                }
-            }
-        }
         if (e.getWhoClicked().getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
         }

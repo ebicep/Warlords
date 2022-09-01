@@ -39,7 +39,19 @@ public abstract class AbstractPlayerClass {
     protected String className;
     protected String classNameShort;
 
-    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+    public AbstractPlayerClass(
+            String name,
+            int maxHealth,
+            int maxEnergy,
+            int energyPerSec,
+            int energyOnHit,
+            int damageResistance,
+            AbstractAbility weapon,
+            AbstractAbility red,
+            AbstractAbility purple,
+            AbstractAbility blue,
+            AbstractAbility orange
+    ) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
@@ -59,21 +71,39 @@ public abstract class AbstractPlayerClass {
         }
     }
 
+    public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
+        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+    }
+
     public void setUpgradeBranches(WarlordsPlayer wp) {
 
     }
 
     public List<TextComponent> getFormattedData() {
         List<TextComponent> textComponentList = new ArrayList<>();
-        ChatColor[] chatColors = {ChatColor.GREEN, ChatColor.RED, ChatColor.LIGHT_PURPLE, ChatColor.AQUA, ChatColor.GOLD, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY, ChatColor.GRAY};
+        ChatColor[] chatColors = {
+                ChatColor.GREEN,
+                ChatColor.RED,
+                ChatColor.LIGHT_PURPLE,
+                ChatColor.AQUA,
+                ChatColor.GOLD,
+                ChatColor.GRAY,
+                ChatColor.GRAY,
+                ChatColor.GRAY,
+                ChatColor.GRAY
+        };
         for (int i = 0; i < getAbilities().length; i++) {
             AbstractAbility ability = getAbilities()[i];
             textComponentList.add(new TextComponentBuilder(chatColors[i] + ability.getName())
-                    .setHoverText(ability.getAbilityInfo().stream()
-                            .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
-                            .collect(Collectors.joining("\n"))
-                    )
-                    .getTextComponent());
+                                          .setHoverText(ability.getAbilityInfo().stream()
+                                                               .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
+                                                               .collect(Collectors.joining("\n"))
+                                          )
+                                          .getTextComponent());
         }
 
         return textComponentList;
@@ -149,7 +179,9 @@ public abstract class AbstractPlayerClass {
             boolean shouldApplyCooldown = ability.onActivate(wp, player);
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
-                ability.setCurrentCooldown((float) (ability.getCooldown() * wp.getCooldownModifier()));
+                if (!wp.isDisableCooldowns()) {
+                    ability.setCurrentCooldown((float) (ability.getCooldown() * wp.getCooldownModifier()));
+                }
                 sendRightClickPacket(player);
             }
             resetAbilityCD();
@@ -177,14 +209,6 @@ public abstract class AbstractPlayerClass {
                 secondaryAbilityCD = true;
             }
         }.runTaskLater(Warlords.getInstance(), 5);
-    }
-
-    public static void sendRightClickPacket(Player player) {
-        if (player == null) {
-            return;
-        }
-        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
     }
 
     public int getMaxHealth() {
@@ -238,36 +262,36 @@ public abstract class AbstractPlayerClass {
         return weapon;
     }
 
-    public AbstractAbility getRed() {
-        return red;
-    }
-
-    public AbstractAbility getPurple() {
-        return purple;
-    }
-
-    public AbstractAbility getBlue() {
-        return blue;
-    }
-
-    public AbstractAbility getOrange() {
-        return orange;
-    }
-
     public void setWeapon(AbstractAbility weapon) {
         this.weapon = weapon;
+    }
+
+    public AbstractAbility getRed() {
+        return red;
     }
 
     public void setRed(AbstractAbility red) {
         this.red = red;
     }
 
+    public AbstractAbility getPurple() {
+        return purple;
+    }
+
     public void setPurple(AbstractAbility purple) {
         this.purple = purple;
     }
 
+    public AbstractAbility getBlue() {
+        return blue;
+    }
+
     public void setBlue(AbstractAbility blue) {
         this.blue = blue;
+    }
+
+    public AbstractAbility getOrange() {
+        return orange;
     }
 
     public void setOrange(AbstractAbility orange) {

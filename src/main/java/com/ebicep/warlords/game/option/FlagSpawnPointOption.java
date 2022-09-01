@@ -10,8 +10,10 @@ import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
@@ -21,6 +23,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,6 +31,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -42,6 +46,10 @@ import static java.util.Collections.singletonList;
 public class FlagSpawnPointOption implements Option {
 
     public static final boolean DEFAULT_REGISTER_COMPASS_MARKER = true;
+    public static final ItemStack COMPASS = new ItemBuilder(Material.COMPASS)
+            .name(ChatColor.GREEN + "Flag Finder")
+            .unbreakable()
+            .get();
 
     @Nonnull
     private final FlagInfo info;
@@ -277,6 +285,11 @@ public class FlagSpawnPointOption implements Option {
     @Override
     public void onGameCleanup(Game game) {
         this.renderer.reset();
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        player.getInventory().setItem(8, COMPASS);
     }
 
     public FlagInfo getInfo() {

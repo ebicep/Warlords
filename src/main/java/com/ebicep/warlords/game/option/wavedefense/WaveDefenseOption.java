@@ -1,11 +1,14 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
+import com.ebicep.warlords.game.option.MaxedWeaponOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -18,6 +21,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -304,7 +308,9 @@ public class WaveDefenseOption implements Option {
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            warlordsEntity.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                            warlordsEntity.getHitBy()
+                                          .forEach((assisted, value) -> assisted.getMinuteStats()
+                                                                                .addMobAssist(mobToRemove.getName()));
                         }
                     }
                 } else if (warlordsEntity instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
@@ -314,32 +320,38 @@ public class WaveDefenseOption implements Option {
                 }
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList(
-                        "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 50 ? "/" + ChatColor.GREEN + maxWave : "") +
-                                ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
-                );
-            }
-        });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
-            }
-        });
+        game.registerGameMarker(ScoreboardHandler.class,
+                                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+                                    @Override
+                                    public List<String> computeLines(@Nullable WarlordsEntity player) {
+                                        return Collections.singletonList(
+                                                "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 50 ? "/" + ChatColor.GREEN + maxWave : "") +
+                                                        ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                                        );
+                                    }
+                                }
+        );
+        game.registerGameMarker(ScoreboardHandler.class,
+                                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+                                    @Override
+                                    public List<String> computeLines(@Nullable WarlordsEntity player) {
+                                        return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
+                                    }
+                                }
+        );
 
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
             @Override
             public List<String> computeLines(@Nullable WarlordsEntity player) {
                 return PlayerFilter.playingGame(game)
-                        .filter(e -> e instanceof WarlordsPlayer)
-                        .stream()
-                        .map(e -> e.getName() + ": " +
-                                (e.isDead() ? ChatColor.DARK_RED + "DEAD" : (e.getHealth() > (e.getMaxHealth() * 0.25f) ? ChatColor.GREEN : ChatColor.RED) + "❤" + (int) e.getHealth()) +
-                                ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats().total().getKills())
-                        .collect(Collectors.toList());
+                                   .filter(e -> e instanceof WarlordsPlayer)
+                                   .stream()
+                                   .map(e -> e.getName() + ": " +
+                                           (e.isDead() ? ChatColor.DARK_RED + "DEAD" : (e.getHealth() > (e.getMaxHealth() * 0.25f) ? ChatColor.GREEN : ChatColor.RED) + "❤" + (int) e.getHealth()) +
+                                           ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats()
+                                                                                             .total()
+                                                                                             .getKills())
+                                   .collect(Collectors.toList());
             }
         });
 
@@ -405,6 +417,37 @@ public class WaveDefenseOption implements Option {
                 counter++;
             }
         }.runTaskTimer(20, 0);
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (DatabaseManager.playerService != null && player instanceof WarlordsPlayer) {
+            DatabasePlayerPvE pveStats = DatabaseManager.playerService.findByUUID(player.getUuid()).getPveStats();
+            Optional<AbstractWeapon> optionalWeapon = pveStats.getWeaponInventory()
+                                                              .stream()
+                                                              .filter(AbstractWeapon::isBound)
+                                                              .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                                                              .findFirst();
+            optionalWeapon.ifPresent(abstractWeapon -> {
+                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+
+                player.setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                warlordsPlayer.setWeapon(abstractWeapon);
+                abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                player.updateEntity();
+            });
+        }
+
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        AbstractWeapon weapon = warlordsPlayer.getAbstractWeapon();
+        if (weapon == null) {
+            MaxedWeaponOption.weaponLeftClick(warlordsPlayer, player);
+        } else {
+            player.getInventory().setItem(0, weapon.generateItemStack());
+        }
     }
 
     public Set<AbstractMob<?>> getMobs() {

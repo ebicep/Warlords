@@ -1,6 +1,7 @@
 package com.ebicep.warlords.menu.generalmenu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -28,6 +29,7 @@ import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
 import static com.ebicep.warlords.player.general.Settings.*;
 import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
+import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public class WarlordsShopMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -212,26 +214,26 @@ public class WarlordsShopMenu {
             apc2.getRed().boostSkill(selectedBoost, apc2);
             apc.getRed().updateDescription(player);
             apc2.getRed().updateDescription(player);
-            menu.setItem(3, 1, apc.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
+            menu.setItem(3, 1, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
         } else if (apc2.getPurple().getClass() == selectedBoost.ability) {
             apc2.getPurple().boostSkill(selectedBoost, apc2);
             apc.getPurple().updateDescription(player);
             apc2.getPurple().updateDescription(player);
-            menu.setItem(3, 1, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
+            menu.setItem(3, 1, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
         } else if (apc2.getBlue().getClass() == selectedBoost.ability) {
             apc2.getBlue().boostSkill(selectedBoost, apc2);
             apc.getBlue().updateDescription(player);
             apc2.getBlue().updateDescription(player);
-            menu.setItem(3, 1, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
+            menu.setItem(3, 1, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
         } else if (apc2.getOrange().getClass() == selectedBoost.ability) {
             apc2.getOrange().boostSkill(selectedBoost, apc2);
             apc.getOrange().updateDescription(player);
             apc2.getOrange().updateDescription(player);
-            menu.setItem(3, 1, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
+            menu.setItem(3, 1, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
         }
         menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
@@ -619,16 +621,11 @@ public class WarlordsShopMenu {
 
         SkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
         if (selectedBoost != null) {
-            if (apc.getWeapon().getClass() == selectedBoost.ability) {
-                apc.getWeapon().boostSkill(selectedBoost, apc);
-            } else if (apc.getRed().getClass() == selectedBoost.ability) {
-                apc.getRed().boostSkill(selectedBoost, apc);
-            } else if (apc.getPurple().getClass() == selectedBoost.ability) {
-                apc.getPurple().boostSkill(selectedBoost, apc);
-            } else if (apc.getBlue().getClass() == selectedBoost.ability) {
-                apc.getBlue().boostSkill(selectedBoost, apc);
-            } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-                apc.getOrange().boostSkill(selectedBoost, apc);
+            for (AbstractAbility ability : apc.getAbilities()) {
+                if (ability.getClass() == selectedBoost.ability) {
+                    ability.boostSkill(selectedBoost, apc);
+                    break;
+                }
             }
         }
 
@@ -639,11 +636,17 @@ public class WarlordsShopMenu {
         apc.getOrange().updateDescription(player);
 
         menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-        menu.setItem(2, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()), ACTION_DO_NOTHING);
-        menu.setItem(3, apc.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
-        menu.setItem(4, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
-        menu.setItem(5, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
-        menu.setItem(6, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
+        menu.setItem(2,
+                     apc.getWeapon()
+                        .getItem(playerSettings.getWeaponSkins()
+                                               .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
+                                               .getItem()),
+                     ACTION_DO_NOTHING
+        );
+        menu.setItem(3, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
+        menu.setItem(4, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
+        menu.setItem(5, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
+        menu.setItem(6, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
         menu.setItem(8, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);

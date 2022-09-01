@@ -1,10 +1,12 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
-
-import java.util.List;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * A game exists out of multiple options, who all change the behavior of the
@@ -62,4 +64,30 @@ public interface Option {
      */
     default void checkConflicts(List<Option> options) {
     }
+
+    /**
+     * Called when a player is created
+     *
+     * @param player The player to act on
+     */
+    default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+    }
+
+    /**
+     * Called to update the warlordsPlayer's inventory
+     *
+     * @param warlordsPlayer The warlordsPlayer to act on
+     * @param player
+     */
+    default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+    }
+
+    /**
+     * Called when a player's spec is changed
+     *
+     * @param player The player to act on
+     */
+    default void onSpecChange(@Nonnull WarlordsEntity player) {
+    }
+
 }

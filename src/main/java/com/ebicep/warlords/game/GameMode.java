@@ -59,6 +59,9 @@ public enum GameMode {
                     ChatColor.YELLOW + "Steal and capture the enemy flag!"
             ));
             options.add(new NoRespawnIfOfflineOption());
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },
@@ -87,6 +90,9 @@ public enum GameMode {
                     ChatColor.YELLOW + "Capture the marked points!"
             ));
             options.add(new NoRespawnIfOfflineOption());
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },
@@ -116,6 +122,10 @@ public enum GameMode {
                     .name(ChatColor.AQUA + "Pre-game Menu ")
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                     .get(), (g, p) -> openMainMenu(p)));
+
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },
@@ -140,6 +150,10 @@ public enum GameMode {
                     10,
                     ChatColor.GREEN + "GO!"
             ));
+
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },
@@ -167,6 +181,9 @@ public enum GameMode {
                     ChatColor.YELLOW + "Let the trials begin!"
             ));
             options.add(new NoRespawnIfOfflineOption());
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },
@@ -214,6 +231,9 @@ public enum GameMode {
                     3,
                     ChatColor.GREEN + "GO!"
             ));
+            options.add(new MaxedWeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
             return options;
         }
     },

@@ -92,9 +92,6 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
             updateBasedOnGameState(customScoreboard, wp);
-            if (wp.getEntity() instanceof Player) {
-                wp.applySkillBoost((Player) wp.getEntity());
-            }
         });
 
         if (DatabaseManager.playerService != null) {

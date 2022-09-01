@@ -26,6 +26,8 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
+import com.ebicep.warlords.game.option.FlagSpawnPointOption;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -116,17 +118,23 @@ public class Warlords extends JavaPlugin {
         return players;
     }
 
-    public static void addPlayer(@Nonnull WarlordsEntity warlordsPlayer) {
-        players.put(warlordsPlayer.getUuid(), warlordsPlayer);
-        for (GameAddon addon : warlordsPlayer.getGame().getAddons()) {
-            addon.warlordsPlayerCreated(warlordsPlayer.getGame(), warlordsPlayer);
+    public static void addPlayer(@Nonnull WarlordsEntity warlordsEntity) {
+        players.put(warlordsEntity.getUuid(), warlordsEntity);
+        for (GameAddon addon : warlordsEntity.getGame().getAddons()) {
+            addon.warlordsEntityCreated(warlordsEntity.getGame(), warlordsEntity);
+        }
+        for (Option option : warlordsEntity.getGame().getOptions()) {
+            option.onWarlordsEntityCreated(warlordsEntity);
         }
     }
 
     @Nullable
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsEntity).findAny();
+            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
+                                                     .stream()
+                                                     .filter(e -> e.value() instanceof WarlordsEntity)
+                                                     .findAny();
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
@@ -501,7 +509,7 @@ public class Warlords extends JavaPlugin {
                     Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
                     if (player != null) {
                         //ACTION BAR
-                        if (player.getInventory().getHeldItemSlot() != 8) {
+                        if (!player.getInventory().getItemInHand().equals(FlagSpawnPointOption.COMPASS)) {
                             wp.displayActionBar();
                         } else {
                             wp.displayFlagActionBar(player);
@@ -521,17 +529,6 @@ public class Warlords extends JavaPlugin {
                     // Setting the flag tracking compass.
                     if (player != null && wp.getCompassTarget() != null) {
                         player.setCompassTarget(wp.getCompassTarget().getLocation());
-                    }
-
-                    // Checks whether the player has cooldowns disabled.
-                    if (wp.isDisableCooldowns()) {
-                        wp.getSpec().getRed().setCurrentCooldown(0);
-                        wp.getSpec().getPurple().setCurrentCooldown(0);
-                        wp.getSpec().getBlue().setCurrentCooldown(0);
-                        wp.getSpec().getOrange().setCurrentCooldown(0);
-                        wp.setHorseCooldown(0);
-                        wp.updateHorseItem();
-                        wp.updateItems();
                     }
 
                     // Ability Cooldowns
@@ -565,14 +562,6 @@ public class Warlords extends JavaPlugin {
                         wp.getSpec().getOrange().subtractCooldown(.05f);
                         if (player != null) {
                             wp.updateOrangeItem(player);
-                        }
-                    }
-
-                    // Decrementing mount cooldown.
-                    if (wp.getHorseCooldown() > 0 && !wp.getEntity().isInsideVehicle()) {
-                        wp.setHorseCooldown(wp.getHorseCooldown() - .05f);
-                        if (player != null) {
-                            wp.updateHorseItem(player);
                         }
                     }
 

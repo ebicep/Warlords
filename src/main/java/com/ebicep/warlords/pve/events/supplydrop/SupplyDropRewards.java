@@ -140,11 +140,11 @@ public enum SupplyDropRewards {
     }
 
     public String getDropMessage() {
-        return ChatColor.GREEN + "You received " + name + " from the supply drop.";
+        return ChatColor.GRAY + "You received " + getChatColor() + name + ChatColor.GRAY + " from the supply drop.";
     }
 
     protected String getStarPieceDropMessage() {
-        return ChatColor.GREEN + "A " + getChatColor() + getType() + " Star Piece " + ChatColor.GREEN + "has been bestowed upon you.";
+        return ChatColor.GRAY + "A " + getChatColor() + getType() + " Star Piece " + ChatColor.GRAY + "has been bestowed upon you.";
     }
 
     public String getType() {

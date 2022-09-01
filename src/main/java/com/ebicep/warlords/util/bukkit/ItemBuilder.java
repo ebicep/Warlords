@@ -16,6 +16,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class ItemBuilder {
+
+    public static final ItemStack RED_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 1);
+    public static final ItemStack PURPLE_ABILITY = new ItemStack(Material.GLOWSTONE_DUST);
+    public static final ItemStack BLUE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 10);
+    public static final ItemStack ORANGE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 14);
     @Nonnull
     private final ItemStack item;
     @Nullable
@@ -77,7 +82,7 @@ public class ItemBuilder {
                 // Fix for \n and null
                 List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
                 for (String loreRow : lore) {
-                    if(loreRow != null) {
+                    if (loreRow != null) {
                         if (loreRow.contains("\n")) {
                             String chatColor = "";
                             for (String split : loreRow.split("\n")) {

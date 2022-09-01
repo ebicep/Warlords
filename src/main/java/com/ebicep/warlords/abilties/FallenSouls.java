@@ -88,9 +88,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             wp.getSpec().getRed().subtractCooldown(2);
-            if (wp.getEntity() instanceof Player) {
-                wp.updateRedItem((Player) wp.getEntity());
-            }
+            wp.updateRedItem();
 
             reduceCooldowns(wp, hit);
         }
@@ -117,9 +115,8 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             wp.getSpec().getRed().subtractCooldown(2);
-            if (wp.getEntity() instanceof Player) {
-                wp.updateRedItem((Player) wp.getEntity());
-            }
+            wp.updateRedItem();
+
         }
 
         return playersHit;
