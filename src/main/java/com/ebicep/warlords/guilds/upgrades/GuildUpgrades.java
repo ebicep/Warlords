@@ -1,6 +1,9 @@
 package com.ebicep.warlords.guilds.upgrades;
 
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,7 +25,7 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
     },
@@ -37,8 +40,17 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
 
+                @EventHandler
+                public void onAddCurrency(WarlordsPlayerAddCurrencyEvent event) {
+                    if (validUUIDs.contains(event.getPlayer().getUuid())) {
+                        event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
+                    }
+                }
+
+            });
         }
     },
     RESPAWN_TIME_REDUCTION(
@@ -52,7 +64,7 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
     },
@@ -67,7 +79,7 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
     },
@@ -84,7 +96,7 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
     },
@@ -99,7 +111,7 @@ public enum GuildUpgrades {
         }
 
         @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs) {
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
     },
@@ -121,8 +133,13 @@ public enum GuildUpgrades {
     /**
      * @param game       the game to modify - main purpose is adding listeners
      * @param validUUIDs uuids that are allowed to get the effect of this upgrade (since listener will affect all players we need to filter out players which guilds have this upgrade)
+     * @param tier
      */
-    public abstract void onGame(Game game, HashSet<UUID> validUUIDs);
+    public abstract void onGame(Game game, HashSet<UUID> validUUIDs, int tier);
+
+    public GuildUpgrade createUpgrade(int tier) {
+        return new GuildUpgrade(this, tier);
+    }
 
     public long getCost(int tier) {
         if (isPermanent) {

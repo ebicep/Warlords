@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.events.game.WarlordsGameWaveClearEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
@@ -21,7 +21,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
-import com.ebicep.warlords.guilds.upgrades.GuildUpgrades;
+import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -371,10 +371,13 @@ public class WaveDefenseOption implements Option {
             }
 
         }.register(game);
+    }
 
+    @Override
+    public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.warlordsPlayers().map(WarlordsEntity::getUuid).collect(Collectors.toList());
+            List<UUID> uuids = game.players().map(Map.Entry::getKey).collect(Collectors.toList());
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> playerMatchingUUID = guild.getPlayerMatchingUUID(uuid);
@@ -384,16 +387,14 @@ public class WaveDefenseOption implements Option {
                     }
                 }
             }
+            System.out.println(guilds);
             guilds.forEach((guild, validUUIDs) -> {
-                for (GuildUpgrades upgrade : guild.getUpgrades()) {
-                    upgrade.onGame(game, validUUIDs);
+                for (GuildUpgrade upgrade : guild.getUpgrades()) {
+                    System.out.println("Upgrading " + upgrade.getUpgrade().name + " for " + validUUIDs.size() + " players");
+                    upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
                 }
             });
         }
-    }
-
-    @Override
-    public void start(@Nonnull Game game) {
         new GameRunnable(game) {
             int counter = 0;
 

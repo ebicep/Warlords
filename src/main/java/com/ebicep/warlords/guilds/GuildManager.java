@@ -40,7 +40,17 @@ public class GuildManager {
                 }
                 //check for guild temp upgrades expiring
                 for (Guild guild : GUILDS) {
-
+                    guild.getUpgrades().removeIf(upgrade -> {
+                        boolean shouldRemove = upgrade.getExpirationDate().isBefore(Instant.now());
+                        if (shouldRemove) {
+                            for (Player player : guild.getOnlinePlayers()) {
+                                Guild.sendGuildMessage(player,
+                                                       ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade().name + ChatColor.RED + " has expired!"
+                                );
+                            }
+                        }
+                        return shouldRemove;
+                    });
                 }
                 secondsElapsed++;
             }

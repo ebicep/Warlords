@@ -1,5 +1,6 @@
-package com.ebicep.warlords.events.game;
+package com.ebicep.warlords.events.game.pve;
 
+import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.HandlerList;
 
