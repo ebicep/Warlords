@@ -457,7 +457,7 @@ public class WaveDefenseOption implements Option {
             String name = we.getName();
             String newName;
 
-            if (healthRatio >= .75) {
+            if (healthRatio >= .5) {
                 healthColor = ChatColor.GREEN;
             } else if (healthRatio >= .25) {
                 healthColor = ChatColor.YELLOW;
@@ -471,12 +471,8 @@ public class WaveDefenseOption implements Option {
                 newName = name;
             }
 
-            list.add(newName + ": " +
-                    (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤" + (int) we.getHealth()) +
-                    ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
-                    .total()
-                    .getKills());
-
+            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤ " + (int) we.getHealth()) +
+                    ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats().total().getKills());
         }
 
         return list;

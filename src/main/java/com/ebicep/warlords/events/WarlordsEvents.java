@@ -175,7 +175,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Last Updated: " + ChatColor.GOLD + DateUtil.formatCurrentDateEST("d/MM/uuuu"));
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Currently playable specs - PVE:");
-            ChatUtils.sendMessage(player, false,ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Thunderlord");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Thunderlord");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Avenger");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Earthwarden");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Berserker");
@@ -185,10 +185,13 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Aquamancer");
             ChatUtils.sendMessage(player, false, "");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Playable but still has WIP:");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Assassin");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Vindicator");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Apothecary");
             ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Pyromancer");
-            ChatUtils.sendMessage(player, false, "");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Next up: Vindicator, Assassin");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Defender");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Revenant");
+            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Spiritguard");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
 //            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
 //            ChatUtils.sendCenteredMessage(player, "");
@@ -314,17 +317,17 @@ public class WarlordsEvents implements Listener {
                                 } else {
                                     wpVictim.sendMessage(
                                             WarlordsEntity.RECEIVE_ARROW_RED +
-                                                    ChatColor.GRAY + "You have been bound by " +
-                                                    wpAttacker.getName() + "'s " +
-                                                    ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
-                                                    ChatColor.GRAY + "!"
+                                            ChatColor.GRAY + "You have been bound by " +
+                                            wpAttacker.getName() + "'s " +
+                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" +
+                                            ChatColor.GRAY + "!"
                                     );
                                     wpAttacker.sendMessage(
                                             WarlordsEntity.GIVE_ARROW_GREEN +
-                                                    ChatColor.GRAY + "Your " +
-                                                    ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
-                                                    ChatColor.GRAY + "has bound " +
-                                                    wpVictim.getName() + "!"
+                                            ChatColor.GRAY + "Your " +
+                                            ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " +
+                                            ChatColor.GRAY + "has bound " +
+                                            wpVictim.getName() + "!"
                                     );
                                     soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulBinding.getBindDuration()));
                                     Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
@@ -414,8 +417,7 @@ public class WarlordsEvents implements Listener {
                                     player.playSound(player.getLocation(), "mountup", 1, 1);
                                     wp.getHorse().spawn();
                                     if (!wp.isDisableCooldowns()) {
-                                        wp.setHorseCooldown((float) (wp.getHorse()
-                                                                       .getCooldown() * wp.getCooldownModifier()));
+                                        wp.setHorseCooldown((float) (wp.getHorse().getCooldown() * wp.getCooldownModifier()));
                                     }
                                 }
                             }

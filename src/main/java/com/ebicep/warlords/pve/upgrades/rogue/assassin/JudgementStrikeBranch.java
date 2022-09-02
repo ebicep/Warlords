@@ -9,6 +9,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
+    float strikeHeal = ability.getStrikeHeal();
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
         super(abilityTree, ability);
@@ -54,7 +55,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+75 Healing on strike kill.",
                 5000,
                 () -> {
-
+                    ability.setPveUpgradeStrikeHeal(true);
                 }
         ));
         treeB.add(new Upgrade(
@@ -62,7 +63,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+150 Healing on strike kill.",
                 10000,
                 () -> {
-
+                    ability.setStrikeHeal(strikeHeal + 75);
                 }
         ));
         treeB.add(new Upgrade(
@@ -70,7 +71,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+225 Healing on strike kill.",
                 15000,
                 () -> {
-
+                    ability.setStrikeHeal(strikeHeal + 150);
                 }
         ));
         treeB.add(new Upgrade(
@@ -78,17 +79,17 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+300 Healing on strike kill.",
                 20000,
                 () -> {
-
+                    ability.setStrikeHeal(strikeHeal + 225);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Death Strike",
                 "Judgement Strike - Master Upgrade",
-                "If the enemy hit by Judgement Strike drop below\n20% max health they get executed. (Excluding boss mobs.)",
+                "If the enemy hit by Judgement Strike drops below\n25% max health they get executed. (Excluding boss mobs.)",
                 50000,
                 () -> {
-
+                    ability.setPveUpgradeMaster(true);
                 }
         );
     }

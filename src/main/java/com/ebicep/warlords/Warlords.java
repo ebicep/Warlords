@@ -256,6 +256,7 @@ public class Warlords extends JavaPlugin {
          * Adding additional game servers will require a config update in @see MultiWorld Plugin
          */
 
+        // CTF
         gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-0")));
         gameManager.addGameHolder("Rift-1", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-1")));
         gameManager.addGameHolder("Rift-2", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-2")));
@@ -303,7 +304,9 @@ public class Warlords extends JavaPlugin {
         //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
         //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
 
-        //gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
+        gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
+        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-1")));
+        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-2")));
 
         gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
         //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));

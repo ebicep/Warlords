@@ -1,7 +1,9 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -19,6 +21,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     private int speedOnCrit = 25;
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
+    private float strikeHeal = 75;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -60,7 +63,31 @@ public class JudgementStrike extends AbstractStrikeBase {
             if (warlordsDamageHealingFinalEvent.isCrit()) {
                 wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
+
+            if (pveUpgradeStrikeHeal) {
+                if (nearPlayer.isDead()) {
+                    wp.addDamageInstance(
+                            wp,
+                            name,
+                            strikeHeal,
+                            strikeHeal,
+                            -1,
+                            100,
+                            false
+                    );
+                }
+            }
         });
+
+        if (pveUpgradeMaster) {
+            if (
+                    nearPlayer instanceof WarlordsNPC &&
+                    nearPlayer.getHealth() < (nearPlayer.getMaxHealth() * 0.25f) &&
+                    ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
+            ) {
+                nearPlayer.die(nearPlayer);
+            }
+        }
 
         return true;
     }
@@ -110,5 +137,13 @@ public class JudgementStrike extends AbstractStrikeBase {
 
     public void setPveUpgradeMaster(boolean pveUpgradeMaster) {
         this.pveUpgradeMaster = pveUpgradeMaster;
+    }
+
+    public void setStrikeHeal(float strikeHeal) {
+        this.strikeHeal = strikeHeal;
+    }
+
+    public float getStrikeHeal() {
+        return strikeHeal;
     }
 }

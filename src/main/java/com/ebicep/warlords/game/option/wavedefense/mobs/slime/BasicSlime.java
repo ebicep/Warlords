@@ -56,7 +56,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
             ).playEffects();
         }
 
-        if (ticksElapsed % 8 == 0) {
+        if (ticksElapsed % 6 == 0) {
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)

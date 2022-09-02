@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -100,7 +101,7 @@ public class IceBarrier extends AbstractAbility {
                                     6,
                                     ParticleEffect.FIREWORKS_SPARK,
                                     1,
-                                    15
+                                    8
                             );
 
                             for (WarlordsEntity we : PlayerFilter
@@ -108,6 +109,9 @@ public class IceBarrier extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
+                                if (we instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                                }
                                 we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
                                 we.getSpeed().addSpeedModifier("Ice Barrier Slowness", -80, 20);
                             }

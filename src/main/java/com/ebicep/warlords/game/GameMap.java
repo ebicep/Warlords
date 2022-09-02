@@ -1192,7 +1192,6 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(584.5, 18, 235.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(593.5, 19, 242.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 19, 232.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
             options.add(new RespawnWaveOption(0, 30, 30));
             options.add(new GraveOption());
@@ -1391,10 +1390,10 @@ public enum GameMap {
                             //void
                             .add(0, Mobs.VOID_ZOMBIE)
                     )
-                    .add(5, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
-                    .add(6, new SimpleWave(20, 10 * SECOND, null)
+                    .add(21, new SimpleWave(20, 10 * SECOND, null)
                             //basic
                             .add(0.8, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
@@ -1417,10 +1416,10 @@ public enum GameMap {
                             //void
                             .add(0, Mobs.VOID_ZOMBIE)
                     )
-                    .add(10, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(40, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.GHOULCALLER)
                     )
-                    .add(11, new SimpleWave(25, 10 * SECOND, null)
+                    .add(41, new SimpleWave(25, 10 * SECOND, null)
                             //basic
                             .add(0.7, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
@@ -1443,10 +1442,10 @@ public enum GameMap {
                             //void
                             .add(0, Mobs.VOID_ZOMBIE)
                     )
-                    .add(15, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(60, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.NARMER)
                     )
-                    .add(16, new SimpleWave(28, 10 * SECOND, null)
+                    .add(61, new SimpleWave(28, 10 * SECOND, null)
                             //basic
                             .add(0.6, Mobs.BASIC_ZOMBIE)
                             .add(0.2, Mobs.BASIC_SKELETON)
@@ -1469,11 +1468,11 @@ public enum GameMap {
                             //void
                             .add(0.01, Mobs.VOID_ZOMBIE)
                     )
-                    .add(20, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(80, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.PHYSIRA)
                             .add(Mobs.MITHRA)
                     )
-                    .add(21, new SimpleWave(30, 10 * SECOND, null)
+                    .add(81, new SimpleWave(30, 10 * SECOND, null)
                             //basic
                             .add(0.5, Mobs.BASIC_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
@@ -1496,10 +1495,10 @@ public enum GameMap {
                             //elite
                             .add(0.02, Mobs.VOID_ZOMBIE)
                     )
-                    .add(25, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
-                    25
+                    10000
             ));
 
             return options;

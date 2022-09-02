@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -22,6 +23,8 @@ import java.util.*;
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int timesProjectilesReduced = 0;
     protected int timesOtherReduced = 0;
 
@@ -141,7 +144,6 @@ public class PrismGuard extends AbstractAbility {
                     if (ticksElapsed < 5) return;
 
                     if (ticksElapsed % 3 == 0) {
-                        System.out.println("reduced " + tempWideGuard.getDamageReduced());
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 190, 190, 190);
                         Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
 
@@ -189,6 +191,20 @@ public class PrismGuard extends AbstractAbility {
                                 }
                             });
                             timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
+                        }
+                    }
+
+                    if (ticksElapsed % 10 == 0) {
+                        if (pveUpgrade) {
+                            for (WarlordsEntity we : PlayerFilter
+                                    .entitiesAround(wp, 15, 15, 15)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(wp)
+                            ) {
+                                if (we instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                                }
+                            }
                         }
                     }
                 }
@@ -280,5 +296,13 @@ public class PrismGuard extends AbstractAbility {
 
     public float getDamageReduced() {
         return damageReduced;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

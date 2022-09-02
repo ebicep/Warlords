@@ -94,9 +94,8 @@ public class Narmer extends AbstractZombie implements BossMob {
                         Location loc = warlordsNPC.getLocation();
                         option.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
-                            Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.8f, 0.5f);
-                            //TODO fix this inaccurate message (not fully invincible only cant drop below executeHealth)
-                            we.sendMessage(ChatColor.RED + "Narmer is invincible while his acolytes are still alive!");
+                            Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
+                            we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
                         });
                         event.setCancelled(true);
                     }
@@ -151,7 +150,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         timesMegaEarthQuakeActivated++;
                     } else {
                         for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(warlordsNPC, 12, 12, 12)
+                                .entitiesAround(warlordsNPC, 20, 20, 20)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             enemy.addDamageInstance(
@@ -199,13 +198,13 @@ public class Narmer extends AbstractZombie implements BossMob {
             acolyteDeathTickWindow--;
         }
 
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 15 == 0) {
             for (WarlordsEntity acolyte : acolytes) {
                 EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
             }
         }
 
-        if (ticksElapsed % 200 == 0) {
+        if (ticksElapsed % 160 == 0) {
             //Bukkit.broadcastMessage("earthquake");
             Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
@@ -218,7 +217,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                 enemy.addDamageInstance(
                         warlordsNPC,
                         "Ground Shred",
-                        600,
+                        750,
                         900,
                         -1,
                         100,
