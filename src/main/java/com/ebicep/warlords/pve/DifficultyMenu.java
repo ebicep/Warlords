@@ -48,7 +48,7 @@ public class DifficultyMenu {
             DifficultyIndex difficulty = index[i];
             int finalI = i;
             menu.setItem(
-                    9 / 2 - index.length / 2 + i * 2,
+                    9 / 2 - index.length + 1 + i * 2,
                     1,
                     new ItemBuilder(Material.REDSTONE_LAMP_OFF)
                             .name(difficulty.getDifficultyColor() + ChatColor.BOLD.toString() + difficulty.getName())

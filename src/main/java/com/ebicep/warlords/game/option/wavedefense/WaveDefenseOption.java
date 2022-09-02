@@ -26,13 +26,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,7 +39,6 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
@@ -295,68 +292,62 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
-                WarlordsEntity warlordsEntity = event.getPlayer();
+                WarlordsEntity we = event.getPlayer();
                 WarlordsEntity killer = event.getKiller();
 
-                if (warlordsEntity instanceof WarlordsNPC) {
-                    AbstractMob<?> mobToRemove = ((WarlordsNPC) warlordsEntity).getMob();
+                if (we instanceof WarlordsNPC) {
+                    AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.contains(mobToRemove)) {
                         mobs.remove(mobToRemove);
                         new GameRunnable(game) {
                             @Override
                             public void run() {
-                                mobToRemove.onDeath(killer, warlordsEntity.getDeathLocation(), WaveDefenseOption.this);
-                                game.removePlayer(warlordsEntity.getUuid());
+                                mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
+                                game.removePlayer(we.getUuid());
                             }
                         }.runTask();
 
                         if (killer instanceof WarlordsPlayer) {
                             killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                            warlordsEntity.getHitBy()
-                                          .forEach((assisted, value) -> assisted.getMinuteStats()
-                                                                                .addMobAssist(mobToRemove.getName()));
+                            we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats()
+                                    .addMobAssist(mobToRemove.getName()));
                         }
                     }
-                } else if (warlordsEntity instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
+                } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
                     if (mobs.contains(((WarlordsNPC) killer).getMob())) {
-                        warlordsEntity.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
+                        we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
                     }
                 }
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class,
-                                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
-                                    @Override
-                                    public List<String> computeLines(@Nullable WarlordsEntity player) {
-                                        return Collections.singletonList(
-                                                "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave == 50 ? "/" + ChatColor.GREEN + maxWave : "") +
-                                                        ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
-                                        );
-                                    }
-                                }
+        game.registerGameMarker(
+                ScoreboardHandler.class,
+                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+                    @Override
+                    public List<String> computeLines(@Nullable WarlordsEntity player) {
+                        return Collections.singletonList(
+                                "Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave < 10000 ? "/" + ChatColor.GREEN + maxWave : "") +
+                                        ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : "")
+                        );
+                    }
+                }
         );
-        game.registerGameMarker(ScoreboardHandler.class,
-                                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
-                                    @Override
-                                    public List<String> computeLines(@Nullable WarlordsEntity player) {
-                                        return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
-                                    }
-                                }
+        game.registerGameMarker(
+                ScoreboardHandler.class,
+                scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+                    @Override
+                    public List<String> computeLines(@Nullable WarlordsEntity player) {
+                        return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
+                    }
+                }
         );
-
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
-                return PlayerFilter.playingGame(game)
-                                   .filter(e -> e instanceof WarlordsPlayer)
-                                   .stream()
-                                   .map(e -> e.getName() + ": " +
-                                           (e.isDead() ? ChatColor.DARK_RED + "DEAD" : (e.getHealth() > (e.getMaxHealth() * 0.25f) ? ChatColor.GREEN : ChatColor.RED) + "❤" + (int) e.getHealth()) +
-                                           ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + e.getMinuteStats()
-                                                                                             .total()
-                                                                                             .getKills())
-                                   .collect(Collectors.toList());
-            }
+        game.registerGameMarker(
+                ScoreboardHandler.class,
+                scoreboard = new SimpleScoreboardHandler(6, "kills") {
+                    @Override
+                    public List<String> computeLines(@Nullable WarlordsEntity player) {
+                        return healthScoreboard(game);
+                }
         });
 
         new TimerSkipAbleMarker() {
@@ -472,6 +463,47 @@ public class WaveDefenseOption implements Option {
         } else {
             player.getInventory().setItem(0, weapon.generateItemStack());
         }
+
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET)
+                .name(ChatColor.GREEN + "Upgrade Talisman")
+                .get()
+        );
+    }
+
+    private List<String> healthScoreboard(Game game) {
+        List<String> list = new ArrayList<>();
+        for (WarlordsEntity we : PlayerFilter
+                .playingGame(game)
+                .filter(e -> e instanceof WarlordsPlayer)
+        ) {
+            float healthRatio = we.getHealth() / we.getMaxHealth();
+            ChatColor healthColor;
+            String name = we.getName();
+            String newName;
+
+            if (healthRatio >= .75) {
+                healthColor = ChatColor.GREEN;
+            } else if (healthRatio >= .25) {
+                healthColor = ChatColor.YELLOW;
+            } else {
+                healthColor = ChatColor.RED;
+            }
+
+            if (name.length() >= 8) {
+                newName = name.substring(0, 8);
+            } else {
+                newName = name;
+            }
+
+            list.add(newName + ": " +
+                    (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤" + (int) we.getHealth()) +
+                    ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
+                    .total()
+                    .getKills());
+
+        }
+
+        return list;
     }
 
     public Set<AbstractMob<?>> getMobs() {
