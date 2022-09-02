@@ -10,7 +10,7 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogDemote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
-import com.ebicep.warlords.guilds.upgrades.temporary.TempGuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.GuildUpgrades;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -34,6 +34,8 @@ public class Guild {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         return pveStats.getCurrencyValue(Currencies.COIN) >= 100;
     };
+
+    //TODO local cache of uuids for faster lookup
 
     @Id
     private String id;
@@ -64,8 +66,7 @@ public class Guild {
             put(value, 0L);
         }
     }};
-    @Field("temporary_upgrades")
-    private List<TempGuildUpgrade> temporaryUpgrades = new ArrayList<>();
+    private List<GuildUpgrades> upgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
 
@@ -336,8 +337,8 @@ public class Guild {
         this.experience.forEach((timing, aLong) -> this.experience.put(timing, aLong + experience));
     }
 
-    public List<TempGuildUpgrade> getTemporaryUpgrades() {
-        return temporaryUpgrades;
+    public List<GuildUpgrades> getUpgrades() {
+        return upgrades;
     }
 
     public List<AbstractGuildLog> getAuditLog() {

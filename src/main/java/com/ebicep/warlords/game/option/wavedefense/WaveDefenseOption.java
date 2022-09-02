@@ -18,6 +18,10 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.waves.Wave;
 import com.ebicep.warlords.game.option.wavedefense.waves.WaveList;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.upgrades.GuildUpgrades;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -367,6 +371,25 @@ public class WaveDefenseOption implements Option {
             }
 
         }.register(game);
+
+        if (DatabaseManager.guildService != null) {
+            HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
+            List<UUID> uuids = game.warlordsPlayers().map(WarlordsEntity::getUuid).collect(Collectors.toList());
+            for (Guild guild : GuildManager.GUILDS) {
+                for (UUID uuid : uuids) {
+                    Optional<GuildPlayer> playerMatchingUUID = guild.getPlayerMatchingUUID(uuid);
+                    if (playerMatchingUUID.isPresent()) {
+                        guilds.computeIfAbsent(guild, k -> new HashSet<>()).add(uuid);
+                        break;
+                    }
+                }
+            }
+            guilds.forEach((guild, validUUIDs) -> {
+                for (GuildUpgrades upgrade : guild.getUpgrades()) {
+                    upgrade.onGame(game, validUUIDs);
+                }
+            });
+        }
     }
 
     @Override
