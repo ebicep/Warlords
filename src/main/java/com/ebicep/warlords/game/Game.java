@@ -716,7 +716,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.eventHandlers.add(listener);
         // Manually register events here, this way we can add support for
         // filtering the WarlordsGameEvent to be from this game instance only.
-        // This makes the implementing of other code comsuming these events
+        // This makes the implementing of other code consuming these events
         // overall simpler.
         // See the source code of {@link org.bukkit.plugin.SimplePluginManager#registerEvents}
         if (!Warlords.getInstance().isEnabled()) {

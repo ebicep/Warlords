@@ -100,6 +100,7 @@ public class DatabaseManager {
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> {
+                    GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
                     ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkStatsTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();

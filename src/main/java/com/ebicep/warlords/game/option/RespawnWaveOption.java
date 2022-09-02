@@ -2,14 +2,18 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RespawnWaveOption implements Option, Listener {
     public static final int DEFAULT_INITIAL_DELAY = 0;
@@ -115,7 +119,9 @@ public class RespawnWaveOption implements Option, Listener {
         while (respawn < minRespawnTimer) {
             respawn += this.taskPeriod;
         }
-        player.setRespawnTimer(respawn);
+        AtomicInteger respawnTime = new AtomicInteger(respawn);
+        Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveRespawnEvent(player, respawnTime));
+        player.setRespawnTimer(Math.max(2, respawnTime.get()));
     }
     
 }
