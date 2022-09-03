@@ -206,6 +206,10 @@ public class Warlords extends JavaPlugin {
         return settings;
     }
 
+    public static void setPlayerSettings(@Nonnull UUID key, @Nonnull PlayerSettings value) {
+        playerSettings.put(key, value);
+    }
+
     public static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> getPlayerHeads() {
         return playerHeads;
     }
