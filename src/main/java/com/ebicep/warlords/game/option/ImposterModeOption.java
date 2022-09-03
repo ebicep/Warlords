@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
@@ -170,15 +169,15 @@ public class ImposterModeOption implements Option {
                             title = ChatColor.YELLOW + "You are...";
                             break;
                         case 4:
-                            if (imposters.get(team).contains(Warlords.getPlayer(player))) {
+                            if (imposters.get(team).contains(player.getUniqueId())) {
                                 title = ChatColor.RED + "The IMPOSTER";
                                 sendImposterMessage(player,
-                                                              ChatColor.RED + "You are the IMPOSTER"
+                                                    ChatColor.RED + "You are the IMPOSTER"
                                 );
                             } else {
                                 title = ChatColor.GREEN + "INNOCENT";
                                 sendImposterMessage(player,
-                                                              ChatColor.GREEN + "You are INNOCENT"
+                                                    ChatColor.GREEN + "You are INNOCENT"
                                 );
                             }
                             break;
@@ -236,8 +235,7 @@ public class ImposterModeOption implements Option {
                             .filter(stringIntegerEntry -> stringIntegerEntry.getValue() == mostVotes)
                             .map(Map.Entry::getKey)
                             .map(s -> game.warlordsEntities()
-                                    .filter(warlordsPlayer -> warlordsPlayer.getName()
-                                            .equals(s))
+                                    .filter(warlordsPlayer -> warlordsPlayer.getName().equals(s))
                                     .findFirst()
                                     .get())
                             .collect(Collectors.toList());
