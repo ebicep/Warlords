@@ -198,6 +198,10 @@ public class Warlords extends JavaPlugin {
         return playerSettings.computeIfAbsent(key, (k) -> new PlayerSettings());
     }
 
+    public static void setPlayerSettings(@Nonnull UUID key, @Nonnull PlayerSettings value) {
+        playerSettings.put(key, value);
+    }
+
     public static GameManager getGameManager() {
         return getInstance().gameManager;
     }

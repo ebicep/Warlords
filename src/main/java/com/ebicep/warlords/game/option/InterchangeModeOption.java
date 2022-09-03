@@ -24,13 +24,9 @@ import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public static final int MAX_SWAP_TIME = 80;
-    public static final int MIN_SWAP_TIME = 50;
-    private final HashMap<UUID, Specializations> previousSelectedSpecs = new HashMap<>();
-    private final HashMap<UUID, HashMap<Specializations, SkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
-    private final HashMap<UUID, HashMap<Specializations, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
-    private final HashMap<UUID, List<ArmorManager.Helmets>> previousSelectedHelmets = new HashMap<>();
-    private final HashMap<UUID, List<ArmorManager.ArmorSets>> previousSelectedArmorSets = new HashMap<>();
+    public final int MAX_SWAP_TIME = 80;
+    public final int MIN_SWAP_TIME = 50;
+    private final HashMap<UUID, PlayerSettings> previousPlayerSettings = new HashMap<>();
 
     private int secondsUntilNextSwap = 0;
 
@@ -45,12 +41,7 @@ public class InterchangeModeOption implements Option {
         game.getPlayers().forEach((uuid, team) -> {
             System.out.println("SETTING " + Bukkit.getOfflinePlayer(uuid).getName());
             PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            System.out.println(Bukkit.getOfflinePlayer(uuid).getName() + " " + playerSettings.getSelectedSpec());
-            previousSelectedSpecs.put(uuid, playerSettings.getSelectedSpec());
-            previousSelectedSkillBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
-            previousSelectedWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
-            previousSelectedHelmets.put(uuid, ArmorManager.Helmets.getSelected(uuid));
-            previousSelectedArmorSets.put(uuid, ArmorManager.ArmorSets.getSelected(uuid));
+            previousPlayerSettings.put(uuid, playerSettings);
         });
 
         generateNextSwapTime();
@@ -79,12 +70,7 @@ public class InterchangeModeOption implements Option {
         //resetting player info
         game.getPlayers().forEach((uuid, team) -> {
             System.out.println("RESETTING " + Bukkit.getOfflinePlayer(uuid).getName());
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-            playerSettings.setSelectedSpec(previousSelectedSpecs.get(uuid));
-            playerSettings.setSpecsSkillBoosts(previousSelectedSkillBoosts.get(uuid));
-            playerSettings.setWeaponSkins(previousSelectedWeaponSkins.get(uuid));
-            playerSettings.setHelmets(previousSelectedHelmets.get(uuid));
-            playerSettings.setArmorSets(previousSelectedArmorSets.get(uuid));
+            Warlords.setPlayerSettings(uuid, previousPlayerSettings.get(uuid));
         });
     }
 
