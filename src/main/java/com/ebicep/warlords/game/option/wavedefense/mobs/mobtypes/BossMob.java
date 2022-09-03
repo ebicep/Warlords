@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.Mob;
 public interface BossMob extends Mob {
 
     @Override
-    default int dropRate() {
+    default double dropRate() {
         return 5;
     }
 

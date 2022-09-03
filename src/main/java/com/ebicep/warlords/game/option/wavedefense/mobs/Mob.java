@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface Mob {
 
-    int dropRate();
+    double dropRate();
 
     int commonDropChance();
 

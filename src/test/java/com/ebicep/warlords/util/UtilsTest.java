@@ -78,8 +78,10 @@ public class UtilsTest {
     public void testRandom() {
 //        double min = 100;
 //        double max = 0;
-//        for (int i = 0; i < 10000; i++) {
-//            int aDouble = Utils.generateRandomValueBetweenInclusive(0, 100);
+//        for (int i = 0; i < 1000; i++) {
+////            int randomInt = ThreadLocalRandom.current().nextInt(10001);
+////            double aDouble = randomInt / 100.0;
+//            double aDouble = ThreadLocalRandom.current().nextDouble(0, 100);
 //            if (aDouble < min) {
 //                min = aDouble;
 //            } else if (aDouble > max) {

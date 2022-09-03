@@ -25,7 +25,11 @@ public class MobCommand extends BaseCommand {
     @Subcommand("spawn")
     @Description("Spawns mobs, amount is how many")
     @CommandCompletion("@pvemobs")
-    public void spawn(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Mobs mobType, @Default("1") @Conditions("limits:min=0,max=10") Integer amount) {
+    public void spawn(
+            @Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer,
+            Mobs mobType,
+            @Default("1") @Conditions("limits:min=0,max=25") Integer amount
+    ) {
         SPAWNED_MOBS.clear();
         for (Option option : warlordsPlayer.getGame().getOptions()) {
             if (option instanceof WaveDefenseOption) {

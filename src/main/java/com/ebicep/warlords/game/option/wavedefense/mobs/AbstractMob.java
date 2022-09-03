@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -13,8 +14,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.google.common.util.concurrent.AtomicDouble;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -133,7 +136,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void dropWeapon(WarlordsEntity killer) {
-        if (DatabaseManager.playerService != null && ThreadLocalRandom.current().nextInt(0, 100) < dropRate()) {
+        if (DatabaseManager.playerService == null) {
+            return;
+        }
+        AtomicDouble dropRate = new AtomicDouble(dropRate());
+        Bukkit.getPluginManager().callEvent(new WarlordsPlayerDropWeaponEvent(killer, dropRate));
+        if (ThreadLocalRandom.current().nextDouble(0, 100) < dropRate.get()) {
             UUID uuid = killer.getUuid();
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
             AbstractWeapon weapon = generateWeapon(uuid);

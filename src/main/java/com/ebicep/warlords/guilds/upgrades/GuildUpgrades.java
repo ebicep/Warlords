@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.upgrades;
 
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.EventHandler;
@@ -92,7 +93,17 @@ public enum GuildUpgrades {
 
         @Override
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
 
+                @EventHandler
+                public void onEvent(WarlordsPlayerDropWeaponEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+                    event.getDropRate().set(event.getDropRate().get() * getValueFromTier(tier));
+                }
+
+            });
         }
     },
 
