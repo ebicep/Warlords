@@ -35,17 +35,28 @@ public class ImposterCommand implements CommandExecutor {
         switch (input.toLowerCase()) {
             case "assign": {
                 WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
-                if (warlordsPlayer == null) return true;
+                if (warlordsPlayer == null) {
+                    return true;
+                }
                 if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                     sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
                     return true;
                 }
+                ImposterModeOption imposterModeOption = (ImposterModeOption) warlordsPlayer.getGame()
+                        .getOptions()
+                        .stream()
+                        .filter(option -> option instanceof ImposterModeOption)
+                        .findFirst()
+                        .get();
+                imposterModeOption.assignImposters(warlordsPlayer.getGame());
 
                 break;
             }
             case "vote": {
                 WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
-                if (warlordsPlayer == null) return true;
+                if (warlordsPlayer == null) {
+                    return true;
+                }
                 if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                     sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
                     return true;
@@ -56,7 +67,9 @@ public class ImposterCommand implements CommandExecutor {
                     return true;
                 }
 
-                ImposterModeOption imposterModeOption = (ImposterModeOption) warlordsPlayer.getGame().getOptions().stream()
+                ImposterModeOption imposterModeOption = (ImposterModeOption) warlordsPlayer.getGame()
+                        .getOptions()
+                        .stream()
                         .filter(option -> option instanceof ImposterModeOption)
                         .findFirst()
                         .get();
@@ -66,27 +79,46 @@ public class ImposterCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (imposterModeOption.getImposters().values().stream().flatMap(Collection::stream).anyMatch(wp -> wp.equals(warlordsPlayer))) {
+                if (imposterModeOption.getImposters()
+                        .values()
+                        .stream()
+                        .flatMap(Collection::stream)
+                        .anyMatch(wp -> wp.equals(warlordsPlayer.getUuid()))
+                ) {
                     sender.sendMessage(ChatColor.RED + "You cannot request to vote when you are an imposter!");
                     return true;
                 }
 
-                if (imposterModeOption.getVoters().values().stream().anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer))) {
+                if (imposterModeOption.getVoters()
+                        .values()
+                        .stream()
+                        .anyMatch(warlordsPlayers -> warlordsPlayers.contains(warlordsPlayer.getUuid()))
+                ) {
                     sender.sendMessage(ChatColor.RED + "You already voted to vote!");
                     return true;
                 }
 
-                imposterModeOption.getVoters().computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>()).add(warlordsPlayer);
+                imposterModeOption.getVoters()
+                        .computeIfAbsent(warlordsPlayer.getTeam(), v -> new ArrayList<>())
+                        .add(warlordsPlayer.getUuid());
 
-                int votesNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == warlordsPlayer.getTeam()).count() * .75 + 1);
+                int votesNeeded = (int) (warlordsPlayer.getGame()
+                        .getPlayers()
+                        .entrySet()
+                        .stream()
+                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == warlordsPlayer.getTeam())
+                        .count() * .6);
                 if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                     Team team = warlordsPlayer.getTeam();
                     imposterModeOption.sendPoll(team);
-                    warlordsPlayer.getGame().addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
+                    warlordsPlayer.getGame()
+                            .addFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
                 } else {
                     warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         if (team == warlordsPlayer.getTeam()) {
-                            player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size() + "/" + votesNeeded + ")");
+                            player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + imposterModeOption.getVoters()
+                                    .get(warlordsPlayer.getTeam())
+                                    .size() + "/" + votesNeeded + ")");
                         }
                     });
                 }

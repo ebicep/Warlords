@@ -6,12 +6,14 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.poll.polls.GamePoll;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -24,10 +26,11 @@ import java.util.stream.Collectors;
 public class ImposterModeOption implements Option {
 
     private final int numberOfImpostersPerTeam = 1;
-    private final HashMap<Team, List<WarlordsPlayer>> imposters = new HashMap<>();
-    private final HashMap<Team, List<WarlordsPlayer>> voters = new HashMap<>();
+    private final HashMap<Team, List<UUID>> imposters = new HashMap<>();
+    private final HashMap<Team, List<UUID>> voters = new HashMap<>();
     private Game game;
     private GamePoll poll;
+    private boolean forceEnd = false;
 
 
     @Override
@@ -38,27 +41,31 @@ public class ImposterModeOption implements Option {
             imposters.put(team, new ArrayList<>());
         }
 
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(Integer.MAX_VALUE - 15, "imposter") {
-                    @Override
-                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
-                        if (warlordsPlayer == null) {
-                            return Collections.singletonList("");
-                        }
-                        if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
-                            return Collections.singletonList("");
-                        }
-                        if (imposters.entrySet().stream().anyMatch(teamListEntry -> teamListEntry.getValue().contains(warlordsPlayer))) {
-                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
-                        }
+        game.registerGameMarker(ScoreboardHandler.class,
+                                new SimpleScoreboardHandler(Integer.MAX_VALUE - 15, "imposter") {
+                                    @Override
+                                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
+                                        if (warlordsPlayer == null) {
+                                            return Collections.singletonList("");
+                                        }
+                                        if (imposters.get(warlordsPlayer.getTeam()).isEmpty()) {
+                                            return Collections.singletonList("");
+                                        }
+                                        if (imposters.entrySet()
+                                                .stream()
+                                                .anyMatch(teamListEntry -> teamListEntry.getValue()
+                                                        .contains(warlordsPlayer.getUuid()))) {
+                                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "Imposter");
+                                        }
 
-                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
-                    }
+                                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "Innocent");
+                                    }
 
-                    @Override
-                    public boolean emptyLinesBetween() {
-                        return false;
-                    }
-                }
+                                    @Override
+                                    public boolean emptyLinesBetween() {
+                                        return false;
+                                    }
+                                }
         );
     }
 
@@ -94,10 +101,18 @@ public class ImposterModeOption implements Option {
                         case 4:
                             if (imposters.get(team).contains(Warlords.getPlayer(player))) {
                                 title = ChatColor.RED + "The IMPOSTER";
-                                ChatUtils.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", ChatColor.BLUE, true);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.RED + "You are the IMPOSTER",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
                             } else {
                                 title = ChatColor.GREEN + "INNOCENT";
-                                ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", ChatColor.BLUE, true);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.GREEN + "You are INNOCENT",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
                             }
                             break;
                     }
@@ -111,19 +126,87 @@ public class ImposterModeOption implements Option {
         }.runTaskTimer(20 * 12, 20);
     }
 
-    private void assignImposters(Game game) {
+    @Override
+    public void onGameEnding(@Nonnull Game game) {
+        if (!forceEnd) {
+            game.getState(EndState.class).ifPresent(endState -> {
+                Team winner = endState.getWinEvent().getDeclaredWinner();
+                if (winner != null) {
+                    game.onlinePlayersWithoutSpectators().forEach(playerTeamEntry -> {
+                        Player player = playerTeamEntry.getKey();
+                        Team team = playerTeamEntry.getValue();
+                        //winners - imposter lose
+                        //losers - imposter win
+                        if (team == winner) {
+                            if (imposters.get(team).stream().anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
+                                PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.RED + "You lost!",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
+                            } else {
+                                PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.GREEN + "You won!",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
+                            }
+                        } else {
+                            boolean isAnImposterOnOtherTeam = false;
+                            for (Map.Entry<Team, List<UUID>> teamListEntry : imposters.entrySet().stream()
+                                    .filter(teamListEntry -> teamListEntry.getKey() != winner)
+                                    .collect(Collectors.toList())
+                            ) {
+                                for (UUID uuid : teamListEntry.getValue()) {
+                                    if (uuid.equals(player.getUniqueId())) {
+                                        isAnImposterOnOtherTeam = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isAnImposterOnOtherTeam) {
+                                PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.GREEN + "You won!",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
+                            } else {
+                                PacketUtils.sendTitle(player, ChatColor.RED + "YOU LOST!", "", 0, 300, 40);
+                                ChatUtils.sendMessageToPlayer(player,
+                                                              ChatColor.RED + "You lost!",
+                                                              ChatColor.BLUE,
+                                                              true
+                                );
+                            }
+                        }
+                        sendImpostorResult(player);
+                    });
+                }
+            });
+        }
+    }
+
+    public void assignImposters(Game game) {
         for (Team team : TeamMarker.getTeams(game)) {
-            List<WarlordsPlayer> teamPlayers = game.warlordsPlayers().filter(warlordsPlayer -> warlordsPlayer.getTeam() == team).collect(Collectors.toList());
+            List<WarlordsPlayer> teamPlayers = game.warlordsPlayers()
+                    .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
+                    .collect(Collectors.toList());
             if (teamPlayers.size() == 0) {
                 continue;
             }
             for (int i = 0; i < numberOfImpostersPerTeam; i++) {
-                imposters.get(team).add(teamPlayers.get(new Random().nextInt(teamPlayers.size())));
+                imposters.get(team).add(teamPlayers.get(new Random().nextInt(teamPlayers.size())).getUuid());
             }
         }
         System.out.println(" --- Assigned Imposters --- ");
         for (Team team : TeamMarker.getTeams(game)) {
-            System.out.println(team.name + " - " + imposters.get(team).stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")));
+            System.out.println(team.name + " - " + imposters.get(team)
+                    .stream()
+                    .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                    .collect(Collectors.joining(", ")));
         }
     }
 
@@ -132,25 +215,32 @@ public class ImposterModeOption implements Option {
                 .setQuestion("Who is the most SUS on your team?")
                 .setTimeLeft(60)
                 .setOptions(game.offlinePlayersWithoutSpectators()
-                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == team)
-                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
-                        .collect(Collectors.toList()))
+                                    .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == team)
+                                    .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
+                                    .collect(Collectors.toList()))
                 .setExcludedPlayers(game.offlinePlayersWithoutSpectators()
-                        .filter(uuidTeamEntry -> uuidTeamEntry.getValue() != team)
-                        .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
-                        .collect(Collectors.toList()))
+                                            .filter(uuidTeamEntry -> uuidTeamEntry.getValue() != team)
+                                            .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey()
+                                                    .getUniqueId())
+                                            .collect(Collectors.toList()))
                 .setRunnableAfterPollEnded(p -> {
-                    int mostVotes = Collections.max(p.getOptionsWithVotes().entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
+                    forceEnd = true;
+                    int mostVotes = Collections.max(p.getOptionsWithVotes().entrySet(),
+                                                    Comparator.comparingInt(Map.Entry::getValue)
+                    ).getValue();
                     List<WarlordsPlayer> votedOut = p.getOptionsWithVotes().entrySet().stream()
                             .filter(stringIntegerEntry -> stringIntegerEntry.getValue() == mostVotes)
                             .map(Map.Entry::getKey)
                             .map(s -> game.warlordsPlayers()
-                                    .filter(warlordsPlayer -> warlordsPlayer.getName().equals(s))
+                                    .filter(warlordsPlayer -> warlordsPlayer.getName()
+                                            .equals(s))
                                     .findFirst()
                                     .get())
                             .collect(Collectors.toList());
                     //If multiple top votes and one is imposter then voted wrong
-                    boolean votedCorrectly = votedOut.size() == 1 && imposters.get(team).stream().anyMatch(warlordsPlayer -> warlordsPlayer == votedOut.get(0));
+                    boolean votedCorrectly = votedOut.size() == 1 && imposters.get(team)
+                            .stream()
+                            .anyMatch(uuid -> uuid == votedOut.get(0).getUuid());
 
                     new GameRunnable(game, true) {
                         int counter = 0;
@@ -171,7 +261,8 @@ public class ImposterModeOption implements Option {
                                     } else {
                                         title = ChatColor.RED + "Incorrectly!";
                                     }
-                                    subtitle = team.teamColor + imposters.get(team).get(0).getName() + ChatColor.YELLOW + " was the imposter";
+                                    subtitle = team.teamColor + Bukkit.getOfflinePlayer(imposters.get(team).get(0))
+                                            .getName() + ChatColor.YELLOW + " was the imposter";
                                     break;
                             }
                             counter++;
@@ -182,7 +273,11 @@ public class ImposterModeOption implements Option {
                                         .forEach(playerTeamEntry -> {
                                             Player player = playerTeamEntry.getKey();
                                             player.removePotionEffect(PotionEffectType.BLINDNESS);
-                                            showWinLossMessage(team, player, votedCorrectly, playerTeamEntry.getValue() == team);
+                                            showWinLossMessage(team,
+                                                               player,
+                                                               votedCorrectly,
+                                                               playerTeamEntry.getValue() == team
+                                            );
                                         });
                             } else if (counter == 9) {
                                 game.removeFrozenCause(team.teamColor + team.name + ChatColor.GREEN + " is voting!");
@@ -198,10 +293,11 @@ public class ImposterModeOption implements Option {
                                 } else {
                                     //team with most points win, excluding voting team
                                     game.setPoints(TeamMarker.getTeams(game).stream()
-                                                    .filter(t -> t != team)
-                                                    .min(Comparator.comparingInt(o -> game.getPoints(o)))
-                                                    .get(),
-                                            scoreNeededToEndGame);
+                                                           .filter(t -> t != team)
+                                                           .min(Comparator.comparingInt(o -> game.getPoints(o)))
+                                                           .get(),
+                                                   scoreNeededToEndGame
+                                    );
                                 }
                                 ((PlayingState) game.getState()).skipTimer();
                                 game.onlinePlayers()
@@ -222,8 +318,12 @@ public class ImposterModeOption implements Option {
             //voted imposter out and player isnt the imposter
             //or didnt vote imposter and player is the imposter
             if (
-                    (votedCorrectly && imposters.get(team).stream().noneMatch(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(player.getName()))) ||
-                            (!votedCorrectly && imposters.get(team).stream().anyMatch(warlordsPlayer -> warlordsPlayer.getName().equalsIgnoreCase(player.getName())))
+                    (votedCorrectly && imposters.get(team)
+                            .stream()
+                            .noneMatch(uuid -> uuid.equals(player.getUniqueId()))) ||
+                            (!votedCorrectly && imposters.get(team)
+                                    .stream()
+                                    .anyMatch(uuid -> uuid.equals(player.getUniqueId())))
             ) {
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "YOU WON!", "", 0, 300, 40);
                 ChatUtils.sendMessageToPlayer(player, ChatColor.GREEN + "You won!", ChatColor.BLUE, true);
@@ -236,12 +336,12 @@ public class ImposterModeOption implements Option {
             //other team votes wrong imposter
             //or other team votes the right imposter then the imposter wins
             boolean isAnImposterOnOtherTeam = false;
-            for (Map.Entry<Team, List<WarlordsPlayer>> teamListEntry : imposters.entrySet().stream()
+            for (Map.Entry<Team, List<UUID>> teamListEntry : imposters.entrySet().stream()
                     .filter(teamListEntry -> teamListEntry.getKey() != team)
                     .collect(Collectors.toList())
             ) {
-                for (WarlordsPlayer warlordsPlayer : teamListEntry.getValue()) {
-                    if (warlordsPlayer.getName().equalsIgnoreCase(player.getName())) {
+                for (UUID uuid : teamListEntry.getValue()) {
+                    if (uuid.equals(player.getUniqueId())) {
                         isAnImposterOnOtherTeam = true;
                         break;
                     }
@@ -261,16 +361,28 @@ public class ImposterModeOption implements Option {
         StringBuilder message = new StringBuilder();
         imposters.forEach((team, warlordsPlayers) -> {
             if (warlordsPlayers.size() == 1) {
-                message.append(ChatColor.GREEN).append("The ")
-                        .append(team.teamColor).append(team.name)
-                        .append(ChatColor.GREEN).append(" imposter was ")
-                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
+                message.append(ChatColor.GREEN)
+                        .append("The ")
+                        .append(team.teamColor)
+                        .append(team.name)
+                        .append(ChatColor.GREEN)
+                        .append(" imposter was ")
+                        .append(ChatColor.AQUA)
+                        .append(warlordsPlayers.stream()
+                                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                        .collect(Collectors.joining(", ")))
                         .append("\n");
             } else if (warlordsPlayers.size() > 1) {
-                message.append(ChatColor.GREEN).append("The ")
-                        .append(team.teamColor).append(team.name)
-                        .append(ChatColor.GREEN).append(" imposters were ")
-                        .append(ChatColor.AQUA).append(warlordsPlayers.stream().map(WarlordsPlayer::getName).collect(Collectors.joining(", ")))
+                message.append(ChatColor.GREEN)
+                        .append("The ")
+                        .append(team.teamColor)
+                        .append(team.name)
+                        .append(ChatColor.GREEN)
+                        .append(" imposters were ")
+                        .append(ChatColor.AQUA)
+                        .append(warlordsPlayers.stream()
+                                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                                        .collect(Collectors.joining(", ")))
                         .append("\n");
             }
         });
@@ -283,18 +395,25 @@ public class ImposterModeOption implements Option {
     }
 
     private void sendTitle(String title, String subtitle) {
-        game.onlinePlayers().forEach(playerTeamEntry -> PacketUtils.sendTitle(playerTeamEntry.getKey(), title, subtitle, 0, 150, 40));
+        game.onlinePlayers()
+                .forEach(playerTeamEntry -> PacketUtils.sendTitle(playerTeamEntry.getKey(),
+                                                                  title,
+                                                                  subtitle,
+                                                                  0,
+                                                                  150,
+                                                                  40
+                ));
     }
 
     public int getNumberOfImpostersPerTeam() {
         return numberOfImpostersPerTeam;
     }
 
-    public HashMap<Team, List<WarlordsPlayer>> getImposters() {
+    public HashMap<Team, List<UUID>> getImposters() {
         return imposters;
     }
 
-    public HashMap<Team, List<WarlordsPlayer>> getVoters() {
+    public HashMap<Team, List<UUID>> getVoters() {
         return voters;
     }
 
