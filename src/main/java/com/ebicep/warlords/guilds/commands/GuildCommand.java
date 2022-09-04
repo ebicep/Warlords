@@ -167,7 +167,7 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getCurrentMaster().equals(player.getUniqueId())) {
             Guild.sendGuildMessage(player,
-                                   ChatColor.RED + "You can only leave through disbanding or transferring the guild!"
+                                   ChatColor.RED + "Guild Masters can only leave through disbanding or transferring the guild!"
             );
             return;
         }

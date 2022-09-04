@@ -137,8 +137,15 @@ public class Guild {
             if (roles.get(i).getPlayers().contains(target.getUUID())) {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i - 1).getPlayers().add(target.getUUID());
-                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to " + roles.get(i - 1).getRoleName(), true);
-                log(new GuildLogPromote(sender.getUUID(), target.getUUID(), roles.get(i).getRoleName(), roles.get(i - 1).getRoleName(), i, i - 1));
+                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to " + roles.get(i - 1)
+                        .getRoleName(), true);
+                log(new GuildLogPromote(sender.getUUID(),
+                        target.getUUID(),
+                        roles.get(i).getRoleName(),
+                        roles.get(i - 1).getRoleName(),
+                        i,
+                        i - 1
+                ));
                 queueUpdate();
                 return;
             }
@@ -150,8 +157,15 @@ public class Guild {
             if (roles.get(i).getPlayers().contains(target.getUUID())) {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i + 1).getPlayers().add(target.getUUID());
-                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to " + roles.get(i + 1).getRoleName(), true);
-                log(new GuildLogDemote(sender.getUUID(), target.getUUID(), roles.get(i).getRoleName(), roles.get(i + 1).getRoleName(), i, i + 1));
+                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to " + roles.get(i + 1)
+                        .getRoleName(), true);
+                log(new GuildLogDemote(sender.getUUID(),
+                        target.getUUID(),
+                        roles.get(i).getRoleName(),
+                        roles.get(i + 1).getRoleName(),
+                        i,
+                        i + 1
+                ));
                 queueUpdate();
                 return;
             }
@@ -257,7 +271,13 @@ public class Guild {
     }
 
     public void setOpen(boolean open) {
-        this.open = open;
+        if (this.open != open) {
+            this.open = open;
+            sendGuildMessageToOnlinePlayers((open ? ChatColor.GREEN : ChatColor.RED) + "The guild is now " + (open ? "open" : "closed"),
+                    true
+            );
+            queueUpdate();
+        }
     }
 
     public boolean isMuted() {
@@ -265,9 +285,13 @@ public class Guild {
     }
 
     public void setMuted(boolean muted) {
-        this.muted = muted;
-        sendGuildMessageToOnlinePlayers((muted ? ChatColor.RED : ChatColor.GREEN) + "The guild is now " + (muted ? "muted" : "unmuted"), true);
-        queueUpdate();
+        if (this.muted != muted) {
+            this.muted = muted;
+            sendGuildMessageToOnlinePlayers((muted ? ChatColor.RED : ChatColor.GREEN) + "The guild is now " + (muted ? "muted" : "unmuted"),
+                    true
+            );
+            queueUpdate();
+        }
     }
 
     public GuildRole getDefaultRole() {
