@@ -16,23 +16,36 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiConsumer;
 
-public class MaxedWeaponOption implements Option {
+public class WeaponOption implements Option {
 
-    public static void weaponLeftClick(WarlordsEntity wp, Player player) {
+    private final BiConsumer<WarlordsPlayer, Player> leftClick;
+    private final BiConsumer<WarlordsPlayer, Player> rightClick;
+
+    public WeaponOption() {
+        this(WeaponOption::showMaxWeapon, WeaponOption::showWeaponStats);
+    }
+
+    public WeaponOption(BiConsumer<WarlordsPlayer, Player> leftClick, BiConsumer<WarlordsPlayer, Player> rightClick) {
+        this.leftClick = leftClick;
+        this.rightClick = rightClick;
+    }
+
+    public static void showMaxWeapon(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
         player.getInventory().setItem(
                 0,
                 new ItemBuilder(wp.getWeaponSkin().getItem())
                         .name(ChatColor.GOLD + "Warlord's " + wp.getWeaponSkin()
-                                                                .getName() + " of the " + spec.getName())
+                                .getName() + " of the " + spec.getName())
                         .lore(
                                 ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
                                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
                                 "",
                                 ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass()
-                                                                                   .getSimpleName() + "):",
+                                        .getSimpleName() + "):",
                                 Warlords.getPlayerSettings(player.getUniqueId())
                                         .getSkillBoostForClass().selectedDescription,
                                 "",
@@ -48,7 +61,7 @@ public class MaxedWeaponOption implements Option {
                                 ChatColor.AQUA + "BOUND",
                                 "",
                                 ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon()
-                                                                                                                                                      .getName(),
+                                        .getName(),
                                 ChatColor.GREEN + "stats!"
                         )
                         .unbreakable()
@@ -57,7 +70,7 @@ public class MaxedWeaponOption implements Option {
         );
     }
 
-    public static void weaponRightClick(WarlordsEntity wp, Player player) {
+    public static void showWeaponStats(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
         AbstractAbility weapon = spec.getWeapon();
         player.getInventory().setItem(
@@ -65,20 +78,32 @@ public class MaxedWeaponOption implements Option {
                 new ItemBuilder(wp.getWeaponSkin().getItem())
                         .name(ChatColor.GREEN + weapon.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
                         .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(
-                                      weapon.getEnergyCost()),
-                              ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                                      weapon.getCritChance()) + "%",
-                              ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                                      weapon.getCritMultiplier()) + "%",
-                              "",
-                              weapon.getDescription(),
-                              "",
-                              ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!"
+                                        weapon.getEnergyCost()),
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
+                                        weapon.getCritChance()) + "%",
+                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
+                                        weapon.getCritMultiplier()) + "%",
+                                "",
+                                weapon.getDescription(),
+                                "",
+                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!"
                         )
                         .unbreakable()
                         .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                         .get()
         );
+    }
+
+    public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
+        player.getInventory().setItem(0, new ItemBuilder(wp.getAbstractWeapon().generateItemStack())
+                .addLore(
+                        "",
+                        ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
+                                .getWeapon()
+                                .getName(),
+                        ChatColor.GREEN + "stats!"
+                )
+                .get());
     }
 
     @Override
@@ -89,49 +114,16 @@ public class MaxedWeaponOption implements Option {
                 if (e.getSlot() == 0) {
                     Player player = (Player) e.getWhoClicked();
                     WarlordsEntity wp = Warlords.getPlayer(player);
-                    if (wp != null) {
+                    if (wp instanceof WarlordsPlayer) {
                         if (e.isLeftClick()) {
-                            weaponLeftClick(wp, player);
+                            leftClick.accept((WarlordsPlayer) wp, player);
                         } else if (e.isRightClick()) {
-                            weaponRightClick(wp, player);
+                            rightClick.accept((WarlordsPlayer) wp, player);
                         }
                     }
                 }
             }
         });
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-        player.getInventory()
-              .setItem(0, new ItemBuilder(warlordsPlayer.getWeaponSkin().getItem())
-                      .name("§cWarlord's Felflame of the " + playerClass.getWeapon()
-                                                                        .getName())
-                      .lore(
-                              "§7Damage: §c132 §7- §c179",
-                              "§7Crit Chance: §c25%",
-                              "§7Crit Multiplier: §c200%",
-                              "",
-                              "§a" + playerClass.getClassName(),
-                              "§aIncreases the damage you",
-                              "§adeal with " + playerClass.getWeapon()
-                                                          .getName() + " by §c20%",
-                              "",
-                              "§7Health: §a+800",
-                              "§7Max Energy: §a+35",
-                              "§7Cooldown Reduction: §a+13%",
-                              "§7Speed: §a+13%",
-                              "",
-                              "§6Skill Boost Unlocked",
-                              "§3Crafted",
-                              "§dVoid Forged [4/4]",
-                              "§aEQUIPPED",
-                              "§bBOUND"
-                      )
-                      .unbreakable()
-                      .get());
-        weaponLeftClick(warlordsPlayer, player);
     }
 
 }

@@ -8,8 +8,8 @@ import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
-import com.ebicep.warlords.game.option.MaxedWeaponOption;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -460,9 +460,9 @@ public class WaveDefenseOption implements Option {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         AbstractWeapon weapon = warlordsPlayer.getAbstractWeapon();
         if (weapon == null) {
-            MaxedWeaponOption.weaponLeftClick(warlordsPlayer, player);
+            WeaponOption.showMaxWeapon(warlordsPlayer, player);
         } else {
-            player.getInventory().setItem(0, weapon.generateItemStack());
+            WeaponOption.showPvEWeapon(warlordsPlayer, player);
         }
 
         player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET)
