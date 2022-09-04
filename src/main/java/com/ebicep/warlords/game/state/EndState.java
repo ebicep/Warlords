@@ -29,8 +29,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
-
 
 public class EndState implements State, TimerDebugAble {
     @Nonnull
@@ -38,9 +36,17 @@ public class EndState implements State, TimerDebugAble {
     private final WarlordsGameTriggerWinEvent winEvent;
     private int timer;
 
+    private boolean gameAdded = false;
+
     public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event) {
         this.game = game;
         this.winEvent = event;
+    }
+
+    public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event, boolean gameAdded) {
+        this.game = game;
+        this.winEvent = event;
+        this.gameAdded = gameAdded;
     }
 
     @Override
@@ -51,7 +57,9 @@ public class EndState implements State, TimerDebugAble {
         boolean teamBlueWins = winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE;
         boolean teamRedWins = winEvent != null && winEvent.getDeclaredWinner() == Team.RED;
         List<WarlordsEntity> players = game.warlordsPlayers().collect(Collectors.toList());
-        if (players.isEmpty()) return;
+        if (players.isEmpty()) {
+            return;
+        }
         sendGlobalMessage(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", true);
         sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
         sendGlobalMessage(game, "", false);
@@ -146,7 +154,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
 
         //EXPERIENCE
-        if (winEvent != null && players.size() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
+        if (gameAdded) {
             showExperienceSummary(game);
         }
 

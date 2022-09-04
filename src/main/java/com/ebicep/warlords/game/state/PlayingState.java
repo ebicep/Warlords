@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.state;
 
-import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
@@ -12,7 +11,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
@@ -59,6 +57,8 @@ public class PlayingState implements State, TimerDebugAble {
     private WarlordsGameTriggerWinEvent winEvent;
     private int counter = 0;
     private int timer = 0;
+
+    private boolean gameAdded = false;
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
@@ -113,7 +113,7 @@ public class PlayingState implements State, TimerDebugAble {
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
-                game.setNextState(new EndState(game, event));
+                game.setNextState(new EndState(game, event, gameAdded));
                 winEvent = event;
             }
         });
@@ -196,49 +196,31 @@ public class PlayingState implements State, TimerDebugAble {
         if (players.isEmpty()) {
             return;
         }
-        //PUBS
-        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons()
-                .contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 12) {
-            String gameEnd = "[GAME] A Public game ended with ";
-            // TODO parse winEvent better here
-            if (winEvent.getDeclaredWinner() == Team.BLUE) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(
-                        Team.RED), false, true);
-            } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(
-                        Team.BLUE), false, true);
-            } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
-            }
 
-            DatabaseGameBase.addGame(game, winEvent, true);
-
-            if (DatabaseManager.playerService == null) {
-                return;
+        if (winEvent != null) {
+            boolean isCompGame = game.getAddons()
+                    .contains(GameAddon.PRIVATE_GAME) && players.size() >= game.getGameMode().minPlayersToAddToDatabase && timer >= 6000;
+            //comps
+            if (isCompGame) {
+                gameAdded = DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames);
             }
-            Warlords.newChain()
-                    .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
-                    .syncLast(databasePlayers -> {
-                        SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
-                        SRCalculator.recalculateSR();
-                    })
-                    .execute();
-        } //COMPS
-        else if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 16 && timer >= 6000) {
-            String gameEnd = "[GAME] A game ended with ";
-            if (winEvent.getDeclaredWinner() == Team.BLUE) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
-            } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), true, false);
-            } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
+            //pubs
+            else if (players.size() >= game.getMap().getMinPlayers()) {
+                gameAdded = DatabaseGameBase.addGame(game, winEvent, true);
+                if (DatabaseManager.playerService == null) {
+                    return;
+                }
+                Warlords.newChain()
+                        .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
+                        .syncLast(databasePlayers -> {
+                            SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
+                            SRCalculator.recalculateSR();
+                        })
+                        .execute();
             }
-
-            DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames);
-        } //END GAME
-        else {
+        } else {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
-                DatabaseGameBase.addGame(game, winEvent, false);
+                DatabaseGameBase.addGame(game, null, false);
             } else {
                 ChatUtils.MessageTypes.WARLORDS.sendMessage(
                         "This PUB/COMP game was not added to the database and player information remained the same");

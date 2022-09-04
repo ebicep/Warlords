@@ -39,7 +39,8 @@ public enum GameMode {
             "Capture The Flag",
             new ItemStack(Material.BANNER),
             DatabaseGameCTF::new,
-            GamesCollections.CTF
+            GamesCollections.CTF,
+            16
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -70,7 +71,8 @@ public enum GameMode {
             "Interception",
             null,//new ItemStack(Material.WOOL),
             DatabaseGameInterception::new,
-            GamesCollections.INTERCEPTION
+            GamesCollections.INTERCEPTION,
+            16
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -101,7 +103,8 @@ public enum GameMode {
             "Team Deathmatch",
             new ItemStack(Material.DIAMOND_BARDING),
             DatabaseGameTDM::new,
-            GamesCollections.TDM
+            GamesCollections.TDM,
+            16
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -134,7 +137,8 @@ public enum GameMode {
             "[WIP] Duel",
             new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
-            GamesCollections.DUEL
+            GamesCollections.DUEL,
+            2
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -162,7 +166,8 @@ public enum GameMode {
             "[WIP] Simulation Trial",
             null,
             null,
-            null
+            null,
+            Integer.MAX_VALUE
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -192,7 +197,8 @@ public enum GameMode {
             "[WIP] USE NPC TO START PVE - Wave Defense",
             null,
             DatabaseGamePvE::new,
-            GamesCollections.PVE
+            GamesCollections.PVE,
+            1
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -222,7 +228,8 @@ public enum GameMode {
             "Sandbox",
             null,
             null,
-            null
+            null,
+            16
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -246,12 +253,20 @@ public enum GameMode {
     private final ItemStack itemStack;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
+    public final int minPlayersToAddToDatabase;
 
-    GameMode(String name, ItemStack itemStack, TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame, GamesCollections gamesCollections) {
+    GameMode(
+            String name,
+            ItemStack itemStack,
+            TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame,
+            GamesCollections gamesCollections,
+            int minPlayersToAddToDatabase
+    ) {
         this.name = name;
         this.itemStack = itemStack;
         this.createDatabaseGame = createDatabaseGame;
         this.gamesCollections = gamesCollections;
+        this.minPlayersToAddToDatabase = minPlayersToAddToDatabase;
     }
 
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

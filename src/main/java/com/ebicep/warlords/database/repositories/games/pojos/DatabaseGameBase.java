@@ -77,10 +77,20 @@ public abstract class DatabaseGameBase {
         this.counted = counted;
     }
 
-    public static void addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
+    public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            float highestDamage = game.warlordsEntities().max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage())).get().getMinuteStats().total().getDamage();
-            float highestHealing = game.warlordsEntities().max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing())).get().getMinuteStats().total().getHealing();
+            float highestDamage = game.warlordsEntities()
+                    .max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()))
+                    .get()
+                    .getMinuteStats()
+                    .total()
+                    .getDamage();
+            float highestHealing = game.warlordsEntities()
+                    .max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()))
+                    .get()
+                    .getMinuteStats()
+                    .total()
+                    .getHealing();
             //checking for inflated stats
             if (highestDamage > 750000 || highestHealing > 750000) {
                 updatePlayerStats = false;
@@ -129,7 +139,7 @@ public abstract class DatabaseGameBase {
             DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
             if (databaseGame == null) {
                 ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
-                return;
+                return false;
             }
 
             if (previousGames.size() > 0) {
@@ -153,9 +163,13 @@ public abstract class DatabaseGameBase {
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilterGeneric.playingGameWarlordsPlayers(game)) {
                 if (updatePlayerStats) {
-                    Permissions.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database and player information was updated");
+                    Permissions.sendMessageToDebug(value,
+                            ChatColor.GREEN + "This game was added to the database and player information was updated"
+                    );
                 } else {
-                    Permissions.sendMessageToDebug(value, ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                    Permissions.sendMessageToDebug(value,
+                            ChatColor.GREEN + "This game was added to the database but player information remained the same"
+                    );
                 }
 
             }
@@ -163,53 +177,55 @@ public abstract class DatabaseGameBase {
             e.printStackTrace();
             System.out.println("ERROR TRYING TO ADD GAME");
         }
-
+        return updatePlayerStats;
     }
 
     public static void addGameToDatabase(DatabaseGameBase databaseGame, Player player) {
-        if (DatabaseManager.gameService == null) return;
+        if (DatabaseManager.gameService == null) {
+            return;
+        }
         try {
             GamesCollections collection = databaseGame.getGameMode().gamesCollections;
             databaseGame.gameAddons.remove(GameAddon.CUSTOM_GAME);
             //game in the database
             if (DatabaseManager.gameService.exists(databaseGame, collection)) {
                 if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Game Found", true);
-            }
-            //if not counted then update player stats then set counted to true, else do nothing
-            if (!databaseGame.isCounted()) {
-                if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                    sendDebugMessage(player, ChatColor.GREEN + "Game Found", true);
                 }
-                databaseGame.updatePlayerStatsFromGame(databaseGame, true);
-                databaseGame.setCounted(true);
-                DatabaseManager.updateGameAsync(databaseGame);
-            }
-        } else {
-                if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
-            }
-            //game not in database then add game and update player stats if counted
-            if (databaseGame.isCounted()) {
-                if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                //if not counted then update player stats then set counted to true, else do nothing
+                if (!databaseGame.isCounted()) {
+                    if (player != null) {
+                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                    }
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                    databaseGame.setCounted(true);
+                    DatabaseManager.updateGameAsync(databaseGame);
                 }
+            } else {
+                if (player != null) {
+                    sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
+                }
+                //game not in database then add game and update player stats if counted
+                if (databaseGame.isCounted()) {
+                    if (player != null) {
+                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                    }
                     databaseGame.updatePlayerStatsFromGame(databaseGame, true);
                 }
                 if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
-            }
-            //only add game if comps
-            //if (databaseGame.isPrivate) {
-            Warlords.newChain()
-                    .delay(4, TimeUnit.SECONDS)
-                    .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
-                    .sync(() -> {
-                        for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
-                            StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
-                        }
-                        StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
-                    })
+                    sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
+                }
+                //only add game if comps
+                //if (databaseGame.isPrivate) {
+                Warlords.newChain()
+                        .delay(4, TimeUnit.SECONDS)
+                        .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
+                        .sync(() -> {
+                            for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
+                                StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
+                            }
+                            StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
+                        })
                         .execute();
                 //}
             }
@@ -222,7 +238,9 @@ public abstract class DatabaseGameBase {
     }
 
     public static void removeGameFromDatabase(DatabaseGameBase databaseGame, Player player) {
-        if (DatabaseManager.gameService == null) return;
+        if (DatabaseManager.gameService == null) {
+            return;
+        }
         GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
@@ -260,13 +278,20 @@ public abstract class DatabaseGameBase {
                 System.out.println("WARNING - " + gamePlayer.getName() + " was not found in " + collections.name());
             } else {
                 if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
-                    databasePlayer.updateCustomStats(databaseGame, databaseGame.getGameMode(), gamePlayer, DatabaseGamePlayerResult.NONE, add);
+                    databasePlayer.updateCustomStats(databaseGame,
+                            databaseGame.getGameMode(),
+                            gamePlayer,
+                            DatabaseGamePlayerResult.NONE,
+                            add
+                    );
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 } else {
                     databasePlayer.updateStats(databaseGame, gamePlayer, add);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 }
-                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections, v -> new HashSet<>());
+                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections,
+                        v -> new HashSet<>()
+                );
                 databasePlayers.remove(databasePlayer);
                 databasePlayers.add(databasePlayer);
             }
@@ -301,9 +326,11 @@ public abstract class DatabaseGameBase {
         for (int i = 0; i < previousGames.size(); i++) {
             List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
             if (i == selectedGame) {
-                gameHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+                gameHolograms.forEach(hologram -> hologram.getVisibilitySettings()
+                        .setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
             } else {
-                gameHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+                gameHolograms.forEach(hologram -> hologram.getVisibilitySettings()
+                        .setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
             }
         }
 
@@ -312,7 +339,9 @@ public abstract class DatabaseGameBase {
 
     private static void createGameSwitcherHologram(Player player) {
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition()
+                        .toLocation()
+                        .equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
                 .forEach(Hologram::delete);
 
         Hologram gameSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.GAME_SWITCH_LOCATION);
@@ -333,19 +362,22 @@ public abstract class DatabaseGameBase {
         if (gameBefore == previousGames.size() - 1) {
             beforeLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
         } else {
-            beforeLine = gameSwitcher.getLines().appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
+            beforeLine = gameSwitcher.getLines()
+                    .appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
         }
 
         if (selectedGame == previousGames.size() - 1) {
             gameSwitcher.getLines().appendText(ChatColor.GREEN + "Latest Game");
         } else {
-            gameSwitcher.getLines().appendText(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
+            gameSwitcher.getLines()
+                    .appendText(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
         }
 
         if (gameAfter == previousGames.size() - 1) {
             afterLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
         } else {
-            afterLine = gameSwitcher.getLines().appendText(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
+            afterLine = gameSwitcher.getLines()
+                    .appendText(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
         }
 
         beforeLine.setClickListener((clicker) -> {
