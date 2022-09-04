@@ -460,7 +460,7 @@ public class WaveDefenseOption implements Option {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         AbstractWeapon weapon = warlordsPlayer.getAbstractWeapon();
         if (weapon == null) {
-            WeaponOption.showMaxWeapon(warlordsPlayer, player);
+            WeaponOption.showWeaponStats(warlordsPlayer, player);
         } else {
             WeaponOption.showPvEWeapon(warlordsPlayer, player);
         }
