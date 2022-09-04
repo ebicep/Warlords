@@ -5,10 +5,7 @@ import com.ebicep.warlords.classes.rogue.AbstractRogue;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCureBranch;
-import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
-import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
-import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.*;
 
 import java.util.List;
 
@@ -36,5 +33,6 @@ public class Assassin extends AbstractRogue {
         branch.add(new IncendiaryCureBranch(abilityTree, (IncendiaryCurse) red));
         branch.add(new ShadowStepBranch(abilityTree, (ShadowStep) purple));
         branch.add(new SoulSwitchBranch(abilityTree, (SoulSwitch) blue));
+        branch.add(new OrderOfEviscerateBranch(abilityTree, (OrderOfEviscerate) orange));
     }
 }

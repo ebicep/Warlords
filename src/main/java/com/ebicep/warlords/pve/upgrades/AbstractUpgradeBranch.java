@@ -29,7 +29,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     protected List<Upgrade> treeA = new ArrayList<>();
     protected List<Upgrade> treeB = new ArrayList<>();
-    protected List<Upgrade> treeC = new ArrayList<>();
     protected Upgrade masterUpgrade;
 
     private int maxUpgrades = 6;
