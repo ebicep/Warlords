@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.springframework.data.annotation.Id;
@@ -53,7 +53,7 @@ public class DatabaseGamePlayerBase {
     public DatabaseGamePlayerBase() {
     }
 
-    public DatabaseGamePlayerBase(WarlordsEntity warlordsPlayer) {
+    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer) {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
         long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
@@ -61,8 +61,18 @@ public class DatabaseGamePlayerBase {
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
         this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
-        this.xLocations = warlordsPlayer.getLocations().stream().map(Location::getX).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
-        this.zLocations = warlordsPlayer.getLocations().stream().map(Location::getZ).map(String::valueOf).map(s -> s.substring(0, s.indexOf(".") + 2)).collect(Collectors.joining(",", "", ","));
+        this.xLocations = warlordsPlayer.getLocations()
+                .stream()
+                .map(Location::getX)
+                .map(String::valueOf)
+                .map(s -> s.substring(0, s.indexOf(".") + 2))
+                .collect(Collectors.joining(",", "", ","));
+        this.zLocations = warlordsPlayer.getLocations()
+                .stream()
+                .map(Location::getZ)
+                .map(String::valueOf)
+                .map(s -> s.substring(0, s.indexOf(".") + 2))
+                .collect(Collectors.joining(",", "", ","));
         this.totalKills = warlordsPlayer.getMinuteStats().total().getKills();
         this.totalAssists = warlordsPlayer.getMinuteStats().total().getAssists();
         this.totalDeaths = warlordsPlayer.getMinuteStats().total().getDeaths();

@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -33,18 +32,21 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     @Field("mob_deaths")
     private Map<String, Long> mobDeaths = new LinkedHashMap<>();
 
-    public DatabaseGamePlayerPvE(WarlordsEntity warlordsEntity) {
-        super(warlordsEntity);
-        if (warlordsEntity instanceof WarlordsPlayer) {
-            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) warlordsEntity;
-            this.prestige = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid()).getSpec(warlordsPlayer.getSpecClass()).getPrestige();
-            this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
-            this.weapon = warlordsPlayer.getAbstractWeapon();
-            this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
-            this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
-            this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
-            this.mobDeaths = warlordsPlayer.getMinuteStats().total().getMobDeaths();
-        }
+    public DatabaseGamePlayerPvE() {
+    }
+
+    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer) {
+        super(warlordsPlayer);
+        this.prestige = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid())
+                .getSpec(warlordsPlayer.getSpecClass())
+                .getPrestige();
+        this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
+        this.weapon = warlordsPlayer.getAbstractWeapon();
+        this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
+        this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
+        this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
+        this.mobDeaths = warlordsPlayer.getMinuteStats().total().getMobDeaths();
+
     }
 
     public int getLongestTimeInCombat() {

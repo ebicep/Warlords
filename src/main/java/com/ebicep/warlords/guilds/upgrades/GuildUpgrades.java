@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.upgrades;
 
+import com.ebicep.warlords.events.player.WarlordsPlayerGiveExperienceEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
@@ -108,8 +109,8 @@ public enum GuildUpgrades {
     },
 
     //PERMANENT UPGRADES
-    SPEC_CLASS_EXP_BONUS(
-            "Spec/Class EXP Bonus",
+    PLAYER_EXP_BONUS(
+            "Player EXP Bonus",
             true,
             null
     ) {
@@ -120,7 +121,17 @@ public enum GuildUpgrades {
 
         @Override
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
 
+                @EventHandler
+                public void onEvent(WarlordsPlayerGiveExperienceEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+                    event.getExperienceSummary().replaceAll((key, value) -> (long) (value * getValueFromTier(tier)));
+                }
+
+            });
         }
     },
     GUILD_COIN_CONVERSION_RATE(

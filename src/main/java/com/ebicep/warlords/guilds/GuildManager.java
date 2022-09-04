@@ -29,6 +29,7 @@ public class GuildManager {
         new BukkitRunnable() {
 
             int secondsElapsed = 0;
+
             @Override
             public void run() {
                 //check for guilds to update
@@ -41,11 +42,14 @@ public class GuildManager {
                 //check for guild temp upgrades expiring
                 for (Guild guild : GUILDS) {
                     guild.getUpgrades().removeIf(upgrade -> {
+                        if (upgrade.getExpirationDate() == null) {
+                            return false;
+                        }
                         boolean shouldRemove = upgrade.getExpirationDate().isBefore(Instant.now());
                         if (shouldRemove) {
                             for (Player player : guild.getOnlinePlayers()) {
                                 Guild.sendGuildMessage(player,
-                                                       ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade().name + ChatColor.RED + " has expired!"
+                                        ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade().name + ChatColor.RED + " has expired!"
                                 );
                             }
                         }
@@ -88,7 +92,9 @@ public class GuildManager {
 
     public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
         for (Guild guild : GUILDS) {
-            if (guild.getDisbandDate() != null) continue;
+            if (guild.getDisbandDate() != null) {
+                continue;
+            }
             for (GuildPlayer guildPlayer : guild.getPlayers()) {
                 if (guildPlayer.getUUID().equals(player.getUniqueId())) {
                     return new Pair<>(guild, guildPlayer);
@@ -106,7 +112,9 @@ public class GuildManager {
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
         ChatUtils.sendCenteredMessage(to, ChatColor.AQUA + from.getName() + ChatColor.YELLOW + " has invited you to join their guild!");
         TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept. " + ChatColor.GOLD + "Click here to join " + guild.getName());
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join " + guild.getName()).create()));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(ChatColor.GREEN + "Click to join " + guild.getName()).create()
+        ));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild join " + guild.getName()));
         ChatUtils.sendCenteredMessageWithEvents(to, Collections.singletonList(message));
         ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
@@ -156,8 +164,12 @@ public class GuildManager {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             GuildInvite that = (GuildInvite) o;
             return uuid.equals(that.uuid) && guild.equals(that.guild);
         }

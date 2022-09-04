@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute.Entry;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -21,7 +21,7 @@ public class DatabaseGamePlayersCTF {
     }
 
     public DatabaseGamePlayersCTF(@Nonnull Game game) {
-        game.warlordsEntities().forEach(warlordsPlayer -> {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
             if (warlordsPlayer.getTeam() == Team.BLUE) {
                 blue.add(new DatabaseGamePlayerCTF(warlordsPlayer));
             } else if (warlordsPlayer.getTeam() == Team.RED) {
@@ -67,7 +67,7 @@ public class DatabaseGamePlayersCTF {
         public DatabaseGamePlayerCTF() {
         }
 
-        public DatabaseGamePlayerCTF(WarlordsEntity warlordsPlayer) {
+        public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
             this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());

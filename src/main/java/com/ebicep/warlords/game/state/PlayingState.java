@@ -137,7 +137,8 @@ public class PlayingState implements State, TimerDebugAble {
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             if (StreamChaptersCommand.gameTimes.containsKey(wp.getUuid())) {
-                StreamChaptersCommand.gameTimes.get(wp.getUuid()).add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
+                StreamChaptersCommand.gameTimes.get(wp.getUuid())
+                        .add(new StreamChaptersCommand.GameTime(Instant.now(), game.getMap(), wp.getSpecClass(), game.playersCount()));
             }
         });
 
@@ -154,10 +155,14 @@ public class PlayingState implements State, TimerDebugAble {
                 byteArrayDataOutput.writeInt((int) wp.getEnergy());
                 byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
                 AbstractPlayerClass spec = wp.getSpec();
-                byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed().getCurrentCooldown() + .5));
-                byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple().getCurrentCooldown() + .5));
-                byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue().getCurrentCooldown() + .5));
-                byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange().getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed()
+                        .getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple()
+                        .getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue()
+                        .getCurrentCooldown() + .5));
+                byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
+                        .getCurrentCooldown() + .5));
                 game.spectators().forEach(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);
                     if (player != null && player.getName().equals("sumSmash")) {
@@ -192,20 +197,25 @@ public class PlayingState implements State, TimerDebugAble {
             return;
         }
         //PUBS
-        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 12) {
+        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons()
+                .contains(GameAddon.IMPOSTER_MODE) && winEvent != null && players.size() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             // TODO parse winEvent better here
             if (winEvent.getDeclaredWinner() == Team.BLUE) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), false, true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(
+                        Team.RED), false, true);
             } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), false, true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(
+                        Team.BLUE), false, true);
             } else {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
 
             DatabaseGameBase.addGame(game, winEvent, true);
 
-            if (DatabaseManager.playerService == null) return;
+            if (DatabaseManager.playerService == null) {
+                return;
+            }
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
                     .syncLast(databasePlayers -> {
@@ -230,7 +240,8 @@ public class PlayingState implements State, TimerDebugAble {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, winEvent, false);
             } else {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("This PUB/COMP game was not added to the database and player information remained the same");
+                ChatUtils.MessageTypes.WARLORDS.sendMessage(
+                        "This PUB/COMP game was not added to the database and player information remained the same");
             }
         }
     }
@@ -284,26 +295,36 @@ public class PlayingState implements State, TimerDebugAble {
             if (wp instanceof WarlordsPlayer) {
                 if (scoreboard.getTeam(wp.getName()) == null) {
                     org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(wp.getName());
-                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec()
+                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                     temp.addEntry(wp.getName());
-                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) + ChatColor.DARK_GRAY + "]");
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(
+                            wp.getUuid(),
+                            wp.getSpecClass()
+                    )) + ChatColor.DARK_GRAY + "]");
                 } else {
-                    scoreboard.getTeam(wp.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    scoreboard.getTeam(wp.getName())
+                            .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec()
+                                    .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                     if (wp.getCarriedFlag() != null) {
                         scoreboard.getTeam(wp.getName()).setSuffix(
                                 ChatColor.DARK_GRAY + "[" +
-                                ChatColor.GRAY + "Lv" +
-                                ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) +
-                                ChatColor.DARK_GRAY + "]" +
-                                ChatColor.WHITE + "⚑"
+                                        ChatColor.GRAY + "Lv" +
+                                        ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(),
+                                                wp.getSpecClass()
+                                        )) +
+                                        ChatColor.DARK_GRAY + "]" +
+                                        ChatColor.WHITE + "⚑"
                         );
                     } else {
                         String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + wp.getMinuteStats().total().getKills();
                         scoreboard.getTeam(wp.getName()).setSuffix(
                                 ChatColor.DARK_GRAY + " [" +
-                                ChatColor.GRAY + "Lv" +
-                                ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) +
-                                ChatColor.DARK_GRAY + "]"
+                                        ChatColor.GRAY + "Lv" +
+                                        ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(),
+                                                wp.getSpecClass()
+                                        )) +
+                                        ChatColor.DARK_GRAY + "]"
                         );
                     }
                 }
@@ -322,8 +343,11 @@ public class PlayingState implements State, TimerDebugAble {
                 Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
                 int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
                 //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
-                scoreboard.getTeam(we.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
-                scoreboard.getTeam(we.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+                scoreboard.getTeam(we.getName())
+                        .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
+                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
+                scoreboard.getTeam(we.getName())
+                        .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
             }
         });
     }

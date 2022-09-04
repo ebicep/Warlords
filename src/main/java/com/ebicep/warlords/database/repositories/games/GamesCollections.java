@@ -7,12 +7,13 @@ public enum GamesCollections {
     TDM("Team Deathmatch", "Games_Information_TDM"),
     INTERCEPTION("Interception", "Games_Information_Interception"),
     DUEL("Duel", "Games_Information_Duel"),
+    PVE("PvE", "Games_Information_PvE"),
 
 
     ;
 
-    public String name;
-    public String collectionName;
+    public final String name;
+    public final String collectionName;
 
     GamesCollections(String name, String collectionName) {
         this.name = name;

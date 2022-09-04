@@ -149,7 +149,7 @@ public abstract class AbstractDatabaseStatInformation {
     }
 
     public long getDHPPerGame() {
-        return plays <= 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
+        return plays <= 0 ? 0 : (damage + healing + absorbed) / plays;
     }
 
     public long getDamage() {

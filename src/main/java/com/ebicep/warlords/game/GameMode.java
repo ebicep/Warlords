@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
@@ -190,8 +191,8 @@ public enum GameMode {
     WAVE_DEFENSE(
             "[WIP] USE NPC TO START PVE - Wave Defense",
             null,
-            null,
-            null
+            DatabaseGamePvE::new,
+            GamesCollections.PVE
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

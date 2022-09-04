@@ -37,7 +37,7 @@ public class GuildExperienceUtils {
         //level to exp, adding all previous levels exp cost to get to current level
         for (int i = 1; i <= 15; i++) {
             long totalExpForLevel = 0;
-            for (int j = 0; j < i; j++) {
+            for (int j = 1; j < i; j++) {
                 totalExpForLevel += LEVEL_EXP_COST.get(j);
             }
             LEVEL_TO_EXP.put(i, totalExpForLevel);

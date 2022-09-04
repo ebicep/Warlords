@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.interception;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -19,7 +19,7 @@ public class DatabaseGamePlayersInterception {
     }
 
     public DatabaseGamePlayersInterception(@Nonnull Game game) {
-        game.warlordsEntities().forEach(warlordsPlayer -> {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
             if (warlordsPlayer.getTeam() == Team.BLUE) {
                 blue.add(new DatabaseGamePlayerInterception(warlordsPlayer));
             } else if (warlordsPlayer.getTeam() == Team.RED) {
@@ -51,7 +51,7 @@ public class DatabaseGamePlayersInterception {
         public DatabaseGamePlayerInterception() {
         }
 
-        public DatabaseGamePlayerInterception(WarlordsEntity warlordsPlayer) {
+        public DatabaseGamePlayerInterception(WarlordsPlayer warlordsPlayer) {
             super(warlordsPlayer);
             this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
             this.secondsInRespawn = Math.round(warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent());

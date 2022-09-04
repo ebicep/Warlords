@@ -128,7 +128,7 @@ public abstract class DatabaseGameBase {
 
             DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
             if (databaseGame == null) {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return;
             }
 

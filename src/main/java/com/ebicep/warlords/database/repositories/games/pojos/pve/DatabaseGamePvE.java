@@ -12,9 +12,11 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,10 +24,13 @@ import java.util.List;
 public class DatabaseGamePvE extends DatabaseGameBase {
 
     private DifficultyIndex difficulty;
+    @Field("waves_cleared")
     private int wavesCleared;
+    @Field("time_elapsed")
     private int timeElapsed;
+    @Field("total_mobs_killed")
     private int totalMobsKilled;
-    private List<DatabaseGamePlayerPvE> players;
+    private List<DatabaseGamePlayerPvE> players = new ArrayList<>();
 
     public DatabaseGamePvE() {
 
@@ -37,12 +42,11 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 this.wavesCleared = ((WaveDefenseOption) option).getWaveCounter() - 1;
-
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);
+        game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer)));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
-        game.warlordsEntities().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer)));
 
     }
 
