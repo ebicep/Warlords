@@ -62,15 +62,16 @@ public final class WarlordsPlayer extends WarlordsEntity {
             @Nonnull PlayerSettings settings
     ) {
         super(player.getUniqueId(),
-              player.getName(),
-              settings.getWeaponSkin(),
-              spawnSimpleJimmy(location, null),
-              game,
-              team,
-              settings.getSelectedSpec()
+                player.getName(),
+                settings.getWeaponSkin(),
+                spawnSimpleJimmy(location, null),
+                game,
+                team,
+                settings.getSelectedSpec()
         );
-        updatePlayerReference(player.getPlayer());
         this.spec.setUpgradeBranches(this);
+        updatePlayerReference(player.getPlayer());
+        updateInventory();
     }
 
     private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
