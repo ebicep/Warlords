@@ -112,7 +112,8 @@ public class WeaponManagerMenu {
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.GREEN + "Your Drops")
                         .lore(CURRENCIES_TO_DISPLAY.stream()
-                                .map(rewardTypes -> rewardTypes.getColoredName() + (databasePlayerPvE.getCurrencyValue(rewardTypes) != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(rewardTypes) + (rewardTypes == Currencies.FAIRY_ESSENCE ? "\n" : ""))
+                                .map(rewardTypes -> rewardTypes.getColoredName() + (databasePlayerPvE.getCurrencyValue(rewardTypes) != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(
+                                        rewardTypes) + (rewardTypes == Currencies.FAIRY_ESSENCE ? "\n" : ""))
                                 .collect(Collectors.joining("\n"))
                         )
                         .get(),
@@ -177,9 +178,11 @@ public class WeaponManagerMenu {
 
     public static void openWeaponEditor(Player player, AbstractWeapon weapon) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        if (databasePlayer == null) return;
+        if (databasePlayer == null) {
+            return;
+        }
 
-        Menu menu = new Menu("Weapon Editor", 9 * 3);
+        Menu menu = new Menu("Weapon Editor", 9 * 6);
 
         menu.setItem(
                 4,
@@ -211,8 +214,7 @@ public class WeaponManagerMenu {
                             .name(ChatColor.GREEN + "Apply a Star Piece")
                             .get(),
                     (m, e) -> {
-                        WeaponsPvE weaponsPvE = WeaponsPvE.getWeapon(weapon);
-                        if (databasePlayer.getPveStats().getCurrencyValue(weaponsPvE.starPieceCurrency) <= 0) {
+                        if (databasePlayer.getPveStats().getCurrencyValue(weapon.getRarity().starPieceCurrency) <= 0) {
                             player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
                             return;
                         }
@@ -299,24 +301,37 @@ public class WeaponManagerMenu {
             ));
         }
 
+        int x = 2;
+        int y = 1;
         for (int i = 0; i < weaponOptions.size(); i++) {
             Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option = weaponOptions.get(i);
+//            menu.setItem(
+//                    i % 7 + 1,
+//                    i / 7 + 1,
+//                    option.getA(),
+//                    option.getB()
+//            );
             menu.setItem(
-                    i % 7 + 1,
-                    i / 7 + 1,
+                    x,
+                    y,
                     option.getA(),
                     option.getB()
             );
+            x += 2;
+            if (x > 6) {
+                x = 2;
+                y += 2;
+            }
         }
 
-        menu.setItem(4, 2, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
         menu.openForPlayer(player);
     }
 
     public enum SortOptions {
 
         DATE("Date", (o1, o2) -> o1.getDate().compareTo(o2.getDate())),
-        RARITY("Rarity", (o1, o2) -> WeaponsPvE.getWeapon(o1).compareTo(WeaponsPvE.getWeapon(o2))),
+        RARITY("Rarity", (o1, o2) -> o1.getRarity().compareTo(o2.getRarity())),
         WEAPON_SCORE("Weapon Score", (o1, o2) -> {
             //first check if implements WeaponScore
             if (o1 instanceof WeaponScore && o2 instanceof WeaponScore) {

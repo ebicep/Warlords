@@ -67,15 +67,6 @@ public enum WeaponsPvE {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static WeaponsPvE getWeapon(AbstractWeapon abstractWeapon) {
-        for (WeaponsPvE value : values()) {
-            if (value.weaponClass == abstractWeapon.getClass()) {
-                return value;
-            }
-        }
-        return NONE;
-    }
-
     public String getChatColorName() {
         return chatColor.toString() + name;
     }

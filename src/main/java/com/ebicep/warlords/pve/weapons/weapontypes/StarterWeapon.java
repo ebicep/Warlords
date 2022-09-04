@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
@@ -25,6 +26,11 @@ public class StarterWeapon extends AbstractWeapon {
         this.selectedWeaponSkin = Weapons.STEEL_SWORD;
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
         this.isBound = true;
+    }
+
+    @Override
+    public WeaponsPvE getRarity() {
+        return WeaponsPvE.NONE;
     }
 
     public StarterWeapon(UUID uuid, Specializations specialization) {

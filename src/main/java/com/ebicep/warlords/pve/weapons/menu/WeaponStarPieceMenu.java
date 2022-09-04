@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -41,7 +40,7 @@ public class WeaponStarPieceMenu {
                         TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
                                 .setHoverItem(weapon.generateItemStack())
                                 .getTextComponent();
-                        databasePlayerPvE.subtractOneCurrency(WeaponsPvE.getWeapon(weapon).starPieceCurrency);
+                        databasePlayerPvE.subtractOneCurrency(weapon.getRarity().starPieceCurrency);
                         databasePlayerPvE.subtractCurrency(Currencies.SYNTHETIC_SHARD, weapon.getStarPieceBonusCost());
                         weapon.setStarPieceBonus();
 

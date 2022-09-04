@@ -48,6 +48,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }
 
+    @Override
+    public WeaponsPvE getRarity() {
+        return WeaponsPvE.LEGENDARY;
+    }
+
     public abstract String getTitle();
 
     public abstract String getPassiveEffect();

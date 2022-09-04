@@ -275,7 +275,7 @@ public class MasterworksFairManager {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         List<AbstractWeapon> filteredWeaponInventory = new ArrayList<>(weaponInventory);
-        filteredWeaponInventory.removeIf(weapon -> WeaponsPvE.getWeapon(weapon) != weaponType);
+        filteredWeaponInventory.removeIf(weapon -> weapon.getRarity() != weaponType);
         filteredWeaponInventory.sort(WeaponManagerMenu.SortOptions.WEAPON_SCORE.comparator.reversed());
 
         List<MasterworksFairPlayerEntry> weaponPlayerEntries = weaponType.getPlayerEntries.apply(currentFair);

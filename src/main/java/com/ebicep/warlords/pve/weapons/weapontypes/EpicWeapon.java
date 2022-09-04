@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -36,6 +37,11 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
         super(uuid);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.EPIC);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    @Override
+    public WeaponsPvE getRarity() {
+        return WeaponsPvE.EPIC;
     }
 
     @Override

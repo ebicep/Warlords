@@ -51,6 +51,8 @@ public abstract class AbstractWeapon {
         player.setHealth(player.getMaxHealth() + getHealthBonus());
     }
 
+    public abstract WeaponsPvE getRarity();
+
     public abstract ChatColor getChatColor();
 
     public abstract List<String> getLore();

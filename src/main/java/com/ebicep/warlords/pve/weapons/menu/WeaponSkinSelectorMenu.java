@@ -42,7 +42,7 @@ public class WeaponSkinSelectorMenu {
             Weapons weaponSkin = weaponSkins.get(i);
             //cant reskin weapon to higher rarity than current weapon
             WeaponsPvE weaponsPvE = weaponSkin.weaponsPvE;
-            if (WeaponsPvE.getWeapon(weapon).compareTo(weaponsPvE) < 0) {
+            if (weapon.getRarity().compareTo(weaponsPvE) < 0) {
                 menu.setItem(
                         (i - (pageNumber - 1) * 21) % 7 + 1,
                         (i - (pageNumber - 1) * 21) / 7 + 1,
@@ -50,7 +50,8 @@ public class WeaponSkinSelectorMenu {
                                 .name(weaponsPvE.chatColor + "LOCKED")
                                 .lore(
                                         ChatColor.GRAY + "This skin is locked to a weapon",
-                                        ChatColor.GRAY + "of " + weaponsPvE.getChatColorName().toUpperCase() + ChatColor.GRAY + " rarity of higher."
+                                        ChatColor.GRAY + "of " + weaponsPvE.getChatColorName()
+                                                .toUpperCase() + ChatColor.GRAY + " rarity of higher."
                                 )
                                 .get(),
                         (m, e) -> {

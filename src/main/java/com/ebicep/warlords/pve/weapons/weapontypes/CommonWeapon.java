@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -33,6 +34,11 @@ public class CommonWeapon extends AbstractTierOneWeapon implements Salvageable, 
         super(uuid);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.COMMON);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    @Override
+    public WeaponsPvE getRarity() {
+        return WeaponsPvE.COMMON;
     }
 
     @Override
