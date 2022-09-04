@@ -68,7 +68,7 @@ public class GuildDebugCommand extends BaseCommand {
                 GuildUpgrades upgrade,
                 @Conditions("limits:min=1,max=9") Integer tier
         ) {
-            guildPlayerWrapper.getGuild().getUpgrades().add(upgrade.createUpgrade(tier));
+            guildPlayerWrapper.getGuild().addUpgrade(upgrade.createUpgrade(tier));
             GuildManager.queueUpdateGuild(guildPlayerWrapper.getGuild());
             ChatChannels.sendDebugMessage(player,
                                           ChatColor.GREEN + "Added upgrade " + ChatColor.YELLOW + upgrade.name + " (" + tier + ") " + ChatColor.GREEN + "to guild",

@@ -365,6 +365,11 @@ public class Guild {
         return upgrades;
     }
 
+    public void addUpgrade(GuildUpgrade upgrade) {
+        this.upgrades.removeIf(guildUpgrade -> guildUpgrade.getUpgrade() == upgrade.getUpgrade());
+        this.upgrades.add(upgrade);
+    }
+
     public List<AbstractGuildLog> getAuditLog() {
         return auditLog;
     }

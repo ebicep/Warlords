@@ -2,7 +2,6 @@ package com.ebicep.warlords.util.java;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 
 public class DateUtil {
@@ -45,29 +44,29 @@ public class DateUtil {
             boolean includeMinutes,
             boolean includeSeconds
     ) {
-        Instant currentDate = Instant.now();
+        Duration duration = Duration.between(Instant.now(), endDate);
 
         String timeLeft = "";
         if (includeDays) {
-            long days = ChronoUnit.DAYS.between(currentDate, endDate);
+            long days = duration.toDaysPart();
             if (days > 0) {
                 timeLeft += days + (days == 1 ? " day " : " days ");
             }
         }
         if (includeHours) {
-            long hours = ChronoUnit.HOURS.between(currentDate, endDate) % 24;
+            long hours = duration.toHoursPart();
             if (hours > 0) {
                 timeLeft += hours + (hours == 1 ? " hour " : " hours ");
             }
         }
         if (includeMinutes) {
-            long minutes = ChronoUnit.MINUTES.between(currentDate, endDate) % 60;
+            long minutes = duration.toMinutesPart();
             if (minutes > 0) {
                 timeLeft += minutes + (minutes == 1 ? " minute " : " minutes ");
             }
         }
         if (includeSeconds) {
-            long seconds = ChronoUnit.SECONDS.between(currentDate, endDate) % 60;
+            long seconds = duration.toSecondsPart();
             if (seconds > 0) {
                 timeLeft += seconds + (seconds == 1 ? " second " : " seconds ");
             }
