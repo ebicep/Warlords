@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
@@ -26,42 +27,6 @@ public class MasterworksFairTrait extends Trait {
 
     public MasterworksFairTrait() {
         super("MasterworksFairTrait");
-    }
-
-    public static String getTimeTill(Instant endDate, boolean includeDays, boolean includeHours, boolean includeMinutes, boolean includeSeconds) {
-        Instant currentDate = Instant.now();
-
-        String timeLeft = "";
-        if (includeDays) {
-            long days = ChronoUnit.DAYS.between(currentDate, endDate);
-            if (days > 0) {
-                timeLeft += days + (days == 1 ? " day " : " days ");
-            }
-        }
-        if (includeHours) {
-            long hours = ChronoUnit.HOURS.between(currentDate, endDate) % 24;
-            if (hours > 0) {
-                timeLeft += hours + (hours == 1 ? " hour " : " hours ");
-            }
-        }
-        if (includeMinutes) {
-            long minutes = ChronoUnit.MINUTES.between(currentDate, endDate) % 60;
-            if (minutes > 0) {
-                timeLeft += minutes + (minutes == 1 ? " minute " : " minutes ");
-            }
-        }
-        if (includeSeconds) {
-            long seconds = ChronoUnit.SECONDS.between(currentDate, endDate) % 60;
-            if (seconds > 0) {
-                timeLeft += seconds + (seconds == 1 ? " second " : " seconds ");
-            }
-        }
-
-        if (timeLeft.isEmpty()) {
-            return "0 seconds";
-        } else {
-            return timeLeft.substring(0, timeLeft.length() - 1);
-        }
     }
 
     @Override
@@ -121,14 +86,21 @@ public class MasterworksFairTrait extends Trait {
         hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair");
         if (currentFair == null) {
             if (startTime != null) {
-                hologramTrait.setLine(2, ChatColor.GOLD + "Starts in " + getTimeTill(startTime, true, true, true, true));
+                hologramTrait.setLine(2, ChatColor.GOLD + "Starts in " + DateUtil.getTimeTill(startTime, true, true, true, true));
             } else {
                 hologramTrait.setLine(2, ChatColor.RED + "Currently closed!");
             }
             return;
         }
         Instant endDate = currentFair.getStartDate().plus(7, ChronoUnit.DAYS);
-        hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.BOLD + getTimeTill(endDate, true, true, true, true) + ChatColor.BOLD + " left");
+        hologramTrait.setLine(2,
+                ChatColor.GOLD.toString() + ChatColor.BOLD + DateUtil.getTimeTill(endDate,
+                        true,
+                        true,
+                        true,
+                        true
+                ) + ChatColor.BOLD + " left"
+        );
     }
 
     @EventHandler

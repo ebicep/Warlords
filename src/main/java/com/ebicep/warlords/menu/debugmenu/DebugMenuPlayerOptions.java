@@ -23,6 +23,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -40,7 +41,7 @@ import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
-import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
+
 
 public class DebugMenuPlayerOptions {
 
@@ -520,7 +521,7 @@ public class DebugMenuPlayerOptions {
                     }
                     AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
                     menu.setItem((i % 7) + 1, yLevel,
-                            new ItemBuilder(woolSortedByColor[i % woolSortedByColor.length])
+                            new ItemBuilder(Utils.getWoolFromIndex(i))
                                     .name(ChatColor.GOLD + abstractCooldown.getName())
                                     .lore(abstractCooldown instanceof RegularCooldown ?
                                                     ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0) + "s" :

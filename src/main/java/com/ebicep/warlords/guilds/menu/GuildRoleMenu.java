@@ -9,6 +9,7 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions.GuildLo
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
-import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
+
 
 public class GuildRoleMenu {
     public static void openRoleSelectorMenu(Guild guild, Player player) {
@@ -60,7 +61,7 @@ public class GuildRoleMenu {
         for (int i = 1; i < guildRoles.size(); i++) {
             GuildRole role = guildRoles.get(i);
             menu.setItem(i, 2,
-                    new ItemBuilder(woolSortedByColor[i + 4])
+                    new ItemBuilder(Utils.getWoolFromIndex(i + 4))
                             .name(ChatColor.GREEN + role.getRoleName())
                             .get(),
                     (m, e) -> openRoleEditor(guild, role, player)

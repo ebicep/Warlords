@@ -2,6 +2,7 @@ package com.ebicep.warlords.util.java;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 
 public class DateUtil {
@@ -37,4 +38,45 @@ public class DateUtil {
         return DateTimeFormatter.ofPattern(format).format(getCurrentDateEST());
     }
 
+    public static String getTimeTill(
+            Instant endDate,
+            boolean includeDays,
+            boolean includeHours,
+            boolean includeMinutes,
+            boolean includeSeconds
+    ) {
+        Instant currentDate = Instant.now();
+
+        String timeLeft = "";
+        if (includeDays) {
+            long days = ChronoUnit.DAYS.between(currentDate, endDate);
+            if (days > 0) {
+                timeLeft += days + (days == 1 ? " day " : " days ");
+            }
+        }
+        if (includeHours) {
+            long hours = ChronoUnit.HOURS.between(currentDate, endDate) % 24;
+            if (hours > 0) {
+                timeLeft += hours + (hours == 1 ? " hour " : " hours ");
+            }
+        }
+        if (includeMinutes) {
+            long minutes = ChronoUnit.MINUTES.between(currentDate, endDate) % 60;
+            if (minutes > 0) {
+                timeLeft += minutes + (minutes == 1 ? " minute " : " minutes ");
+            }
+        }
+        if (includeSeconds) {
+            long seconds = ChronoUnit.SECONDS.between(currentDate, endDate) % 60;
+            if (seconds > 0) {
+                timeLeft += seconds + (seconds == 1 ? " second " : " seconds ");
+            }
+        }
+
+        if (timeLeft.isEmpty()) {
+            return "0 seconds";
+        } else {
+            return timeLeft.substring(0, timeLeft.length() - 1);
+        }
+    }
 }

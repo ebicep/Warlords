@@ -23,7 +23,11 @@ public class GuildMenu {
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLD_BLOCK)
                         .name(ChatColor.GREEN + "Guild Bank")
-                        .lore(ChatColor.GRAY + "Coins: " + ChatColor.GREEN + guild.getCoins(Timing.LIFETIME))
+                        .lore(
+                                ChatColor.GRAY + "Coins: " + ChatColor.GREEN + guild.getCoins(Timing.LIFETIME),
+                                "",
+                                ChatColor.GRAY + "Click to open the guild bank"
+                        )
                         .get(),
                 (m, e) -> GuildBankMenu.openGuildBankMenu(player, guild)
         );
