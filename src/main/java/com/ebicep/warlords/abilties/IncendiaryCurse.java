@@ -3,7 +3,11 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -23,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncendiaryCurse extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int playersHit = 0;
 
     private static final double SPEED = 0.250;
@@ -151,6 +157,32 @@ public class IncendiaryCurse extends AbstractAbility {
                         );
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
+
+                        if (pveUpgrade && nearEntity instanceof WarlordsNPC) {
+                            FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
+                                    .withColor(Color.RED)
+                                    .withColor(Color.BLACK)
+                                    .with(FireworkEffect.Type.BALL_LARGE)
+                                    .build());
+
+                            nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class);
+                            nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    name,
+                                    "INCEN",
+                                    IncendiaryCurse.class,
+                                    new IncendiaryCurse(),
+                                    wp,
+                                    CooldownTypes.DEBUFF,
+                                    cooldownManager -> {
+                                    },
+                                    2 * 20
+                            ) {
+                                @Override
+                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    return currentDamageValue * 1.5f;
+                                }
+                            });
+                        }
                     }
 
                     this.cancel();
@@ -176,5 +208,13 @@ public class IncendiaryCurse extends AbstractAbility {
 
     public void setHitbox(float hitbox) {
         this.hitbox = hitbox;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

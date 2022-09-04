@@ -94,11 +94,6 @@ public class Vindicate extends AbstractAbility {
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
 
         Vindicate tempVindicate = new Vindicate();
-
-        if (pveUpgrade) {
-            buffOnUse(wp);
-        }
-
         for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
@@ -142,8 +137,7 @@ public class Vindicate extends AbstractAbility {
                 WarlordsEntity we = event.getAttacker();
                 if (pveUpgrade) {
                     if (Utils.isLineOfSightVindicator(event.getPlayer().getEntity(), we.getEntity())) {
-                        final Vector v = wp.getLocation().toVector().subtract(we.getLocation().toVector()).normalize().multiply(-1.25).setY(0.3);
-                        we.setVelocity(v, false);
+                        Utils.addKnockback(wp.getLocation(), event.getAttacker(), -1.25, 0.3);
                         we.addDamageInstance(event.getPlayer(), name, currentDamageValue, currentDamageValue, -1, 100, false);
                         return currentDamageValue * 0;
                     } else {
@@ -156,11 +150,6 @@ public class Vindicate extends AbstractAbility {
         });
 
         return true;
-    }
-
-    private void buffOnUse(WarlordsEntity we) {
-        we.getSpeed().addSpeedModifier("Vindicate Speed", 25, vindicateDuration);
-        // TODO: Add EPS increase
     }
 
     public float getVindicateDamageReduction() {

@@ -2201,4 +2201,12 @@ public abstract class WarlordsEntity {
     public void setInPve(boolean inPve) {
         isInPve = inPve;
     }
+
+    public float getFallDistance() {
+        return this.getEntity().getFallDistance();
+    }
+
+    public void setFallDistance(float amount) {
+        this.getEntity().setFallDistance(amount);
+    }
 }

@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -64,80 +65,115 @@ public class HeartToHeart extends AbstractAbility {
             verticalRadius = getVerticalRadius();
         }
 
-        for (WarlordsEntity heartTarget : PlayerFilter
-                .entitiesAround(wp, radius, verticalRadius, radius)
-                .aliveTeammatesOfExcludingSelf(wp)
-                .requireLineOfSight(wp)
-                .lookingAtFirst(wp)
-                .limit(1)
-        ) {
-            if (wp.hasFlag()) {
-                timesUsedWithFlag++;
+        if (wp.isInPve()) {
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
             }
-            wp.subtractEnergy(energyCost, false);
-            Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
-            Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
+        } else {
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+                    .limit(1)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
+            }
+        }
 
-            HeartToHeart tempHeartToHeart = new HeartToHeart();
-            Vindicate.giveVindicateCooldown(wp, wp, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
-            Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
+        return false;
+    }
 
-            new BukkitRunnable() {
-                final Location playerLoc = wp.getLocation();
-                int timer = 0;
+    private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
+        if (wp.hasFlag()) {
+            timesUsedWithFlag++;
+        }
+        wp.subtractEnergy(energyCost, false);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 
-                @Override
-                public void run() {
-                    timer++;
+        HeartToHeart tempHeartToHeart = new HeartToHeart();
+        Vindicate.giveVindicateCooldown(wp, wp, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
+        Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
 
-                    if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
-                        this.cancel();
-                    }
+        List<WarlordsEntity> playersHit = new ArrayList<>();
+        new BukkitRunnable() {
+            final Location playerLoc = wp.getLocation();
+            int timer = 0;
 
-                    double target = timer / 8D;
-                    Location targetLoc = heartTarget.getLocation();
-                    Location newLocation = new Location(
-                            playerLoc.getWorld(),
-                            Utils.lerp(playerLoc.getX(), targetLoc.getX(), target),
-                            Utils.lerp(playerLoc.getY(), targetLoc.getY(), target),
-                            Utils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
-                            targetLoc.getYaw(),
-                            targetLoc.getPitch()
-                    );
+            @Override
+            public void run() {
+                timer++;
 
-                    EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.LEAVES, 1, (short) 1), timer);
+                if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
+                    this.cancel();
+                }
 
-                    wp.teleportLocationOnly(newLocation);
-                    player.setFallDistance(-5);
-                    newLocation.add(0, 1, 0);
-                    Matrix4d center = new Matrix4d(newLocation);
-                    for (float i = 0; i < 6; i++) {
-                        double angle = Math.toRadians(i * 90) + timer * 0.6;
-                        double width = 1.5D;
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1,
-                                center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
-                    }
+                double target = timer / 8D;
+                Location targetLoc = heartTarget.getLocation();
+                Location newLocation = new Location(
+                        playerLoc.getWorld(),
+                        Utils.lerp(playerLoc.getX(), targetLoc.getX(), target),
+                        Utils.lerp(playerLoc.getY(), targetLoc.getY(), target),
+                        Utils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
+                        targetLoc.getYaw(),
+                        targetLoc.getPitch()
+                );
 
-                    if (timer >= 8) {
-                        wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2), false);
-                        wp.addHealingInstance(
+                EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.LEAVES, 1, (short) 1), timer);
+
+                wp.teleportLocationOnly(newLocation);
+                wp.setFallDistance(-5);
+                newLocation.add(0, 1, 0);
+                Matrix4d center = new Matrix4d(newLocation);
+                for (float i = 0; i < 6; i++) {
+                    double angle = Math.toRadians(i * 90) + timer * 0.6;
+                    double width = 1.5D;
+                    ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1,
+                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                }
+
+                if (pveUpgrade) {
+                    for (WarlordsEntity we : PlayerFilter
+                            .entitiesAround(wp, 3, 3, 3)
+                            .aliveEnemiesOf(wp)
+                            .excluding(playersHit)
+                    ) {
+                        playersHit.add(we);
+                        we.getSpeed().addSpeedModifier("Heart Slowness", -99, GameRunnable.SECOND, "BASE");
+                        we.addDamageInstance(
                                 wp,
                                 name,
-                                healthRestore,
-                                healthRestore,
+                                904,
+                                1377,
                                 -1,
                                 100,
-                                false,
                                 false
                         );
                     }
                 }
-            }.runTaskTimer(Warlords.getInstance(), 0, 1);
 
-            return true;
-        }
-
-        return false;
+                if (timer >= 8) {
+                    wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2), false);
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            healthRestore,
+                            healthRestore,
+                            -1,
+                            100,
+                            false,
+                            false
+                    );
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 1);
     }
 
     public void setVindDuration(int vindDuration) {

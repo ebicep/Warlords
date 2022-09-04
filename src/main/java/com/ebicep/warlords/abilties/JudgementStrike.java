@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.player.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -8,6 +9,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
     private float strikeHeal = 75;
+    private Listener listener;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -63,22 +67,11 @@ public class JudgementStrike extends AbstractStrikeBase {
             if (warlordsDamageHealingFinalEvent.isCrit()) {
                 wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
-
-            if (pveUpgradeStrikeHeal) {
-                if (nearPlayer.isDead()) {
-                    wp.addDamageInstance(
-                            wp,
-                            name,
-                            strikeHeal,
-                            strikeHeal,
-                            -1,
-                            100,
-                            false
-                    );
-                }
-            }
         });
 
+        if (pveUpgradeStrikeHeal) {
+            healOnKill(wp);
+        }
         if (pveUpgradeMaster) {
             if (
                     nearPlayer instanceof WarlordsNPC &&
@@ -97,6 +90,25 @@ public class JudgementStrike extends AbstractStrikeBase {
         Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
         Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
         randomHitEffect(location, 7, 255, 255, 255);
+    }
+
+    private void healOnKill(WarlordsEntity we) {
+        listener = new Listener() {
+            @EventHandler
+            private void onKill(WarlordsDeathEvent event) {
+                if (event.getKiller() == we && event.getPlayer().isEnemyAlive(we)) {
+                    we.addDamageInstance(
+                            we,
+                            name,
+                            strikeHeal,
+                            strikeHeal,
+                            -1,
+                            100,
+                            false
+                    );
+                }
+            }
+        };
     }
 
     public int getSpeedOnCrit() {
