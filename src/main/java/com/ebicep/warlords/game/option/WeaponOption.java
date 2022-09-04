@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
@@ -95,7 +96,11 @@ public class WeaponOption implements Option {
     }
 
     public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
-        player.getInventory().setItem(0, new ItemBuilder(wp.getAbstractWeapon().generateItemStack())
+        AbstractWeapon weapon = wp.getAbstractWeapon();
+        if (weapon == null) {
+            return;
+        }
+        player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack())
                 .addLore(
                         "",
                         ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
