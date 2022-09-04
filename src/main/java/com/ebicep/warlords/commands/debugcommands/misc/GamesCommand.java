@@ -15,6 +15,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
-import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
+
 
 @CommandAlias("games")
 @CommandPermission("warlords.game.lookupgame")
@@ -206,7 +207,7 @@ public class GamesCommand extends BaseCommand {
             GameAddon gameAddon = GameAddon.VALUES[i];
 
             boolean isASelectedAddon = addons.contains(gameAddon);
-            ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
+            ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                     .name(ChatColor.GREEN + gameAddon.getName())
                     .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
             if (isASelectedAddon) {

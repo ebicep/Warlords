@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -19,6 +20,7 @@ public enum GuildUpgrades {
     //TEMPORARY UPGRADES
     COINS_BOOST(
             "Coins Boost",
+            Material.GOLD_INGOT,
             false,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -34,6 +36,7 @@ public enum GuildUpgrades {
     },
     INSIGNIA_BOOST(
             "Insignia Boost",
+            Material.NETHER_STAR,
             false,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -59,6 +62,7 @@ public enum GuildUpgrades {
     },
     RESPAWN_TIME_REDUCTION(
             "Respawn Time Reduction",
+            Material.WATCH,
             false,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -84,6 +88,7 @@ public enum GuildUpgrades {
     },
     WEAPON_DROP_RATE(
             "Weapon Drop Rate",
+            Material.WOOD_AXE,
             false,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -111,6 +116,7 @@ public enum GuildUpgrades {
     //PERMANENT UPGRADES
     PLAYER_EXP_BONUS(
             "Player EXP Bonus",
+            Material.EXP_BOTTLE,
             true,
             null
     ) {
@@ -136,6 +142,7 @@ public enum GuildUpgrades {
     },
     GUILD_COIN_CONVERSION_RATE(
             "Guild Coin Conversion Rate",
+            Material.GOLD_NUGGET,
             true,
             null
     ) {
@@ -152,12 +159,15 @@ public enum GuildUpgrades {
 
     ;
 
+    public static final GuildUpgrades[] VALUES = values();
     public final String name;
+    public final Material material;
     public final boolean isPermanent;
     public final UnaryOperator<Instant> expirationDate;
 
-    GuildUpgrades(String name, boolean isPermanent, UnaryOperator<Instant> expirationDate) {
+    GuildUpgrades(String name, Material material, boolean isPermanent, UnaryOperator<Instant> expirationDate) {
         this.name = name;
+        this.material = material;
         this.isPermanent = isPermanent;
         this.expirationDate = expirationDate;
     }
@@ -178,46 +188,46 @@ public enum GuildUpgrades {
     public long getCost(int tier) {
         if (isPermanent) {
             switch (tier) {
-                case 0:
-                    return 250000;
                 case 1:
-                    return 500000;
+                    return 250000;
                 case 2:
-                    return 1000000;
+                    return 500000;
                 case 3:
-                    return 2000000;
+                    return 1000000;
                 case 4:
-                    return 3000000;
+                    return 2000000;
                 case 5:
-                    return 4500000;
+                    return 3000000;
                 case 6:
-                    return 6750000;
+                    return 4500000;
                 case 7:
-                    return 10125000;
+                    return 6750000;
                 case 8:
+                    return 10125000;
+                case 9:
                     return 15187500;
                 default:
                     return Long.MAX_VALUE;
             }
         } else {
             switch (tier) {
-                case 0:
-                    return 10000;
                 case 1:
-                    return 20000;
+                    return 10000;
                 case 2:
-                    return 40000;
+                    return 20000;
                 case 3:
-                    return 80000;
+                    return 40000;
                 case 4:
-                    return 120000;
+                    return 80000;
                 case 5:
-                    return 180000;
+                    return 120000;
                 case 6:
-                    return 270000;
+                    return 180000;
                 case 7:
-                    return 405000;
+                    return 270000;
                 case 8:
+                    return 405000;
+                case 9:
                     return 607500;
                 default:
                     return Long.MAX_VALUE;

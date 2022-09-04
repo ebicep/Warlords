@@ -56,7 +56,7 @@ public class Utils {
 
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
-    public static final ItemStack[] woolSortedByColor = {
+    private static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),
             new ItemStack(Material.WOOL, 1, (byte) 8),
             new ItemStack(Material.WOOL, 1, (byte) 7),
@@ -90,6 +90,10 @@ public class Utils {
             new ItemStack(Material.WOOL, 1, (byte) 2),
             new ItemStack(Material.WOOL, 1, (byte) 6),
     };
+
+    public static ItemStack getWoolFromIndex(int index) {
+        return woolSortedByColor[index % woolSortedByColor.length];
+    }
 
     private Utils() {
     }

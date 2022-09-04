@@ -18,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -58,6 +59,12 @@ public class MasterworksFairManager {
         //reset fair
         MasterworksFairTrait.startTime = Instant.now().plus(minutesTillStart, ChronoUnit.MINUTES);
         MasterworksFairTrait.PAUSED.set(false);
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.getOpenInventory().getTopInventory().getName().equals("Masterworks Fair")) {
+                onlinePlayer.closeInventory();
+            }
+        }
     }
 
     public static void createFair(MasterworksFair masterworksFair) {
@@ -89,11 +96,11 @@ public class MasterworksFairManager {
     }
 
     public static void awardEntries(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
+        currentFair = null;
+
         Warlords.newChain()
                 .async(() -> DatabaseManager.masterworksFairService.update(masterworksFair))
                 .sync(() -> {
-                    currentFair = null;
-
                     Instant now = Instant.now();
                     for (WeaponsPvE value : WeaponsPvE.VALUES) {
                         if (value.getPlayerEntries != null) {

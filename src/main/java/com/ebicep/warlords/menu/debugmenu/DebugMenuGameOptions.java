@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
-import static com.ebicep.warlords.util.warlords.Utils.woolSortedByColor;
+
 
 public class DebugMenuGameOptions {
 
@@ -93,7 +94,7 @@ public class DebugMenuGameOptions {
                 if (!map.getGameModes().contains(gm)) continue;
                 i++;
                 menu.setItem(i % 7 + 1, 1 + i / 7,
-                        new ItemBuilder(woolSortedByColor[i + 5])
+                        new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                                 .name(ChatColor.GREEN + map.getMapName())
                                 .get(),
                         (m, e) -> {
@@ -124,7 +125,7 @@ public class DebugMenuGameOptions {
                 }
 
                 boolean isASelectedAddon = addons.contains(gameAddon);
-                ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
+                ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                         .name(ChatColor.GREEN + gameAddon.getName())
                         .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
                 if (isASelectedAddon) {
