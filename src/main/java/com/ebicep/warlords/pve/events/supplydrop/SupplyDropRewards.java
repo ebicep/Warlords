@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -162,5 +163,6 @@ public enum SupplyDropRewards {
                 ChatColor.GOLD + name,
                 0, 40, 0
         );
+        player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 1.2f);
     }
 }

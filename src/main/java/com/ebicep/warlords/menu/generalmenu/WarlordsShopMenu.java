@@ -47,7 +47,8 @@ public class WarlordsShopMenu {
     private static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
             .name(ChatColor.AQUA + "Weapon Skill Boost")
             .lore("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
-                    "This option does not effect PvE",
+                    "",
+                    "§cWARNING: §7Skill boosts are not available in PvE.",
                     "",
                     "§eClick to change skill boost!"
             )

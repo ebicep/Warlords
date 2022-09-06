@@ -109,9 +109,6 @@ public class IceBarrier extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                                     .closestFirst(wp)
                             ) {
-                                if (we instanceof WarlordsNPC) {
-                                    ((WarlordsNPC) we).getMob().setTarget(wp);
-                                }
                                 we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
                                 we.getSpeed().addSpeedModifier("Ice Barrier Slowness", -80, 20);
                             }
@@ -126,6 +123,16 @@ public class IceBarrier extends AbstractAbility {
                 return newDamageValue;
             }
         });
+
+        for (WarlordsEntity we : PlayerFilter
+                .entitiesAround(wp, 10, 10, 10)
+                .aliveEnemiesOf(wp)
+                .closestFirst(wp)
+        ) {
+            if (we instanceof WarlordsNPC) {
+                ((WarlordsNPC) we).getMob().setTarget(wp);
+            }
+        }
 
         return true;
     }

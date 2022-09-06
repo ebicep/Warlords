@@ -20,6 +20,8 @@ import java.util.Optional;
 
 public class WoundingStrikeDefender extends AbstractStrikeBase {
 
+    private boolean pveUpgrade = false;
+
     public WoundingStrikeDefender() {
         super("Wounding Strike", 415.8f, 556.5f, 0, 100, 20, 200);
     }
@@ -52,7 +54,13 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                 critMultiplier,
                 false
         );
-//        if(finalEvent.isPresent()) {
+
+        finalEvent.ifPresent(event -> {
+            if (event.isCrit() && pveUpgrade) {
+                damageReductionOnCrit(wp);
+            }
+        });
+
         if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeDefender.class))) {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
         }
@@ -78,11 +86,28 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                 }
             });
         }
-//            return true;
-//        } else {
-//            return false;
-//        }
+
         return true;
+    }
+
+    private void damageReductionOnCrit(WarlordsEntity we) {
+        we.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "STRIKE RES",
+                WoundingStrikeDefender.class,
+                new WoundingStrikeDefender(),
+                we,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                5 * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 0.7f;
+            }
+        });
     }
 
     @Override
@@ -91,4 +116,11 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         randomHitEffect(location, 7, 255, 0, 0);
     }
 
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
+    }
 }

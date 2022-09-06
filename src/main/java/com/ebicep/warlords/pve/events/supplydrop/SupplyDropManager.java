@@ -9,14 +9,12 @@ import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -36,7 +34,7 @@ public class SupplyDropManager {
     public static void openSupplyDropMenu(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer == null) {
-            player.sendMessage(ChatColor.RED + "Susan does not want to talk to you right now. fucking loser");
+            player.sendMessage(ChatColor.RED + "Susan does not want to talk to you right now.");
             return;
         }
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
@@ -58,6 +56,7 @@ public class SupplyDropManager {
                         player.closeInventory();
                         return;
                     }
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     databasePlayerPvE.subtractCurrency(Currencies.COIN, 10000);
                     databasePlayerPvE.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
                     openSupplyDropMenu(player);
@@ -80,6 +79,7 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     if (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 0) {
                         supplyDropRoll(player, 1, e.isShiftClick());
                     } else {
@@ -165,6 +165,8 @@ public class SupplyDropManager {
 
                 if (instant || counter % slowness == 0) {
                     reward = SupplyDropRewards.getRandomReward();
+                    Random random = new Random();
+                    player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, random.nextFloat());
                     PacketUtils.sendTitle(
                             player.getUniqueId(),
                             reward.getChatColor() + reward.name,
