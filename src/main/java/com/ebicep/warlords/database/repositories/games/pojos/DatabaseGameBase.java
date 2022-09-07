@@ -12,8 +12,9 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -79,22 +80,33 @@ public abstract class DatabaseGameBase {
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
-            float highestDamage = game.warlordsEntities()
-                    .max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getDamage()))
-                    .get()
-                    .getMinuteStats()
-                    .total()
-                    .getDamage();
-            float highestHealing = game.warlordsEntities()
-                    .max(Comparator.comparing((WarlordsEntity wp) -> wp.getMinuteStats().total().getHealing()))
-                    .get()
-                    .getMinuteStats()
-                    .total()
-                    .getHealing();
-            //checking for inflated stats
-            if (highestDamage > 750000 || highestHealing > 750000) {
-                updatePlayerStats = false;
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+            if (game.getGameMode() != GameMode.WAVE_DEFENSE) {
+                float highestDamage = game.warlordsPlayers()
+                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getDamage()))
+                        .get()
+                        .getMinuteStats()
+                        .total()
+                        .getDamage();
+                float highestHealing = game.warlordsPlayers()
+                        .max(Comparator.comparing((WarlordsPlayer wp) -> wp.getMinuteStats().total().getHealing()))
+                        .get()
+                        .getMinuteStats()
+                        .total()
+                        .getHealing();
+                //checking for inflated stats
+                if (highestDamage > 750000 || highestHealing > 750000) {
+                    updatePlayerStats = false;
+                    ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                }
+            } else {
+                for (Option option : game.getOptions()) {
+                    if (option instanceof WaveDefenseOption) {
+                        if (((WaveDefenseOption) option).getWavesCleared() == 0) {
+                            updatePlayerStats = false;
+                            break;
+                        }
+                    }
+                }
             }
             //check for private + untracked gamemodes
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
@@ -263,6 +275,24 @@ public abstract class DatabaseGameBase {
         }
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
+    public boolean isCounted() {
+        return counted;
+    }
+
+    public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add);
+
+    public void setCounted(boolean counted) {
+        this.counted = counted;
+    }
+
     protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, boolean add) {
         if (DatabaseManager.playerService == null) {
             System.out.println("playerService is null - cannot update player stats");
@@ -406,15 +436,11 @@ public abstract class DatabaseGameBase {
         return Long.parseLong(objectId.substring(0, 8), 16) * 1000;
     }
 
-    public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add);
-
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 
     public abstract void createHolograms();
 
     public abstract String getGameLabel();
-
-    public abstract List<String> getExtraLore();
 
     public List<String> getLore() {
         List<String> lore = new ArrayList<>();
@@ -427,6 +453,24 @@ public abstract class DatabaseGameBase {
         lore.add("");
         lore.addAll(getExtraLore());
         return lore;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
+    }
+
+    public List<GameAddon> getGameAddons() {
+        return gameAddons;
+    }
+
+    public abstract List<String> getExtraLore();
+
+    public void setGameAddons(List<GameAddon> gameAddons) {
+        this.gameAddons = gameAddons;
     }
 
     public boolean isPrivate() {
@@ -462,37 +506,5 @@ public abstract class DatabaseGameBase {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public GameMap getMap() {
-        return map;
-    }
-
-    public void setMap(GameMap map) {
-        this.map = map;
-    }
-
-    public GameMode getGameMode() {
-        return gameMode;
-    }
-
-    public void setGameMode(GameMode gameMode) {
-        this.gameMode = gameMode;
-    }
-
-    public List<GameAddon> getGameAddons() {
-        return gameAddons;
-    }
-
-    public void setGameAddons(List<GameAddon> gameAddons) {
-        this.gameAddons = gameAddons;
-    }
-
-    public boolean isCounted() {
-        return counted;
-    }
-
-    public void setCounted(boolean counted) {
-        this.counted = counted;
     }
 }
