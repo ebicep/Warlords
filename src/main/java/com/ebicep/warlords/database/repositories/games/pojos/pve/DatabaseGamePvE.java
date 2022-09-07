@@ -41,7 +41,7 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         //this.difficulty =
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
-                this.wavesCleared = ((WaveDefenseOption) option).getWaveCounter() - 1;
+                this.wavesCleared = ((WaveDefenseOption) option).getWavesCleared();
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);

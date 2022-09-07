@@ -15,7 +15,7 @@ import java.util.UUID;
 public class GuildExperienceUtils {
 
     public static final long EXP_PER_WAVE = 4;
-    public static final long BONUS_EXP_WAVE_50 = 400;
+    public static final long BONUS_EXP_WAVE_25 = 400;
     public static final HashMap<Integer, Long> LEVEL_EXP_COST = new HashMap<>();
     public static final HashMap<Integer, Long> LEVEL_TO_EXP = new HashMap<>();
     private static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
@@ -50,7 +50,10 @@ public class GuildExperienceUtils {
         for (Option option : warlordsPlayer.getGame().getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
-                int waveCounter = waveDefenseOption.getWaveCounter();
+                int wavesCleared = waveDefenseOption.getWavesCleared();
+                if (wavesCleared == 0) {
+                    break;
+                }
 
                 if (DatabaseManager.guildService != null) {
                     Player player = Bukkit.getPlayer(warlordsPlayer.getUuid());
@@ -59,13 +62,14 @@ public class GuildExperienceUtils {
                         if (guildPlayerPair != null) {
                             Guild guild = guildPlayerPair.getA();
                             GuildPlayer guildPlayer = guildPlayerPair.getB();
-                            guild.addExperience(GuildExperienceUtils.EXP_PER_WAVE);
-                            guildPlayer.addExperience(GuildExperienceUtils.EXP_PER_WAVE);
-                            expSummary.put("Waves Cleared", waveCounter * EXP_PER_WAVE);
-                            if (waveCounter == 50 && waveDefenseOption.getMaxWave() == 50) {
-                                guild.addExperience(GuildExperienceUtils.BONUS_EXP_WAVE_50);
-                                guildPlayer.addExperience(GuildExperienceUtils.BONUS_EXP_WAVE_50);
-                                expSummary.put("Wave 50 Clear Bonus", BONUS_EXP_WAVE_50);
+                            long expEarnedPerWave = EXP_PER_WAVE * wavesCleared;
+                            guild.addExperience(expEarnedPerWave);
+                            guildPlayer.addExperience(expEarnedPerWave);
+                            expSummary.put("Waves Cleared", expEarnedPerWave);
+                            if (wavesCleared == 25 && waveDefenseOption.getMaxWave() == 25) {
+                                guild.addExperience(BONUS_EXP_WAVE_25);
+                                guildPlayer.addExperience(BONUS_EXP_WAVE_25);
+                                expSummary.put("Wave 25 Clear Bonus", BONUS_EXP_WAVE_25);
                             }
                             GuildManager.queueUpdateGuild(guild);
                         }
