@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -177,21 +178,25 @@ public final class WarlordsPlayer extends WarlordsEntity {
     private void resetPlayerAddons() {
         if (getEntity() instanceof Player) {
             Player player = (Player) getEntity();
+            PlayerInventory playerInventory = player.getInventory();
 
             //Soulbinding weapon enchant
-            if (getCooldownManager().hasCooldown(Soulbinding.class)) {
-                ItemMeta itemMeta = player.getInventory().getItem(0).getItemMeta();
-                itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
-                player.getInventory().getItem(0).setItemMeta(itemMeta);
-            } else {
-                player.getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+            ItemStack firstItem = playerInventory.getItem(0);
+            if (firstItem != null) {
+                if (getCooldownManager().hasCooldown(Soulbinding.class)) {
+                    ItemMeta itemMeta = firstItem.getItemMeta();
+                    itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                    firstItem.setItemMeta(itemMeta);
+                } else {
+                    firstItem.removeEnchantment(Enchantment.OXYGEN);
+                }
             }
 
             //Undying army bone
             if (getCooldownManager().checkUndyingArmy(true)) {
-                player.getInventory().setItem(5, UndyingArmy.BONE);
+                playerInventory.setItem(5, UndyingArmy.BONE);
             } else {
-                player.getInventory().remove(UndyingArmy.BONE);
+                playerInventory.remove(UndyingArmy.BONE);
             }
 
             //Arcane shield absorption hearts
