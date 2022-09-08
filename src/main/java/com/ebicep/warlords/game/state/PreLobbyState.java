@@ -182,11 +182,11 @@ public class PreLobbyState implements State, TimerDebugAble {
                         //start on team with least amount of players
                         int blueSR = teams.entrySet().stream()
                                 .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
-                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
                                 .sum();
                         int redSR = teams.entrySet().stream()
                                 .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
-                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
                                 .sum();
 
 //                        playersLeft = playersLeft.stream()
@@ -195,10 +195,10 @@ public class PreLobbyState implements State, TimerDebugAble {
                         for (Player player : playersLeft) {
                             if (redSR > blueSR) {
                                 teams.put(player, Team.BLUE);
-                                blueSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                blueSR += playersSR.getOrDefault(player.getUniqueId(), 500);
                             } else {
                                 teams.put(player, Team.RED);
-                                redSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                redSR += playersSR.getOrDefault(player.getUniqueId(), 500);
                             }
                         }
 
@@ -286,11 +286,11 @@ public class PreLobbyState implements State, TimerDebugAble {
                         bestTeam = teams;
                         bestBlueSR = teams.entrySet().stream()
                                 .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
-                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
                                 .sum();
                         bestRedSR = teams.entrySet().stream()
                                 .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
-                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId(), 500))
                                 .sum();
                         bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
                     }
@@ -311,10 +311,10 @@ public class PreLobbyState implements State, TimerDebugAble {
                             for (Player player : value) {
                                 if (blueSR > redSR) {
                                     teams.put(player, Team.RED);
-                                    redSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                    redSR += playersSR.getOrDefault(player.getUniqueId(), 500);
                                 } else {
                                     teams.put(player, Team.BLUE);
-                                    blueSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                    blueSR += playersSR.getOrDefault(player.getUniqueId(), 500);
                                 }
                             }
                         }
@@ -350,9 +350,10 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                             bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
                                 Specializations specializations = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
-                                value.sendMessage(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey().getName() + ChatColor.GRAY + " - " +
+                                value.sendMessage(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey()
+                                        .getName() + ChatColor.GRAY + " - " +
                                         specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
-                                        ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId().toString()));
+                                        ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId()));
                             });
 
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
@@ -369,9 +370,10 @@ public class PreLobbyState implements State, TimerDebugAble {
                     System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
                     bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
                         Specializations specializations = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedSpec();
-                        System.out.println(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey().getName() + ChatColor.GRAY + " - " +
+                        System.out.println(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey()
+                                .getName() + ChatColor.GRAY + " - " +
                                 specializations.specType.chatColor + specializations.name + ChatColor.GRAY + " - " +
-                                ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId().toString()));
+                                ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId()));
                     });
 
                     System.out.println(ChatColor.DARK_AQUA + "-------------------------------");
