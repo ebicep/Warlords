@@ -31,7 +31,7 @@ public class DatabaseShaman extends AbstractDatabaseStatInformation implements D
             int multiplier
     ) {
         //UPDATE SPEC EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedSpec() :-gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     @Override

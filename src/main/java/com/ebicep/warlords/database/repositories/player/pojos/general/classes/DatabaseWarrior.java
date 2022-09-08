@@ -31,7 +31,7 @@ public class DatabaseWarrior extends AbstractDatabaseStatInformation implements 
             int multiplier
     ) {
         //UPDATE SPEC EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedSpec() :-gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     @Override

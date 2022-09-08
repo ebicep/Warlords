@@ -41,13 +41,13 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         //this.difficulty =
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
-                this.wavesCleared = ((WaveDefenseOption) option).getWavesCleared();
+                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                this.wavesCleared = waveDefenseOption.getWavesCleared();
+                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer, waveDefenseOption)));
             }
         }
         this.timeElapsed = RecordTimeElapsedOption.getTicksElapsed(game);
-        game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer)));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
-
     }
 
     @Override

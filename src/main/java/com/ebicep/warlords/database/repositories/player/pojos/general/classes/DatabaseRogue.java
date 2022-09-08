@@ -31,7 +31,7 @@ public class DatabaseRogue extends AbstractDatabaseStatInformation implements Da
             int multiplier
     ) {
         //UPDATE SPEC EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedSpec() :-gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     @Override

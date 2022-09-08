@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -90,19 +91,24 @@ public class GuildManager {
         queueUpdateGuild(guild);
     }
 
-    public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
+    public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(UUID uuid) {
         for (Guild guild : GUILDS) {
             if (guild.getDisbandDate() != null) {
                 continue;
             }
             for (GuildPlayer guildPlayer : guild.getPlayers()) {
-                if (guildPlayer.getUUID().equals(player.getUniqueId())) {
+                if (guildPlayer.getUUID().equals(uuid)) {
                     return new Pair<>(guild, guildPlayer);
                 }
             }
         }
         return null;
     }
+
+    public static Pair<Guild, GuildPlayer> getGuildAndGuildPlayerFromPlayer(Player player) {
+        return getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
+    }
+
 
     public static void addInvite(Player from, Player to, Guild guild) {
         INVITES.add(new GuildInvite(to.getUniqueId(), guild));

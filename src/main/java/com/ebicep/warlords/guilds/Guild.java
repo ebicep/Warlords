@@ -349,6 +349,10 @@ public class Guild {
         this.coins.forEach((timing, amount) -> this.coins.put(timing, amount + coins));
     }
 
+    public void addCoins(Timing timing, long coins) {
+        this.coins.put(timing, this.coins.getOrDefault(timing, 0L) + coins);
+    }
+
     public long getExperience(Timing timing) {
         return experience.getOrDefault(timing, 0L);
     }

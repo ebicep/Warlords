@@ -2,8 +2,10 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -31,11 +33,15 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private Map<String, Long> mobAssists = new LinkedHashMap<>();
     @Field("mob_deaths")
     private Map<String, Long> mobDeaths = new LinkedHashMap<>();
+    @Field("coins_gained")
+    private long coinsGained;
+    @Field("guild_coins_gained")
+    private long guildCoinsGained;
 
     public DatabaseGamePlayerPvE() {
     }
 
-    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
         super(warlordsPlayer);
         this.prestige = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid())
                 .getSpec(warlordsPlayer.getSpecClass())
@@ -46,7 +52,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
         this.mobAssists = warlordsPlayer.getMinuteStats().total().getMobAssists();
         this.mobDeaths = warlordsPlayer.getMinuteStats().total().getMobDeaths();
-
+        Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
+        this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
+        this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
     }
 
     public int getLongestTimeInCombat() {
@@ -87,5 +95,13 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public Map<String, Long> getMobDeaths() {
         return mobDeaths;
+    }
+
+    public long getCoinsGained() {
+        return coinsGained;
+    }
+
+    public long getGuildCoinsGained() {
+        return guildCoinsGained;
     }
 }

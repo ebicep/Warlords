@@ -24,7 +24,7 @@ public class DatabaseMage extends AbstractDatabaseStatInformation {
             int multiplier
     ) {
         //UPDATE SPEC EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedSpec() :-gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     public DatabaseBaseSpec getPyromancer() {

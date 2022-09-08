@@ -1,8 +1,14 @@
 package com.ebicep.warlords.pve.rewards;
 
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public enum Currencies {
 
@@ -61,6 +67,7 @@ public enum Currencies {
     ;
 
     public static final Currencies[] VALUES = values();
+    public static final HashMap<UUID, PvECoinSummary> CACHED_PLAYER_COIN_STATS = new HashMap<>();
     public final String name;
     public final ChatColor chatColor;
     public final ItemStack item;
@@ -71,8 +78,76 @@ public enum Currencies {
         this.item = item;
     }
 
+    public static PvECoinSummary getCoinGainFromGameStats(
+            WarlordsEntity warlordsPlayer, WaveDefenseOption waveDefenseOption,
+            boolean recalculate
+    ) {
+        if (!recalculate && CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_COIN_STATS.get(
+                warlordsPlayer.getUuid()) != null) {
+            return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
+        }
+
+        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(waveDefenseOption.getCachedBaseCoinSummary());
+        //TODO event for upgrade
+        long totalCoinsEarned = 0;
+        for (Long value : coinSummary.values()) {
+            totalCoinsEarned += value;
+        }
+
+        long guildCoinsEarned = Math.min(300, Math.round(totalCoinsEarned * .02));
+
+        if (CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid())) {
+            return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid())
+                    .setCoinSummary(coinSummary)
+                    .setTotalCoinsGained(totalCoinsEarned)
+                    .setTotalGuildCoinsGained(guildCoinsEarned);
+        } else {
+            return CACHED_PLAYER_COIN_STATS.put(warlordsPlayer.getUuid(),
+                    new PvECoinSummary(coinSummary, totalCoinsEarned, guildCoinsEarned)
+            );
+        }
+    }
+
     public String getColoredName() {
         return chatColor + name;
     }
 
+    public static class PvECoinSummary {
+        private LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>();
+        private long totalCoinsGained = 0;
+        private long totalGuildCoinsGained = 0;
+
+        public PvECoinSummary(LinkedHashMap<String, Long> coinSummary, long totalCoinsGained, long totalGuildCoinsGained) {
+            this.coinSummary = coinSummary;
+            this.totalCoinsGained = totalCoinsGained;
+            this.totalGuildCoinsGained = totalGuildCoinsGained;
+        }
+
+        public LinkedHashMap<String, Long> getCoinSummary() {
+            return coinSummary;
+        }
+
+        public PvECoinSummary setCoinSummary(LinkedHashMap<String, Long> coinSummary) {
+            this.coinSummary = coinSummary;
+            return this;
+        }
+
+        public long getTotalCoinsGained() {
+            return totalCoinsGained;
+        }
+
+        public PvECoinSummary setTotalCoinsGained(long totalCoinsGained) {
+            this.totalCoinsGained = totalCoinsGained;
+            return this;
+        }
+
+        public long getTotalGuildCoinsGained() {
+            return totalGuildCoinsGained;
+        }
+
+        public PvECoinSummary setTotalGuildCoinsGained(long totalGuildCoinsGained) {
+            this.totalGuildCoinsGained = totalGuildCoinsGained;
+            return this;
+        }
+    }
 }
