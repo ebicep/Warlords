@@ -58,9 +58,9 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.blue.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, add));
-        players.red.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, add));
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.blue.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, multiplier));
+        players.red.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, multiplier));
     }
 
     @Override

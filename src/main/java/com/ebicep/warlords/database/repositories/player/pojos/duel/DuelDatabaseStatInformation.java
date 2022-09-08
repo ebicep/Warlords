@@ -18,11 +18,17 @@ public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         assert databaseGame instanceof DatabaseGameCTF;
         assert gamePlayer instanceof DatabaseGamePlayersCTF.DatabaseGamePlayerCTF;
 
-        this.totalTimePlayed += 900 - ((DatabaseGameCTF) databaseGame).getTimeLeft();
+        this.totalTimePlayed += (long) (900 - ((DatabaseGameCTF) databaseGame).getTimeLeft()) * multiplier;
     }
 
     public long getTotalTimePlayed() {

@@ -17,15 +17,21 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
     private DatabaseRogueInterception rogue = new DatabaseRogueInterception();
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, add);
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier);
 
         //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier);
     }
 
     @Override

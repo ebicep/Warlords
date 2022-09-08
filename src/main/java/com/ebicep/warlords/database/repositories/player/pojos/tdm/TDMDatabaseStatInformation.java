@@ -18,11 +18,17 @@ public class TDMDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         assert databaseGame instanceof DatabaseGameTDM;
         assert gamePlayer instanceof DatabaseGamePlayersTDM.DatabaseGamePlayerTDM;
 
-        this.totalTimePlayed += 900 - ((DatabaseGameTDM) databaseGame).getTimeLeft();
+        this.totalTimePlayed += (long) (900 - ((DatabaseGameTDM) databaseGame).getTimeLeft()) * multiplier;
     }
 
     public long getTotalTimePlayed() {

@@ -73,9 +73,9 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.blue.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, add));
-        players.red.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, add));
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.blue.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier));
+        players.red.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier));
     }
 
     @Override

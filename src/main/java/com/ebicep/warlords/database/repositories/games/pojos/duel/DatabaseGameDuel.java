@@ -37,9 +37,9 @@ public class DatabaseGameDuel extends DatabaseGameBase {
 
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.blue.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, add));
-        players.red.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, add));
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.blue.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier));
+        players.red.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier));
     }
 
     @Override

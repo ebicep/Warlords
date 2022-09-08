@@ -51,8 +51,11 @@ public class DatabaseGamePvE extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.forEach(databaseGamePlayerPvE -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, databaseGamePlayerPvE, add));
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.forEach(databaseGamePlayerPvE -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
+                databaseGamePlayerPvE,
+                multiplier
+        ));
     }
 
     @Override

@@ -28,18 +28,24 @@ public class CTFDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         assert databaseGame instanceof DatabaseGameCTF;
         assert gamePlayer instanceof DatabaseGamePlayersCTF.DatabaseGamePlayerCTF;
 
-        this.flagsCaptured += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getFlagCaptures();
-        this.flagsReturned += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getFlagReturns();
-        this.totalBlocksTravelled += gamePlayer.getBlocksTravelled();
-        if (this.mostBlocksTravelled < gamePlayer.getBlocksTravelled()) {
+        this.flagsCaptured += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getFlagCaptures() * multiplier;
+        this.flagsReturned += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getFlagReturns() * multiplier;
+        this.totalBlocksTravelled += (long) gamePlayer.getBlocksTravelled() * multiplier;
+        if (multiplier > 0 && this.mostBlocksTravelled < gamePlayer.getBlocksTravelled()) {
             this.mostBlocksTravelled = gamePlayer.getBlocksTravelled();
         }
-        this.totalTimeInRespawn += ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getSecondsInRespawn();
-        this.totalTimePlayed += 900 - ((DatabaseGameCTF) databaseGame).getTimeLeft();
+        this.totalTimeInRespawn += (long) ((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) gamePlayer).getSecondsInRespawn() * multiplier;
+        this.totalTimePlayed += (long) (900 - ((DatabaseGameCTF) databaseGame).getTimeLeft()) * multiplier;
 
     }
 

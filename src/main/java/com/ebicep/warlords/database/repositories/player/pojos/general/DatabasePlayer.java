@@ -97,41 +97,47 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
         if (gameMode == GameMode.WAVE_DEFENSE) {
-            this.pveStats.updateStats(databaseGame, gamePlayer, add);
+            this.pveStats.updateStats(databaseGame, gamePlayer, multiplier);
             return;
         }
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, add);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier);
         //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, add);
+                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier);
                 break;
             case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, add);
+                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier);
                 break;
             case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, add);
+                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier);
                 break;
             case DUEL:
-                this.duelStats.updateStats(databaseGame, gamePlayer, add);
+                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier);
                 break;
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, add);
+            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, multiplier);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(databaseGame, gamePlayer, add);
+                this.pubStats.updateStats(databaseGame, gamePlayer, multiplier);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(databaseGame, gamePlayer, add);
+                this.compStats.updateStats(databaseGame, gamePlayer, multiplier);
             }
         }
     }

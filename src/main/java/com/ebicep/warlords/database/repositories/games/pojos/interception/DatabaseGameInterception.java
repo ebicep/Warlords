@@ -42,9 +42,13 @@ public class DatabaseGameInterception extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add) {
-        players.blue.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception, add));
-        players.red.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception, add));
+    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+        players.blue.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception,
+                multiplier
+        ));
+        players.red.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception,
+                multiplier
+        ));
     }
 
     @Override

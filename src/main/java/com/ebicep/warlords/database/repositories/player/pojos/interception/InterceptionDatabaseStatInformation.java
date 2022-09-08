@@ -22,13 +22,19 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         assert databaseGame instanceof DatabaseGameInterception;
         assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
 
-        this.pointsCaptured += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured();
-        this.pointsDefended += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsDefended();
-        this.totalTimePlayed += 900 - ((DatabaseGameInterception) databaseGame).getTimeLeft();
+        this.pointsCaptured += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured() * multiplier;
+        this.pointsDefended += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsDefended() * multiplier;
+        this.totalTimePlayed += (long) (900 - ((DatabaseGameInterception) databaseGame).getTimeLeft()) * multiplier;
     }
 
     public int getPointsCaptured() {

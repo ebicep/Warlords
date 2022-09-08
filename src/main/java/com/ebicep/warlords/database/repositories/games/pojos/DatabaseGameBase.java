@@ -209,7 +209,7 @@ public abstract class DatabaseGameBase {
                     if (player != null) {
                         sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                     }
-                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                     databaseGame.setCounted(true);
                     DatabaseManager.updateGameAsync(databaseGame);
                 }
@@ -222,7 +222,7 @@ public abstract class DatabaseGameBase {
                     if (player != null) {
                         sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                     }
-                    databaseGame.updatePlayerStatsFromGame(databaseGame, true);
+                    databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                 }
                 if (player != null) {
                     sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
@@ -264,7 +264,7 @@ public abstract class DatabaseGameBase {
                 if (player != null) {
                     sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
                 }
-                databaseGame.updatePlayerStatsFromGame(databaseGame, false);
+                databaseGame.updatePlayerStatsFromGame(databaseGame, -1);
                 databaseGame.setCounted(false);
                 DatabaseManager.updateGameAsync(databaseGame);
             }
@@ -287,13 +287,13 @@ public abstract class DatabaseGameBase {
         return counted;
     }
 
-    public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, boolean add);
+    public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier);
 
     public void setCounted(boolean counted) {
         this.counted = counted;
     }
 
-    protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, boolean add) {
+    protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
         if (DatabaseManager.playerService == null) {
             System.out.println("playerService is null - cannot update player stats");
             return;
@@ -312,11 +312,11 @@ public abstract class DatabaseGameBase {
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
-                            add
+                            multiplier
                     );
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 } else {
-                    databasePlayer.updateStats(databaseGame, gamePlayer, add);
+                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 }
                 Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections,

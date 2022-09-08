@@ -37,29 +37,35 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
         DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) databaseGame;
         DatabaseGamePlayerPvE databaseGamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
 
-        if (databaseGamePvE.getWavesCleared() > highestWaveCleared) {
+        if (multiplier > 0 && databaseGamePvE.getWavesCleared() > highestWaveCleared) {
             this.highestWaveCleared = databaseGamePvE.getWavesCleared();
         }
-        if (databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
+        if (multiplier > 0 && databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
             this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
         }
-        if (databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
+        if (multiplier > 0 && databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
             this.mostDamageInRound = databaseGamePlayerPvE.getMostDamageInRound();
         }
-        if (databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
+        if (multiplier > 0 && databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
             this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
         }
         this.totalWavesCleared += databaseGamePvE.getWavesCleared();
-        databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong, Long::sum));
-        databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong, Long::sum));
-        databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong, Long::sum));
+        databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
+        databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
+        databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
     }
 
     public int getHighestWaveCleared() {

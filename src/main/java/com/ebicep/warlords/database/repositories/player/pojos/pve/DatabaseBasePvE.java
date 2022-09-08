@@ -8,8 +8,17 @@ import com.ebicep.warlords.game.GameMode;
 public class DatabaseBasePvE extends PvEDatabaseStatInformation {
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier);
 
+        //UPDATE SPEC EXPERIENCE
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
 }

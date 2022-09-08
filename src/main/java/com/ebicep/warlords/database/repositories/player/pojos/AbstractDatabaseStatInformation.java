@@ -24,34 +24,33 @@ public abstract class AbstractDatabaseStatInformation {
 
     public void updateStats(DatabaseGameBase databaseGame,
                             DatabaseGamePlayerBase gamePlayer,
-                            boolean add
+                            int multiplier
     ) {
         DatabaseGamePlayerResult result = databaseGame.getPlayerGameResult(gamePlayer);
-        int operation = add ? 1 : -1;
-        this.kills += gamePlayer.getTotalKills() * operation;
-        this.assists += gamePlayer.getTotalAssists() * operation;
-        this.deaths += gamePlayer.getTotalDeaths() * operation;
+        this.kills += gamePlayer.getTotalKills() * multiplier;
+        this.assists += gamePlayer.getTotalAssists() * multiplier;
+        this.deaths += gamePlayer.getTotalDeaths() * multiplier;
         switch (result) {
             case WON:
-                this.wins += operation;
+                this.wins += multiplier;
                 break;
             case LOST:
             case DRAW:
-                this.losses += operation;
+                this.losses += multiplier;
                 break;
             case NONE:
                 break;
         }
-        this.plays += operation;
-        this.damage += gamePlayer.getTotalDamage() * operation;
-        this.healing += gamePlayer.getTotalHealing() * operation;
-        this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
+        this.plays += multiplier;
+        this.damage += gamePlayer.getTotalDamage() * multiplier;
+        this.healing += gamePlayer.getTotalHealing() * multiplier;
+        this.absorbed += gamePlayer.getTotalAbsorbed() * multiplier;
         this.updateCustomStats(
                 databaseGame,
                 databaseGame.getGameMode(),
                 gamePlayer,
                 result,
-                add
+                multiplier
         );
     }
 
@@ -60,7 +59,7 @@ public abstract class AbstractDatabaseStatInformation {
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            boolean add
+            int multiplier
     );
 
     public double getKDA() {

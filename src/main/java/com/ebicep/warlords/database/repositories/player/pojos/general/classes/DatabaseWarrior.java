@@ -23,9 +23,15 @@ public class DatabaseWarrior extends AbstractDatabaseStatInformation implements 
     }
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
         //UPDATE SPEC EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() :-gamePlayer.getExperienceEarnedSpec();
     }
 
     @Override

@@ -8,10 +8,16 @@ import com.ebicep.warlords.game.GameMode;
 public class DatabaseBaseInterception extends InterceptionDatabaseStatInformation {
 
     @Override
-    public void updateCustomStats(DatabaseGameBase databaseGame, GameMode gameMode, DatabaseGamePlayerBase gamePlayer, DatabaseGamePlayerResult result, boolean add) {
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, add);
+    public void updateCustomStats(
+            DatabaseGameBase databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier
+    ) {
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier);
 
         //UPDATE SPEC EXPERIENCE
-        this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 }
