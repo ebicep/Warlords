@@ -1,14 +1,10 @@
 package com.ebicep.warlords.guilds.upgrades;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 
 public class GuildUpgrade {
-
-    @Id
-    private String id;
 
     private GuildUpgrades upgrade;
     @Field("activation_date")

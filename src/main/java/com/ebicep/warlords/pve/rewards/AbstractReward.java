@@ -1,14 +1,11 @@
 package com.ebicep.warlords.pve.rewards;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 
 public abstract class AbstractReward {
 
-    @Id
-    private String id;
     protected Currencies currency;
     protected Long amount;
     protected String from;

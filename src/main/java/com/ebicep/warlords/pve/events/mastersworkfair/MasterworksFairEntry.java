@@ -1,15 +1,12 @@
 package com.ebicep.warlords.pve.events.mastersworkfair;
 
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 
 public class MasterworksFairEntry {
 
-    @Id
-    protected String id;
     private Instant time;
     @Field("rarity")
     private WeaponsPvE rarity;
