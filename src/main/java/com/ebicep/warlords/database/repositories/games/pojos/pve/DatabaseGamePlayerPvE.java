@@ -40,6 +40,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private long guildCoinsGained;
     @Field("weapons_found")
     private List<AbstractWeapon> weaponsFound = new ArrayList<>();
+    @Field("legend_fragments_gain")
+    private long legendFragmentsGained;
 
     public DatabaseGamePlayerPvE() {
     }
@@ -61,6 +63,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.weaponsFound.addAll(waveDefenseOption.getWaveDefenseStats()
                 .getPlayerWeaponsFound()
                 .getOrDefault(warlordsPlayer.getUuid(), new ArrayList<>()));
+        this.legendFragmentsGained = waveDefenseOption.getWaveDefenseStats()
+                .getPlayerLegendFragmentGain()
+                .getOrDefault(warlordsPlayer.getUuid(), 0L);
     }
 
     public int getLongestTimeInCombat() {
@@ -113,5 +118,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public List<AbstractWeapon> getWeaponsFound() {
         return weaponsFound;
+    }
+
+    public long getLegendFragmentsGained() {
+        return legendFragmentsGained;
     }
 }

@@ -87,6 +87,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
             weaponInventory.removeIf(weapon -> weaponsFoundUUIDs.contains(weapon.getUUID()));
         }
 
+        //LEGEND FRAGMENTS
+        addCurrency(Currencies.LEGEND_FRAGMENTS, ((DatabaseGamePlayerPvE) gamePlayer).getLegendFragmentsGained() * multiplier);
+
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 

@@ -235,6 +235,7 @@ public class WaveDefenseOption implements Option {
 
                 if (waveCounter > maxWave) {
                     waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
+                    waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
                     game.setNextState(new EndState(game, null, true)); //TODO event + gameAdded bolean
                     this.cancel();
                 }
