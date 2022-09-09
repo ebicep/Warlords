@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds.upgrades;
 
 import com.ebicep.warlords.events.player.WarlordsPlayerGiveExperienceEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 
@@ -31,7 +33,18 @@ public enum GuildUpgrades {
 
         @Override
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
 
+                @EventHandler
+                public void onEvent(WarlordsPlayerCoinSummaryEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+                    LinkedHashMap<String, Long> currencyToAdd = event.getCurrencyToAdd();
+                    currencyToAdd.forEach((s, aLong) -> currencyToAdd.put(s, (long) (aLong * getValueFromTier(tier))));
+                }
+
+            });
         }
     },
     INSIGNIA_BOOST(

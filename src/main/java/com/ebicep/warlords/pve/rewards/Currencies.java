@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.rewards;
 
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -91,7 +93,9 @@ public enum Currencies {
         }
 
         LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(waveDefenseOption.getWaveDefenseStats().getCachedBaseCoinSummary());
-        //TODO event for upgrade
+
+        Bukkit.getPluginManager().callEvent(new WarlordsPlayerCoinSummaryEvent(warlordsPlayer, coinSummary));
+
         long totalCoinsEarned = 0;
         for (Long value : coinSummary.values()) {
             totalCoinsEarned += value;
