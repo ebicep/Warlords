@@ -81,6 +81,8 @@ public class GuildBankMenu {
                 if (upgrade.getUpgrade() == value) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.lore(ChatColor.GRAY + "Current Tier: " + ChatColor.GREEN + upgrade.getTier());
+                    itemBuilder.addLore(ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getUpgrade()
+                            .getEffectBonusFromTier(upgrade.getTier()));
                     if (!isPermanent) {
                         itemBuilder.addLore(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(upgrade.getExpirationDate(),
                                 false,
@@ -118,6 +120,7 @@ public class GuildBankMenu {
                             .lore(
                                     ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +
                                             " Guild Coins",
+                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getEffectBonusFromTier(tier),
                                     "",
                                     ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgrade."
                             )

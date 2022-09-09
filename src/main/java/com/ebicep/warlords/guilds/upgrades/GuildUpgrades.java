@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,6 +33,11 @@ public enum GuildUpgrades {
         }
 
         @Override
+        public String getEffectBonusFromTier(int tier) {
+            return NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + "x";
+        }
+
+        @Override
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
             game.registerEvents(new Listener() {
 
@@ -55,7 +61,12 @@ public enum GuildUpgrades {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return 1 + .05 * tier;
+            return tier == 9 ? 1.5 : 1 + .05 * tier;
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return getValueFromTier(tier) + "x";
         }
 
         @Override
@@ -73,32 +84,6 @@ public enum GuildUpgrades {
             });
         }
     },
-    RESPAWN_TIME_REDUCTION(
-            "Respawn Time Reduction",
-            Material.WATCH,
-            false,
-            start -> start.plus(24, ChronoUnit.HOURS)
-    ) {
-        @Override
-        public double getValueFromTier(int tier) {
-            return tier == 9 ? -10 : -tier;
-        }
-
-        @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
-            game.registerEvents(new Listener() {
-
-                @EventHandler
-                public void onEvent(WarlordsPlayerGiveRespawnEvent event) {
-                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
-                        return;
-                    }
-                    event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier)));
-                }
-
-            });
-        }
-    },
     WEAPON_DROP_RATE(
             "Weapon Drop Rate",
             Material.WOOD_AXE,
@@ -108,6 +93,11 @@ public enum GuildUpgrades {
         @Override
         public double getValueFromTier(int tier) {
             return 1 + (tier == 9 ? 100 : 10 * tier) * .01;
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return "+" + Math.round((getValueFromTier(tier) - 1) * 100) + "%";
         }
 
         @Override
@@ -125,6 +115,37 @@ public enum GuildUpgrades {
             });
         }
     },
+    RESPAWN_TIME_REDUCTION(
+            "Respawn Time Reduction",
+            Material.WATCH,
+            false,
+            start -> start.plus(24, ChronoUnit.HOURS)
+    ) {
+        @Override
+        public double getValueFromTier(int tier) {
+            return tier == 9 ? -10 : -tier;
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return (int) getValueFromTier(tier) + "s";
+        }
+
+        @Override
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
+
+                @EventHandler
+                public void onEvent(WarlordsPlayerGiveRespawnEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+                    event.getRespawnTimer().set((int) (event.getRespawnTimer().get() + getValueFromTier(tier)));
+                }
+
+            });
+        }
+    },
 
     //PERMANENT UPGRADES
     PLAYER_EXP_BONUS(
@@ -135,7 +156,12 @@ public enum GuildUpgrades {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return 1 + .05 * tier;
+            return tier == 9 ? 1.5 : 1 + .05 * tier;
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return getValueFromTier(tier) + "x";
         }
 
         @Override
@@ -165,6 +191,11 @@ public enum GuildUpgrades {
         }
 
         @Override
+        public String getEffectBonusFromTier(int tier) {
+            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier) * 100) + "%";
+        }
+
+        @Override
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
         }
@@ -185,7 +216,9 @@ public enum GuildUpgrades {
         this.expirationDate = expirationDate;
     }
 
-    public abstract double getValueFromTier(int tier);
+    protected abstract double getValueFromTier(int tier);
+
+    public abstract String getEffectBonusFromTier(int tier);
 
     /**
      * @param game       the game to modify - main purpose is adding listeners
