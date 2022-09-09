@@ -6,6 +6,7 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class GuildMenu {
                 new ItemBuilder(Material.GOLD_BLOCK)
                         .name(ChatColor.GREEN + "Guild Bank")
                         .lore(
-                                ChatColor.GRAY + "Coins: " + ChatColor.GREEN + guild.getCoins(Timing.LIFETIME),
+                                ChatColor.GRAY + "Coins: " + ChatColor.GREEN + NumberFormat.addCommas(guild.getCoins(Timing.LIFETIME)),
                                 "",
                                 ChatColor.GRAY + "Click to open the guild bank"
                         )
