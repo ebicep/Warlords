@@ -2,6 +2,7 @@ package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDu
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.menu.Menu;
@@ -16,6 +18,8 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.TriFunction;
@@ -25,10 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -215,6 +216,23 @@ public enum GameMode {
                     .name(ChatColor.AQUA + "Pre-game Menu ")
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                     .get(), (g, p) -> openMainMenu(p)));
+            options.add(new PreGameItemOption(
+                    6,
+                    (game, player) -> {
+                        if (DatabaseManager.playerService != null) {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
+                            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                                    .filter(AbstractWeapon::isBound)
+                                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
+                                    .findFirst();
+                            return optionalWeapon.map(AbstractWeapon::generateItemStack).orElse(null);
+                        } else {
+                            return null;
+                        }
+                    },
+                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
+            ));
             options.add(TextOption.Type.TITLE.create(
                     5,
                     ChatColor.GREEN + "GO!",
@@ -250,11 +268,11 @@ public enum GameMode {
     ;
 
     public static final GameMode[] VALUES = values();
-    private final String name;
-    private final ItemStack itemStack;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
     public final int minPlayersToAddToDatabase;
+    private final String name;
+    private final ItemStack itemStack;
 
     GameMode(
             String name,
@@ -290,33 +308,35 @@ public enum GameMode {
                 .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
                 .get(), (g, p) -> openMainMenu(p)));
         options.add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                .name(ChatColor.AQUA + "Player Spec Information")
-                .lore(ChatColor.GRAY + "Displays the amount of people on each specialization.")
-                .get(),
-                (g, p) -> {
-                    openPlayerSpecInfoMenu(g, p);
-                    new BukkitRunnable() {
+                        .name(ChatColor.AQUA + "Player Spec Information")
+                        .lore(ChatColor.GRAY + "Displays the amount of people on each specialization.")
+                        .get(),
+                        (g, p) -> {
+                            openPlayerSpecInfoMenu(g, p);
+                            new BukkitRunnable() {
 
-                        @Override
-                        public void run() {
-                            if (p.getOpenInventory().getTopInventory().getName().equals("Player Specs")) {
-                                openPlayerSpecInfoMenu(g, p);
-                            } else {
-                                this.cancel();
-                            }
+                                @Override
+                                public void run() {
+                                    if (p.getOpenInventory().getTopInventory().getName().equals("Player Specs")) {
+                                        openPlayerSpecInfoMenu(g, p);
+                                    } else {
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(Warlords.getInstance(), 20, 20);
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                })
+                )
         );
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
-                .name(ChatColor.RED + "Leave")
-                .lore(ChatColor.GRAY + "Right-Click to leave the game.")
-                .get(),
-                (g, p) -> {
-                    if (g.acceptsPeople()) {
-                        g.removePlayer(p.getUniqueId());
-                    }
-                })
+                        .name(ChatColor.RED + "Leave")
+                        .lore(ChatColor.GRAY + "Right-Click to leave the game.")
+                        .get(),
+                        (g, p) -> {
+                            if (g.acceptsPeople()) {
+                                g.removePlayer(p.getUniqueId());
+                            }
+                        }
+                )
         );
 
         options.add(new GameFreezeOption());
@@ -344,7 +364,12 @@ public enum GameMode {
                                 .map(PlayerSettings::getSelectedSpec)
                                 .filter(c -> c == classes)
                                 .count();
-                        lore.append(ChatColor.GREEN).append(classes.name).append(": ").append(ChatColor.YELLOW).append(playersOnSpec).append("\n");
+                        lore.append(ChatColor.GREEN)
+                                .append(classes.name)
+                                .append(": ")
+                                .append(ChatColor.YELLOW)
+                                .append(playersOnSpec)
+                                .append("\n");
                     });
             itemBuilder.lore(lore.toString());
             menu.setItem(
