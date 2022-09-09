@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+
+import java.util.*;
 
 public class WaveDefenseStats {
     public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
@@ -16,6 +16,7 @@ public class WaveDefenseStats {
     public static final long[] COINS_PER_5_WAVES = new long[]{50, 100, 150, 200, 300};
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
+    private final HashMap<UUID, List<AbstractWeapon>> playerWeaponsFound = new HashMap<>();
 
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
         cachedBaseCoinSummary.clear();
@@ -46,4 +47,7 @@ public class WaveDefenseStats {
         return bossesKilled;
     }
 
+    public HashMap<UUID, List<AbstractWeapon>> getPlayerWeaponsFound() {
+        return playerWeaponsFound;
+    }
 }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.BoundingBoxOption;
@@ -139,6 +140,14 @@ public class WaveDefenseOption implements Option {
                     }
                 }
             }
+
+            @EventHandler
+            public void onWeaponDrop(WarlordsPlayerGiveWeaponEvent event) {
+                waveDefenseStats.getPlayerWeaponsFound()
+                        .computeIfAbsent(event.getPlayer().getUuid(), v -> new ArrayList<>())
+                        .add(event.getWeapon());
+            }
+
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Override

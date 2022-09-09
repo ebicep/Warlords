@@ -18,6 +18,7 @@ import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -175,10 +176,15 @@ public class EndState implements State, TimerDebugAble {
         //EXPERIENCE
         System.out.println("Game Added = " + gameAdded);
         if (gameAdded && DatabaseManager.playerService != null) {
+            sendGlobalMessage(game,
+                    "" + ChatColor.GRAY + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    true
+            );
             showExperienceSummary(players);
             for (Option option : game.getOptions()) {
                 if (option instanceof WaveDefenseOption) {
-                    showPvESummary((WaveDefenseOption) option, players);
+                    showCoinSummary((WaveDefenseOption) option, players);
+                    showWeaponSummary((WaveDefenseOption) option, players);
                     break;
                 }
             }
@@ -343,7 +349,6 @@ public class EndState implements State, TimerDebugAble {
     }
 
     private void showExperienceSummary(List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
@@ -445,7 +450,7 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private void showPvESummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+    private void showCoinSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ COINS SUMMARY ✚", true);
 
@@ -487,6 +492,34 @@ public class EndState implements State, TimerDebugAble {
                                 ChatColor.GOLD + "Guild Coins"
                 );
             }
+        }
+    }
+
+    private void showWeaponSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ WEAPONS SUMMARY ✚", true);
+
+        for (WarlordsPlayer wp : players) {
+            Player player = Bukkit.getPlayer(wp.getUuid());
+            if (player == null) {
+                continue;
+            }
+
+            List<AbstractWeapon> weaponsFound = waveDefenseOption.getWaveDefenseStats()
+                    .getPlayerWeaponsFound()
+                    .getOrDefault(wp.getUuid(), new ArrayList<>());
+            if (weaponsFound.isEmpty()) {
+                ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not find any weapons in this game!");
+            } else {
+                for (AbstractWeapon weapon : weaponsFound) {
+                    ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
+                            new TextComponentBuilder(weapon.getName())
+                                    .setHoverItem(weapon.generateItemStack())
+                                    .getTextComponent())
+                    );
+                }
+            }
+
         }
     }
 

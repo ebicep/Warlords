@@ -23,10 +23,8 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
 
@@ -76,6 +74,17 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
                     ((DatabaseGamePlayerPvE) gamePlayer).getGuildCoinsGained() * multiplier
             );
             GuildManager.queueUpdateGuild(guildGuildPlayerPair.getA());
+        }
+        //WEAPONS
+        if (multiplier > 0) {
+            weaponInventory.addAll(((DatabaseGamePlayerPvE) gamePlayer).getWeaponsFound());
+        } else {
+            //need to search by uuid incase weapon got upgraded or changed
+            List<UUID> weaponsFoundUUIDs = ((DatabaseGamePlayerPvE) gamePlayer).getWeaponsFound()
+                    .stream()
+                    .map(AbstractWeapon::getUUID)
+                    .collect(Collectors.toList());
+            weaponInventory.removeIf(weapon -> weaponsFoundUUIDs.contains(weapon.getUUID()));
         }
 
         //UPDATE UNIVERSAL EXPERIENCE

@@ -2,9 +2,9 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -142,11 +142,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         AtomicDouble dropRate = new AtomicDouble(dropRate());
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerDropWeaponEvent(killer, dropRate));
         if (ThreadLocalRandom.current().nextDouble(0, 100) < dropRate.get()) {
-            UUID uuid = killer.getUuid();
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-            AbstractWeapon weapon = generateWeapon(uuid);
-            databasePlayer.getPveStats().getWeaponInventory().add(weapon);
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+            AbstractWeapon weapon = generateWeapon(killer.getUuid());
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
                 player.spigot().sendMessage(

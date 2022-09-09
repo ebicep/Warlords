@@ -8,7 +8,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -21,8 +20,7 @@ import java.util.UUID;
  */
 public abstract class AbstractWeapon {
 
-    @Id
-    private String id;
+    private UUID uuid = UUID.randomUUID();
     @Field("obtain_date")
     protected Instant date = Instant.now();
     @Field("melee_damage")
@@ -114,6 +112,10 @@ public abstract class AbstractWeapon {
                 .lore(lore)
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     public Instant getDate() {

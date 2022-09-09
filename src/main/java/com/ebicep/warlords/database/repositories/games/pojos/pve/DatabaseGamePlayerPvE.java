@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private long coinsGained;
     @Field("guild_coins_gained")
     private long guildCoinsGained;
+    @Field("weapons_found")
+    private List<AbstractWeapon> weaponsFound = new ArrayList<>();
 
     public DatabaseGamePlayerPvE() {
     }
@@ -55,6 +58,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
+        this.weaponsFound.addAll(waveDefenseOption.getWaveDefenseStats()
+                .getPlayerWeaponsFound()
+                .getOrDefault(warlordsPlayer.getUuid(), new ArrayList<>()));
     }
 
     public int getLongestTimeInCombat() {
@@ -103,5 +109,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public long getGuildCoinsGained() {
         return guildCoinsGained;
+    }
+
+    public List<AbstractWeapon> getWeaponsFound() {
+        return weaponsFound;
     }
 }
