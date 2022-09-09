@@ -46,15 +46,6 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 
 public class WaveDefenseOption implements Option {
-    public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
-        put("Boltaro", 200L);
-        put("Ghoulcaller", 300L);
-        put("Narmer", 500L);
-        put("Physira", 400L);
-        put("Mithra", 400L);
-        put("Zenith", 1500L);
-    }};
-    public static final long[] COINS_PER_5_WAVES = new long[]{50, 100, 150, 200, 300};
     private static final int SCOREBOARD_PRIORITY = 5;
     private final Set<AbstractMob<?>> mobs = new HashSet<>();
     private final Team team;
@@ -69,8 +60,7 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
-    private HashMap<String, Long> bossesKilled = new HashMap<>();
-    private LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
+    private WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
 
     public WaveDefenseOption(Team team, WaveList waves) {
         this.team = team;
@@ -139,8 +129,8 @@ public class WaveDefenseOption implements Option {
                             we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
                         }
 
-                        if (BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
-                            bossesKilled.merge(mobToRemove.getName(), 1L, Long::sum);
+                        if (WaveDefenseStats.BOSS_COIN_VALUES.containsKey(mobToRemove.getName())) {
+                            waveDefenseStats.getBossesKilled().merge(mobToRemove.getName(), 1L, Long::sum);
                         }
                     }
                 } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
@@ -235,7 +225,7 @@ public class WaveDefenseOption implements Option {
                 }
 
                 if (waveCounter > maxWave) {
-                    cacheBaseCoinSummary();
+                    waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
                     game.setNextState(new EndState(game, null, true)); //TODO event + gameAdded bolean
                     this.cancel();
                 }
@@ -546,33 +536,7 @@ public class WaveDefenseOption implements Option {
         this.spawnCount = spawnCount;
     }
 
-    public HashMap<String, Long> getBossesKilled() {
-        return bossesKilled;
-    }
-
-    public LinkedHashMap<String, Long> getCachedBaseCoinSummary() {
-        return cachedBaseCoinSummary;
-    }
-
-    public void cacheBaseCoinSummary() {
-        cachedBaseCoinSummary.clear();
-        cachedBaseCoinSummary.put("Waves Cleared", 0L);
-        cachedBaseCoinSummary.put("Bosses Killed", 0L);
-
-        for (int i = 1; i <= getWavesCleared(); i++) {
-            if ((i - 1) / 5 >= WaveDefenseOption.COINS_PER_5_WAVES.length) {
-                break;
-            }
-            cachedBaseCoinSummary.merge("Waves Cleared", WaveDefenseOption.COINS_PER_5_WAVES[(i - 1) / 5], Long::sum);
-        }
-        HashMap<String, Long> allMobKills = getBossesKilled();
-        for (Map.Entry<String, Long> stringLongEntry : WaveDefenseOption.BOSS_COIN_VALUES.entrySet()) {
-            if (allMobKills.containsKey(stringLongEntry.getKey())) {
-                cachedBaseCoinSummary.merge("Bosses Killed",
-                        allMobKills.get(stringLongEntry.getKey()) * stringLongEntry.getValue(),
-                        Long::sum
-                );
-            }
-        }
+    public WaveDefenseStats getWaveDefenseStats() {
+        return waveDefenseStats;
     }
 }

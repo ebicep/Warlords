@@ -90,7 +90,7 @@ public enum Currencies {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
         }
 
-        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(waveDefenseOption.getCachedBaseCoinSummary());
+        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(waveDefenseOption.getWaveDefenseStats().getCachedBaseCoinSummary());
         //TODO event for upgrade
         long totalCoinsEarned = 0;
         for (Long value : coinSummary.values()) {
