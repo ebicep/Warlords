@@ -118,7 +118,9 @@ public class PlayerHotBarItemListener implements Listener {
         setItem(player, 4, SELECTION_MENU);
         setItem(player, 5, SPECTATE_MENU);
 
-        if (DatabaseManager.enabled) {
+        if (fromGame) {
+            giveLobbyHotBarDatabase(player);
+        } else if (DatabaseManager.enabled) {
             setItem(player, 7, new ItemBuilder(HeadUtils.getHead(uuid)).name("§aLevel Rewards").get());
             setItem(player, 8, REWARD_INVENTORY_MENU);
         }
