@@ -6,6 +6,7 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
@@ -102,42 +103,43 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            int multiplier
+            int multiplier,
+            PlayersCollections playersCollection
     ) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
         if (gameMode == GameMode.WAVE_DEFENSE) {
-            this.pveStats.updateStats(databaseGame, gamePlayer, multiplier);
+            this.pveStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case DUEL:
-                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, multiplier);
+            this.tournamentStats.getCurrentTournamentStats().updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.pubStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.compStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             }
         }
     }

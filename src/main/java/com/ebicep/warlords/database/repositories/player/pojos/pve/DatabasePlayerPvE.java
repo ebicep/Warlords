@@ -1,11 +1,11 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
@@ -20,10 +20,7 @@ import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -63,30 +60,30 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            int multiplier
+            int multiplier,
+            PlayersCollections playersCollection
     ) {
         assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
-        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier);
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //COINS
         addCurrency(Currencies.COIN, ((DatabaseGamePlayerPvE) gamePlayer).getCoinsGained() * multiplier);
-        if (DatabaseManager.guildService != null) {
-            Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
-            if (guildGuildPlayerPair != null) {
-                guildGuildPlayerPair.getA().addCoins(
-                        Timing.LIFETIME,
-                        ((DatabaseGamePlayerPvE) gamePlayer).getGuildCoinsGained() * multiplier
-                );
-            }
+        Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
+        if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {
+            guildGuildPlayerPair.getA().addCoins(
+                    Timing.LIFETIME,
+                    ((DatabaseGamePlayerPvE) gamePlayer).getGuildCoinsGained() * multiplier
+            );
+            GuildManager.queueUpdateGuild(guildGuildPlayerPair.getA());
         }
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
     @Override

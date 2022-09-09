@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayersInterception;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -27,7 +28,8 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            int multiplier
+            int multiplier,
+            PlayersCollections playersCollection
     ) {
         assert databaseGame instanceof DatabaseGameInterception;
         assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;

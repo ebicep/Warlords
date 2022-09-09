@@ -183,7 +183,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Force End = " + (winEvent == null));
-        System.out.println("Player Count = " + game.playersCount());
+        System.out.println("Player Count = " + game.warlordsPlayers().count());
         System.out.println("Players = " + game.warlordsPlayers());
         System.out.println("Timer = " + timer);
         System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
@@ -197,7 +197,8 @@ public class PlayingState implements State, TimerDebugAble {
             return;
         }
 
-        if (winEvent != null) {
+        //TODO pve win event
+        if (winEvent != null || game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
             boolean isCompGame = game.getAddons()
                     .contains(GameAddon.PRIVATE_GAME) && players.size() >= game.getGameMode().minPlayersToAddToDatabase && timer >= 6000;
             //comps
@@ -210,13 +211,15 @@ public class PlayingState implements State, TimerDebugAble {
                 if (DatabaseManager.playerService == null) {
                     return;
                 }
-                Warlords.newChain()
-                        .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
-                        .syncLast(databasePlayers -> {
-                            SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
-                            SRCalculator.recalculateSR();
-                        })
-                        .execute();
+                if (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                    Warlords.newChain()
+                            .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
+                            .syncLast(databasePlayers -> {
+                                SRCalculator.databasePlayerCache = new HashSet<>(databasePlayers);
+                                SRCalculator.recalculateSR();
+                            })
+                            .execute();
+                }
             }
         } else {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {

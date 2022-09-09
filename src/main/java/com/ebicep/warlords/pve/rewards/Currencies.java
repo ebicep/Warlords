@@ -79,11 +79,14 @@ public enum Currencies {
     }
 
     public static PvECoinSummary getCoinGainFromGameStats(
-            WarlordsEntity warlordsPlayer, WaveDefenseOption waveDefenseOption,
+            WarlordsEntity warlordsPlayer,
+            WaveDefenseOption waveDefenseOption,
             boolean recalculate
     ) {
-        if (!recalculate && CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_COIN_STATS.get(
-                warlordsPlayer.getUuid()) != null) {
+        if (!recalculate &&
+                CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid()) &&
+                CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid()) != null
+        ) {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
         }
 
@@ -102,9 +105,9 @@ public enum Currencies {
                     .setTotalCoinsGained(totalCoinsEarned)
                     .setTotalGuildCoinsGained(guildCoinsEarned);
         } else {
-            return CACHED_PLAYER_COIN_STATS.put(warlordsPlayer.getUuid(),
-                    new PvECoinSummary(coinSummary, totalCoinsEarned, guildCoinsEarned)
-            );
+            PvECoinSummary pvECoinSummary = new PvECoinSummary(coinSummary, totalCoinsEarned, guildCoinsEarned);
+            CACHED_PLAYER_COIN_STATS.put(warlordsPlayer.getUuid(), pvECoinSummary);
+            return pvECoinSummary;
         }
     }
 
@@ -113,9 +116,9 @@ public enum Currencies {
     }
 
     public static class PvECoinSummary {
-        private LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>();
-        private long totalCoinsGained = 0;
-        private long totalGuildCoinsGained = 0;
+        private LinkedHashMap<String, Long> coinSummary;
+        private long totalCoinsGained;
+        private long totalGuildCoinsGained;
 
         public PvECoinSummary(LinkedHashMap<String, Long> coinSummary, long totalCoinsGained, long totalGuildCoinsGained) {
             this.coinSummary = coinSummary;

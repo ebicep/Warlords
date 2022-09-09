@@ -3,7 +3,6 @@ package com.ebicep.warlords.game.state;
 import com.ebicep.warlords.commands.debugcommands.misc.GetPlayerLastAbilityStatsCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -174,6 +173,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
 
         //EXPERIENCE
+        System.out.println("Game Added = " + gameAdded);
         if (gameAdded && DatabaseManager.playerService != null) {
             showExperienceSummary(players);
             for (Option option : game.getOptions()) {
@@ -447,42 +447,17 @@ public class EndState implements State, TimerDebugAble {
 
     private void showPvESummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
         sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ COINS SUMMARY ✚", true);
-
-        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>();
-        coinSummary.put("Waves Cleared", 0L);
-        coinSummary.put("Bosses Killed", 0L);
-
-        for (int i = 1; i <= waveDefenseOption.getWavesCleared(); i++) {
-            if ((i - 1) / 5 >= WaveDefenseOption.COINS_PER_5_WAVES.length) {
-                break;
-            }
-            coinSummary.merge("Waves Cleared", WaveDefenseOption.COINS_PER_5_WAVES[(i - 1) / 5], Long::sum);
-        }
-        HashMap<String, Long> allMobKills = waveDefenseOption.getBossesKilled();
-        for (Map.Entry<String, Long> stringLongEntry : WaveDefenseOption.BOSS_COIN_VALUES.entrySet()) {
-            if (allMobKills.containsKey(stringLongEntry.getKey())) {
-                coinSummary.merge("Bosses Killed", allMobKills.get(stringLongEntry.getKey()) * stringLongEntry.getValue(), Long::sum);
-            }
-        }
-
+        sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ COINS SUMMARY ✚", true);
 
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
                 continue;
             }
-
-            LinkedHashMap<String, Long> playerCoinSummary = new LinkedHashMap<>(coinSummary);
-
-            //TODO event for upgrade
-            long totalCoinsEarned = 0;
-            for (Long value : playerCoinSummary.values()) {
-                totalCoinsEarned += value;
-            }
+            Currencies.PvECoinSummary pvECoinSummary = Currencies.getCoinGainFromGameStats(wp, waveDefenseOption, false);
 
             StringBuilder coinSummaryString = new StringBuilder();
-            playerCoinSummary.forEach((s, aLong) -> {
+            pvECoinSummary.getCoinSummary().forEach((s, aLong) -> {
                 coinSummaryString.append(ChatColor.AQUA)
                         .append(s)
                         .append(ChatColor.WHITE)
@@ -493,32 +468,26 @@ public class EndState implements State, TimerDebugAble {
                         .append(aLong)
                         .append("\n");
             });
+            coinSummaryString.setLength(coinSummaryString.length() - 1);
 
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-            databasePlayer.getPveStats().addCurrency(Currencies.COIN, totalCoinsEarned);
             ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
                     new TextComponentBuilder(
                             ChatColor.GRAY + "+" +
-                                    ChatColor.YELLOW + NumberFormat.addCommaAndRound(totalCoinsEarned) + " " +
+                                    ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalCoinsGained()) + " " +
                                     ChatColor.GOLD + "Coins")
                             .setHoverText(coinSummaryString.toString())
                             .getTextComponent())
             );
-            if (DatabaseManager.guildService != null) {
-                Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-                if (guildGuildPlayerPair != null) {
-                    long guildCoinsEarned = Math.min(300, Math.round(totalCoinsEarned * .02));
-                    guildGuildPlayerPair.getA().addCoins(guildCoinsEarned);
-                    ChatUtils.sendMessage(player, true,
-                            ChatColor.GRAY + "+" +
-                                    ChatColor.YELLOW + NumberFormat.addCommaAndRound(guildCoinsEarned) + " " +
-                                    ChatColor.GOLD + "Guild Coins"
-                    );
-                }
+
+            Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player.getUniqueId());
+            if (guildGuildPlayerPair != null) {
+                ChatUtils.sendMessage(player, true,
+                        ChatColor.GRAY + "+" +
+                                ChatColor.YELLOW + NumberFormat.addCommaAndRound(pvECoinSummary.getTotalGuildCoinsGained()) + " " +
+                                ChatColor.GOLD + "Guild Coins"
+                );
             }
         }
-
-
     }
 
     @Override

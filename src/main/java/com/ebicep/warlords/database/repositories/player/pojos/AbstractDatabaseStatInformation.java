@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
@@ -22,9 +23,11 @@ public abstract class AbstractDatabaseStatInformation {
     public AbstractDatabaseStatInformation() {
     }
 
-    public void updateStats(DatabaseGameBase databaseGame,
-                            DatabaseGamePlayerBase gamePlayer,
-                            int multiplier
+    public void updateStats(
+            DatabaseGameBase databaseGame,
+            DatabaseGamePlayerBase gamePlayer,
+            int multiplier,
+            PlayersCollections playersCollection
     ) {
         DatabaseGamePlayerResult result = databaseGame.getPlayerGameResult(gamePlayer);
         this.kills += gamePlayer.getTotalKills() * multiplier;
@@ -50,7 +53,8 @@ public abstract class AbstractDatabaseStatInformation {
                 databaseGame.getGameMode(),
                 gamePlayer,
                 result,
-                multiplier
+                multiplier,
+                playersCollection
         );
     }
 
@@ -59,7 +63,8 @@ public abstract class AbstractDatabaseStatInformation {
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            int multiplier
+            int multiplier,
+            PlayersCollections playersCollection
     );
 
     public double getKDA() {

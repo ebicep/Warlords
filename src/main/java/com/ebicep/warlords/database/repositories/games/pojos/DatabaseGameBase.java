@@ -256,9 +256,6 @@ public abstract class DatabaseGameBase {
         GamesCollections collection = databaseGame.getGameMode().gamesCollections;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame, collection)) {
-            if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
-            }
             //if counted then remove player stats then set counted to false, else do nothing
             if (databaseGame.isCounted()) {
                 if (player != null) {
@@ -312,11 +309,12 @@ public abstract class DatabaseGameBase {
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
-                            multiplier
+                            multiplier,
+                            collections
                     );
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 } else {
-                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier);
+                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, collections);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 }
                 Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections,

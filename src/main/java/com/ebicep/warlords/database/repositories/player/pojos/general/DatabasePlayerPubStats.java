@@ -4,6 +4,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
@@ -41,25 +42,26 @@ public class DatabasePlayerPubStats extends AbstractDatabaseStatInformation impl
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
-            int multiplier
+            int multiplier,
+            PlayersCollections playersCollection
     ) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.ctfStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.tdmStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case INTERCEPTION:
-                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.interceptionStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
             case DUEL:
-                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier);
+                this.duelStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
                 break;
         }
     }
