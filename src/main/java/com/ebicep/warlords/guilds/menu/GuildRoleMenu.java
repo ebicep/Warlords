@@ -36,7 +36,7 @@ public class GuildRoleMenu {
                         return;
                     }
                     SignGUI.open(player, new String[]{"", "^^^^^^", "Enter new", "role name"}, (p, lines) -> {
-                        String roleName = lines[0];
+                        String roleName = lines[0].trim();
                         if (roleName.isEmpty()) {
                             Guild.sendGuildMessage(player, ChatColor.RED + "You must enter a role name!");
                             return;
