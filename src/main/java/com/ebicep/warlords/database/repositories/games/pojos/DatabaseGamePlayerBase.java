@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -21,6 +23,8 @@ public class DatabaseGamePlayerBase {
     protected UUID uuid;
     protected String name;
     protected Specializations spec;
+    @Field("skill_boost")
+    protected SkillBoosts skillBoost;
     @Field("blocks_travelled")
     protected int blocksTravelled;
     @Field("x_locations")
@@ -60,6 +64,7 @@ public class DatabaseGamePlayerBase {
         this.uuid = warlordsPlayer.getUuid();
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
+        this.skillBoost = Warlords.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForClass();
         this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
         this.xLocations = warlordsPlayer.getLocations()
                 .stream()
@@ -99,6 +104,10 @@ public class DatabaseGamePlayerBase {
 
     public Specializations getSpec() {
         return spec;
+    }
+
+    public SkillBoosts getSkillBoost() {
+        return skillBoost;
     }
 
     public int getBlocksTravelled() {
