@@ -154,7 +154,7 @@ public class GameManager implements AutoCloseable {
     }
 
     public long getPlayerCount() {
-        return this.games.stream().mapToInt(e -> e.getGame() == null ? 0 : e.getGame().getPlayers().size()).sum();
+        return this.games.stream().mapToInt(e -> e.getGame() == null ? 0 : (int) e.getGame().warlordsPlayers().count()).sum();
     }
 
     public long getPlayerCountInLobby() {
