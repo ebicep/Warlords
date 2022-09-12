@@ -19,6 +19,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -109,24 +110,29 @@ public class EndState implements State, TimerDebugAble {
         //PLAYER STATS
 
         sendGlobalMessage(game, "", false);
-        sendGlobalEventMessage(game,
-                Collections.singletonList(new TextComponentBuilder(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚")
-                        .setHoverText(
-                                ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream()
-                                        .mapToInt(wp -> wp.getMinuteStats().total().getKills())
-                                        .sum()) + "\n" +
-                                        ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(
-                                        players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum()) + "\n" +
-                                        ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(
-                                        players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum()))
-                        .getTextComponent())
-        );
+        int totalKills = players.stream()
+                .mapToInt(wp -> wp.getMinuteStats().total().getKills())
+                .sum();
+        int totalAssists = players.stream().mapToInt(wp -> wp.getMinuteStats().total().getAssists()).sum();
+        int totalDeaths = players.stream().mapToInt(wp -> wp.getMinuteStats().total().getDeaths()).sum();
 
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
                 continue;
             }
+
+            ChatUtils.sendCenteredMessageWithEvents(
+                    player,
+                    Collections.singletonList(new TextComponentBuilder(ChatColor.GOLD.toString() + ChatColor.BOLD + "✚ YOUR STATISTICS ✚")
+                            .setHoverText(ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalKills) + "\n" +
+                                    ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalAssists) + "\n" +
+                                    ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(totalDeaths) + "\n" +
+                                    ChatColor.WHITE + "Total Melee Hits (you): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(wp.getMinuteStats()
+                                    .total()
+                                    .getMeleeHits()))
+                            .getTextComponent())
+            );
 
             List<TextComponent> textComponents = new ArrayList<>(wp.getAllMinuteHoverableStats(MinuteStats.KILLS));
             textComponents.add(ChatUtils.SPACER);
@@ -177,7 +183,12 @@ public class EndState implements State, TimerDebugAble {
         System.out.println("Game Added = " + gameAdded);
         if (gameAdded && DatabaseManager.playerService != null) {
             sendGlobalMessage(game,
-                    "" + ChatColor.GRAY + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
+                    true
+            );
+            sendGlobalMessage(game, "", false);
+            sendGlobalMessage(game,
+                    "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                     true
             );
             showExperienceSummary(players);
@@ -340,12 +351,6 @@ public class EndState implements State, TimerDebugAble {
                                 "\n" +
                                 ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned())
                         .getTextComponent()));
-    }
-
-    public void sendGlobalEventMessage(Game game, List<TextComponent> message) {
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            ChatUtils.sendCenteredMessageWithEvents(p, message);
-        });
     }
 
     private void showExperienceSummary(List<WarlordsPlayer> players) {
@@ -511,16 +516,35 @@ public class EndState implements State, TimerDebugAble {
             if (weaponsFound.isEmpty()) {
                 ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not find any weapons in this game!");
             } else {
-                for (AbstractWeapon weapon : weaponsFound) {
-                    ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
-                            new TextComponentBuilder(weapon.getName())
-                                    .setHoverItem(weapon.generateItemStack())
-                                    .getTextComponent())
-                    );
+                LinkedHashMap<WeaponsPvE, List<AbstractWeapon>> weaponsFoundByType = new LinkedHashMap<>();
+                for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+                    weaponsFoundByType.put(rarity, new ArrayList<>());
                 }
+                for (AbstractWeapon weapon : weaponsFound) {
+                    weaponsFoundByType.get(weapon.getRarity()).add(weapon);
+                }
+                weaponsFoundByType.forEach((rarity, weapons) -> {
+                    int amountFound = weapons.size();
+                    if (amountFound > 0) {
+                        ChatUtils.sendCenteredMessageWithEvents(
+                                player,
+                                Collections.singletonList(new TextComponentBuilder(rarity.chatColor.toString() + amountFound + " " + rarity.name + (amountFound == 1 ? "" : "s"))
+                                        .setHoverText(
+                                                weapons.stream()
+                                                        .map(AbstractWeapon::getName)
+                                                        .collect(Collectors.joining("\n")))
+                                        .getTextComponent())
+                        );
+                    }
+                });
             }
-
         }
+    }
+
+    public void sendGlobalEventMessage(Game game, List<TextComponent> message) {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
+            ChatUtils.sendCenteredMessageWithEvents(p, message);
+        });
     }
 
     @Override
