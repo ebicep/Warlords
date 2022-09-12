@@ -2,6 +2,8 @@ package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildPermissions;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrades;
 import com.ebicep.warlords.menu.Menu;
@@ -19,6 +21,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
@@ -49,6 +52,7 @@ public class GuildBankMenu {
                         .get(),
                 (m, e) -> {
                     openGuildUpgradeTypeMenu(player, guild, false);
+
                 }
         );
         menu.setItem(6, 1,
@@ -67,6 +71,11 @@ public class GuildBankMenu {
     public static void openGuildUpgradeTypeMenu(Player player, Guild guild, boolean isPermanent) {
         Menu menu = new Menu("Temporary Upgrades", 9 * 6);
 
+        Optional<GuildPlayer> optionalGuildPlayer = guild.getPlayerMatchingUUID(player.getUniqueId());
+        boolean canPurchaseUpgrades = optionalGuildPlayer.isPresent() && guild.playerHasPermission(optionalGuildPlayer.get(),
+                GuildPermissions.PURCHASE_UPGRADES
+        );
+
         List<GuildUpgrade> upgrades = guild.getUpgrades();
         int index = 0;
         for (GuildUpgrades value : GuildUpgrades.VALUES) {
@@ -76,13 +85,15 @@ public class GuildBankMenu {
 
             ItemBuilder itemBuilder = new ItemBuilder(value.material)
                     .name(ChatColor.GREEN + value.name)
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+                    .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
             for (GuildUpgrade upgrade : upgrades) {
                 if (upgrade.getUpgrade() == value) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.lore(ChatColor.GRAY + "Current Tier: " + ChatColor.GREEN + upgrade.getTier());
-                    itemBuilder.addLore(ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getUpgrade()
-                            .getEffectBonusFromTier(upgrade.getTier()));
+                    itemBuilder.lore(
+                            ChatColor.GRAY + "Current Tier: " + ChatColor.GREEN + upgrade.getTier(),
+                            ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getUpgrade()
+                                    .getEffectBonusFromTier(upgrade.getTier())
+                    );
                     if (!isPermanent) {
                         itemBuilder.addLore(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(upgrade.getExpirationDate(),
                                 false,
@@ -95,10 +106,15 @@ public class GuildBankMenu {
                     break;
                 }
             }
+            if (canPurchaseUpgrades) {
+                itemBuilder.addLore(ChatColor.GRAY + "\nClick to Purchase");
+            }
             menu.setItem(index % 7 + 1, index / 7 + 1,
                     itemBuilder.get(),
                     (m, e) -> {
-                        openGuildUpgradePurchaseMenu(player, guild, value);
+                        if (canPurchaseUpgrades) {
+                            openGuildUpgradePurchaseMenu(player, guild, value);
+                        }
                     }
             );
             index++;

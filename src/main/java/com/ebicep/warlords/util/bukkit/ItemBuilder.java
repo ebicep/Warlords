@@ -108,6 +108,9 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(Collection<String> lore) {
+        if (meta().getLore() == null) {
+            return lore(lore);
+        }
         for (String row : lore) {
             if (row == null || row.contains("\n")) {
                 // Fix for \n and null
