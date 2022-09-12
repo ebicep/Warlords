@@ -34,7 +34,7 @@ public class Windfury extends AbstractAbility {
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
                 "§7melee attacks to have a §e" + procChance + "% §7chance\n" +
-                "§7to hit §e" + maxHits + " §7additional times for §c" + weaponDamage + "%\n" +
+                "§7to hit §e" + maxHits + " §7additional times for §c" + format(weaponDamage) + "%\n" +
                 "§7weapon damage. The first melee hit is\n" +
                 "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +
                 "§7seconds.";

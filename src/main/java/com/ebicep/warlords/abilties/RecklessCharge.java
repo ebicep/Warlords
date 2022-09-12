@@ -34,12 +34,11 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
-        double stunDuration = stunTimeInTicks == 10 ? 0.5 : 0.75;
         description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
                 "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
                 "§5IMMOBILIZED§7, preventing movement\n" +
-                "§7for §6" + stunDuration + " §7seconds. Charge is reduced\n" +
+                "§7for §6" + (stunTimeInTicks / 20f) + " §7seconds. Charge is reduced\n" +
                 "§7when carrying a flag.";
     }
 

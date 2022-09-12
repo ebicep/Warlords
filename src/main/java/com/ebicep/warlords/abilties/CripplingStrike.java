@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CripplingStrike extends AbstractStrikeBase {
+    private boolean pveUpgrade = false;
 
     private int consecutiveStrikeCounter = 0;
 
@@ -71,6 +72,10 @@ public class CripplingStrike extends AbstractStrikeBase {
                 RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
                 .findAny();
+
+        if (pveUpgrade) {
+            tripleHit(wp, nearPlayer);
+        }
 
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrike cripplingStrike = optionalCripplingStrike.get();
@@ -142,5 +147,13 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     public void setCripplePerStrike(int cripplePerStrike) {
         this.cripplePerStrike = cripplePerStrike;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -296,12 +296,12 @@ public enum SkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.25 seconds and reduce the\n§7cooldown by 25%",
-            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.25 §aseconds and reduce the\n§acooldown by §c25%",
+            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.3 seconds and reduce the\n§7cooldown by 25%",
+            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.3 §aseconds and reduce the\n§acooldown by §c25%",
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge) {
-                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(15);
+                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(16);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }

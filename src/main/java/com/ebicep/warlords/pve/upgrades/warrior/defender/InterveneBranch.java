@@ -91,7 +91,8 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                 "Remove the cast and break range limit on Intervene. Additionally, ",
                 50000,
                 () -> {
-
+                    ability.setRadius(200);
+                    ability.setBreakRadius(200);
                 }
         );
     }

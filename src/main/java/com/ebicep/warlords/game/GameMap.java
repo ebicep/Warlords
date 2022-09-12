@@ -1026,7 +1026,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
-            options.add(new RespawnWaveOption(0, 30, 30));
+            options.add(new RespawnWaveOption(0, 20, 20));
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
