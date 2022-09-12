@@ -151,6 +151,9 @@ permissions:
     default: false
   group.administrator:
     default: false
+  group.patreon:
+    default: false
+
   warlords.game.impostertoggle:
     description: Allows the user to start games with the imposter game mode
   warlords.game.megagame:
