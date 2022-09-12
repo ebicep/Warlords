@@ -8,39 +8,40 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
 
     float cooldown = ability.getCooldown();
+    int healing = ability.getWarpHealPercentage();
 
     public TimeWarpBranch(AbilityTree abilityTree, TimeWarp ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "",
+                "Alleviate - Tier I",
+                "+3% Healing",
                 5000,
                 () -> {
-
+                    ability.setWarpHealPercentage(healing + 3);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "",
+                "Alleviate - Tier II",
+                "+6% Healing",
                 10000,
                 () -> {
-
+                    ability.setWarpHealPercentage(healing + 6);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "",
+                "Alleviate - Tier III",
+                "+9% Healing",
                 15000,
                 () -> {
-
+                    ability.setWarpHealPercentage(healing + 9);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "",
+                "Alleviate - Tier IV",
+                "+12% Healing",
                 20000,
                 () -> {
-
+                    ability.setWarpHealPercentage(healing + 12);
                 }
         ));
 
@@ -80,10 +81,11 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         masterUpgrade = new Upgrade(
                 "Dimensional Leap",
                 "Time Warp - Master Upgrade",
-                "WIP",
+                "Time Warp can now be re-activated to\nteleport you back early. Additionally, double the\nduration of Time Warp.",
                 50000,
                 () -> {
-
+                    ability.setDuration(ability.getDuration() * 2);
+                    ability.setPveUpgrade(true);
                 }
         );
     }

@@ -37,7 +37,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 
     @Override

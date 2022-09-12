@@ -22,10 +22,12 @@ import java.util.List;
 
 
 public class LastStand extends AbstractAbility {
+    private boolean pveUpgrade = false;
+
     protected int playersLastStanded = 0;
 
-    private final int selfDuration = 12;
-    private final int allyDuration = 6;
+    private int selfDuration = 12;
+    private int allyDuration = 6;
     private final int radius = 7;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
@@ -84,7 +86,7 @@ public class LastStand extends AbstractAbility {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * getSelfDamageReduction();
+                float afterValue = currentDamageValue * (100 - selfDamageReductionPercent) / 100f;
                 tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
                 return afterValue;
             }
@@ -110,7 +112,7 @@ public class LastStand extends AbstractAbility {
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * getTeammateDamageReduction();
+                    return currentDamageValue * (100 - teammateDamageReductionPercent) / 100f;
                 }
 
                 @Override
@@ -159,6 +161,17 @@ public class LastStand extends AbstractAbility {
             );
         }
 
+        if (pveUpgrade) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(wp)
+            ) {
+                EffectUtils.playSphereAnimation(wp.getLocation(), radius + 2, ParticleEffect.FLAME, 1);
+                Utils.addKnockback(wp.getLocation(), we, -2.5, 0.2f);
+            }
+        }
+
         Location loc = player.getEyeLocation();
         loc.setPitch(0);
         loc.setYaw(0);
@@ -189,7 +202,7 @@ public class LastStand extends AbstractAbility {
     }
 
     public float getSelfDamageReduction() {
-        return (100 - selfDamageReductionPercent) / 100f;
+        return selfDamageReductionPercent;
     }
 
     public void setSelfDamageReductionPercent(int selfDamageReductionPercent) {
@@ -197,7 +210,7 @@ public class LastStand extends AbstractAbility {
     }
 
     public float getTeammateDamageReduction() {
-        return (100 - selfDamageReductionPercent) / 100f;
+        return teammateDamageReductionPercent;
     }
 
     public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
@@ -210,5 +223,29 @@ public class LastStand extends AbstractAbility {
 
     public float getAmountPrevented() {
         return amountPrevented;
+    }
+
+    public int getSelfDuration() {
+        return selfDuration;
+    }
+
+    public void setSelfDuration(int selfDuration) {
+        this.selfDuration = selfDuration;
+    }
+
+    public int getAllyDuration() {
+        return allyDuration;
+    }
+
+    public void setAllyDuration(int allyDuration) {
+        this.allyDuration = allyDuration;
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 }

@@ -215,20 +215,20 @@ public class PowerupOption implements Option {
     public enum PowerupType {
         SPEED(10, Material.WOOL, (short) 4) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(SpeedPowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.getCooldownManager().removeCooldown(SpeedPowerup.class);
+                we.getCooldownManager().addRegularCooldown(
                         "Speed",
                         "SPEED",
                         SpeedPowerup.class,
                         SpeedPowerup.SPEED_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.YELLOW + ChatColor.BOLD + "SPEED" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.YELLOW + ChatColor.BOLD + "SPEED" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20
                 );
-                warlordsPlayer.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
-                warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, option.getDuration() * 20, "BASE");
+                we.sendMessage(String.format("§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!", option.getDuration()));
+                we.getSpeed().addSpeedModifier("Speed Powerup", 40, option.getDuration() * 20, "BASE");
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 
@@ -241,19 +241,19 @@ public class PowerupOption implements Option {
 
         HEALING(5, Material.WOOL, (short) 13) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(HealingPowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.getCooldownManager().removeCooldown(HealingPowerup.class);
+                we.getCooldownManager().addRegularCooldown(
                         "Healing",
                         "HEAL",
                         HealingPowerup.class,
                         HealingPowerup.HEALING_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "HEALING" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "HEALING" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20
                 );
-                warlordsPlayer.sendMessage(String.format("§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!", option.getDuration()));
+                we.sendMessage(String.format("§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!", option.getDuration()));
             }
 
             @Override
@@ -265,24 +265,24 @@ public class PowerupOption implements Option {
 
         ENERGY(30, Material.WOOL, (short) 1) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(EnergyPowerup.class);
-                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<EnergyPowerup>(
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.getCooldownManager().removeCooldown(EnergyPowerup.class);
+                we.getCooldownManager().addCooldown(new RegularCooldown<EnergyPowerup>(
                         "Energy",
                         "ENERGY",
                         EnergyPowerup.class,
                         EnergyPowerup.ENERGY_POWERUP,
                         null,
                         CooldownTypes.BUFF,
-                        cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GOLD + ChatColor.BOLD + "ENERGY" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GOLD + ChatColor.BOLD + "ENERGY" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20
                 ) {
                     @Override
                     public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick * 1.4f;
+                        return energyGainPerTick * 1.5f;
                     }
                 });
-                warlordsPlayer.sendMessage(String.format("§6You activated the §lENERGY §6powerup! §a+40%% §6Energy gain for §a%d §6seconds!", option.getDuration()));
+                we.sendMessage(String.format("§6You activated the §lENERGY §6powerup! §a+50%% §6Energy gain for §a%d §6seconds!", option.getDuration()));
             }
 
             @Override
@@ -294,16 +294,16 @@ public class PowerupOption implements Option {
 
         DAMAGE(30, Material.WOOL, (short) 14) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(DamagePowerup.class);
-                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.getCooldownManager().removeCooldown(DamagePowerup.class);
+                we.getCooldownManager().addCooldown(new RegularCooldown<DamagePowerup>(
                         "Damage",
                         "DMG",
                         DamagePowerup.class,
                         DamagePowerup.DAMAGE_POWERUP,
-                        warlordsPlayer,
+                        we,
                         CooldownTypes.BUFF,
-                        cooldownManager -> warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
+                        cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20,
                         (cooldown, ticksLeft, ticksElapsed) -> {
                         }
@@ -314,7 +314,7 @@ public class PowerupOption implements Option {
                     }
                 });
 
-                warlordsPlayer.sendMessage(String.format("§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!", option.getDuration()));
+                we.sendMessage(String.format("§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!", option.getDuration()));
             }
 
             @Override
@@ -326,9 +326,9 @@ public class PowerupOption implements Option {
 
         COOLDOWN(30, Material.WOOL, (short) 9) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().removeCooldown(CooldownPowerup.class);
-                warlordsPlayer.getCooldownManager().addRegularCooldown(
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.getCooldownManager().removeCooldown(CooldownPowerup.class);
+                we.getCooldownManager().addRegularCooldown(
                         "Cooldown",
                         "CDR",
                         CooldownPowerup.class,
@@ -336,13 +336,13 @@ public class PowerupOption implements Option {
                         null,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
-                            warlordsPlayer.setCooldownModifier(1);
-                            warlordsPlayer.sendMessage(ChatColor.GOLD + "Your " + ChatColor.AQUA + ChatColor.BOLD + "COOLDOWN" + ChatColor.GOLD + " powerup has worn off.");
+                            we.setCooldownModifier(1);
+                            we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.AQUA + ChatColor.BOLD + "COOLDOWN" + ChatColor.GOLD + " powerup has worn off.");
                         },
                         option.getDuration() * 20
                 );
-                warlordsPlayer.setCooldownModifier(0.75);
-                warlordsPlayer.sendMessage(String.format("§6You activated the §b§lCOOLDOWN §6powerup! §a+25%% §6Cooldown reduction for §a%d §6seconds!", option.getDuration()));
+                we.setCooldownModifier(0.75);
+                we.sendMessage(String.format("§6You activated the §b§lCOOLDOWN §6powerup! §a+25%% §6Cooldown reduction for §a%d §6seconds!", option.getDuration()));
             }
 
             @Override
@@ -354,8 +354,8 @@ public class PowerupOption implements Option {
 
         SELF_DAMAGE(0, Material.WOOL, (short) 15) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.addDamageInstance(warlordsPlayer, "Self Damage Powerup", 5000, 5000, -1, 100, true);
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, -1, 100, true);
             }
 
             @Override
@@ -367,8 +367,8 @@ public class PowerupOption implements Option {
 
         SELF_HEAL(0, Material.WOOL, (short) 15) {
             @Override
-            public void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer) {
-                warlordsPlayer.addHealingInstance(warlordsPlayer, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
             }
 
             @Override
@@ -400,7 +400,7 @@ public class PowerupOption implements Option {
             return debugData;
         }
 
-        public abstract void onPickUp(PowerupOption option, WarlordsEntity warlordsPlayer);
+        public abstract void onPickUp(PowerupOption option, WarlordsEntity we);
 
         public abstract void setNameAndItem(PowerupOption option, ArmorStand armorStand);
 

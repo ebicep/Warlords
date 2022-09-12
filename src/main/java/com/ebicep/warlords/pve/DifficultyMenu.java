@@ -21,8 +21,6 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public class DifficultyMenu {
 
-    // WIP
-
     public static void openPveMenu(Player player) {
         Menu menu = new Menu("Pve Menu", 9 * 4);
         menu.setItem(
@@ -73,7 +71,6 @@ public class DifficultyMenu {
         menu.openForPlayer(player);
     }
 
-    // TODO: random map
     private static void startNormalGame(Player player, boolean endless, boolean hardMode) {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);

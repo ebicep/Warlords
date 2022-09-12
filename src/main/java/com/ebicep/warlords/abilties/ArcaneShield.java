@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -75,12 +76,14 @@ public class ArcaneShield extends AbstractAbility {
                     }
 
                     if (pveUpgrade) {
+                        Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
+                        EffectUtils.strikeLightning(wp.getLocation(), false);
                         for (WarlordsEntity we : PlayerFilter
-                                .entitiesAround(wp, 3, 3, 3)
+                                .entitiesAround(wp, 6, 6, 6)
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
                         ) {
-                            // TODO
+                            we.getSpeed().addSpeedModifier("Arcane Aegis", -99, 6 * 20);
                         }
                     }
                 },

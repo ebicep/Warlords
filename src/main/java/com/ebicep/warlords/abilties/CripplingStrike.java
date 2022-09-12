@@ -21,7 +21,10 @@ import java.util.Optional;
 public class CripplingStrike extends AbstractStrikeBase {
 
     private int consecutiveStrikeCounter = 0;
+
     private final int crippleDuration = 3;
+    private int cripple = 10;
+    private int cripplePerStrike = 5;
 
     public CripplingStrike() {
         super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
@@ -37,10 +40,10 @@ public class CripplingStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
-                "§7A §ccrippled §7player deals §c10% §7less\n" +
+                "§7A §ccrippled §7player deals §c" + cripple + "% §7less\n" +
                 "§7damage for the duration of the effect.\n" +
-                "§7Adds §c5% §7less damage dealt per\n" +
-                "§7additional strike. (max 20%)";
+                "§7Adds §c" + cripplePerStrike  +"% §7less damage dealt per\n" +
+                "§7additional strike. (max " + (cripple + (cripplePerStrike * 2)) + "%)";
     }
 
     @Override
@@ -88,7 +91,7 @@ public class CripplingStrike extends AbstractStrikeBase {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return (float) (currentDamageValue * (.9 - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * .05));
+                    return currentDamageValue * (((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * (cripplePerStrike / 100f));
                 }
             });
         } else {
@@ -107,7 +110,7 @@ public class CripplingStrike extends AbstractStrikeBase {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * .9f;
+                    return currentDamageValue * (100 - cripple) / 100f;
                 }
             });
         }
@@ -123,5 +126,21 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     public int getConsecutiveStrikeCounter() {
         return consecutiveStrikeCounter;
+    }
+
+    public int getCripple() {
+        return cripple;
+    }
+
+    public void setCripple(int cripple) {
+        this.cripple = cripple;
+    }
+
+    public int getCripplePerStrike() {
+        return cripplePerStrike;
+    }
+
+    public void setCripplePerStrike(int cripplePerStrike) {
+        this.cripplePerStrike = cripplePerStrike;
     }
 }

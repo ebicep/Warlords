@@ -34,6 +34,7 @@ public class UndyingArmy extends AbstractAbility {
     protected int playersArmied = 0;
     private int duration = 10;
     private int maxArmyAllies = 6;
+    private int maxHealthDamage = 10;
 
     public UndyingArmy() {
         super("Undying Army", 0, 0, 62.64f, 60, 0, 0);
@@ -49,7 +50,7 @@ public class UndyingArmy extends AbstractAbility {
                 "§7Chained allies that take fatal damage\n" +
                 "§7will be revived with §a100% §7of their max health\n" +
                 "§7and §e100% §7max energy. Revived allies rapidly\n" +
-                "§7take §c10% §7of their max health as damage every\n" +
+                "§7take §c" + maxHealthDamage + "% §7of their max health as damage every\n" +
                 "§7second.";
     }
 
@@ -196,5 +197,13 @@ public class UndyingArmy extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public int getMaxHealthDamage() {
+        return maxHealthDamage;
+    }
+
+    public void setMaxHealthDamage(int maxHealthDamage) {
+        this.maxHealthDamage = maxHealthDamage;
     }
 }

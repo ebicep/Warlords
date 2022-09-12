@@ -665,8 +665,15 @@ public class Warlords extends JavaPlugin {
                                         if (wp.getRespawnTimer() >= 0 || wp.isDead()) {
                                             this.cancel();
                                         } else {
-                                            //UNDYING ARMY - dmg 10% of max health each popped army
-                                            wp.addDamageInstance(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
+                                            wp.addDamageInstance(
+                                                    wp,
+                                                    "",
+                                                    wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                                    wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                                    -1,
+                                                    100,
+                                                    false
+                                            );
                                         }
                                     }
                                 }.runTaskTimer(0, 20);

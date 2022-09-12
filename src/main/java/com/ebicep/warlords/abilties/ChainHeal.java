@@ -61,7 +61,8 @@ public class ChainHeal extends AbstractChainBase {
                         name,
                         minDamageHeal,
                         maxDamageHeal,
-                        critChance, critMultiplier,
+                        critChance,
+                        critMultiplier,
                         false,
                         false
                 );

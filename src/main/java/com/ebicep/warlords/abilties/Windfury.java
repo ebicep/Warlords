@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -101,28 +100,15 @@ public class Windfury extends AbstractAbility {
                             @Override
                             public void run() {
                                 Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-
-                                if (Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == SkillBoosts.WINDFURY_WEAPON) {
-                                    victim.addDamageInstance(
-                                            attacker,
-                                            name,
-                                            132 * (weaponDamage / 100f) * 1.2f,
-                                            179 * (weaponDamage / 100f) * 1.2f,
-                                            critChance,
-                                            critMultiplier,
-                                            false
-                                    );
-                                } else {
-                                    victim.addDamageInstance(
-                                            attacker,
-                                            name,
-                                            132 * (weaponDamage / 100f),
-                                            179 * (weaponDamage / 100f),
-                                            critChance,
-                                            critMultiplier,
-                                            false
-                                    );
-                                }
+                                victim.addDamageInstance(
+                                        attacker,
+                                        name,
+                                        132 * (weaponDamage / 100f),
+                                        179 * (weaponDamage / 100f),
+                                        critChance,
+                                        critMultiplier,
+                                        false
+                                );
 
                                 if (pveUpgrade) {
                                     victim.getSpec().setDamageResistance(victim.getSpec().getDamageResistance() - 2);

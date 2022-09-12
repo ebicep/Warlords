@@ -85,10 +85,10 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
         masterUpgrade = new Upgrade(
                 "Arcane Aegis",
                 "Arcane Shield - Master Upgrade",
-                "WIP",
+                "When arcane shield ends or beaks, unleash\na shockwave that stuns enemies for 6 seconds.",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }

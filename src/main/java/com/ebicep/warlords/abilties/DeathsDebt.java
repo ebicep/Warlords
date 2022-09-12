@@ -50,7 +50,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        int selfDamagePercent = selfDamageInPercentPerSecond == .1667f ? 100 : 75;
+        int selfDamagePercent = selfDamageInPercentPerSecond == .1667f ? 100 : 60;
         description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                 "§7delays §c100% §7of incoming damage towards\n" +
                 "§7yourself. Transforms into §dDeath’s Debt §7after\n" +

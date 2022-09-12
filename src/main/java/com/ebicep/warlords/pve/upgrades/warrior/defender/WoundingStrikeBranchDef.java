@@ -87,7 +87,7 @@ public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrik
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "+20% Critical Chance. Critical Strikes increase\ndamage reduction by 25% for 5 seconds.",
+                "+20% Critical Chance. Critical Strikes increase\ndamage reduction by 30% for 5 seconds.",
                 50000,
                 () -> {
                     ability.setCritChance(ability.getCritChance() + 20);

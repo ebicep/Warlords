@@ -50,7 +50,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 170, 170, 170),
                         Weapons.ENDERFIST.getItem()
                 ),
-                17000,
+                16000,
                 0.42f,
                 0,
                 277,
@@ -135,7 +135,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         }
         //Spawn 5 * (The number of players in the game) Tormented Souls every 20 seconds
         if (ticksElapsed % 400 == 0) {
-            spawnTormentedSouls(option, (int) (4 * option.getGame().warlordsPlayers().count()));
+            spawnTormentedSouls(option, (int) (3 * option.getGame().warlordsPlayers().count()));
         }
 
         if (ticksElapsed % 10 == 0) {

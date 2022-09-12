@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.irongolem;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -31,7 +32,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false);
     }
 
     @Override

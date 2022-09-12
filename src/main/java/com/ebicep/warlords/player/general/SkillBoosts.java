@@ -18,14 +18,14 @@ public enum SkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720% and reduce the cooldown\n§7by 20%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20% §aand reduce the cooldown\n§aby §c20%",
+            "§7Increases the damage you\n§7deal with Flame Burst by\n§725% and reduce the energy cost\n§7by 30",
+            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c25% §aand reduce the energy cost\n§aby §c30",
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * 0.8f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 }
             }
     ),
@@ -41,36 +41,35 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 50%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c50%",
+            "§7Remove the energy cost of Arcane Shield\nand reduce the cooldown by 30%",
+            "§aRemove the energy cost of Arcane Shield\n§aand reduce the cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 70% but reduce the Crit\nChance bonus by 10%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c70% §abut reduce the Crit\nChance bonus §aby §c10%",
+            "§7Increase the Crit Multiplier bonus of\nInferno by 70%",
+            "§aIncrease the Crit Multiplier bonus of\nInferno by §c70%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
-                    ((Inferno) abstractAbility).setCritChanceIncrease(20);
                     ((Inferno) abstractAbility).setCritMultiplierIncrease(100);
                 }
             }
     ),
     FROST_BOLT("Frostbolt",
-            "§7Increases the damage you\n§7deal with Frostbolt by\n§720%",
-            "§aIncreases the damage you\n§adeal with Frostbolt by\n§c20%",
+            "§7Increases the damage you\n§7deal with Frostbolt by\n§720% and increase the slowness\nby 5%",
+            "§aIncreases the damage you\n§adeal with Frostbolt by\n§c20% §aand increase the slowness\nby §c5%",
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt) {
                     abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                     abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    ((FrostBolt) abstractAbility).setSlowness(((FrostBolt) abstractAbility).getSlowness() + 5);
                 }
             }
     ),
@@ -87,34 +86,33 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp\n§7by 40%",
-            "§aReduce the cooldown of Time Warp\n§aby §c40%",
+            "§7Reduce the cooldown of Time Warp\n§7by 35%",
+            "§aReduce the cooldown of Time Warp\n§aby §c35%",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 20%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c20%",
+            "§7Reduce the cooldown of Arcane Shield\n§7by 20%",
+            "§aReduce the cooldown of Arcane Shield\n§aby §c20%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(70);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     ICE_BARRIER("Ice Barrier",
-            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§710% §7and reduce the cooldown by 20%",
-            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c20%",
+            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§710% §7and increase the duration\nby 2 seconds",
+            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand increase the duration\nby §c2 §aseconds",
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
                     ((IceBarrier) abstractAbility).setDamageReductionPercent(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    ((IceBarrier) abstractAbility).setDuration(((IceBarrier) abstractAbility).getDuration() + 2);
                 }
             }
     ),
@@ -130,13 +128,14 @@ public enum SkillBoosts {
             }
     ),
     WATER_BREATH("Water Breath",
-            "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 25%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c25%",
+            "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 8% and reduce\nthe energy cost by 40",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c8% §aand reduce\nthe energy cost §c40",
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.08f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.08f);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
                 }
             }
     ),
@@ -151,14 +150,12 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 50%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c50%",
+            "§7Reduce the cooldown of Arcane Shield\n§7by 30%",
+            "§aReduce the cooldown of Arcane Shield\n§aby §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
@@ -174,70 +171,71 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_BERSERKER("Wounding Strike",
-            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 10% and reduce the\nenergy cost by 10",
+            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c10% §aand reduce the\nenergy cost by §c10",
             WoundingStrikeBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 10);
                 }
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720% and reduce the cooldown\n§7by 25%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20% §aand reduce the cooldown\n§aby §c25%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§715% and reduce the cooldown\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c15% §aand reduce the cooldown\n§aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§725% §7and reduce the cooldown\nby §725%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c25% §aand reduce the cooldown\nby §c25%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§735% §7and reduce the cooldown\nby §720%",
+            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c35% §aand reduce the cooldown\nby §c20%",
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 25%",
-            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c25%",
+            "§7Reduce the cooldown of Blood Lust\n§7by 30%",
+            "§aReduce the cooldown of Blood Lust\n§aby §c30%",
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
-                    ((BloodLust) abstractAbility).setDamageConvertPercent(70);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     BERSERK("Berserk",
-            "§7Increase the damage bonus of Berserk\n§7by 20% but increase the damage you take\n§7by 5%",
-            "§aIncrease the damage bonus of Berserk\n§aby §c20% §abut increase the damage you take\n§aby §c5%",
+            "§7Increase the damage bonus of Berserk\n§7by 15% and increase the speed\n§7by 10%",
+            "§aIncrease the damage bonus of Berserk\n§aby §c15% §aand increase the speed\n§aby §c10%",
             Berserk.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Berserk) {
-                    ((Berserk) abstractAbility).setDamageIncrease(50);
-                    ((Berserk) abstractAbility).setDamageTakenIncrease(15);
+                    ((Berserk) abstractAbility).setDamageIncrease(((Berserk) abstractAbility).getDamageIncrease() + 15);
+                    ((Berserk) abstractAbility).setSpeedBuff(((Berserk) abstractAbility).getSpeedBuff() + 10);
                 }
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
-            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 10% and increase wounding by\n25%",
+            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c10% §aand increase wounding\nby §c25%",
             WoundingStrikeDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeDefender) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                    ((WoundingStrikeDefender) abstractAbility).setWounding(((WoundingStrikeDefender) abstractAbility).getWounding() + 25);
                 }
             }
     ),
@@ -275,25 +273,25 @@ public enum SkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§75% §7and reduce the cooldown by 15%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c5% §aand reduce the cooldown by §c15%",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 10%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c10%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
-                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(55);
-                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(45);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(60);
+                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(50);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
-            "§7Increase the damage you\n§7deal with Crippling Strike\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Crippling Strike\n§aby §c20%",
+            "§7Increase the damage you\n§7reduce with Crippling Strike\n§7by 10% and increase the\nadditional reduction per strike\nby 5%",
+            "§aIncrease the damage you\n§areduce with Crippling Strike\n§aby §c10% §aand increase the\nadditional reduction per strike\nby §c5%",
             CripplingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CripplingStrike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    ((CripplingStrike) abstractAbility).setCripple(((CripplingStrike) abstractAbility).getCripple() + 10);
+                    ((CripplingStrike) abstractAbility).setCripplePerStrike(((CripplingStrike) abstractAbility).getCripplePerStrike() + 5);
                 }
             }
     ),
@@ -330,13 +328,13 @@ public enum SkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Reduce the cooldown of Undying Army\nby 25% and increase the duration\nby 3 seconds",
-            "§aReduce the cooldown of Undying Army\nby §c25% §aand increase the duration\nby §c3 §aseconds",
+            "§7Reduce the damage of\nUndying Army after dying\nby 5% and increase the\nduration by 5 seconds",
+            "§aReduce the damage of\nUndying Army after dying\nby §c5% §aand increase the\nduration by §c5 §aseconds",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
-                    ((UndyingArmy) abstractAbility).setDuration(13);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    ((UndyingArmy) abstractAbility).setDuration(15);
+                    ((UndyingArmy) abstractAbility).setMaxHealthDamage(((UndyingArmy) abstractAbility).getMaxHealthDamage() - 5);
                 }
             }
     ),
@@ -363,34 +361,35 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_AVENGER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 2 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c2 §aseconds",
-            LightInfusion.class,
+            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the energy\nyou restore by 30",
+            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the energy\n§ayou restore by §c30",
+            LightInfusionAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusion) abstractAbility).setDuration(5);
+                if (abstractAbility instanceof LightInfusionAvenger) {
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    ((LightInfusionAvenger) abstractAbility).setEnergyGiven(((LightInfusionAvenger) abstractAbility).getEnergyGiven() + 30);
                 }
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance\n§7by 40%",
-            "§aReduce the cooldown of Holy Radiance\n§aby §c40%",
+            "§7Reduce the cooldown of Holy Radiance\n§7by 20% and double the energy\ndrain of Avenger's Mark",
+            "§aReduce the cooldown of Holy Radiance\n§aby §c20% §aand double the energy\ndrain of Avenger's Mark",
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    ((HolyRadianceAvenger) abstractAbility).setEnergyDrainPerSecond(((HolyRadianceAvenger) abstractAbility).getEnergyDrainPerSecond() * 2);
                 }
             }
     ),
     AVENGERS_WRATH("Avenger's Wrath",
-            "§7Reduce the cooldown of Avenger's Wrath\n§7by 25% and increase the duration by\n§73 seconds",
-            "§aReduce the cooldown of Avenger's Wrath\n§aby §c25% §aand increase the duration §aby\n§c3 §aseconds",
+            "§7Increase the energy per second of\nAvenger's Wrath by 10 and increase the\nduration by 5 seconds",
+            "§aIncrease the energy per second of\nAvenger's Wrath by §c10 §aand increase the\nduration §aby §c5 §aseconds",
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
-                    ((AvengersWrath) abstractAbility).setDuration(15);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    ((AvengersWrath) abstractAbility).setDuration(((AvengersWrath) abstractAbility).getDuration() + 5);
+                    ((AvengersWrath) abstractAbility).setEnergyPerSecond(((AvengersWrath) abstractAbility).getEnergyPerSecond() + 10);
                 }
             }
     ),
@@ -417,13 +416,13 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_CRUSADER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the speed\n§7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the speed\n§aduration by §c3 §aseconds",
-            LightInfusion.class,
+            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 2 seconds",
+            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c2 §aseconds",
+            LightInfusionCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
-                    ((LightInfusion) abstractAbility).setDuration(6);
+                if (abstractAbility instanceof LightInfusionCrusader) {
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
+                    ((LightInfusionCrusader) abstractAbility).setDuration(((LightInfusionCrusader) abstractAbility).getDuration() + 2);
                 }
             }
     ),
@@ -435,6 +434,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                     ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
+                    ((HolyRadianceCrusader) abstractAbility).setMarkSpeed(((HolyRadianceCrusader) abstractAbility).getMarkSpeed() + 15);
                 }
             }
     ),
@@ -449,35 +449,36 @@ public enum SkillBoosts {
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            "§7Increase the amount of damage\n§7you convert into healing for allies with\n§7Protector's Strike by 20%",
-            "§aIncrease the amount of damage\n§ayou convert into healing for allies with\n§aProtector's Strike by §c20%",
+            "§7Increase the amount of damage\n§7you convert into healing for allies with\n§7Protector's Strike by 10%\nand heal 1 more ally.",
+            "§aIncrease the amount of damage\n§ayou convert into healing for allies with\n§aProtector's Strike by §c10%\n§aand heal 1 more ally.",
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
-                    ((ProtectorsStrike) abstractAbility).setMinConvert(90);
-                    ((ProtectorsStrike) abstractAbility).setMaxConvert(120);
+                    ((ProtectorsStrike) abstractAbility).setMinConvert(((ProtectorsStrike) abstractAbility).getMinConvert() + 10);
+                    ((ProtectorsStrike) abstractAbility).setMaxConvert(((ProtectorsStrike) abstractAbility).getMaxConvert() + 10);
+                    ((ProtectorsStrike) abstractAbility).setMaxAllies(((ProtectorsStrike) abstractAbility).getMaxAllies() + 1);
                 }
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 40%",
-            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c40%",
+            "§7Increases the range of\n§7Consecrate by 4 blocks and\n§7reduce the cooldown\n§7by 20%",
+            "§aIncreases the range of\n§aConsecrate by §c4 §ablocks and\n§areduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(6);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    ((Consecrate) abstractAbility).setRadius(((Consecrate) abstractAbility).getRadius() + 4);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
             "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 2 seconds",
             "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c2 §aseconds",
-            LightInfusion.class,
+            LightInfusionProtector.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusion) {
+                if (abstractAbility instanceof LightInfusionProtector) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    ((LightInfusion) abstractAbility).setDuration(5);
+                    ((LightInfusionProtector) abstractAbility).setDuration(5);
                 }
             }
     ),
@@ -516,24 +517,24 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            "§7Increase the damage you\n§7deal with Chain Lightning\n§7by 20% and reduce the cooldown\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c20% §aand reduce the cooldown\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Chain Lightning\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c25%",
             ChainLightning.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 }
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 20% and increase the proc\n§7chance by 20%",
-            "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c20% §aand increase the proc\n§achance by §c20%",
+            "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 40% and increase the proc\n§7chance by 20%",
+            "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c40% §aand increase the proc\n§achance by §c20%",
             Windfury.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
                     ((Windfury) abstractAbility).setProcChance(55);
+                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 40);
                 }
             }
     ),
@@ -548,14 +549,14 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 25% and increase the range\n§7by 3 blocks",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c25% §aand increase the range\n§aby §c3 §ablocks",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 35% and reduce the cooldown\n§7by 15%",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c35% §aand reduce the cooldown\n§aby §c15%",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    ((CapacitorTotem) abstractAbility).setRadius(9);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
                 }
             }
     ),
@@ -582,12 +583,12 @@ public enum SkillBoosts {
             }
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
-            "§7Increase the duration of\n§7binds by 1 second.",
-            "§aIncrease the duration of\n§abinds by §c1 §asecond.",
+            "§7Increase the duration of\n§7binds by 2 seconds.",
+            "§aIncrease the duration of\n§abinds by §c2 §aseconds.",
             Soulbinding.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding) {
-                    ((Soulbinding) abstractAbility).setBindDuration(3);
+                    ((Soulbinding) abstractAbility).setBindDuration(4);
                 }
             }
     ),
@@ -603,8 +604,8 @@ public enum SkillBoosts {
             }
     ),
     DEATHS_DEBT("Death's Debt",
-            "§7Increase the range of Death's Debt\n§7by 4 blocks and reduce the\n§7amount of delayed damage you take\n§7by 25%",
-            "§aIncrease the range of Death's Debt\n§aby §c4 §ablocks and reduce the\n§aamount of delayed damage you take\n§aby §c25%",
+            "§7Increase the range of Death's Debt\n§7by 4 blocks and reduce the\n§7amount of delayed damage you take\n§7by 40%",
+            "§aIncrease the range of Death's Debt\n§aby §c4 §ablocks and reduce the\n§aamount of delayed damage you take\n§aby §c40%",
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt) {
@@ -615,24 +616,25 @@ public enum SkillBoosts {
             }
     ),
     EARTHEN_SPIKE("Earthen Spike",
-            "§7Increase the damage you\n§7deal with Earthen Spike by\n§720%",
-            "§aIncrease the damage you\n§adeal with Earthen Spike by\n§c20%",
+            "§7Increase the damage you\n§7deal with Earthen Spike by\n§715% and increase the speed\nby 30%",
+            "§aIncrease the damage you\n§adeal with Earthen Spike by\n§c15% §aincrease the speed\nby §c30%",
             EarthenSpike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthenSpike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                    ((EarthenSpike) abstractAbility).setSpeed(((EarthenSpike) abstractAbility).getSpeed() * 1.3f);
                 }
             }
     ),
     BOULDER("Boulder",
-            "§7Increase the damage you\n§7deal with Boulder by 20%",
-            "§aIncrease the damage you\n§adeal with Boulder by §c20%",
+            "§7Increase the damage you\n§7deal with Boulder by 30%",
+            "§aIncrease the damage you\n§adeal with Boulder by §c30%",
             Boulder.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Boulder) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
                 }
             }
     ),
@@ -647,24 +649,24 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_HEAL("Chain Heal",
-            "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%",
+            "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 30%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c30%",
             ChainHeal.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainHeal) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
                 }
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 20% and reduce the\n§7cooldown by 25%",
-            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c20% §aand reduce the\n§acooldown by §c25%",
+            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 25% and reduce the\n§7cooldown by 25%",
+            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c25% §aand reduce the\n§acooldown by §c25%",
             HealingTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
