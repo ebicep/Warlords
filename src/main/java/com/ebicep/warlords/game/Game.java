@@ -568,6 +568,10 @@ public final class Game implements Runnable, AutoCloseable {
         warlordsEntities().filter(WarlordsEntity::isOnline).forEach(consumer);
     }
 
+    public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
+        warlordsPlayers().filter(WarlordsEntity::isOnline).forEach(consumer);
+    }
+
     @Override
     public void run() {
         if (this.nextState == null && this.state != null) {

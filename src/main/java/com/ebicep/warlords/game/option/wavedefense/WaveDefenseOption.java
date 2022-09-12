@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -40,6 +41,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
@@ -213,17 +215,16 @@ public class WaveDefenseOption implements Option {
                     newWave();
 
                     if (waveCounter > 1) {
-                        getGame().forEachOnlineWarlordsEntity(we -> {
-                            if (we instanceof WarlordsPlayer) {
-                                int currency;
-                                if (waveCounter % 5 == 1) {
-                                    currency = 1000;
-                                } else {
-                                    currency = 200;
-                                }
-                                we.addCurrency(currency);
-                                we.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
+                        getGame().forEachOnlineWarlordsPlayer(wp -> {
+                            AtomicInteger currency = new AtomicInteger();
+                            if (waveCounter % 5 == 1) {
+                                currency.set(1000);
+                            } else {
+                                currency.set(200);
                             }
+                            Bukkit.getPluginManager().callEvent(new WarlordsPlayerAddCurrencyEvent(wp, currency));
+                            wp.addCurrency(currency.get());
+                            wp.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
                         });
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
                     }

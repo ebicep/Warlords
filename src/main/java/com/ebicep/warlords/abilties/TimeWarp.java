@@ -51,7 +51,7 @@ public class TimeWarp extends AbstractAbility {
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
-        wp.getCooldownManager().addRegularCooldown(
+        RegularCooldown<TimeWarp> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
                 TimeWarp.class,
@@ -59,7 +59,9 @@ public class TimeWarp extends AbstractAbility {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) return;
+                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
+                        return;
+                    }
                     timesSuccessful++;
 
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
@@ -98,16 +100,13 @@ public class TimeWarp extends AbstractAbility {
                     }
                 }
         );
+        wp.getCooldownManager().addCooldown(timeWarpCooldown);
 
         if (pveUpgrade) {
-            addSecondaryAbility(() -> {
-                new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filterCooldownClass(TimeWarp.class)
-                        .findFirst()
-                        .ifPresent(cooldown -> cooldown.setTicksLeft(1));
-            },
-            false,
-            secondaryAbility -> wp.isDead() || !wp.getCooldownManager().hasCooldown(TimeWarp.class)
+            addSecondaryAbility(
+                    () -> timeWarpCooldown.setTicksLeft(1),
+                    false,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)
             );
         }
         return true;

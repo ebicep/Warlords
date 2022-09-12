@@ -8,3 +8,15 @@
 # Editor specific
 /nb-configuration.xml
 /nbproject/
+
+### Intellij ###
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Maven
+.idea/libraries

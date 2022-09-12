@@ -133,7 +133,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         });
             }
         }
-        //Spawn 5 * (The number of players in the game) Tormented Souls every 20 seconds
+        //Spawn 3 * (The number of players in the game) Tormented Souls every 20 seconds
         if (ticksElapsed % 400 == 0) {
             spawnTormentedSouls(option, (int) (3 * option.getGame().warlordsPlayers().count()));
         }
