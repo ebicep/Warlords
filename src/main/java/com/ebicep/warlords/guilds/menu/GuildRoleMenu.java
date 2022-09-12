@@ -54,6 +54,7 @@ public class GuildRoleMenu {
                         Guild.sendGuildMessage(player, ChatColor.GREEN + "Role created: " + roleName);
                         guild.log(new GuildLogRoleCreate(player.getUniqueId(), roleName));
                         guild.queueUpdate();
+                        openRoleEditor(guild, role, player);
                     });
                 }
         );
@@ -114,7 +115,17 @@ public class GuildRoleMenu {
                         guild.log(new GuildLogRoleSetDefault(player.getUniqueId(), role.getRoleName()));
                         guild.queueUpdate();
                         openRoleEditor(guild, role, player);
-                    });
+                    }
+            );
+        } else {
+            menu.setItem(1, 3,
+                    new ItemBuilder(Material.GRASS)
+                            .name(ChatColor.GREEN + "This is the default role")
+                            .get(),
+                    (m, e) -> {
+
+                    }
+            );
         }
         menu.setItem(3, 3,
                 new ItemBuilder(Material.NAME_TAG)
@@ -136,12 +147,14 @@ public class GuildRoleMenu {
                             Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
                             return;
                         }
+                        Guild.sendGuildMessage(player, ChatColor.GREEN + "Role " + role.getRoleName() + " was renamed to " + newRoleName);
                         guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
                         role.setRoleName(newRoleName);
                         guild.queueUpdate();
                         openRoleEditor(guild, role, player);
                     });
-                });
+                }
+        );
 
         List<String> lore = new ArrayList<>();
         for (int i = 1; i < guildRoles.size(); i++) {
@@ -165,7 +178,8 @@ public class GuildRoleMenu {
                     guild.log(new GuildLogRoleChangeLevel(player.getUniqueId(), role.getRoleName(), roleIndex, newRoleIndex));
                     guild.queueUpdate();
                     openRoleEditor(guild, role, player);
-                });
+                }
+        );
 
         menu.setItem(7, 3,
                 new ItemBuilder(Material.LAVA_BUCKET)
@@ -189,10 +203,13 @@ public class GuildRoleMenu {
                             guild.queueUpdate();
                             openRoleSelectorMenu(guild, player);
                         } else {
-                            Guild.sendGuildMessage(player, ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM");
+                            Guild.sendGuildMessage(player,
+                                    ChatColor.RED + "Role " + role.getRoleName() + " was not deleted because you did not input CONFIRM"
+                            );
                         }
                     });
-                });
+                }
+        );
 
 
         menu.setItem(4, 3, MENU_BACK, (m, e) -> openRoleSelectorMenu(guild, player));

@@ -19,7 +19,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 public class GuildMenu {
 
     public static void openGuildMenu(Guild guild, Player player, int page) {
-        Menu menu = new Menu(guild.getName(), 9 * 6);
+        Menu menu = new Menu("Guild Settings: " + guild.getName(), 9 * 6);
 
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLD_BLOCK)
