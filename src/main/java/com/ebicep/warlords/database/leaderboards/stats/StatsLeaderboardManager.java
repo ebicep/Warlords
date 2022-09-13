@@ -92,7 +92,7 @@ public class StatsLeaderboardManager {
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
-                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
@@ -148,14 +148,16 @@ public class StatsLeaderboardManager {
         StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromPlayer(player);
 
         getAllLeaderboardCategories().forEach(category -> {
-            category.getAllHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+            category.getAllHolograms()
+                    .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
         });
         if (statsLeaderboardCategory != null) {
-            statsLeaderboardCategory.getCollectionHologramPaged(selectedTime).forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+            statsLeaderboardCategory.getCollectionHologramPaged(selectedTime)
+                    .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
-        if (Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
-            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+        if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
+            Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
         }
 
         createLeaderboardSwitcherHologram(player);

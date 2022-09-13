@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
-import static com.ebicep.warlords.player.general.Settings.*;
+import static com.ebicep.warlords.player.general.Settings.ParticleQuality;
 import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
@@ -71,7 +71,7 @@ public class WarlordsShopMenu {
             .get();
 
     public static void openMainMenu(Player player) {
-        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
 
         Menu menu = new Menu("Warlords Shop", 9 * 6);
         Classes[] values = Classes.VALUES;
@@ -114,7 +114,7 @@ public class WarlordsShopMenu {
     }
 
     public static void openClassMenu(Player player, Classes selectedGroup) {
-        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         Menu menu = new Menu(selectedGroup.name, 9 * 4);
         List<Specializations> values = selectedGroup.subclasses;
         for (int i = 0; i < values.size(); i++) {
@@ -146,8 +146,8 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                        ArmorManager.resetArmor(player, spec, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
-                        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                        ArmorManager.resetArmor(player, spec, PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam());
+                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                         playerSettings.setSelectedSpec(spec);
 
                         AbstractPlayerClass apc = spec.create.get();
@@ -176,7 +176,7 @@ public class WarlordsShopMenu {
     }
 
     public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
-        SkillBoosts selectedBoost = Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
+        SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
         Menu menu = new Menu("Skill Boost", 9 * 6);
         List<SkillBoosts> values = selectedSpec.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
@@ -200,7 +200,7 @@ public class WarlordsShopMenu {
                     builder.get(),
                     (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
-                        Warlords.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
+                        PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
                         openSkillBoostMenu(player, selectedSpec);
 
                         if (DatabaseManager.playerService == null) {
@@ -214,7 +214,7 @@ public class WarlordsShopMenu {
         }
 
         //showing change of ability
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         AbstractPlayerClass apc = selectedSpec.create.get();
         AbstractPlayerClass apc2 = selectedSpec.create.get();
         if (apc2.getWeapon().getClass() == selectedBoost.ability) {
@@ -261,7 +261,7 @@ public class WarlordsShopMenu {
     }
 
     public static void openWeaponMenu(Player player, int pageNumber) {
-        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         Weapons selectedWeapon = Weapons.getSelected(player, selectedSpec);
         Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
         List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.VALUES));
@@ -297,7 +297,7 @@ public class WarlordsShopMenu {
                             player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.getName() + "!");
                             Weapons.setSelected(player, selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
-                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                     .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
@@ -412,8 +412,8 @@ public class WarlordsShopMenu {
                             Helmets.setSelectedRogue(player, helmet);
                         }
                         ArmorManager.resetArmor(player,
-                                Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec(),
-                                Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam()
+                                PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(),
+                                PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam()
                         );
 
                         openArmorMenu(player, pageNumber);
@@ -538,27 +538,32 @@ public class WarlordsShopMenu {
     }
 
     public static void openSettingsMenu(Player player) {
-        Powerup selectedPowerup = Powerup.getSelected(player);
-        HotkeyMode selectedHotkeyMode = HotkeyMode.getSelected(player);
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
 
         Menu menu = new Menu("Settings", 9 * 4);
-        menu.setItem(
-                3,
-                1,
-                selectedHotkeyMode.item,
-                (m, e) -> {
-                    player.sendMessage(selectedHotkeyMode == HotkeyMode.NEW_MODE ? ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled." : ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
-                    HotkeyMode.setSelected(player,
-                            selectedHotkeyMode == HotkeyMode.NEW_MODE ? HotkeyMode.CLASSIC_MODE : HotkeyMode.NEW_MODE
-                    );
-                    openSettingsMenu(player);
-                }
-        );
         menu.setItem(
                 1,
                 1,
                 MENU_SETTINGS_PARTICLE_QUALITY,
                 (m, e) -> openParticleQualityMenu(player)
+        );
+        menu.setItem(
+                3,
+                1,
+                playerSettings.getHotkeyMode().item,
+                (m, e) -> {
+                    Bukkit.dispatchCommand(player, "hotkeymode");
+                    openSettingsMenu(player);
+                }
+        );
+        menu.setItem(
+                5,
+                1,
+                playerSettings.getFlagMessageMode().item,
+                (m, e) -> {
+                    Bukkit.dispatchCommand(player, "flagmessagemode");
+                    openSettingsMenu(player);
+                }
         );
 
         menu.setItem(4, 3, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
@@ -566,7 +571,7 @@ public class WarlordsShopMenu {
     }
 
     public static void openParticleQualityMenu(Player player) {
-        ParticleQuality selectedParticleQuality = ParticleQuality.getSelected(player);
+        ParticleQuality selectedParticleQuality = PlayerSettings.getPlayerSettings(player.getUniqueId()).getParticleQuality();
 
         Menu menu = new Menu("Particle Quality", 9 * 4);
 
@@ -595,7 +600,7 @@ public class WarlordsShopMenu {
     }
 
     public static void openTeamMenu(Player player) {
-        Team selectedTeam = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
+        Team selectedTeam = PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam();
         Menu menu = new Menu("Team Selector", 9 * 4);
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
@@ -636,8 +641,8 @@ public class WarlordsShopMenu {
                                     Warlords.setRejoinPoint(player.getUniqueId(), teleportDestination);
                                 }
                             }
-                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
-                            Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
+                            ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
+                            PlayerSettings.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
                         }
                         openTeamMenu(player);
                     }
@@ -650,7 +655,7 @@ public class WarlordsShopMenu {
 
     public static void openLobbyAbilityMenu(Player player) {
         Menu menu = new Menu("Class Information", 9);
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
         AbstractPlayerClass apc = selectedSpec.create.get();
 

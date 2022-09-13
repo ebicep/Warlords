@@ -292,7 +292,7 @@ public enum GameMode {
         List<Option> options = new ArrayList<>(64);
 
         options.add(new PreGameItemOption(1, (g, p) -> {
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(p.getUniqueId());
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p.getUniqueId());
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
@@ -352,7 +352,7 @@ public enum GameMode {
                     .name(value.chatColor + value.name);
             StringBuilder lore = new StringBuilder(ChatColor.GREEN + "Total: " + ChatColor.GOLD +
                     (int) game.getPlayers().keySet().stream()
-                            .map(Warlords::getPlayerSettings)
+                            .map(PlayerSettings::getPlayerSettings)
                             .map(PlayerSettings::getSelectedSpec)
                             .filter(c -> c.specType == value)
                             .count() + "\n\n");
@@ -360,7 +360,7 @@ public enum GameMode {
                     .filter(classes -> classes.specType == value)
                     .forEach(classes -> {
                         int playersOnSpec = (int) game.getPlayers().keySet().stream()
-                                .map(Warlords::getPlayerSettings)
+                                .map(PlayerSettings::getPlayerSettings)
                                 .map(PlayerSettings::getSelectedSpec)
                                 .filter(c -> c == classes)
                                 .count();

@@ -11,22 +11,23 @@ import com.ebicep.warlords.player.general.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-@CommandAlias("pq")
-public class ParticleQualityCommand extends BaseCommand {
+@CommandAlias("flagmessagemode")
+public class FlagMessageModeCommand extends BaseCommand {
 
     @Default
-    @Description("Sets your particle quality")
-    public void particleQuality(Player player, Settings.ParticleQuality particleQuality) {
+    @Description("Toggles flag message mode")
+    public void flagMessage(Player player) {
         PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        settings.setParticleQuality(particleQuality);
-
-        player.sendMessage(ChatColor.GREEN + "Particle Quality set to " + particleQuality);
-
+        settings.setFlagMessageMode(settings.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE ? Settings.FlagMessageMode.RELATIVE : Settings.FlagMessageMode.ABSOLUTE);
+        if (settings.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE) {
+            player.sendMessage(ChatColor.GREEN + "Flag Message Mode " + ChatColor.YELLOW + "ABSOLUTE " + ChatColor.GREEN + "enabled.");
+        } else {
+            player.sendMessage(ChatColor.GREEN + "Flag Message Mode " + ChatColor.AQUA + "RELATIVE " + ChatColor.GREEN + "enabled.");
+        }
         if (DatabaseManager.playerService != null) {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-            databasePlayer.setParticleQuality(particleQuality);
+            databasePlayer.setFlagMessageMode(settings.getFlagMessageMode());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         }
     }
-
 }

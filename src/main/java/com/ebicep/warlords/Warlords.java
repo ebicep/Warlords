@@ -81,16 +81,15 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class Warlords extends JavaPlugin {
-    public static final HashMap<UUID, Location> spawnPoints = new HashMap<>();
-    private static final HashMap<UUID, WarlordsEntity> players = new HashMap<>();
-    private static final HashMap<UUID, PlayerSettings> playerSettings = new HashMap<>();
+    public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
+    public static final ConcurrentHashMap<UUID, ChatChannels> PLAYER_CHAT_CHANNELS = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
+    public static final AtomicInteger LOOP_TICK_COUNTER = new AtomicInteger(0);
+    private static final HashMap<UUID, WarlordsEntity> PLAYERS = new HashMap<>();
     public static String VERSION = "";
     public static String serverIP;
     public static boolean holographicDisplaysEnabled;
     public static boolean citizensEnabled;
-    public static ConcurrentHashMap<UUID, ChatChannels> playerChatChannels = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<UUID, CustomScoreboard> playerScoreboards = new ConcurrentHashMap<>();
-    public static AtomicInteger loopTickCounter = new AtomicInteger(0);
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -102,8 +101,8 @@ public class Warlords extends JavaPlugin {
 
     private GameManager gameManager;
 
-    public static Warlords getInstance() {
-        return instance;
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
     }
 
     public static <T> TaskChain<T> newChain() {
@@ -115,11 +114,11 @@ public class Warlords extends JavaPlugin {
     }
 
     public static HashMap<UUID, WarlordsEntity> getPlayers() {
-        return players;
+        return PLAYERS;
     }
 
     public static void addPlayer(@Nonnull WarlordsEntity warlordsEntity) {
-        players.put(warlordsEntity.getUuid(), warlordsEntity);
+        PLAYERS.put(warlordsEntity.getUuid(), warlordsEntity);
         for (GameAddon addon : warlordsEntity.getGame().getAddons()) {
             addon.warlordsEntityCreated(warlordsEntity.getGame(), warlordsEntity);
         }
@@ -132,9 +131,9 @@ public class Warlords extends JavaPlugin {
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
             Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
-                                                     .stream()
-                                                     .filter(e -> e.value() instanceof WarlordsEntity)
-                                                     .findAny();
+                    .stream()
+                    .filter(e -> e.value() instanceof WarlordsEntity)
+                    .findAny();
             if (metadata.isPresent()) {
                 return (WarlordsEntity) metadata.get().value();
             }
@@ -143,34 +142,26 @@ public class Warlords extends JavaPlugin {
     }
 
     @Nullable
-    public static WarlordsEntity getPlayer(@Nullable OfflinePlayer player) {
-        return player == null ? null : getPlayer(player.getUniqueId());
-    }
-
-    @Nullable
     public static WarlordsEntity getPlayer(@Nullable Player player) {
         return getPlayer((OfflinePlayer) player);
     }
 
     @Nullable
+    public static WarlordsEntity getPlayer(@Nullable OfflinePlayer player) {
+        return player == null ? null : getPlayer(player.getUniqueId());
+    }
+
+    @Nullable
     public static WarlordsEntity getPlayer(@Nonnull UUID uuid) {
-        return players.get(uuid);
-    }
-
-    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
-        return hasPlayer(player.getUniqueId());
-    }
-
-    public static boolean hasPlayer(@Nonnull UUID player) {
-        return players.containsKey(player);
+        return PLAYERS.get(uuid);
     }
 
     public static void removePlayer(@Nonnull UUID player) {
-        WarlordsEntity wp = players.remove(player);
+        WarlordsEntity wp = PLAYERS.remove(player);
         if (wp != null) {
             wp.onRemove();
         }
-        Location loc = spawnPoints.remove(player);
+        Location loc = SPAWN_POINTS.remove(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
             p.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
@@ -180,67 +171,117 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-    @Nonnull
-    public static Location getRejoinPoint(@Nonnull UUID key) {
-        return spawnPoints.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
+    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
+        return hasPlayer(player.getUniqueId());
     }
 
-    public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
-        spawnPoints.put(key, value);
-        Player player = Bukkit.getPlayer(key);
-        if (player != null) {
-            player.teleport(value);
-        }
-    }
-
-    @Nonnull
-    public static PlayerSettings getPlayerSettings(@Nonnull UUID key) {
-        return playerSettings.computeIfAbsent(key, (k) -> new PlayerSettings());
-    }
-
-    public static void setPlayerSettings(@Nonnull UUID key, @Nonnull PlayerSettings value) {
-        playerSettings.put(key, value);
-    }
-
-    public static GameManager getGameManager() {
-        return getInstance().gameManager;
+    public static boolean hasPlayer(@Nonnull UUID player) {
+        return PLAYERS.containsKey(player);
     }
 
     public static boolean onCustomServer() {
         return !serverIP.equals("51.81.49.127");
     }
 
-    public void readKeysConfig() {
-        try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
-            ApplicationConfiguration.key = config.getString("database_key");
-            BotManager.botToken = config.getString("botToken");
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static Warlords getInstance() {
+        return instance;
+    }
+
+    @Nonnull
+    public static Location getRejoinPoint(@Nonnull UUID key) {
+        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
+    }
+
+    public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
+        SPAWN_POINTS.put(key, value);
+        Player player = Bukkit.getPlayer(key);
+        if (player != null) {
+            player.teleport(value);
         }
     }
 
-    public void readWeaponConfig() {
+
+    @Override
+    public void onDisable() {
+        if (BotManager.task != null) {
+            BotManager.task.cancel();
+        }
         try {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "weapons.yml"));
-            for (String key : config.getKeys(false)) {
-                Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
+            //updates all queues, locks main thread to ensure update is complete before disabling
+            if (DatabaseManager.enabled) {
+                DatabaseManager.updateQueue();
+                if (MasterworksFairManager.currentFair != null) {
+                    DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                }
+                GuildManager.updateGuilds();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void saveWeaponConfig() {
         try {
-            YamlConfiguration config = new YamlConfiguration();
-            for (Weapons weapons : Weapons.VALUES) {
-                config.set(weapons.getName(), weapons.isUnlocked);
-            }
-            config.save(new File(this.getDataFolder(), "weapons.yml"));
+            taskChainFactory.shutdown(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            // Pre-caution
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.getActivePotionEffects().clear();
+                player.removeMetadata("WARLORDS_PLAYER", this);
+                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            CraftServer server = (CraftServer) Bukkit.getServer();
+            server.getEntityMetadata().invalidateAll(this);
+            server.getWorldMetadata().invalidateAll(this);
+            server.getPlayerMetadata().invalidateAll(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            gameManager.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (holographicDisplaysEnabled) {
+                HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            NPCManager.destroyNPCs();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Bukkit.getWorld("MainLobby").getEntities().stream()
+                    .filter(entity -> entity.getName().equals("capture-the-flag"))
+                    .filter(entity -> entity.getName().equals("pve-mode"))
+                    .forEach(Entity::remove);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            BotManager.deleteStatusMessage();
+            if (BotManager.jda != null) {
+                BotManager.jda.shutdownNow();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            SignGUI.destroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
     }
 
     @Override
@@ -346,7 +387,7 @@ public class Warlords extends JavaPlugin {
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.teleport(getRejoinPoint(player.getUniqueId()));
             player.getInventory().clear();
-            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+            PLAYER_SCOREBOARDS.put(player.getUniqueId(), new CustomScoreboard(player));
             PlayerHotBarItemListener.giveLobbyHotBar(player, false);
         });
 
@@ -376,7 +417,7 @@ public class Warlords extends JavaPlugin {
                         if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
                             Player player = event.getPlayer();
                             if (Warlords.hasPlayer(player)) {
-                                if (counter++ % playerSettings.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
+                                if (counter++ % PlayerSettings.PLAYER_SETTINGS.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
                                     event.setCancelled(true);
                                 }
                             }
@@ -423,88 +464,39 @@ public class Warlords extends JavaPlugin {
         ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is enabled");
     }
 
-    @Override
-    public void onDisable() {
-        if (BotManager.task != null) {
-            BotManager.task.cancel();
-        }
+    public void readKeysConfig() {
         try {
-            //updates all queues, locks main thread to ensure update is complete before disabling
-            if (DatabaseManager.enabled) {
-                DatabaseManager.updateQueue();
-                if (MasterworksFairManager.currentFair != null) {
-                    DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
-                }
-                GuildManager.updateGuilds();
-            }
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
+            ApplicationConfiguration.key = config.getString("database_key");
+            BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            taskChainFactory.shutdown(10, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            // Pre-caution
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.removePotionEffect(PotionEffectType.BLINDNESS);
-                player.getActivePotionEffects().clear();
-                player.removeMetadata("WARLORDS_PLAYER", this);
-                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            CraftServer server = (CraftServer) Bukkit.getServer();
-            server.getEntityMetadata().invalidateAll(this);
-            server.getWorldMetadata().invalidateAll(this);
-            server.getPlayerMetadata().invalidateAll(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            gameManager.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            if (holographicDisplaysEnabled) {
-                HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            NPCManager.destroyNPCs();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Bukkit.getWorld("MainLobby").getEntities().stream()
-                    .filter(entity -> entity.getName().equals("capture-the-flag"))
-                    .filter(entity -> entity.getName().equals("pve-mode"))
-                    .forEach(Entity::remove);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            BotManager.deleteStatusMessage();
-            if (BotManager.jda != null) {
-                BotManager.jda.shutdownNow();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            SignGUI.destroy();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Plugin is disabled");
     }
+
+    public void readWeaponConfig() {
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "weapons.yml"));
+            for (String key : config.getKeys(false)) {
+                Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveWeaponConfig() {
+        try {
+            YamlConfiguration config = new YamlConfiguration();
+            for (Weapons weapons : Weapons.VALUES) {
+                config.set(weapons.getName(), weapons.isUnlocked);
+            }
+            config.save(new File(this.getDataFolder(), "weapons.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void startMainLoop() {
         new BukkitRunnable() {
@@ -512,7 +504,7 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
                 // Every 1 tick - 0.05 seconds.
-                for (WarlordsEntity wp : players.values()) {
+                for (WarlordsEntity wp : PLAYERS.values()) {
                     Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
                     if (player != null) {
                         //ACTION BAR
@@ -752,7 +744,7 @@ public class Warlords extends JavaPlugin {
                             itr.remove();
 
                             float orbHeal = OrbsOfLife.ORB_HEALING;
-                            if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
+                            if (PlayerSettings.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
                                 orbHeal *= 1.2;
                             }
 
@@ -790,8 +782,8 @@ public class Warlords extends JavaPlugin {
                 }
 
                 // Loops every 10 ticks - .5 second.
-                if (loopTickCounter.get() % 10 == 0) {
-                    for (WarlordsEntity wps : players.values()) {
+                if (LOOP_TICK_COUNTER.get() % 10 == 0) {
+                    for (WarlordsEntity wps : PLAYERS.values()) {
                         // Soulbinding Weapon - decrementing time left on the ability.
                         new CooldownFilter<>(wps, PersistentCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
@@ -805,12 +797,12 @@ public class Warlords extends JavaPlugin {
                 }
 
                 // Loops every 20 ticks - 1 second.
-                if (loopTickCounter.get() % 20 == 0) {
+                if (LOOP_TICK_COUNTER.get() % 20 == 0) {
 
                     // Removes leftover horses if there are any.
                     RemoveEntities.removeHorsesInGame();
 
-                    for (WarlordsEntity wps : players.values()) {
+                    for (WarlordsEntity wps : PLAYERS.values()) {
                         // Checks whether the game is paused.
                         if (wps.getGame().isFrozen()) {
                             continue;
@@ -832,7 +824,8 @@ public class Warlords extends JavaPlugin {
                             wps.setHealth(Math.max(wps.getHealth(),
                                     Math.min(wps.getHealth() + healthToAdd,
                                             wps.getMaxHealth()
-                                    )));
+                                    )
+                            ));
                         }
 
                         // Cooldowns
@@ -874,8 +867,8 @@ public class Warlords extends JavaPlugin {
                 }
 
                 // Loops every 50 ticks - 2.5 seconds.
-                if (loopTickCounter.get() % 50 == 0) {
-                    for (WarlordsEntity warlordsPlayer : players.values()) {
+                if (LOOP_TICK_COUNTER.get() % 50 == 0) {
+                    for (WarlordsEntity warlordsPlayer : PLAYERS.values()) {
 
                         if (warlordsPlayer.getGame().isFrozen()) {
                             continue;
@@ -892,25 +885,12 @@ public class Warlords extends JavaPlugin {
                     }
                 }
 
-                loopTickCounter.getAndIncrement();
+                LOOP_TICK_COUNTER.getAndIncrement();
             }
 
         }.runTaskTimer(this, 0, 0);
     }
 
-    private Map<UUID, Game> getPlayersToGame() {
-        Map<UUID, Game> players = new HashMap<>();
-        for (GameManager.GameHolder holder : gameManager.getGames()) {
-            Game game = holder.getGame();
-            if (game != null) {
-                //Stream<Map.Entry<UUID, Team>> players()
-                for (Map.Entry<UUID, Team> e : iterable(game.players())) {
-                    players.put(e.getKey(), game);
-                }
-            }
-        }
-        return players;
-    }
 
     public void hideAndUnhidePeople(@Nonnull Player player) {
         Map<UUID, Game> players = getPlayersToGame();
@@ -949,4 +929,19 @@ public class Warlords extends JavaPlugin {
             }
         }
     }
+
+    private Map<UUID, Game> getPlayersToGame() {
+        Map<UUID, Game> players = new HashMap<>();
+        for (GameManager.GameHolder holder : gameManager.getGames()) {
+            Game game = holder.getGame();
+            if (game != null) {
+                //Stream<Map.Entry<UUID, Team>> players()
+                for (Map.Entry<UUID, Team> e : iterable(game.players())) {
+                    players.put(e.getKey(), game);
+                }
+            }
+        }
+        return players;
+    }
+
 }

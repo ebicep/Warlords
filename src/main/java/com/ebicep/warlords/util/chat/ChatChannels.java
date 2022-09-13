@@ -58,7 +58,7 @@ public enum ChatChannels {
         public String getFormat(Player player, String prefixWithColor) {
             UUID uuid = player.getUniqueId();
             WarlordsEntity wp = Warlords.getPlayer(player);
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedSpec());
 
             if (wp != null) {
@@ -135,7 +135,7 @@ public enum ChatChannels {
                 setRecipients(player, e.getRecipients());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
-                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                Warlords.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
                 e.setCancelled(true);
             }
@@ -173,7 +173,7 @@ public enum ChatChannels {
                 setRecipients(player, e.getRecipients());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
-                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                Warlords.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
                 e.setCancelled(true);
             }
@@ -217,10 +217,10 @@ public enum ChatChannels {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    ChatChannels oldChatChannel = Warlords.playerChatChannels.getOrDefault(uuid, ALL);
-                    Warlords.playerChatChannels.put(uuid, chatChannel == null ? ALL : chatChannel);
+                    ChatChannels oldChatChannel = Warlords.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ALL);
+                    Warlords.PLAYER_CHAT_CHANNELS.put(uuid, chatChannel == null ? ALL : chatChannel);
                     player.chat(finalMessage);
-                    Warlords.playerChatChannels.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
+                    Warlords.PLAYER_CHAT_CHANNELS.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
                 }
             }.runTaskAsynchronously(Warlords.getInstance());
         } else {
@@ -263,7 +263,7 @@ public enum ChatChannels {
     }
 
     public static void switchChannels(Player player, ChatChannels chatChannel) {
-        Warlords.playerChatChannels.put(player.getUniqueId(), chatChannel);
+        Warlords.PLAYER_CHAT_CHANNELS.put(player.getUniqueId(), chatChannel);
         player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name() + ChatColor.GREEN + " channel");
     }
 

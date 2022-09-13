@@ -179,7 +179,8 @@ public class DatabaseManager {
             }
         }
 
-        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedSpec(databasePlayer.getLastSpec());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
 
         ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
         ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
@@ -193,50 +194,27 @@ public class DatabaseManager {
         ArmorManager.ArmorSets.setSelectedRogue(player, databasePlayer.getRogue().getArmor());
 
         HashMap<Specializations, Weapons> weaponSkins = new HashMap<>();
-        weaponSkins.put(Specializations.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());
-        weaponSkins.put(Specializations.CRYOMANCER, databasePlayer.getMage().getCryomancer().getWeapon());
-        weaponSkins.put(Specializations.AQUAMANCER, databasePlayer.getMage().getAquamancer().getWeapon());
-        weaponSkins.put(Specializations.BERSERKER, databasePlayer.getWarrior().getBerserker().getWeapon());
-        weaponSkins.put(Specializations.DEFENDER, databasePlayer.getWarrior().getDefender().getWeapon());
-        weaponSkins.put(Specializations.REVENANT, databasePlayer.getWarrior().getRevenant().getWeapon());
-        weaponSkins.put(Specializations.AVENGER, databasePlayer.getPaladin().getAvenger().getWeapon());
-        weaponSkins.put(Specializations.CRUSADER, databasePlayer.getPaladin().getCrusader().getWeapon());
-        weaponSkins.put(Specializations.PROTECTOR, databasePlayer.getPaladin().getProtector().getWeapon());
-        weaponSkins.put(Specializations.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
-        weaponSkins.put(Specializations.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
-        weaponSkins.put(Specializations.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
-        weaponSkins.put(Specializations.ASSASSIN, databasePlayer.getRogue().getAssassin().getWeapon());
-        weaponSkins.put(Specializations.VINDICATOR, databasePlayer.getRogue().getVindicator().getWeapon());
-        weaponSkins.put(Specializations.APOTHECARY, databasePlayer.getRogue().getApothecary().getWeapon());
+        for (Specializations spec : Specializations.VALUES) {
+            weaponSkins.put(spec, databasePlayer.getSpec(spec).getWeapon());
+        }
         weaponSkins.values().removeAll(Collections.singleton(null));
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
+        playerSettings.setWeaponSkins(weaponSkins);
 
         HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>();
-        classesSkillBoosts.put(Specializations.PYROMANCER, databasePlayer.getMage().getPyromancer().getSkillBoost());
-        classesSkillBoosts.put(Specializations.CRYOMANCER, databasePlayer.getMage().getCryomancer().getSkillBoost());
-        classesSkillBoosts.put(Specializations.AQUAMANCER, databasePlayer.getMage().getAquamancer().getSkillBoost());
-        classesSkillBoosts.put(Specializations.BERSERKER, databasePlayer.getWarrior().getBerserker().getSkillBoost());
-        classesSkillBoosts.put(Specializations.DEFENDER, databasePlayer.getWarrior().getDefender().getSkillBoost());
-        classesSkillBoosts.put(Specializations.REVENANT, databasePlayer.getWarrior().getRevenant().getSkillBoost());
-        classesSkillBoosts.put(Specializations.AVENGER, databasePlayer.getPaladin().getAvenger().getSkillBoost());
-        classesSkillBoosts.put(Specializations.CRUSADER, databasePlayer.getPaladin().getCrusader().getSkillBoost());
-        classesSkillBoosts.put(Specializations.PROTECTOR, databasePlayer.getPaladin().getProtector().getSkillBoost());
-        classesSkillBoosts.put(Specializations.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getSkillBoost());
-        classesSkillBoosts.put(Specializations.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getSkillBoost());
-        classesSkillBoosts.put(Specializations.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getSkillBoost());
-        classesSkillBoosts.put(Specializations.ASSASSIN, databasePlayer.getRogue().getAssassin().getSkillBoost());
-        classesSkillBoosts.put(Specializations.VINDICATOR, databasePlayer.getRogue().getVindicator().getSkillBoost());
-        classesSkillBoosts.put(Specializations.APOTHECARY, databasePlayer.getRogue().getApothecary().getSkillBoost());
+        for (Specializations spec : Specializations.VALUES) {
+            classesSkillBoosts.put(spec, databasePlayer.getSpec(spec).getSkillBoost());
+        }
         classesSkillBoosts.values().removeAll(Collections.singleton(null));
         classesSkillBoosts.forEach((specializations, skillBoosts) -> {
             if (!specializations.skillBoosts.contains(skillBoosts)) {
                 classesSkillBoosts.put(specializations, specializations.skillBoosts.get(0));
             }
         });
-        Warlords.getPlayerSettings(player.getUniqueId()).setSpecsSkillBoosts(classesSkillBoosts);
+        playerSettings.setSpecsSkillBoosts(classesSkillBoosts);
 
-        Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
-        Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
+        playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
+        playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
+        playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
     }
 
     public static void updateQueue() {

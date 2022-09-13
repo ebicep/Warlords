@@ -23,7 +23,7 @@ public class SyncTimerState implements State {
     @Nullable
     @Override
     public State run() {
-        return Warlords.loopTickCounter.get() % 20 == 0 ? new PlayingState(game) : null;
+        return Warlords.LOOP_TICK_COUNTER.get() % 20 == 0 ? new PlayingState(game) : null;
     }
 
     @Override

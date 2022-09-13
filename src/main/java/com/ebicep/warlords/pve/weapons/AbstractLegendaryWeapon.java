@@ -1,12 +1,8 @@
 package com.ebicep.warlords.pve.weapons;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.player.general.SkillBoosts;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.player.general.WeaponsRarity;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -40,7 +36,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     public AbstractLegendaryWeapon(UUID uuid) {
         super(uuid);
-        Specializations selectedSpec = Warlords.getPlayerSettings(uuid).getSelectedSpec();
+        Specializations selectedSpec = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
         this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);

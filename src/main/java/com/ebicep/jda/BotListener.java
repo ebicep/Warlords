@@ -9,6 +9,7 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -195,12 +196,12 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             }
                                             //includes offline players
                                             if (isBlueTeam) {
-                                                Warlords.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
+                                                PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
                                             } else if (isRedTeam) {
-                                                Warlords.getPlayerSettings(uuid).setWantedTeam(Team.RED);
+                                                PlayerSettings.getPlayerSettings(uuid).setWantedTeam(Team.RED);
                                             }
                                             if (!spec.isEmpty()) {
-                                                Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
+                                                PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
                                                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
                                                 if (databasePlayer != null) {
                                                     databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));

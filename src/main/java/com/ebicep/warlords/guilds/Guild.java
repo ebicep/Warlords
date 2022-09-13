@@ -181,17 +181,20 @@ public class Guild {
 
     public String getList() {
         StringBuilder sb = new StringBuilder(ChatColor.GREEN + "------------------------------------------\n");
-        sb.append(ChatColor.GOLD).append("Guild Name: ").append(this.name).append("\n \n");
+        sb.append(ChatColor.GOLD).append(" Guild Name: ").append(this.name).append("\n \n");
         for (GuildRole role : this.roles) {
-            sb.append(ChatColor.GREEN).append("= ").append(role.getRoleName()).append(" =\n");
+            if (role.getPlayers().isEmpty()) {
+                continue;
+            }
+            sb.append(ChatColor.GREEN).append(ChatColor.BOLD).append(" = ").append(role.getRoleName()).append(" =\n ");
             players.stream()
                     .filter(player -> role.getPlayers().contains(player.getUUID()))
                     .forEach(player -> sb.append(player.getListName()).append(" "));
             sb.append("\n \n");
         }
         sb.append(" \n");
-        sb.append(ChatColor.YELLOW).append("Total Players: ").append(ChatColor.GREEN).append(this.players.size()).append("\n");
-        sb.append(ChatColor.YELLOW).append("Online Players: ").append(ChatColor.GREEN).append(this.getOnlinePlayers().size()).append("\n");
+        sb.append(ChatColor.YELLOW).append(" Total Players: ").append(ChatColor.GREEN).append(this.players.size()).append("\n");
+        sb.append(ChatColor.YELLOW).append(" Online Players: ").append(ChatColor.GREEN).append(this.getOnlinePlayers().size()).append("\n");
         sb.append(ChatColor.GREEN).append("------------------------------------------\n");
         return sb.toString();
     }

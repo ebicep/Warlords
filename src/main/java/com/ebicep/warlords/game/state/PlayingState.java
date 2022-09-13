@@ -90,7 +90,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
-            CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
+            CustomScoreboard customScoreboard = Warlords.PLAYER_SCOREBOARDS.get(wp.getUuid());
             updateBasedOnGameState(customScoreboard, wp);
         });
 
@@ -251,7 +251,7 @@ public class PlayingState implements State, TimerDebugAble {
 
     private void updateScoreboard() {
         game.forEachOnlinePlayer((player, team) -> {
-            updateBasedOnGameState(Warlords.playerScoreboards.get(player.getUniqueId()), Warlords.getPlayer(player));
+            updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()), Warlords.getPlayer(player));
         });
     }
 
@@ -324,8 +324,8 @@ public class PlayingState implements State, TimerDebugAble {
      */
     public void updatePlayerName(@Nonnull WarlordsEntity we) {
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            if (Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
-                Scoreboard scoreboard = Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard();
+            if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
+                Scoreboard scoreboard = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard();
                 int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
                 //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
                 scoreboard.getTeam(we.getName())
@@ -382,7 +382,7 @@ public class PlayingState implements State, TimerDebugAble {
             ).map(LocationMarker::getLocation).collect(Utils.randomElement());
             player.teleport(spawn);
         }
-        CustomScoreboard sb = Warlords.playerScoreboards.get(player.getUniqueId());
+        CustomScoreboard sb = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId());
         updateBasedOnGameState(sb, wp);
     }
 

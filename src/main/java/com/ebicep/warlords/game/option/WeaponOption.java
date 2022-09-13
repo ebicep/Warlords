@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -47,7 +48,7 @@ public class WeaponOption implements Option {
                                 "",
                                 ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass()
                                         .getSimpleName() + "):",
-                                Warlords.getPlayerSettings(player.getUniqueId())
+                                PlayerSettings.getPlayerSettings(player.getUniqueId())
                                         .getSkillBoostForClass().selectedDescription,
                                 "",
                                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",

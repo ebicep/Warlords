@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons;
 
-import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -41,7 +41,7 @@ public abstract class AbstractWeapon {
 
     public AbstractWeapon(UUID uuid) {
         generateStats();
-        this.specialization = Warlords.getPlayerSettings(uuid).getSelectedSpec();
+        this.specialization = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {

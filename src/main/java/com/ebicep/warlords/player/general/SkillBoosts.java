@@ -846,6 +846,7 @@ public enum SkillBoosts {
 
     ;
 
+    public static final SkillBoosts[] VALUES = values();
     public final String name;
     public final String description;
     public final String selectedDescription;

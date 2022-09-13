@@ -40,7 +40,7 @@ public class InterchangeModeOption implements Option {
         //saving player info as it will be modified during the game
         game.getPlayers().forEach((uuid, team) -> {
             System.out.println("SETTING " + Bukkit.getOfflinePlayer(uuid).getName());
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             previousPlayerSettings.put(uuid, playerSettings);
         });
 
@@ -70,7 +70,7 @@ public class InterchangeModeOption implements Option {
         //resetting player info
         game.getPlayers().forEach((uuid, team) -> {
             System.out.println("RESETTING " + Bukkit.getOfflinePlayer(uuid).getName());
-            Warlords.setPlayerSettings(uuid, previousPlayerSettings.get(uuid));
+            PlayerSettings.setPlayerSettings(uuid, previousPlayerSettings.get(uuid));
         });
     }
 
@@ -102,7 +102,7 @@ public class InterchangeModeOption implements Option {
         for (WarlordsEntity teamPlayer : teamPlayers) {
             UUID uuid = teamPlayer.getUuid();
             playerLocations.put(uuid, teamPlayer.getLocation());
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             playerClasses.put(uuid, playerSettings.getSelectedSpec());
             playerBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
             playerWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
@@ -117,7 +117,7 @@ public class InterchangeModeOption implements Option {
         UUID secondPlayerUuid = secondPlayer.getUuid();
         LivingEntity secondPlayerEntity = secondPlayer.getEntity();
 
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(secondPlayer.getUuid());
 
         for (int i = 0; i < teamPlayers.size() - 1; i++) {
             transferPlayerStats(teamPlayers.get(i), teamPlayers.get(i + 1),
@@ -196,7 +196,7 @@ public class InterchangeModeOption implements Option {
             );
         }
         //copying over playersettings
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(secondPlayer.getUuid());
         playerSettings.setSelectedSpec(playerClasses.get(firstPlayerUuid));
         playerSettings.setWeaponSkins(playerWeaponSkins.get(firstPlayerUuid));
         playerSettings.setSpecsSkillBoosts(playerBoosts.get(firstPlayerUuid));

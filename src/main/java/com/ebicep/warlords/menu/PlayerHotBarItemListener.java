@@ -90,7 +90,7 @@ public class PlayerHotBarItemListener implements Listener {
 
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
         UUID uuid = player.getUniqueId();
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         Specializations selectedSpec = playerSettings.getSelectedSpec();
         AbstractPlayerClass apc = selectedSpec.create.get();
 

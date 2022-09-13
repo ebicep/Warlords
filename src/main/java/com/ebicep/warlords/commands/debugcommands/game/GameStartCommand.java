@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Pair;
@@ -283,7 +284,7 @@ public class GameStartCommand extends BaseCommand {
         boolean allHaveBoundWeapons = true;
         if (gameMode == GameMode.WAVE_DEFENSE && DatabaseManager.playerService != null) {
             for (Player person : people) {
-                Specializations selectedSpec = Warlords.getPlayerSettings(person.getUniqueId()).getSelectedSpec();
+                Specializations selectedSpec = PlayerSettings.getPlayerSettings(person.getUniqueId()).getSelectedSpec();
                 DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(person.getUniqueId());
                 DatabasePlayerPvE databaseBasePvE = databasePlayer.getPveStats();
                 Optional<AbstractWeapon> optionalBoundWeapon = databaseBasePvE.getWeaponInventory().stream()

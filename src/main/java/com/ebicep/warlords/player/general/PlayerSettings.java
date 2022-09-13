@@ -1,20 +1,19 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.game.Team;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.ebicep.warlords.player.general.ArmorManager.Helmets.*;
 import static com.ebicep.warlords.player.general.Weapons.FELFLAME_BLADE;
 
 public class PlayerSettings {
 
-    private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<Specializations, SkillBoosts>() {{
+    public static final HashMap<UUID, PlayerSettings> PLAYER_SETTINGS = new HashMap<>();
+    private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>() {{
         put(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
         put(Specializations.CRYOMANCER, SkillBoosts.FROST_BOLT);
         put(Specializations.AQUAMANCER, SkillBoosts.WATER_BOLT);
@@ -31,7 +30,7 @@ public class PlayerSettings {
         put(Specializations.VINDICATOR, SkillBoosts.RIGHTEOUS_STRIKE);
         put(Specializations.APOTHECARY, SkillBoosts.IMPALING_STRIKE);
     }};
-    private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<Specializations, Weapons>() {{
+    private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<>() {{
         put(Specializations.PYROMANCER, Weapons.FELFLAME_BLADE);
         put(Specializations.CRYOMANCER, Weapons.FELFLAME_BLADE);
         put(Specializations.AQUAMANCER, Weapons.FELFLAME_BLADE);
@@ -46,8 +45,9 @@ public class PlayerSettings {
         put(Specializations.EARTHWARDEN, Weapons.FELFLAME_BLADE);
     }};
     private Specializations selectedSpec = Specializations.PYROMANCER;
-    private boolean hotKeyMode = true;
+    private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+    private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
     /**
      * Preferred team in the upcoming warlords game
      */
@@ -65,18 +65,17 @@ public class PlayerSettings {
     private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_ROGUE;
 
     @Nonnull
-    public Specializations getSelectedSpec() {
-        if (selectedSpec == null) {
-            System.out.println("ERROR: SELECTED SPEC IS NULL");
-            return Specializations.PYROMANCER;
-        }
-        return selectedSpec;
+    public static PlayerSettings getPlayerSettings(@Nonnull UUID key) {
+        return PLAYER_SETTINGS.computeIfAbsent(key, (k) -> new PlayerSettings());
     }
 
-    public void setSelectedSpec(Specializations selectedSpec) {
-        if (selectedSpec != null) {
-            this.selectedSpec = selectedSpec;
-        }
+    @Nonnull
+    public static PlayerSettings getPlayerSettings(@Nonnull Player player) {
+        return getPlayerSettings(player.getUniqueId());
+    }
+
+    public static void setPlayerSettings(@Nonnull UUID key, @Nonnull PlayerSettings value) {
+        PLAYER_SETTINGS.put(key, value);
     }
 
     public SkillBoosts getSkillBoostForClass() {
@@ -114,16 +113,27 @@ public class PlayerSettings {
         this.wantedTeam = wantedTeam;
     }
 
-    public boolean getHotKeyMode() {
-        return hotKeyMode;
+    public Weapons getWeaponSkin() {
+        return this.getWeaponSkins().getOrDefault(this.getSelectedSpec(), FELFLAME_BLADE);
     }
 
     public HashMap<Specializations, Weapons> getWeaponSkins() {
         return weaponSkins;
     }
-    
-    public Weapons getWeaponSkin() {
-        return this.getWeaponSkins().getOrDefault(this.getSelectedSpec(), FELFLAME_BLADE);
+
+    @Nonnull
+    public Specializations getSelectedSpec() {
+        if (selectedSpec == null) {
+            System.out.println("ERROR: SELECTED SPEC IS NULL");
+            return Specializations.PYROMANCER;
+        }
+        return selectedSpec;
+    }
+
+    public void setSelectedSpec(Specializations selectedSpec) {
+        if (selectedSpec != null) {
+            this.selectedSpec = selectedSpec;
+        }
     }
 
     public void setWeaponSkins(HashMap<Specializations, Weapons> weaponSkins) {
@@ -141,12 +151,20 @@ public class PlayerSettings {
         this.particleQuality = particleQuality;
     }
 
-    public boolean isHotKeyMode() {
-        return hotKeyMode;
+    public Settings.HotkeyMode getHotkeyMode() {
+        return hotkeyMode;
     }
 
-    public void setHotKeyMode(boolean hotKeyMode) {
-        this.hotKeyMode = hotKeyMode;
+    public void setHotkeyMode(Settings.HotkeyMode hotkeyMode) {
+        this.hotkeyMode = hotkeyMode;
+    }
+
+    public Settings.FlagMessageMode getFlagMessageMode() {
+        return flagMessageMode;
+    }
+
+    public void setFlagMessageMode(Settings.FlagMessageMode flagMessageMode) {
+        this.flagMessageMode = flagMessageMode;
     }
 
     public List<ArmorManager.Helmets> getHelmets() {

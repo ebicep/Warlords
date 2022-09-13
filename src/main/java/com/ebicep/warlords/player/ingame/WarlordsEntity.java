@@ -1245,7 +1245,7 @@ public abstract class WarlordsEntity {
     }
 
     public void applySkillBoost(Player player) {
-        SkillBoosts selectedBoost = Warlords.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId())
+        SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId())
                 .getSkillBoostForClass();
         if (selectedBoost != null) {
             for (AbstractAbility ability : spec.getAbilities()) {
@@ -1405,12 +1405,12 @@ public abstract class WarlordsEntity {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         if (this instanceof WarlordsPlayer) {
-            Warlords.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
-            Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
+            PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
+            PlayerSettings.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
             Player player = Bukkit.getPlayer(uuid);
             ArmorManager.resetArmor(player, specClass, team);
             this.weaponSkin = Weapons.getSelected(player, this.specClass);
-            this.specClass = Warlords.getPlayerSettings(uuid).getSelectedSpec();
+            this.specClass = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
 
             for (Option option : game.getOptions()) {
                 option.onSpecChange(this);

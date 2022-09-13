@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -64,7 +63,7 @@ public class ArmorManager {
         }
 
         public static List<Helmets> getSelected(UUID uuid) {
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             List<Helmets> armorSets = new ArrayList<>();
             armorSets.add(playerSettings.getMageHelmet());
             armorSets.add(playerSettings.getWarriorHelmet());
@@ -75,23 +74,23 @@ public class ArmorManager {
         }
 
         public static void setSelectedMage(Player player, Helmets selectedHelmet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setMageHelmet(selectedHelmet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setMageHelmet(selectedHelmet);
         }
 
         public static void setSelectedWarrior(Player player, Helmets selectedHelmet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setWarriorHelmet(selectedHelmet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setWarriorHelmet(selectedHelmet);
         }
 
         public static void setSelectedPaladin(Player player, Helmets selectedHelmet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setPaladinHelmet(selectedHelmet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setPaladinHelmet(selectedHelmet);
         }
 
         public static void setSelectedShaman(Player player, Helmets selectedHelmet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setShamanHelmet(selectedHelmet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setShamanHelmet(selectedHelmet);
         }
 
         public static void setSelectedRogue(Player player, Helmets selectedHelmet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setRogueHelmet(selectedHelmet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setRogueHelmet(selectedHelmet);
         }
     }
 
@@ -138,23 +137,23 @@ public class ArmorManager {
         }
 
         public static void setSelectedMage(Player player, ArmorSets selectedArmorSet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setMageArmor(selectedArmorSet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setMageArmor(selectedArmorSet);
         }
 
         public static void setSelectedWarrior(Player player, ArmorSets selectedArmorSet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setWarriorArmor(selectedArmorSet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setWarriorArmor(selectedArmorSet);
         }
 
         public static void setSelectedPaladin(Player player, ArmorSets selectedArmorSet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setPaladinArmor(selectedArmorSet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setPaladinArmor(selectedArmorSet);
         }
 
         public static void setSelectedShaman(Player player, ArmorSets selectedArmorSet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setShamanArmor(selectedArmorSet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setShamanArmor(selectedArmorSet);
         }
 
         public static void setSelectedRogue(Player player, ArmorSets selectedArmorSet) {
-            Warlords.getPlayerSettings(player.getUniqueId()).setRogueArmor(selectedArmorSet);
+            PlayerSettings.getPlayerSettings(player.getUniqueId()).setRogueArmor(selectedArmorSet);
         }
 
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
@@ -173,7 +172,7 @@ public class ArmorManager {
         }
 
         public static List<ArmorSets> getSelected(UUID uuid) {
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
             List<ArmorSets> armorSets = new ArrayList<>();
             armorSets.add(playerSettings.getMageArmor());
             armorSets.add(playerSettings.getWarriorArmor());

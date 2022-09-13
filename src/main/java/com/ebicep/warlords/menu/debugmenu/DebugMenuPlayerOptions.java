@@ -13,10 +13,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.SkillBoosts;
-import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -100,8 +97,9 @@ public class DebugMenuPlayerOptions {
                     sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName, true);
                 }
         );
-        firstRow.add(new ItemBuilder(Material.WOOL, 1, (short) (Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? 14 : 11))
-                        .name(ChatColor.GREEN + "Swap to the " + (Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
+        firstRow.add(new ItemBuilder(Material.WOOL, 1, (short) (PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? 14 : 11))
+                        .name(ChatColor.GREEN + "Swap to the " + (PlayerSettings.getPlayerSettings(player.getUniqueId())
+                                .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
                         .get(),
                 (m, e) -> {
                     Game game = target.getGame();
@@ -111,14 +109,17 @@ public class DebugMenuPlayerOptions {
                     target.setTeam(otherTeam);
 
                     target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
-                    Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
+                    PlayerSettings.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                     if (randomLobbyLocation != null) {
                         Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
                                 .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
                         target.teleport(teleportDestination);
                     }
-                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedSpec(), otherTeam);
+                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()),
+                            PlayerSettings.getPlayerSettings(target.getUuid()).getSelectedSpec(),
+                            otherTeam
+                    );
                     openPlayerMenu(player, target);
                     sendDebugMessage(player, ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team", true);
                 }
@@ -478,7 +479,7 @@ public class DebugMenuPlayerOptions {
                                         ChatColor.YELLOW + "Click to select!"
                                 ).get(),
                         (m, e) -> {
-                            Warlords.getPlayerSettings(target.getUuid()).setSkillBoostForSelectedSpec(skillBoost);
+                            PlayerSettings.getPlayerSettings(target.getUuid()).setSkillBoostForSelectedSpec(skillBoost);
                             target.setSpec(selectedSpec.create.get(), skillBoost);
 
                             target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));

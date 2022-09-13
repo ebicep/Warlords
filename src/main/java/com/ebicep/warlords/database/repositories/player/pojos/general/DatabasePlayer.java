@@ -73,6 +73,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+    @Field("flag_message")
+    private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
 
@@ -382,6 +384,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setParticleQuality(Settings.ParticleQuality particleQuality) {
         this.particleQuality = particleQuality;
+    }
+
+    public Settings.FlagMessageMode getFlagMessageMode() {
+        return flagMessageMode;
+    }
+
+    public void setFlagMessageMode(Settings.FlagMessageMode flagMessageMode) {
+        this.flagMessageMode = flagMessageMode;
     }
 
     public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {

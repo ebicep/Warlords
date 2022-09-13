@@ -52,7 +52,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
             @Nonnull Game game,
             @Nonnull Team team
     ) {
-        this(location, player, game, team, Warlords.getPlayerSettings(player.getUniqueId()));
+        this(location, player, game, team, PlayerSettings.getPlayerSettings(player.getUniqueId()));
     }
 
     private WarlordsPlayer(

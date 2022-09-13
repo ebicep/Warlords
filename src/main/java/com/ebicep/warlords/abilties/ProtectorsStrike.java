@@ -1,8 +1,8 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -134,7 +134,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                 .thenComparing(Utils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
                         .limit(maxAllies)
                 ) {
-                    if (Warlords.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
+                    if (PlayerSettings.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
                         ally.addHealingInstance(
                                 wp,
                                 name,

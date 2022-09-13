@@ -88,7 +88,7 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("list")
     @Description("Prints your guild list")
     public void list(@Conditions("guild:true") Player player, GuildPlayerWrapper guildPlayerWrapper) {
-        ChatUtils.sendCenteredMessage(player, guildPlayerWrapper.getGuild().getList());
+        ChatUtils.sendMessage(player, false, guildPlayerWrapper.getGuild().getList());
     }
 
     @Subcommand("invite")

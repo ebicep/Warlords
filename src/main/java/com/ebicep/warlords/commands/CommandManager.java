@@ -107,6 +107,7 @@ public class CommandManager {
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
         manager.registerCommand(new DiscordCommand());
+        manager.registerCommand(new FlagMessageModeCommand());
         manager.registerCommand(new HotkeyModeCommand());
         manager.registerCommand(new LobbyCommand());
         manager.registerCommand(new ParticleQualityCommand());
@@ -450,7 +451,7 @@ public class CommandManager {
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
-            ChatChannels selectedChatChannel = Warlords.playerChatChannels.get(player.getUniqueId());
+            ChatChannels selectedChatChannel = Warlords.PLAYER_CHAT_CHANNELS.get(player.getUniqueId());
             if (command.hasConfig("target")) {
                 ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
                 if (selectedChatChannel == currentChatChannel) {

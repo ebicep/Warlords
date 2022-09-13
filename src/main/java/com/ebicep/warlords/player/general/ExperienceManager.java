@@ -131,7 +131,7 @@ public class ExperienceManager {
     public static void openLevelingRewardsMenuForClass(Player player, Classes classes) {
         Menu menu = new Menu(classes.name, 9 * 4);
 
-        Specializations selectedSpec = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
+        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
 
         List<Specializations> values = classes.subclasses;
