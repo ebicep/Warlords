@@ -10,7 +10,8 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogDemote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
-import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -32,7 +33,7 @@ public class Guild {
 
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        return pveStats.getCurrencyValue(Currencies.COIN) >= 100;
+        return pveStats.getCurrencyValue(Currencies.COIN) >= 500_000;
     };
 
     //TODO local cache of uuids for faster lookup
@@ -66,7 +67,7 @@ public class Guild {
             put(value, 0L);
         }
     }};
-    private List<GuildUpgrade> upgrades = new ArrayList<>();
+    private List<AbstractGuildUpgrade<?>> upgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
 
@@ -368,12 +369,12 @@ public class Guild {
         this.experience.forEach((timing, aLong) -> this.experience.put(timing, aLong + experience));
     }
 
-    public List<GuildUpgrade> getUpgrades() {
+    public List<AbstractGuildUpgrade<?>> getUpgrades() {
         return upgrades;
     }
 
-    public void addUpgrade(GuildUpgrade upgrade) {
-        this.upgrades.removeIf(guildUpgrade -> guildUpgrade.getUpgrade() == upgrade.getUpgrade());
+    public void addUpgrade(AbstractGuildUpgrade<?> upgrade) {
+        this.upgrades.removeIf(guildUpgrade -> guildUpgrade.isMatchingUpgrade(upgrade));
         this.upgrades.add(upgrade);
     }
 

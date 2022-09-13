@@ -23,7 +23,8 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
-import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -200,8 +201,8 @@ public class WaveDefenseOption implements Option {
             }
             System.out.println(guilds);
             guilds.forEach((guild, validUUIDs) -> {
-                for (GuildUpgrade upgrade : guild.getUpgrades()) {
-                    System.out.println("Upgrading " + upgrade.getUpgrade().name + " for " + validUUIDs.size() + " players");
+                for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
+                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
                     upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
                 }
             });

@@ -1,42 +1,28 @@
 package com.ebicep.warlords.guilds.upgrades;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.ebicep.warlords.game.Game;
+import org.bukkit.Material;
 
-import java.time.Instant;
+import java.util.HashSet;
+import java.util.UUID;
 
-public class GuildUpgrade {
+public interface GuildUpgrade {
 
-    private GuildUpgrades upgrade;
-    @Field("activation_date")
-    private Instant activationDate;
-    @Field("expiration_date")
-    private Instant expirationDate;
-    private int tier;
+    String getName();
 
-    public GuildUpgrade(GuildUpgrades upgrade, int tier) {
-        Instant now = Instant.now();
-        this.upgrade = upgrade;
-        this.activationDate = now;
-        if (upgrade.expirationDate != null) {
-            this.expirationDate = upgrade.expirationDate.apply(now);
-        }
-        this.tier = tier;
-    }
+    Material getMaterial();
 
-    public GuildUpgrades getUpgrade() {
-        return upgrade;
-    }
+    double getValueFromTier(int tier);
 
-    public Instant getActivationDate() {
-        return activationDate;
-    }
+    String getEffectBonusFromTier(int tier);
 
-    public Instant getExpirationDate() {
-        return expirationDate;
-    }
 
-    public int getTier() {
-        return tier;
-    }
+    /**
+     * @param game       the game to modify - main purpose is adding listeners
+     * @param validUUIDs uuids that are allowed to get the effect of this upgrade (since listener will affect all players we need to filter out players which guilds have this upgrade)
+     * @param tier
+     */
+    void onGame(Game game, HashSet<UUID> validUUIDs, int tier);
+
 
 }

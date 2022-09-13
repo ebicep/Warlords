@@ -7,7 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.upgrades.GuildUpgrades;
+import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -65,7 +65,7 @@ public class GuildDebugCommand extends BaseCommand {
         public void addUpgrade(
                 @Conditions("guild:true") Player player,
                 GuildPlayerWrapper guildPlayerWrapper,
-                GuildUpgrades upgrade,
+                GuildUpgradesTemporary upgrade,
                 @Conditions("limits:min=1,max=9") Integer tier
         ) {
             guildPlayerWrapper.getGuild().addUpgrade(upgrade.createUpgrade(tier));

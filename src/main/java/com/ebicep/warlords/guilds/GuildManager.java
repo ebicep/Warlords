@@ -4,13 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogInvite;
+import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -43,14 +43,15 @@ public class GuildManager {
                 //check for guild temp upgrades expiring
                 for (Guild guild : GUILDS) {
                     guild.getUpgrades().removeIf(upgrade -> {
-                        if (upgrade.getExpirationDate() == null) {
+                        if (!(upgrade instanceof GuildUpgradeTemporary)) {
                             return false;
                         }
-                        boolean shouldRemove = upgrade.getExpirationDate().isBefore(Instant.now());
+                        boolean shouldRemove = ((GuildUpgradeTemporary) upgrade).getExpirationDate().isBefore(Instant.now());
                         if (shouldRemove) {
                             for (Player player : guild.getOnlinePlayers()) {
                                 Guild.sendGuildMessage(player,
-                                        ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade().name + ChatColor.RED + " has expired!"
+                                        ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade()
+                                                .getName() + ChatColor.RED + " has expired!"
                                 );
                             }
                         }
