@@ -77,7 +77,11 @@ public class PartyCommand extends BaseCommand {
                 true
         );
         ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-        ChatUtils.sendCenteredMessage(target, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (party.getPartyLeader().getUUID().equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!"));
+        ChatUtils.sendCenteredMessage(target,
+                ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (party.getPartyLeader()
+                        .getUUID()
+                        .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
+        );
         TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + party.getLeaderName()));
@@ -135,7 +139,11 @@ public class PartyCommand extends BaseCommand {
     @Subcommand("promote")
     @CommandCompletion("@partymembers")
     @Description("Promotes a player in your party")
-    public void promote(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, @Conditions("lowerRank") PartyPlayer targetPartyPlayer) {
+    public void promote(
+            @Conditions("party:true") Player player,
+            PartyPlayerWrapper partyPlayerWrapper,
+            @Conditions("lowerRank") PartyPlayer targetPartyPlayer
+    ) {
         partyPlayerWrapper.getParty().promote(targetPartyPlayer.getUUID());
     }
 
@@ -155,7 +163,10 @@ public class PartyCommand extends BaseCommand {
 
     @Subcommand("poll")
     @Description("Creates a poll in your party")
-    public void poll(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper, @Syntax("question answer answer ...") String[] pollInfo) {
+    public void poll(
+            @Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper,
+            @Split("/") @Syntax("question/answer/answer ...") String[] pollInfo
+    ) {
         Party party = partyPlayerWrapper.getParty();
         if (partyPlayerWrapper.getPartyPlayer().getPartyPlayerType() == PartyPlayerType.MEMBER) {
             Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
@@ -227,7 +238,11 @@ public class PartyCommand extends BaseCommand {
 
     @Subcommand("transfer")
     @Description("Transfers party to another party")
-    public void transfer(@Conditions("party:true") Player player, @Flags("leader") PartyPlayerWrapper partyPlayerWrapper, @Conditions("lowerRank") PartyPlayer targetPartyPlayer) {
+    public void transfer(
+            @Conditions("party:true") Player player,
+            @Flags("leader") PartyPlayerWrapper partyPlayerWrapper,
+            @Conditions("lowerRank") PartyPlayer targetPartyPlayer
+    ) {
         partyPlayerWrapper.getParty().transfer(targetPartyPlayer.getUUID());
     }
 

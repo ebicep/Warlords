@@ -40,7 +40,7 @@ public enum ChatChannels {
 
         @Override
         public void setRecipients(Player player, Set<Player> players) {
-            players.removeIf(p -> !Permissions.isAdmin(player) && !p.equals(player));
+            players.removeIf(p -> !Permissions.isAdmin(p) && !p.equals(player));
         }
 
         @Override
