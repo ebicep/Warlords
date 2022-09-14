@@ -425,21 +425,21 @@ public class EndState implements State, TimerDebugAble {
 
 
             LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp);
-            StringBuilder expFromWaveDefenseSummary = new StringBuilder();
-            expFromWaveDefense.forEach((s, aLong) -> {
-                expFromWaveDefenseSummary.append(ChatColor.AQUA)
-                        .append(s)
-                        .append(ChatColor.WHITE)
-                        .append(": ")
-                        .append(ChatColor.DARK_GRAY)
-                        .append("+")
-                        .append(ChatColor.DARK_GREEN)
-                        .append(aLong)
-                        .append("\n");
-            });
-            expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
-
             if (expFromWaveDefense.size() > 0) {
+                StringBuilder expFromWaveDefenseSummary = new StringBuilder();
+                expFromWaveDefense.forEach((s, aLong) -> {
+                    expFromWaveDefenseSummary.append(ChatColor.AQUA)
+                            .append(s)
+                            .append(ChatColor.WHITE)
+                            .append(": ")
+                            .append(ChatColor.DARK_GRAY)
+                            .append("+")
+                            .append(ChatColor.DARK_GREEN)
+                            .append(aLong)
+                            .append("\n");
+                });
+                expFromWaveDefenseSummary.setLength(expFromWaveDefenseSummary.length() - 1);
+
                 ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
                         new TextComponentBuilder(
                                 ChatColor.GRAY + "+" +
