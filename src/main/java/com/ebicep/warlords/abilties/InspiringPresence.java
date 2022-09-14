@@ -20,11 +20,13 @@ import java.util.List;
 
 public class InspiringPresence extends AbstractAbility {
     private boolean pveUpgrade = false;
-    private final int speedBuff = 30;
+
+    private int speedBuff = 30;
     private double radius = 10;
     protected int playersHit = 0;
     private int duration = 12;
     private int energyPerSecond = 10;
+
     private List<WarlordsEntity> playersAffected = new ArrayList<>();
     private double energyGivenFromStrikeAndPresence = 0;
 
@@ -183,5 +185,13 @@ public class InspiringPresence extends AbstractAbility {
 
     public double getEnergyGivenFromStrikeAndPresence() {
         return energyGivenFromStrikeAndPresence;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 }

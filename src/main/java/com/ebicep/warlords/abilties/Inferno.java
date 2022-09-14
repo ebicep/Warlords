@@ -33,7 +33,7 @@ public class Inferno extends AbstractAbility {
         description = "§7Combust into a molten inferno,\n" +
                 "§7increasing your Crit Chance by §c" + critChanceIncrease + "%\n" +
                 "§7and your Crit Multiplier by §c" + critMultiplierIncrease + "%§7. Lasts\n" +
-                "§6" + duration + " §7seconds. Max hits: " + maxHits;
+                "§6" + duration + " §7seconds.";
     }
 
     @Override

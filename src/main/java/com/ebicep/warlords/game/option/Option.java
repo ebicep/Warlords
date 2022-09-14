@@ -26,7 +26,7 @@ public interface Option {
 
     /**
      * Called when the game is started (For a typical game, a transition to the
-     * <code>PlayingState</code>). Use this method to start your long running
+     * <code>PlayingState</code>). Use this method to start your long-running
      * tasks
      *
      * @param game The game instance
@@ -35,7 +35,7 @@ public interface Option {
     }
 
     /**
-     * Called when the game transitions to a end state. Generally, the game
+     * Called when the game transitions to an end state. Generally, the game
      * no longer accepts players, and players can leave the game without
      * affecting their standings.
      *

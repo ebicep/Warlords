@@ -29,8 +29,7 @@ public class ChainHeal extends AbstractChainBase {
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
                 "§7jumps to §e1 §7additional target within\n" +
-                "§e" + bounceRange + " §7blocks. The last jump heals\n" +
-                "§7for §c20% §7less." +
+                "§e" + bounceRange + " §7blocks." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
                 "§7Boulder by §62.5 §7seconds." +
@@ -90,8 +89,8 @@ public class ChainHeal extends AbstractChainBase {
                     bounceTarget.addHealingInstance(
                             wp,
                             name,
-                            minDamageHeal * (pveUpgrade ? 1 : 0.8f),
-                            maxDamageHeal * (pveUpgrade ? 1 : 0.8f),
+                            minDamageHeal,
+                            maxDamageHeal,
                             critChance,
                             critMultiplier,
                             false,

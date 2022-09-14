@@ -119,7 +119,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 }
                             }.runTaskLater(getStunTimeInTicks()); //.5 seconds
                             if (enemy.getEntity() instanceof Player) {
-                                PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
+                                PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, stunTimeInTicks, 0);
                             }
                         });
 

@@ -618,7 +618,7 @@ public class Warlords extends JavaPlugin {
                                             ChatColor.LIGHT_PURPLE +
                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
                                             ChatColor.RED +
-                                            (wp.getMaxHealth() / 10) +
+                                            (wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
                                             ChatColor.LIGHT_PURPLE +
                                             " every second."
                                     );
@@ -627,7 +627,7 @@ public class Warlords extends JavaPlugin {
                                             ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
                                             "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
                                             ChatColor.RED +
-                                            (wp.getMaxHealth() / 10) +
+                                            (wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f)) +
                                             ChatColor.LIGHT_PURPLE +
                                             " every second."
                                     );

@@ -100,7 +100,7 @@ public class Berserk extends AbstractAbility {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                         return currentCritChance;
                     }
-                    int critBoost = (int) (0.2f * multiplier);
+                    float critBoost = (0.2f * multiplier);
                     if (critBoost > 30) {
                         critBoost = 30;
                     }
@@ -115,7 +115,7 @@ public class Berserk extends AbstractAbility {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
                         return currentCritMultiplier;
                     }
-                    int critBoost = (int) (0.2f * multiplier);
+                    float critBoost = (0.2f * multiplier);
                     if (critBoost > 30) {
                         critBoost = 30;
                     }
