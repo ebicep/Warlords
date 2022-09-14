@@ -1,4 +1,4 @@
-package com.ebicep.warlords.events.player;
+package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

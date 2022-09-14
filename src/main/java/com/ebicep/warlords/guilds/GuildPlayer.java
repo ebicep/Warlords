@@ -17,6 +17,8 @@ public class GuildPlayer {
     @Field("join_date")
     private Instant joinDate = Instant.now();
     private long experience = 0;
+    @Field("coin_bonus_received")
+    private boolean coinBonusReceived = false;
 
     public GuildPlayer() {
     }
@@ -66,10 +68,22 @@ public class GuildPlayer {
         this.experience += experience;
     }
 
+    public boolean isCoinBonusReceived() {
+        return coinBonusReceived;
+    }
+
+    public void setCoinBonusReceived(boolean coinBonusReceived) {
+        this.coinBonusReceived = coinBonusReceived;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GuildPlayer that = (GuildPlayer) o;
         return uuid.equals(that.uuid);
     }

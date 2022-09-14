@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.java.Pair;

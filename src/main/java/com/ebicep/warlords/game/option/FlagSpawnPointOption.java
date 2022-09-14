@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;

@@ -213,4 +213,11 @@ public class GuildBankMenu {
         );
     }
 
+    /*
+    public static void openGuildCoinConversionMenu(Player player, Guild guild) {
+        Menu menu = new Menu("Guild Coin Conversion", )
+    }
+
+     */
+
 }

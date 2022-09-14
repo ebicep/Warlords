@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
 import org.bukkit.event.EventHandler;

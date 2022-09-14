@@ -1,8 +1,8 @@
 
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;

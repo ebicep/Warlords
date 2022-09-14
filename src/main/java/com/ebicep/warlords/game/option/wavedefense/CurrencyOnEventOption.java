@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
-import com.ebicep.warlords.events.player.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;

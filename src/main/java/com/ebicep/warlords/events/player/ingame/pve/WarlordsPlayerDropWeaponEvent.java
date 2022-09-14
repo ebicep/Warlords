@@ -1,6 +1,6 @@
-package com.ebicep.warlords.events.player.pve;
+package com.ebicep.warlords.events.player.ingame.pve;
 
-import com.ebicep.warlords.events.player.AbstractWarlordsPlayerEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsPlayerEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;

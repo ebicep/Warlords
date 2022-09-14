@@ -22,7 +22,9 @@ public interface GuildUpgrade {
      * @param validUUIDs uuids that are allowed to get the effect of this upgrade (since listener will affect all players we need to filter out players which guilds have this upgrade)
      * @param tier
      */
-    void onGame(Game game, HashSet<UUID> validUUIDs, int tier);
+    default void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+
+    }
 
     AbstractGuildUpgrade<?> createUpgrade(int tier);
 

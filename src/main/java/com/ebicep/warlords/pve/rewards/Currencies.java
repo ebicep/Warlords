@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.rewards;
 
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerCoinSummaryEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;

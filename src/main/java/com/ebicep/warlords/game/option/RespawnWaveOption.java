@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.events.player.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.WarlordsRespawnEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

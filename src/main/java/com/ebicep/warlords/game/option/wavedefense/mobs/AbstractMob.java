@@ -2,9 +2,9 @@ package com.ebicep.warlords.game.option.wavedefense.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;

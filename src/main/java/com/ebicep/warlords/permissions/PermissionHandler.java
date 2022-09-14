@@ -1,6 +1,6 @@
 package com.ebicep.warlords.permissions;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.entity.Player;
 
 public class PermissionHandler {

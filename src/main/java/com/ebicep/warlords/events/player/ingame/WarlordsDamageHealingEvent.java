@@ -1,5 +1,5 @@
 
-package com.ebicep.warlords.events.player;
+package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.Cancellable;

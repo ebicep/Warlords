@@ -1,9 +1,9 @@
 package com.ebicep.warlords.guilds.upgrades.temporary;
 
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerAddCurrencyEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerCoinSummaryEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerDropWeaponEvent;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerDropWeaponEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;

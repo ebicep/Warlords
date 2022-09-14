@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
-import com.ebicep.warlords.events.player.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BasicMob;

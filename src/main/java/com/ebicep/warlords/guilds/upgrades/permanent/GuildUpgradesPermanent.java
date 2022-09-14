@@ -1,6 +1,6 @@
 package com.ebicep.warlords.guilds.upgrades.permanent;
 
-import com.ebicep.warlords.events.player.WarlordsPlayerGiveExperienceEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -8,18 +8,14 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 public enum GuildUpgradesPermanent implements GuildUpgrade {
 
     PLAYER_EXP_BONUS(
             "Player EXP Bonus",
-            Material.EXP_BOTTLE,
-            true,
-            null
+            Material.EXP_BOTTLE
     ) {
         @Override
         public double getValueFromTier(int tier) {
@@ -48,9 +44,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     },
     GUILD_COIN_CONVERSION_RATE(
             "Guild Coin Conversion Rate",
-            Material.GOLD_NUGGET,
-            true,
-            null
+            Material.GOLD_NUGGET
     ) {
         @Override
         public double getValueFromTier(int tier) {
@@ -62,10 +56,39 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier) * 100) + "%";
         }
 
-        @Override
-        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
 
+    },
+    DAILY_PLAYER_COIN_BONUS(
+            "Daily Player Coin Bonus",
+            Material.GOLD_INGOT
+    ) {
+        @Override
+        public double getValueFromTier(int tier) {
+            return tier == 9 ? 10000 : tier * 1000;
         }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Coins";
+        }
+
+    },
+    GUILD_MEMBER_CAPACITY(
+            "Guild Member Capacity",
+            Material.CHEST
+    ) {
+        final int[] values = new int[]{2, 4, 7, 10, 15, 20, 30, 40, 50};
+
+        @Override
+        public double getValueFromTier(int tier) {
+            return values[tier - 1];
+        }
+
+        @Override
+        public String getEffectBonusFromTier(int tier) {
+            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Players";
+        }
+
     },
 
     ;
@@ -73,14 +96,10 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     public static final GuildUpgradesPermanent[] VALUES = values();
     public final String name;
     public final Material material;
-    public final boolean isPermanent;
-    public final UnaryOperator<Instant> expirationDate;
 
-    GuildUpgradesPermanent(String name, Material material, boolean isPermanent, UnaryOperator<Instant> expirationDate) {
+    GuildUpgradesPermanent(String name, Material material) {
         this.name = name;
         this.material = material;
-        this.isPermanent = isPermanent;
-        this.expirationDate = expirationDate;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.pve.WarlordsPlayerUpgradeUnlockEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;

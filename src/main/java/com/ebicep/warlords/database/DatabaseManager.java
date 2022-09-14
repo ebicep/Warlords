@@ -33,6 +33,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
@@ -88,7 +89,7 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
+            loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
                 PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
             });
         });
@@ -138,15 +139,18 @@ public class DatabaseManager {
                 .execute();
     }
 
-    public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
-        if (playerService == null || !enabled) return;
-        if (playerService.findByUUID(uuid, collections) == null) {
+    public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        DatabasePlayer foundPlayer = playerService.findByUUID(uuid, collections);
+        if (foundPlayer == null) {
             Warlords.newChain()
-                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
-                    .sync(() -> {
+                    .asyncFirst(() -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
+                    .syncLast((databasePlayer) -> {
                         if (collections == PlayersCollections.LIFETIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
-                            callback.run();
+                            callback.accept(databasePlayer);
                         }
                     }).execute();
         } else {
@@ -154,7 +158,7 @@ public class DatabaseManager {
                 Warlords.newChain()
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
-                            callback.run();
+                            callback.accept(foundPlayer);
                             ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
                         }).execute();
             }

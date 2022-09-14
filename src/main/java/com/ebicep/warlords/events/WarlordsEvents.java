@@ -12,7 +12,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
-import com.ebicep.warlords.events.player.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.Team;
@@ -94,7 +95,7 @@ public class WarlordsEvents implements Listener {
             }
             Warlords.newChain()
                     .async(() -> {
-                        DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                        DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
                             PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
                             HeadUtils.updateHead(e.getPlayer());
 
@@ -112,7 +113,6 @@ public class WarlordsEvents implements Listener {
                                 Warlords.newChain()
                                         .delay(20)
                                         .async(() -> {
-                                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                                             List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
                                             futureMessages.forEach(futureMessage -> {
                                                 if (futureMessage.isCentered()) {
@@ -124,6 +124,8 @@ public class WarlordsEvents implements Listener {
                                             databasePlayer.clearFutureMessages();
                                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                         }).execute();
+
+                                Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                             }
                         });
                     })
