@@ -61,7 +61,7 @@ public class DatabaseGamePvE extends DatabaseGameBase {
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        return DatabaseGamePlayerResult.NONE;
+        return wavesCleared >= difficulty.getMaxWaves() ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
     }
 
     @Override

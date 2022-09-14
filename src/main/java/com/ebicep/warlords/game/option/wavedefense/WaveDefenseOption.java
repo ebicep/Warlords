@@ -55,9 +55,9 @@ public class WaveDefenseOption implements Option {
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
+    private final int maxWave;
     SimpleScoreboardHandler scoreboard;
     private int waveCounter = 0;
-    private int maxWave = 10000;
     private int spawnCount = 0;
     private Wave currentWave;
     @Nonnull
@@ -71,13 +71,7 @@ public class WaveDefenseOption implements Option {
         this.team = team;
         this.waves = waves;
         this.difficulty = difficulty;
-    }
-
-    public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty, int maxWave) {
-        this.team = team;
-        this.waves = waves;
-        this.difficulty = difficulty;
-        this.maxWave = maxWave;
+        this.maxWave = difficulty.getMaxWaves();
     }
 
 
@@ -537,10 +531,6 @@ public class WaveDefenseOption implements Option {
 
     public int getMaxWave() {
         return maxWave;
-    }
-
-    public void setMaxWave(int maxWave) {
-        this.maxWave = maxWave;
     }
 
     public int getSpawnCount() {

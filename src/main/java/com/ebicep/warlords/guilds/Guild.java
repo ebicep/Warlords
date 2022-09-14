@@ -11,7 +11,6 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -33,7 +32,7 @@ public class Guild {
 
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        return pveStats.getCurrencyValue(Currencies.COIN) >= 500_000;
+        return pveStats.getCurrencyValue(Currencies.COIN) >= 500_000 && pveStats.getNormalStats().getWins() >= 25;
     };
 
     //TODO local cache of uuids for faster lookup

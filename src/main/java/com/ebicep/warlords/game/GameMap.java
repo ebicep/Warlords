@@ -1164,8 +1164,7 @@ public enum GameMap {
                     .add(25, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
-                    DifficultyIndex.NORMAL,
-                    25
+                    DifficultyIndex.NORMAL
             ));
 
             return options;
@@ -1332,8 +1331,7 @@ public enum GameMap {
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
-                    DifficultyIndex.HARD,
-                    50
+                    DifficultyIndex.HARD
             ));
 
             return options;
@@ -1501,8 +1499,7 @@ public enum GameMap {
                     .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
-                    DifficultyIndex.ENDLESS,
-                    10000
+                    DifficultyIndex.ENDLESS
             ));
 
             return options;
