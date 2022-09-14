@@ -111,13 +111,18 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
+        AbstractDatabaseStatInformation classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
+        DatabaseSpecialization specStats = this.getSpec(gamePlayer.getSpec());
         if (gameMode == GameMode.WAVE_DEFENSE) {
+            //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
+            classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
+            specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             this.pveStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        classStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+        specStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG:
