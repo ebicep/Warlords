@@ -33,6 +33,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
+    //DIFFICULTY STATS
+    @Field("normal_stats")
+    private DatabasePlayerPvEDifficultyStats normalStats = new DatabasePlayerPvEDifficultyStats();
+    @Field("hard_stats")
+    private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
+    @Field("endless_stats")
+    private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
+
     //GENERAL
     @Field("masterworks_fair_rewards")
     private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
@@ -92,10 +100,25 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
+        this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+
+        //UPDATE GAME MODE STATS
+        switch (((DatabaseGamePvE) databaseGame).getDifficulty()) {
+            case NORMAL:
+                normalStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                break;
+            case HARD:
+                hardStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                break;
+            case ENDLESS:
+                endlessStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
+                break;
+        }
+
     }
 
     @Override
@@ -175,6 +198,18 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public DatabaseRoguePvE getRogue() {
         return rogue;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getNormalStats() {
+        return normalStats;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getHardStats() {
+        return hardStats;
+    }
+
+    public DatabasePlayerPvEDifficultyStats getEndlessStats() {
+        return endlessStats;
     }
 
     public List<AbstractWeapon> getWeaponInventory() {

@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Material;
 
@@ -1163,6 +1164,7 @@ public enum GameMap {
                     .add(25, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
+                    DifficultyIndex.NORMAL,
                     25
             ));
 
@@ -1330,6 +1332,7 @@ public enum GameMap {
                     .add(50, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
+                    DifficultyIndex.HARD,
                     50
             ));
 
@@ -1498,6 +1501,7 @@ public enum GameMap {
                     .add(100, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)
                     ),
+                    DifficultyIndex.ENDLESS,
                     10000
             ));
 
@@ -1533,8 +1537,7 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld()));
 
             options.add(new CurrencyOnEventOption(250));
-            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-            ));
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList(), DifficultyIndex.NORMAL)); //TODO difficulty
 
             return options;
         }

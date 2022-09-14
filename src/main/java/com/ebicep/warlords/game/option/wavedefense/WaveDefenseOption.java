@@ -24,10 +24,10 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -54,6 +54,7 @@ public class WaveDefenseOption implements Option {
     private final Set<AbstractMob<?>> mobs = new HashSet<>();
     private final Team team;
     private final WaveList waves;
+    private final DifficultyIndex difficulty;
     SimpleScoreboardHandler scoreboard;
     private int waveCounter = 0;
     private int maxWave = 10000;
@@ -66,14 +67,16 @@ public class WaveDefenseOption implements Option {
     private BukkitTask spawner;
     private WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
 
-    public WaveDefenseOption(Team team, WaveList waves) {
+    public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this.team = team;
         this.waves = waves;
+        this.difficulty = difficulty;
     }
 
-    public WaveDefenseOption(Team team, WaveList waves, int maxWave) {
+    public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty, int maxWave) {
         this.team = team;
         this.waves = waves;
+        this.difficulty = difficulty;
         this.maxWave = maxWave;
     }
 
@@ -550,5 +553,9 @@ public class WaveDefenseOption implements Option {
 
     public WaveDefenseStats getWaveDefenseStats() {
         return waveDefenseStats;
+    }
+
+    public DifficultyIndex getDifficulty() {
+        return difficulty;
     }
 }

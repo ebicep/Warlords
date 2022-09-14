@@ -42,6 +42,7 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                this.difficulty = waveDefenseOption.getDifficulty();
                 this.wavesCleared = waveDefenseOption.getWavesCleared();
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvE(warlordsPlayer, waveDefenseOption)));
             }

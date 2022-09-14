@@ -15,24 +15,26 @@ import java.util.Map;
 
 public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation {
 
+    @Field("experience_pve")
+    protected long experiencePvE;
     @Field("highest_wave_cleared")
-    private int highestWaveCleared;
+    protected int highestWaveCleared;
     @Field("longest_time_in_combat")
-    private int longestTimeInCombat;
+    protected int longestTimeInCombat;
     @Field("most_damage_in_round")
-    private long mostDamageInRound;
+    protected long mostDamageInRound;
     @Field("most_damage_in_wave")
-    private long mostDamageInWave;
+    protected long mostDamageInWave;
     @Field("total_waves_cleared")
-    private int totalWavesCleared;
+    protected int totalWavesCleared;
     @Field("total_time_played")
-    private long totalTimePlayed = 0;
+    protected long totalTimePlayed = 0;
     @Field("mob_kills")
-    private Map<String, Long> mobKills = new LinkedHashMap<>();
+    protected Map<String, Long> mobKills = new LinkedHashMap<>();
     @Field("mob_assists")
-    private Map<String, Long> mobAssists = new LinkedHashMap<>();
+    protected Map<String, Long> mobAssists = new LinkedHashMap<>();
     @Field("mob_deaths")
-    private Map<String, Long> mobDeaths = new LinkedHashMap<>();
+    protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
 
     public PvEDatabaseStatInformation() {
     }
@@ -68,6 +70,10 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
+    }
+
+    public long getExperiencePvE() {
+        return experiencePvE;
     }
 
     public int getHighestWaveCleared() {
