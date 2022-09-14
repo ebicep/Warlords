@@ -30,9 +30,10 @@ import static com.ebicep.warlords.guilds.GuildManager.queueUpdateGuild;
 @Document(collection = "Guilds")
 public class Guild {
 
+    public static final int CREATE_COIN_COST = 500000;
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        return pveStats.getCurrencyValue(Currencies.COIN) >= 500_000 && pveStats.getNormalStats().getWins() >= 20;
+        return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST && pveStats.getNormalStats().getWins() >= 20;
     };
 
     //TODO local cache of uuids for faster lookup

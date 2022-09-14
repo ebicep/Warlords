@@ -15,6 +15,7 @@ import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -36,7 +37,7 @@ public class GuildCommand extends BaseCommand {
     public void create(@Conditions("guild:false") Player player, String guildName) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (!Guild.CAN_CREATE.test(databasePlayer)) {
-            player.sendMessage(ChatColor.RED + "You do not meet the requirements to create a guild.");
+            player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 20 Normal PvE wins to create a guild.");
             return;
         }
         if (guildName.length() > 15) {
@@ -52,6 +53,7 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that name already exists.");
             return;
         }
+        databasePlayer.getPveStats().addCurrency(Currencies.COIN, -Guild.CREATE_COIN_COST);
         GuildManager.addGuild(new Guild(player, guildName));
         Guild.sendGuildMessage(player, ChatColor.GREEN + "You created guild " + ChatColor.GOLD + guildName);
     }
