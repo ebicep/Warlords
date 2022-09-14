@@ -93,6 +93,11 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
         return material;
     }
 
+    @Override
+    public GuildUpgradePermanent createUpgrade(int tier) {
+        return new GuildUpgradePermanent(this, tier);
+    }
+
     public long getCost(int tier) {
         switch (tier) {
             case 1:

@@ -24,5 +24,6 @@ public interface GuildUpgrade {
      */
     void onGame(Game game, HashSet<UUID> validUUIDs, int tier);
 
+    AbstractGuildUpgrade<?> createUpgrade(int tier);
 
 }

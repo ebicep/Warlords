@@ -6,6 +6,7 @@ import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
+import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradePermanent;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.menu.Menu;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.ItemFlag;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -82,21 +84,31 @@ public class GuildBankMenu {
             ItemBuilder itemBuilder = new ItemBuilder(value.getMaterial())
                     .name(ChatColor.GREEN + value.getName())
                     .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-            for (AbstractGuildUpgrade<?> upgrade : upgrades) {
-                if (upgrade.getUpgrade() == value) {
-                    upgrade.modifyItem(itemBuilder);
+            AbstractGuildUpgrade<?> upgrade = null;
+            for (AbstractGuildUpgrade<?> abstractGuildUpgrade : upgrades) {
+                if (abstractGuildUpgrade.getUpgrade() == value) {
+                    upgrade = abstractGuildUpgrade;
                     break;
                 }
             }
-            if (canPurchaseUpgrades) {
+            if (upgrade != null) {
+                upgrade.modifyItem(itemBuilder);
+                if (canPurchaseUpgrades) {
+                    upgrade.addItemClickLore(itemBuilder);
+                }
+            } else {
                 itemBuilder.addLore(ChatColor.GRAY + "\nClick to Purchase");
             }
+
+            AbstractGuildUpgrade<?> finalUpgrade = upgrade;
             menu.setItem(index % 7 + 1, index / 7 + 1,
                     itemBuilder.get(),
                     (m, e) -> {
                         if (canPurchaseUpgrades) {
                             if (value instanceof GuildUpgradesTemporary) {
                                 openGuildUpgradeTemporaryPurchaseMenu(player, guild, (GuildUpgradesTemporary) value);
+                            } else if (value instanceof GuildUpgradesPermanent) {
+                                openGuildUpgradePermanentPurchaseMenu(player, guild, (GuildUpgradesPermanent) value, (GuildUpgradePermanent) finalUpgrade);
                             }
                         }
                     }
@@ -158,6 +170,47 @@ public class GuildBankMenu {
 
         menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildUpgradeTypeMenu(player, guild, GuildUpgradesTemporary.VALUES));
         menu.openForPlayer(player);
+    }
+
+    public static void openGuildUpgradePermanentPurchaseMenu(
+            Player player,
+            Guild guild,
+            GuildUpgradesPermanent upgradesPermanent,
+            GuildUpgradePermanent upgrade
+    ) {
+        int nextTier = upgrade == null ? 1 : upgrade.getTier() + 1;
+        if (nextTier > 9) {
+            player.sendMessage(ChatColor.RED + "You have reached the maximum tier for this upgrade.");
+            return;
+        }
+        Menu.openConfirmationMenu(player,
+                upgradesPermanent.name + " (T" + nextTier + ")",
+                3,
+                Arrays.asList(
+                        ChatColor.GRAY + "Purchase Upgrade",
+                        "",
+                        ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradesPermanent.getCost(nextTier)) + " Guild Coins"
+                ),
+                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                (m2, e2) -> {
+                    long upgradeCost = upgradesPermanent.getCost(nextTier);
+                    if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
+                        guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
+                        guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));
+
+                        guild.sendGuildMessageToOnlinePlayers(
+                                ChatColor.YELLOW + "Permanent Tier " + nextTier + " " + upgradesPermanent.name + ChatColor.GREEN + " upgrade purchased!",
+                                true
+                        );
+                        openGuildUpgradeTypeMenu(player, guild, GuildUpgradesPermanent.VALUES);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
+                    }
+                },
+                (m2, e2) -> openGuildUpgradeTypeMenu(player, guild, GuildUpgradesPermanent.VALUES),
+                (m2) -> {
+                }
+        );
     }
 
 }

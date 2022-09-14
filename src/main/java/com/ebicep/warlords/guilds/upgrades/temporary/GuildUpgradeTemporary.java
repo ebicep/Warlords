@@ -26,6 +26,11 @@ public class GuildUpgradeTemporary extends AbstractGuildUpgrade<GuildUpgradesTem
     }
 
     @Override
+    public void addItemClickLore(ItemBuilder itemBuilder) {
+        itemBuilder.addLore(ChatColor.GRAY + "\nClick to Purchase");
+    }
+
+    @Override
     protected void addItemLore(ItemBuilder itemBuilder) {
         super.addItemLore(itemBuilder);
         itemBuilder.addLore(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(expirationDate,

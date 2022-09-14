@@ -165,6 +165,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
         return material;
     }
 
+    @Override
     public GuildUpgradeTemporary createUpgrade(int tier) {
         return new GuildUpgradeTemporary(this, tier);
     }
