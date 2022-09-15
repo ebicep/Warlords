@@ -260,6 +260,10 @@ public class Guild {
         sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild name was changed to " + ChatColor.GOLD + name, true);
     }
 
+    public Instant getCreationDate() {
+        return creationDate;
+    }
+
     public Instant getDisbandDate() {
         return disbandDate;
     }

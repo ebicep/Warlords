@@ -3,6 +3,7 @@ package com.ebicep.warlords.guilds.menu;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -21,6 +22,20 @@ public class GuildMenu {
     public static void openGuildMenu(Guild guild, Player player, int page) {
         Menu menu = new Menu("Guild Settings: " + guild.getName(), 9 * 6);
 
+        menu.setItem(0, 0,
+                new ItemBuilder(Material.SIGN)
+                        .name(ChatColor.GREEN + "Guild Information")
+                        .lore(
+                                ChatColor.GRAY + "Name: " + ChatColor.YELLOW + guild.getName(),
+                                ChatColor.GRAY + "Created: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guild.getCreationDate()),
+                                ChatColor.GRAY + "Members: " + ChatColor.YELLOW + guild.getPlayers()
+                                        .size() + ChatColor.AQUA + "/" + ChatColor.YELLOW + guild.getPlayerLimit(),
+                                ChatColor.GRAY + "Rank: " + ChatColor.YELLOW + guild.getRoleOfPlayer(player.getUniqueId()).getRoleName()
+                        )
+                        .get(),
+                (m, e) -> {
+                }
+        );
         menu.setItem(2, 0,
                 new ItemBuilder(Material.GOLD_BLOCK)
                         .name(ChatColor.GREEN + "Guild Bank")
@@ -38,7 +53,8 @@ public class GuildMenu {
                     new ItemBuilder(Material.LEVER)
                             .name(ChatColor.GREEN + "Edit Permissions")
                             .get(),
-                    (m, e) -> GuildRoleMenu.openRoleSelectorMenu(guild, player));
+                    (m, e) -> GuildRoleMenu.openRoleSelectorMenu(guild, player)
+            );
         }
 
         int playerPerPage = 36;
@@ -54,7 +70,8 @@ public class GuildMenu {
                                 .get(),
                         (m, e) -> {
 
-                        });
+                        }
+                );
             } else {
                 break;
             }
