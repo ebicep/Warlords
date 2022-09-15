@@ -8,6 +8,9 @@ import java.time.Instant;
 
 public class GuildUpgradePermanent extends AbstractGuildUpgrade<GuildUpgradesPermanent> {
 
+    public GuildUpgradePermanent() {
+    }
+
     public GuildUpgradePermanent(GuildUpgradesPermanent guildBlessings, int tier) {
         this.upgrade = guildBlessings;
         this.activationDate = Instant.now();

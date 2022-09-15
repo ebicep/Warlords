@@ -14,6 +14,9 @@ public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
     protected Instant activationDate;
     protected int tier;
 
+    public AbstractGuildUpgrade() {
+    }
+
     public abstract void addItemClickLore(ItemBuilder itemBuilder);
 
     public void modifyItem(ItemBuilder itemBuilder) {

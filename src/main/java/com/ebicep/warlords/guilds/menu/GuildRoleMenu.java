@@ -22,6 +22,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
 
 public class GuildRoleMenu {
+
     public static void openRoleSelectorMenu(Guild guild, Player player) {
         Menu menu = new Menu("Role Selector", 9 * 5);
 

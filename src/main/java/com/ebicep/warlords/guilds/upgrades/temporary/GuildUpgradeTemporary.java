@@ -13,6 +13,9 @@ public class GuildUpgradeTemporary extends AbstractGuildUpgrade<GuildUpgradesTem
     @Field("expiration_date")
     private Instant expirationDate;
 
+    public GuildUpgradeTemporary() {
+    }
+
     public GuildUpgradeTemporary(GuildUpgradesTemporary guildUpgradesTemporary, int tier) {
         Instant now = Instant.now();
         this.upgrade = guildUpgradesTemporary;
