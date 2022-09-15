@@ -8,6 +8,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades.GuildLogUpgradeTemporary;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
@@ -95,23 +96,23 @@ public class GuildBankMenu {
                             (p, lines) -> {
                                 String amountString = lines[0];
                                 try {
-                                    int amount = Integer.parseInt(amountString);
-                                    if (amount <= 0) {
+                                    int playerCoinsToConvert = Integer.parseInt(amountString);
+                                    if (playerCoinsToConvert <= 0) {
                                         player.sendMessage(ChatColor.RED + "You must enter a positive number.");
                                         openGuildBankMenu(player, guild);
                                         return;
                                     }
-                                    if (amount > playerCoins) {
+                                    if (playerCoinsToConvert > playerCoins) {
                                         player.sendMessage(ChatColor.RED + "You do not have enough player coins to convert to guild coins.");
                                         openGuildBankMenu(player, guild);
                                         return;
                                     }
-                                    if (amount > maxCoinsCanConvert) {
+                                    if (playerCoinsToConvert > maxCoinsCanConvert) {
                                         player.sendMessage(ChatColor.RED + "You cannot exceed the max convertable amount.");
                                         openGuildBankMenu(player, guild);
                                         return;
                                     }
-                                    int guildCoinsGained = amount / coinConversionRatio;
+                                    int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
                                     Menu.openConfirmationMenu(
                                             player,
                                             "Confirm Conversion",
@@ -119,12 +120,13 @@ public class GuildBankMenu {
                                             Arrays.asList(
                                                     ChatColor.GRAY + "Convert",
                                                     ChatColor.GREEN + "+" + guildCoinsGained + " Guild Coins",
-                                                    ChatColor.RED + "-" + amount + " Player Coins"
+                                                    ChatColor.RED + "-" + playerCoinsToConvert + " Player Coins"
                                             ),
                                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                                             (m2, e2) -> {
                                                 guild.addCoins(guildCoinsGained);
                                                 guildPlayer.addDailyCoinsConverted(guildCoinsGained);
+                                                guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
                                                 guild.queueUpdate();
                                                 openGuildBankMenu(player, guild);
                                             },
