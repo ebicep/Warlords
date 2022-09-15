@@ -85,6 +85,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
             guild.addCoins(Timing.LIFETIME, gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
+            guildPlayer.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
             guild.queueUpdate();
         }

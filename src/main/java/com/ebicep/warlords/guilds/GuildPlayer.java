@@ -17,6 +17,9 @@ public class GuildPlayer {
     @Field("join_date")
     private Instant joinDate = Instant.now();
     private long experience = 0;
+    private long coins = 0;
+    @Field("coins_converted")
+    private long coinsConverted = 0;
     @Field("daily_coin_bonus_received")
     private boolean dailyCoinBonusReceived = false;
     @Field("daily_coins_converted")
@@ -66,12 +69,24 @@ public class GuildPlayer {
         return experience;
     }
 
-    public void setExperience(long experience) {
-        this.experience = experience;
-    }
-
     public void addExperience(long experience) {
         this.experience += experience;
+    }
+
+    public long getCoins() {
+        return coins;
+    }
+
+    public void addCoins(long coins) {
+        this.coins += coins;
+    }
+
+    public long getCoinsConverted() {
+        return coinsConverted;
+    }
+
+    public void addCoinsConverted(long coinsConverted) {
+        this.coinsConverted += coinsConverted;
     }
 
     public boolean isDailyCoinBonusReceived() {
@@ -91,6 +106,7 @@ public class GuildPlayer {
     }
 
     public void addDailyCoinsConverted(long dailyCoinsConverted) {
+        this.coinsConverted += dailyCoinsConverted;
         this.dailyCoinsConverted += dailyCoinsConverted;
     }
 
