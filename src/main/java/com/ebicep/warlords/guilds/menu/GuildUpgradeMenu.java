@@ -100,7 +100,8 @@ public class GuildUpgradeMenu {
                             )
                             .get(),
                     (m, e) -> {
-                        Menu.openConfirmationMenu(player,
+                        Menu.openConfirmationMenu(
+                                player,
                                 upgradesTemporary.name + " (T" + tier + ")",
                                 3,
                                 Collections.singletonList(ChatColor.GRAY + "Purchase Upgrade"),
