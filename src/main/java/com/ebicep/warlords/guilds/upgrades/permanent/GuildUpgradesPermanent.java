@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.upgrades.permanent;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
@@ -49,7 +50,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     ) {
         @Override
         public double getValueFromTier(int tier) {
-            return (tier == 9 ? 5 : 2 + .25 * tier) * .01;
+            return tier == 9 ? .003 : .0025 * tier;
         }
 
         @Override
@@ -57,7 +58,21 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier) * 100) + "%";
         }
 
+        @Override
+        public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
+            game.registerEvents(new Listener() {
 
+                @EventHandler
+                public void onEvent(WarlordsPlayerGiveGuildCoinEvent event) {
+                    if (!validUUIDs.contains(event.getPlayer().getUuid())) {
+                        return;
+                    }
+
+                    event.getCoinConversionRate().set(event.getCoinConversionRate().get() + getValueFromTier(tier));
+                }
+
+            });
+        }
     },
     DAILY_PLAYER_COIN_BONUS(
             "Daily Player Coin Bonus",
@@ -78,7 +93,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
             "Guild Member Capacity",
             Material.CHEST
     ) {
-        final int[] values = new int[]{2, 4, 7, 10, 15, 20, 30, 40, 50};
+        final int[] values = new int[]{2, 2, 3, 3, 5, 5, 10, 10, 10, 0};
 
         @Override
         public double getValueFromTier(int tier) {
@@ -92,7 +107,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
         @Override
         public void onPurchase(Guild guild, int tier) {
-            guild.setPlayerLimit(Guild.BASE_PLAYER_LIMIT + (int) getValueFromTier(tier));
+            guild.setPlayerLimit(guild.getPlayerLimit() + (int) getValueFromTier(tier));
         }
     },
 

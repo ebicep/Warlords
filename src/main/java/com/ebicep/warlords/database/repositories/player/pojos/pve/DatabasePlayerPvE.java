@@ -73,22 +73,27 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
         super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
+        DatabaseGamePlayerPvE gamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
+
         //COINS
-        addCurrency(Currencies.COIN, ((DatabaseGamePlayerPvE) gamePlayer).getCoinsGained() * multiplier);
+        addCurrency(Currencies.COIN, gamePlayerPvE.getCoinsGained() * multiplier);
+        //GUILDS
         Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
         if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {
-            guildGuildPlayerPair.getA().addCoins(
-                    Timing.LIFETIME,
-                    ((DatabaseGamePlayerPvE) gamePlayer).getGuildCoinsGained() * multiplier
-            );
-            GuildManager.queueUpdateGuild(guildGuildPlayerPair.getA());
+            Guild guild = guildGuildPlayerPair.getA();
+            GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
+
+            guild.addCoins(Timing.LIFETIME, gamePlayerPvE.getGuildCoinsGained() * multiplier);
+            guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
+            guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
+            guild.queueUpdate();
         }
         //WEAPONS
         if (multiplier > 0) {
-            weaponInventory.addAll(((DatabaseGamePlayerPvE) gamePlayer).getWeaponsFound());
+            weaponInventory.addAll(gamePlayerPvE.getWeaponsFound());
         } else {
             //need to search by uuid incase weapon got upgraded or changed
-            List<UUID> weaponsFoundUUIDs = ((DatabaseGamePlayerPvE) gamePlayer).getWeaponsFound()
+            List<UUID> weaponsFoundUUIDs = gamePlayerPvE.getWeaponsFound()
                     .stream()
                     .map(AbstractWeapon::getUUID)
                     .collect(Collectors.toList());
@@ -96,7 +101,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         }
 
         //LEGEND FRAGMENTS
-        addCurrency(Currencies.LEGEND_FRAGMENTS, ((DatabaseGamePlayerPvE) gamePlayer).getLegendFragmentsGained() * multiplier);
+        addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
@@ -119,6 +124,13 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
                 break;
         }
 
+    }
+
+    public void addCurrency(Currencies currency, Long amount) {
+        if (!currencies.containsKey(currency)) {
+            currencies.put(currency, 0L);
+        }
+        this.currencies.put(currency, this.currencies.get(currency) + amount);
     }
 
     @Override
@@ -248,13 +260,6 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         return this.currencies.getOrDefault(currency, 0L);
     }
 
-    public void addCurrency(Currencies currency, Long amount) {
-        if (!currencies.containsKey(currency)) {
-            currencies.put(currency, 0L);
-        }
-        this.currencies.put(currency, this.currencies.get(currency) + amount);
-    }
-
     public void addCurrency(Currencies currency, int amount) {
         this.addCurrency(currency, (long) amount);
     }
@@ -263,12 +268,12 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.addCurrency(currency, 1L);
     }
 
-    public void subtractCurrency(Currencies currency, Long amount) {
-        this.addCurrency(currency, -amount);
-    }
-
     public void subtractCurrency(Currencies currency, int amount) {
         this.subtractCurrency(currency, (long) amount);
+    }
+
+    public void subtractCurrency(Currencies currency, Long amount) {
+        this.addCurrency(currency, -amount);
     }
 
     public void subtractOneCurrency(Currencies currency) {

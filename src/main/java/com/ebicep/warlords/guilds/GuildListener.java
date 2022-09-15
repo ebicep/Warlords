@@ -24,8 +24,8 @@ public class GuildListener implements Listener {
                     if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(1, ChronoUnit.DAYS))) {
                         return;
                     }
-                    if (!guildPlayer.isCoinBonusReceived()) {
-                        guildPlayer.setCoinBonusReceived(true);
+                    if (!guildPlayer.isDailyCoinBonusReceived()) {
+                        guildPlayer.setDailyCoinBonusReceived(true);
                         long coins = (long) upgrade.getUpgrade().getValueFromTier(upgrade.getTier());
                         guild.addCoins(coins);
                         guild.sendGuildMessageToOnlinePlayers(

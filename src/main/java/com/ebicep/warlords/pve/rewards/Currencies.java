@@ -1,8 +1,10 @@
 package com.ebicep.warlords.pve.rewards;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -101,7 +103,9 @@ public enum Currencies {
             totalCoinsEarned += value;
         }
 
-        long guildCoinsEarned = Math.min(300, Math.round(totalCoinsEarned * .02));
+        AtomicDouble guildCoinConversionRate = new AtomicDouble(.02);
+        Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
+        long guildCoinsEarned = Math.min(300, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
 
         if (CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid())) {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid())

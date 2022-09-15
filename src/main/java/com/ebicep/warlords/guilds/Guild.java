@@ -36,7 +36,6 @@ public class Guild {
         return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST && (pveStats.getNormalStats().getWins() + pveStats.getHardStats()
                 .getWins()) >= 20;
     };
-    public static final int BASE_PLAYER_LIMIT = 10;
 
     //TODO local cache of uuids for faster lookup
 
@@ -58,7 +57,7 @@ public class Guild {
     private List<GuildRole> roles = new ArrayList<>();
     private List<GuildPlayer> players = new ArrayList<>();
     @Field("player_limit")
-    private int playerLimit = BASE_PLAYER_LIMIT;
+    private int playerLimit = 10;
     private Map<Timing, Long> coins = new HashMap<>() {{
         for (Timing value : Timing.VALUES) {
             put(value, 0L);

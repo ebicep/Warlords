@@ -94,8 +94,8 @@ public class DatabaseTiming {
 
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
-                            guild.setExperience(Timing.DAILY, 0);
-                            GuildManager.queueUpdateGuild(guild);
+                            guild.setExperience(Timing.WEEKLY, 0);
+                            guild.queueUpdate();
                         }
                         GuildLeaderboardManager.recalculateLeaderboard(Timing.WEEKLY);
                     }
@@ -129,7 +129,11 @@ public class DatabaseTiming {
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
                             guild.setExperience(Timing.DAILY, 0);
-                            GuildManager.queueUpdateGuild(guild);
+                            guild.getPlayers().forEach(guildPlayer -> {
+                                guildPlayer.setDailyCoinBonusReceived(false);
+                                guildPlayer.setDailyCoinsConverted(0);
+                            });
+                            guild.queueUpdate();
                         }
                         GuildLeaderboardManager.recalculateLeaderboard(Timing.DAILY);
                     }

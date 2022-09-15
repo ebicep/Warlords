@@ -27,8 +27,9 @@ import java.util.Optional;
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 
 public class GuildUpgradeMenu {
-    public static <T extends Enum<T> & GuildUpgrade> void openGuildUpgradeTypeMenu(Player player, Guild guild, T[] values) {
-        Menu menu = new Menu("Temporary Upgrades", 9 * 6);
+
+    public static <T extends Enum<T> & GuildUpgrade> void openGuildUpgradeTypeMenu(Player player, Guild guild, String name, T[] values) {
+        Menu menu = new Menu(name, 9 * 6);
 
         Optional<GuildPlayer> optionalGuildPlayer = guild.getPlayerMatchingUUID(player.getUniqueId());
         boolean canPurchaseUpgrades = optionalGuildPlayer.isPresent() && guild.playerHasPermission(optionalGuildPlayer.get(),
@@ -63,9 +64,11 @@ public class GuildUpgradeMenu {
                     (m, e) -> {
                         if (canPurchaseUpgrades) {
                             if (value instanceof GuildUpgradesTemporary) {
-                                openGuildUpgradeTemporaryPurchaseMenu(player, guild, (GuildUpgradesTemporary) value);
+                                openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, (GuildUpgradesTemporary) value);
                             } else if (value instanceof GuildUpgradesPermanent) {
-                                openGuildUpgradePermanentPurchaseMenu(player, guild, (GuildUpgradesPermanent) value, (GuildUpgradePermanent) finalUpgrade);
+                                openGuildUpgradePermanentPurchaseMenu(player, guild, name, (GuildUpgradesPermanent) value,
+                                        (GuildUpgradePermanent) finalUpgrade
+                                );
                             }
                         }
                     }
@@ -77,7 +80,7 @@ public class GuildUpgradeMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openGuildUpgradeTemporaryPurchaseMenu(Player player, Guild guild, GuildUpgradesTemporary upgrade) {
+    public static void openGuildUpgradeTemporaryPurchaseMenu(Player player, Guild guild, String name, GuildUpgradesTemporary upgrade) {
         Menu menu = new Menu(upgrade.name, 9 * 5);
 
         for (int i = 0; i < 9; i++) {
@@ -110,15 +113,15 @@ public class GuildUpgradeMenu {
                                         Instant end = upgrade.expirationDate.apply(Instant.now());
                                         guild.sendGuildMessageToOnlinePlayers(ChatColor.YELLOW.toString() +
                                                         Duration.between(now, end).toHours() + " Hour Tier " +
-                                                        tier + " " + upgrade.name + ChatColor.GREEN + " upgrade purchased!",
+                                                        tier + " " + upgrade.name + ChatColor.GREEN + " blessing purchased!",
                                                 true
                                         );
-                                        openGuildUpgradeTypeMenu(player, guild, GuildUpgradesTemporary.VALUES);
+                                        openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES);
                                     } else {
                                         player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
                                     }
                                 },
-                                (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, upgrade),
+                                (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, upgrade),
                                 (m2) -> {
                                 }
                         );
@@ -126,14 +129,14 @@ public class GuildUpgradeMenu {
             );
         }
 
-        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildUpgradeTypeMenu(player, guild, GuildUpgradesTemporary.VALUES));
+        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES));
         menu.openForPlayer(player);
     }
 
     public static void openGuildUpgradePermanentPurchaseMenu(
             Player player,
             Guild guild,
-            GuildUpgradesPermanent upgradesPermanent,
+            String name, GuildUpgradesPermanent upgradesPermanent,
             GuildUpgradePermanent upgrade
     ) {
         int nextTier = upgrade == null ? 1 : upgrade.getTier() + 1;
@@ -162,12 +165,12 @@ public class GuildUpgradeMenu {
                                 ChatColor.YELLOW + "Permanent Tier " + nextTier + " " + upgradesPermanent.name + ChatColor.GREEN + " upgrade purchased!",
                                 true
                         );
-                        openGuildUpgradeTypeMenu(player, guild, GuildUpgradesPermanent.VALUES);
+                        openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesPermanent.VALUES);
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
                     }
                 },
-                (m2, e2) -> openGuildUpgradeTypeMenu(player, guild, GuildUpgradesPermanent.VALUES),
+                (m2, e2) -> openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesPermanent.VALUES),
                 (m2) -> {
                 }
         );

@@ -18,10 +18,10 @@ public class GuildBankMenu {
 
         menu.setItem(1, 1,
                 new ItemBuilder(Material.GOLD_BARDING)
-                        .name(ChatColor.GREEN + "Temporary Upgrades")
+                        .name(ChatColor.GREEN + "Temporary Blessings")
                         .get(),
                 (m, e) -> {
-                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, GuildUpgradesTemporary.VALUES);
+                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Temporary Blessings", GuildUpgradesTemporary.VALUES);
 
                 }
         );
@@ -30,7 +30,15 @@ public class GuildBankMenu {
                         .name(ChatColor.GREEN + "Permanent Upgrades")
                         .get(),
                 (m, e) -> {
-                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, GuildUpgradesPermanent.VALUES);
+                    GuildUpgradeMenu.openGuildUpgradeTypeMenu(player, guild, "Permanent Upgrades", GuildUpgradesPermanent.VALUES);
+                }
+        );
+        menu.setItem(3, 1,
+                new ItemBuilder(Material.EMERALD)
+                        .name(ChatColor.GREEN + "Convert Coins")
+                        .get(),
+                (m, e) -> {
+
                 }
         );
 

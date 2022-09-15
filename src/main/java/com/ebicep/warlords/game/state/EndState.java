@@ -424,7 +424,7 @@ public class EndState implements State, TimerDebugAble {
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
 
 
-            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp);
+            LinkedHashMap<String, Long> expFromWaveDefense = GuildExperienceUtils.getExpFromWaveDefense(wp, false);
             if (expFromWaveDefense.size() > 0) {
                 StringBuilder expFromWaveDefenseSummary = new StringBuilder();
                 expFromWaveDefense.forEach((s, aLong) -> {

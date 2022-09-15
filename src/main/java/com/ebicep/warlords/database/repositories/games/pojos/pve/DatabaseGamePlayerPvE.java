@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.rewards.Currencies;
@@ -38,6 +39,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private long coinsGained;
     @Field("guild_coins_gained")
     private long guildCoinsGained;
+    @Field("guild_exp_gained")
+    private long guildExpGained;
     @Field("weapons_found")
     private List<AbstractWeapon> weaponsFound = new ArrayList<>();
     @Field("legend_fragments_gain")
@@ -60,6 +63,7 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         Currencies.PvECoinSummary coinGainFromGameStats = Currencies.getCoinGainFromGameStats(warlordsPlayer, waveDefenseOption, true);
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
+        this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, true).values().stream().mapToLong(aLong -> aLong).sum();
         this.weaponsFound.addAll(waveDefenseOption.getWaveDefenseStats()
                 .getPlayerWeaponsFound()
                 .getOrDefault(warlordsPlayer.getUuid(), new ArrayList<>()));
@@ -114,6 +118,10 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public long getGuildCoinsGained() {
         return guildCoinsGained;
+    }
+
+    public long getGuildExpGained() {
+        return guildExpGained;
     }
 
     public List<AbstractWeapon> getWeaponsFound() {

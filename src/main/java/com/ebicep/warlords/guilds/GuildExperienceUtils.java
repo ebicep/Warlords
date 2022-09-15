@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -44,41 +45,45 @@ public class GuildExperienceUtils {
         }
     }
 
-    public static LinkedHashMap<String, Long> getExpFromWaveDefense(WarlordsEntity warlordsPlayer) {
+    public static LinkedHashMap<String, Long> getExpFromWaveDefense(WarlordsEntity warlordsPlayer, boolean recalculate) {
+        if (!recalculate &&
+                CACHED_PLAYER_EXP_SUMMARY.containsKey(warlordsPlayer.getUuid()) &&
+                CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid()) != null
+        ) {
+            return CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid());
+        }
+
         LinkedHashMap<String, Long> expSummary = new LinkedHashMap<>();
 
         for (Option option : warlordsPlayer.getGame().getOptions()) {
             if (option instanceof WaveDefenseOption) {
+                if (DatabaseManager.guildService == null) {
+                    break;
+                }
+
                 WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                 int wavesCleared = waveDefenseOption.getWavesCleared();
                 if (wavesCleared == 0) {
                     break;
                 }
 
-                if (DatabaseManager.guildService != null) {
-                    Player player = Bukkit.getPlayer(warlordsPlayer.getUuid());
-                    if (player != null) {
-                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
-                        if (guildPlayerPair != null) {
-                            Guild guild = guildPlayerPair.getA();
-                            GuildPlayer guildPlayer = guildPlayerPair.getB();
-                            long expEarnedPerWave = EXP_PER_WAVE * wavesCleared;
-                            guild.addExperience(expEarnedPerWave);
-                            guildPlayer.addExperience(expEarnedPerWave);
-                            expSummary.put("Waves Cleared", expEarnedPerWave);
-                            if (wavesCleared == 25 && waveDefenseOption.getMaxWave() == 25) {
-                                guild.addExperience(BONUS_EXP_WAVE_25);
-                                guildPlayer.addExperience(BONUS_EXP_WAVE_25);
-                                expSummary.put("Wave 25 Clear Bonus", BONUS_EXP_WAVE_25);
-                            }
-                            GuildManager.queueUpdateGuild(guild);
+                Player player = Bukkit.getPlayer(warlordsPlayer.getUuid());
+                if (player != null) {
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+                    if (guildPlayerPair != null) {
+                        expSummary.put("Waves Cleared", EXP_PER_WAVE * wavesCleared);
+                        if (wavesCleared == 25 && waveDefenseOption.getDifficulty() == DifficultyIndex.NORMAL) {
+                            expSummary.put("Wave 25 Clear Bonus", BONUS_EXP_WAVE_25);
                         }
+                        guildPlayerPair.getA().queueUpdate();
                     }
                 }
 
                 break;
             }
         }
+
+        CACHED_PLAYER_EXP_SUMMARY.put(warlordsPlayer.getUuid(), expSummary);
 
         return expSummary;
     }
