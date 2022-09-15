@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.trait.HologramTrait;
+import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -101,7 +102,9 @@ public class NPCManager {
     }
 
     public static void createMasterworksFairNPC() {
-        if (!MasterworksFairManager.enabled) return;
+        if (!MasterworksFairManager.enabled) {
+            return;
+        }
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
         masterworksFairNPC = npcRegistry.createNPC(EntityType.VILLAGER, "masterworks-fair");
@@ -109,8 +112,10 @@ public class NPCManager {
 
         masterworksFairNPC.data().set(NPC.VILLAGER_BLOCK_TRADES, true);
         masterworksFairNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        LookClose lookClose = masterworksFairNPC.getOrAddTrait(LookClose.class);
+        lookClose.toggle();
 
-        masterworksFairNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2542, 50, 754.5, 135, 0));
+        masterworksFairNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2523.5, 50, 725.5, 90, 0));
     }
 
     public static void createSupplyDropFairNPC() {
@@ -124,8 +129,10 @@ public class NPCManager {
         //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
 
         supplyDropNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        LookClose lookClose = supplyDropNPC.getOrAddTrait(LookClose.class);
+        lookClose.toggle();
 
-        supplyDropNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2538, 50, 751, 135, 0));
+        supplyDropNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
     }
 
 
