@@ -155,6 +155,7 @@ public class GuildUpgradeMenu {
                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
                         guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
                         guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));
+                        upgradesPermanent.onPurchase(guild, nextTier);
                         guild.queueUpdate();
 
                         guild.sendGuildMessageToOnlinePlayers(

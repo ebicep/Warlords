@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds.upgrades.permanent;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Material;
@@ -86,9 +87,13 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
         @Override
         public String getEffectBonusFromTier(int tier) {
-            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Players";
+            return "+" + NumberFormat.formatOptionalHundredths(getValueFromTier(tier)) + " Player Limit";
         }
 
+        @Override
+        public void onPurchase(Guild guild, int tier) {
+            guild.setPlayerLimit(Guild.BASE_PLAYER_LIMIT + (int) getValueFromTier(tier));
+        }
     },
 
     ;
@@ -115,6 +120,10 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     @Override
     public GuildUpgradePermanent createUpgrade(int tier) {
         return new GuildUpgradePermanent(this, tier);
+    }
+
+    public void onPurchase(Guild guild, int tier) {
+
     }
 
     public long getCost(int tier) {
