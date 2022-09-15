@@ -86,6 +86,10 @@ public class GuildPlayer {
         return dailyCoinsConverted;
     }
 
+    public void setDailyCoinsConverted(long dailyCoinsConverted) {
+        this.dailyCoinsConverted = dailyCoinsConverted;
+    }
+
     public void addDailyCoinsConverted(long dailyCoinsConverted) {
         this.dailyCoinsConverted += dailyCoinsConverted;
     }
