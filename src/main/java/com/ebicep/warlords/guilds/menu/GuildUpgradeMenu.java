@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades.GuildLogUpgradePermanent;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades.GuildLogUpgradeTemporary;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradePermanent;
@@ -80,48 +82,49 @@ public class GuildUpgradeMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openGuildUpgradeTemporaryPurchaseMenu(Player player, Guild guild, String name, GuildUpgradesTemporary upgrade) {
-        Menu menu = new Menu(upgrade.name, 9 * 5);
+    public static void openGuildUpgradeTemporaryPurchaseMenu(Player player, Guild guild, String name, GuildUpgradesTemporary upgradesTemporary) {
+        Menu menu = new Menu(upgradesTemporary.name, 9 * 5);
 
         for (int i = 0; i < 9; i++) {
             int tier = i + 1;
-            long upgradeCost = upgrade.getCost(tier);
+            long upgradeCost = upgradesTemporary.getCost(tier);
             menu.setItem(i % 7 + 1, i / 7 + 1,
                     new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                             .name(ChatColor.GREEN + "Tier " + tier)
                             .lore(
                                     ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +
                                             " Guild Coins",
-                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getEffectBonusFromTier(tier),
+                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
                                     "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgrade."
+                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgradesTemporary."
                             )
                             .get(),
                     (m, e) -> {
                         Menu.openConfirmationMenu(player,
-                                upgrade.name + " (T" + tier + ")",
+                                upgradesTemporary.name + " (T" + tier + ")",
                                 3,
                                 Collections.singletonList(ChatColor.GRAY + "Purchase Upgrade"),
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
                                         guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
-                                        guild.addUpgrade(upgrade.createUpgrade(tier));
+                                        guild.addUpgrade(upgradesTemporary.createUpgrade(tier));
+                                        guild.log(new GuildLogUpgradeTemporary(upgradesTemporary, tier));
                                         guild.queueUpdate();
 
                                         Instant now = Instant.now();
-                                        Instant end = upgrade.expirationDate.apply(Instant.now());
+                                        Instant end = upgradesTemporary.expirationDate.apply(Instant.now());
                                         guild.sendGuildMessageToOnlinePlayers(ChatColor.YELLOW.toString() +
                                                         Duration.between(now, end).toHours() + " Hour Tier " +
-                                                        tier + " " + upgrade.name + ChatColor.GREEN + " blessing purchased!",
+                                                        tier + " " + upgradesTemporary.name + ChatColor.GREEN + " blessing purchased!",
                                                 true
                                         );
                                         openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES);
                                     } else {
-                                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
+                                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgradesTemporary.");
                                     }
                                 },
-                                (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, upgrade),
+                                (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, upgradesTemporary),
                                 (m2) -> {
                                 }
                         );
@@ -158,6 +161,7 @@ public class GuildUpgradeMenu {
                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
                         guild.setCoins(Timing.LIFETIME, guild.getCoins(Timing.LIFETIME) - upgradeCost);
                         guild.addUpgrade(upgradesPermanent.createUpgrade(nextTier));
+                        guild.log(new GuildLogUpgradePermanent(upgradesPermanent, nextTier));
                         upgradesPermanent.onPurchase(guild, nextTier);
                         guild.queueUpdate();
 
