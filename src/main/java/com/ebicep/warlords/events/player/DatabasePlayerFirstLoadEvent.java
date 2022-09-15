@@ -2,7 +2,6 @@ package com.ebicep.warlords.events.player;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 
@@ -23,6 +22,10 @@ public class DatabasePlayerFirstLoadEvent extends PlayerEvent {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

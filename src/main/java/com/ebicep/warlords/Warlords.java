@@ -29,6 +29,7 @@ import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -370,6 +371,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
+        getServer().getPluginManager().registerEvents(new GuildListener(), this);
 
         CommandManager.init(this);
 
