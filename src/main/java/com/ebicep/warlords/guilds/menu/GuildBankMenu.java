@@ -56,10 +56,10 @@ public class GuildBankMenu {
                         .name(ChatColor.GREEN + "Convert Coins")
                         .lore(
                                 ChatColor.GRAY + "Convert your Player Coins to Guild Coins",
-                                ChatColor.GRAY + "Guild Level 1-5: " + ChatColor.GREEN + "100:1",
-                                ChatColor.GRAY + "Guild Level 6-10: " + ChatColor.GREEN + "40:1",
-                                ChatColor.GRAY + "Guild Level 11-15: " + ChatColor.GREEN + "10:1",
-                                ChatColor.GRAY + "Guild Level 16-20: " + ChatColor.GREEN + "5:1"
+                                ChatColor.GRAY + "Guild Level 1-5: " + ChatColor.GOLD + "100:1",
+                                ChatColor.GRAY + "Guild Level 6-10: " + ChatColor.GOLD + "40:1",
+                                ChatColor.GRAY + "Guild Level 11-15: " + ChatColor.GOLD + "10:1",
+                                ChatColor.GRAY + "Guild Level 16-20: " + ChatColor.GOLD + "5:1"
                         )
                         .get(),
                 (m, e) -> {
