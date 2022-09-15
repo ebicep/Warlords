@@ -12,7 +12,7 @@ import java.util.List;
 public class PlayerLeaderboardInfo {
 
     private int gameHologram = 0;
-    private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.ALL;
+    private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;
     private StatsLeaderboardManager.Category statsCategory = StatsLeaderboardManager.Category.ALL;
     private PlayersCollections statsTime = PlayersCollections.LIFETIME;
     private List<Hologram> holograms = new ArrayList<>();
