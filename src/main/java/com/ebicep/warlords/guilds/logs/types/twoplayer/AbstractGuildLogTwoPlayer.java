@@ -25,11 +25,11 @@ public abstract class AbstractGuildLogTwoPlayer extends AbstractGuildLog {
     }
 
     protected String getSenderName() {
-        return ChatColor.AQUA + Bukkit.getOfflinePlayer(sender).getName();
+        return ChatColor.AQUA + (sender == null ? "UNKNOWN" : Bukkit.getOfflinePlayer(sender).getName());
     }
 
     protected String getReceiverName() {
-        return ChatColor.AQUA + Bukkit.getOfflinePlayer(receiver).getName();
+        return ChatColor.AQUA + (receiver == null ? "UNKNOWN" : Bukkit.getOfflinePlayer(receiver).getName());
     }
 
 }

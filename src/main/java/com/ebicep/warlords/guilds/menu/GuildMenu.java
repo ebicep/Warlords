@@ -113,7 +113,10 @@ public class GuildMenu {
                 menu.setItem(i % 9, i / 9 + 1,
                         new ItemBuilder(HeadUtils.getHead(guildPlayer.getUUID())) //TODO check if this lags
                                 .name(ChatColor.GREEN + guildPlayer.getName())
-                                .lore(ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName())
+                                .lore(
+                                        ChatColor.GRAY + "Join Date: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()),
+                                        ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName()
+                                )
                                 .get(),
                         (m, e) -> {
 

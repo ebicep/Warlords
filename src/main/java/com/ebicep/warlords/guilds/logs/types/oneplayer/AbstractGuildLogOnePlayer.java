@@ -23,7 +23,7 @@ public abstract class AbstractGuildLogOnePlayer extends AbstractGuildLog {
     }
 
     protected String getSenderName() {
-        return ChatColor.AQUA + Bukkit.getOfflinePlayer(sender).getName();
+        return ChatColor.AQUA + (sender == null ? "UNKNOWN" : Bukkit.getOfflinePlayer(sender).getName());
     }
 
 
