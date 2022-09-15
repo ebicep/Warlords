@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuildUpgradeTemporary extends AbstractGuildUpgrade<GuildUpgradesTemporary> {
 
@@ -34,13 +36,17 @@ public class GuildUpgradeTemporary extends AbstractGuildUpgrade<GuildUpgradesTem
     }
 
     @Override
-    protected void addItemLore(ItemBuilder itemBuilder) {
-        super.addItemLore(itemBuilder);
-        itemBuilder.addLore(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(expirationDate,
+    public List<String> getLore() {
+        List<String> lore = new ArrayList<>(super.getLore());
+        lore.add(ChatColor.GRAY + "Time Left: " + ChatColor.GREEN + DateUtil.getTimeTill(expirationDate,
                 false,
                 true,
                 true,
                 true
         ));
+        lore.add(ChatColor.YELLOW + "\n>>> ACTIVE <<<");
+
+        return lore;
     }
+
 }

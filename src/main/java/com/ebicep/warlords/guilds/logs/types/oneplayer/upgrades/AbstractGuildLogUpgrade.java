@@ -2,8 +2,6 @@ package com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
-import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
-import org.bukkit.ChatColor;
 
 public abstract class AbstractGuildLogUpgrade<T extends Enum<T> & GuildUpgrade> extends AbstractGuildLogOnePlayer {
 

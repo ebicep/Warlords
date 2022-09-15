@@ -95,6 +95,22 @@ public class Guild {
         ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 
+    public static int getConversionRatio(Guild guild) {
+        int guildLevel = guild.getLevel();
+
+        int coinConversionRatio;
+        if (guildLevel <= 5) {
+            coinConversionRatio = 100;
+        } else if (guildLevel <= 10) {
+            coinConversionRatio = 40;
+        } else if (guildLevel <= 15) {
+            coinConversionRatio = 10;
+        } else {
+            coinConversionRatio = 5;
+        }
+        return coinConversionRatio;
+    }
+
     public void queueUpdate() {
         queueUpdateGuild(this);
     }
@@ -376,6 +392,10 @@ public class Guild {
 
     public void addExperience(long experience) {
         this.experience.forEach((timing, aLong) -> this.experience.put(timing, aLong + experience));
+    }
+
+    public int getLevel() {
+        return GuildExperienceUtils.getLevelFromExp(getExperience(Timing.LIFETIME));
     }
 
     public List<AbstractGuildUpgrade<?>> getUpgrades() {

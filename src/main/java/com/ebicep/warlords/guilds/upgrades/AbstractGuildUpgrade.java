@@ -6,6 +6,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
 
@@ -21,12 +23,11 @@ public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
 
     public void modifyItem(ItemBuilder itemBuilder) {
         itemBuilder.enchant(Enchantment.OXYGEN, 1);
-        addItemLore(itemBuilder);
-        itemBuilder.addLore(ChatColor.YELLOW + "\n>>> ACTIVE <<<");
+        itemBuilder.lore(getLore());
     }
 
-    protected void addItemLore(ItemBuilder itemBuilder) {
-        itemBuilder.lore(
+    public List<String> getLore() {
+        return Arrays.asList(
                 ChatColor.GRAY + "Current Tier: " + ChatColor.GREEN + tier,
                 ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgrade.getEffectBonusFromTier(tier)
         );

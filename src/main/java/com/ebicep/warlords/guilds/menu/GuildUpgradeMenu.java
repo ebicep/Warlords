@@ -31,7 +31,7 @@ import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 public class GuildUpgradeMenu {
 
     public static <T extends Enum<T> & GuildUpgrade> void openGuildUpgradeTypeMenu(Player player, Guild guild, String name, T[] values) {
-        Menu menu = new Menu(name, 9 * 6);
+        Menu menu = new Menu(name, 9 * 4);
 
         Optional<GuildPlayer> optionalGuildPlayer = guild.getPlayerMatchingUUID(player.getUniqueId());
         boolean canPurchaseUpgrades = optionalGuildPlayer.isPresent() && guild.playerHasPermission(optionalGuildPlayer.get(),
@@ -78,12 +78,12 @@ public class GuildUpgradeMenu {
             index++;
         }
 
-        menu.setItem(4, 5, MENU_BACK, (m, e) -> GuildBankMenu.openGuildBankMenu(player, guild));
+        menu.setItem(4, 3, MENU_BACK, (m, e) -> GuildMenu.openGuildMenu(guild, player, 1));
         menu.openForPlayer(player);
     }
 
     public static void openGuildUpgradeTemporaryPurchaseMenu(Player player, Guild guild, String name, GuildUpgradesTemporary upgradesTemporary) {
-        Menu menu = new Menu(upgradesTemporary.name, 9 * 5);
+        Menu menu = new Menu(upgradesTemporary.name, 9 * 4);
 
         for (int i = 0; i < 9; i++) {
             int tier = i + 1;
@@ -92,9 +92,9 @@ public class GuildUpgradeMenu {
                     new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                             .name(ChatColor.GREEN + "Tier " + tier)
                             .lore(
+                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
                                     ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +
                                             " Guild Coins",
-                                    ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
                                     "",
                                     ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgradesTemporary."
                             )
@@ -104,7 +104,14 @@ public class GuildUpgradeMenu {
                                 player,
                                 upgradesTemporary.name + " (T" + tier + ")",
                                 3,
-                                Collections.singletonList(ChatColor.GRAY + "Purchase Upgrade"),
+                                ChatColor.GREEN + "Purchase Upgrade",
+                                Arrays.asList(
+                                        ChatColor.GRAY + "Tier: " + ChatColor.GREEN + tier,
+                                        ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesTemporary.getEffectBonusFromTier(tier),
+                                        "",
+                                        ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradesTemporary.getCost(tier)) + " Guild Coins"
+                                ),
+                                ChatColor.RED + "Cancel",
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     if (guild.getCoins(Timing.LIFETIME) >= upgradeCost) {
@@ -122,7 +129,7 @@ public class GuildUpgradeMenu {
                                         );
                                         openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES);
                                     } else {
-                                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgradesTemporary.");
+                                        player.sendMessage(ChatColor.RED + "You do not have enough guild coins to purchase this upgrade.");
                                     }
                                 },
                                 (m2, e2) -> openGuildUpgradeTemporaryPurchaseMenu(player, guild, name, upgradesTemporary),
@@ -133,14 +140,15 @@ public class GuildUpgradeMenu {
             );
         }
 
-        menu.setItem(4, 4, MENU_BACK, (m, e) -> openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES));
+        menu.setItem(4, 3, MENU_BACK, (m, e) -> openGuildUpgradeTypeMenu(player, guild, name, GuildUpgradesTemporary.VALUES));
         menu.openForPlayer(player);
     }
 
     public static void openGuildUpgradePermanentPurchaseMenu(
             Player player,
             Guild guild,
-            String name, GuildUpgradesPermanent upgradesPermanent,
+            String name,
+            GuildUpgradesPermanent upgradesPermanent,
             GuildUpgradePermanent upgrade
     ) {
         int nextTier = upgrade == null ? 1 : upgrade.getTier() + 1;
@@ -151,11 +159,14 @@ public class GuildUpgradeMenu {
         Menu.openConfirmationMenu(player,
                 upgradesPermanent.name + " (T" + nextTier + ")",
                 3,
+                ChatColor.GREEN + "Purchase Upgrade",
                 Arrays.asList(
-                        ChatColor.GRAY + "Purchase Upgrade",
+                        ChatColor.GRAY + "Tier: " + ChatColor.GREEN + nextTier,
+                        ChatColor.GRAY + "Effect Bonus: " + ChatColor.GREEN + upgradesPermanent.getEffectBonusFromTier(nextTier),
                         "",
                         ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradesPermanent.getCost(nextTier)) + " Guild Coins"
                 ),
+                ChatColor.RED + "Cancel",
                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                 (m2, e2) -> {
                     long upgradeCost = upgradesPermanent.getCost(nextTier);

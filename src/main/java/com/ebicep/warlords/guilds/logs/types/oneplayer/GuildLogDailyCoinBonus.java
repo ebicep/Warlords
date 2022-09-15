@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer;
 
+import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -21,6 +22,6 @@ public class GuildLogDailyCoinBonus extends AbstractGuildLogOnePlayer {
 
     @Override
     public String append() {
-        return coinsGained + " guild coins from daily bonus";
+        return ChatColor.GREEN.toString() + coinsGained + ChatColor.GRAY + " guild coins from daily bonus";
     }
 }

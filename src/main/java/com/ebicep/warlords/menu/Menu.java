@@ -41,18 +41,47 @@ public class Menu extends AbstractMenuBase {
         this.inventory = Bukkit.createInventory(null, size, name.substring(0, Math.min(name.length(), 32)));
     }
 
-    public static void openConfirmationMenu(Player player,
-                                            String title,
-                                            int rows, List<String> confirmLore,
-                                            List<String> cancelLore,
-                                            BiConsumer<Menu, InventoryClickEvent> onConfirm,
-                                            BiConsumer<Menu, InventoryClickEvent> onCancel,
-                                            Consumer<Menu> editMenu) {
+    public static void openConfirmationMenu(
+            Player player,
+            String title,
+            int rows,
+            List<String> confirmLore,
+            List<String> cancelLore,
+            BiConsumer<Menu, InventoryClickEvent> onConfirm,
+            BiConsumer<Menu, InventoryClickEvent> onCancel,
+            Consumer<Menu> editMenu
+    ) {
+        openConfirmationMenu(
+                player,
+                title,
+                rows,
+                ChatColor.GREEN + "Confirm",
+                confirmLore,
+                ChatColor.RED + "Deny",
+                cancelLore,
+                onConfirm,
+                onCancel,
+                editMenu
+        );
+    }
+
+    public static void openConfirmationMenu(
+            Player player,
+            String title,
+            int rows,
+            String confirmName,
+            List<String> confirmLore,
+            String cancelName,
+            List<String> cancelLore,
+            BiConsumer<Menu, InventoryClickEvent> onConfirm,
+            BiConsumer<Menu, InventoryClickEvent> onCancel,
+            Consumer<Menu> editMenu
+    ) {
         Menu menu = new Menu(title, 9 * rows);
 
         menu.setItem(2, 1,
                 new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
-                        .name(ChatColor.GREEN + "Confirm")
+                        .name(confirmName)
                         .lore(confirmLore)
                         .get(),
                 onConfirm
@@ -60,7 +89,7 @@ public class Menu extends AbstractMenuBase {
 
         menu.setItem(6, 1,
                 new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
-                        .name(ChatColor.RED + "Deny")
+                        .name(cancelName)
                         .lore(cancelLore)
                         .get(),
                 onCancel
@@ -69,11 +98,6 @@ public class Menu extends AbstractMenuBase {
         editMenu.accept(menu);
 
         menu.openForPlayer(player);
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return inventory;
     }
 
     public void setItem(int x, int y, ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
@@ -88,19 +112,10 @@ public class Menu extends AbstractMenuBase {
         }
     }
 
-    public void removeItem(int x, int y) {
-        removeItem(x + y * 9);
+    @Override
+    public Inventory getInventory() {
+        return inventory;
     }
-
-    public void removeItem(int index) {
-        inventory.setItem(index, null);
-        onClick[index] = null;
-    }
-
-    public void addItem(ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
-        this.setItem(nextItemIndex, item, clickHandler);
-    }
-
 
     @Override
     public void doOnClickAction(InventoryClickEvent event) {
@@ -117,5 +132,18 @@ public class Menu extends AbstractMenuBase {
             event.setCancelled(true);
             this.onClick[event.getRawSlot()].accept(this, event);
         }
+    }
+
+    public void removeItem(int x, int y) {
+        removeItem(x + y * 9);
+    }
+
+    public void removeItem(int index) {
+        inventory.setItem(index, null);
+        onClick[index] = null;
+    }
+
+    public void addItem(ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
+        this.setItem(nextItemIndex, item, clickHandler);
     }
 }
