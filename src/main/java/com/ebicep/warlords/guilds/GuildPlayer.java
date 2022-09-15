@@ -56,6 +56,10 @@ public class GuildPlayer {
         return uuid;
     }
 
+    public Instant getJoinDate() {
+        return joinDate;
+    }
+
     public long getExperience() {
         return experience;
     }
