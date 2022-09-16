@@ -44,7 +44,7 @@ public class PlayerHotBarItemListener implements Listener {
     private static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER).name("§aStart Menu").get();
     private static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER).name("§aSpectate").get();
     private static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD).name("§aWeapons").get();
-    private static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.CHEST).name("§aReward Inventory").get();
+    private static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST).name("§aReward Inventory").get();
     private static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 

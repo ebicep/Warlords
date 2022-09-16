@@ -50,18 +50,20 @@ public class RewardInventory {
                     menu.setItem(i % 9, i / 9,
                             masterworksFairReward.getItem(),
                             (m, e) -> {
-                                databasePlayerPvE.addCurrency(masterworksFairReward.getCurrency(), masterworksFairReward.getAmount());
+                                masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
                                 masterworksFairReward.setTimeClaimed();
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getCurrency().name)
+                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
                                                 .setHoverItem(masterworksFairReward.getItemWithoutClaim())
-                                                .getTextComponent());
+                                                .getTextComponent()
+                                );
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openRewardInventory(player, page);
-                            });
+                            }
+                    );
 
                 } else {
                     break;
@@ -74,20 +76,22 @@ public class RewardInventory {
                             .get(),
                     (m, e) -> {
                         for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
-                            databasePlayerPvE.addCurrency(masterworksFairReward.getCurrency(), masterworksFairReward.getAmount());
+                            masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
                             masterworksFairReward.setTimeClaimed();
 
                             sendRewardMessage(
                                     player.getUniqueId(),
                                     new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getCurrency().name)
+                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
                                             .setHoverItem(masterworksFairReward.getItemWithoutClaim())
-                                            .getTextComponent());
+                                            .getTextComponent()
+                            );
                         }
 
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         openRewardInventory(player, page);
-                    });
+                    }
+            );
 
         }
 

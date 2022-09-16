@@ -62,15 +62,15 @@ public class SupplyDropManager {
                     openSupplyDropMenu(player);
                 });
 
+        Long tokens = databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN);
         menu.setItem(
                 2,
                 3,
                 new ItemBuilder(Material.GOLD_BARDING)
                         .name(ChatColor.GREEN + "Click to call a supply drop")
                         .lore(
-                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + "1 Token",
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
-                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
+                                ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "1 Token",
+                                ChatColor.GRAY + "Balance: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call a supply drop"
                         )
@@ -81,7 +81,7 @@ public class SupplyDropManager {
                         return;
                     }
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    if (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 0) {
+                    if (tokens > 0) {
                         supplyDropRoll(player, 1, e.isShiftClick());
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
@@ -94,10 +94,8 @@ public class SupplyDropManager {
                 new ItemBuilder(Material.DIAMOND_BARDING)
                         .name(ChatColor.GREEN + "Click to call all available supply drops")
                         .lore(
-                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
-                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
-                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
+                                ChatColor.GRAY + "Cost: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
+                                ChatColor.GRAY + "Balance: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call all available supply drops"
                         )
@@ -107,8 +105,8 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You must wait for your current roll to end to roll again!");
                         return;
                     }
-                    if (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 0) {
-                        supplyDropRoll(player, Math.toIntExact(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)), e.isShiftClick());
+                    if (tokens > 0) {
+                        supplyDropRoll(player, Math.toIntExact(tokens), e.isShiftClick());
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
                     }

@@ -53,7 +53,7 @@ public enum Currencies {
     ),
     SUPPLY_DROP_TOKEN(
             "Supply Drop Token",
-            ChatColor.YELLOW,
+            ChatColor.GOLD,
             new ItemStack(Material.FIREWORK_CHARGE)
     ),
     COIN(

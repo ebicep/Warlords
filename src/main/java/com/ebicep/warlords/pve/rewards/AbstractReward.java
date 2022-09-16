@@ -3,27 +3,26 @@ package com.ebicep.warlords.pve.rewards;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public abstract class AbstractReward {
 
-    protected Currencies currency;
-    protected Long amount;
+    protected Map<Currencies, Long> rewards = new LinkedHashMap<>();
     protected String from;
     @Field("time_claimed")
     protected Instant timeClaimed;
 
-    public AbstractReward(Currencies currency, Long amount, String from) {
-        this.currency = currency;
-        this.amount = amount;
+    public AbstractReward() {
+    }
+
+    public AbstractReward(LinkedHashMap<Currencies, Long> rewards, String from) {
+        this.rewards = rewards;
         this.from = from;
     }
 
-    public Currencies getCurrency() {
-        return currency;
-    }
-
-    public Long getAmount() {
-        return amount;
+    public Map<Currencies, Long> getRewards() {
+        return rewards;
     }
 
     public String getFrom() {

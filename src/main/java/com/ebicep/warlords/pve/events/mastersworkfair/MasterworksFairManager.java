@@ -67,6 +67,95 @@ public class MasterworksFairManager {
         }
     }
 
+    public static void awardEntries(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
+        currentFair = null;
+
+        Warlords.newChain()
+                .async(() -> DatabaseManager.masterworksFairService.update(masterworksFair))
+                .sync(() -> {
+                    Instant now = Instant.now();
+                    for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+                        if (rarity.getPlayerEntries == null) {
+                            continue;
+                        }
+
+                        List<MasterworksFairPlayerEntry> playerEntries = rarity.getPlayerEntries.apply(masterworksFair);
+                        playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
+                        Collections.reverse(playerEntries);
+
+                        for (int i = 0; i < playerEntries.size(); i++) {
+                            MasterworksFairPlayerEntry entry = playerEntries.get(i);
+                            MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(now,
+                                    rarity,
+                                    i + 1,
+                                    Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore()))
+                            );
+                            int finalI = i;
+                            Warlords.newChain()
+                                    .asyncFirst(() -> DatabaseManager.playerService.findByUUID(entry.getUuid()))
+                                    .syncLast(databasePlayer -> {
+                                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                        pveStats.addMasterworksFairEntry(playerRecordEntry);
+                                        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+                                        if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
+                                            if (throughRewardsInventory) {
+                                                rewards.put(rarity.starPieceCurrency, 1L);
+                                            } else {
+                                                pveStats.addOneCurrency(rarity.starPieceCurrency);
+                                            }
+                                            switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
+                                                case 0:
+                                                    if (throughRewardsInventory) {
+                                                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                                                    } else {
+                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 10);
+                                                    }
+                                                    break;
+                                                case 1:
+                                                case 2:
+                                                    if (throughRewardsInventory) {
+                                                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
+                                                    } else {
+                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 7);
+                                                    }
+                                                    break;
+                                            }
+                                        } else {
+                                            if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
+                                                if (throughRewardsInventory) {
+                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                                                } else {
+                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 5);
+                                                }
+                                            } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
+                                                if (throughRewardsInventory) {
+                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
+                                                } else {
+                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 3);
+                                                }
+                                            } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
+                                                if (throughRewardsInventory) {
+                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
+                                                } else {
+                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
+                                                }
+                                            }
+                                        }
+                                        pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    })
+                                    .execute();
+                        }
+                    }
+                    if (throughRewardsInventory) {
+                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
+                    } else {
+                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
+                    }
+                }).
+                execute();
+    }
+
     public static void createFair(MasterworksFair masterworksFair) {
         Warlords.newChain()
                 .async(() -> DatabaseManager.masterworksFairService.create(masterworksFair))
@@ -93,87 +182,6 @@ public class MasterworksFairManager {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 60, 20 * 30);
-    }
-
-    public static void awardEntries(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
-        currentFair = null;
-
-        Warlords.newChain()
-                .async(() -> DatabaseManager.masterworksFairService.update(masterworksFair))
-                .sync(() -> {
-                    Instant now = Instant.now();
-                    for (WeaponsPvE value : WeaponsPvE.VALUES) {
-                        if (value.getPlayerEntries != null) {
-                            List<MasterworksFairPlayerEntry> playerEntries = value.getPlayerEntries.apply(masterworksFair);
-                            playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
-                            Collections.reverse(playerEntries);
-
-                            for (int i = 0; i < playerEntries.size(); i++) {
-                                MasterworksFairPlayerEntry entry = playerEntries.get(i);
-                                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(now, value, i + 1, Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())));
-                                int finalI = i;
-                                Warlords.newChain()
-                                        .asyncFirst(() -> DatabaseManager.playerService.findByUUID(entry.getUuid()))
-                                        .syncLast(databasePlayer -> {
-                                            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                            pveStats.addMasterworksFairEntry(playerRecordEntry);
-                                            if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
-                                                if (throughRewardsInventory) {
-                                                    pveStats.addReward(new MasterworksFairReward(value.starPieceCurrency, 1L, now));
-                                                } else {
-                                                    pveStats.addOneCurrency(value.starPieceCurrency);
-                                                }
-                                                switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
-                                                    case 0:
-                                                        if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 10L, now));
-                                                        } else {
-                                                            pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 10);
-                                                        }
-                                                        break;
-                                                    case 1:
-                                                    case 2:
-                                                        if (throughRewardsInventory) {
-                                                            pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 7L, now));
-                                                        } else {
-                                                            pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 7);
-                                                        }
-                                                        break;
-                                                }
-                                            } else {
-                                                if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
-                                                    if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 5L, now));
-                                                    } else {
-                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 5);
-                                                    }
-                                                } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
-                                                    if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 3L, now));
-                                                    } else {
-                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 3);
-                                                    }
-                                                } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
-                                                    if (throughRewardsInventory) {
-                                                        pveStats.addReward(new MasterworksFairReward(Currencies.SUPPLY_DROP_TOKEN, 1L, now));
-                                                    } else {
-                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
-                                                    }
-                                                }
-                                            }
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        })
-                                        .execute();
-                            }
-                        }
-                    }
-                    if (throughRewardsInventory) {
-                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
-                    } else {
-                        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
-                    }
-                }).
-                execute();
     }
 
     public static void openMasterworksFairMenu(Player player) {
@@ -247,7 +255,8 @@ public class MasterworksFairManager {
                                         .collect(Collectors.toList()))
                                 .get(), (m, e) -> {
 
-                        });
+                        }
+                );
                 column += 2;
             }
         }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -201,11 +203,15 @@ public class ExperienceManager {
             }
 
             int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
-            Pair<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add(ChatColor.GRAY + "Reward: " + ChatColor.GOLD + rewardForLevel.getA().name);
-            lore.add(ChatColor.GRAY + "Amount: " + ChatColor.GOLD + NumberFormat.formatOptionalHundredths(rewardForLevel.getB()));
+            LinkedHashMap<Currencies, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
+            List<String> lore = rewardForLevel.entrySet()
+                    .stream()
+                    .map(currenciesLongEntry -> {
+                        Currencies currency = currenciesLongEntry.getKey();
+                        Long value = currenciesLongEntry.getValue();
+                        return currency.chatColor.toString() + value + " " + currency.name + (currency != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
+                    }).collect(Collectors.toList());
+            lore.add(0, "");
             lore.add("");
             AtomicBoolean claimed = new AtomicBoolean(false);
             boolean currentPrestigeSelected = selectedPrestige != currentPrestige;
@@ -234,12 +240,9 @@ public class ExperienceManager {
                             if (claimed.get()) {
                                 player.sendMessage(ChatColor.RED + "You already claimed this reward!");
                             } else {
-                                databasePlayer.getPveStats().addCurrency(rewardForLevel.getA(), rewardForLevel.getB());
-                                databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel.getA(),
-                                        rewardForLevel.getB(),
-                                        menuLevel,
-                                        selectedPrestige
-                                ));
+                                DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+                                rewardForLevel.forEach(databasePlayerPvE::addCurrency);
+                                databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
                                 player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openLevelingRewardsMenuForSpec(player, spec, page, selectedPrestige);
@@ -449,6 +452,14 @@ public class ExperienceManager {
                 - expSummary.getOrDefault("Third Game of the Day", 0L);
     }
 
+    public static int getLevelForClass(UUID uuid, Classes classes) {
+        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classes));
+    }
+
+    public static double calculateLevelFromExp(long exp) {
+        return Math.sqrt(exp / 25.0);
+    }
+
     public static long getExperienceForClass(UUID uuid, Classes classes) {
         if (DatabaseManager.playerService == null) {
             return 0;
@@ -457,28 +468,8 @@ public class ExperienceManager {
         return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
     }
 
-    public static int getLevelForClass(UUID uuid, Classes classes) {
-        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classes));
-    }
-
     public static long getExperienceForSpec(UUID uuid, Specializations spec) {
         return getExperienceFromSpec(uuid, spec);
-    }
-
-    public static int getLevelForSpec(UUID uuid, Specializations spec) {
-        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
-    }
-
-    public static int getLevelFromExp(long experience) {
-        return (int) calculateLevelFromExp(experience);
-    }
-
-    public static long getUniversalLevel(UUID uuid) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getExperience();
     }
 
     private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
@@ -489,20 +480,20 @@ public class ExperienceManager {
         return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
     }
 
+    public static int getLevelForSpec(UUID uuid, Specializations spec) {
+        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
+    }
+
+    public static int getLevelFromExp(long experience) {
+        return (int) calculateLevelFromExp(experience);
+    }
+
     public static String getLevelString(int level) {
         return level < 10 ? "0" + level : String.valueOf(level);
     }
 
     public static String getProgressString(long currentExperience, int nextLevel) {
         String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
-        return getProgressString(currentExperience, nextLevel, progress);
-    }
-
-    public static String getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
-        String progress = nextLevel == 100 ?
-                ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1)
-                        .getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
-                ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
         return getProgressString(currentExperience, nextLevel, progress);
     }
 
@@ -526,6 +517,14 @@ public class ExperienceManager {
         return progress;
     }
 
+    public static String getProgressStringWithPrestige(long currentExperience, int nextLevel, int currentPrestige) {
+        String progress = nextLevel == 100 ?
+                ChatColor.GRAY + "Progress to " + PRESTIGE_COLORS.get(currentPrestige + 1)
+                        .getA() + "PRESTIGE" + ChatColor.GRAY + ": " + ChatColor.YELLOW :
+                ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+        return getProgressString(currentExperience, nextLevel, progress);
+    }
+
     public static String getPrestigeLevelString(UUID uuid, Specializations spec) {
         if (DatabaseManager.playerService == null) {
             return PRESTIGE_COLORS.get(0).getA() + "[-]";
@@ -544,10 +543,6 @@ public class ExperienceManager {
                 .getA() + prestigeLevel + ChatColor.DARK_GRAY + "]";
     }
 
-    public static double calculateLevelFromExp(long exp) {
-        return Math.sqrt(exp / 25.0);
-    }
-
     public static double calculateExpFromLevel(int level) {
         return Math.pow(level, 2) * 25;
     }
@@ -559,6 +554,14 @@ public class ExperienceManager {
         player.setLevel(level);
         player.setExp((float) (experience - LEVEL_TO_EXPERIENCE.get(level)) / (LEVEL_TO_EXPERIENCE.get(level + 1) - LEVEL_TO_EXPERIENCE.get(
                 level)));
+    }
+
+    public static long getUniversalLevel(UUID uuid) {
+        if (DatabaseManager.playerService == null) {
+            return 0;
+        }
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getExperience();
     }
 
     public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {
