@@ -61,7 +61,7 @@ public class WeaponManagerMenu {
         weaponInventory.removeIf(weapon -> weapon instanceof StarterWeapon);
 
         SortOptions sortedBy = menuSettings.getSortOption();
-        WeaponsPvE filterBy = menuSettings.getFilter();
+        WeaponsPvE filterBy = menuSettings.getRarityFilter();
 
         Menu menu = new Menu("Weapon Inventory", 9 * 6);
 
@@ -126,7 +126,7 @@ public class WeaponManagerMenu {
                         .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
-                    menuSettings.setFilter(WeaponsPvE.NONE);
+                    menuSettings.setRarityFilter(WeaponsPvE.NONE);
                     menuSettings.setSortOption(SortOptions.DATE);
                     menuSettings.setAscending(true);
                     openWeaponInventoryFromInternal(player);
@@ -141,7 +141,7 @@ public class WeaponManagerMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    menuSettings.setFilter(filterBy.next());
+                    menuSettings.setRarityFilter(filterBy.next());
                     openWeaponInventoryFromInternal(player);
                 }
         );
@@ -368,14 +368,14 @@ public class WeaponManagerMenu {
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
-        private WeaponsPvE filter = WeaponsPvE.NONE;
+        private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
         public void sort() {
             sortedWeaponInventory = new ArrayList<>(weaponInventory);
-            if (filter != WeaponsPvE.NONE) {
-                sortedWeaponInventory.removeIf(weapon -> !Objects.equals(weapon.getClass(), filter.weaponClass));
+            if (rarityFilter != WeaponsPvE.NONE) {
+                sortedWeaponInventory.removeIf(weapon -> weapon.getRarity() != rarityFilter);
             }
             sortedWeaponInventory.sort(sortOption.comparator);
             if (!ascending) {
@@ -400,12 +400,12 @@ public class WeaponManagerMenu {
             this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
         }
 
-        public WeaponsPvE getFilter() {
-            return filter;
+        public WeaponsPvE getRarityFilter() {
+            return rarityFilter;
         }
 
-        public void setFilter(WeaponsPvE filter) {
-            this.filter = filter;
+        public void setRarityFilter(WeaponsPvE rarityFilter) {
+            this.rarityFilter = rarityFilter;
         }
 
         public SortOptions getSortOption() {
