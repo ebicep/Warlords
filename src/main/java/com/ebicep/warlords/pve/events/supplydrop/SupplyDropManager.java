@@ -69,7 +69,8 @@ public class SupplyDropManager {
                         .name(ChatColor.GREEN + "Click to call a supply drop")
                         .lore(
                                 ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + "1 Token",
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
+                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
+                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call a supply drop"
                         )
@@ -93,8 +94,10 @@ public class SupplyDropManager {
                 new ItemBuilder(Material.DIAMOND_BARDING)
                         .name(ChatColor.GREEN + "Click to call all available supply drops")
                         .lore(
-                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
-                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) > 1 ? "s" : ""),
+                                ChatColor.GRAY + "Cost: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
+                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
+                                ChatColor.GRAY + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)) + " Token" + (databasePlayerPvE.getCurrencyValue(
+                                        Currencies.SUPPLY_DROP_TOKEN) != 1 ? "s" : ""),
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call all available supply drops"
                         )
