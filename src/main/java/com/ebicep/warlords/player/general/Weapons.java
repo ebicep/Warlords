@@ -159,6 +159,6 @@ public enum Weapons {
     }
 
     public int getCost() {
-        return 0;
+        return weaponsPvE.fairyEssenceCost;
     }
 }
