@@ -10,31 +10,48 @@ public enum DifficultyIndex {
             "Fight off 25 waves of monsters to\nearn rewards." +
                     "\n\nModifiers:\n§aNone",
             ChatColor.YELLOW,
-            25
+            25,
+            16,
+            4
     ),
     HARD("Hard",
             "Fight off 50 waves of monsters to\nearn greater rewards." +
                     "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage",
             ChatColor.GOLD,
-            50
+            50,
+            32,
+            8
     ),
     ENDLESS("Endless",
             "Fight to the death against endless\nwaves of monsters to prove your worth\nagainst the Vanguard." +
                     "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Monster Spawns",
             ChatColor.RED,
-            10000
+            10000,
+            24,
+            4
     );
 
     private final String name;
     private final String description;
     private final ChatColor difficultyColor;
     private final int maxWaves;
+    private final int waveExperienceMultiplier;
+    private final int waveGuildExperienceMultiplier;
 
-    DifficultyIndex(@Nonnull String name, String description, ChatColor difficultyColor, int maxWaves) {
+    DifficultyIndex(
+            @Nonnull String name,
+            String description,
+            ChatColor difficultyColor,
+            int maxWaves,
+            int waveExperienceMultiplier,
+            int waveGuildExperienceMultiplier
+    ) {
         this.name = name;
         this.description = description;
         this.difficultyColor = difficultyColor;
         this.maxWaves = maxWaves;
+        this.waveExperienceMultiplier = waveExperienceMultiplier;
+        this.waveGuildExperienceMultiplier = waveGuildExperienceMultiplier;
     }
 
     public String getName() {
@@ -51,5 +68,13 @@ public enum DifficultyIndex {
 
     public int getMaxWaves() {
         return maxWaves;
+    }
+
+    public int getWaveExperienceMultiplier() {
+        return waveExperienceMultiplier;
+    }
+
+    public int getWaveGuildExperienceMultiplier() {
+        return waveGuildExperienceMultiplier;
     }
 }

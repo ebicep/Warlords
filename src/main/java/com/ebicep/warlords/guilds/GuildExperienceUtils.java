@@ -16,7 +16,6 @@ import java.util.UUID;
 public class GuildExperienceUtils {
 
     public static final long EXP_PER_WAVE = 4;
-    public static final long BONUS_EXP_WAVE_25 = 400;
     public static final HashMap<Integer, Long> LEVEL_EXP_COST = new HashMap<>();
     public static final HashMap<Integer, Long> LEVEL_TO_EXP = new HashMap<>();
     private static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
@@ -71,9 +70,13 @@ public class GuildExperienceUtils {
                 if (player != null) {
                     Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
                     if (guildPlayerPair != null) {
-                        expSummary.put("Waves Cleared", EXP_PER_WAVE * wavesCleared);
-                        if (wavesCleared == 25 && waveDefenseOption.getDifficulty() == DifficultyIndex.NORMAL) {
-                            expSummary.put("Wave 25 Clear Bonus", BONUS_EXP_WAVE_25);
+                        expSummary.put("Waves Cleared", (long) wavesCleared * waveDefenseOption.getDifficulty().getWaveGuildExperienceMultiplier());
+                        if (wavesCleared == 25) {
+                            if (waveDefenseOption.getDifficulty() == DifficultyIndex.NORMAL) {
+                                expSummary.put("Wave 25 Clear Bonus", 200L);
+                            } else if (waveDefenseOption.getDifficulty() == DifficultyIndex.HARD) {
+                                expSummary.put("Wave 25 Clear Bonus", 500L);
+                            }
                         }
                         guildPlayerPair.getA().queueUpdate();
                     }

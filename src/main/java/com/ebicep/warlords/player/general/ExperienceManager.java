@@ -8,10 +8,14 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerGiveExperienceEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.rewards.LevelUpReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -358,84 +362,106 @@ public class ExperienceManager {
             return CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid());
         }
 
-        boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
-        float multiplier = 1;
-        //pubs
-        if (!isCompGame) {
-            multiplier *= .1;
-        }
-        //duels
-        if (warlordsPlayer.getGame().getGameMode() == GameMode.DUEL) {
-            multiplier *= .1;
-        }
-
-        boolean won = warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam()) > warlordsPlayer.getGame()
-                .getPoints(warlordsPlayer.getTeam().enemy());
-        long winLossExp = won ? 500 : 250;
-        long kaExp = 5L * (warlordsPlayer.getMinuteStats().total().getKills() + warlordsPlayer.getMinuteStats()
-                .total()
-                .getAssists());
-
-        double damageMultiplier;
-        double healingMultiplier;
-        double absorbedMultiplier;
-        Specializations specializations = warlordsPlayer.getSpecClass();
-        if (specializations.specType == SpecType.DAMAGE) {
-            damageMultiplier = .80;
-            healingMultiplier = .10;
-            absorbedMultiplier = .10;
-        } else if (specializations.specType == SpecType.HEALER) {
-            damageMultiplier = .275;
-            healingMultiplier = .65;
-            absorbedMultiplier = .75;
-        } else { //tank
-            damageMultiplier = .575;
-            healingMultiplier = .1;
-            absorbedMultiplier = .325;
-        }
-        double calculatedDHP = warlordsPlayer.getMinuteStats()
-                .total()
-                .getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats()
-                .total()
-                .getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats()
-                .total()
-                .getAbsorbed() * absorbedMultiplier;
-        long dhpExp = (long) (calculatedDHP / 500L);
-        long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
-        long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
-
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
-        expGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
-        if (kaExp != 0) {
-            expGain.put("Kills/Assists", (long) (kaExp * multiplier));
-        }
-        if (dhpExp != 0) {
-            expGain.put("DHP", (long) (dhpExp * multiplier));
-        }
-        if (flagCapExp != 0) {
-            expGain.put("Flags Captured", (long) (flagCapExp * multiplier));
-        }
-        if (flagRetExp != 0) {
-            expGain.put("Flags Returned", (long) (flagRetExp * multiplier));
-        }
 
-        if (DatabaseManager.playerService != null) {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
-            if (databasePlayer != null) {
-                int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
-                switch (plays) {
-                    case 0:
-                        expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
-                        break;
-                    case 1:
-                        expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
-                        break;
-                    case 2:
-                        expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
-                        break;
+        Game game = warlordsPlayer.getGame();
+        if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+            for (Option option : game.getOptions()) {
+                if (option instanceof WaveDefenseOption) {
+                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
+                    int wavesCleared = waveDefenseOption.getWavesCleared();
+                    expGain.put("Waves Cleared", (long) wavesCleared * difficulty.getWaveExperienceMultiplier());
+                    if (wavesCleared == 25) {
+                        if (difficulty == DifficultyIndex.NORMAL) {
+                            expGain.put("Wave 25 Clear Bonus", 500L);
+                        } else if (difficulty == DifficultyIndex.HARD) {
+                            expGain.put("Wave 25 Clear Bonus", 1000L);
+                        }
+                    }
+                    break;
                 }
-            } else {
-                System.out.println("Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
+            }
+        } else {
+            boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
+            float multiplier = 1;
+            //pubs
+            if (!isCompGame) {
+                multiplier *= .1;
+            }
+            //duels
+            if (game.getGameMode() == GameMode.DUEL) {
+                multiplier *= .1;
+            }
+
+            boolean won = game.getPoints(warlordsPlayer.getTeam()) > game
+                    .getPoints(warlordsPlayer.getTeam().enemy());
+            long winLossExp = won ? 500 : 250;
+            long kaExp = 5L * (warlordsPlayer.getMinuteStats().total().getKills() + warlordsPlayer.getMinuteStats()
+                    .total()
+                    .getAssists());
+
+            double damageMultiplier;
+            double healingMultiplier;
+            double absorbedMultiplier;
+            Specializations specializations = warlordsPlayer.getSpecClass();
+            if (specializations.specType == SpecType.DAMAGE) {
+                damageMultiplier = .80;
+                healingMultiplier = .10;
+                absorbedMultiplier = .10;
+            } else if (specializations.specType == SpecType.HEALER) {
+                damageMultiplier = .275;
+                healingMultiplier = .65;
+                absorbedMultiplier = .75;
+            } else { //tank
+                damageMultiplier = .575;
+                healingMultiplier = .1;
+                absorbedMultiplier = .325;
+            }
+            double calculatedDHP = warlordsPlayer.getMinuteStats()
+                    .total()
+                    .getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats()
+                    .total()
+                    .getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats()
+                    .total()
+                    .getAbsorbed() * absorbedMultiplier;
+            long dhpExp = (long) (calculatedDHP / 500L);
+            long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
+            long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
+
+            expGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
+            if (kaExp != 0) {
+                expGain.put("Kills/Assists", (long) (kaExp * multiplier));
+            }
+            if (dhpExp != 0) {
+                expGain.put("DHP", (long) (dhpExp * multiplier));
+            }
+            if (flagCapExp != 0) {
+                expGain.put("Flags Captured", (long) (flagCapExp * multiplier));
+            }
+            if (flagRetExp != 0) {
+                expGain.put("Flags Returned", (long) (flagRetExp * multiplier));
+            }
+
+
+            if (DatabaseManager.playerService != null) {
+                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
+                if (databasePlayer != null) {
+                    int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
+                    switch (plays) {
+                        case 0:
+                            expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
+                            break;
+                        case 1:
+                            expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
+                            break;
+                        case 2:
+                            expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
+                            break;
+                    }
+                } else {
+                    System.out.println("Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
+                }
             }
         }
 
