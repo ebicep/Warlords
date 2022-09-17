@@ -21,6 +21,8 @@ public class SpiritLink extends AbstractChainBase {
     protected int numberOfDismounts = 0;
 
     private final int bounceRange = 10;
+    private double speedDuration = 1.5;
+    private double damageReductionDuration = 4.5;
 
     public SpiritLink() {
         super("Spirit Link", 236.25f, 446.25f, 8.61f, 40, 20, 175);
@@ -32,8 +34,8 @@ public class SpiritLink extends AbstractChainBase {
                 "§7players, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to the first target hit. Each additional hit\n" +
                 "§7deals §c20% §7reduced damage. You gain §e40%\n" +
-                "§7speed for §61.5 §7seconds, and take §c15%\n" +
-                "§7reduced damage for §64.5 §7seconds.";
+                "§7speed for §6" + speedDuration  + " §7seconds, and take §c15%\n" +
+                "§7reduced damage for §6" + damageReductionDuration + " §7seconds.";
     }
 
     @Override
@@ -122,7 +124,7 @@ public class SpiritLink extends AbstractChainBase {
         player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
 
         // speed buff
-        warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
+        warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
         warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<SpiritLink>(
                 name,
                 "LINK",
@@ -131,7 +133,7 @@ public class SpiritLink extends AbstractChainBase {
                 warlordsPlayer,
                 CooldownTypes.BUFF,
                 cooldownManager -> { },
-                (int) (4.5 * 20)
+                (int) (damageReductionDuration * 20)
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -166,5 +168,21 @@ public class SpiritLink extends AbstractChainBase {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
             nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false, false);
         }
+    }
+
+    public double getSpeedDuration() {
+        return speedDuration;
+    }
+
+    public void setSpeedDuration(double speedDuration) {
+        this.speedDuration = speedDuration;
+    }
+
+    public double getDamageReductionDuration() {
+        return damageReductionDuration;
+    }
+
+    public void setDamageReductionDuration(double damageReductionDuration) {
+        this.damageReductionDuration = damageReductionDuration;
     }
 }

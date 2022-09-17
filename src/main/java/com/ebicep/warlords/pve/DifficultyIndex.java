@@ -15,16 +15,16 @@ public enum DifficultyIndex {
             4
     ),
     HARD("Hard",
-            "Fight off 50 waves of monsters to\nearn greater rewards." +
+            "Fight off 25 waves of monsters to\nearn greater rewards." +
                     "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage",
             ChatColor.GOLD,
-            50,
+            25,
             32,
             8
     ),
     ENDLESS("Endless",
             "Fight to the death against endless\nwaves of monsters to prove your worth\nagainst the Vanguard." +
-                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Monster Spawns",
+                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Mob Spawns",
             ChatColor.RED,
             10000,
             24,
