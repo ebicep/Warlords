@@ -382,6 +382,7 @@ public class ExperienceManager {
                     break;
                 }
             }
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveExperienceEvent(warlordsPlayer, expGain));
         } else {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
             float multiplier = 1;
@@ -465,7 +466,6 @@ public class ExperienceManager {
             }
         }
 
-        Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveExperienceEvent(warlordsPlayer, expGain));
 
         CACHED_PLAYER_EXP_SUMMARY.put(warlordsPlayer.getUuid(), expGain);
         return expGain;
