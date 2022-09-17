@@ -38,6 +38,7 @@ public class WeaponSkinSelectorMenu {
         List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        int weaponSkinCost = weapon.getRarity().fairyEssenceCost;
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {
             Weapons weaponSkin = weaponSkins.get(i);
             //cant reskin weapon to higher rarity than current weapon
@@ -68,7 +69,7 @@ public class WeaponSkinSelectorMenu {
                                         ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
                                         ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
                                         "",
-                                        isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "UNLOCKED" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkin.getCost() + " Fairy Essence"
+                                        isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "UNLOCKED" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkinCost + " Fairy Essence"
                                 )
                                 .get(),
                         (m, e) -> {
@@ -78,7 +79,7 @@ public class WeaponSkinSelectorMenu {
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }
                             } else {
-                                if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkin.getCost()) {
+                                if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkinCost) {
                                     player.sendMessage(ChatColor.RED + "You do not have enough Fairy Essence to purchase this skin.");
                                     return;
                                 }
@@ -131,7 +132,7 @@ public class WeaponSkinSelectorMenu {
         if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, -weaponSkin.getCost());
+            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, -weapon.getRarity().fairyEssenceCost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             openWeaponSkinSelectorMenu(player, weapon, page);
             player.spigot().sendMessage(
