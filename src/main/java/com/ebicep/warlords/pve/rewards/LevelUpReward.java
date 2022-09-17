@@ -25,8 +25,10 @@ public class LevelUpReward extends AbstractReward {
             rewards.put(Currencies.COIN, 1000L);
         } else if (level <= 80) {
             rewards.put(Currencies.COIN, 1500L);
-        } else if (level <= 100) {
+        } else if (level < 100) {
             rewards.put(Currencies.COIN, 3000L);
+        } else if (level == 100) {
+            rewards.put(Currencies.COIN, 10000L);
         }
         if (level % 10 != 0) {
             if (level < 40) {
