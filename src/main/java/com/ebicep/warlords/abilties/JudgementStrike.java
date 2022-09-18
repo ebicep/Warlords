@@ -25,7 +25,6 @@ public class JudgementStrike extends AbstractStrikeBase {
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
     private float strikeHeal = 75;
-    private Listener listener;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -93,22 +92,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     }
 
     private void healOnKill(WarlordsEntity we) {
-        listener = new Listener() {
-            @EventHandler
-            private void onKill(WarlordsDeathEvent event) {
-                if (event.getKiller() == we && event.getPlayer().isEnemyAlive(we)) {
-                    we.addDamageInstance(
-                            we,
-                            name,
-                            strikeHeal,
-                            strikeHeal,
-                            -1,
-                            100,
-                            false
-                    );
-                }
-            }
-        };
+        // fix
     }
 
     public int getSpeedOnCrit() {

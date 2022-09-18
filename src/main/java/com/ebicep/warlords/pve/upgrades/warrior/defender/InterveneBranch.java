@@ -17,82 +17,79 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "-3% Cooldown reduction\n+150 Max damage prevented",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.97f);
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 150);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "-6% Cooldown reduction\n+300 Max damage prevented",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.94f);
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 300);
+                    ability.setCooldown(cooldown * 0.9f);
+
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "-9% Cooldown reduction\n+450 Max damage prevented",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.91f);
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 450);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "-12% Cooldown reduction\n+600 Max damage prevented",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.88f);
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 600);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "",
+                "+250 Max damage prevented",
                 5000,
                 () -> {
-
+                    ability.setMaxDamagePrevented(maxDamagePrevented + 250);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "",
+                "+500 Max damage prevented",
                 10000,
                 () -> {
-
+                    ability.setMaxDamagePrevented(maxDamagePrevented + 500);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "",
+                "+750 Max damage prevented",
                 15000,
                 () -> {
-
+                    ability.setMaxDamagePrevented(maxDamagePrevented + 750);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "",
+                "+1000 Max damage prevented",
                 20000,
                 () -> {
-
+                    ability.setMaxDamagePrevented(maxDamagePrevented + 1000);
                 }
         ));
 
         masterUpgrade = new Upgrade(
-                "",
-                "",
-                "Remove the cast and break range limit on Intervene. Additionally, ",
+                "Intersection",
+                "Intervene - Master Upgrade",
+                "Remove the cast and break range limit on Intervene.",
                 50000,
                 () -> {
-                    ability.setRadius(200);
-                    ability.setBreakRadius(200);
+                    ability.setRadius(300);
+                    ability.setBreakRadius(300);
                 }
         );
     }

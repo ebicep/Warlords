@@ -16,8 +16,9 @@ import java.util.List;
 
 public class Repentance extends AbstractAbility {
 
-    private final int duration = 12;
+    private int duration = 12;
     private float pool = 0;
+    private int poolDecay = 60;
     private int damageConvertPercent = 10;
 
     public Repentance() {
@@ -99,8 +100,24 @@ public class Repentance extends AbstractAbility {
     @Override
     public void runEverySecond() {
         if (pool > 0) {
-            float newPool = pool * .8f - 60;
+            float newPool = pool * .8f - poolDecay;
             pool = Math.max(newPool, 0);
         }
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getPoolDecay() {
+        return poolDecay;
+    }
+
+    public void setPoolDecay(int poolDecay) {
+        this.poolDecay = poolDecay;
     }
 }

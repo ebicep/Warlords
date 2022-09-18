@@ -53,44 +53,44 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "",
+                "-2 Energy cost",
                 5000,
                 () -> {
-
+                    ability.setEnergyCost(energyCost - 2);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "",
+                "-3 Energy cost",
                 10000,
                 () -> {
-
+                    ability.setEnergyCost(energyCost - 3);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "",
+                "-4 Energy cost",
                 15000,
                 () -> {
-
+                    ability.setEnergyCost(energyCost - 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "",
+                "-5 Energy cost",
                 20000,
                 () -> {
-
+                    ability.setEnergyCost(energyCost - 5);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Soul Swarm",
                 "Fallen Souls - Master Upgrade",
-                "Fallen Souls shoots 2 additional projectiles.",
+                "Fallen Souls shoots 3 additional projectiles.",
                 50000,
                 () -> {
-                    ability.setShotsFiredAtATime(5);
+                    ability.setShotsFiredAtATime(6);
                 }
         );
     }

@@ -20,7 +20,7 @@ import java.util.List;
 public class SpiritLink extends AbstractChainBase {
     protected int numberOfDismounts = 0;
 
-    private final int bounceRange = 10;
+    private int bounceRange = 10;
     private double speedDuration = 1.5;
     private double damageReductionDuration = 4.5;
 
@@ -184,5 +184,13 @@ public class SpiritLink extends AbstractChainBase {
 
     public void setDamageReductionDuration(double damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
+    }
+
+    public int getBounceRange() {
+        return bounceRange;
+    }
+
+    public void setBounceRange(int bounceRange) {
+        this.bounceRange = bounceRange;
     }
 }

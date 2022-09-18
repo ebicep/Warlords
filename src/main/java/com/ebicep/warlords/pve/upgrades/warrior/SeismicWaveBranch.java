@@ -86,12 +86,11 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         masterUpgrade = new Upgrade(
                 "Seismic Smash",
                 "Seismic Wave - Master Upgrade",
-                "Increase energy cost by 50% but increase the\nsize of Seismic Wave by 100%",
+                "Increase the size of Seismic Wave by 200%",
                 50000,
                 () -> {
-                    ability.setEnergyCost(ability.getEnergyCost() * 1.5f);
-                    ability.setWaveSize(ability.getWaveSize() * 2);
-                    ability.setWaveWidth(ability.getWaveWidth() * 2);
+                    ability.setWaveSize(ability.getWaveSize() * 3);
+                    ability.setWaveWidth(ability.getWaveWidth() * 3);
                 }
         );
     }

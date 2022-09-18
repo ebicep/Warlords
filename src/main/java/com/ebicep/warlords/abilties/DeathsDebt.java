@@ -34,6 +34,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     private int respiteRadius = 10;
     private int debtRadius = 8;
+    private float damagePercent = 15;
     private float delayedDamage = 0;
     private float selfDamageInPercentPerSecond = .1667f;
 
@@ -59,8 +60,8 @@ public class DeathsDebt extends AbstractTotemBase {
                 "§dDeath’s Debt§7: Take §c" +  Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
-                "§7that you take. If you survive, deal §c15% §7of the\n" +
-                "§7to nearby enemies." +
+                "§7that you take. If you survive, deal §c" + format(damagePercent) + "% §7of the\n" +
+                "§7damage delayed to nearby enemies." +
                 "\n\n" +
                 "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
                 "§7to your totem duration. (cap of §66 §7seconds)";
@@ -233,8 +234,8 @@ public class DeathsDebt extends AbstractTotemBase {
             allyTarget.addHealingInstance(
                     wp,
                     name,
-                    damage * .15f,
-                    damage * .15f,
+                    damage * (damagePercent / 100f),
+                    damage * (damagePercent / 100f),
                     critChance,
                     critMultiplier,
                     false,
@@ -294,5 +295,13 @@ public class DeathsDebt extends AbstractTotemBase {
 
     public void setPlayerInRadius(boolean playerInRadius) {
         this.playerInRadius = playerInRadius;
+    }
+
+    public float getDamagePercent() {
+        return damagePercent;
+    }
+
+    public void setDamagePercent(float damagePercent) {
+        this.damagePercent = damagePercent;
     }
 }

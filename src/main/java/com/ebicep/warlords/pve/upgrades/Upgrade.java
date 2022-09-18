@@ -9,13 +9,12 @@ public class Upgrade {
     private Runnable onUpgrade;
     private boolean isUnlocked = false;
 
-    @Deprecated
-    public Upgrade(String name, String description, int currencyCost) {
-        this.name = name;
-        this.description = description;
-        this.currencyCost = currencyCost;
-    }
-
+    /**
+     * @param name name of the upgrade.
+     * @param description description of the upgrade.
+     * @param currencyCost how much does the upgrade cost to unlock.
+     * @param onUpgrade runnable to execute when the upgrade is unlocked.
+     */
     public Upgrade(String name, String description, int currencyCost, Runnable onUpgrade) {
         this.name = name;
         this.description = description;
@@ -23,14 +22,13 @@ public class Upgrade {
         this.onUpgrade = onUpgrade;
     }
 
-    @Deprecated
-    public Upgrade(String name, String subName, String description, int currencyCost) {
-        this.name = name;
-        this.subName = subName;
-        this.description = description;
-        this.currencyCost = currencyCost;
-    }
-
+    /**
+     * @param name name of the master upgrade.
+     * @param subName sub name of the master upgrade (e.g. old ability name) should always include "Master Upgrade"
+     * @param description description of the upgrade.
+     * @param currencyCost how much does the upgrade cost to unlock.
+     * @param onUpgrade runnable to execute when the upgrade is unlocked.
+     */
     public Upgrade(String name, String subName, String description, int currencyCost, Runnable onUpgrade) {
         this.name = name;
         this.subName = subName;
