@@ -25,7 +25,7 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             wp.getSpec().getBlue().setCurrentCooldown(0);
             wp.getSpec().getOrange().setCurrentCooldown(0);
             wp.setHorseCooldown(0);
-            wp.updateInventory();
+            wp.updateInventory(true);
         }
         preventPlayerMovement = true;
     }

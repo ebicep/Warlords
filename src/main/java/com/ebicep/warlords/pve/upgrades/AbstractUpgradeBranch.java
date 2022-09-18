@@ -107,7 +107,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     y - i,
                     branchItem(upgrade),
                     (m, e) -> {
-                        updateInventory(player);
+                        //updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
                             return;
@@ -203,7 +203,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     public void updateInventory(WarlordsPlayer wp) {
-        wp.updateInventory();
+        wp.updateInventory(false);
         ability.updateDescription((Player) wp.getEntity());
     }
 

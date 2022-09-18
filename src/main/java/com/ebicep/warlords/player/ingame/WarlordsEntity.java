@@ -1285,7 +1285,7 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void updateInventory() {
+    public void updateInventory(boolean closeInventory) {
 
     }
 
@@ -1412,7 +1412,7 @@ public abstract class WarlordsEntity {
             this.specClass = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
             ArmorManager.resetArmor(player, specClass, team);
 
-            updateInventory();
+            updateInventory(true);
             for (Option option : game.getOptions()) {
                 option.onSpecChange(this);
             }

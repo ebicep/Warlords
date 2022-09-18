@@ -72,7 +72,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         );
         this.spec.setUpgradeBranches(this);
         updatePlayerReference(player.getPlayer());
-        updateInventory();
+        updateInventory(true);
     }
 
     private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
@@ -155,7 +155,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
     }
 
     @Override
-    public void updateInventory() {
+    public void updateInventory(boolean closeInventory) {
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
@@ -170,7 +170,9 @@ public final class WarlordsPlayer extends WarlordsEntity {
             }
 
             resetPlayerAddons();
-            player.closeInventory();
+            if (closeInventory) {
+                player.closeInventory();
+            }
         }
 
     }
@@ -222,7 +224,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
             player.setMaxHealth(40);
             player.setLevel((int) this.getMaxEnergy());
 
-            updateInventory();
+            updateInventory(true);
             resetPlayerAddons();
             updateArmor();
 
