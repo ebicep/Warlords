@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
-import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -9,22 +8,19 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
-    private boolean pveUpgradeStrikeHeal = false;
     private boolean pveUpgradeMaster = false;
 
     private int attacksDone = 0;
     private int speedOnCrit = 25;
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
-    private float strikeHeal = 75;
+    private float strikeHeal = 0;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -62,24 +58,22 @@ public class JudgementStrike extends AbstractStrikeBase {
                 critChance,
                 critMultiplier,
                 false
-        ).ifPresent(warlordsDamageHealingFinalEvent -> {
-            if (warlordsDamageHealingFinalEvent.isCrit()) {
+        ).ifPresent(finalEvent -> {
+            if (finalEvent.isCrit()) {
                 wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
-        });
-
-        if (pveUpgradeStrikeHeal) {
-            healOnKill(wp);
-        }
-        if (pveUpgradeMaster) {
-            if (
-                    nearPlayer instanceof WarlordsNPC &&
-                    nearPlayer.getHealth() < (nearPlayer.getMaxHealth() * 0.25f) &&
-                    ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
-            ) {
-                nearPlayer.die(nearPlayer);
+            if (strikeHeal != 0 && finalEvent.isDead()) {
+                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, -1, 100, false, false);
             }
-        }
+            if (pveUpgradeMaster) {
+                if (nearPlayer instanceof WarlordsNPC &&
+                        finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
+                        ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
+                ) {
+                    nearPlayer.die(nearPlayer);
+                }
+            }
+        });
 
         return true;
     }
@@ -89,10 +83,6 @@ public class JudgementStrike extends AbstractStrikeBase {
         Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
         Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
         randomHitEffect(location, 7, 255, 255, 255);
-    }
-
-    private void healOnKill(WarlordsEntity we) {
-        // fix
     }
 
     public int getSpeedOnCrit() {
@@ -119,14 +109,6 @@ public class JudgementStrike extends AbstractStrikeBase {
         this.speedOnCritDuration = speedOnCritDuration;
     }
 
-    public boolean isPveUpgradeStrikeHeal() {
-        return pveUpgradeStrikeHeal;
-    }
-
-    public void setPveUpgradeStrikeHeal(boolean pveUpgradeStrikeHeal) {
-        this.pveUpgradeStrikeHeal = pveUpgradeStrikeHeal;
-    }
-
     public boolean isPveUpgradeMaster() {
         return pveUpgradeMaster;
     }
@@ -135,11 +117,11 @@ public class JudgementStrike extends AbstractStrikeBase {
         this.pveUpgradeMaster = pveUpgradeMaster;
     }
 
-    public void setStrikeHeal(float strikeHeal) {
-        this.strikeHeal = strikeHeal;
-    }
-
     public float getStrikeHeal() {
         return strikeHeal;
+    }
+
+    public void setStrikeHeal(float strikeHeal) {
+        this.strikeHeal = strikeHeal;
     }
 }

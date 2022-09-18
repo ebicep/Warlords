@@ -55,7 +55,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+75 Healing on strike kill.",
                 5000,
                 () -> {
-                    ability.setPveUpgradeStrikeHeal(true);
+                    ability.setStrikeHeal(75);
                 }
         ));
         treeB.add(new Upgrade(
@@ -63,7 +63,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+150 Healing on strike kill.",
                 10000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 75);
+                    ability.setStrikeHeal(strikeHeal + 150);
                 }
         ));
         treeB.add(new Upgrade(
@@ -71,7 +71,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+225 Healing on strike kill.",
                 15000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 150);
+                    ability.setStrikeHeal(strikeHeal + 225);
                 }
         ));
         treeB.add(new Upgrade(
@@ -79,7 +79,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "+300 Healing on strike kill.",
                 20000,
                 () -> {
-                    ability.setStrikeHeal(strikeHeal + 225);
+                    ability.setStrikeHeal(strikeHeal + 300);
                 }
         ));
 
