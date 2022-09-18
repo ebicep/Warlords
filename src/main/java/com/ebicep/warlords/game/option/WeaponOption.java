@@ -139,4 +139,10 @@ public class WeaponOption implements Option {
         }
     }
 
+    @Override
+    public void onSpecChange(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer && player.getEntity() instanceof Player) {
+            leftClick.accept((WarlordsPlayer) player, (Player) player.getEntity());
+        }
+    }
 }

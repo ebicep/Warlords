@@ -1408,17 +1408,17 @@ public abstract class WarlordsEntity {
             PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
             PlayerSettings.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
             Player player = Bukkit.getPlayer(uuid);
-            ArmorManager.resetArmor(player, specClass, team);
             this.weaponSkin = Weapons.getSelected(player, this.specClass);
             this.specClass = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
+            ArmorManager.resetArmor(player, specClass, team);
 
+            updateInventory();
             for (Option option : game.getOptions()) {
                 option.onSpecChange(this);
             }
             for (AbstractAbility ability : this.spec.getAbilities()) {
                 ability.updateDescription(player);
             }
-            updateInventory();
 
             if (DatabaseManager.playerService == null) {
                 return;
