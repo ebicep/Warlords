@@ -350,139 +350,61 @@ public class WarlordsShopMenu {
                 .getPlayerGame(player.getUniqueId())
                 .map(g -> g.getPlayerTeam(player.getUniqueId()))
                 .orElse(Team.BLUE) == Team.BLUE;
-        List<Helmets> selectedHelmet = Helmets.getSelected(player);
-        List<ArmorSets> selectedArmorSet = ArmorSets.getSelected(player);
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        List<Helmets> selectedHelmet = playerSettings.getHelmets();
+
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
+
         List<Helmets> helmets = Arrays.asList(Helmets.VALUES);
         for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.size(); i++) {
             Helmets helmet = helmets.get(i);
             ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
+                    .lore(HELMET_DESCRIPTION, "")
                     .flags(ItemFlag.HIDE_ENCHANTS);
-            List<String> lore = new ArrayList<>();
-            lore.add(HELMET_DESCRIPTION);
-            lore.add("");
             if (selectedHelmet.contains(helmet)) {
-                lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
+                builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
-                lore.add(ChatColor.YELLOW + "> Click to activate! <");
+                builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
             }
-            builder.lore(lore);
             menu.setItem(
                     (i - (pageNumber - 1) * 8) + 1,
                     2,
                     builder.get(),
                     (m, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
-                        if (
-                                helmet == Helmets.SIMPLE_MAGE_HELMET ||
-                                        helmet == Helmets.GREATER_MAGE_HELMET ||
-                                        helmet == Helmets.MASTERWORK_MAGE_HELMET ||
-                                        helmet == Helmets.LEGENDARY_MAGE_HELMET
-                        ) {
-                            Helmets.setSelectedMage(player, helmet);
-                        } else if (
-                                helmet == Helmets.SIMPLE_WARRIOR_HELMET ||
-                                        helmet == Helmets.GREATER_WARRIOR_HELMET ||
-                                        helmet == Helmets.MASTERWORK_WARRIOR_HELMET ||
-                                        helmet == Helmets.LEGENDARY_WARRIOR_HELMET
-                        ) {
-                            Helmets.setSelectedWarrior(player, helmet);
-                        } else if (
-                                helmet == Helmets.SIMPLE_PALADIN_HELMET ||
-                                        helmet == Helmets.GREATER_PALADIN_HELMET ||
-                                        helmet == Helmets.MASTERWORK_PALADIN_HELMET ||
-                                        helmet == Helmets.LEGENDARY_PALADIN_HELMET
-                        ) {
-                            Helmets.setSelectedPaladin(player, helmet);
-                        } else if (
-                                helmet == Helmets.SIMPLE_SHAMAN_HELMET ||
-                                        helmet == Helmets.GREATER_SHAMAN_HELMET ||
-                                        helmet == Helmets.MASTERWORK_SHAMAN_HELMET ||
-                                        helmet == Helmets.LEGENDARY_SHAMAN_HELMET
-                        ) {
-                            Helmets.setSelectedShaman(player, helmet);
-                        } else if (
-                                helmet == Helmets.SIMPLE_ROGUE_HELMET ||
-                                        helmet == Helmets.GREATER_ROGUE_HELMET ||
-                                        helmet == Helmets.MASTERWORK_ROGUE_HELMET ||
-                                        helmet == Helmets.LEGENDARY_ROGUE_HELMET
-                        ) {
-                            Helmets.setSelectedRogue(player, helmet);
-                        }
-                        ArmorManager.resetArmor(player,
-                                PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(),
-                                PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam()
-                        );
-
+                        playerSettings.setHelmet(helmet.classes, helmet);
+                        ArmorManager.resetArmor(player, playerSettings.getSelectedSpec(), playerSettings.getWantedTeam());
                         openArmorMenu(player, pageNumber);
-
-                        if (DatabaseManager.playerService == null) {
-                            return;
-                        }
-                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
-                        databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
-                        databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
-                        databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
-                        databasePlayer.getRogue().setHelmet(selectedHelmets.get(4));
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
         }
-        List<ArmorSets> armorSets = Arrays.asList(ArmorSets.VALUES);
         int xPosition = 1;
         for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
             if (pageNumber == 3 && i == 15) {
                 break;
             }
-            ArmorSets armorSet = armorSets.get(i);
+            ArmorSets armorSet = ArmorSets.VALUES[(i % 3) * 3];
+            Classes classes = Classes.VALUES[i / 3];
             ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
                     .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
+                    .lore(ARMOR_DESCRIPTION, "")
                     .flags(ItemFlag.HIDE_ENCHANTS);
-            List<String> lore = new ArrayList<>();
-            lore.add(ARMOR_DESCRIPTION);
-            lore.add("");
-            if (selectedArmorSet.contains(armorSet)) {
-                lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
+            if (playerSettings.getArmor(classes) == armorSet) {
+                builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
-                lore.add(ChatColor.YELLOW + "> Click to activate! <");
+                builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
             }
-            builder.lore(lore);
             menu.setItem(
                     xPosition,
                     3,
                     builder.get(),
                     (m, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + armorSet.name);
-                        if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_MAGE || armorSet == ArmorSets.GREATER_CHESTPLATE_MAGE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_MAGE) {
-                            ArmorSets.setSelectedMage(player, armorSet);
-                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_WARRIOR || armorSet == ArmorSets.GREATER_CHESTPLATE_WARRIOR || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_WARRIOR) {
-                            ArmorSets.setSelectedWarrior(player, armorSet);
-                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_PALADIN || armorSet == ArmorSets.GREATER_CHESTPLATE_PALADIN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_PALADIN) {
-                            ArmorSets.setSelectedPaladin(player, armorSet);
-                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
-                            ArmorSets.setSelectedShaman(player, armorSet);
-                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_ROGUE || armorSet == ArmorSets.GREATER_CHESTPLATE_ROGUE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_ROGUE) {
-                            ArmorSets.setSelectedRogue(player, armorSet);
-                        }
-
+                        playerSettings.setArmor(classes, armorSet);
                         openArmorMenu(player, pageNumber);
-
-                        if (DatabaseManager.playerService == null) {
-                            return;
-                        }
-                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.getMage().setArmor(armorSetsList.get(0));
-                        databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
-                        databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
-                        databasePlayer.getShaman().setArmor(armorSetsList.get(3));
-                        databasePlayer.getRogue().setArmor(armorSetsList.get(4));
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
             );
             if (xPosition == 3) {

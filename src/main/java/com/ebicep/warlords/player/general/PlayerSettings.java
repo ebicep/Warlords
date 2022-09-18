@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Team;
 import org.bukkit.entity.Player;
 
@@ -13,36 +14,17 @@ import static com.ebicep.warlords.player.general.Weapons.FELFLAME_BLADE;
 public class PlayerSettings {
 
     public static final HashMap<UUID, PlayerSettings> PLAYER_SETTINGS = new HashMap<>();
+
+    private final UUID uuid;
     private final HashMap<Specializations, SkillBoosts> classesSkillBoosts = new HashMap<>() {{
-        put(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
-        put(Specializations.CRYOMANCER, SkillBoosts.FROST_BOLT);
-        put(Specializations.AQUAMANCER, SkillBoosts.WATER_BOLT);
-        put(Specializations.BERSERKER, SkillBoosts.WOUNDING_STRIKE_BERSERKER);
-        put(Specializations.DEFENDER, SkillBoosts.WOUNDING_STRIKE_DEFENDER);
-        put(Specializations.REVENANT, SkillBoosts.ORBS_OF_LIFE);
-        put(Specializations.AVENGER, SkillBoosts.AVENGER_STRIKE);
-        put(Specializations.CRUSADER, SkillBoosts.CRUSADER_STRIKE);
-        put(Specializations.PROTECTOR, SkillBoosts.PROTECTOR_STRIKE);
-        put(Specializations.THUNDERLORD, SkillBoosts.LIGHTNING_BOLT);
-        put(Specializations.SPIRITGUARD, SkillBoosts.FALLEN_SOULS);
-        put(Specializations.EARTHWARDEN, SkillBoosts.EARTHEN_SPIKE);
-        put(Specializations.ASSASSIN, SkillBoosts.JUDGEMENT_STRIKE);
-        put(Specializations.VINDICATOR, SkillBoosts.RIGHTEOUS_STRIKE);
-        put(Specializations.APOTHECARY, SkillBoosts.IMPALING_STRIKE);
+        for (Specializations value : Specializations.VALUES) {
+            put(value, value.skillBoosts.get(0));
+        }
     }};
     private final HashMap<Specializations, Weapons> weaponSkins = new HashMap<>() {{
-        put(Specializations.PYROMANCER, Weapons.FELFLAME_BLADE);
-        put(Specializations.CRYOMANCER, Weapons.FELFLAME_BLADE);
-        put(Specializations.AQUAMANCER, Weapons.FELFLAME_BLADE);
-        put(Specializations.BERSERKER, Weapons.FELFLAME_BLADE);
-        put(Specializations.DEFENDER, Weapons.FELFLAME_BLADE);
-        put(Specializations.REVENANT, Weapons.FELFLAME_BLADE);
-        put(Specializations.AVENGER, Weapons.FELFLAME_BLADE);
-        put(Specializations.CRUSADER, Weapons.FELFLAME_BLADE);
-        put(Specializations.PROTECTOR, Weapons.FELFLAME_BLADE);
-        put(Specializations.THUNDERLORD, Weapons.FELFLAME_BLADE);
-        put(Specializations.SPIRITGUARD, Weapons.FELFLAME_BLADE);
-        put(Specializations.EARTHWARDEN, Weapons.FELFLAME_BLADE);
+        for (Specializations value : Specializations.VALUES) {
+            put(value, FELFLAME_BLADE);
+        }
     }};
     private Specializations selectedSpec = Specializations.PYROMANCER;
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
@@ -58,15 +40,14 @@ public class PlayerSettings {
     private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
     private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
     private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
-    private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
-    private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
-    private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
-    private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
-    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_ROGUE;
+    private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
 
-    @Nonnull
-    public static PlayerSettings getPlayerSettings(@Nonnull UUID key) {
-        return PLAYER_SETTINGS.computeIfAbsent(key, (k) -> new PlayerSettings());
+    public PlayerSettings(UUID uuid) {
+        this.uuid = uuid;
     }
 
     @Nonnull
@@ -74,8 +55,13 @@ public class PlayerSettings {
         return getPlayerSettings(player.getUniqueId());
     }
 
-    public static void setPlayerSettings(@Nonnull UUID key, @Nonnull PlayerSettings value) {
-        PLAYER_SETTINGS.put(key, value);
+    @Nonnull
+    public static PlayerSettings getPlayerSettings(@Nonnull UUID uuid) {
+        return PLAYER_SETTINGS.computeIfAbsent(uuid, (k) -> new PlayerSettings(uuid));
+    }
+
+    public static void setPlayerSettings(@Nonnull UUID uuid, @Nonnull PlayerSettings value) {
+        PLAYER_SETTINGS.put(uuid, value);
     }
 
     public SkillBoosts getSkillBoostForClass() {
@@ -167,6 +153,11 @@ public class PlayerSettings {
         this.flagMessageMode = flagMessageMode;
     }
 
+    public ArmorManager.Helmets getHelmet(Specializations spec) {
+        int index = spec.ordinal() / 3;
+        return getHelmets().get(index);
+    }
+
     public List<ArmorManager.Helmets> getHelmets() {
         List<ArmorManager.Helmets> armorSets = new ArrayList<>();
         armorSets.add(mageHelmet);
@@ -185,6 +176,15 @@ public class PlayerSettings {
             this.shamanHelmet = helmets.get(3);
             this.rogueHelmet = helmets.get(4);
         }
+    }
+
+    public ArmorManager.Helmets getHelmet(Classes classes) {
+        return getHelmets().get(classes.ordinal());
+    }
+
+    public ArmorManager.ArmorSets getArmor(Specializations spec) {
+        int index = spec.ordinal() / 3;
+        return getArmorSets().get(index);
     }
 
     public List<ArmorManager.ArmorSets> getArmorSets() {
@@ -207,103 +207,50 @@ public class PlayerSettings {
         }
     }
 
-    public ArmorManager.Helmets getMageHelmet() {
-        return mageHelmet;
+    public ArmorManager.ArmorSets getArmor(Classes classes) {
+        return getArmorSets().get(classes.ordinal());
     }
 
-    public void setMageHelmet(ArmorManager.Helmets mageHelmet) {
-        if (mageHelmet != null) {
-            this.mageHelmet = mageHelmet;
+    public void setHelmet(Classes classes, ArmorManager.Helmets helmet) {
+        switch (classes) {
+            case MAGE:
+                this.mageHelmet = helmet;
+                break;
+            case WARRIOR:
+                this.warriorHelmet = helmet;
+                break;
+            case PALADIN:
+                this.paladinHelmet = helmet;
+                break;
+            case SHAMAN:
+                this.shamanHelmet = helmet;
+                break;
+            case ROGUE:
+                this.rogueHelmet = helmet;
+                break;
         }
+        DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
     }
 
-    public ArmorManager.Helmets getWarriorHelmet() {
-        return warriorHelmet;
-    }
-
-    public void setWarriorHelmet(ArmorManager.Helmets warriorHelmet) {
-        if (warriorHelmet != null) {
-            this.warriorHelmet = warriorHelmet;
+    public void setArmor(Classes classes, ArmorManager.ArmorSets armor) {
+        switch (classes) {
+            case MAGE:
+                this.mageArmor = armor;
+                break;
+            case WARRIOR:
+                this.warriorArmor = armor;
+                break;
+            case PALADIN:
+                this.paladinArmor = armor;
+                break;
+            case SHAMAN:
+                this.shamanArmor = armor;
+                break;
+            case ROGUE:
+                this.rogueArmor = armor;
+                break;
         }
+        DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }
 
-    public ArmorManager.Helmets getPaladinHelmet() {
-        return paladinHelmet;
-    }
-
-    public void setPaladinHelmet(ArmorManager.Helmets paladinHelmet) {
-        if (paladinHelmet != null) {
-            this.paladinHelmet = paladinHelmet;
-        }
-    }
-
-    public ArmorManager.Helmets getShamanHelmet() {
-        return shamanHelmet;
-    }
-
-    public void setShamanHelmet(ArmorManager.Helmets shamanHelmet) {
-        if (shamanHelmet != null) {
-            this.shamanHelmet = shamanHelmet;
-        }
-    }
-
-    public ArmorManager.Helmets getRogueHelmet() {
-        return rogueHelmet;
-    }
-
-    public void setRogueHelmet(ArmorManager.Helmets rogueHelmet) {
-        if (rogueHelmet != null) {
-            this.rogueHelmet = rogueHelmet;
-        }
-    }
-
-    public ArmorManager.ArmorSets getMageArmor() {
-        return mageArmor;
-    }
-
-    public void setMageArmor(ArmorManager.ArmorSets mageArmor) {
-        if (mageArmor != null) {
-            this.mageArmor = mageArmor;
-        }
-    }
-
-    public ArmorManager.ArmorSets getWarriorArmor() {
-        return warriorArmor;
-    }
-
-    public void setWarriorArmor(ArmorManager.ArmorSets warriorArmor) {
-        if (warriorArmor != null) {
-            this.warriorArmor = warriorArmor;
-        }
-    }
-
-    public ArmorManager.ArmorSets getPaladinArmor() {
-        return paladinArmor;
-    }
-
-    public void setPaladinArmor(ArmorManager.ArmorSets paladinArmor) {
-        if (paladinArmor != null) {
-            this.paladinArmor = paladinArmor;
-        }
-    }
-
-    public ArmorManager.ArmorSets getShamanArmor() {
-        return shamanArmor;
-    }
-
-    public void setShamanArmor(ArmorManager.ArmorSets shamanArmor) {
-        if (shamanArmor != null) {
-            this.shamanArmor = shamanArmor;
-        }
-    }
-
-    public ArmorManager.ArmorSets getRogueArmor() {
-        return rogueArmor;
-    }
-
-    public void setRogueArmor(ArmorManager.ArmorSets rogueArmor) {
-        if (rogueArmor != null) {
-            this.rogueArmor = rogueArmor;
-        }
-    }
 }

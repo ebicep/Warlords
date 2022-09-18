@@ -44,7 +44,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             Team team,
             Specializations specClass
     ) {
-        super(uuid, name, weapon, entity, game, team, specClass);
+        super(uuid, name, entity, game, team, specClass);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -64,8 +64,8 @@ public final class WarlordsNPC extends WarlordsEntity {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        super(uuid, name, weapon, entity, game, team, specClass);
-        this.walkspeed = walkSpeed;
+        super(uuid, name, entity, game, team, specClass);
+        this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         updateEntity();
@@ -90,7 +90,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             float maxMeleeDamage,
             AbstractMob<?> mob
     ) {
-        super(uuid, name, weapon, entity, game, team, specClass);
+        super(uuid, name, entity, game, team, specClass);
         this.mob = mob;
         this.setInPve(true);
         this.minMeleeDamage = minMeleeDamage;

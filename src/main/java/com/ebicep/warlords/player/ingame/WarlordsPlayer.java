@@ -33,10 +33,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
+
 public final class WarlordsPlayer extends WarlordsEntity {
 
     private final AbilityTree abilityTree = new AbilityTree(this);
     private AbstractWeapon weapon;
+    private CosmeticSettings cosmeticSettings;
 
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
@@ -64,13 +67,18 @@ public final class WarlordsPlayer extends WarlordsEntity {
     ) {
         super(player.getUniqueId(),
                 player.getName(),
-                settings.getWeaponSkin(),
                 spawnSimpleJimmy(location, null),
                 game,
                 team,
                 settings.getSelectedSpec()
         );
         this.spec.setUpgradeBranches(this);
+        this.cosmeticSettings = new CosmeticSettings(
+                settings.getWeaponSkin(),
+                settings.getHelmet(settings.getSelectedSpec()),
+                settings.getArmor(settings.getSelectedSpec())
+        );
+
         updatePlayerReference(player.getPlayer());
         updateInventory(true);
     }
@@ -92,21 +100,16 @@ public final class WarlordsPlayer extends WarlordsEntity {
         return jimmy;
     }
 
-    @Override
-    public boolean isOnline() {
-        return this.entity instanceof Player;
-    }
-
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
         jimmy.setCustomName(this.getSpec()
-                                .getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(
+                .getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(
                 this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                                                          .setValue(0);
+                .setValue(0);
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE)
-                                                          .setValue(0);
+                .setValue(0);
         //prevents jimmy from moving
         net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
         NBTTagCompound compound = new NBTTagCompound();
@@ -138,6 +141,49 @@ public final class WarlordsPlayer extends WarlordsEntity {
             this.entity = player;
             updateEntity();
         }
+    }
+
+    private void resetPlayerAddons() {
+        if (getEntity() instanceof Player) {
+            Player player = (Player) getEntity();
+            PlayerInventory playerInventory = player.getInventory();
+
+            //Soulbinding weapon enchant
+            ItemStack firstItem = playerInventory.getItem(0);
+            if (firstItem != null) {
+                if (getCooldownManager().hasCooldown(Soulbinding.class)) {
+                    ItemMeta itemMeta = firstItem.getItemMeta();
+                    itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                    firstItem.setItemMeta(itemMeta);
+                } else {
+                    firstItem.removeEnchantment(Enchantment.OXYGEN);
+                }
+            }
+
+            //Undying army bone
+            if (getCooldownManager().checkUndyingArmy(true)) {
+                playerInventory.setItem(5, UndyingArmy.BONE);
+            } else {
+                playerInventory.remove(UndyingArmy.BONE);
+            }
+
+            //Arcane shield absorption hearts
+            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
+                    .collect(Collectors.toList());
+            if (!arcaneShields.isEmpty()) {
+                ArcaneShield arcaneShield = arcaneShields.get(0);
+                ((CraftPlayer) player).getHandle()
+                        .setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
+            } else {
+                ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
+            }
+        }
+    }
+
+    @Override
+    protected boolean shouldCheckForAchievements() {
+        return true;
     }
 
     @Override
@@ -177,42 +223,9 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
     }
 
-    private void resetPlayerAddons() {
-        if (getEntity() instanceof Player) {
-            Player player = (Player) getEntity();
-            PlayerInventory playerInventory = player.getInventory();
-
-            //Soulbinding weapon enchant
-            ItemStack firstItem = playerInventory.getItem(0);
-            if (firstItem != null) {
-                if (getCooldownManager().hasCooldown(Soulbinding.class)) {
-                    ItemMeta itemMeta = firstItem.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
-                    firstItem.setItemMeta(itemMeta);
-                } else {
-                    firstItem.removeEnchantment(Enchantment.OXYGEN);
-                }
-            }
-
-            //Undying army bone
-            if (getCooldownManager().checkUndyingArmy(true)) {
-                playerInventory.setItem(5, UndyingArmy.BONE);
-            } else {
-                playerInventory.remove(UndyingArmy.BONE);
-            }
-
-            //Arcane shield absorption hearts
-            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
-                    .collect(Collectors.toList());
-            if (!arcaneShields.isEmpty()) {
-                ArcaneShield arcaneShield = arcaneShields.get(0);
-                ((CraftPlayer) player).getHandle()
-                                      .setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
-            } else {
-                ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
-            }
-        }
+    @Override
+    public boolean isOnline() {
+        return this.entity instanceof Player;
     }
 
     public void updateEntity() {
@@ -220,7 +233,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
             Player player = (Player) entity;
             player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
             player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-            player.setWalkSpeed(walkspeed);
+            player.setWalkSpeed(walkSpeed);
             player.setMaxHealth(40);
             player.setLevel((int) this.getMaxEnergy());
 
@@ -238,10 +251,21 @@ public final class WarlordsPlayer extends WarlordsEntity {
         }
     }
 
-    @Override
-    protected boolean shouldCheckForAchievements() {
-        return true;
+    public ItemStack getItemStackForAbility(AbstractAbility ability) {
+        if (ability == spec.getWeapon()) {
+            return cosmeticSettings.getWeaponSkin().getItem();
+        } else if (ability == spec.getRed()) {
+            return RED_ABILITY;
+        } else if (ability == spec.getPurple()) {
+            return PURPLE_ABILITY;
+        } else if (ability == spec.getBlue()) {
+            return BLUE_ABILITY;
+        } else if (ability == spec.getOrange()) {
+            return ORANGE_ABILITY;
+        }
+        return null;
     }
+
 
     public AbilityTree getAbilityTree() {
         return abilityTree;
@@ -253,5 +277,9 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
     public void setWeapon(AbstractWeapon weapon) {
         this.weapon = weapon;
+    }
+
+    public CosmeticSettings getCosmeticSettings() {
+        return cosmeticSettings;
     }
 }

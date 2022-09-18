@@ -38,8 +38,8 @@ public class WeaponOption implements Option {
         AbstractPlayerClass spec = wp.getSpec();
         player.getInventory().setItem(
                 0,
-                new ItemBuilder(wp.getWeaponSkin().getItem())
-                        .name(ChatColor.GOLD + "Warlord's " + wp.getWeaponSkin()
+                new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
+                        .name(ChatColor.GOLD + "Warlord's " + wp.getCosmeticSettings().getWeaponSkin()
                                 .getName() + " of the " + spec.getName())
                         .lore(
                                 ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
@@ -77,7 +77,7 @@ public class WeaponOption implements Option {
         AbstractAbility weapon = spec.getWeapon();
         player.getInventory().setItem(
                 0,
-                new ItemBuilder(wp.getWeaponSkin().getItem())
+                new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
                         .name(ChatColor.GREEN + weapon.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
                         .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(
                                         weapon.getEnergyCost()),

@@ -189,7 +189,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public AbstractDatabaseStatInformation getClass(Classes classes) {
+    public DatabaseBaseGeneral getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -206,8 +206,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getClasses() {
-        return new AbstractDatabaseStatInformation[]{mage, warrior, paladin, shaman, rogue};
+    public DatabaseBaseGeneral[] getClasses() {
+        return new DatabaseBaseGeneral[]{mage, warrior, paladin, shaman, rogue};
     }
 
     //    public AbstractDatabaseWarlordsClass getClass(AbstractDatabaseWarlordsClass databaseWarlordsClass) {

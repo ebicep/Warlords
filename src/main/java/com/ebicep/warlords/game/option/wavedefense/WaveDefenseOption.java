@@ -265,7 +265,7 @@ public class WaveDefenseOption implements Option {
             optionalWeapon.ifPresent(abstractWeapon -> {
                 WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
 
-                player.setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
                 warlordsPlayer.setWeapon(abstractWeapon);
                 abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
                 player.updateEntity();

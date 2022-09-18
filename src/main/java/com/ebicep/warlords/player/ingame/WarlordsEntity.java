@@ -78,8 +78,8 @@ public abstract class WarlordsEntity {
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
     private final List<Float> recordDamage = new ArrayList<>();
-    private final PlayerStatisticsMinute minuteStats;
-    private final PlayerStatisticsSecond secondStats;
+    private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
+    private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
     private final List<Achievement.AbstractAchievementRecord<?>> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
@@ -92,8 +92,7 @@ public abstract class WarlordsEntity {
     protected String name;
     protected UUID uuid;
     protected AbstractPlayerClass spec;
-    protected Weapons weaponSkin;
-    protected float walkspeed = 1;
+    protected float walkSpeed = 1;
     protected LivingEntity entity;
     private Vector currentVector;
     private Team team;
@@ -103,21 +102,21 @@ public abstract class WarlordsEntity {
     private int regenTimer;
     private int respawnTimer = -1;
     private boolean dead = false;
-    private float energy;
+    private float energy = 0;
     private float maxEnergy;
     private CustomHorse horse;
-    private float horseCooldown;
+    private float horseCooldown = 0;
     private float currentHealthModifier = 1;
-    private int flagDropCooldown;
-    private int flagPickCooldown;
-    private int hitCooldown;
+    private int flagDropCooldown = 0;
+    private int flagPickCooldown = 0;
+    private int hitCooldown = 20;
     private int currency;
     private boolean wasSneaking = false;
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
-    private double energyModifier;
-    private double cooldownModifier;
+    private double energyModifier = 1;
+    private double cooldownModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
     private double flagDamageMultiplier = 0;
@@ -134,14 +133,12 @@ public abstract class WarlordsEntity {
      * @param name
      * @param game       what game should the WarlordsPlayer be assigned to.
      * @param team       optional team parameter to assign the WarlordsPlayer to a team.
-     * @param weaponSkin
      * @param specClass
      * @param entity
      */
     public WarlordsEntity(
             @Nonnull UUID uuid,
             @Nonnull String name,
-            @Nonnull Weapons weaponSkin,
             @Nonnull LivingEntity entity,
             @Nonnull Game game,
             @Nonnull Team team,
@@ -150,21 +147,12 @@ public abstract class WarlordsEntity {
         this.name = name;
         this.uuid = uuid;
         this.game = game;
-        this.minuteStats = new PlayerStatisticsMinute();
-        this.secondStats = new PlayerStatisticsSecond();
         this.team = team;
         this.specClass = specClass;
         this.spec = specClass.create.get();
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
-        this.energy = 0;
-        this.energyModifier = 1;
         this.maxEnergy = this.spec.getMaxEnergy();
-        this.horseCooldown = 0;
-        this.flagDropCooldown = 0;
-        this.flagPickCooldown = 0;
-        this.cooldownModifier = 1;
-        this.hitCooldown = 20;
         this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed,
                 13,
                 true
@@ -173,15 +161,21 @@ public abstract class WarlordsEntity {
             this.speed.addBaseModifier(10);
         }
         this.entity = entity;
-        this.weaponSkin = weaponSkin;
         this.deathLocation = this.entity.getLocation();
         this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)
-                .stream().filter(c -> c.isEnabled())
-                .sorted(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)).reversed())
-                .findFirst()
+                .stream().filter(CompassTargetMarker::isEnabled)
+                .max(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)))
                 .orElse(null);
         this.horse = new CustomHorse(((CraftWorld) entity.getWorld()).getHandle(), this);
+    }
+
+    public boolean isInPve() {
+        return isInPve;
+    }
+
+    public void setInPve(boolean inPve) {
+        isInPve = inPve;
     }
 
     public List<Location> getLocations() {
@@ -1191,21 +1185,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public CooldownManager getCooldownManager() {
-        return cooldownManager;
-    }
-
-    protected void setWalkSpeed(float walkspeed) {
-        this.walkspeed = walkspeed;
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null) {
-            player.setWalkSpeed(this.walkspeed);
-        } else {
-            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                    .setValue(this.walkspeed);
-        }
-    }
-
     public void displayActionBar() {
         StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
         float healthRatio = health / maxHealth;
@@ -1285,8 +1264,55 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void updateInventory(boolean closeInventory) {
+    public boolean hasFlag() {
+        return FlagHolder.isPlayerHolderFlag(this);
+    }
 
+    public Specializations getSpecClass() {
+        return specClass;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    @Nonnull
+    public LivingEntity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
+
+    public void updateItems() {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            updateRedItem(player);
+            updatePurpleItem(player);
+            updateBlueItem(player);
+            updateOrangeItem(player);
+        }
+    }
+
+    public void updateRedItem(Player player) {
+        updateItem(player, 1, spec.getRed(), RED_ABILITY);
+    }
+
+    public void updatePurpleItem(Player player) {
+        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
+    }
+
+    public void updateBlueItem(Player player) {
+        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
+    }
+
+    public void updateOrangeItem(Player player) {
+        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
     }
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
@@ -1305,39 +1331,10 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public ItemStack getItemStackForAbility(AbstractAbility ability) {
-        if (ability == spec.getWeapon()) {
-            return weaponSkin.getItem();
-        } else if (ability == spec.getRed()) {
-            return RED_ABILITY;
-        } else if (ability == spec.getPurple()) {
-            return PURPLE_ABILITY;
-        } else if (ability == spec.getBlue()) {
-            return BLUE_ABILITY;
-        } else if (ability == spec.getOrange()) {
-            return ORANGE_ABILITY;
-        }
-        return null;
-    }
-
-    public void updateItems() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-            updateRedItem(player);
-            updatePurpleItem(player);
-            updateBlueItem(player);
-            updateOrangeItem(player);
-        }
-    }
-
     public void updateRedItem() {
         if (entity instanceof Player) {
             updateRedItem((Player) entity);
         }
-    }
-
-    public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), RED_ABILITY);
     }
 
     public void updatePurpleItem() {
@@ -1346,36 +1343,16 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
-    }
-
     public void updateBlueItem() {
         if (entity instanceof Player) {
             updateBlueItem((Player) entity);
         }
     }
 
-    public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
-    }
-
     public void updateOrangeItem() {
         if (entity instanceof Player) {
             updateOrangeItem((Player) entity);
         }
-    }
-
-    public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public UUID getUuid() {
@@ -1405,10 +1382,7 @@ public abstract class WarlordsEntity {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         if (this instanceof WarlordsPlayer) {
-            PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec.getName()));
-            PlayerSettings.getPlayerSettings(uuid).setSkillBoostForSelectedSpec(skillBoost);
             Player player = Bukkit.getPlayer(uuid);
-            this.weaponSkin = Weapons.getSelected(player, this.specClass);
             this.specClass = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
             ArmorManager.resetArmor(player, specClass, team);
 
@@ -1427,6 +1401,10 @@ public abstract class WarlordsEntity {
             databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         }
+    }
+
+    public void updateInventory(boolean closeInventory) {
+
     }
 
     public float getHealth() {
@@ -1462,67 +1440,6 @@ public abstract class WarlordsEntity {
 
     public void heal() {
         this.health = this.maxHealth;
-    }
-
-    private void decrementRespawnTimer() {
-        // Respawn
-        if (respawnTimer == 1) {
-            respawn();
-        } else if (respawnTimer > 0) {
-            minuteStats.addTotalRespawnTime();
-            respawnTimer--;
-            if (respawnTimer <= 30) {
-                if (entity instanceof Player) {
-                    PacketUtils.sendTitle((Player) entity,
-                            "",
-                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer,
-                            0,
-                            40,
-                            0
-                    );
-                }
-            }
-        }
-    }
-
-    public void respawn() {
-        List<Location> candidates = new ArrayList<>();
-        double priority = Double.NEGATIVE_INFINITY;
-        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-            if (candidates.isEmpty()) {
-                candidates.add(marker.getLocation());
-                priority = marker.getPriority(this);
-            } else {
-                double newPriority = marker.getPriority(this);
-                if (newPriority >= priority) {
-                    if (newPriority > priority) {
-                        candidates.clear();
-                        priority = newPriority;
-                    }
-                    candidates.add(marker.getLocation());
-                }
-            }
-        }
-        Location respawnPoint =
-                !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
-                        deathLocation != null ? deathLocation :
-                                getLocation();
-        WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return;
-        }
-
-        if (entity instanceof Player) {
-            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
-        }
-        setRespawnTimer(-1);
-        setEnergy(getMaxEnergy() / 2);
-        dead = false;
-        teleport(respawnPoint);
-
-        this.health = this.maxHealth;
-        updateEntity();
     }
 
     public int getRegenTimer() {
@@ -1572,6 +1489,20 @@ public abstract class WarlordsEntity {
         return energyGiven;
     }
 
+    public void sendMessage(String message) {
+        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
+            this.entity.sendMessage(message);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public float subtractEnergy(float amount, boolean fromAttacker) {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
@@ -1593,12 +1524,6 @@ public abstract class WarlordsEntity {
         return amountSubtracted;
     }
 
-    public void sendMessage(String message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
-            this.entity.sendMessage(message);
-        }
-    }
-
     public void playSound(Location location, Sound sound, float volume, float pitch) {
         if (this.entity instanceof Player) {
             ((Player) this.entity).playSound(location, sound, volume, pitch);
@@ -1613,14 +1538,6 @@ public abstract class WarlordsEntity {
 
     public boolean onHorse() {
         return this.entity.isInsideVehicle();
-    }
-
-    public float getMaxEnergy() {
-        return maxEnergy;
-    }
-
-    public void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = maxEnergy;
     }
 
     public CustomHorse getHorse() {
@@ -1805,6 +1722,10 @@ public abstract class WarlordsEntity {
         this.compassTarget = first;
     }
 
+    public Game getGame() {
+        return this.game;
+    }
+
     public CalculateSpeed getSpeed() {
         return speed;
     }
@@ -1838,56 +1759,16 @@ public abstract class WarlordsEntity {
         return (total.getFlagsCaptured() * 5) + total.getFlagsReturned();
     }
 
+    public boolean isAlive() {
+        return !isDead();
+    }
+
     public boolean isDead() {
         return dead;
     }
 
     public void setDead(boolean dead) {
         this.dead = dead;
-    }
-
-    public boolean isAlive() {
-        return !isDead();
-    }
-
-    public abstract void updateEntity();
-
-    public Specializations getSpecClass() {
-        return specClass;
-    }
-
-    public Weapons getWeaponSkin() {
-        return weaponSkin;
-    }
-
-    public void setWeaponSkin(Weapons weaponSkin) {
-        this.weaponSkin = weaponSkin;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public Game getGame() {
-        return this.game;
-    }
-
-    @Nonnull
-    public LivingEntity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
-    @Nonnull
-    public Location getLocation() {
-        return this.entity.getLocation();
     }
 
     @Nonnull
@@ -1946,10 +1827,6 @@ public abstract class WarlordsEntity {
                 p.getTeam() == getTeam();
     }
 
-    public void teleport(Location location) {
-        this.entity.teleport(location);
-    }
-
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player) {
             TeleportUtils.teleport((Player) this.entity, location);
@@ -1960,6 +1837,11 @@ public abstract class WarlordsEntity {
             location1.setZ(location.getZ());
             this.entity.teleport(location);
         }
+    }
+
+    @Nonnull
+    public Location getLocation() {
+        return this.entity.getLocation();
     }
 
     /**
@@ -1973,10 +1855,6 @@ public abstract class WarlordsEntity {
                 && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this
                 ? ((PlayerFlagLocation) this.carriedFlag.getFlag()).getComputedMultiplier()
                 : 1;
-    }
-
-    public boolean hasFlag() {
-        return FlagHolder.isPlayerHolderFlag(this);
     }
 
     public String getColoredName() {
@@ -2012,6 +1890,10 @@ public abstract class WarlordsEntity {
         }
         //addPotionEffect(effect, force);
         this.getEntity().addPotionEffect(potionEffect, true);
+    }
+
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
     }
 
     public World getWorld() {
@@ -2074,8 +1956,19 @@ public abstract class WarlordsEntity {
         this.blocksTravelledCM = blocksTravelledCM;
     }
 
-    public float getWalkspeed() {
-        return walkspeed;
+    public float getWalkSpeed() {
+        return walkSpeed;
+    }
+
+    protected void setWalkSpeed(float walkspeed) {
+        this.walkSpeed = walkspeed;
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.setWalkSpeed(this.walkSpeed);
+        } else {
+            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
+                    .setValue(this.walkSpeed);
+        }
     }
 
     public List<Float> getRecordDamage() {
@@ -2146,6 +2039,81 @@ public abstract class WarlordsEntity {
         this.decrementRespawnTimer();
     }
 
+    private void decrementRespawnTimer() {
+        // Respawn
+        if (respawnTimer == 1) {
+            respawn();
+        } else if (respawnTimer > 0) {
+            minuteStats.addTotalRespawnTime();
+            respawnTimer--;
+            if (respawnTimer <= 30) {
+                if (entity instanceof Player) {
+                    PacketUtils.sendTitle((Player) entity,
+                            "",
+                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer,
+                            0,
+                            40,
+                            0
+                    );
+                }
+            }
+        }
+    }
+
+    public void respawn() {
+        List<Location> candidates = new ArrayList<>();
+        double priority = Double.NEGATIVE_INFINITY;
+        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+            if (candidates.isEmpty()) {
+                candidates.add(marker.getLocation());
+                priority = marker.getPriority(this);
+            } else {
+                double newPriority = marker.getPriority(this);
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
+                }
+            }
+        }
+        Location respawnPoint =
+                !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
+                        deathLocation != null ? deathLocation :
+                                getLocation();
+        WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (entity instanceof Player) {
+            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+        }
+        setRespawnTimer(-1);
+        setEnergy(getMaxEnergy() / 2);
+        dead = false;
+        teleport(respawnPoint);
+
+        this.health = this.maxHealth;
+        updateEntity();
+    }
+
+    public float getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
+    public void teleport(Location location) {
+        this.entity.teleport(location);
+    }
+
+    public abstract void updateEntity();
+
     public void runEveryTick() {
         this.spec.runEveryTick();
     }
@@ -2192,14 +2160,6 @@ public abstract class WarlordsEntity {
             currency = 0;
         }
         this.currency -= currency;
-    }
-
-    public boolean isInPve() {
-        return isInPve;
-    }
-
-    public void setInPve(boolean inPve) {
-        isInPve = inPve;
     }
 
     public float getFallDistance() {

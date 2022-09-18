@@ -186,16 +186,10 @@ public class DatabaseManager {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
 
-        ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
-        ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
-        ArmorManager.Helmets.setSelectedWarrior(player, databasePlayer.getWarrior().getHelmet());
-        ArmorManager.ArmorSets.setSelectedWarrior(player, databasePlayer.getWarrior().getArmor());
-        ArmorManager.Helmets.setSelectedPaladin(player, databasePlayer.getPaladin().getHelmet());
-        ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
-        ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
-        ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
-        ArmorManager.Helmets.setSelectedRogue(player, databasePlayer.getRogue().getHelmet());
-        ArmorManager.ArmorSets.setSelectedRogue(player, databasePlayer.getRogue().getArmor());
+        for (Classes classes : Classes.VALUES) {
+            playerSettings.setHelmet(classes, databasePlayer.getClass(classes).getHelmet());
+            playerSettings.setArmor(classes, databasePlayer.getClass(classes).getArmor());
+        }
 
         HashMap<Specializations, Weapons> weaponSkins = new HashMap<>();
         for (Specializations spec : Specializations.VALUES) {
@@ -238,9 +232,22 @@ public class DatabaseManager {
     }
 
     public static void updateGameAsync(DatabaseGameBase databaseGame) {
-        if (playerService == null || !enabled) return;
+        if (playerService == null || !enabled) {
+            return;
+        }
         Warlords.newChain().async(() -> gameService.save(databaseGame, GamesCollections.ALL)).execute();
         Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().gamesCollections)).execute();
+    }
+
+    public static void updatePlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        if (databasePlayer != null) {
+            databasePlayerConsumer.accept(databasePlayer);
+            queueUpdatePlayerAsync(databasePlayer);
+        }
     }
 
 }
