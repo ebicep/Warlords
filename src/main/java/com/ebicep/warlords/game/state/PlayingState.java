@@ -45,10 +45,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,11 +60,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
-    }
-
-    @Nonnull
-    public Game getGame() {
-        return game;
     }
 
     @Override
@@ -118,7 +110,15 @@ public class PlayingState implements State, TimerDebugAble {
                 winEvent = event;
             }
         });
-        GameRunnable.create(game, this::updateScoreboard).runTaskTimer(0, 10);
+        new GameRunnable(game) {
+
+            @Override
+            public void run() {
+                game.forEachOnlinePlayer((player, team) -> {
+                    updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()), (WarlordsPlayer) Warlords.getPlayer(player));
+                });
+            }
+        }.runTaskTimer(0, 10);
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -144,6 +144,101 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         Warlords.getInstance().hideAndUnhidePeople();
+    }
+
+    @Nonnull
+    public Game getGame() {
+        return game;
+    }
+
+    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+        this.updateHealth(customScoreboard);
+        this.updateNames(customScoreboard);
+        this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
+    }
+
+    private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        Objective health = customScoreboard.getHealth();
+        if (health == null || scoreboard.getObjective("health") == null) {
+            health = scoreboard.registerNewObjective("health", "dummy");
+            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            health.setDisplayName(ChatColor.RED + "❤");
+            customScoreboard.setHealth(health);
+        }
+        Objective finalHealth = health;
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            if (warlordsEntity != null) {
+                finalHealth.getScore(warlordsEntity.getName()).setScore(Math.round(warlordsEntity.getHealth()));
+            }
+        });
+    }
+
+    private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            if (warlordsEntity instanceof WarlordsPlayer) {
+                String name = warlordsEntity.getName();
+                UUID uuid = warlordsEntity.getUuid();
+                String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
+                if (scoreboard.getTeam(name) == null) {
+                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(name);
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
+                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.addEntry(name);
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]");
+                } else {
+                    scoreboard.getTeam(name).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
+                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    if (warlordsEntity.getCarriedFlag() != null) {
+                        scoreboard.getTeam(name).setSuffix(
+                                ChatColor.DARK_GRAY + "[" +
+                                        ChatColor.GRAY + "Lv" +
+                                        levelString +
+                                        ChatColor.DARK_GRAY + "]" +
+                                        ChatColor.WHITE + "⚑"
+                        );
+                    } else {
+                        String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + warlordsEntity.getMinuteStats().total().getKills();
+                        scoreboard.getTeam(name).setSuffix(
+                                ChatColor.DARK_GRAY + " [" +
+                                        ChatColor.GRAY + "Lv" +
+                                        levelString +
+                                        ChatColor.DARK_GRAY + "]"
+                        );
+                    }
+                }
+            }
+        });
+    }
+
+    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+        List<String> scoreboard = new ArrayList<>();
+
+        ScoreboardHandler lastHandler = null;
+        String lastGroup = null;
+        boolean lastWasEmpty = true;
+        for (ScoreboardHandler handler : Utils.iterable(game
+                .getScoreboardHandlers()
+                .stream()
+                .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))
+        )) {
+            String group = handler.getGroup();
+            if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty && handler.emptyLinesBetween() && lastHandler.emptyLinesBetween()) {
+                scoreboard.add("");
+                lastWasEmpty = true;
+            }
+            lastHandler = handler;
+            lastGroup = group;
+            List<String> handlerContents = handler.computeLines(warlordsPlayer);
+            if (!handlerContents.isEmpty()) {
+                lastWasEmpty = false;
+                scoreboard.addAll(handlerContents);
+            }
+        }
+        customScoreboard.giveNewSideBar(false, scoreboard);
     }
 
     @Override
@@ -233,143 +328,6 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     @Override
-    public void skipTimer() {
-        // TODO loop over options and decrement them is needed
-        int maxSkip = Integer.MAX_VALUE;
-        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
-            if (marker.getDelay() > 0) {
-                maxSkip = Math.min(marker.getDelay(), maxSkip);
-            }
-        }
-        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
-            marker.skipTimer(maxSkip);
-        }
-    }
-
-    @Override
-    public void resetTimer() throws IllegalStateException {
-    }
-
-    private void updateScoreboard() {
-        game.forEachOfflineWarlordsPlayer(warlordsPlayer -> updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(warlordsPlayer.getUuid()), warlordsPlayer));
-    }
-
-    private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-        Objective health = customScoreboard.getHealth();
-        if (health == null || scoreboard.getObjective("health") == null) {
-            health = scoreboard.registerNewObjective("health", "dummy");
-            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            health.setDisplayName(ChatColor.RED + "❤");
-            customScoreboard.setHealth(health);
-        }
-        Objective finalHealth = health;
-        this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-            if (warlordsPlayer != null) {
-                finalHealth.getScore(warlordsPlayer.getName()).setScore(Math.round(warlordsPlayer.getHealth()));
-            }
-        });
-    }
-
-    private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-        this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsEntity wp = Warlords.getPlayer(player);
-            if (wp instanceof WarlordsPlayer) {
-                if (scoreboard.getTeam(wp.getName()) == null) {
-                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(wp.getName());
-                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec()
-                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                    temp.addEntry(wp.getName());
-                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(
-                            wp.getUuid(),
-                            wp.getSpecClass()
-                    )) + ChatColor.DARK_GRAY + "]");
-                } else {
-                    scoreboard.getTeam(wp.getName())
-                            .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + wp.getSpec()
-                                    .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                    if (wp.getCarriedFlag() != null) {
-                        scoreboard.getTeam(wp.getName()).setSuffix(
-                                ChatColor.DARK_GRAY + "[" +
-                                        ChatColor.GRAY + "Lv" +
-                                        ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(),
-                                                wp.getSpecClass()
-                                        )) +
-                                        ChatColor.DARK_GRAY + "]" +
-                                        ChatColor.WHITE + "⚑"
-                        );
-                    } else {
-                        String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + wp.getMinuteStats().total().getKills();
-                        scoreboard.getTeam(wp.getName()).setSuffix(
-                                ChatColor.DARK_GRAY + " [" +
-                                        ChatColor.GRAY + "Lv" +
-                                        ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(),
-                                                wp.getSpecClass()
-                                        )) +
-                                        ChatColor.DARK_GRAY + "]"
-                        );
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
-     *
-     * @param we the player changing
-     */
-    public void updatePlayerName(@Nonnull WarlordsEntity we) {
-        this.getGame().forEachOfflinePlayer((player, team) -> {
-            if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
-                Scoreboard scoreboard = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard();
-                int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
-                //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
-                scoreboard.getTeam(we.getName())
-                        .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
-                scoreboard.getTeam(we.getName())
-                        .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
-            }
-        });
-    }
-
-    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
-        List<String> scoreboard = new ArrayList<>();
-
-        ScoreboardHandler lastHandler = null;
-        String lastGroup = null;
-        boolean lastWasEmpty = true;
-        for (ScoreboardHandler handler : Utils.iterable(game
-                .getScoreboardHandlers()
-                .stream()
-                .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))
-        )) {
-            String group = handler.getGroup();
-            if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty && handler.emptyLinesBetween() && lastHandler.emptyLinesBetween()) {
-                scoreboard.add("");
-                lastWasEmpty = true;
-            }
-            lastHandler = handler;
-            lastGroup = group;
-            List<String> handlerContents = handler.computeLines(warlordsPlayer);
-            if (!handlerContents.isEmpty()) {
-                lastWasEmpty = false;
-                scoreboard.addAll(handlerContents);
-            }
-        }
-        customScoreboard.giveNewSideBar(false, scoreboard);
-    }
-
-    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
-        this.updateHealth(customScoreboard);
-        this.updateNames(customScoreboard);
-        this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
-    }
-
-    @Override
     public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
@@ -390,6 +348,44 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     public int getTicksElapsed() {
         return this.timer;
+    }
+
+    @Override
+    public void skipTimer() {
+        // TODO loop over options and decrement them is needed
+        int maxSkip = Integer.MAX_VALUE;
+        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
+            if (marker.getDelay() > 0) {
+                maxSkip = Math.min(marker.getDelay(), maxSkip);
+            }
+        }
+        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
+            marker.skipTimer(maxSkip);
+        }
+    }
+
+    @Override
+    public void resetTimer() throws IllegalStateException {
+    }
+
+    /**
+     * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
+     *
+     * @param we the player changing
+     */
+    public void updatePlayerName(@Nonnull WarlordsEntity we) {
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
+                Scoreboard scoreboard = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard();
+                int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
+                //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
+                scoreboard.getTeam(we.getName())
+                        .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
+                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
+                scoreboard.getTeam(we.getName())
+                        .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
+            }
+        });
     }
 
 }

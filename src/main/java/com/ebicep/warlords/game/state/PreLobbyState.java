@@ -19,7 +19,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 
@@ -518,7 +517,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     private void distributePeopleOverTeams() {
-        List<Map.Entry<UUID, TeamPreference>> prefs = teamPreferences.entrySet().stream().collect(Collectors.toList());
+        List<Map.Entry<UUID, TeamPreference>> prefs = new ArrayList<>(teamPreferences.entrySet());
 
         if (!prefs.isEmpty()) {
             int redIndex = 0;
@@ -587,23 +586,20 @@ public class PreLobbyState implements State, TimerDebugAble {
         State.super.onPlayerReJoinGame(player);
         Team team = game.getPlayerTeam(player.getUniqueId());
         player.getActivePotionEffects().clear();
-        
+        player.getInventory().clear();
+
         if (team == null) {
-            player.getInventory().clear();
             player.setAllowFlight(true);
             player.setGameMode(GameMode.SPECTATOR);
         } else {
-            player.getInventory().clear();
             player.setAllowFlight(false);
             player.setGameMode(GameMode.ADVENTURE);
-            
+
             for (PreGameItemOption item : items) {
                 if (item != null) {
                     player.getInventory().setItem(item.getSlot(), item.getItem(game, player));
                 }
             }
-
-            // ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
         }
         
         LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
@@ -643,7 +639,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         NO_PREFERENCE,
     }
 
-    private final class TeamPreference implements Comparable<TeamPreference> {
+    private static final class TeamPreference implements Comparable<TeamPreference> {
         final Team wantedTeam;
         final TeamPriority priority;
         final Team currentTeam;
