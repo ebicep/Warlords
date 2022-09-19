@@ -27,6 +27,10 @@ public class PermissionHandler {
         return player.hasPermission("group.gametester");
     }
 
+    public static boolean isPatreon(Player player) {
+        return player.hasPermission("group.patreon");
+    }
+
     public static boolean isDefault(Player player) {
         return player.hasPermission("group.default");
     }

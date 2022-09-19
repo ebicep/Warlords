@@ -586,9 +586,9 @@ public class WarlordsEvents implements Listener {
                 if (PermissionHandler.isDefault(player)) {
                     prefixColor = ChatColor.AQUA;
                     prefix = prefixColor + "";
-                } else if (PermissionHandler.isGameTester(player)) {
-                    prefixColor = ChatColor.YELLOW;
-                    prefix = prefixColor + "[T] ";
+                } else if (PermissionHandler.isPatreon(player)) {
+                    prefixColor = ChatColor.GREEN;
+                    prefix = prefixColor + "[P] ";
                 } else if (PermissionHandler.isGameStarter(player)) {
                     prefixColor = ChatColor.YELLOW;
                     prefix = prefixColor + "[GS] ";

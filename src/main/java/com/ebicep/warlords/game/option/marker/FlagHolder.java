@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -98,14 +99,22 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
             FlagInfo info = holder.getInfo();
             boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
             if (drop) {
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        holder.update(i -> i.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null);
-                    }
-
-                }.runTaskLater(Warlords.getInstance(), 1);
+                if (!(player.getGame().getState() instanceof EndState)) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            holder.update(i ->
+                                    i.getFlag() instanceof PlayerFlagLocation &&
+                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                            );
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 1);
+                } else {
+                    holder.update(i ->
+                            i.getFlag() instanceof PlayerFlagLocation &&
+                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                    );
+                }
                 return true;
             }
         }
