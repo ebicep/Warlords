@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class ImposterModeOption implements Option {
 
-    private final int numberOfImpostersPerTeam = 1;
+    public static int NUMBER_OF_IMPOSTERS_PER_TEAM = 1;
     private final HashMap<Team, List<UUID>> imposters = new HashMap<>();
     private final HashMap<Team, List<UUID>> voters = new HashMap<>();
     private Game game;
@@ -201,9 +201,23 @@ public class ImposterModeOption implements Option {
                             title = ChatColor.YELLOW + "You are...";
                             break;
                         case 4:
-                            if (imposters.get(team).contains(player.getUniqueId())) {
+                            List<UUID> imposterUUIDs = imposters.get(team);
+                            if (imposterUUIDs.contains(player.getUniqueId())) {
                                 title = ChatColor.RED + "The IMPOSTER";
                                 sendImposterMessage(player, ChatColor.RED + "You are the IMPOSTER");
+                                if (imposterUUIDs.size() > 1) {
+                                    List<UUID> otherImposters = new ArrayList<>(imposterUUIDs);
+                                    otherImposters.remove(player.getUniqueId());
+                                    ChatUtils.sendMessageToPlayer(player,
+                                            ChatColor.GRAY + "Other imposters: " + ChatColor.RED + otherImposters.stream()
+                                                    .map(Bukkit::getPlayer)
+                                                    .filter(Objects::nonNull)
+                                                    .map(Player::getName)
+                                                    .collect(Collectors.joining(ChatColor.GRAY + ", " + ChatColor.RED)),
+                                            ChatColor.BLUE,
+                                            true
+                                    );
+                                }
                             } else {
                                 title = ChatColor.GREEN + "INNOCENT";
                                 sendImposterMessage(player, ChatColor.GREEN + "You are INNOCENT");
@@ -223,13 +237,13 @@ public class ImposterModeOption implements Option {
     public void assignImposters() {
         imposters.forEach((team, uuids) -> uuids.clear());
         for (Team team : TeamMarker.getTeams(game)) {
-            List<WarlordsEntity> teamPlayers = game.warlordsEntities()
+            List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
                     .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                     .collect(Collectors.toList());
             if (teamPlayers.size() == 0) {
                 continue;
             }
-            for (int i = 0; i < numberOfImpostersPerTeam; i++) {
+            for (int i = 0; i < NUMBER_OF_IMPOSTERS_PER_TEAM; i++) {
                 imposters.get(team).add(teamPlayers.get(new Random().nextInt(teamPlayers.size())).getUuid());
             }
         }
