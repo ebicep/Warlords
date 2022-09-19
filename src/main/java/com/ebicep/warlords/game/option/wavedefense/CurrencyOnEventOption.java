@@ -39,8 +39,9 @@ public class CurrencyOnEventOption implements Option, Listener {
         game.registerEvents(this);
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "currency") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(player != null ? "Insignia: " + ChatColor.GOLD + "❂ " + player.getCurrency() : "");
             }
         });

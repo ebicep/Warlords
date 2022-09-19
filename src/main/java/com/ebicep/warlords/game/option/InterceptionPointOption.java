@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -132,17 +133,18 @@ public class InterceptionPointOption implements Option {
 				"radius: " + computeCurrentRadius()
 		)));
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
-            @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
-                StringBuilder status = new StringBuilder();
-                if (teamAttacking == null) {
-                    status.append(ChatColor.GRAY);
-                } else {
-                    status.append(teamAttacking.teamColor());
-                }
-                status.append(name);
-                status.append(ChatColor.WHITE);
-                status.append(": ");
+			@Nonnull
+			@Override
+			public List<String> computeLines(@Nullable WarlordsPlayer player) {
+				StringBuilder status = new StringBuilder();
+				if (teamAttacking == null) {
+					status.append(ChatColor.GRAY);
+				} else {
+					status.append(teamAttacking.teamColor());
+				}
+				status.append(name);
+				status.append(ChatColor.WHITE);
+				status.append(": ");
 
 				if (teamInCircle == null) {
 					status.append(ChatColor.GRAY);

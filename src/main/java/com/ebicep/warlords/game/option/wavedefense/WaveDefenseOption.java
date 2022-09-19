@@ -150,20 +150,23 @@ public class WaveDefenseOption implements Option {
 
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter + ChatColor.RESET + (maxWave < 10000 ? "/" + ChatColor.GREEN + maxWave : "") + ChatColor.RESET + (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList("Monsters left: " + ChatColor.GREEN + mobs.size());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });

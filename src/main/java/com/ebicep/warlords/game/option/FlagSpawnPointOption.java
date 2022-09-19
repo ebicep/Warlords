@@ -93,8 +93,9 @@ public class FlagSpawnPointOption implements Option {
             game.registerGameMarker(CompassTargetMarker.class, holder);
         }
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 String flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {

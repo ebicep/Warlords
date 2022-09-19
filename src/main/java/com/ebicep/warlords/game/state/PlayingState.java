@@ -251,9 +251,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private void updateScoreboard() {
-        game.forEachOnlinePlayer((player, team) -> {
-            updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()), Warlords.getPlayer(player));
-        });
+        game.forEachOfflineWarlordsPlayer(warlordsPlayer -> updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(warlordsPlayer.getUuid()), warlordsPlayer));
     }
 
     private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
@@ -338,7 +336,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
+    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         List<String> scoreboard = new ArrayList<>();
 
         ScoreboardHandler lastHandler = null;
@@ -365,7 +363,7 @@ public class PlayingState implements State, TimerDebugAble {
         customScoreboard.giveNewSideBar(false, scoreboard);
     }
 
-    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
+    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         this.updateHealth(customScoreboard);
         this.updateNames(customScoreboard);
         this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
@@ -383,8 +381,10 @@ public class PlayingState implements State, TimerDebugAble {
             ).map(LocationMarker::getLocation).collect(Utils.randomElement());
             player.teleport(spawn);
         }
-        CustomScoreboard sb = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId());
-        updateBasedOnGameState(sb, wp);
+        if (wp instanceof WarlordsPlayer) {
+            CustomScoreboard sb = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId());
+            updateBasedOnGameState(sb, (WarlordsPlayer) wp);
+        }
     }
 
     @Override

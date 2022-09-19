@@ -552,7 +552,7 @@ public final class Game implements Runnable, AutoCloseable {
         warlordsEntities().forEach(consumer);
     }
 
-    public void forEachOfflineWarlordsPlayer(Consumer<WarlordsEntity> consumer) {
+    public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         warlordsPlayers().forEach(consumer);
     }
 

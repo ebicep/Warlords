@@ -4,7 +4,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -36,8 +36,9 @@ public class RecordTimeElapsedOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(ticksElapsed / 20));
             }
         });

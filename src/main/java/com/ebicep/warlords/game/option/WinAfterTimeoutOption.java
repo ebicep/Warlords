@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
@@ -106,8 +106,9 @@ public class WinAfterTimeoutOption implements Option {
             
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
                 Team winner = null;
@@ -121,7 +122,7 @@ public class WinAfterTimeoutOption implements Option {
                             .sorted()
                             .findFirst()
                             .orElse(Integer.MAX_VALUE);
-                    
+
                     int highestScore = Integer.MIN_VALUE;
                     int highestWinInSeconds = Integer.MAX_VALUE;
                     for (Team team : teams) {
@@ -146,7 +147,7 @@ public class WinAfterTimeoutOption implements Option {
                                 points = pointsAfterTimeIsOver;
                             }
                         }
-                        
+
                         if (points > highestScore) {
                             highestScore = points;
                             highestWinInSeconds = winInSeconds;

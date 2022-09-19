@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.marker.scoreboard;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -11,8 +12,9 @@ public abstract class AbstractScoreboardHandler implements ScoreboardHandler {
     public AbstractScoreboardHandler() {
     }
 
+    @Nonnull
     @Override
-    public Runnable registerChangeHandler(Consumer<ScoreboardHandler> onChange) {
+    public Runnable registerChangeHandler(@Nonnull Consumer<ScoreboardHandler> onChange) {
         handlers.add(onChange);
         return () -> handlers.remove(onChange);
     }

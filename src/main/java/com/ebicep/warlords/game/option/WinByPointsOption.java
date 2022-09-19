@@ -6,12 +6,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,8 +37,9 @@ public class WinByPointsOption implements Option, Listener {
     public void register(Game game) {
         game.registerEvents(this);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "points") {
+            @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsEntity player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return TeamMarker.getTeams(game).stream()
                         .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getPoints(t) + ChatColor.GOLD + "/" + pointLimit)
                         .collect(Collectors.toList());

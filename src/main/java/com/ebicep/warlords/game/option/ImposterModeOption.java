@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.polls.GamePoll;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -42,8 +43,9 @@ public class ImposterModeOption implements Option {
 
         game.registerGameMarker(ScoreboardHandler.class,
                 new SimpleScoreboardHandler(Integer.MAX_VALUE - 15, "imposter") {
+                    @Nonnull
                     @Override
-                    public List<String> computeLines(@Nullable WarlordsEntity warlordsPlayer) {
+                    public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
                         if (warlordsPlayer == null) {
                             return Collections.singletonList("");
                         }
