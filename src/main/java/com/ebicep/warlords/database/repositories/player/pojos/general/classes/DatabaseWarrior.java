@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabaseWarrior extends DatabaseBaseGeneral implements DatabaseWarlordsClass {
@@ -11,6 +12,7 @@ public class DatabaseWarrior extends DatabaseBaseGeneral implements DatabaseWarl
     private DatabaseSpecialization revenant = new DatabaseSpecialization(SkillBoosts.ORBS_OF_LIFE);
 
     public DatabaseWarrior() {
+        super(ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET);
     }
 
     @Override

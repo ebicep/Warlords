@@ -84,19 +84,18 @@ public class PlayerHotBarItemListener implements Listener {
         SLOT_HOTBAR_LISTENER.put(8, e -> RewardInventory.openRewardInventory(e.getPlayer(), 1));
     }
 
-    public static void setItem(Player player, int slot, ItemStack itemStack) {
-        player.getInventory().setItem(slot, itemStack);
-    }
-
     public static void giveLobbyHotBar(Player player, boolean fromGame) {
         UUID uuid = player.getUniqueId();
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         Specializations selectedSpec = playerSettings.getSelectedSpec();
         AbstractPlayerClass apc = selectedSpec.create.get();
 
-        setItem(player, 1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                .name("§aWeapon Skin Preview")
-                .get());
+        setItem(player,
+                1,
+                new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                        .name("§aWeapon Skin Preview")
+                        .get()
+        );
         if (!fromGame) {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
             if (partyPlayerPair != null) {
@@ -126,6 +125,10 @@ public class PlayerHotBarItemListener implements Listener {
         }
     }
 
+    public static void setItem(Player player, int slot, ItemStack itemStack) {
+        player.getInventory().setItem(slot, itemStack);
+    }
+
     public static void giveLobbyHotBarDatabase(Player player) {
         if (DatabaseManager.enabled) {
             updateWeaponManagerItem(player);
@@ -138,15 +141,21 @@ public class PlayerHotBarItemListener implements Listener {
         UUID uuid = player.getUniqueId();
         if (DatabaseManager.playerService != null) {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
-            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
-                    .filter(AbstractWeapon::isBound)
-                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
-                    .findFirst();
-            if (optionalWeapon.isPresent()) {
-                setItem(player, 6, optionalWeapon.get().generateItemStack());
-                return;
-            }
+            updateWeaponManagerItem(player, databasePlayer);
+        } else {
+            setItem(player, 6, WEAPONS_MENU);
+        }
+    }
+
+    public static void updateWeaponManagerItem(Player player, DatabasePlayer databasePlayer) {
+        List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
+        Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                .filter(AbstractWeapon::isBound)
+                .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
+                .findFirst();
+        if (optionalWeapon.isPresent()) {
+            setItem(player, 6, optionalWeapon.get().generateItemStack());
+            return;
         }
         setItem(player, 6, WEAPONS_MENU);
     }

@@ -8,8 +8,10 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -74,13 +76,13 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 team,
                 settings.getSelectedSpec()
         );
-        this.spec.setUpgradeBranches(this);
         this.cosmeticSettings = new CosmeticSettings(
-                settings.getWeaponSkin(),
+                settings.getWeaponSkinForSelectedSpec(),
                 settings.getHelmet(settings.getSelectedSpec()),
-                settings.getArmor(settings.getSelectedSpec())
+                settings.getArmorSet(settings.getSelectedSpec())
         );
         this.skillBoost = settings.getSkillBoostForClass();
+        this.spec.setUpgradeBranches(this);
 
         updatePlayerReference(player.getPlayer());
         updateInventory(true);
@@ -146,6 +148,45 @@ public final class WarlordsPlayer extends WarlordsEntity {
         }
     }
 
+    @Override
+    protected boolean shouldCheckForAchievements() {
+        return true;
+    }
+
+    @Override
+    public void updateHealth() {
+        if (getEntity() instanceof Zombie) {
+            if (isDead()) {
+                getEntity().setCustomName("");
+            } else {
+                String oldName = getEntity().getCustomName();
+                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(
+                        getHealth()) + "❤";
+                getEntity().setCustomName(newName);
+            }
+        }
+    }
+
+    @Override
+    public void setSpec(Specializations spec, SkillBoosts skillBoost) {
+        super.setSpec(spec, skillBoost);
+        this.specClass = spec;
+        this.skillBoost = skillBoost;
+
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
+        cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
+        cosmeticSettings.setHelmet(playerSettings.getHelmet(spec));
+        cosmeticSettings.setArmorSet(playerSettings.getArmorSet(spec));
+
+        Player player = Bukkit.getPlayer(uuid);
+
+        ArmorManager.resetArmor(player, this);
+        for (Option option : game.getOptions()) {
+            option.onSpecChange(this);
+        }
+        updateInventory(true);
+    }
+
     private void resetPlayerAddons() {
         if (getEntity() instanceof Player) {
             Player player = (Player) getEntity();
@@ -185,25 +226,6 @@ public final class WarlordsPlayer extends WarlordsEntity {
     }
 
     @Override
-    protected boolean shouldCheckForAchievements() {
-        return true;
-    }
-
-    @Override
-    public void updateHealth() {
-        if (getEntity() instanceof Zombie) {
-            if (isDead()) {
-                getEntity().setCustomName("");
-            } else {
-                String oldName = getEntity().getCustomName();
-                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(
-                        getHealth()) + "❤";
-                getEntity().setCustomName(newName);
-            }
-        }
-    }
-
-    @Override
     public void updateInventory(boolean closeInventory) {
         if (entity instanceof Player) {
             Player player = (Player) entity;
@@ -213,17 +235,16 @@ public final class WarlordsPlayer extends WarlordsEntity {
             for (Option option : game.getOptions()) {
                 option.updateInventory(this, player);
             }
-            updateItems();
             for (AbstractAbility ability : this.spec.getAbilities()) {
                 ability.updateDescription(player);
             }
-
+            updateItems();
             resetPlayerAddons();
+
             if (closeInventory) {
                 player.closeInventory();
             }
         }
-
     }
 
     @Override
@@ -251,6 +272,17 @@ public final class WarlordsPlayer extends WarlordsEntity {
             }
         } else {
             this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
+        }
+    }
+
+    public void applySkillBoost(Player player) {
+        for (AbstractAbility ability : spec.getAbilities()) {
+            if (ability.getClass() == skillBoost.ability) {
+                ability.boostSkill(skillBoost, spec);
+                ability.updateDescription(player);
+                updateItems();
+                break;
+            }
         }
     }
 
@@ -284,5 +316,9 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
     public CosmeticSettings getCosmeticSettings() {
         return cosmeticSettings;
+    }
+
+    public SkillBoosts getSkillBoost() {
+        return skillBoost;
     }
 }

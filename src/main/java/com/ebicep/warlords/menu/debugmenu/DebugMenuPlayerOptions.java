@@ -478,8 +478,7 @@ public class DebugMenuPlayerOptions {
                                         ChatColor.YELLOW + "Click to select!"
                                 ).get(),
                         (m, e) -> {
-                            PlayerSettings.getPlayerSettings(target.getUuid()).setSkillBoostForSelectedSpec(skillBoost);
-                            target.setSpec(selectedSpec.create.get(), skillBoost);
+                            target.setSpec(selectedSpec, skillBoost);
 
                             target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             openSpecMenu(player, target);

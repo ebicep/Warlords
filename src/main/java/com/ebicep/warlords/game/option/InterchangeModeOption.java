@@ -14,16 +14,13 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public final int MAX_SWAP_TIME = 80;
-    public final int MIN_SWAP_TIME = 50;
+    public final int MAX_SWAP_TIME = 8;//0;
+    public final int MIN_SWAP_TIME = 5;//0;
 
     private int secondsUntilNextSwap = 0;
 
@@ -72,12 +69,13 @@ public class InterchangeModeOption implements Option {
     //the player BEFORE becomes the player AFTER
     //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
-        List<WarlordsEntity> teamPlayers = game.warlordsEntities()
+        List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
         if (teamPlayers.size() <= 1) {
             return;
         }
+        Collections.shuffle(teamPlayers);
 
         //Storing all player information as swapping jumbles it up
         HashMap<UUID, Location> playerLocations = new HashMap<>();

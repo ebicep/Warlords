@@ -26,6 +26,10 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
         super(uuid);
     }
 
+    public AbstractTierTwoWeapon(WarlordsPlayer warlordsPlayer) {
+        super(warlordsPlayer);
+    }
+
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
@@ -34,7 +38,8 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
+        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSpeedBonus()) + "%" + getStarPieceBonusString(
+                WeaponStats.SPEED_BONUS));
     }
 
     @Override

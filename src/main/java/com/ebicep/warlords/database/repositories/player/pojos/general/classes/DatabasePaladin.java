@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabasePaladin extends DatabaseBaseGeneral implements DatabaseWarlordsClass {
@@ -11,6 +12,7 @@ public class DatabasePaladin extends DatabaseBaseGeneral implements DatabaseWarl
     private DatabaseSpecialization protector = new DatabaseSpecialization(SkillBoosts.PROTECTOR_STRIKE);
 
     public DatabasePaladin() {
+        super(ArmorManager.Helmets.SIMPLE_PALADIN_HELMET);
     }
 
     @Override

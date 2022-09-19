@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
@@ -146,9 +145,9 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
                         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                        ArmorManager.resetArmor(player, spec, PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                         playerSettings.setSelectedSpec(spec);
+                        ArmorManager.resetArmor(player);
 
                         AbstractPlayerClass apc = spec.create.get();
                         player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
@@ -157,16 +156,10 @@ public class WarlordsShopMenu {
                                 .get());
 
                         openClassMenu(player, selectedGroup);
-
-                        if (DatabaseManager.playerService == null) {
-                            return;
-                        }
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.setLastSpec(spec);
-                        if (player.getWorld().getName().equals("MainLobby")) {
-                            PlayerHotBarItemListener.updateWeaponManagerItem(player);
-                        }
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+                            databasePlayer.setLastSpec(spec);
+                            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
+                        });
                     }
             );
         }
@@ -203,12 +196,7 @@ public class WarlordsShopMenu {
                         PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
                         openSkillBoostMenu(player, selectedSpec);
 
-                        if (DatabaseManager.playerService == null) {
-                            return;
-                        }
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost));
                     }
             );
         }
@@ -261,8 +249,9 @@ public class WarlordsShopMenu {
     }
 
     public static void openWeaponMenu(Player player, int pageNumber) {
-        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
-        Weapons selectedWeapon = Weapons.getSelected(player, selectedSpec);
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        Weapons selectedWeapon = playerSettings.getWeaponSkinForSelectedSpec();
         Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
         List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
@@ -295,21 +284,15 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         if (weapon.isUnlocked) {
                             player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.getName() + "!");
-                            Weapons.setSelected(player, selectedSpec, weapon);
+                            playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
-                            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                             AbstractPlayerClass apc = selectedSpec.create.get();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                     .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem())).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
 
-                            if (DatabaseManager.playerService == null) {
-                                return;
-                            }
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getSpec(selectedSpec).setWeapon(weapon);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -352,12 +335,13 @@ public class WarlordsShopMenu {
                 .orElse(Team.BLUE) == Team.BLUE;
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         List<Helmets> selectedHelmet = playerSettings.getHelmets();
+        System.out.println(selectedHelmet);
 
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
 
-        List<Helmets> helmets = Arrays.asList(Helmets.VALUES);
-        for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.size(); i++) {
-            Helmets helmet = helmets.get(i);
+        Helmets[] helmets = Helmets.VALUES;
+        for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.length; i++) {
+            Helmets helmet = helmets[i];
             ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
                     .lore(HELMET_DESCRIPTION, "")
@@ -375,7 +359,7 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
                         playerSettings.setHelmet(helmet.classes, helmet);
-                        ArmorManager.resetArmor(player, playerSettings.getSelectedSpec(), playerSettings.getWantedTeam());
+                        ArmorManager.resetArmor(player);
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -391,7 +375,7 @@ public class WarlordsShopMenu {
                     .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
                     .lore(ARMOR_DESCRIPTION, "")
                     .flags(ItemFlag.HIDE_ENCHANTS);
-            if (playerSettings.getArmor(classes) == armorSet) {
+            if (playerSettings.getArmorSet(classes) == armorSet) {
                 builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
@@ -563,8 +547,8 @@ public class WarlordsShopMenu {
                                     Warlords.setRejoinPoint(player.getUniqueId(), teleportDestination);
                                 }
                             }
-                            ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
                             PlayerSettings.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
+                            ArmorManager.resetArmor(player);
                         }
                         openTeamMenu(player);
                     }

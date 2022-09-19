@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
@@ -32,6 +33,12 @@ public class RareWeapon extends AbstractTierOneWeapon implements Salvageable, We
 
     public RareWeapon(UUID uuid) {
         super(uuid);
+        this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.RARE);
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    public RareWeapon(WarlordsPlayer warlordsPlayer) {
+        super(warlordsPlayer);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.RARE);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }

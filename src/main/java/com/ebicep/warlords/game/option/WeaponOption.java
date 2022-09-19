@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -46,10 +45,8 @@ public class WeaponOption implements Option {
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
                                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
                                 "",
-                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass()
-                                        .getSimpleName() + "):",
-                                PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                        .getSkillBoostForClass().selectedDescription,
+                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
+                                wp.getSkillBoost().selectedDescription,
                                 "",
                                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
                                 ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
@@ -137,6 +134,11 @@ public class WeaponOption implements Option {
         if (player instanceof WarlordsPlayer && player.getEntity() instanceof Player) {
             leftClick.accept((WarlordsPlayer) player, (Player) player.getEntity());
         }
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        leftClick.accept(warlordsPlayer, player);
     }
 
     @Override

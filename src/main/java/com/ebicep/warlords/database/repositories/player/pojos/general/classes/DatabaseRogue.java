@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabaseRogue extends DatabaseBaseGeneral implements DatabaseWarlordsClass {
@@ -11,6 +12,7 @@ public class DatabaseRogue extends DatabaseBaseGeneral implements DatabaseWarlor
     protected DatabaseSpecialization apothecary = new DatabaseSpecialization(SkillBoosts.WATER_BOLT);
 
     public DatabaseRogue() {
+        super(ArmorManager.Helmets.SIMPLE_ROGUE_HELMET);
     }
 
     @Override

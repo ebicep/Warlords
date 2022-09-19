@@ -11,14 +11,14 @@ public class ApplySkillBoostOption implements Option {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity wp) {
         if (wp instanceof WarlordsPlayer && wp.getEntity() instanceof Player) {
-            wp.applySkillBoost((Player) wp.getEntity());
+            ((WarlordsPlayer) wp).applySkillBoost((Player) wp.getEntity());
         }
     }
 
     @Override
     public void onSpecChange(@Nonnull WarlordsEntity wp) {
         if (wp instanceof WarlordsPlayer && wp.getEntity() instanceof Player) {
-            wp.applySkillBoost((Player) wp.getEntity());
+            ((WarlordsPlayer) wp).applySkillBoost((Player) wp.getEntity());
         }
     }
 }

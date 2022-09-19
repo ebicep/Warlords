@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -120,16 +119,6 @@ public enum Weapons {
 
     public String getName() {
         return this.name;
-    }
-
-    @Deprecated
-    public static Weapons getSelected(OfflinePlayer player, Specializations specializations) {
-        return PlayerSettings.getPlayerSettings(player.getUniqueId()).getWeaponSkin();
-    }
-
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, Specializations specializations, Weapons weapon) {
-        PlayerSettings.getPlayerSettings(player.getUniqueId()).getWeaponSkins().put(specializations, weapon);
     }
 
     public static Weapons getWeapon(String name) {

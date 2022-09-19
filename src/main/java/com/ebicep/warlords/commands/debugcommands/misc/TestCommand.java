@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Comparator;
@@ -61,12 +63,9 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testgame")
     @Description("In game test command")
     public void testGame(WarlordsPlayer warlordsPlayer) {
-        System.out.println(warlordsPlayer.getMinuteStats().total().getMobKills());
-        System.out.println("--------------");
-        System.out.println(warlordsPlayer.getMinuteStats().total().getMobAssists());
-        System.out.println("--------------");
-        System.out.println(warlordsPlayer.getMinuteStats().total().getMobDeaths());
-
+        for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+            ability.updateDescription((Player) warlordsPlayer.getEntity());
+        }
         ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
     }
 

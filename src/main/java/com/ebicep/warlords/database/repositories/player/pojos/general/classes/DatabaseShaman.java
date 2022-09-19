@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabaseShaman extends DatabaseBaseGeneral implements DatabaseWarlordsClass {
@@ -11,6 +12,7 @@ public class DatabaseShaman extends DatabaseBaseGeneral implements DatabaseWarlo
     private DatabaseSpecialization earthwarden = new DatabaseSpecialization(SkillBoosts.EARTHEN_SPIKE);
 
     public DatabaseShaman() {
+        super(ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET);
     }
 
     @Override

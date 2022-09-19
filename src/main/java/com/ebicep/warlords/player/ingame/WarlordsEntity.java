@@ -17,11 +17,13 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.FlagInfo;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.MinuteStats;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
@@ -94,9 +96,9 @@ public abstract class WarlordsEntity {
     protected AbstractPlayerClass spec;
     protected float walkSpeed = 1;
     protected LivingEntity entity;
+    protected Specializations specClass;
     private Vector currentVector;
     private Team team;
-    private Specializations specClass;
     private float health;
     private float maxHealth;
     private int regenTimer;
@@ -131,8 +133,8 @@ public abstract class WarlordsEntity {
     /**
      * @param uuid
      * @param name
-     * @param game       what game should the WarlordsPlayer be assigned to.
-     * @param team       optional team parameter to assign the WarlordsPlayer to a team.
+     * @param game      what game should the WarlordsPlayer be assigned to.
+     * @param team      optional team parameter to assign the WarlordsPlayer to a team.
      * @param specClass
      * @param entity
      */
@@ -1223,20 +1225,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void applySkillBoost(Player player) {
-        SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(Bukkit.getOfflinePlayer(uuid).getUniqueId())
-                .getSkillBoostForClass();
-        if (selectedBoost != null) {
-            for (AbstractAbility ability : spec.getAbilities()) {
-                if (ability.getClass() == selectedBoost.ability) {
-                    ability.boostSkill(selectedBoost, spec);
-                    ability.updateDescription(player);
-                    break;
-                }
-            }
-        }
-    }
-
     public void updateArmor() {
         if (!(this.entity instanceof Player)) {
             return;
@@ -1270,8 +1258,9 @@ public abstract class WarlordsEntity {
         return FlagHolder.isPlayerHolderFlag(this);
     }
 
-    public Specializations getSpecClass() {
-        return specClass;
+    @Nonnull
+    public LivingEntity getEntity() {
+        return this.entity;
     }
 
     public Team getTeam() {
@@ -1282,13 +1271,12 @@ public abstract class WarlordsEntity {
         this.team = team;
     }
 
-    @Nonnull
-    public LivingEntity getEntity() {
-        return this.entity;
-    }
-
     public void setEntity(LivingEntity entity) {
         this.entity = entity;
+    }
+
+    public Specializations getSpecClass() {
+        return specClass;
     }
 
     public void updateItems() {
@@ -1377,32 +1365,12 @@ public abstract class WarlordsEntity {
         return spec;
     }
 
-    public void setSpec(AbstractPlayerClass spec, SkillBoosts skillBoost) {
-        this.spec = spec;
+    public void setSpec(Specializations spec, SkillBoosts skillBoost) {
+        this.spec = spec.create.get();
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
-        if (this instanceof WarlordsPlayer) {
-            Player player = Bukkit.getPlayer(uuid);
-            this.specClass = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
-            ArmorManager.resetArmor(player, specClass, team);
-
-            updateInventory(true);
-            for (Option option : game.getOptions()) {
-                option.onSpecChange(this);
-            }
-            for (AbstractAbility ability : this.spec.getAbilities()) {
-                ability.updateDescription(player);
-            }
-
-            if (DatabaseManager.playerService == null) {
-                return;
-            }
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-            databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        }
     }
 
     public void updateInventory(boolean closeInventory) {

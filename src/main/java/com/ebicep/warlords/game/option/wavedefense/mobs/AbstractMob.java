@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -135,13 +136,13 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void dropWeapon(WarlordsEntity killer) {
-        if (DatabaseManager.playerService == null) {
+        if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
         AtomicDouble dropRate = new AtomicDouble(dropRate());
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerDropWeaponEvent(killer, dropRate));
         if (ThreadLocalRandom.current().nextDouble(0, 100) < dropRate.get()) {
-            AbstractWeapon weapon = generateWeapon(killer.getUuid());
+            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {

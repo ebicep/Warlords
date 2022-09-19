@@ -10,10 +10,14 @@ import com.ebicep.warlords.player.general.ArmorManager;
 
 public abstract class DatabaseBaseGeneral extends AbstractDatabaseStatInformation {
 
-    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
+    protected ArmorManager.Helmets helmet;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
 
     public DatabaseBaseGeneral() {
+    }
+
+    public DatabaseBaseGeneral(ArmorManager.Helmets helmet) {
+        this.helmet = helmet;
     }
 
     @Override

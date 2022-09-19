@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
 public class DatabaseMage extends DatabaseBaseGeneral implements DatabaseWarlordsClass {
@@ -11,6 +12,7 @@ public class DatabaseMage extends DatabaseBaseGeneral implements DatabaseWarlord
     protected DatabaseSpecialization aquamancer = new DatabaseSpecialization(SkillBoosts.WATER_BOLT);
 
     public DatabaseMage() {
+        super(ArmorManager.Helmets.SIMPLE_MAGE_HELMET);
     }
 
     @Override

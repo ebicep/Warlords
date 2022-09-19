@@ -44,6 +44,11 @@ public abstract class AbstractWeapon {
         this.specialization = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
     }
 
+    public AbstractWeapon(WarlordsPlayer warlordsPlayer) {
+        generateStats();
+        this.specialization = warlordsPlayer.getSpecClass();
+    }
+
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         player.setMaxHealth(player.getMaxHealth() + getHealthBonus());
         player.setHealth(player.getMaxHealth() + getHealthBonus());

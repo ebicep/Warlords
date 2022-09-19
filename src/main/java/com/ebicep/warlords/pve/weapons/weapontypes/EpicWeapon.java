@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
@@ -35,6 +36,12 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
 
     public EpicWeapon(UUID uuid) {
         super(uuid);
+        this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.EPIC);
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    public EpicWeapon(WarlordsPlayer warlordsPlayer) {
+        super(warlordsPlayer);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.EPIC);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
     }

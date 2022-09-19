@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons;
 
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
@@ -28,12 +29,19 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
         super(uuid);
     }
 
+    public AbstractTierOneWeapon(WarlordsPlayer warlordsPlayer) {
+        super(warlordsPlayer);
+    }
+
     @Override
     public List<String> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + getStarPieceBonusString(WeaponStats.CRIT_CHANCE),
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(WeaponStats.CRIT_MULTIPLIER),
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
+                        getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + getStarPieceBonusString(
+                        WeaponStats.CRIT_CHANCE),
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(
+                        WeaponStats.CRIT_MULTIPLIER),
                 "",
                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
         );

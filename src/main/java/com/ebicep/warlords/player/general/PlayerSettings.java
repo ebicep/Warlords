@@ -95,7 +95,7 @@ public class PlayerSettings {
         this.wantedTeam = wantedTeam;
     }
 
-    public Weapons getWeaponSkin() {
+    public Weapons getWeaponSkinForSelectedSpec() {
         return this.getWeaponSkins().getOrDefault(this.getSelectedSpec(), FELFLAME_BLADE);
     }
 
@@ -164,21 +164,11 @@ public class PlayerSettings {
         return armorSets;
     }
 
-    public void setHelmets(List<ArmorManager.Helmets> helmets) {
-        if (helmets != null) {
-            this.mageHelmet = helmets.get(0);
-            this.warriorHelmet = helmets.get(1);
-            this.paladinHelmet = helmets.get(2);
-            this.shamanHelmet = helmets.get(3);
-            this.rogueHelmet = helmets.get(4);
-        }
-    }
-
     public ArmorManager.Helmets getHelmet(Classes classes) {
         return getHelmets().get(classes.ordinal());
     }
 
-    public ArmorManager.ArmorSets getArmor(Specializations spec) {
+    public ArmorManager.ArmorSets getArmorSet(Specializations spec) {
         int index = spec.ordinal() / 3;
         return getArmorSets().get(index);
     }
@@ -193,17 +183,7 @@ public class PlayerSettings {
         return armorSets;
     }
 
-    public void setArmorSets(List<ArmorManager.ArmorSets> armorSets) {
-        if (armorSets != null) {
-            this.mageArmor = armorSets.get(0);
-            this.warriorArmor = armorSets.get(1);
-            this.paladinArmor = armorSets.get(2);
-            this.shamanArmor = armorSets.get(3);
-            this.rogueArmor = armorSets.get(4);
-        }
-    }
-
-    public ArmorManager.ArmorSets getArmor(Classes classes) {
+    public ArmorManager.ArmorSets getArmorSet(Classes classes) {
         return getArmorSets().get(classes.ordinal());
     }
 
