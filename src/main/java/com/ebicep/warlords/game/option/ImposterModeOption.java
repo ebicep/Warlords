@@ -247,8 +247,9 @@ public class ImposterModeOption implements Option {
             if (teamPlayers.size() == 0) {
                 continue;
             }
+            Collections.shuffle(teamPlayers);
             for (int i = 0; i < NUMBER_OF_IMPOSTERS_PER_TEAM; i++) {
-                imposters.get(team).add(teamPlayers.get(new Random().nextInt(teamPlayers.size())).getUuid());
+                imposters.get(team).add(teamPlayers.get(i).getUuid());
             }
         }
         System.out.println(" --- Assigned Imposters --- ");
