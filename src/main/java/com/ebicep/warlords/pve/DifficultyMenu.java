@@ -53,6 +53,10 @@ public class DifficultyMenu {
                             .lore(ChatColor.GRAY + difficulty.getDescription())
                             .get(),
                     (m, e) -> {
+                        if (Warlords.SENT_HALF_HOUR_REMINDER.get()) {
+                            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+                            return;
+                        }
                         switch (finalI) {
                             case 0:
                                 startNormalGame(player, false, false);
@@ -64,7 +68,8 @@ public class DifficultyMenu {
                                 startNormalGame(player, true, false);
                                 break;
                         }
-                    });
+                    }
+            );
             menu.setItem(4, 3, MENU_BACK, (m, e) -> openPveMenu(player));
             menu.setItem(3, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         }

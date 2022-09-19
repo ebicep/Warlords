@@ -19,6 +19,15 @@ public class DateUtil {
                 .toInstant();
     }
 
+    public static Instant getNextResetDate() {
+        return OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .withHour(10)
+                .withMinute(0)
+                .withSecond(0)
+                .toInstant();
+    }
+
     public static Instant getResetDateLatestMonday() {
         return OffsetDateTime
                 .now(ZoneOffset.UTC)

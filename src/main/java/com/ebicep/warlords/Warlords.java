@@ -49,6 +49,7 @@ import com.ebicep.warlords.util.bukkit.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -73,9 +74,12 @@ import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -93,6 +97,9 @@ public class Warlords extends JavaPlugin {
     public static boolean citizensEnabled;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
+    public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
+    public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
+    public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
 
     static {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
@@ -458,7 +465,8 @@ public class Warlords extends JavaPlugin {
                 .sync(NPCManager::createSupplyDropFairNPC)
                 .execute();
 
-        startMainLoop();
+        startWarlordsEntitiesLoop();
+        startRestartReminderLoop();
 
         //Sending data to mod
         Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "Warlords");
@@ -500,7 +508,7 @@ public class Warlords extends JavaPlugin {
     }
 
 
-    private void startMainLoop() {
+    private void startWarlordsEntitiesLoop() {
         new BukkitRunnable() {
 
             @Override
@@ -891,6 +899,37 @@ public class Warlords extends JavaPlugin {
             }
 
         }.runTaskTimer(this, 0, 0);
+    }
+
+    private void startRestartReminderLoop() {
+        new BukkitRunnable() {
+
+            final Instant nextReset = Instant.now().isAfter(DateUtil.getNextResetDate()) ?
+                    DateUtil.getNextResetDate().plus(24, ChronoUnit.HOURS) :
+                    DateUtil.getNextResetDate();
+
+            @Override
+            public void run() {
+                Instant now = Instant.now();
+                if (!SENT_HOUR_REMINDER.get()) {
+                    if (now.plus(1, ChronoUnit.HOURS).isAfter(nextReset)) {
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 1 hour.");
+                        SENT_HOUR_REMINDER.set(true);
+                    }
+                } else if (!SENT_HALF_HOUR_REMINDER.get()) {
+                    if (now.plus(30, ChronoUnit.MINUTES).isAfter(nextReset)) {
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 30 minutes.");
+                        SENT_HALF_HOUR_REMINDER.set(true);
+                    }
+                } else if (!SENT_FIFTEEN_MINUTE_REMINDER.get()) {
+                    if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 15 minutes.");
+                        SENT_FIFTEEN_MINUTE_REMINDER.set(true);
+                    }
+                }
+
+            }
+        }.runTaskTimer(this, 20, 1000);
     }
 
 
