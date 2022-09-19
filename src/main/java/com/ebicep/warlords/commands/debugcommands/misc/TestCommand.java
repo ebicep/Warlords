@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.ImposterModeOption;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -71,6 +72,7 @@ public class TestCommand implements CommandExecutor {
         }
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
+            ImposterModeOption.NUMBER_OF_IMPOSTERS_PER_TEAM = Integer.parseInt(args[0]);
 //            System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
 
