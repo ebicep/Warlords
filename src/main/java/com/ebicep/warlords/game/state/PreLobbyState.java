@@ -8,7 +8,10 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -342,7 +345,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     bestTeam.forEach((player, team) -> {
                         game.setPlayerTeam(player, team);
-                        ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
+                        //ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
                         LobbyLocationMarker location = LobbyLocationMarker.getFirstLobbyLocation(game, team);
                         if (location != null) {
                             player.teleport(location.getLocation());
@@ -600,7 +603,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                 }
             }
 
-            ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
+            // ArmorManager.resetArmor(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec(), team);
         }
         
         LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);

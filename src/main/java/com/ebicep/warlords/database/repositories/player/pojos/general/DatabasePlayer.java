@@ -210,15 +210,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         return new DatabaseBaseGeneral[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    //    public AbstractDatabaseWarlordsClass getClass(AbstractDatabaseWarlordsClass databaseWarlordsClass) {
-//        for (AbstractDatabaseWarlordsClass aClass : getClasses()) {
-//            if (databaseWarlordsClass.getClass().equals(aClass.getClass())) {
-//                return aClass;
-//            }
-//        }
-//        return null;
-//    }
-
     @Override
     public String toString() {
         return "DatabasePlayer{" +

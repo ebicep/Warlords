@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -38,8 +39,9 @@ import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 public final class WarlordsPlayer extends WarlordsEntity {
 
     private final AbilityTree abilityTree = new AbilityTree(this);
+    private final CosmeticSettings cosmeticSettings;
+    private SkillBoosts skillBoost;
     private AbstractWeapon weapon;
-    private CosmeticSettings cosmeticSettings;
 
     public WarlordsPlayer(
             @Nonnull OfflinePlayer player,
@@ -78,6 +80,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 settings.getHelmet(settings.getSelectedSpec()),
                 settings.getArmor(settings.getSelectedSpec())
         );
+        this.skillBoost = settings.getSkillBoostForClass();
 
         updatePlayerReference(player.getPlayer());
         updateInventory(true);

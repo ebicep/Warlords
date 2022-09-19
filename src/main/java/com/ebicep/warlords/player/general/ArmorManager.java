@@ -1,6 +1,8 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.ingame.CosmeticSettings;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -13,6 +15,59 @@ public class ArmorManager {
 
     public static final String HELMET_DESCRIPTION = "§7A cosmetic item for your head.\n§7Each class has a different piece of headgear.";
     public static final String ARMOR_DESCRIPTION = "§7Cosmetic armor to complement your hat.\n§7The armor pieces are the same for each class.";
+
+    public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
+        CosmeticSettings cosmeticSettings = warlordsPlayer.getCosmeticSettings();
+        resetArmor(player, cosmeticSettings.getHelmet(), cosmeticSettings.getArmorSet(), warlordsPlayer.getTeam());
+    }
+
+    public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {
+        boolean onBlueTeam = team == Team.BLUE;
+        ItemStack[] armor = new ItemStack[4];
+
+        armor[2] = new ItemBuilder(onBlueTeam ? armorSet.itemBlue : armorSet.itemRed)
+                .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
+                .lore(ARMOR_DESCRIPTION)
+                .get();
+        armor[3] = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
+                .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
+                .lore(HELMET_DESCRIPTION)
+                .get();
+
+        if (armorSet.name.contains("Simple")) {
+            armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_CHESTPLATE.name : ChatColor.RED + ArmorSets.SIMPLE_CHESTPLATE.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+            armor[1] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_LEGGINGS.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_LEGGINGS.name : ChatColor.RED + ArmorSets.SIMPLE_LEGGINGS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+            armor[0] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_BOOTS.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_BOOTS.name : ChatColor.RED + ArmorSets.SIMPLE_BOOTS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+        } else if (armorSet.name.contains("Greater")) {
+            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_LEGGINGS.itemBlue : ArmorSets.GREATER_LEGGINGS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.GREATER_LEGGINGS.name : ChatColor.RED + ArmorSets.GREATER_LEGGINGS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_BOOTS.itemBlue : ArmorSets.GREATER_BOOTS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.GREATER_BOOTS.name : ChatColor.RED + ArmorSets.GREATER_BOOTS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+        } else if (armorSet.name.contains("Masterwork")) {
+            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_LEGGINGS.itemBlue : ArmorSets.MASTERWORK_LEGGINGS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.MASTERWORK_LEGGINGS.name : ChatColor.RED + ArmorSets.MASTERWORK_LEGGINGS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_BOOTS.itemBlue : ArmorSets.MASTERWORK_BOOTS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.MASTERWORK_BOOTS.name : ChatColor.RED + ArmorSets.MASTERWORK_BOOTS.name)
+                    .lore(ARMOR_DESCRIPTION)
+                    .get();
+        }
+        player.getInventory().setArmorContents(armor);
+    }
 
     public static void resetArmor(Player player, Specializations selectedSpec, Team team) {
         boolean onBlueTeam = team == Team.BLUE;

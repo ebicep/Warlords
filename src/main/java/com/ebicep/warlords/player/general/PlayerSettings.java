@@ -60,10 +60,6 @@ public class PlayerSettings {
         return PLAYER_SETTINGS.computeIfAbsent(uuid, (k) -> new PlayerSettings(uuid));
     }
 
-    public static void setPlayerSettings(@Nonnull UUID uuid, @Nonnull PlayerSettings value) {
-        PLAYER_SETTINGS.put(uuid, value);
-    }
-
     public SkillBoosts getSkillBoostForClass() {
         return classesSkillBoosts.get(selectedSpec);
     }

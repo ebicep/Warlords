@@ -1245,7 +1245,9 @@ public abstract class WarlordsEntity {
         Player player = (Player) this.entity;
 
         if (!cooldownManager.hasCooldownFromName("Cloaked") || hasFlag()) {
-            ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+            if (this instanceof WarlordsPlayer) {
+                ArmorManager.resetArmor(player, (WarlordsPlayer) this);
+            }
 
             getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
             for (Player otherPlayer : player.getWorld().getPlayers()) {

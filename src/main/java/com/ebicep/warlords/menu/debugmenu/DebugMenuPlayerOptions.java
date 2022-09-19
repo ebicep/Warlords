@@ -13,7 +13,10 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -21,7 +24,6 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -116,10 +118,7 @@ public class DebugMenuPlayerOptions {
                                 .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
                         target.teleport(teleportDestination);
                     }
-                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()),
-                            PlayerSettings.getPlayerSettings(target.getUuid()).getSelectedSpec(),
-                            otherTeam
-                    );
+                    target.updateArmor();
                     openPlayerMenu(player, target);
                     sendDebugMessage(player, ChatColor.GREEN + "Swapped " + coloredName + ChatColor.GREEN + " to the " + otherTeam.coloredPrefix() + ChatColor.GREEN + " team", true);
                 }
