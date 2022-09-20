@@ -103,7 +103,7 @@ public class CommandManager {
         manager.registerCommand(new ServerStatusCommand());
         manager.registerCommand(new TestCommand());
 
-        //manager.registerCommand(new AchievementsCommand());
+        manager.registerCommand(new AchievementsCommand(), true);
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
         manager.registerCommand(new DiscordCommand());

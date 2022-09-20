@@ -34,6 +34,7 @@ public enum ChallengeAchievements implements Achievement {
             "Heal your flag carrier from below 1k health to their maximum health capacity or above in 3 seconds.",
             GameMode.CAPTURE_THE_FLAG,
             null,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
                 WarlordsEntity carrier = null;
@@ -83,6 +84,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier within 2 seconds.",
             GameMode.CAPTURE_THE_FLAG,
             null,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(2);
                 int indexCarrierFull = -1;
@@ -132,18 +134,25 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier while being at least 30 blocks away from them.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.PYROMANCER,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer().getLocation().distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
+                return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer()
+                        .getLocation()
+                        .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
             }
     ),
     DUCK_TANK("Duck Tank",
             "Tank 9000 damage without losing health while holding the flag.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.CRYOMANCER,
+            false,
             warlordsEntity -> {
-                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsSelfFromLastSecond(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
-                if (events.isEmpty()) return false;
+                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats()
+                        .getEventsAsSelfFromLastSecond(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
+                if (events.isEmpty()) {
+                    return false;
+                }
                 float lastHealth = events.get(0).getFinalHealth();
                 float totalAbsorbed = 0;
                 for (WarlordsDamageHealingFinalEvent event : events) {
@@ -164,12 +173,14 @@ public enum ChallengeAchievements implements Achievement {
             "Heal your carrier for over 80k damage within a game.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AQUAMANCER,
+            false,
             warlordsEntity -> warlordsEntity.getMinuteStats().total().getHealingOnCarrier() >= 80000
     ),
     ASSASSINATE("Assassinate",
             "Land 7 critical hits on the enemy carrier in a row.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.ASSASSIN,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(10);
                 int critsOnCarrier = 0;
@@ -190,6 +201,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier (that you silenced) while the silence duration is still up.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.VINDICATOR,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead()) {
@@ -206,6 +218,7 @@ public enum ChallengeAchievements implements Achievement {
             "Generate over 3k healing by inflicting one instance of LEECH on the enemy flag carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.APOTHECARY,
+            false,
             warlordsEntity -> {
                 return PlayerFilter.playingGame(warlordsEntity.getGame())
                         .enemiesOf(warlordsEntity)
@@ -221,6 +234,7 @@ public enum ChallengeAchievements implements Achievement {
             "Stay in combat for over 40 seconds and deal 10k damage to the enemy carrier.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.BERSERKER,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(40);
                 float totalDamageToCarrier = 0;
@@ -241,6 +255,7 @@ public enum ChallengeAchievements implements Achievement {
             "Prevent over 2k damage dealt to the flag carrier within 1s of the ability activating.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.DEFENDER,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -253,6 +268,7 @@ public enum ChallengeAchievements implements Achievement {
             "Return the flag while being popped from your Undying Army.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.REVENANT,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
@@ -267,6 +283,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill 3 enemies within 5s of your flag carrier dying. ",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AVENGER,
+            false,
             warlordsEntity -> {
                 boolean carrierDeadLast5Seconds = false;
                 for (WarlordsEntity player : PlayerFilter.playingGame(warlordsEntity.getGame())
@@ -297,6 +314,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy carrier while 4 or more allies are affected by your Inspiring Presence.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.CRUSADER,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
@@ -311,47 +329,48 @@ public enum ChallengeAchievements implements Achievement {
             "Deal 3k damage to the enemy carrier while they have an active shield/damage reduction.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.PROTECTOR,
-            warlordsEntity -> {
-                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
-                WarlordsEntity carrier = null;
-                int index = -1;
-                for (int i = 0; i < events.size(); i++) {
-                    WarlordsDamageHealingFinalEvent event = events.get(i);
-                    if (event.isHasFlag() && event.getPlayerCooldowns().stream()
-                            .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                            .filter(RegularCooldown.class::isInstance)
-                            .map(RegularCooldown.class::cast)
-                            .anyMatch(regularCooldown ->
-                                    regularCooldown.getCooldownObject() instanceof ArcaneShield ||
-                                            regularCooldown.getCooldownObject() instanceof IceBarrier ||
-                                            regularCooldown.getCooldownObject() instanceof LastStand
-                            )
-                    ) {
-                        carrier = event.getPlayer();
-                        index = i;
-                        break;
-                    }
-                }
+            false, warlordsEntity -> {
+        List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
+        WarlordsEntity carrier = null;
+        int index = -1;
+        for (int i = 0; i < events.size(); i++) {
+            WarlordsDamageHealingFinalEvent event = events.get(i);
+            if (event.isHasFlag() && event.getPlayerCooldowns().stream()
+                    .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                    .filter(RegularCooldown.class::isInstance)
+                    .map(RegularCooldown.class::cast)
+                    .anyMatch(regularCooldown ->
+                            regularCooldown.getCooldownObject() instanceof ArcaneShield ||
+                                    regularCooldown.getCooldownObject() instanceof IceBarrier ||
+                                    regularCooldown.getCooldownObject() instanceof LastStand
+                    )
+            ) {
+                carrier = event.getPlayer();
+                index = i;
+                break;
+            }
+        }
 
-                if (carrier != null) {
-                    int totalDamage = 0;
-                    for (int i = index; i < events.size(); i++) {
-                        WarlordsDamageHealingFinalEvent event = events.get(i);
-                        if (event.getPlayer() == carrier && event.isHasFlag()) {
-                            totalDamage += event.getValue();
-                        }
-                    }
-
-                    return totalDamage >= 3000;
-                } else {
-                    return false;
+        if (carrier != null) {
+            int totalDamage = 0;
+            for (int i = index; i < events.size(); i++) {
+                WarlordsDamageHealingFinalEvent event = events.get(i);
+                if (event.getPlayer() == carrier && event.isHasFlag()) {
+                    totalDamage += event.getValue();
                 }
             }
+
+            return totalDamage >= 3000;
+        } else {
+            return false;
+        }
+    }
     ),
     ROADBLOCK("Roadblock?!",
             "Proc your Capacitor Totem three (or more) times after your carrier passes through the totem.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.THUNDERLORD,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 return lastDamageEvent.getAttackerCooldowns().stream()
@@ -367,6 +386,7 @@ public enum ChallengeAchievements implements Achievement {
             "Proc soulbinding healing/cooldown reduction 10 times on the enemy carrier within 20 seconds.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.SPIRITGUARD,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(20);
                 for (WarlordsDamageHealingFinalEvent event : events) {
@@ -390,6 +410,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill the enemy flag carrier after landing 5 or more abilities on them.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.EARTHWARDEN,
+            false,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(10);
                 int indexCarrier = -1;
@@ -431,6 +452,7 @@ public enum ChallengeAchievements implements Achievement {
             "Reduce the damage of Ghoulcaller's Fury by the maximum amount three times in a row.",
             GameMode.WAVE_DEFENSE,
             null,
+            true,
             warlordsEntity -> {
                 return PlayerFilterGeneric.playingGameWarlordsNPCs(warlordsEntity.getGame())
                         .filter(warlordsNPC -> warlordsNPC.getMob() instanceof Ghoulcaller)
@@ -448,6 +470,7 @@ public enum ChallengeAchievements implements Achievement {
             "Get teamwiped by Narmer's mega-earthquake.",
             GameMode.WAVE_DEFENSE,
             null,
+            true,
             warlordsEntity -> {
                 return PlayerFilterGeneric.playingGame(warlordsEntity.getGame())
                         .teammatesOf(warlordsEntity)
@@ -465,6 +488,7 @@ public enum ChallengeAchievements implements Achievement {
             "Trigger Boltaro's splitting phase without killing any other mobs.",
             GameMode.WAVE_DEFENSE,
             null,
+            true,
             warlordsEntity -> {
                 return true;
             }
@@ -473,6 +497,7 @@ public enum ChallengeAchievements implements Achievement {
             "Defeat Narmer after triggering his mega-earthquake twice.",
             GameMode.WAVE_DEFENSE,
             null,
+            true,
             warlordsEntity -> {
                 return true; //logic in Narmer.java
             }
@@ -486,25 +511,35 @@ public enum ChallengeAchievements implements Achievement {
             "Land 10 critical hits in a row while Inferno is active.",
             GameMode.WAVE_DEFENSE,
             Specializations.PYROMANCER,
+            false,
             warlordsEntity -> {
-                List<WarlordsDamageHealingFinalEvent> lastEventsAsAttacker = warlordsEntity.getSecondStats().getLastEventsAsAttacker(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
+                List<WarlordsDamageHealingFinalEvent> lastEventsAsAttacker = warlordsEntity.getSecondStats()
+                        .getLastEventsAsAttacker(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
                 return lastEventsAsAttacker.size() >= 10 && lastEventsAsAttacker
                         .stream()
-                        .allMatch(event -> event.getAttackerCooldowns().stream().anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), Inferno.class)) && event.isCrit());
+                        .allMatch(event -> event.getAttackerCooldowns()
+                                .stream()
+                                .anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(),
+                                        Inferno.class
+                                )) && event.isCrit());
             }
     ),
     DUCK_TANK_PVE("Duck Tank",
             "Tank 8,000 damage within the duration of 1 Ice Barrier.",
             GameMode.WAVE_DEFENSE,
             Specializations.CRYOMANCER,
+            false,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEventAsSelf = warlordsEntity.getSecondStats().getLastEventAsSelf();
                 for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
                     if (Objects.equals(playerCooldown.getAbstractCooldown().getCooldownClass(), IceBarrier.class)) {
                         int secondsLeft = playerCooldown.getTicksLeft() / 20;
                         int totalDamage = 0;
-                        for (WarlordsDamageHealingFinalEvent event : warlordsEntity.getSecondStats().getEventsAsSelfFromLastSecond(secondsLeft, WarlordsDamageHealingFinalEvent::isDamageInstance)) {
-                            if (event.getPlayerCooldowns().stream().anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), IceBarrier.class))) {
+                        for (WarlordsDamageHealingFinalEvent event : warlordsEntity.getSecondStats()
+                                .getEventsAsSelfFromLastSecond(secondsLeft, WarlordsDamageHealingFinalEvent::isDamageInstance)) {
+                            if (event.getPlayerCooldowns()
+                                    .stream()
+                                    .anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), IceBarrier.class))) {
                                 totalDamage += event.getValue();
                             }
                         }
@@ -518,6 +553,7 @@ public enum ChallengeAchievements implements Achievement {
             "Clear 7 debuffs in 1 Water Breath activation.",
             GameMode.WAVE_DEFENSE,
             Specializations.AQUAMANCER,
+            false,
             WARLORDS_ENTITY -> {
                 return true; //logic in WaterBreath.java
             }
@@ -526,6 +562,7 @@ public enum ChallengeAchievements implements Achievement {
             "Land 40 strikes and kill 12 enemies in 1 wrath activation.",
             GameMode.WAVE_DEFENSE,
             Specializations.AVENGER,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
@@ -537,6 +574,7 @@ public enum ChallengeAchievements implements Achievement {
             "Provide 400 total energy to teammates (both strike and presence) within the duration of 1 Inspiring Presence.",
             GameMode.WAVE_DEFENSE,
             Specializations.CRUSADER,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
@@ -548,6 +586,7 @@ public enum ChallengeAchievements implements Achievement {
             "Heal allies for 15,000 within the duration of 1 Hammer/Crown of Light.",
             GameMode.WAVE_DEFENSE,
             Specializations.PROTECTOR,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
@@ -559,6 +598,7 @@ public enum ChallengeAchievements implements Achievement {
             "Heal yourself with Blood Lust for 18,000 within the duration of 1 Blood Lust.",
             GameMode.WAVE_DEFENSE,
             Specializations.BERSERKER,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
@@ -570,6 +610,7 @@ public enum ChallengeAchievements implements Achievement {
             "Prevent 30,000 damage to your allies within the duration of 1 Last Stand.",
             GameMode.WAVE_DEFENSE,
             Specializations.DEFENDER,
+            false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
@@ -581,6 +622,7 @@ public enum ChallengeAchievements implements Achievement {
             "Create 50 Orbs within the duration of 1 Orbs of Life.",
             GameMode.WAVE_DEFENSE,
             Specializations.REVENANT,
+            false,
             warlordsEntity -> {
                 return true; //logic in OrbsOfLife.java
             }
@@ -589,6 +631,7 @@ public enum ChallengeAchievements implements Achievement {
             "Kill 15 mobs with Capacitor Totem landing the final hit within the duration of 1 Capacitor Totem.",
             GameMode.WAVE_DEFENSE,
             Specializations.THUNDERLORD,
+            false,
             warlordsEntity -> {
                 return true; //logic in CapacitorTotem.java
             }
@@ -597,6 +640,7 @@ public enum ChallengeAchievements implements Achievement {
             "Deal an instance of 5,000 damage to over 5 targets with Death's Debt.",
             GameMode.WAVE_DEFENSE,
             Specializations.SPIRITGUARD,
+            false,
             warlordsEntity -> {
                 return true; //logic in DeathsDebt.java
             }
@@ -605,6 +649,7 @@ public enum ChallengeAchievements implements Achievement {
             "Heal allies for 20,000 within the duration of 1 Healing Totem.",
             GameMode.WAVE_DEFENSE,
             Specializations.EARTHWARDEN,
+            false,
             warlordsEntity -> {
                 return true; //logic in HealingTotem.java
             }
@@ -613,6 +658,7 @@ public enum ChallengeAchievements implements Achievement {
             "Deal 15,000 damage and kill 6 mobs within the duration of 1 Order of Eviscerate.",
             GameMode.WAVE_DEFENSE,
             Specializations.ASSASSIN,
+            false,
             warlordsEntity -> {
                 return true;
             }
@@ -621,6 +667,7 @@ public enum ChallengeAchievements implements Achievement {
             "Prevent 8,000 damage within the duration of 1 Prism Guard.",
             GameMode.WAVE_DEFENSE,
             Specializations.VINDICATOR,
+            false,
             warlordsEntity -> {
                 return true; //logic in PrismGuard.java
             }
@@ -629,6 +676,7 @@ public enum ChallengeAchievements implements Achievement {
             "Trigger 50 instances of Leech within the duration of 1 Draining Miasma.",
             GameMode.WAVE_DEFENSE,
             Specializations.APOTHECARY,
+            false,
             warlordsEntity -> {
                 return true;
             }
@@ -658,29 +706,23 @@ public enum ChallengeAchievements implements Achievement {
     public final String description;
     public final GameMode gameMode;
     public final Specializations spec;
+    public final boolean isHidden;
     public final Predicate<WarlordsEntity> warlordsEntityPredicate;
 
-    ChallengeAchievements(String name, String description, GameMode gameMode, Specializations spec, Predicate<WarlordsEntity> warlordsEntityPredicate) {
+    ChallengeAchievements(
+            String name,
+            String description,
+            GameMode gameMode,
+            Specializations spec,
+            boolean isHidden,
+            Predicate<WarlordsEntity> warlordsEntityPredicate
+    ) {
         this.name = name;
         this.description = description;
         this.gameMode = gameMode;
         this.spec = spec;
+        this.isHidden = isHidden;
         this.warlordsEntityPredicate = warlordsEntityPredicate;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public GameMode getGameMode() {
-        return gameMode;
     }
 
     public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
@@ -705,11 +747,19 @@ public enum ChallengeAchievements implements Achievement {
         }
     }
 
+    public boolean autoGiveToTeammates() {
+        return false;
+    }
+
     public static void giveTeammatesSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
         player.getGame().warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
                 //.filter(warlordsEntity -> !warlordsEntity.hasAchievement(achievement))
                 .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
+    }
+
+    public boolean checkTeammates() {
+        return false;
     }
 
     public static void checkTeammatesForSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
@@ -720,25 +770,46 @@ public enum ChallengeAchievements implements Achievement {
                 .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
     }
 
-    public boolean checkTeammates() {
-        return false;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public boolean autoGiveToTeammates() {
-        return false;
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    @Override
+    public Specializations getSpec() {
+        return spec;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return isHidden;
     }
 
     @Override
     public void sendAchievementUnlockMessage(Player player) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()
+        ));
         ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true);
     }
 
     @Override
     public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()));
+        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()
+        ));
         warlordsEntity.getGame().warlordsPlayers()
                 //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())
                 .filter(wp -> wp != warlordsEntity)
@@ -758,26 +829,6 @@ public enum ChallengeAchievements implements Achievement {
 
         public ChallengeAchievementRecord(ChallengeAchievements achievement, Instant date) {
             super(achievement, date);
-        }
-
-        @Override
-        public String getName() {
-            return getAchievement().name;
-        }
-
-        @Override
-        public String getDescription() {
-            return getAchievement().description;
-        }
-
-        @Override
-        public GameMode getGameMode() {
-            return getAchievement().gameMode;
-        }
-
-        @Override
-        public ChallengeAchievements[] getAchievements() {
-            return ChallengeAchievements.values();
         }
 
     }

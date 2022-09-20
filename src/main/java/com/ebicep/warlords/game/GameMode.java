@@ -38,6 +38,7 @@ import static com.ebicep.warlords.menu.generalmenu.WarlordsShopMenu.openMainMenu
 public enum GameMode {
     CAPTURE_THE_FLAG(
             "Capture The Flag",
+            "CTF",
             new ItemStack(Material.BANNER),
             DatabaseGameCTF::new,
             GamesCollections.CTF,
@@ -70,6 +71,7 @@ public enum GameMode {
     },
     INTERCEPTION(
             "Interception",
+            "INTER",
             null,//new ItemStack(Material.WOOL),
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
@@ -102,6 +104,7 @@ public enum GameMode {
     },
     TEAM_DEATHMATCH(
             "Team Deathmatch",
+            "TDM",
             new ItemStack(Material.DIAMOND_BARDING),
             DatabaseGameTDM::new,
             GamesCollections.TDM,
@@ -136,7 +139,8 @@ public enum GameMode {
     },
     DUEL(
             "[WIP] Duel",
-            new ItemStack(Material.DIAMOND_SWORD),
+            "DUEL",
+            null,//new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
             GamesCollections.DUEL,
             2
@@ -165,6 +169,7 @@ public enum GameMode {
     },
     SIMULATION_TRIAL(
             "[WIP] Simulation Trial",
+            "SIMS",
             null,
             null,
             null,
@@ -196,7 +201,8 @@ public enum GameMode {
     },
     WAVE_DEFENSE(
             "[WIP] USE NPC TO START PVE - Wave Defense",
-            null,
+            "PVE",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             DatabaseGamePvE::new,
             GamesCollections.PVE,
             1
@@ -245,6 +251,7 @@ public enum GameMode {
     },
     DEBUG(
             "Sandbox",
+            "SandBox",
             null,
             null,
             null,
@@ -268,20 +275,23 @@ public enum GameMode {
     ;
 
     public static final GameMode[] VALUES = values();
+
+    public final String name;
+    public final String abbreviation;
+    public final ItemStack itemStack;
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
     public final int minPlayersToAddToDatabase;
-    private final String name;
-    private final ItemStack itemStack;
 
     GameMode(
             String name,
-            ItemStack itemStack,
+            String abbreviation, ItemStack itemStack,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame,
             GamesCollections gamesCollections,
             int minPlayersToAddToDatabase
     ) {
         this.name = name;
+        this.abbreviation = abbreviation;
         this.itemStack = itemStack;
         this.createDatabaseGame = createDatabaseGame;
         this.gamesCollections = gamesCollections;

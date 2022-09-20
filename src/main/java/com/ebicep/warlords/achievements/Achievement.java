@@ -1,6 +1,7 @@
 package com.ebicep.warlords.achievements;
 
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
@@ -14,11 +15,15 @@ public interface Achievement {
 
     GameMode getGameMode();
 
+    Specializations getSpec();
+
+    boolean isHidden();
+
     void sendAchievementUnlockMessage(Player player);
 
     void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
 
-    abstract class AbstractAchievementRecord<T extends Enum<T>> {
+    abstract class AbstractAchievementRecord<T extends Enum<T> & Achievement> {
 
         private T achievement;
         private Instant date;
@@ -35,14 +40,6 @@ public interface Achievement {
             this.achievement = achievement;
             this.date = date;
         }
-
-        public abstract String getName();
-
-        public abstract String getDescription();
-
-        public abstract GameMode getGameMode();
-
-        public abstract T[] getAchievements();
 
         public T getAchievement() {
             return achievement;
