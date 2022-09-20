@@ -18,6 +18,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -439,6 +440,14 @@ public abstract class DatabaseGameBase {
     public abstract void createHolograms();
 
     public abstract String getGameLabel();
+
+    protected void appendTeamDHP(Hologram hologram, Map<ChatColor, Long> map) {
+        map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
+            ChatColor key = chatColorLongEntry.getKey();
+            Long value = chatColorLongEntry.getValue();
+            hologram.getLines().appendText(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + NumberFormat.addCommaAndRound(value));
+        });
+    }
 
     public List<String> getLore() {
         List<String> lore = new ArrayList<>();

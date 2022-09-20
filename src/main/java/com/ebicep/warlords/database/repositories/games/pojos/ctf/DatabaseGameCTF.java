@@ -233,14 +233,6 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         );
     }
 
-    private void appendTeamDHP(Hologram hologram, Map<ChatColor, Long> map) {
-        map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
-            ChatColor key = chatColorLongEntry.getKey();
-            Long value = chatColorLongEntry.getValue();
-            hologram.getLines().appendText(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + NumberFormat.addCommaAndRound(value));
-        });
-    }
-
     @Transient
     public static String lastWarlordsPlusString = "";
 
