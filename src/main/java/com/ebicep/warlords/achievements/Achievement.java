@@ -8,6 +8,12 @@ import java.time.Instant;
 
 public interface Achievement {
 
+    String getName();
+
+    String getDescription();
+
+    GameMode getGameMode();
+
     void sendAchievementUnlockMessage(Player player);
 
     void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);

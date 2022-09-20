@@ -129,6 +129,22 @@ public enum TieredAchievements implements Achievement {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+
+    @Override
     public void sendAchievementUnlockMessage(Player player) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + description).create()));

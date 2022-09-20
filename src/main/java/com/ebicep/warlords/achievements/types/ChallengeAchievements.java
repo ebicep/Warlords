@@ -668,6 +668,21 @@ public enum ChallengeAchievements implements Achievement {
         this.warlordsEntityPredicate = warlordsEntityPredicate;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
     public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
         if (achievement.gameMode != player.getGame().getGameMode()) {
             return;
