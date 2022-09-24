@@ -34,8 +34,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         new ItemStack(Material.DIAMOND_SPADE)
                 ),
-                30000,
-                0.33f,
+                27000,
+                0.35f,
                 20,
                 1200,
                 2400
@@ -64,9 +64,9 @@ public class Zenith extends AbstractZombie implements BossMob {
             EffectUtils.strikeLightningInCylinder(loc, 8, false, 10, warlordsNPC.getGame());
             shockwave(loc, 8, 10);
             EffectUtils.strikeLightningInCylinder(loc, 16, false, 15, warlordsNPC.getGame());
-            shockwave(loc, 16, 15);
+            shockwave(loc, 15, 15);
             EffectUtils.strikeLightningInCylinder(loc, 24, false, 20, warlordsNPC.getGame());
-            shockwave(loc, 24, 20);
+            shockwave(loc, 20, 20);
         }
 
         if (ticksElapsed % 40 == 0) {
@@ -96,8 +96,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .entitiesAround(loc, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    we.getSpeed().addSpeedModifier("Zenith Slow", -30, 3 * 30, "BASE");
-                    we.addDamageInstance(warlordsNPC, "Armageddon", 600, 1000, -1, 100, false);
+                    we.addDamageInstance(warlordsNPC, "Armageddon", 600, 900, -1, 100, false);
                     Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
                 }
             }

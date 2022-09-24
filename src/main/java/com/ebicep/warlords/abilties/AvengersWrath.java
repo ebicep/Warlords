@@ -19,15 +19,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class AvengersWrath extends AbstractAbility {
+    private boolean pveUpgrade = false;
 
     private static final String WRATH_SKIP = "wrath_skip";
     protected int extraPlayersStruck = 0;
-    private boolean pveUpgrade = false;
+    private int playersStruckDuringWrath = 0;
+    private int playersKilledDuringWrath = 0;
+
     private int duration = 12;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
-    private int playersStruckDuringWrath = 0;
-    private int playersKilledDuringWrath = 0;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);

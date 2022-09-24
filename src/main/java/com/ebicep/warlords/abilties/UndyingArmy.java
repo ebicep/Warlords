@@ -25,16 +25,20 @@ import java.util.List;
 
 
 public class UndyingArmy extends AbstractAbility {
+    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
+    protected int playersArmied = 0;
+
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(ChatColor.RED + "Instant Kill")
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
-    private final int radius = 15;
-    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
-    protected int playersArmied = 0;
+
+    private int radius = 15;
     private int duration = 10;
     private int maxArmyAllies = 6;
     private int maxHealthDamage = 10;
+    private float flatHealing = 100;
+    private float missingHealing = 3.5f;
 
     public UndyingArmy() {
         super("Undying Army", 0, 0, 62.64f, 60, 0, 0);
@@ -48,8 +52,8 @@ public class UndyingArmy extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
-                "§7block radius to heal them for §a100 §7+\n" +
-                "§7§a3.5% §7of their missing health every second.\n" +
+                "§7block radius to heal them for §a" + format(flatHealing) + " §7+\n" +
+                "§7§a" + missingHealing + "% §7of their missing health every second.\n" +
                 "Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Chained allies that take fatal damage\n" +
@@ -147,7 +151,7 @@ public class UndyingArmy extends AbstractAbility {
                     (cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
-                                float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
+                                float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getHealth()) * (missingHealing / 100f);
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
                                 teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                                 // Particles
@@ -210,5 +214,29 @@ public class UndyingArmy extends AbstractAbility {
 
     public void setMaxHealthDamage(int maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public float getFlatHealing() {
+        return flatHealing;
+    }
+
+    public void setFlatHealing(float flatHealing) {
+        this.flatHealing = flatHealing;
+    }
+
+    public float getMissingHealing() {
+        return missingHealing;
+    }
+
+    public void setMissingHealing(float missingHealing) {
+        this.missingHealing = missingHealing;
     }
 }

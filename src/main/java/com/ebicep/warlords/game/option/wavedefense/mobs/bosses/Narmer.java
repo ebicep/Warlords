@@ -135,7 +135,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         for (WarlordsEntity enemy : warlordsEntities) {
                             enemy.addDamageInstance(
                                     warlordsNPC,
-                                    "Acolyte Revenge",
+                                    "Death Wish",
                                     965 * 8,
                                     1138 * 8,
                                     -1,

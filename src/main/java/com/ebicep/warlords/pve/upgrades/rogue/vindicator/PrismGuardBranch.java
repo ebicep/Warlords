@@ -7,7 +7,6 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
 
-    int damageReduction = ability.getDamageReduction();
     int projectileDamageReduction = ability.getProjectileDamageReduction();
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
@@ -56,7 +55,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+5% Damage reduction\n+10% Projectile Damage reduction",
                 5000,
                 () -> {
-                    ability.setDamageReduction(damageReduction + 5);
                     ability.setProjectileDamageReduction(projectileDamageReduction + 10);
                 }
         ));
@@ -65,7 +63,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+10% Damage reduction\n+20% Projectile Damage reduction",
                 10000,
                 () -> {
-                    ability.setDamageReduction(damageReduction + 10);
                     ability.setProjectileDamageReduction(projectileDamageReduction + 20);
                 }
         ));
@@ -74,7 +71,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+15% Damage reduction\n+30% Projectile Damage reduction",
                 15000,
                 () -> {
-                    ability.setDamageReduction(damageReduction + 15);
                     ability.setProjectileDamageReduction(projectileDamageReduction + 30);
                 }
         ));
@@ -83,7 +79,6 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 "+20% Damage reduction\n+40% Projectile Damage reduction",
                 20000,
                 () -> {
-                    ability.setDamageReduction(damageReduction + 20);
                     ability.setProjectileDamageReduction(projectileDamageReduction + 40);
                 }
         ));

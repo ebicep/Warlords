@@ -818,9 +818,6 @@ public class Warlords extends JavaPlugin {
                             continue;
                         }
                         wps.runEverySecond();
-
-                        Player player = wps.getEntity() instanceof Player ? (Player) wps.getEntity() : null;
-
                         // Natural Regen
                         if (wps.getRegenTimer() != 0) {
                             if (wps instanceof WarlordsPlayer) {

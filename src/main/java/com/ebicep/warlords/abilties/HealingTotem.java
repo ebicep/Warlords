@@ -54,8 +54,8 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7increase by §a35% §7(up to " + (35 * duration) + "%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7Pressing SHIFT or re-activating the\n " +
-                "ability causes your totem to\n" +
+                "§7Pressing SHIFT or re-activating\n " +
+                "§7the ability causes your totem to\n" +
                 "§7pulse with immense force, crippling all\n" +
                 "§7enemies for §6" + crippleDuration + " §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";

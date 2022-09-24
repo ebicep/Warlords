@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class RighteousStrike extends AbstractStrikeBase {
-    protected int silencedTargetStruck = 0;
     private boolean pveUpgrade = false;
+
+    protected int silencedTargetStruck = 0;
+
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {

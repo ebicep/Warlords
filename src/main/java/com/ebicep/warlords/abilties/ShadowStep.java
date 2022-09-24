@@ -24,6 +24,7 @@ public class ShadowStep extends AbstractAbility {
     private boolean pveUpgrade = false;
 
     private int totalPlayersHit = 0;
+
     private int fallDamageNegation = 10;
 
     public ShadowStep() {

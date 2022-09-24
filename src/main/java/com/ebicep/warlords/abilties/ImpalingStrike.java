@@ -18,6 +18,7 @@ import java.util.Optional;
 
 public class ImpalingStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
+
     private float healingDoneFromEnemyCarrier = 0;
 
     private int leechDuration = 5;
@@ -58,11 +59,11 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 false
         );
 
-        //if(finalEvent.isPresent()) {
         if (pveUpgrade) {
             // TODO: add leech
             tripleHit(wp, nearPlayer);
         }
+
         nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
         nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
                 "Leech Debuff",
@@ -99,10 +100,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 });
             }
         });
-//            return true;
-//        } else {
-//            return false;
-//        }
+
         return true;
     }
 

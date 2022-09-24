@@ -29,6 +29,7 @@ public class GroundSlam extends AbstractAbility {
     protected int warpsKnockbacked = 0;
 
     private int slamSize = 6;
+    private float velocity = 1.25f;
 
     public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -128,7 +129,7 @@ public class GroundSlam extends AbstractAbility {
 
                             currentPlayersHit.add(slamTarget);
                             final Location loc = slamTarget.getLocation();
-                            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
+                            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
                             slamTarget.setVelocity(v, false, false);
 
                             slamTarget.addDamageInstance(
@@ -243,6 +244,14 @@ public class GroundSlam extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
+    }
+
+    public float getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(float velocity) {
+        this.velocity = velocity;
     }
 }
 

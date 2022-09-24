@@ -66,9 +66,10 @@ public class JudgementStrike extends AbstractStrikeBase {
                 wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, -1, 100, false, false);
             }
             if (pveUpgradeMaster) {
-                if (nearPlayer instanceof WarlordsNPC &&
-                        finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
-                        ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
+                if (
+                    nearPlayer instanceof WarlordsNPC &&
+                    finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
+                    ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
                 ) {
                     nearPlayer.die(nearPlayer);
                 }

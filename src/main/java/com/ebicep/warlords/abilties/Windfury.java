@@ -84,8 +84,6 @@ public class Windfury extends AbstractAbility {
                 if (event.getAbility().isEmpty()) {
                     WarlordsEntity victim = event.getPlayer();
                     WarlordsEntity attacker = event.getAttacker();
-                    float min = event.getMin();
-                    float max = event.getMax();
 
                     int windfuryActivate = (int) (Math.random() * 100);
                     if (firstProc[0]) {

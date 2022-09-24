@@ -23,7 +23,7 @@ import org.bukkit.Sound;
 public class BasicSlime extends AbstractSlime implements BasicMob {
 
     private final double hitRadius = 2.5;
-    private final double shimmerRadius = 5;
+    private final double shimmerRadius = 3;
 
     public BasicSlime(Location spawnLocation) {
         super(

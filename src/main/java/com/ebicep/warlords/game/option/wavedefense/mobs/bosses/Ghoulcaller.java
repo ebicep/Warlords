@@ -117,7 +117,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
 
                 Location loc = warlordsNPC.getLocation();
                 Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
-                EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 50);
+                EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 20);
                 PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
                         .aliveEnemiesOf(getWarlordsNPC())
                         .forEach(enemyPlayer -> {
