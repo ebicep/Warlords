@@ -40,6 +40,11 @@ public class UndyingArmy extends AbstractAbility {
         super("Undying Army", 0, 0, 62.64f, 60, 0, 0);
     }
 
+    public UndyingArmy(int maxHealthDamage) {
+        this();
+        this.maxHealthDamage = maxHealthDamage;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
@@ -102,7 +107,7 @@ public class UndyingArmy extends AbstractAbility {
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2)
         ).playEffects();
 
-        UndyingArmy tempUndyingArmy = new UndyingArmy();
+        UndyingArmy tempUndyingArmy = new UndyingArmy(maxHealthDamage);
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
