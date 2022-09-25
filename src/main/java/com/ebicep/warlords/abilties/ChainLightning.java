@@ -102,7 +102,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 return newDamageValue;
             }
         });
-        wp.getSpec().getRed().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        wp.setRedCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
     }
 
     @Override

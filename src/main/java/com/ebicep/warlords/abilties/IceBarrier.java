@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class IceBarrier extends AbstractAbility {
@@ -72,7 +73,7 @@ public class IceBarrier extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
                         ParticleEffect.CLOUD.display(
@@ -114,7 +115,7 @@ public class IceBarrier extends AbstractAbility {
                             }
                         }
                     }
-                }
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

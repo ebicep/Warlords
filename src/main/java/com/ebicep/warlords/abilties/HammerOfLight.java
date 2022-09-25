@@ -25,10 +25,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class HammerOfLight extends AbstractAbility {
     private boolean pveUpgrade = false;
@@ -111,7 +108,7 @@ public class HammerOfLight extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost, false);
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
 
@@ -151,8 +148,9 @@ public class HammerOfLight extends AbstractAbility {
                     hammer.remove();
                     particleTask.cancel();
                 },
+                false,
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
                         if (tempHammerOfLight.isCrownOfLight()) {
                             if (wp.isAlive()) {
@@ -209,7 +207,7 @@ public class HammerOfLight extends AbstractAbility {
                             }
                         }
                     }
-                }
+                })
         );
 
         wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
@@ -224,6 +222,7 @@ public class HammerOfLight extends AbstractAbility {
                         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
                         Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
 
+                        hammerOfLightCooldown.setRemoveOnDeath(true);
                         hammerOfLightCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 6 == 0) {
                                 double angle = 0;

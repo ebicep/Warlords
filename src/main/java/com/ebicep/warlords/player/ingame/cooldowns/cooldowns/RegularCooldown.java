@@ -8,7 +8,6 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,29 +16,60 @@ import java.util.function.Consumer;
  */
 public class RegularCooldown<T> extends AbstractCooldown<T> {
 
-    protected int startingTicks;
-    protected int ticksLeft;
-    protected int ticksElapsed;
     /**
      * <p>cooldown = this
      * <p>ticksLeft = ticksLeft of cooldown
      * <p>counter = counter incrementing every tick, separate from ticksLeft
      */
     protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers;
+    protected int startingTicks;
+    protected int ticksLeft;
+    protected int ticksElapsed;
 
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
-        this.startingTicks = ticksLeft;
-        this.ticksLeft = ticksLeft;
-        this.consumers = new ArrayList<>();
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            int ticksLeft
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, ticksLeft, new ArrayList<>());
     }
 
-    @SafeVarargs //(cooldown, ticksLeft, ticksElapsed)
-    public RegularCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int ticksLeft, TriConsumer<RegularCooldown<T>, Integer, Integer>... triConsumers) {
-        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
+    //(cooldown, ticksLeft, ticksElapsed)
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            int ticksLeft,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
+    ) {
+        this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, true, ticksLeft, triConsumers);
+    }
+
+    public RegularCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            boolean removeOnDeath,
+            int ticksLeft,
+            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
+    ) {
+        super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
-        this.consumers = new ArrayList<>(Arrays.asList(triConsumers));
+        this.consumers = triConsumers;
     }
 
     @Override
@@ -62,7 +92,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public void onTick() {
+    public void onTick(WarlordsEntity from) {
         consumers.forEach(integerConsumer -> integerConsumer.accept(this, ticksLeft, ticksElapsed));
         ticksElapsed++;
         subtractTime(1);

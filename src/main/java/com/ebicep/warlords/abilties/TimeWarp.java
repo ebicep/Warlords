@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
@@ -14,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
@@ -82,7 +82,7 @@ public class TimeWarp extends AbstractAbility {
                     warpTrail.clear();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
@@ -99,7 +99,7 @@ public class TimeWarp extends AbstractAbility {
                             ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                         }
                     }
-                }
+                })
         );
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
 

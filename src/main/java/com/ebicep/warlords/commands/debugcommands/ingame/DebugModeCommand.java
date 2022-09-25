@@ -27,8 +27,8 @@ public class DebugModeCommand extends BaseCommand {
         warlordsPlayer.updateItems();
         warlordsPlayer.setHorseCooldown(0);
         ChatChannels.sendDebugMessage(warlordsPlayer,
-                                      ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!",
-                                      true
+                ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!",
+                true
         );
     }
 }

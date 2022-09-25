@@ -86,6 +86,7 @@ public class OrbsOfLife extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
+                false,
                 duration * 20,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
         ) {

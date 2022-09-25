@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ArcaneShield extends AbstractAbility {
@@ -88,7 +89,7 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
@@ -96,7 +97,7 @@ public class ArcaneShield extends AbstractAbility {
                         ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
                         ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0, 1, location, 500);
                     }
-                }
+                })
         );
         ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
 

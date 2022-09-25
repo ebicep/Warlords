@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -112,7 +113,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                     totemStand.remove();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (!tempCapacitorTotem.isTeamCarrierPassedThrough()) {
                         if (PlayerFilter.playingGame(wp.getGame())
                                 .teammatesOfExcludingSelf(wp)
@@ -123,7 +124,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                             tempCapacitorTotem.setTeamCarrierPassedThrough(true);
                         }
                     }
-                }
+                })
         );
 
     }

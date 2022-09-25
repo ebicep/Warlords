@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -148,7 +149,7 @@ public class UndyingArmy extends AbstractAbility {
                     cooldownManager -> {
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, ticksElapsed) -> {
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
                                 float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getHealth()) * (missingHealing / 100f);
@@ -171,7 +172,7 @@ public class UndyingArmy extends AbstractAbility {
                                 }
                             }
                         }
-                    }
+                    })
             );
 
             numberOfPlayersWithArmy++;

@@ -20,10 +20,10 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             wp.getCooldownManager().removeDebuffCooldowns();
 
             wp.setEnergy(wp.getSpec().getMaxEnergy());
-            wp.getSpec().getRed().setCurrentCooldown(0);
-            wp.getSpec().getPurple().setCurrentCooldown(0);
-            wp.getSpec().getBlue().setCurrentCooldown(0);
-            wp.getSpec().getOrange().setCurrentCooldown(0);
+            wp.setRedCurrentCooldown(0);
+            wp.setPurpleCurrentCooldown(0);
+            wp.setBlueCurrentCooldown(0);
+            wp.setOrangeCurrentCooldown(0);
             wp.setHorseCooldown(0);
             wp.updateInventory(true);
         }

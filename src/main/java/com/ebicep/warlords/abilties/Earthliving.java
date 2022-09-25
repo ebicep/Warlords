@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Earthliving extends AbstractAbility {
@@ -73,7 +74,7 @@ public class Earthliving extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.VILLAGER_HAPPY.display(
                                 0.3f,
@@ -85,7 +86,7 @@ public class Earthliving extends AbstractAbility {
                                 500
                         );
                     }
-                }
+                })
         ) {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -184,13 +185,13 @@ public class Earthliving extends AbstractAbility {
                     }
                 },
                 2 * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     target.getSpeed().addSpeedModifier("Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
                     }
-                }
+                })
         );
     }
 

@@ -20,6 +20,8 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import java.util.Collections;
+
 public class BasicSlime extends AbstractSlime implements BasicMob {
 
     private final double hitRadius = 2.5;
@@ -92,8 +94,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                     cooldownManager -> {
                     },
                     4 * 20,
-                    (cooldown, ticksLeft, counter) -> {
-                        if (counter % 10 == 0) {
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 10 == 0) {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
@@ -112,7 +114,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                                     false
                             );
                         }
-                    }
+                    })
             );
         }
 

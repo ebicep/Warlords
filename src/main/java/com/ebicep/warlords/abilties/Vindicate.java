@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
@@ -46,10 +47,10 @@ public class Vindicate extends AbstractAbility {
                 cooldownManager -> {
                 },
                 tickDuration,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     target.getSpeed().removeSlownessModifiers();
                     target.getCooldownManager().removeDebuffCooldowns();
-                }
+                })
         ) {
             @Override
             public void multiplyKB(Vector currentVector) {

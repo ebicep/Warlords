@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility {
@@ -161,7 +162,7 @@ public class WaterBreath extends AbstractAbility {
                 cooldownManager -> {
                 },
                 5 * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healing = hit.getMaxHealth() * 0.01f;
                         hit.addHealingInstance(
@@ -175,7 +176,7 @@ public class WaterBreath extends AbstractAbility {
                                 false
                         );
                     }
-                }
+                })
         );
     }
 

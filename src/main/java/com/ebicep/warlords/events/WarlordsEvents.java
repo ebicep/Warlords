@@ -8,7 +8,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
@@ -328,7 +327,7 @@ public class WarlordsEvents implements Listener {
         wpAttacker.getMinuteStats().addMeleeHits();
 
         if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
-            Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getSpec().getPurple();
+            Soulbinding baseSoulBinding = (Soulbinding) wpAttacker.getPurpleAbility();
             new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
                     .filter(PersistentCooldown::isShown)
                     .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)

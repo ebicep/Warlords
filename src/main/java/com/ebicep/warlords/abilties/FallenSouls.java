@@ -87,7 +87,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            wp.getSpec().getRed().subtractCooldown(2);
+            wp.getRedAbility().subtractCooldown(2);
             wp.updateRedItem();
 
             reduceCooldowns(wp, hit);
@@ -114,7 +114,7 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
             }
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
-            wp.getSpec().getRed().subtractCooldown(2);
+            wp.getRedAbility().subtractCooldown(2);
             wp.updateRedItem();
 
         }
@@ -129,10 +129,10 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                 .forEachOrdered(soulbinding -> {
                     wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
-                    wp.getSpec().getRed().subtractCooldown(1.5F);
-                    wp.getSpec().getPurple().subtractCooldown(1.5F);
-                    wp.getSpec().getBlue().subtractCooldown(1.5F);
-                    wp.getSpec().getOrange().subtractCooldown(1.5F);
+                    wp.getRedAbility().subtractCooldown(1.5F);
+                    wp.getPurpleAbility().subtractCooldown(1.5F);
+                    wp.getBlueAbility().subtractCooldown(1.5F);
+                    wp.getOrangeAbility().subtractCooldown(1.5F);
 
                     wp.updateItems();
 
@@ -144,10 +144,10 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     ) {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 
-                        teammate.getSpec().getRed().subtractCooldown(1);
-                        teammate.getSpec().getPurple().subtractCooldown(1);
-                        teammate.getSpec().getBlue().subtractCooldown(1);
-                        teammate.getSpec().getOrange().subtractCooldown(1);
+                        teammate.getRedAbility().subtractCooldown(1);
+                        teammate.getPurpleAbility().subtractCooldown(1);
+                        teammate.getBlueAbility().subtractCooldown(1);
+                        teammate.getOrangeAbility().subtractCooldown(1);
 
                         teammate.updateItems();
                     }

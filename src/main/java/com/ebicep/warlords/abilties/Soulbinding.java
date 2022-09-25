@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
@@ -88,13 +89,13 @@ public class Soulbinding extends AbstractAbility {
                 },
                 duration * 20,
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
                         ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 2, location, 500);
                     }
-                }
+                })
         );
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();

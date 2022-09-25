@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,7 +111,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                 cooldownManager -> {
                 },
                 woundingDuration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.0025f;
                         hit.addDamageInstance(
@@ -123,7 +124,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                                 false
                         );
                     }
-                }
+                })
         ) {
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {

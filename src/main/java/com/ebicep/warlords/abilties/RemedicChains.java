@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -152,7 +153,7 @@ public class RemedicChains extends AbstractAbility {
                             }
                         },
                         duration * 20,
-                        (cooldown, ticksLeft, ticksElapsed) -> {
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
 
                             if (ticksElapsed % 20 == 0 && !outOfRange) {
@@ -183,7 +184,7 @@ public class RemedicChains extends AbstractAbility {
                                     cooldown.setTicksLeft(0);
                                 }
                             }
-                        }
+                        })
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

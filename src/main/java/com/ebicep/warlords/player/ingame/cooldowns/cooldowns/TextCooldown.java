@@ -16,7 +16,16 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
     protected boolean remove = false;
     protected String text = "";
 
-    public TextCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, String text) {
+    public TextCooldown(
+            String name,
+            String nameAbbreviation,
+            Class<T> cooldownClass,
+            T cooldownObject,
+            WarlordsEntity from,
+            CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove,
+            String text
+    ) {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove);
         this.text = text;
     }
@@ -27,7 +36,7 @@ public class TextCooldown<T> extends AbstractCooldown<T> {
     }
 
     @Override
-    public void onTick() {
+    public void onTick(WarlordsEntity from) {
 
     }
 

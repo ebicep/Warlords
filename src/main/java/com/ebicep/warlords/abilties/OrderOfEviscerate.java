@@ -21,6 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -85,13 +86,13 @@ public class OrderOfEviscerate extends AbstractAbility {
                     removeCloak(wp, true);
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.4f, 2);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
                     if (ticksElapsed % 10 == 0) {
                         ParticleEffect.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
                     }
-                }
+                })
         ) {
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
@@ -142,8 +143,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                                     ChatColor.GRAY + "!"
                             );
 
-                            wp.getSpec().getPurple().setCurrentCooldown(0);
-                            wp.getSpec().getOrange().setCurrentCooldown(0);
+                            wp.setPurpleCurrentCooldown(0);
+                            wp.setOrangeCurrentCooldown(0);
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
                             wp.addEnergy(wp, name, energyCost);
@@ -161,8 +162,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                                     ChatColor.GRAY + "!"
                             );
 
-                            wp.getSpec().getPurple().setCurrentCooldown(wp.getSpec().getPurple().getCurrentCooldown() / 2);
-                            wp.getSpec().getOrange().setCurrentCooldown(wp.getSpec().getOrange().getCurrentCooldown() / 2);
+                            wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
+                            wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
                             wp.addEnergy(wp, name, energyCost / 2f);
@@ -196,7 +197,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                         }
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, ticksElapsed) -> {
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 5 == 0) {
                             wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
 
@@ -211,7 +212,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                         .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
                             }
                         }
-                    }
+                    })
             );
         }
 

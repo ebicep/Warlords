@@ -1345,6 +1345,54 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public void setRedCurrentCooldown(float currentCooldown) {
+        if (!isDisableCooldowns()) {
+            this.getRedAbility().setCurrentCooldown(currentCooldown);
+        }
+    }
+
+    public boolean isDisableCooldowns() {
+        return disableCooldowns;
+    }
+
+    public AbstractAbility getRedAbility() {
+        return spec.getRed();
+    }
+
+    public void setDisableCooldowns(boolean disableCooldowns) {
+        this.disableCooldowns = disableCooldowns;
+    }
+
+    public void setPurpleCurrentCooldown(float currentCooldown) {
+        if (!isDisableCooldowns()) {
+            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
+        }
+    }
+
+    public AbstractAbility getPurpleAbility() {
+        return spec.getPurple();
+    }
+
+    public void setBlueCurrentCooldown(float currentCooldown) {
+        if (!isDisableCooldowns()) {
+            this.getBlueAbility().setCurrentCooldown(currentCooldown);
+        }
+    }
+
+    public AbstractAbility getBlueAbility() {
+        return spec.getBlue();
+    }
+
+    public void setOrangeCurrentCooldown(float currentCooldown) {
+        if (!isDisableCooldowns()) {
+            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
+        }
+    }
+
+    public AbstractAbility getOrangeAbility() {
+        return spec.getOrange();
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -1876,14 +1924,6 @@ public abstract class WarlordsEntity {
 
     public void setNoEnergyConsumption(boolean noEnergyConsumption) {
         this.noEnergyConsumption = noEnergyConsumption;
-    }
-
-    public boolean isDisableCooldowns() {
-        return disableCooldowns;
-    }
-
-    public void setDisableCooldowns(boolean disableCooldowns) {
-        this.disableCooldowns = disableCooldowns;
     }
 
     public double getEnergyModifier() {

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
@@ -97,11 +98,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                         cooldownManager -> {
                         },
                         markDuration * 20,
-                        (cooldown, ticksLeft, ticksElapsed) -> {
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 10 == 0) {
                                 EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
                             }
-                        }
+                        })
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -159,11 +160,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 cooldownManager -> {
                 },
                 markDuration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
                     }
-                }
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

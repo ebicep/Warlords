@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SoulShackle extends AbstractAbility {
@@ -39,7 +40,7 @@ public class SoulShackle extends AbstractAbility {
                 cooldownManager -> {
                 },
                 tickDuration,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
                         Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
 
@@ -57,7 +58,7 @@ public class SoulShackle extends AbstractAbility {
                             }
                         }
                     }
-                }
+                })
         );
     }
 

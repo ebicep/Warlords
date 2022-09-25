@@ -47,6 +47,8 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 new Berserk(),
                 warlordsNPC,
                 CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {

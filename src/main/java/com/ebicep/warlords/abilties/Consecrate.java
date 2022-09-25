@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Consecrate extends AbstractAbility {
@@ -90,8 +91,9 @@ public class Consecrate extends AbstractAbility {
                 cooldownManager -> {
                     effectTask.cancel();
                 },
+                false,
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                 .aliveEnemiesOf(wp)
@@ -104,10 +106,11 @@ public class Consecrate extends AbstractAbility {
                                             maxDamageHeal,
                                             critChance,
                                             critMultiplier,
-                                            false);
+                                            false
+                                    );
                                 });
                     }
-                }
+                })
         );
 
         return true;

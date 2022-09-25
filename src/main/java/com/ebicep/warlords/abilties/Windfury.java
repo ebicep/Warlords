@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Windfury extends AbstractAbility {
@@ -66,7 +67,7 @@ public class Windfury extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.CRIT.display(
                                 0.2f,
@@ -75,9 +76,10 @@ public class Windfury extends AbstractAbility {
                                 0.1f,
                                 3,
                                 wp.getLocation().add(0, 1.2, 0),
-                                500);
+                                500
+                        );
                     }
-                }
+                })
         ) {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -165,12 +166,12 @@ public class DeathsDebt extends AbstractTotemBase {
                                 }
                             },
                             6 * 20,
-                            (cooldown, ticksLeft, ticksElapsed) -> {
+                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                 //6 self damage ticks
                                 if (ticksElapsed % 20 == 0) {
                                     onDebtTick(wp, totemStand, tempDeathsDebt);
                                 }
-                            }
+                            })
                     ));
                     circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                     circle.setRadius(debtRadius);
@@ -179,7 +180,7 @@ public class DeathsDebt extends AbstractTotemBase {
                     totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
                 },
                 duration,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (wp.getWorld() != totemStand.getWorld()) {
                         cooldown.setTicksLeft(0);
                         return;
@@ -200,7 +201,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                 Math.round(ticksLeft / 20f) + " §7seconds left."
                         );
                     }
-                }
+                })
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -244,8 +245,8 @@ public class DeathsDebt extends AbstractTotemBase {
         }
         // Adding damage to Repentance Pool
         // @see Repentance.class
-        if (wp.getSpec().getBlue() instanceof Repentance) {
-            ((Repentance) wp.getSpec().getBlue()).addToPool(debtTrueDamage);
+        if (wp.getBlueAbility() instanceof Repentance) {
+            ((Repentance) wp.getBlueAbility()).addToPool(debtTrueDamage);
         }
     }
 

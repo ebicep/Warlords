@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BloodLust extends AbstractAbility {
@@ -57,18 +58,20 @@ public class BloodLust extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 3 == 0) {
-                        ParticleEffect.REDSTONE.display(
-                                new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                wp.getLocation().add(
-                                        (Math.random() - 0.5) * 1,
-                                        1.2,
-                                        (Math.random() - 0.5) * 1),
-                                500
-                        );
-                    }
-                }
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 3 == 0) {
+                                ParticleEffect.REDSTONE.display(
+                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                        wp.getLocation().add(
+                                                (Math.random() - 0.5) * 1,
+                                                1.2,
+                                                (Math.random() - 0.5) * 1
+                                        ),
+                                        500
+                                );
+                            }
+                        }
+                )
         ) {
             @Override
             public boolean distinct() {

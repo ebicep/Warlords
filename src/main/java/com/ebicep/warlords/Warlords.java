@@ -543,32 +543,32 @@ public class Warlords extends JavaPlugin {
                     // Ability Cooldowns
 
                     // Decrementing red skill's cooldown.
-                    if (wp.getSpec().getRed().getCurrentCooldown() > 0) {
-                        wp.getSpec().getRed().subtractCooldown(.05f);
+                    if (wp.getRedAbility().getCurrentCooldown() > 0) {
+                        wp.getRedAbility().subtractCooldown(.05f);
                         if (player != null) {
                             wp.updateRedItem(player);
                         }
                     }
 
                     // Decrementing purple skill's cooldown.
-                    if (wp.getSpec().getPurple().getCurrentCooldown() > 0) {
-                        wp.getSpec().getPurple().subtractCooldown(.05f);
+                    if (wp.getPurpleAbility().getCurrentCooldown() > 0) {
+                        wp.getPurpleAbility().subtractCooldown(.05f);
                         if (player != null) {
                             wp.updatePurpleItem(player);
                         }
                     }
 
                     // Decrementing blue skill's cooldown.
-                    if (wp.getSpec().getBlue().getCurrentCooldown() > 0) {
-                        wp.getSpec().getBlue().subtractCooldown(.05f);
+                    if (wp.getBlueAbility().getCurrentCooldown() > 0) {
+                        wp.getBlueAbility().subtractCooldown(.05f);
                         if (player != null) {
                             wp.updateBlueItem(player);
                         }
                     }
 
                     // Decrementing orange skill's cooldown.
-                    if (wp.getSpec().getOrange().getCurrentCooldown() > 0) {
-                        wp.getSpec().getOrange().subtractCooldown(.05f);
+                    if (wp.getOrangeAbility().getCurrentCooldown() > 0) {
+                        wp.getOrangeAbility().subtractCooldown(.05f);
                         if (player != null) {
                             wp.updateOrangeItem(player);
                         }

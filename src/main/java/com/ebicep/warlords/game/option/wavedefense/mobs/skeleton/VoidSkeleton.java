@@ -47,7 +47,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 60 == 0) {
-            warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
+            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
         }
 
         if (ticksElapsed % 60 == 0) {

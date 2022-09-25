@@ -143,7 +143,7 @@ public class SpiritLink extends AbstractChainBase {
             }
         });
 
-        warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
+        warlordsPlayer.setRedCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
     }
 
     @Override

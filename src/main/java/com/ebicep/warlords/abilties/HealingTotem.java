@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -122,8 +123,9 @@ public class HealingTotem extends AbstractTotemBase {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
                 },
+                false,
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveUpgrade && ticksElapsed % 10 == 0) {
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), radius, ParticleEffect.VILLAGER_HAPPY, 2);
                     }
@@ -207,7 +209,7 @@ public class HealingTotem extends AbstractTotemBase {
                                     });
                         }
                     }
-                }
+                })
         );
         wp.getCooldownManager().addCooldown(healingTotemCooldown);
 

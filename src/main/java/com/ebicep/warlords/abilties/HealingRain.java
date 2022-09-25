@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +63,7 @@ public class HealingRain extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
         wp.subtractEnergy(energyCost, false);
-        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().clone();
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
@@ -89,8 +90,9 @@ public class HealingRain extends AbstractAbility {
                 cooldownManager -> {
                     particleTask.cancel();
                 },
+                false,
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
                         for (WarlordsEntity teammateInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
@@ -132,7 +134,7 @@ public class HealingRain extends AbstractAbility {
                             }
                         }
                     }
-                }
+                })
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
 

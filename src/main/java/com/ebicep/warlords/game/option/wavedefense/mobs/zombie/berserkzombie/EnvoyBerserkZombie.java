@@ -49,6 +49,8 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 new Berserk(),
                 warlordsNPC,
                 CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
@@ -76,7 +78,8 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 new BloodLust(),
                 warlordsNPC,
                 CooldownTypes.ABILITY,
-                false,
+                cooldownManager -> {
+                }, false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         ParticleEffect.REDSTONE.display(
@@ -84,7 +87,8 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                                 warlordsNPC.getLocation().add(
                                         (Math.random() - 0.5) * 1,
                                         1.2,
-                                        (Math.random() - 0.5) * 1),
+                                        (Math.random() - 0.5) * 1
+                                ),
                                 500
                         );
                     }

@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
@@ -138,7 +139,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                     }
                 },
                 markDuration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
                         Location playerLoc = target.getLocation();
                         Location particleLoc = playerLoc.clone();
@@ -154,7 +155,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                             }
                         }
                     }
-                }
+                })
         );
     }
 

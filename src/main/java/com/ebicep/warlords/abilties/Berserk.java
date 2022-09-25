@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Berserk extends AbstractAbility {
@@ -66,7 +67,7 @@ public class Berserk extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         ParticleEffect.VILLAGER_ANGRY.display(
                                 0,
@@ -78,7 +79,7 @@ public class Berserk extends AbstractAbility {
                                 500
                         );
                     }
-                }
+                })
         ) {
             int multiplier = 0;
             @Override

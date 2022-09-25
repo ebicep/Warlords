@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LightInfusion extends AbstractAbility {
@@ -66,7 +67,7 @@ public class LightInfusion extends AbstractAbility {
                     }
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3f,
@@ -78,7 +79,7 @@ public class LightInfusion extends AbstractAbility {
                                 500
                         );
                     }
-                }
+                })
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

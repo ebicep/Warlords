@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility {
@@ -88,7 +89,7 @@ public class DrainingMiasma extends AbstractAbility {
                         cancelSlowness.run();
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, ticksElapsed) -> {
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
 
@@ -98,7 +99,8 @@ public class DrainingMiasma extends AbstractAbility {
                                         miasmaTarget.getLocation().clone().add(
                                                 (Math.random() * 2) - 1,
                                                 1.2 + (Math.random() * 2) - 1,
-                                                (Math.random() * 2) - 1),
+                                                (Math.random() * 2) - 1
+                                        ),
                                         500
                                 );
                             }
@@ -115,7 +117,7 @@ public class DrainingMiasma extends AbstractAbility {
                                     false
                             );
                         }
-                    }
+                    })
             );
             playersHit += hitCounter;
 

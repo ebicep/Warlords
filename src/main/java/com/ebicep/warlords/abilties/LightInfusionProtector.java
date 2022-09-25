@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LightInfusionProtector extends AbstractAbility {
@@ -58,7 +59,7 @@ public class LightInfusionProtector extends AbstractAbility {
                     cancelSpeed.run();
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3f,
@@ -70,7 +71,7 @@ public class LightInfusionProtector extends AbstractAbility {
                                 500
                         );
                     }
-                }
+                })
         );
 
         for (int i = 0; i < 10; i++) {

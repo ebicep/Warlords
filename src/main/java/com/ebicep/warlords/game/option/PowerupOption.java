@@ -304,9 +304,7 @@ public class PowerupOption implements Option {
                         we,
                         CooldownTypes.BUFF,
                         cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.RED + ChatColor.BOLD + "DAMAGE" + ChatColor.GOLD + " powerup has worn off."),
-                        option.getDuration() * 20,
-                        (cooldown, ticksLeft, ticksElapsed) -> {
-                        }
+                        option.getDuration() * 20
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

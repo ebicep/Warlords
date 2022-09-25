@@ -17,8 +17,12 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected WarlordsEntity from;
     protected CooldownTypes cooldownType;
     protected Consumer<CooldownManager> onRemove;
+    protected boolean removeOnDeath = true;
 
-    public AbstractCooldown(String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove) {
+    public AbstractCooldown(
+            String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove
+    ) {
         this.name = name;
         this.nameAbbreviation = nameAbbreviation;
         this.cooldownClass = cooldownClass;
@@ -28,9 +32,27 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.onRemove = onRemove;
     }
 
+    public AbstractCooldown(
+            String name, String nameAbbreviation, Class<T> cooldownClass, T cooldownObject, WarlordsEntity from, CooldownTypes cooldownType,
+            Consumer<CooldownManager> onRemove, boolean removeOnDeath
+    ) {
+        this.name = name;
+        this.nameAbbreviation = nameAbbreviation;
+        this.cooldownClass = cooldownClass;
+        this.cooldownObject = cooldownObject;
+        this.from = from;
+        this.cooldownType = cooldownType;
+        this.onRemove = onRemove;
+        this.removeOnDeath = removeOnDeath;
+    }
+
     public abstract String getNameAbbreviation();
 
-    public abstract void onTick();
+    public void setNameAbbreviation(String nameAbbreviation) {
+        this.nameAbbreviation = nameAbbreviation;
+    }
+
+    public abstract void onTick(WarlordsEntity from);
 
     public abstract boolean removeCheck();
 
@@ -54,10 +76,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         return nameAbbreviation;
     }
 
-    public void setNameAbbreviation(String nameAbbreviation) {
-        this.nameAbbreviation = nameAbbreviation;
-    }
-
     public WarlordsEntity getFrom() {
         return from;
     }
@@ -68,5 +86,17 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public Consumer<CooldownManager> getOnRemove() {
         return onRemove;
+    }
+
+    public void setOnRemove(Consumer<CooldownManager> onRemove) {
+        this.onRemove = onRemove;
+    }
+
+    public boolean isRemoveOnDeath() {
+        return removeOnDeath;
+    }
+
+    public void setRemoveOnDeath(boolean removeOnDeath) {
+        this.removeOnDeath = removeOnDeath;
     }
 }

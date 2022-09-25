@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -73,14 +74,14 @@ public class InspiringPresence extends AbstractAbility {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
                         ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
                         ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
                     }
-                }
+                })
         ) {
             @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
@@ -133,13 +134,12 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     private void resetCooldowns(WarlordsEntity we) {
-        we.getSpec().getRed().setCurrentCooldown(0);
-        we.getSpec().getPurple().setCurrentCooldown(0);
-        we.getSpec().getBlue().setCurrentCooldown(0);
-        if (!we.getSpec().getOrange().getName().equals("Inspiring Presence")) {
-            we.getSpec().getOrange().setCurrentCooldown(0);
+        we.setRedCurrentCooldown(0);
+        we.setPurpleCurrentCooldown(0);
+        we.setBlueCurrentCooldown(0);
+        if (!we.getOrangeAbility().getName().equals("Inspiring Presence")) {
+            we.setOrangeCurrentCooldown(0);
         }
-
         we.updateItems();
     }
 

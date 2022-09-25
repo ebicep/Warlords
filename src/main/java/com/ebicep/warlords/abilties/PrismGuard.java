@@ -156,8 +156,10 @@ public class PrismGuard extends AbstractAbility {
                     }
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed < 5) return;
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed < 5) {
+                        return;
+                    }
 
                     if (ticksElapsed % 3 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
@@ -221,7 +223,7 @@ public class PrismGuard extends AbstractAbility {
                             }
                         }
                     }
-                }
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

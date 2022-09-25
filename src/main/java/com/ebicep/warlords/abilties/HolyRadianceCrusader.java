@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
@@ -86,7 +87,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                         cooldownManager -> {
                         },
                         markDuration * 20,
-                        (cooldown, ticksLeft, ticksElapsed) -> {
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 10 == 0) {
                                 Location playerLoc = markTarget.getLocation();
                                 Location particleLoc = playerLoc.clone();
@@ -102,7 +103,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                                     }
                                 }
                             }
-                        }
+                        })
                 ) {
                     @Override
                     public float addEnergyGainPerTick(float energyGainPerTick) {

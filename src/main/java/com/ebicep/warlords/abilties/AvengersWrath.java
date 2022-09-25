@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class AvengersWrath extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     private static final String WRATH_SKIP = "wrath_skip";
     protected int extraPlayersStruck = 0;
+    private boolean pveUpgrade = false;
     private int playersStruckDuringWrath = 0;
     private int playersKilledDuringWrath = 0;
 
@@ -69,7 +68,7 @@ public class AvengersWrath extends AbstractAbility {
                 cooldownManager -> {
                 },
                 duration * 20,
-                (cooldown, ticksLeft, ticksElapsed) -> {
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         ParticleEffect.SPELL.display(
                                 0.3F,
@@ -81,7 +80,7 @@ public class AvengersWrath extends AbstractAbility {
                                 500
                         );
                     }
-                }
+                })
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -143,12 +142,12 @@ public class AvengersWrath extends AbstractAbility {
         return true;
     }
 
-    public void addExtraPlayersStruck() {
-        extraPlayersStruck++;
-    }
-
     public void addPlayersStruckDuringWrath() {
         playersStruckDuringWrath++;
+    }
+
+    public void addExtraPlayersStruck() {
+        extraPlayersStruck++;
     }
 
     public void addPlayersKilledDuringWrath() {

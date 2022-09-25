@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Fireball extends AbstractProjectileBase {
@@ -119,7 +120,7 @@ public class Fireball extends AbstractProjectileBase {
                         CooldownTypes.DEBUFF,
                         cooldownManager -> {},
                         5 * 20,
-                        (cooldown, ticksLeft, ticksElapsed) -> {
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = hit.getMaxHealth() * 0.0025f;
                                 hit.addDamageInstance(
@@ -132,7 +133,7 @@ public class Fireball extends AbstractProjectileBase {
                                         false
                                 );
                             }
-                        }
+                        })
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

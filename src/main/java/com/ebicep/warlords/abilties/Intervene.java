@@ -5,7 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -120,7 +121,7 @@ public class Intervene extends AbstractAbility {
                     ChatColor.GRAY + "!"
             );
 
-            RegularCooldown<Intervene> interveneCooldownVeneTarget = new RegularCooldown<>(
+            LinkedCooldown<Intervene> interveneCooldown = new LinkedCooldown<>(
                     name,
                     "VENE",
                     Intervene.class,
@@ -128,6 +129,11 @@ public class Intervene extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
+                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
+                                ChatColor.GRAY + wp.getName() + "'s " +
+                                ChatColor.YELLOW + "Intervene " +
+                                ChatColor.GRAY + "has expired!"
+                        );
                         veneTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
                                 ChatColor.GRAY + wp.getName() + "'s " +
                                 ChatColor.YELLOW + "Intervene " +
@@ -135,8 +141,12 @@ public class Intervene extends AbstractAbility {
                         );
                     },
                     duration * 20,
-                    (cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 20 == 0 && ticksLeft > 0) {
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
+                            cooldown.setTicksLeft(0);
+                            return;
+                        }
+                        if (ticksElapsed % 20 == 0) {
                             int timeLeft = Math.round(ticksLeft / 20f);
                             if (timeLeft == 1) {
                                 veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " " +
@@ -150,36 +160,13 @@ public class Intervene extends AbstractAbility {
                                 );
                             }
                         }
-                    }
+                    }),
+                    veneTarget
             );
 
-            RegularCooldown<Intervene> interveneCooldownWp = new RegularCooldown<>(
-                    name,
-                    "VENE",
-                    Intervene.class,
-                    tempIntervene,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED + " " +
-                                ChatColor.GRAY + wp.getName() + "'s " +
-                                ChatColor.YELLOW + "Intervene " +
-                                ChatColor.GRAY + "has expired!"
-                        );
-                    },
-                    duration * 20,
-                    (cooldown, ticksLeft, ticksElapsed) -> {
-                        if (wp.isDead() || veneTarget.getLocation().distanceSquared(wp.getLocation()) > breakRadius * breakRadius) {
-                            cooldown.setTicksLeft(0);
-                            interveneCooldownVeneTarget.setTicksLeft(0);
-                        }
-                    }
-            );
+            wp.getCooldownManager().addCooldown(interveneCooldown);
+            veneTarget.getCooldownManager().addCooldown(interveneCooldown);
 
-            wp.getCooldownManager().addCooldown(interveneCooldownWp);
-            veneTarget.getCooldownManager().addCooldown(interveneCooldownVeneTarget);
-
-            wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
             wp.updateBlueItem();
 
             return true;
