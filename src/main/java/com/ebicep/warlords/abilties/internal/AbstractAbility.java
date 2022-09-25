@@ -58,8 +58,6 @@ public abstract class AbstractAbility {
     public abstract List<Pair<String, String>> getAbilityInfo();
 
     /**
-     * @param wp
-     * @param player
      * @return whether the ability has to go on cooldown after activation.
      */
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player);
@@ -217,6 +215,13 @@ public abstract class AbstractAbility {
 
     public String format(double input) {
         return decimalFormat.format(input);
+    }
+
+    /**
+     * @return returns the input divided by 100
+     */
+    public float convertToPercent(float input) {
+        return input / 100f;
     }
 
     public void runEverySecond() {
