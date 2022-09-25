@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -7,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -16,8 +19,16 @@ public class GuildPlayer {
     private UUID uuid;
     @Field("join_date")
     private Instant joinDate = Instant.now();
-    private long experience = 0;
-    private long coins = 0;
+    private Map<Timing, Long> coins = new HashMap<>() {{
+        for (Timing value : Timing.VALUES) {
+            put(value, 0L);
+        }
+    }};
+    private Map<Timing, Long> experience = new HashMap<>() {{
+        for (Timing value : Timing.VALUES) {
+            put(value, 0L);
+        }
+    }};
     @Field("coins_converted")
     private long coinsConverted = 0;
     @Field("daily_coin_bonus_received")
@@ -65,20 +76,28 @@ public class GuildPlayer {
         return joinDate;
     }
 
-    public long getExperience() {
-        return experience;
+    public long getExperience(Timing timing) {
+        return experience.getOrDefault(timing, 0L);
     }
 
     public void addExperience(long experience) {
-        this.experience += experience;
+        this.experience.forEach((timing, amount) -> this.experience.put(timing, amount + experience));
     }
 
-    public long getCoins() {
-        return coins;
+    public void setExperience(Timing timing, long experience) {
+        this.experience.put(timing, experience);
+    }
+
+    public long getCoins(Timing timing) {
+        return coins.getOrDefault(timing, 0L);
     }
 
     public void addCoins(long coins) {
-        this.coins += coins;
+        this.coins.forEach((timing, amount) -> this.coins.put(timing, amount + coins));
+    }
+
+    public void setCoins(Timing timing, long coins) {
+        this.coins.put(timing, coins);
     }
 
     public long getCoinsConverted() {

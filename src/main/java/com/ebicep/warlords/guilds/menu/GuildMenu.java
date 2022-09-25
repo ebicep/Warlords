@@ -115,7 +115,9 @@ public class GuildMenu {
                                 .name(ChatColor.GREEN + guildPlayer.getName())
                                 .lore(
                                         ChatColor.GRAY + "Join Date: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()),
-                                        ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName()
+                                        ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName(),
+                                        ChatColor.GRAY + "Lifetime Coins: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
+                                        ChatColor.GRAY + "Lifetime Experience: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME))
                                 )
                                 .get(),
                         (m, e) -> {
