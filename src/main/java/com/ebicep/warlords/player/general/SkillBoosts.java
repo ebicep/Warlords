@@ -74,14 +74,14 @@ public enum SkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 20% and reduce the cooldown\n§7by 15%",
-            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c20% §aand reduce the cooldown\n§aby §c15%",
+            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 20% and reduce the cooldown\n§7by 20%",
+            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c20% §aand reduce the cooldown\n§aby §c20%",
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
@@ -620,7 +620,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof DeathsDebt) {
                     ((DeathsDebt) abstractAbility).setRespiteRadius(15);
                     ((DeathsDebt) abstractAbility).setDebtRadius(13);
-                    ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.0667f);
+                    ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.1f);
                 }
             }
     ),

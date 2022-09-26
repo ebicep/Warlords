@@ -32,11 +32,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DeathsDebt extends AbstractTotemBase {
     protected int playersDamaged = 0;
     protected int playersHealed = 0;
+    private float delayedDamage = 0;
 
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float damagePercent = 15;
-    private float delayedDamage = 0;
     private float selfDamageInPercentPerSecond = .1667f;
 
     private boolean inDebt = false;

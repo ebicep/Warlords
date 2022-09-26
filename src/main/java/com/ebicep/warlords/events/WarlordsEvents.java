@@ -176,32 +176,10 @@ public class WarlordsEvents implements Listener {
                     ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie"
             );
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendMessage(player,
-                    false,
-                    ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Last Updated: " + ChatColor.GOLD + DateUtil.formatCurrentDateEST("d/MM/uuuu")
-            );
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Currently playable specs - PVE:");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Thunderlord");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Avenger");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Earthwarden");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Berserker");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Crusader");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Protector");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Cryomancer");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Aquamancer");
-            ChatUtils.sendMessage(player, false, "");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "Playable but still has WIP:");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Assassin");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Vindicator");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Apothecary");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Pyromancer");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Defender");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Revenant");
-            ChatUtils.sendMessage(player, false, ChatColor.RED + "[DEV] " + ChatColor.GRAY + "- Spiritguard");
-//            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
-//            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
-//            ChatUtils.sendCenteredMessage(player, "");
-//            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player,
                     ChatColor.GOLD + "We highly recommend you to download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn"
