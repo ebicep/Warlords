@@ -565,7 +565,7 @@ public enum ChallengeAchievements implements Achievement {
             false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
                         .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
             }
@@ -577,7 +577,7 @@ public enum ChallengeAchievements implements Achievement {
             false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
                         .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
             }
@@ -589,7 +589,7 @@ public enum ChallengeAchievements implements Achievement {
             false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                         .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
             }
@@ -601,7 +601,7 @@ public enum ChallengeAchievements implements Achievement {
             false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(BloodLust.class)
                         .anyMatch(bloodLust -> bloodLust.getAmountHealed() >= 18000);
             }
@@ -613,7 +613,7 @@ public enum ChallengeAchievements implements Achievement {
             false,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(warlordsEntity))
+                        .filter(regularCooldown -> Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                         .filterCooldownClassAndMapToObjectsOfClass(LastStand.class)
                         .anyMatch(lastStand -> lastStand.getAmountPrevented() >= 30000);
             }

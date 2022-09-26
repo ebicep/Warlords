@@ -151,7 +151,8 @@ public enum TieredAchievements implements Achievement {
     GAMES_PLAYED_PVE_1("Warped World",
             "Enter a PvE game for the first time.",
             WAVE_DEFENSE,
-            false, databasePlayer -> databasePlayer.getPveStats().getPlays() >= 1
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getPlays() >= 1
     ),
 
     ;
