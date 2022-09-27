@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 @CommandAlias("givestats")
+@CommandPermission("group.adminisrator")
 @Conditions("database:player")
 public class GiveStatsCommand extends BaseCommand {
 
