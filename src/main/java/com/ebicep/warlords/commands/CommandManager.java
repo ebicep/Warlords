@@ -90,6 +90,7 @@ public class CommandManager {
         manager.registerCommand(new ToggleOfflineFreezeCommand());
         manager.registerCommand(new UnstuckCommand(), true);
 
+        manager.registerCommand(new AdminCommand());
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());

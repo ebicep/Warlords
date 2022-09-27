@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
+import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -128,6 +129,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     }
 
     public void addCurrency(Currencies currency, Long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
         if (!currencies.containsKey(currency)) {
             currencies.put(currency, 0L);
         }
@@ -253,11 +257,10 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.masterworksFairRewards.add(reward);
     }
 
-    public Map<Currencies, Long> getCurrencies() {
-        return currencies;
-    }
-
     public Long getCurrencyValue(Currencies currency) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return Long.MAX_VALUE;
+        }
         return this.currencies.getOrDefault(currency, 0L);
     }
 
