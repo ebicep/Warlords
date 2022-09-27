@@ -29,7 +29,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and removing §e" + energySteal + " §7energy.";
+                "§7and removing §e" + format(energySteal) + " §7energy.";
     }
 
     @Override

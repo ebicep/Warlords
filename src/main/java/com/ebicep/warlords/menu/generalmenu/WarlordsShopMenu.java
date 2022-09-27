@@ -12,6 +12,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -178,7 +179,7 @@ public class WarlordsShopMenu {
                     .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedSpec.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description);
+            lore.add(WordWrap.wrapWithNewline(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
             lore.add("");
             if (skillBoost == selectedBoost) {
                 lore.add(ChatColor.GREEN + "Currently selected!");

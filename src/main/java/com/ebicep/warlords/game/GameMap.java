@@ -1027,7 +1027,10 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
-            options.add(new RespawnWaveOption(0, 20, 20));
+            options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
+
+            options.add(new RespawnWaveOption(1, 20, 30));
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -1035,7 +1038,7 @@ public enum GameMap {
 
             options.add(new CurrencyOnEventOption(500));
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(12, 5 * SECOND, null)
+                    .add(1, new SimpleWave(12, 10 * SECOND, null)
                             //basic
                             .add(0.9, Mobs.BASIC_ZOMBIE)
                             .add(0.08, Mobs.BASIC_SKELETON)

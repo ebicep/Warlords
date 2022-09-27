@@ -14,12 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
-    private boolean pveUpgradeMaster = false;
+    private boolean pveUpgrade = false;
 
     private int attacksDone = 0;
-    private int speedOnCrit = 25;
+    private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
+
     private float strikeHeal = 0;
 
     public JudgementStrike() {
@@ -65,7 +66,7 @@ public class JudgementStrike extends AbstractStrikeBase {
             if (strikeHeal != 0 && finalEvent.isDead()) {
                 wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, -1, 100, false, false);
             }
-            if (pveUpgradeMaster) {
+            if (pveUpgrade) {
                 if (
                     nearPlayer instanceof WarlordsNPC &&
                     finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
@@ -110,12 +111,12 @@ public class JudgementStrike extends AbstractStrikeBase {
         this.speedOnCritDuration = speedOnCritDuration;
     }
 
-    public boolean isPveUpgradeMaster() {
-        return pveUpgradeMaster;
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
     }
 
-    public void setPveUpgradeMaster(boolean pveUpgradeMaster) {
-        this.pveUpgradeMaster = pveUpgradeMaster;
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 
     public float getStrikeHeal() {

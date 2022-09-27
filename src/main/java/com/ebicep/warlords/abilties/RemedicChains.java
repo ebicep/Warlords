@@ -25,9 +25,9 @@ public class RemedicChains extends AbstractAbility {
 
     protected int playersLinked = 0;
     protected int numberOfBrokenLinks = 0;
-    // Percent
-    private float healingMultiplier = 12.5f;
-    private float allyDamageIncrease = 12;
+
+    private float healingMultiplier = 12.5f; // %
+    private float allyDamageIncrease = 12; // %
     private int duration = 8;
     private int alliesAffected = 3;
     private int linkBreakRadius = 15;

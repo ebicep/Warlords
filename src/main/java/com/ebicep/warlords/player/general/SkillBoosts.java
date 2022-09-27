@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 public enum SkillBoosts {
     FIREBALL("Fireball",
-            "§7Increases the damage you\n§7deal with Fireball by 20%",
-            "§aIncreases the damage you\n§adeal with Fireball by §c20%",
+            "§7Increases the damage you §7deal with Fireball by 20%",
+            "§aIncreases the damage you §adeal with Fireball by §c20%",
             Fireball.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball) {
@@ -18,8 +18,8 @@ public enum SkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§725% and reduce the energy cost\n§7by 40",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c25% §aand reduce the energy cost\n§aby §c40",
+            "§7Increases the damage you §7deal with Flame Burst by §725% and reduce the energy cost §7by 40",
+            "§aIncreases the damage you §adeal with Flame Burst by §c25% §aand reduce the energy cost §aby §c40",
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
@@ -30,8 +30,8 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health\nyou restore with Time Warp by §710% §7and\n§7reduce the cooldown by 50%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c10% §aand\n§areduce the cooldown by §c50%.",
+            "§7Increase the amount of health you restore with Time Warp by §710% §7and §7reduce the cooldown by 50%.",
+            "§aIncrease the amount of health §ayou restore with Time Warp by §c10% §aand §areduce the cooldown by §c50%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -41,8 +41,8 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield\nand reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield\n§aand reduce the cooldown by §c30%",
+            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
+            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -52,8 +52,8 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of\nInferno by 60%",
-            "§aIncrease the Crit Multiplier bonus of\nInferno by §c60%",
+            "§7Increase the Crit Multiplier bonus of Inferno by 60%",
+            "§aIncrease the Crit Multiplier bonus of Inferno by §c60%",
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno) {
@@ -62,8 +62,8 @@ public enum SkillBoosts {
             }
     ),
     FROST_BOLT("Frostbolt",
-            "§7Increases the damage you\n§7deal with Frostbolt by\n§720% and increase the slowness\nby 5%",
-            "§aIncreases the damage you\n§adeal with Frostbolt by\n§c20% §aand increase the slowness\nby §c5%",
+            "§7Increases the damage you deal with Frostbolt by 20% and increase the slowness by 5%",
+            "§aIncreases the damage you deal with Frostbolt by §c20% §aand increase the slowness by §c5%",
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt) {
@@ -74,8 +74,8 @@ public enum SkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 20% and reduce the cooldown\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c20% §aand reduce the cooldown\n§aby §c20%",
+            "§7Increase the damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%",
+            "§aIncrease the damage you deal with Freezing Breath §aby §c20% §aand reduce the cooldown §aby §c20%",
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
@@ -86,8 +86,8 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp\n§7by 30%",
-            "§aReduce the cooldown of Time Warp\n§aby §c30%",
+            "§7Reduce the cooldown of Time Warp §7by 30%",
+            "§aReduce the cooldown of Time Warp §aby §c30%",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -96,8 +96,8 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Reduce the cooldown of Arcane Shield\n§7by 30%",
-            "§aReduce the cooldown of Arcane Shield\n§aby §c30%",
+            "§7Reduce the cooldown of Arcane Shield §7by 30%",
+            "§aReduce the cooldown of Arcane Shield §aby §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -106,8 +106,8 @@ public enum SkillBoosts {
             }
     ),
     ICE_BARRIER("Ice Barrier",
-            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§75% §7and increase the duration\nby 2 seconds",
-            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c5% §aand increase the duration\nby §c2 §aseconds",
+            "§7Increase the amount damage you reduce with Ice Barrier by §75% §7and increase the duration by 2 seconds",
+            "§aIncrease the amount damage you reduce with Ice Barrier by §c5% §aand increase the duration by §c2 §aseconds",
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
@@ -117,8 +117,8 @@ public enum SkillBoosts {
             }
     ),
     WATER_BOLT("Water Bolt",
-            "§7Increases the amount of\n§7health you restore with\n§7Water Bolt by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Bolt by §c20%",
+            "§7Increases the amount of health you restore with Water Bolt by 20%",
+            "§aIncreases the amount of health you restore with Water Bolt by §c20%",
             WaterBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBolt) {
@@ -128,20 +128,20 @@ public enum SkillBoosts {
             }
     ),
     WATER_BREATH("Water Breath",
-            "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 10% and reduce\nthe energy cost by 40",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c10% §aand reduce\nthe energy cost by §c40",
+            "§7Increases the amount of health you restore with Water Breath by 15% and reduce the energy cost by 30",
+            "§aIncreases the amount of health you restore with Water Breath by §c15% §aand reduce the energy cost by §c30",
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 }
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp\n§7by 50%",
-            "§aReduce the cooldown of Time Warp\n§aby §c50%",
+            "§7Reduce the cooldown of Time Warp §7by 50%",
+            "§aReduce the cooldown of Time Warp §aby §c50%",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -150,8 +150,8 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield\nand reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield\n§aand reduce the cooldown by §c30%",
+            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
+            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -161,8 +161,8 @@ public enum SkillBoosts {
             }
     ),
     HEALING_RAIN("Healing Rain",
-            "§7Increases the duration of\n§7Healing Rain by 4 seconds and\n§7reduce the cooldown by 20%",
-            "§aIncreases the duration of\n§aHealing Rain by §c4 §aseconds and\n§areduce the cooldown by §c20%",
+            "§7Increases the duration of §7Healing Rain by 4 seconds and §7reduce the cooldown by 20%",
+            "§aIncreases the duration of §aHealing Rain by §c4 §aseconds and §areduce the cooldown by §c20%",
             HealingRain.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain) {
@@ -172,8 +172,8 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_BERSERKER("Wounding Strike",
-            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 10% and reduce the\nenergy cost by 10",
-            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c10% §aand reduce the\nenergy cost by §c10",
+            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and reduce the energy cost by 10",
+            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand reduce the energy cost by §c10",
             WoundingStrikeBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
@@ -184,8 +184,8 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§715% and reduce the cooldown\n§7by 25%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c15% §aand reduce the cooldown\n§aby §c25%",
+            "§7Increase the damage you §7deal with Seismic Wave by §715% and reduce the cooldown §7by 25%",
+            "§aIncrease the damage you §adeal with Seismic Wave by §c15% §aand reduce the cooldown §aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
@@ -196,8 +196,8 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§735% §7and reduce the cooldown\nby §710%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c35% §aand reduce the cooldown\nby §c10%",
+            "§7Increase the damage you §7deal with Ground Slam by §735% §7and reduce the cooldown by §710%",
+            "§aIncrease the damage you §adeal with Ground Slam by §c35% §aand reduce the cooldown by §c10%",
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -208,8 +208,8 @@ public enum SkillBoosts {
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Reduce the cooldown of Blood Lust\nby 30% and increase damage converted\nto healing by 5%",
-            "§aReduce the cooldown of Blood Lust\n§aby §c30% §aand increase damage converted\nto healing by §c5%",
+            "§7Reduce the cooldown of Blood Lust by 30% and increase damage converted to healing by 5%",
+            "§aReduce the cooldown of Blood Lust §aby §c30% §aand increase damage converted to healing by §c5%",
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
@@ -219,8 +219,8 @@ public enum SkillBoosts {
             }
     ),
     BERSERK("Berserk",
-            "§7Increase the damage bonus of Berserk\n§7by 15% and increase the speed\n§7by 10%",
-            "§aIncrease the damage bonus of Berserk\n§aby §c15% §aand increase the speed\n§aby §c10%",
+            "§7Increase the damage bonus of Berserk §7by 15% and increase the speed §7by 10%",
+            "§aIncrease the damage bonus of Berserk §aby §c15% §aand increase the speed §aby §c10%",
             Berserk.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Berserk) {
@@ -230,8 +230,8 @@ public enum SkillBoosts {
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
-            "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 10% and increase wounding by\n25%",
-            "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c10% §aand increase wounding\nby §c25%",
+            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and increase wounding by 25%",
+            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand increase wounding by §c25%",
             WoundingStrikeDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeDefender) {
@@ -242,8 +242,8 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the amount knockback you\n§7deal with Seismic Wave by\n§735% and reduce the cooldown\n§7by 25%",
-            "§aIncrease the amount knockback you\n§adeal with Seismic Wave by\n§c35% §aand reduce the cooldown\n§aby §c25%",
+            "§7Increase the amount knockback you §7deal with Seismic Wave by §735% and reduce the cooldown §7by 25%",
+            "§aIncrease the amount knockback you §adeal with Seismic Wave by §c35% §aand reduce the cooldown §aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
@@ -253,8 +253,8 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Increase the amount of knockback you\ndeal with Ground Slam by 10% and reduce\nthe cooldown by 20%",
-            "§aIncrease the amount of knockback you\ndeal with Ground Slam by §c10% §aand reduce\nthe cooldown by §c20%",
+            "§7Increase the amount of knockback you deal with Ground Slam by 10% and reduce the cooldown by 20%",
+            "§aIncrease the amount of knockback you deal with Ground Slam by §c10% §aand reduce the cooldown by §c20%",
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -264,8 +264,8 @@ public enum SkillBoosts {
             }
     ),
     INTERVENE("Intervene",
-            "§7Increase the cast and break radius\n§7of Intervene by 5 blocks and increase\n§7the max amount of damage you can\n§7absorb by 400",
-            "§aIncrease the cast and break radius\n§aof Intervene by §c5 §ablocks and increase\n§athe max amount of damage you can\n§aabsorb by §c400",
+            "§7Increase the cast and break radius §7of Intervene by 5 blocks and increase §7the max amount of damage you can §7absorb by 400",
+            "§aIncrease the cast and break radius §aof Intervene by §c5 §ablocks and increase §athe max amount of damage you can §aabsorb by §c400",
             Intervene.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Intervene) {
@@ -276,8 +276,8 @@ public enum SkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§75% §7and reduce the cooldown by 10%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c5% §aand reduce the cooldown by §c10%",
+            "§7Increase the amount damage you §7reduce with Last Stand by §75% §7and reduce the cooldown by 10%",
+            "§aIncrease the amount damage you §areduce with Last Stand by §c5% §aand reduce the cooldown by §c10%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
@@ -288,8 +288,8 @@ public enum SkillBoosts {
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
-            "§7Increase the damage you\n§7reduce with Crippling Strike\n§7by 10% and increase the\nadditional reduction per strike\nby 5%",
-            "§aIncrease the damage you\n§areduce with Crippling Strike\n§aby §c10% §aand increase the\nadditional reduction per strike\nby §c5%",
+            "§7Increase the damage you §7reduce with Crippling Strike §7by 10% and increase the additional reduction per strike by 5%",
+            "§aIncrease the damage you §areduce with Crippling Strike §aby §c10% §aand increase the additional reduction per strike by §c5%",
             CripplingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CripplingStrike) {
@@ -299,8 +299,8 @@ public enum SkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.3 seconds and reduce the\n§7cooldown by 30%",
-            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.3 §aseconds and reduce the\n§acooldown by §c30%",
+            "§7Increase the immobilize duration §7of your Reckless Charge by §70.3 seconds and reduce the §7cooldown by 30%",
+            "§aIncrease the immobilize duration §aof your Reckless Charge by §c0.3 §aseconds and reduce the §acooldown by §c30%",
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge) {
@@ -310,8 +310,8 @@ public enum SkillBoosts {
             }
     ),
     GROUND_SLAM_REVENANT("Ground Slam",
-            "§7Reduce the cooldown of Ground Slam\n§7by 40%",
-            "§aReduce the cooldown of Ground Slam\n§aby §c40%",
+            "§7Reduce the cooldown of Ground Slam §7by 40%",
+            "§aReduce the cooldown of Ground Slam §aby §c40%",
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -320,8 +320,8 @@ public enum SkillBoosts {
             }
     ),
     ORBS_OF_LIFE("Orbs of Life",
-            "§7Increases the amount of\n§7health you restore with\n§7Orbs of Life by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aOrbs of Life by §c20%",
+            "§7Increases the amount of §7health you restore with §7Orbs of Life by 20%",
+            "§aIncreases the amount of §ahealth you restore with §aOrbs of Life by §c20%",
             OrbsOfLife.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrbsOfLife) {
@@ -331,8 +331,8 @@ public enum SkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Reduce the damage of\nUndying Army after dying\nby 5% and increase the\nduration by 5 seconds",
-            "§aReduce the damage of\nUndying Army after dying\nby §c5% §aand increase the\nduration by §c5 §aseconds",
+            "§7Reduce the damage of Undying Army after dying by 5% and increase the duration by 5 seconds",
+            "§aReduce the damage of Undying Army after dying by §c5% §aand increase the duration by §c5 §aseconds",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
@@ -342,8 +342,8 @@ public enum SkillBoosts {
             }
     ),
     AVENGER_STRIKE("Avenger's Strike",
-            "§7Increase the damage you\n§7deal with Avenger's Strike\n§7by 15% and increase the energy\nyou steal by 5",
-            "§aIncrease the damage you\n§adeal with Avenger's Strike\n§aby §c15% §aand increase the energy\nyou steal by §c5",
+            "§7Increase the damage you §7deal with Avenger's Strike §7by 15% and increase the energy you steal by 5",
+            "§aIncrease the damage you §adeal with Avenger's Strike §aby §c15% §aand increase the energy you steal by §c5",
             AvengersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersStrike) {
@@ -354,8 +354,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\nincrease the damage\nby 35%",
-            "§aRemove the energy cost\nof Consecrate and\nincrease the damage\nby §c35%",
+            "§7Remove the energy cost of Consecrate and increase the damage by 35%",
+            "§aRemove the energy cost of Consecrate and increase the damage by §c35%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -366,8 +366,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_AVENGER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 25% and increase the energy\nyou restore by 40",
-            "§aReduce the cooldown of Light Infusion\n§aby §c25% §aand increase the energy\n§ayou restore by §c40",
+            "§7Reduce the cooldown of Light Infusion §7by 25% and increase the energy you restore by 40",
+            "§aReduce the cooldown of Light Infusion §aby §c25% §aand increase the energy §ayou restore by §c40",
             LightInfusionAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionAvenger) {
@@ -377,8 +377,8 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance\n§7by 20% and double the energy\ndrain of Avenger's Mark",
-            "§aReduce the cooldown of Holy Radiance\n§aby §c20% §aand double the energy\ndrain of Avenger's Mark",
+            "§7Reduce the cooldown of Holy Radiance §7by 20% and double the energy drain of Avenger's Mark",
+            "§aReduce the cooldown of Holy Radiance §aby §c20% §aand double the energy drain of Avenger's Mark",
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger) {
@@ -388,8 +388,8 @@ public enum SkillBoosts {
             }
     ),
     AVENGERS_WRATH("Avenger's Wrath",
-            "§7Increase the energy per second of\nAvenger's Wrath by 10 and increase the\nduration by 5 seconds",
-            "§aIncrease the energy per second of\nAvenger's Wrath by §c10 §aand increase the\nduration §aby §c5 §aseconds",
+            "§7Increase the energy per second of Avenger's Wrath by 10 and increase the duration by 5 seconds",
+            "§aIncrease the energy per second of Avenger's Wrath by §c10 §aand increase the duration §aby §c5 §aseconds",
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
@@ -399,8 +399,8 @@ public enum SkillBoosts {
             }
     ),
     CRUSADER_STRIKE("Crusader's Strike",
-            "§7Increase the damage you\n§7deal with Crusader's Strike\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Crusader's Strike\n§aby §c20%",
+            "§7Increase the damage you §7deal with Crusader's Strike §7by 20%",
+            "§aIncrease the damage you §adeal with Crusader's Strike §aby §c20%",
             CrusadersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CrusadersStrike) {
@@ -410,8 +410,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Remove the energy cost\nof Consecrate and\nincrease the damage\n§7by 35%",
-            "§aRemove the energy cost\nof Consecrate and\nincrease the damage\n§aby §c35%",
+            "§7Remove the energy cost of Consecrate and increase the damage §7by 35%",
+            "§aRemove the energy cost of Consecrate and increase the damage §aby §c35%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -422,8 +422,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_CRUSADER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c3 §aseconds",
+            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
+            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
             LightInfusionCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader) {
@@ -433,8 +433,8 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance\n§7by 25%, increase the duration\n§7of Crusader's Mark by 4 seconds\nand speed bonus by 15%",
-            "§aReduce the cooldown of Holy Radiance\n§aby §c25%§a, increase the duration\n§aof Crusader's Mark by §c4 §aseconds\nand speed bonus by §c15%",
+            "§7Reduce the cooldown of Holy Radiance §7by 25%, increase the duration §7of Crusader's Mark by 4 seconds and speed bonus by 15%",
+            "§aReduce the cooldown of Holy Radiance §aby §c25%§a, increase the duration §aof Crusader's Mark by §c4 §aseconds and speed bonus by §c15%",
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
@@ -445,8 +445,8 @@ public enum SkillBoosts {
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring\n§7Presence by 25% and increase the\nspeed by 10%",
-            "§aReduce the cooldown of Inspiring\n§aPresence by §c25% §aand increase the\nspeed by §c10%",
+            "§7Reduce the cooldown of Inspiring §7Presence by 25% and increase the speed by 10%",
+            "§aReduce the cooldown of Inspiring §aPresence by §c25% §aand increase the speed by §c10%",
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence) {
@@ -456,8 +456,8 @@ public enum SkillBoosts {
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            "§7Increase the amount of damage\n§7you convert into healing for allies with\n§7Protector's Strike by 10%\nand heal 1 more ally.",
-            "§aIncrease the amount of damage\n§ayou convert into healing for allies with\n§aProtector's Strike by §c10%\n§aand heal §c1 §amore ally.",
+            "§7Increase the amount of damage §7you convert into healing for allies with §7Protector's Strike by 10% and heal 1 more ally.",
+            "§aIncrease the amount of damage §ayou convert into healing for allies with §aProtector's Strike by §c10% §aand heal §c1 §amore ally.",
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
@@ -468,8 +468,8 @@ public enum SkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 30%",
-            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c30%",
+            "§7Increases the range of §7Consecrate by 2 blocks and §7reduce the cooldown §7by 30%",
+            "§aIncreases the range of §aConsecrate by §c2 §ablocks and §areduce the cooldown §aby §c30%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -479,8 +479,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c3 §aseconds",
+            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
+            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
             LightInfusionProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector) {
@@ -490,8 +490,8 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_PROTECTOR("Holy Radiance",
-            "§7Increases the amount of\n§7health you restore with\n§7Holy Radiance by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHoly Radiance by §c20%",
+            "§7Increases the amount of §7health you restore with §7Holy Radiance by 20%",
+            "§aIncreases the amount of §ahealth you restore with §aHoly Radiance by §c20%",
             HolyRadianceProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceProtector) {
@@ -501,8 +501,8 @@ public enum SkillBoosts {
             }
     ),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 25% and\nreduce the cooldown by 25%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c25% §aand\nreduce the cooldown by §c25%",
+            "§7Increases the amount of §7health you restore with §7Hammer of Light by 25% and reduce the cooldown by 25%",
+            "§aIncreases the amount of §ahealth you restore with §aHammer of Light by §c25% §aand reduce the cooldown by §c25%",
             HammerOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HammerOfLight) {
@@ -513,8 +513,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHTNING_BOLT("Lightning Bolt",
-            "§7Increase the damage you\n§7deal with Lightning Bolt by\n§720%",
-            "§aIncrease the damage you\n§adeal with Lightning Bolt by\n§c20%",
+            "§7Increase the damage you §7deal with Lightning Bolt by §720%",
+            "§aIncrease the damage you §adeal with Lightning Bolt by §c20%",
             LightningBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningBolt) {
@@ -524,8 +524,8 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            "§7Increase the damage you\n§7deal with Chain Lightning\n§7by 20% and reduce the cooldown\nby 15%",
-            "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c20% §aand reduce the cooldown\nby §c15%",
+            "§7Increase the damage you §7deal with Chain Lightning §7by 20% and reduce the cooldown by 15%",
+            "§aIncrease the damage you §adeal with Chain Lightning §aby §c20% §aand reduce the cooldown by §c15%",
             ChainLightning.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
@@ -536,8 +536,8 @@ public enum SkillBoosts {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 40% and increase the proc\n§7chance by 20%",
-            "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c40% §aand increase the proc\n§achance by §c20%",
+            "§7Increase the damage you §7deal with Windfury Weapon §7by 40% and increase the proc §7chance by 20%",
+            "§aIncrease the damage you §adeal with Windfury Weapon §aby §c40% §aand increase the proc §achance by §c20%",
             Windfury.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Windfury) {
@@ -547,8 +547,8 @@ public enum SkillBoosts {
             }
     ),
     LIGHTNING_ROD("Lightning Rod",
-            "§7Reduce the cooldown of Lightning Rod\n§7by 40%",
-            "§aReduce the cooldown of Lightning Rod\n§aby §c40%",
+            "§7Reduce the cooldown of Lightning Rod §7by 40%",
+            "§aReduce the cooldown of Lightning Rod §aby §c40%",
             LightningRod.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningRod) {
@@ -557,20 +557,20 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 35% and reduce the cooldown\n§7by 15%",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c35% §aand reduce the cooldown\n§aby §c15%",
+            "§7Increase the damage you §7deal with Capacitor Totem §7by 30% and reduce the cooldown §7by 15%",
+            "§aIncrease the damage you §adeal with Capacitor Totem §aby §c30% §aand reduce the cooldown §aby §c15%",
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
                 }
             }
     ),
     FALLEN_SOULS("Fallen Souls",
-            "§7Increase the damage you\n§7deal with Fallen Souls by\n§720%",
-            "§aIncrease the damage you\n§adeal with Fallen Souls by\n§c20%",
+            "§7Increase the damage you §7deal with Fallen Souls by §720%",
+            "§aIncrease the damage you §adeal with Fallen Souls by §c20%",
             FallenSouls.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FallenSouls) {
@@ -580,8 +580,8 @@ public enum SkillBoosts {
             }
     ),
     SPIRIT_LINK("Spirit Link",
-            "§7Increase the damage you\n§7deal with Spirit Link by\n§725% and increase the speed\nduration by 0.5 seconds",
-            "§aIncrease the damage you\n§adeal with Spirit Link by\n§c25% §aand increase the speed\nduration by §c0.5 §aseconds",
+            "§7Increase the damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds",
+            "§aIncrease the damage you §adeal with Spirit Link by §c25% §aand increase the speed duration by §c0.5 §aseconds",
             SpiritLink.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SpiritLink) {
@@ -592,8 +592,8 @@ public enum SkillBoosts {
             }
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
-            "§7Increase the duration of\n§7binds by 2 seconds.",
-            "§aIncrease the duration of\n§abinds by §c2 §aseconds.",
+            "§7Increase the duration of §7binds by 2 seconds.",
+            "§aIncrease the duration of §abinds by §c2 §aseconds.",
             Soulbinding.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding) {
@@ -602,8 +602,8 @@ public enum SkillBoosts {
             }
     ),
     REPENTANCE("Repentance",
-            "§7Increase the damage you\n§7convert by 5% and reduce the\n§7cooldown by 10%",
-            "§aIncrease the damage you\n§aconvert by §c5% §aand reduce the\n§acooldown by §c10%",
+            "§7Increase the damage you convert by 5% and reduce the cooldown by 10%",
+            "§aIncrease the damage you §aconvert by §c5% §aand reduce the §acooldown by §c10%",
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
@@ -613,8 +613,8 @@ public enum SkillBoosts {
             }
     ),
     DEATHS_DEBT("Death's Debt",
-            "§7Increase the range of Death's Debt\n§7by 5 blocks and reduce the\n§7amount of delayed damage you take\n§7by 40%",
-            "§aIncrease the range of Death's Debt\n§aby §c5 §ablocks and reduce the\n§aamount of delayed damage you take\n§aby §c40%",
+            "§7Increase the range of Death's Debt §7by 5 blocks and reduce the §7amount of delayed damage you take §7by 40%",
+            "§aIncrease the range of Death's Debt §aby §c5 §ablocks and reduce the §aamount of delayed damage you take §aby §c40%",
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt) {
@@ -625,8 +625,8 @@ public enum SkillBoosts {
             }
     ),
     EARTHEN_SPIKE("Earthen Spike",
-            "§7Increase the damage you\n§7deal with Earthen Spike by\n§715% and increase the speed\nby 30%",
-            "§aIncrease the damage you\n§adeal with Earthen Spike by\n§c15% §aand increase the speed\nby §c30%",
+            "§7Increase the damage you §7deal with Earthen Spike by §715% and increase the speed by 30%",
+            "§aIncrease the damage you §adeal with Earthen Spike by §c15% §aand increase the speed by §c30%",
             EarthenSpike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthenSpike) {
@@ -637,19 +637,19 @@ public enum SkillBoosts {
             }
     ),
     BOULDER("Boulder",
-            "§7Increase the damage you\n§7deal with Boulder by 30%",
-            "§aIncrease the damage you\n§adeal with Boulder by §c30%",
+            "§7Increase the damage you §7deal with Boulder by 25%",
+            "§aIncrease the damage you §adeal with Boulder by §c25%",
             Boulder.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Boulder) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
+                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 }
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the proc chance by\nof Earthliving Weapon§7 by 20%",
-            "§aIncrease the proc chance by\nof Earthliving Weapon by §c20%",
+            "§7Increase the proc chance by of Earthliving Weapon§7 by 20%",
+            "§aIncrease the proc chance by of Earthliving Weapon by §c20%",
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
@@ -658,8 +658,8 @@ public enum SkillBoosts {
             }
     ),
     CHAIN_HEAL("Chain Heal",
-            "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 30%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c30%",
+            "§7Increases the amount of health you restore with Chain Heal by 30%",
+            "§aIncreases the amount of health you restore with Chain Heal by §c30%",
             ChainHeal.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainHeal) {
@@ -669,8 +669,8 @@ public enum SkillBoosts {
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 25% and reduce the\n§7cooldown by 25%",
-            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c25% §aand reduce the\n§acooldown by §c25%",
+            "§7Increase the amount of health you restore with Healing Totem by 25% and reduce the cooldown by 25%",
+            "§aIncrease the amount of health you restore with Healing Totem by §c25% §aand reduce the cooldown by §c25%",
             HealingTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
@@ -681,8 +681,8 @@ public enum SkillBoosts {
             }
     ),
     JUDGEMENT_STRIKE("Judgement Strike",
-            "§7Increase the amount of damage you\n§7deal with Judgement Strike\n§7by 20%",
-            "§aIncrease the amount of damage you\n§adeal with Judgement Strike\n§aby §c20%",
+            "§7Increase the amount of damage you §7deal with Judgement Strike §7by 20%",
+            "§aIncrease the amount of damage you §adeal with Judgement Strike §aby §c20%",
             JudgementStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof JudgementStrike) {
@@ -692,8 +692,8 @@ public enum SkillBoosts {
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse\nby 35% and increase the blind duration\nby 1.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse\nby §c35% §aand increase the blind duration\nby §c1.5 §aseconds.",
+            "§7Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 1.5 seconds.",
+            "§aReduce the cooldown of Incendiary Curse by §c35% §aand increase the blind duration by §c1.5 §aseconds.",
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse) {
@@ -703,8 +703,8 @@ public enum SkillBoosts {
             }
     ),
     BLINDING_ASSAULT("Shadow Step",
-            "§7Reduce the cooldown by Shadow Step\nby 40% and become temporarily immune to\nfall damage after leaping.",
-            "§aReduce the cooldown by Shadow Step\nby §c40% §aand become temporarily immune to\nfall damage after leaping.",
+            "§7Reduce the cooldown by Shadow Step by 40% and become temporarily immune to fall damage after leaping.",
+            "§aReduce the cooldown by Shadow Step by §c40% §aand become temporarily immune to fall damage after leaping.",
             ShadowStep.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep) {
@@ -714,8 +714,8 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch\nby 50% and increase the range\nby 2 blocks.",
-            "§aReduce the cooldown by Soul Switch\nby §c50% §aand increase the range\nby §c2 §ablocks",
+            "§7Reduce the cooldown by Soul Switch by 50% and increase the range by 2 blocks.",
+            "§aReduce the cooldown by Soul Switch by §c50% §aand increase the range by §c2 §ablocks",
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch) {
@@ -725,8 +725,8 @@ public enum SkillBoosts {
             }
     ),
     ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "§7Increase the duration of Order Of Eviscerate\nby 4 seconds and reduce the cooldown\nby 30%.",
-            "§aIncrease the duration of Order Of Eviscerate\nby §c4 §aseconds and reduce the cooldown\nby §c30%.",
+            "§7Increase the duration of Order Of Eviscerate by 4 seconds and reduce the cooldown by 30%.",
+            "§aIncrease the duration of Order Of Eviscerate by §c4 §aseconds and reduce the cooldown by §c30%.",
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate) {
@@ -736,8 +736,8 @@ public enum SkillBoosts {
             }
     ),
     RIGHTEOUS_STRIKE("Righteous Strike",
-            "§7Increase the amount of damage you\n§7deal with Righteous Strike\n§7by 20%",
-            "§aIncrease the amount of damage you\n§adeal with Righteous Strike\n§aby §c20%",
+            "§7Increase the amount of damage you §7deal with Righteous Strike §7by 20%",
+            "§aIncrease the amount of damage you §adeal with Righteous Strike §aby §c20%",
             RighteousStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RighteousStrike) {
@@ -747,8 +747,8 @@ public enum SkillBoosts {
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle\nby 15% and increase the silence\nduration by 0.5 seconds",
-            "§aReduce the cooldown of Soul Shackle\nby §c15% §aand increase the silence\nduration by §c0.5 §aseconds",
+            "§7Reduce the cooldown of Soul Shackle by 15% and increase the silence duration by 0.5 seconds",
+            "§aReduce the cooldown of Soul Shackle by §c15% §aand increase the silence duration by §c0.5 §aseconds",
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
@@ -759,8 +759,8 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart\nby 30% and increase the amount of health\nyou restore by 300",
-            "§aReduce the cooldown of Heart ot Heart\nby §c30% §aand increase the amount of health\nyou restore by §c300",
+            "§7Reduce the cooldown of Heart ot Heart by 30% and increase the amount of health you restore by 300",
+            "§aReduce the cooldown of Heart ot Heart by §c30% §aand increase the amount of health you restore by §c300",
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
@@ -770,8 +770,8 @@ public enum SkillBoosts {
             }
     ),
     PRISM_GUARD("Prism Guard",
-            "§7Increase the damage reduction of Prism\nGuard by 15% and increase the amount of\nhealth you restore by 300",
-            "§aIncrease the damage reduction of Prism\nGuard by §c15% §aand increase the amount of\nhealth you restore by §c300",
+            "§7Increase the damage reduction of Prism Guard by 15% and increase the amount of health you restore by 300",
+            "§aIncrease the damage reduction of Prism Guard by §c15% §aand increase the amount of health you restore by §c300",
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard) {
@@ -781,8 +781,8 @@ public enum SkillBoosts {
             }
     ),
     VINDICATE("Vindicate",
-            "§7Increase the damage reduction of\nVindicate by 10% and reduce the\ncooldown by 25%",
-            "§aIncrease the damage reduction of\nVindicate by §c10% §aand reduce the\ncooldown by §c25%",
+            "§7Increase the damage reduction of Vindicate by 10% and reduce the cooldown by 25%",
+            "§aIncrease the damage reduction of Vindicate by §c10% §aand reduce the cooldown by §c25%",
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate) {
@@ -792,8 +792,8 @@ public enum SkillBoosts {
             }
     ),
     IMPALING_STRIKE("Impaling Strike",
-            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 10% and increase the leech\nduration by 5 seconds.",
-            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c10% §aand increase the leech\nduration by §c5 §aseconds.",
+            "§7Increase the amount of damage you §7deal with Impaling Strike §7by 10% and increase the leech duration by 5 seconds.",
+            "§aIncrease the amount of damage you §adeal with Impaling Strike §aby §c10% §aand increase the leech duration by §c5 §aseconds.",
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike) {
@@ -804,8 +804,8 @@ public enum SkillBoosts {
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            "§7Increase the amount of health you\n§7restore with Soothing Elixir\n§7by 25%",
-            "§aIncrease the amount of health you\n§arestore with Soothing Elixir\n§aby §c25%",
+            "§7Increase the amount of health you §7restore with Soothing Elixir §7by 25%",
+            "§aIncrease the amount of health you §arestore with Soothing Elixir §aby §c25%",
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
@@ -815,8 +815,8 @@ public enum SkillBoosts {
             }
     ),
     VITALITY_LIQUOR("Vitality Liquor",
-            "§7Increase the amount of health you\n§7restore with Vitality Liquor\n§7by 15% and reduce the cooldown\nby 30%",
-            "§aIncrease the amount of health you\n§arestore with Vitality Liquor\n§aby §c15% §aand reduce the cooldown\nby §c30%",
+            "§7Increase the amount of health you §7restore with Vitality Liquor §7by 15% and reduce the cooldown by 30%",
+            "§aIncrease the amount of health you §arestore with Vitality Liquor §aby §c15% §aand reduce the cooldown by §c30%",
             VitalityLiquor.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityLiquor) {
@@ -829,8 +829,8 @@ public enum SkillBoosts {
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of health\nyou restore with Remedic Chains\nby 10% and increase the link break\nradius by 10 blocks.",
-            "§aIncrease the amount of health\nyou restore with Remedic Chains\nby §c10% §aand increase the link break\nradius by §c10 §ablocks.",
+            "§7Increase the amount of health you restore with Remedic Chains by 10% and increase the link break radius by 10 blocks.",
+            "§aIncrease the amount of health you restore with Remedic Chains by §c10% §aand increase the link break radius by §c10 §ablocks.",
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains) {
@@ -841,8 +841,8 @@ public enum SkillBoosts {
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the leech duration of Draining Miasma\nby 5 seconds and reduce the cooldown\nby 30%",
-            "§aIncrease the leech duration of Draining Miasma\nby §c5 §aseconds and reduce the cooldown\nby §c30%",
+            "§7Increase the leech duration of Draining Miasma by 5 seconds and reduce the cooldown by 30%",
+            "§aIncrease the leech duration of Draining Miasma by §c5 §aseconds and reduce the cooldown by §c30%",
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma) {

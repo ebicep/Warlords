@@ -38,7 +38,6 @@ public class Witch extends AbstractWitch implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-
         if (ticksElapsed % 4 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
@@ -55,7 +54,7 @@ public class Witch extends AbstractWitch implements EliteMob {
                 .aliveTeammatesOfExcludingSelf(warlordsNPC)
         ) {
             EffectUtils.playRandomHitEffect(ally.getLocation(), 0, 150, 0, 2);
-            ally.getSpeed().addSpeedModifier("Witch Speed Buff", 30, 3 * 20);
+            ally.getSpeed().addSpeedModifier("Witch Speed Buff", 20, 3 * 20);
         }
     }
 

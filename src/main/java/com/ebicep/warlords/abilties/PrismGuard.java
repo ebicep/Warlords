@@ -111,7 +111,7 @@ public class PrismGuard extends AbstractAbility {
                     ).playEffects();
 
                     for (WarlordsEntity entity : PlayerFilter
-                            .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
+                            .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
                         float healingValue = bubbleHealing +
@@ -132,7 +132,7 @@ public class PrismGuard extends AbstractAbility {
                         }
 
                         if (hits.get() != 0) {
-                            String s = wp == entity ? "Your " : wp + "'s ";
+                            String s = wp == entity ? "Your " : wp.getName() + "'s ";
                             entity.sendMessage(
                                     WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
                                     (hits.get() * damageReduction) + "% §7damage reduction for §6" + duration + " §7seconds!"

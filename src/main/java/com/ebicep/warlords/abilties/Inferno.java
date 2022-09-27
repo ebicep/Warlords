@@ -18,12 +18,13 @@ import java.util.List;
 
 public class Inferno extends AbstractAbility {
     private boolean pveUpgrade = false;
+
     protected int hitsAmplified = 0;
+    private int maxHits = 10;
 
     private int duration = 18;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
-    private int maxHits = 10;
 
     public Inferno() {
         super("Inferno", 0, 0, 46.98f, 0, 0, 0);

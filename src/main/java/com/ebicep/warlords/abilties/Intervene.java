@@ -21,9 +21,9 @@ import java.util.List;
 public class Intervene extends AbstractAbility {
     protected int playersIntervened = 0;
     protected int carriersIntervened = 0;
+    private float damagePrevented = 0;
 
     private final int duration = 5;
-    private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
     private int radius = 10;
     private int breakRadius = 15;

@@ -23,9 +23,9 @@ import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
     private boolean pveUpgrade = false;
-    // Percentage
-    private int minConvert = 75;
-    private int maxConvert = 100;
+
+    private int minConvert = 75; // %
+    private int maxConvert = 100; // %
     private int maxAllies = 2;
 
     public ProtectorsStrike() {

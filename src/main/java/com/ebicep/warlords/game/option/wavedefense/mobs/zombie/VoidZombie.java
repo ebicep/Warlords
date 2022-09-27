@@ -44,11 +44,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-        getWarlordsNPC().getGame().forEachOfflineWarlordsPlayer(we -> {
-            we.sendMessage(ChatColor.YELLOW + "A §8" + getWarlordsNPC().getName() + " §ehas spawned.");
-        });
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 2);
     }
 
     @Override

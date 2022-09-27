@@ -17,7 +17,7 @@ import org.bukkit.*;
 
 public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
 
-    private int voidRadius = 5;
+    private int voidRadius = 3;
 
     public VoidSkeleton(Location spawnLocation) {
         super(
