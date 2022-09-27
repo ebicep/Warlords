@@ -30,7 +30,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     protected float skillCritChanceBonus;
     @Field("skill_crit_multiplier_bonus")
     protected float skillCritMultiplierBonus;
-
     public AbstractLegendaryWeapon() {
     }
 
@@ -49,9 +48,19 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         return WeaponsPvE.LEGENDARY;
     }
 
-    public abstract String getTitle();
+    @Override
+    public ChatColor getChatColor() {
+        return ChatColor.GOLD;
+    }
 
-    public abstract String getPassiveEffect();
+    @Override
+    public String getName() {
+        if (getTitle().isEmpty()) {
+            return super.getName();
+        } else {
+            return ChatColor.GOLD + getTitle() + " " + super.getName();
+        }
+    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
@@ -67,24 +76,20 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GOLD;
-    }
-
-    @Override
     public List<String> getLore() {
         List<String> lore = new ArrayList<>(super.getLore());
         if (energyPerSecondBonus != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
+            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
         }
         if (energyPerHitBonus != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
+            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
         }
         if (skillCritChanceBonus != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
+            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
         }
         if (skillCritMultiplierBonus != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
+            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(
+                    WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
         }
         String passiveEffect = getPassiveEffect();
         if (!passiveEffect.isEmpty()) {
@@ -98,19 +103,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         return lore;
     }
 
-    @Override
-    public String getName() {
-        if (getTitle().isEmpty()) {
-            return super.getName();
-        } else {
-            return ChatColor.GOLD + getTitle() + " " + super.getName();
-        }
-    }
+    public abstract String getPassiveEffect();
 
-    @Override
-    public int getStarPieceBonusValue() {
-        return 50;
-    }
+    public abstract String getTitle();
 
     @Override
     public List<WeaponStats> getRandomStatBonus() {
@@ -135,23 +130,22 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     public List<String> getUpgradeLore() {
         List<String> upgradeLore = new ArrayList<>(super.getUpgradeLore());
         if (energyPerSecondBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(energyPerSecondBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerSecondBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(energyPerSecondBonus) + " > " + NumberFormat.formatOptionalHundredths(
+                    energyPerSecondBonus * getUpgradeMultiplier()));
         }
         if (energyPerHitBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(energyPerHitBonus) + " > " + NumberFormat.formatOptionalHundredths(energyPerHitBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(energyPerHitBonus) + " > " + NumberFormat.formatOptionalHundredths(
+                    energyPerHitBonus * getUpgradeMultiplier()));
         }
         if (skillCritChanceBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(skillCritChanceBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritChanceBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(skillCritChanceBonus) + " > " + NumberFormat.formatOptionalHundredths(
+                    skillCritChanceBonus * getUpgradeMultiplier()));
         }
         if (skillCritMultiplierBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(skillCritMultiplierBonus) + " > " + NumberFormat.formatOptionalHundredths(skillCritMultiplierBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(skillCritMultiplierBonus) + " > " + NumberFormat.formatOptionalHundredths(
+                    skillCritMultiplierBonus * getUpgradeMultiplier()));
         }
         return upgradeLore;
-    }
-
-    @Override
-    public int getMaxUpgradeLevel() {
-        return 4;
     }
 
     public float getEnergyPerHitBonus() {
@@ -168,5 +162,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     public float getSkillCritMultiplierBonus() {
         return starPieceBonus == WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS ? skillCritMultiplierBonus * getStarPieceBonusMultiplicativeValue() : skillCritMultiplierBonus;
+    }
+
+    @Override
+    public int getStarPieceBonusValue() {
+        return 50;
+    }
+
+    @Override
+    public int getMaxUpgradeLevel() {
+        return 4;
     }
 }

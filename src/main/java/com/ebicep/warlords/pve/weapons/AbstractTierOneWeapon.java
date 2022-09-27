@@ -43,7 +43,7 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(
                         WeaponStats.CRIT_MULTIPLIER),
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
         );
     }
 

@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,15 @@ import java.util.UUID;
  */
 public abstract class AbstractWeapon {
 
-    private UUID uuid = UUID.randomUUID();
+    protected static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
+
+    static {
+        DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        DECIMAL_FORMAT.setPositivePrefix("+");
+        DECIMAL_FORMAT.setNegativePrefix("-");
+    }
+
     @Field("obtain_date")
     protected Instant date = Instant.now();
     @Field("melee_damage")
@@ -35,6 +45,7 @@ public abstract class AbstractWeapon {
     protected Specializations specialization;
     @Field("bound")
     protected boolean isBound = false;
+    private UUID uuid = UUID.randomUUID();
 
     public AbstractWeapon() {
     }
@@ -44,9 +55,15 @@ public abstract class AbstractWeapon {
         this.specialization = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
     }
 
+    public abstract void generateStats();
+
     public AbstractWeapon(WarlordsPlayer warlordsPlayer) {
         generateStats();
         this.specialization = warlordsPlayer.getSpecClass();
+    }
+
+    protected static String format(double value) {
+        return DECIMAL_FORMAT.format(value);
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
@@ -54,17 +71,11 @@ public abstract class AbstractWeapon {
         player.setHealth(player.getMaxHealth() + getHealthBonus());
     }
 
+    public abstract float getHealthBonus();
+
     public abstract WeaponsPvE getRarity();
 
-    public abstract ChatColor getChatColor();
-
-    public abstract List<String> getLore();
-
-    public abstract void generateStats();
-
     public abstract int getMeleeDamageRange();
-
-    public abstract List<String> getBaseStats();
 
     public abstract float getMeleeDamageMin();
 
@@ -73,16 +84,6 @@ public abstract class AbstractWeapon {
     public abstract float getCritChance();
 
     public abstract float getCritMultiplier();
-
-    public abstract float getHealthBonus();
-
-    public List<String> getLoreAddons() {
-        return new ArrayList<>();
-    }
-
-    public String getName() {
-        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
-    }
 
     public ItemStack generateItemStack() {
         List<String> lore = new ArrayList<>();
@@ -100,6 +101,20 @@ public abstract class AbstractWeapon {
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                 .get();
     }
+
+    public abstract List<String> getBaseStats();
+
+    public abstract List<String> getLore();
+
+    public List<String> getLoreAddons() {
+        return new ArrayList<>();
+    }
+
+    public String getName() {
+        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    }
+
+    public abstract ChatColor getChatColor();
 
     public ItemBuilder generateItemStackInLore(String name) {
         List<String> lore = new ArrayList<>();

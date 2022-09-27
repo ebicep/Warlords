@@ -67,7 +67,7 @@ public class StarterWeapon extends AbstractWeapon {
         return Arrays.asList(
                 ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getHealthBonus())
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus())
         );
     }
 

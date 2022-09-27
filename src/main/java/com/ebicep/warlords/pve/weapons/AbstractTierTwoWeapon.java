@@ -38,7 +38,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(getSpeedBonus()) + "%" + getStarPieceBonusString(
+        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + getStarPieceBonusString(
                 WeaponStats.SPEED_BONUS));
     }
 
@@ -67,17 +67,19 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     @Override
     public List<String> getUpgradeLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
+                        meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
+                        ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
+                        meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
                         ChatColor.RED + NumberFormat.formatOptionalTenths(critChance * getUpgradeMultiplier()) + "%",
                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
                         ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier * getUpgradeMultiplier()) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(healthBonus) + " > " +
-                        "+" + NumberFormat.formatOptionalTenths(healthBonus * getUpgradeMultiplier()),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+" + NumberFormat.formatOptionalTenths(speedBonus) + "%" + " > " +
-                        "+" + NumberFormat.formatOptionalTenths(speedBonus * getUpgradeMultiplier()) + "%"
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
+                        format(healthBonus * getUpgradeMultiplier()),
+                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " +
+                        format(speedBonus * getUpgradeMultiplier()) + "%"
         );
     }
 
