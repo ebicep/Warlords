@@ -92,10 +92,12 @@ public class SupplyDropManager {
                 6,
                 3,
                 new ItemBuilder(Material.DIAMOND_BARDING)
-                        .name(ChatColor.GREEN + "Click to call all available supply drops")
+                        .name(ChatColor.GREEN + "Click to call all available supply drops (Max 25)")
                         .lore(
                                 ChatColor.GRAY + "Cost: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
                                 ChatColor.GRAY + "Balance: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
+                                "",
+                                ChatColor.GRAY + "NOTE: Max 25 at a time",
                                 "",
                                 ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call all available supply drops"
                         )
@@ -106,7 +108,7 @@ public class SupplyDropManager {
                         return;
                     }
                     if (tokens > 0) {
-                        supplyDropRoll(player, Math.toIntExact(tokens), e.isShiftClick());
+                        supplyDropRoll(player, Math.min(tokens, 25), e.isShiftClick());
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
                     }
@@ -138,9 +140,11 @@ public class SupplyDropManager {
         menu.openForPlayer(player);
     }
 
-    public static void supplyDropRoll(Player player, int amount, boolean instant) {
+    public static void supplyDropRoll(Player player, long amount, boolean instant) {
         PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), true);
-        sendSupplyDropMessage(player.getUniqueId(), ChatColor.GREEN + "Called " + ChatColor.YELLOW + amount + ChatColor.GREEN + " supply drop" + (amount > 1 ? "s" : "") + "!");
+        sendSupplyDropMessage(player.getUniqueId(),
+                ChatColor.GREEN + "Called " + ChatColor.YELLOW + amount + ChatColor.GREEN + " supply drop" + (amount > 1 ? "s" : "") + "!"
+        );
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
