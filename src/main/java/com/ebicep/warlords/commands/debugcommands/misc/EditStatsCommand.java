@@ -55,6 +55,7 @@ public class EditStatsCommand extends BaseCommand {
                         }
                         object = method.invoke(object, arguments);
                         player.sendMessage(ChatColor.YELLOW + "Invoked Method " + method.getName());
+                        player.sendMessage(ChatColor.YELLOW + "Returned: " + object);
                     } catch (Exception e) {
                         player.sendMessage("Error: " + e.getMessage());
                         e.printStackTrace();
