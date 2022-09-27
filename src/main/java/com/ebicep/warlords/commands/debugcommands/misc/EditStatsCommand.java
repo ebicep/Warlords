@@ -12,14 +12,14 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-@CommandAlias("givestats")
+@CommandAlias("editstats")
 @CommandPermission("group.adminisrator")
 @Conditions("database:player")
-public class GiveStatsCommand extends BaseCommand {
+public class EditStatsCommand extends BaseCommand {
 
     @Default
-    @Description("Gives you stats using reflection - ex. /givestats getpvestats setwins(20)")
-    public void giveStats(Player player, @Split(" ") String[] query) {
+    @Description("Edits your stats using reflection - ex. /givestats getpvestats setwins(20)")
+    public void editStats(Player player, @Split(" ") String[] query) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         Object object = databasePlayer;
         for (String s : query) {

@@ -90,12 +90,12 @@ public class CommandManager {
         manager.registerCommand(new ToggleOfflineFreezeCommand());
         manager.registerCommand(new UnstuckCommand(), true);
 
+        manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
         manager.registerCommand(new GetPlayersCommand());
-        manager.registerCommand(new GiveStatsCommand());
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new MyLocationCommand());
         manager.registerCommand(new PvECurrencyCommand());
