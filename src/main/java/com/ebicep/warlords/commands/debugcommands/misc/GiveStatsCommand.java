@@ -1,10 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Conditions;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Split;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bukkit.entity.Player;
@@ -17,6 +14,7 @@ import java.util.Arrays;
 public class GiveStatsCommand extends BaseCommand {
 
     @Default
+    @Description("Gives you stats using reflection - ex. /givestats getpvestats setwins(20)")
     public void giveStats(Player player, @Split(" ") String[] query) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         Object object = databasePlayer;
