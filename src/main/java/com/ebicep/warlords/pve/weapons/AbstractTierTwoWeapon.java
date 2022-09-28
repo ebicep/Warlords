@@ -78,13 +78,15 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
                         ChatColor.GREEN + " > " +
                         ChatColor.RED + formatOptionalTenths(upgradedMeleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(
                         upgradedMeleeDamage + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + formatOptionalTenths(
-                        critChance * getUpgradeMultiplier()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + formatOptionalTenths(
-                        critMultiplier * getUpgradeMultiplier()) + "%",
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
+                        ChatColor.RED + formatOptionalTenths(critChance * (critChance < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%",
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
+                        ChatColor.RED + formatOptionalTenths(critMultiplier * (critMultiplier < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " + format(healthBonus * getUpgradeMultiplier()),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " + format(speedBonus * getUpgradeMultiplier()) + "%"
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
+                        format(healthBonus * (healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())),
+                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " +
+                        format(speedBonus * (speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%"
         );
     }
 

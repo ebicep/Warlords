@@ -504,6 +504,8 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ WEAPONS SUMMARY ✚", true);
 
+        HashMap<UUID, Long> playerLegendFragmentGain = waveDefenseOption.getWaveDefenseStats().getPlayerLegendFragmentGain();
+
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
@@ -537,6 +539,14 @@ public class EndState implements State, TimerDebugAble {
                         );
                     }
                 });
+            }
+
+            Long fragmentGain = playerLegendFragmentGain.getOrDefault(wp.getUuid(), 0L);
+            if (fragmentGain > 0) {
+                ChatUtils.sendMessage(player,
+                        true,
+                        ChatColor.GRAY + "+" + ChatColor.GREEN + fragmentGain + " " + Currencies.LEGEND_FRAGMENTS.getColoredName() + "s"
+                );
             }
         }
     }

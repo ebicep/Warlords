@@ -304,7 +304,7 @@ public class WeaponManagerMenu {
             //synthetic alloy title legendary
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
-                            .name(ChatColor.GREEN + "Title Weapon")
+                            .name(ChatColor.GREEN + "Apply Title to Weapon")
                             .get(),
                     (m, e) -> {
                     }

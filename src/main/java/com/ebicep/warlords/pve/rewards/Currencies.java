@@ -22,7 +22,7 @@ public enum Currencies {
             new ItemStack(Material.BLAZE_POWDER)
     ),
     LEGEND_FRAGMENTS(
-            "Legend Fragments",
+            "Legend Fragment",
             ChatColor.GOLD,
             new ItemStack(Material.GOLD_NUGGET)
     ),

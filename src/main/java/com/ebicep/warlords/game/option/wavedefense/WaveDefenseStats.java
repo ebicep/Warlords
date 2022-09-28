@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 
 import java.util.*;
 
@@ -45,7 +45,7 @@ public class WaveDefenseStats {
         int wavesCleared = waveDefenseOption.getWavesCleared();
         boolean won = waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
         waveDefenseOption.getGame().warlordsPlayers().forEach(warlordsPlayer -> {
-            if (warlordsPlayer.getAbstractWeapon() instanceof LegendaryWeapon) {
+            if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
                 playerLegendFragmentGain.put(warlordsPlayer.getUuid(), won ? wavesCleared : (long) (wavesCleared * 0.5));
             }
         });
