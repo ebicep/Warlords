@@ -31,6 +31,7 @@ public abstract class AbstractWeapon {
         DECIMAL_FORMAT.setNegativePrefix("-");
     }
 
+    protected UUID uuid = UUID.randomUUID();
     @Field("obtain_date")
     protected Instant date = Instant.now();
     @Field("melee_damage")
@@ -45,7 +46,6 @@ public abstract class AbstractWeapon {
     protected Specializations specialization;
     @Field("bound")
     protected boolean isBound = false;
-    private UUID uuid = UUID.randomUUID();
 
     public AbstractWeapon() {
     }

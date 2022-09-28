@@ -47,6 +47,10 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
         super(uuid);
     }
 
+    public LegendarySuspicious(AbstractLegendaryWeapon legendaryWeapon) {
+        super(legendaryWeapon);
+    }
+
     @Override
     public String getTitle() {
         return "Suspicious";

@@ -17,7 +17,6 @@ import java.util.*;
 
 public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
-    protected String title;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
     @Field("unlocked_skill_boosts")
@@ -42,6 +41,19 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+    }
+
+    public AbstractLegendaryWeapon(AbstractLegendaryWeapon legendaryWeapon) {
+        this.uuid = legendaryWeapon.getUUID();
+        this.specialization = legendaryWeapon.getSpecializations();
+        this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
+        this.unlockedSkillBoosts.add(selectedSkillBoost);
+        this.selectedWeaponSkin = legendaryWeapon.getSelectedWeaponSkin();
+        this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+        generateStats();
+        for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
+            upgrade();
+        }
     }
 
     @Override
@@ -201,5 +213,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
                 break;
         }
         return cost;
+    }
+
+    public SkillBoosts getSelectedSkillBoost() {
+        return selectedSkillBoost;
     }
 }

@@ -22,6 +22,10 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
         super(uuid);
     }
 
+    public LegendaryTitanic(AbstractLegendaryWeapon legendaryWeapon) {
+        super(legendaryWeapon);
+    }
+
     @Override
     public String getTitle() {
         return "Titanic";

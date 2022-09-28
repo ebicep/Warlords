@@ -22,6 +22,10 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         super(uuid);
     }
 
+    public LegendaryVorpal(AbstractLegendaryWeapon legendaryWeapon) {
+        super(legendaryWeapon);
+    }
+
     @Override
     public String getTitle() {
         return "Vorpal";

@@ -29,6 +29,10 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         super(uuid);
     }
 
+    public LegendaryVigorous(AbstractLegendaryWeapon legendaryWeapon) {
+        super(legendaryWeapon);
+    }
+
     @Override
     public String getTitle() {
         return "Vigorous";
