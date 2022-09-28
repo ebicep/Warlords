@@ -1,19 +1,20 @@
-package com.ebicep.warlords.pve.weapons;
+package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponStats;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
@@ -172,5 +173,33 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     @Override
     public int getMaxUpgradeLevel() {
         return 4;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
+        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
+        switch (tier) {
+            case 1:
+                cost.put(Currencies.COIN, 100000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
+                break;
+            case 2:
+                cost.put(Currencies.COIN, 250000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
+                break;
+            case 3:
+                cost.put(Currencies.COIN, 500000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 30000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
+                break;
+            case 4:
+                cost.put(Currencies.COIN, 1000000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 40000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
+                break;
+        }
+        return cost;
     }
 }

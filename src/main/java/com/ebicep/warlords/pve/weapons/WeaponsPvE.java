@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

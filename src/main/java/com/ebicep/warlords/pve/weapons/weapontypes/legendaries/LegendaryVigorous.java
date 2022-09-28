@@ -4,7 +4,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsPlayerEnergyUsed;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,7 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
-import com.ebicep.warlords.pve.weapons.AbstractLegendaryWeapon;
-
 import java.util.UUID;
 
 public class LegendaryDivine extends AbstractLegendaryWeapon {

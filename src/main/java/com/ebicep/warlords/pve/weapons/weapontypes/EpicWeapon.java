@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.general.WeaponsRarity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.rewards.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
@@ -11,10 +12,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore.getAverageValue;
 
@@ -118,5 +116,18 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     @Override
     public int getMaxUpgradeLevel() {
         return 2;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
+        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
+        if (tier == 1) {
+            cost.put(Currencies.COIN, 10000L);
+            cost.put(Currencies.SYNTHETIC_SHARD, 1000L);
+        } else if (tier == 2) {
+            cost.put(Currencies.COIN, 25000L);
+            cost.put(Currencies.SYNTHETIC_SHARD, 2000L);
+        }
+        return cost;
     }
 }

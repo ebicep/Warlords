@@ -38,7 +38,7 @@ public class WeaponRerollMenu {
                 (m, e) -> {
                     if (databasePlayer.getPveStats().getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) >= rerollCost) {
                         databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
-                        rerollWeapon(player, weapon);
+                        rerollWeapon(player, (AbstractWeapon & StatsRerollable) weapon);
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have enough coins to reroll this weapon.");
                     }
@@ -63,15 +63,14 @@ public class WeaponRerollMenu {
         menu.openForPlayer(player);
     }
 
-    public static void rerollWeapon(Player player, AbstractWeapon weapon) {
-        if (!(weapon instanceof StatsRerollable)) {
+    public static <T extends AbstractWeapon & StatsRerollable> void rerollWeapon(Player player, T weapon) {
+        if (weapon == null) {
             return;
         }
-        StatsRerollable rerollable = (StatsRerollable) weapon;
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            rerollable.reroll();
+            weapon.reroll();
 
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 

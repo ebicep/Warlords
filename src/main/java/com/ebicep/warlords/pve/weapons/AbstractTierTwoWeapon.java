@@ -47,6 +47,10 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
         return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
     }
 
+    public float getSpeedBonus() {
+        return starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
+    }
+
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
@@ -71,24 +75,18 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
                         meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
                         ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
                         meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalTenths(critChance * getUpgradeMultiplier()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier * getUpgradeMultiplier()) + "%",
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + NumberFormat.formatOptionalTenths(
+                        critChance * getUpgradeMultiplier()) + "%",
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + NumberFormat.formatOptionalTenths(
+                        critMultiplier * getUpgradeMultiplier()) + "%",
                 "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
-                        format(healthBonus * getUpgradeMultiplier()),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " +
-                        format(speedBonus * getUpgradeMultiplier()) + "%"
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " + format(healthBonus * getUpgradeMultiplier()),
+                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " + format(speedBonus * getUpgradeMultiplier()) + "%"
         );
     }
 
     @Override
     public int getUpgradeLevel() {
         return upgradeLevel;
-    }
-
-    public float getSpeedBonus() {
-        return starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
     }
 }

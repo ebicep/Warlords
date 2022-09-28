@@ -6,12 +6,16 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.rewards.Currencies;
-import com.ebicep.warlords.pve.weapons.*;
+import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -264,10 +268,10 @@ public class WeaponManagerMenu {
                         }
 
                         if (!(weapon instanceof AbstractTierTwoWeapon) && e.isShiftClick()) {
-                            WeaponSalvageMenu.salvageWeapon(player, weapon);
+                            WeaponSalvageMenu.salvageWeapon(player, (AbstractWeapon & Salvageable) weapon);
                             openWeaponInventoryFromInternal(player);
                         } else {
-                            WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, weapon);
+                            WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, (AbstractWeapon & Salvageable) weapon);
                         }
                     }
             ));
@@ -287,7 +291,13 @@ public class WeaponManagerMenu {
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
                             .get(),
-                    (m, e) -> WeaponUpgradeMenu.openWeaponUpgradeMenu(player, weapon)
+                    (m, e) -> {
+                        if (((Upgradeable) weapon).getUpgradeLevel() >= ((Upgradeable) weapon).getMaxUpgradeLevel()) {
+                            player.sendMessage(ChatColor.RED + "You can't upgrade this weapon anymore.");
+                            return;
+                        }
+                        WeaponUpgradeMenu.openWeaponUpgradeMenu(player, (AbstractWeapon & Upgradeable) weapon);
+                    }
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon) {
@@ -303,14 +313,7 @@ public class WeaponManagerMenu {
 
         int x = 2;
         int y = 1;
-        for (int i = 0; i < weaponOptions.size(); i++) {
-            Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option = weaponOptions.get(i);
-//            menu.setItem(
-//                    i % 7 + 1,
-//                    i / 7 + 1,
-//                    option.getA(),
-//                    option.getB()
-//            );
+        for (Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option : weaponOptions) {
             menu.setItem(
                     x,
                     y,

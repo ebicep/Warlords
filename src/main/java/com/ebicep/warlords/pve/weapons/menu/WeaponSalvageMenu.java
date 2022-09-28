@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 public class WeaponSalvageMenu {
 
-    public static void openWeaponSalvageConfirmMenu(Player player, AbstractWeapon weapon) {
+    public static <T extends AbstractWeapon & Salvageable> void openWeaponSalvageConfirmMenu(Player player, T weapon) {
         Menu menu = new Menu("Confirm salvage", 9 * 3);
 
         menu.setItem(2, 1,
@@ -50,12 +50,11 @@ public class WeaponSalvageMenu {
         menu.openForPlayer(player);
     }
 
-    public static void salvageWeapon(Player player, AbstractWeapon weapon) {
-        if (!(weapon instanceof Salvageable)) {
+    public static <T extends AbstractWeapon & Salvageable> void salvageWeapon(Player player, T weapon) {
+        if (weapon == null) {
             return;
         }
-        Salvageable salvageable = (Salvageable) weapon;
-        int salvageAmount = salvageable.getSalvageAmount();
+        int salvageAmount = weapon.getSalvageAmount();
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
