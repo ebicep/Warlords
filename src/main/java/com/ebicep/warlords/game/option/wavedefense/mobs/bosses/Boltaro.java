@@ -81,7 +81,6 @@ public class Boltaro extends AbstractZombie implements BossMob {
         if (!event.getAbility().equals("Multi Hit")) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
-
                 @Override
                 public void run() {
                     counter++;
