@@ -86,12 +86,12 @@ public enum Weapons {
     SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), LEGENDARY, WeaponsPvE.LEGENDARY),
     SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY, WeaponsPvE.LEGENDARY),
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY, WeaponsPvE.LEGENDARY),
-
-    // mythic
-    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), ASCENDANT, WeaponsPvE.LEGENDARY),
-    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), ASCENDANT, WeaponsPvE.LEGENDARY),
+    FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    FABLED_HEROICS_SWORD("Nichirin", new ItemStack(Material.WHEAT), LEGENDARY, WeaponsPvE.LEGENDARY),
     FABLED_HEROICS_SWORD_2("Bumbleblade", new ItemStack(Material.NETHER_BRICK_ITEM), LEGENDARY, WeaponsPvE.LEGENDARY),
     FABLED_HEROICS_DRUMSTICK("Cornelius", new ItemStack(Material.SUGAR_CANE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    LUNAR_JUSTICE("Lunar Justice", new ItemStack(Material.MAGMA_CREAM), LEGENDARY, WeaponsPvE.LEGENDARY),
+    VORPAL_SWORD("Vorpal Sword", new ItemStack(Material.FERMENTED_SPIDER_EYE), LEGENDARY, WeaponsPvE.LEGENDARY),
 
     ;
 

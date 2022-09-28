@@ -328,6 +328,66 @@ public enum GameMap {
         }
 
     },
+    GORGE(
+            "Gorge Remastered",
+            32,
+            12,
+            60 * SECOND,
+            "",
+            GameMode.CAPTURE_THE_FLAG
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(43.5, 76, -216.5, 90, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(59.5, 71.5, -232.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(59.5, 36.5, -23.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(-12.5, 45.5, -194.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(3.5, 71.5, -159.5, 135, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 90, 0), Team.RED));
+
+            options.add(new FlagCapturePointOption(loc.addXYZ(50.5, 76.5, -199.5, 180, 0), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(50.5, 76.5, -199.5, 180, 0), Team.BLUE));
+
+            options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+
+            options.add(new AbstractScoreOnEventOption.FlagCapture(250));
+
+            options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
+            options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
+            options.add(new GateOption(loc, 79, 45, 25, 79, 49, 29));
+            options.add(new GateOption(loc, 87, 45, 6, 91, 49, 6));
+
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(1800));
+            } else {
+                options.add(new WinAfterTimeoutOption());
+            }
+            options.add(new GameOvertimeOption());
+            options.add(new AbstractScoreOnEventOption.OnKill(5));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
     SIEGE(
             "Siege",
             32,
