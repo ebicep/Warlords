@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 public enum SkillBoosts {
     FIREBALL("Fireball",
-            "§7Increases the damage you §7deal with Fireball by 20%",
-            "§aIncreases the damage you §adeal with Fireball by §c20%",
+            "§7Increases the damage you deal with Fireball by 20%",
+            "§aIncreases the damage you deal with Fireball by §c20%",
             Fireball.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball) {
@@ -18,8 +18,8 @@ public enum SkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you §7deal with Flame Burst by §725% and reduce the energy cost §7by 40",
-            "§aIncreases the damage you §adeal with Flame Burst by §c25% §aand reduce the energy cost §aby §c40",
+            "§7Increases the damage you deal with Flame Burst by 25% and reduce the energy cost by 40",
+            "§aIncreases the damage you deal with Flame Burst by §c25% §aand reduce the energy cost by §c40",
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
@@ -30,8 +30,8 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you restore with Time Warp by §710% §7and §7reduce the cooldown by 50%.",
-            "§aIncrease the amount of health §ayou restore with Time Warp by §c10% §aand §areduce the cooldown by §c50%.",
+            "§7Increase the amount of health you restore with Time Warp by 10% and reduce the cooldown by 50%.",
+            "§aIncrease the amount of health you restore with Time Warp by §c10% §aand reduce the cooldown by §c50%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -86,12 +86,12 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp §7by 30%",
-            "§aReduce the cooldown of Time Warp §aby §c30%",
+            "§7Reduce the cooldown of Time Warp §7by 40%",
+            "§aReduce the cooldown of Time Warp §aby §c40%",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
     ),

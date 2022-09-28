@@ -334,6 +334,8 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Arathi-1", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-1")));
         gameManager.addGameHolder("Arathi-2", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-2")));
 
+        //gameManager.addGameHolder("Gorge-0", GameMap.GORGE, new LocationFactory(Bukkit.getWorld("Gorge-0")));
+
         // TDM
         gameManager.addGameHolder("Siege-0", GameMap.SIEGE, new LocationFactory(Bukkit.getWorld("Siege-0")));
         gameManager.addGameHolder("Ruins-0", GameMap.RUINS, new LocationFactory(Bukkit.getWorld("Ruins-0")));
@@ -365,7 +367,7 @@ public class Warlords extends JavaPlugin {
         //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));
         //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-2")));
 
-        gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, new LocationFactory(Bukkit.getWorld("FrozenDivide-0")));
+        //gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, new LocationFactory(Bukkit.getWorld("FrozenDivide-0")));
 
         // PRACTICE
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));

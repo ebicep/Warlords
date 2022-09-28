@@ -179,7 +179,10 @@ public class WarlordsShopMenu {
                     .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedSpec.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(WordWrap.wrapWithNewline(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+            lore.add(WordWrap.wrapWithNewline(skillBoost == selectedBoost ? skillBoost.selectedDescription
+                    .replace("§c", ChatColor.RED.toString())
+                    .replace("§a", ChatColor.GREEN.toString()) : skillBoost.description, 130)
+            );
             lore.add("");
             if (skillBoost == selectedBoost) {
                 lore.add(ChatColor.GREEN + "Currently selected!");
