@@ -1,5 +1,7 @@
-package com.ebicep.warlords.pve.rewards;
+package com.ebicep.warlords.pve.rewards.types;
 
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.rewards.AbstractReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;

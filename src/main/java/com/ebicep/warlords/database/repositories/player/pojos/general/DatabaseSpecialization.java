@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.rewards.LevelUpReward;
+import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;

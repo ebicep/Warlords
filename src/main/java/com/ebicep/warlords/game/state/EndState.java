@@ -17,7 +17,7 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;

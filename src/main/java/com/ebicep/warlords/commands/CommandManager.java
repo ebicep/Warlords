@@ -75,72 +75,6 @@ public class CommandManager {
         registerCommands();
     }
 
-    public static void registerCommands() {
-        manager.registerCommand(new DebugCommand());
-        manager.registerCommand(new GameKillCommand());
-        manager.registerCommand(new GameListCommand());
-        manager.registerCommand(new GameTerminateCommand());
-        manager.registerCommand(new PrivateGameTerminateCommand());
-
-        manager.registerCommand(new DebugModeCommand());
-        manager.registerCommand(new ImposterCommand());
-        manager.registerCommand(new RecordAverageDamageCommand());
-        manager.registerCommand(new SpawnTestDummyCommand());
-        manager.registerCommand(new ToggleAFKDetectionCommand());
-        manager.registerCommand(new ToggleOfflineFreezeCommand());
-        manager.registerCommand(new UnstuckCommand(), true);
-
-        manager.registerCommand(new AdminCommand());
-        manager.registerCommand(new EditStatsCommand());
-        manager.registerCommand(new ExperienceCommand());
-        manager.registerCommand(new FindPlayerCommand());
-        manager.registerCommand(new GamesCommand());
-        manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
-        manager.registerCommand(new GetPlayersCommand());
-        manager.registerCommand(new MuteCommand());
-        manager.registerCommand(new MyLocationCommand());
-        manager.registerCommand(new PvECurrencyCommand());
-        manager.registerCommand(new RecordGamesCommand());
-        manager.registerCommand(new SeeAllChatsCommand());
-        manager.registerCommand(new ServerStatusCommand());
-        manager.registerCommand(new TestCommand());
-
-        manager.registerCommand(new AchievementsCommand(), true);
-        manager.registerCommand(new ChatCommand());
-        manager.registerCommand(new ClassCommand());
-        manager.registerCommand(new DiscordCommand());
-        manager.registerCommand(new FlagMessageModeCommand());
-        manager.registerCommand(new HotkeyModeCommand());
-        manager.registerCommand(new LobbyCommand());
-        manager.registerCommand(new ParticleQualityCommand());
-        manager.registerCommand(new ResourcePackCommand());
-        manager.registerCommand(new ShoutCommand());
-        manager.registerCommand(new SpectateCommand());
-        manager.registerCommand(new StreamChaptersCommand());
-        manager.registerCommand(new MessageCommand());
-
-        manager.registerCommand(new StatsLeaderboardCommand());
-
-        manager.registerCommand(new PartyCommand());
-        manager.registerCommand(new StreamCommand());
-
-        manager.registerCommand(new PollCommand());
-
-        manager.registerCommand(new BotCommand());
-        manager.registerCommand(new QueueCommand());
-
-        manager.registerCommand(new EditCurrencyCommand());
-        manager.registerCommand(new MobCommand());
-        manager.registerCommand(new WaveCommand());
-
-        manager.registerCommand(new GuildCommand());
-        manager.registerCommand(new GuildDebugCommand());
-
-        manager.registerCommand(new MyPositionCommand());
-        manager.registerCommand(new WeaponCommand());
-        manager.registerCommand(new MasterworksFairCommand());
-    }
-
     public static void registerContexts() {
         //Issuer aware contexts
         manager.getCommandContexts().registerIssuerAwareContext(Player.class, (c) -> {
@@ -339,10 +273,19 @@ public class CommandManager {
                         .map(String::valueOf)
                         .collect(Collectors.toList())
         );
-        commandCompletions.registerAsyncCompletion("gameteams", command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList()));
-        commandCompletions.registerAsyncCompletion("playerabilitystats", command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet().stream().map(uuid -> Bukkit.getOfflinePlayer(uuid).getName()).collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("gameteams",
+                command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList())
+        );
+        commandCompletions.registerAsyncCompletion("playerabilitystats",
+                command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet()
+                        .stream()
+                        .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
+                        .collect(Collectors.toList())
+        );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
-        commandCompletions.registerAsyncCompletion("partyleaders", command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).collect(Collectors.toList()));
+        commandCompletions.registerAsyncCompletion("partyleaders",
+                command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).collect(Collectors.toList())
+        );
         commandCompletions.registerAsyncCompletion("partymembers", command -> {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
@@ -453,7 +396,7 @@ public class CommandManager {
             }
         });
         manager.getCommandConditions().addCondition(Player.class, "otherChatChannel", (command, exec, player) -> {
-            ChatChannels selectedChatChannel = Warlords.PLAYER_CHAT_CHANNELS.get(player.getUniqueId());
+            ChatChannels selectedChatChannel = ChatChannels.PLAYER_CHAT_CHANNELS.get(player.getUniqueId());
             if (command.hasConfig("target")) {
                 ChatChannels currentChatChannel = ChatChannels.valueOf(command.getConfigValue("target", ""));
                 if (selectedChatChannel == currentChatChannel) {
@@ -519,10 +462,83 @@ public class CommandManager {
         });
     }
 
-    public static void requirePlayer(BukkitCommandIssuer issuer) {
-        if (!issuer.isPlayer()) {
-            throw new ConditionFailedException(ChatColor.RED + "This command requires a player!");
+    public static void registerCommands() {
+        manager.registerCommand(new DebugCommand());
+        manager.registerCommand(new GameKillCommand());
+        manager.registerCommand(new GameListCommand());
+        manager.registerCommand(new GameTerminateCommand());
+        manager.registerCommand(new PrivateGameTerminateCommand());
+
+        manager.registerCommand(new DebugModeCommand());
+        manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new RecordAverageDamageCommand());
+        manager.registerCommand(new SpawnTestDummyCommand());
+        manager.registerCommand(new ToggleAFKDetectionCommand());
+        manager.registerCommand(new ToggleOfflineFreezeCommand());
+        manager.registerCommand(new UnstuckCommand(), true);
+
+        manager.registerCommand(new AdminCommand());
+        manager.registerCommand(new EditStatsCommand());
+        manager.registerCommand(new ExperienceCommand());
+        manager.registerCommand(new FindPlayerCommand());
+        manager.registerCommand(new GamesCommand());
+        manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
+        manager.registerCommand(new GetPlayersCommand());
+        manager.registerCommand(new MuteCommand());
+        manager.registerCommand(new MyLocationCommand());
+        manager.registerCommand(new PvECurrencyCommand());
+        manager.registerCommand(new RecordGamesCommand());
+        manager.registerCommand(new SeeAllChatsCommand());
+        manager.registerCommand(new ServerStatusCommand());
+        manager.registerCommand(new TestCommand());
+
+        manager.registerCommand(new AchievementsCommand(), true);
+        manager.registerCommand(new ChatCommand());
+        manager.registerCommand(new ClassCommand());
+        manager.registerCommand(new DiscordCommand());
+        manager.registerCommand(new FlagMessageModeCommand());
+        manager.registerCommand(new HotkeyModeCommand());
+        manager.registerCommand(new LobbyCommand());
+        manager.registerCommand(new ParticleQualityCommand());
+        manager.registerCommand(new ResourcePackCommand());
+        manager.registerCommand(new ShoutCommand());
+        manager.registerCommand(new SpectateCommand());
+        manager.registerCommand(new StreamChaptersCommand());
+        manager.registerCommand(new MessageCommand());
+
+        manager.registerCommand(new StatsLeaderboardCommand());
+
+        manager.registerCommand(new PartyCommand());
+        manager.registerCommand(new StreamCommand());
+
+        manager.registerCommand(new PollCommand());
+
+        manager.registerCommand(new BotCommand());
+        manager.registerCommand(new QueueCommand());
+
+        manager.registerCommand(new EditCurrencyCommand());
+        manager.registerCommand(new MobCommand());
+        manager.registerCommand(new WaveCommand());
+
+        manager.registerCommand(new GuildCommand());
+        manager.registerCommand(new GuildDebugCommand());
+
+        manager.registerCommand(new MyPositionCommand());
+        manager.registerCommand(new WeaponCommand());
+        manager.registerCommand(new MasterworksFairCommand());
+    }
+
+    @Nullable
+    public static OnlinePlayer getOnlinePlayer(BukkitCommandIssuer issuer, String lookup, boolean allowMissing) throws InvalidCommandArgument {
+        Player player = findPlayerSmart(issuer, lookup);
+        //noinspection Duplicates
+        if (player == null) {
+            if (allowMissing) {
+                return null;
+            }
+            throw new InvalidCommandArgument(false);
         }
+        return new OnlinePlayer(player);
     }
 
     public static void requireWarlordsPlayer(Player player) {
@@ -552,20 +568,6 @@ public class CommandManager {
         }
     }
 
-
-    @Nullable
-    public static OnlinePlayer getOnlinePlayer(BukkitCommandIssuer issuer, String lookup, boolean allowMissing) throws InvalidCommandArgument {
-        Player player = findPlayerSmart(issuer, lookup);
-        //noinspection Duplicates
-        if (player == null) {
-            if (allowMissing) {
-                return null;
-            }
-            throw new InvalidCommandArgument(false);
-        }
-        return new OnlinePlayer(player);
-    }
-
     public static Player findPlayerSmart(CommandIssuer issuer, String search) {
         CommandSender requester = issuer.getIssuer();
         if (search == null) {
@@ -586,7 +588,8 @@ public class CommandManager {
         if (matches.size() > 1 || confirmList.size() > 1) {
             String allMatches = matches.stream().map(Player::getName).collect(Collectors.joining(", "));
             issuer.sendError(MinecraftMessageKeys.MULTIPLE_PLAYERS_MATCH,
-                    "{search}", name, "{all}", allMatches);
+                    "{search}", name, "{all}", allMatches
+            );
             return null;
         }
 
@@ -603,5 +606,11 @@ public class CommandManager {
         }
 
         return matches.get(0);
+    }
+
+    public static void requirePlayer(BukkitCommandIssuer issuer) {
+        if (!issuer.isPlayer()) {
+            throw new ConditionFailedException(ChatColor.RED + "This command requires a player!");
+        }
     }
 }

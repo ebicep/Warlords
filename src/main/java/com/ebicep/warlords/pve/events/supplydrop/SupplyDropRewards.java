@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.events.supplydrop;
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -14,34 +14,34 @@ import java.util.function.Consumer;
 public enum SupplyDropRewards {
 
     SYNTHETIC_SHARDS_3("3 Synthetic Shards",
-                       databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
-                       150,
-                       WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
+            150,
+            WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_5("5 Synthetic Shards",
-                       databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
-                       200,
-                       WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
+            200,
+            WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_10("10 Synthetic Shards",
-                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
-                        100,
-                        WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
+            100,
+            WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_20("20 Synthetic Shards",
-                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20),
-                        50,
-                        WeaponsPvE.RARE
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20),
+            50,
+            WeaponsPvE.RARE
     ),
     SYNTHETIC_SHARDS_50("50 Synthetic Shards",
-                        databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50),
-                        20,
-                        WeaponsPvE.EPIC
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50),
+            20,
+            WeaponsPvE.EPIC
     ),
     COMMON_STAR_PIECE("Common Star Piece",
-                      databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE),
-                      10,
-                      WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE),
+            10,
+            WeaponsPvE.COMMON
     ) {
         @Override
         public String getDropMessage() {
@@ -49,9 +49,9 @@ public enum SupplyDropRewards {
         }
     },
     RARE_STAR_PIECE("Rare Star Piece",
-                    databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
-                    3,
-                    WeaponsPvE.RARE
+            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
+            3,
+            WeaponsPvE.RARE
     ) {
         @Override
         public String getDropMessage() {
@@ -59,9 +59,9 @@ public enum SupplyDropRewards {
         }
     },
     EPIC_STAR_PIECE("Epic Star Piece",
-                    databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE),
-                    1,
-                    WeaponsPvE.EPIC
+            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.EPIC_STAR_PIECE),
+            1,
+            WeaponsPvE.EPIC
     ) {
         @Override
         public String getDropMessage() {
@@ -69,49 +69,49 @@ public enum SupplyDropRewards {
         }
     },
     SKILL_BOOST_MODIFIER("Skill Boost Modifier",
-                         databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER),
-                         1,
-                         WeaponsPvE.EPIC
+            databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER),
+            1,
+            WeaponsPvE.EPIC
     ),
     COINS_1000("1,000 Coins",
-               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000),
-               100,
-               WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000),
+            100,
+            WeaponsPvE.COMMON
     ),
     COINS_2000("2,000 Coins",
-               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000),
-               150,
-               WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000),
+            150,
+            WeaponsPvE.COMMON
     ),
     COINS_5000("5,000 Coins",
-               databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000),
-               100,
-               WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000),
+            100,
+            WeaponsPvE.COMMON
     ),
     COINS_10000("10,000 Coins",
-                databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000),
-                50,
-                WeaponsPvE.COMMON
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000),
+            50,
+            WeaponsPvE.COMMON
     ),
     COINS_50000("50,000 Coins",
-                databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000),
-                20,
-                WeaponsPvE.RARE
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000),
+            20,
+            WeaponsPvE.RARE
     ),
     COINS_100000("100,000 Coins",
-                 databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000),
-                 10,
-                 WeaponsPvE.EPIC
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000),
+            10,
+            WeaponsPvE.EPIC
     ),
     FAIRY_ESSENCE_20("20 Fairy Essence",
-                     databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20),
-                     50,
-                     WeaponsPvE.RARE
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20),
+            50,
+            WeaponsPvE.RARE
     ),
     FAIRY_ESSENCE_40("40 Fairy Essence",
-                     databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
-                     20,
-                     WeaponsPvE.RARE
+            databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
+            20,
+            WeaponsPvE.RARE
     ),
 
     ;
@@ -144,16 +144,16 @@ public enum SupplyDropRewards {
         return ChatColor.GRAY + "You received " + getChatColor() + name + ChatColor.GRAY + " from the supply drop.";
     }
 
+    public ChatColor getChatColor() {
+        return rarity.chatColor;
+    }
+
     protected String getStarPieceDropMessage() {
         return ChatColor.GRAY + "A " + getChatColor() + getType() + " Star Piece " + ChatColor.GRAY + "has been bestowed upon you.";
     }
 
     public String getType() {
         return rarity.name;
-    }
-
-    public ChatColor getChatColor() {
-        return rarity.chatColor;
     }
 
     public void givePlayerRewardTitle(Player player) {

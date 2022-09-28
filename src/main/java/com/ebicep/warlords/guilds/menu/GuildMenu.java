@@ -13,7 +13,7 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;

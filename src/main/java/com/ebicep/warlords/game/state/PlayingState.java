@@ -83,7 +83,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
-            CustomScoreboard customScoreboard = Warlords.PLAYER_SCOREBOARDS.get(wp.getUuid());
+            CustomScoreboard customScoreboard = CustomScoreboard.PLAYER_SCOREBOARDS.get(wp.getUuid());
             updateBasedOnGameState(customScoreboard, wp);
         });
 
@@ -115,7 +115,7 @@ public class PlayingState implements State, TimerDebugAble {
             @Override
             public void run() {
                 game.forEachOnlinePlayer((player, team) -> {
-                    updateBasedOnGameState(Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()), (WarlordsPlayer) Warlords.getPlayer(player));
+                    updateBasedOnGameState(CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()), (WarlordsPlayer) Warlords.getPlayer(player));
                 });
             }
         }.runTaskTimer(0, 10);
@@ -340,7 +340,7 @@ public class PlayingState implements State, TimerDebugAble {
             player.teleport(spawn);
         }
         if (wp instanceof WarlordsPlayer) {
-            CustomScoreboard sb = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId());
+            CustomScoreboard sb = CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId());
             updateBasedOnGameState(sb, (WarlordsPlayer) wp);
         }
     }
@@ -375,8 +375,8 @@ public class PlayingState implements State, TimerDebugAble {
      */
     public void updatePlayerName(@Nonnull WarlordsEntity we) {
         this.getGame().forEachOfflinePlayer((player, team) -> {
-            if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
-                Scoreboard scoreboard = Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard();
+            if (CustomScoreboard.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
+                Scoreboard scoreboard = CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard();
                 int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
                 //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
                 scoreboard.getTeam(we.getName())

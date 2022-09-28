@@ -55,21 +55,8 @@ public class NPCManager {
     public static void destroyNPCs() {
         if (!Warlords.citizensEnabled) return;
 
-        npcRegistry.deregisterAll();
         npcRegistry.despawnNPCs(DespawnReason.RELOAD);
-
-        if (gameStartNPC != null) {
-            gameStartNPC.destroy();
-        }
-        if (gameStartNPC != null) {
-            gameStartNPC.destroy();
-        }
-        if (pveStartNPC != null) {
-            pveStartNPC.destroy();
-        }
-        if (masterworksFairNPC != null) {
-            masterworksFairNPC.destroy();
-        }
+        npcRegistry.deregisterAll();
     }
 
     private static void registerTrait(Class<? extends Trait> trait, String traitName) {

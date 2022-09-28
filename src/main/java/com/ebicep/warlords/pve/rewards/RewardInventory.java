@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -52,6 +53,8 @@ public class RewardInventory {
                             (m, e) -> {
                                 masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
                                 masterworksFairReward.setTimeClaimed();
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         new TextComponent(ChatColor.GREEN + "Claimed: "),
@@ -60,7 +63,6 @@ public class RewardInventory {
                                                 .getTextComponent()
                                 );
 
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 openRewardInventory(player, page);
                             }
                     );
@@ -87,7 +89,6 @@ public class RewardInventory {
                                             .getTextComponent()
                             );
                         }
-
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         openRewardInventory(player, page);
                     }

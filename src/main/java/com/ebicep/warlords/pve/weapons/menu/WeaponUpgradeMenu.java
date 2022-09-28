@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -71,13 +71,14 @@ public class WeaponUpgradeMenu {
                 databasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
             }
             weapon.upgrade();
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "Upgraded Weapon: "),
                     new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent()
             );
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         }
 
     }

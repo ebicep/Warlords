@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;

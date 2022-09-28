@@ -1,4 +1,7 @@
-package com.ebicep.warlords.pve.rewards;
+package com.ebicep.warlords.pve.rewards.types;
+
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.rewards.AbstractReward;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;

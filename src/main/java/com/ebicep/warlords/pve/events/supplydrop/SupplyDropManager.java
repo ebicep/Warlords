@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -48,7 +48,8 @@ public class SupplyDropManager {
                         .name(ChatColor.GREEN + "Click to buy a supply drop token")
                         .lore(
                                 ChatColor.GREEN + "Cost: " + ChatColor.YELLOW + "10,000 coins",
-                                ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins")
+                                ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins"
+                        )
                         .get(),
                 (m, e) -> {
                     if (databasePlayerPvE.getCurrencyValue(Currencies.COIN) < 10000) {
@@ -60,7 +61,8 @@ public class SupplyDropManager {
                     databasePlayerPvE.subtractCurrency(Currencies.COIN, 10000);
                     databasePlayerPvE.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
                     openSupplyDropMenu(player);
-                });
+                }
+        );
 
         Long tokens = databasePlayerPvE.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN);
         menu.setItem(
@@ -87,7 +89,8 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
                     }
                     player.closeInventory();
-                });
+                }
+        );
         menu.setItem(
                 6,
                 3,
@@ -113,7 +116,8 @@ public class SupplyDropManager {
                         player.sendMessage(ChatColor.RED + "You do not have any supply drop tokens to call a supply drop.");
                     }
                     player.closeInventory();
-                });
+                }
+        );
 
         //last 20 supply drops
         List<SupplyDropEntry> supplyDropEntries = databasePlayerPvE.getSupplyDropEntries();
@@ -134,19 +138,21 @@ public class SupplyDropManager {
                         .get(),
                 (m, e) -> {
 
-                });
+                }
+        );
 
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
     public static void supplyDropRoll(Player player, long amount, boolean instant) {
-        PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), true);
-        sendSupplyDropMessage(player.getUniqueId(),
+        UUID uuid = player.getUniqueId();
+        PLAYER_ROLL_COOLDOWN.put(uuid, true);
+        sendSupplyDropMessage(uuid,
                 ChatColor.GREEN + "Called " + ChatColor.YELLOW + amount + ChatColor.GREEN + " supply drop" + (amount > 1 ? "s" : "") + "!"
         );
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
         databasePlayerPvE.subtractCurrency(Currencies.SUPPLY_DROP_TOKEN, amount);
 
@@ -173,7 +179,7 @@ public class SupplyDropManager {
                     Random random = new Random();
                     player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, random.nextFloat());
                     PacketUtils.sendTitle(
-                            player.getUniqueId(),
+                            uuid,
                             reward.getChatColor() + reward.name,
                             "",
                             0, 100, 0
@@ -189,10 +195,11 @@ public class SupplyDropManager {
                         slowness = 1;
                         rewardsGained++;
                         cooldown = instant ? 3 : 13;
-                        sendSupplyDropMessage(player.getUniqueId(), reward.getDropMessage());
+                        sendSupplyDropMessage(uuid, reward.getDropMessage());
                         databasePlayerPvE.addSupplyDropEntry(new SupplyDropEntry(reward));
+                        reward.giveReward.accept(databasePlayerPvE);
                         if (rewardsGained == amount) {
-                            PLAYER_ROLL_COOLDOWN.put(player.getUniqueId(), false);
+                            PLAYER_ROLL_COOLDOWN.put(uuid, false);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             cancel();
                         }

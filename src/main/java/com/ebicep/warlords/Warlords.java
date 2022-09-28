@@ -47,7 +47,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.bukkit.*;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -77,7 +76,6 @@ import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -87,8 +85,6 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
-    public static final ConcurrentHashMap<UUID, ChatChannels> PLAYER_CHAT_CHANNELS = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
     public static final AtomicInteger LOOP_TICK_COUNTER = new AtomicInteger(0);
     private static final HashMap<UUID, WarlordsEntity> PLAYERS = new HashMap<>();
     public static String VERSION = "";
@@ -268,14 +264,6 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
         try {
-            Bukkit.getWorld("MainLobby").getEntities().stream()
-                    .filter(entity -> entity.getName().equals("capture-the-flag"))
-                    .filter(entity -> entity.getName().equals("pve-mode"))
-                    .forEach(Entity::remove);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             BotManager.deleteStatusMessage();
             if (BotManager.jda != null) {
                 BotManager.jda.shutdownNow();
@@ -396,9 +384,11 @@ public class Warlords extends JavaPlugin {
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.teleport(getRejoinPoint(player.getUniqueId()));
+            UUID uuid = player.getUniqueId();
+            player.teleport(getRejoinPoint(uuid));
             player.getInventory().clear();
-            PLAYER_SCOREBOARDS.put(player.getUniqueId(), new CustomScoreboard(player));
+            player.setAllowFlight(true);
+            CustomScoreboard.PLAYER_SCOREBOARDS.put(uuid, new CustomScoreboard(uuid));
             PlayerHotBarItemListener.giveLobbyHotBar(player, false);
         });
 

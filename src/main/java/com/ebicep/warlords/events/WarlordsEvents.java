@@ -32,7 +32,6 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
@@ -103,7 +102,7 @@ public class WarlordsEvents implements Listener {
                                 if (StatsLeaderboardManager.loaded) {
                                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                                     DatabaseGameBase.setGameHologramVisibility(player);
-                                    Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                                    CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
 
                                 }
                                 ExperienceManager.giveExperienceBar(player);
@@ -132,10 +131,10 @@ public class WarlordsEvents implements Listener {
         }
 
         //scoreboard
-        if (!Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId()) || Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()) == null) {
-            Warlords.PLAYER_SCOREBOARDS.put(player.getUniqueId(), new CustomScoreboard(player));
+        if (!CustomScoreboard.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId()) || CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()) == null) {
+            CustomScoreboard.PLAYER_SCOREBOARDS.put(player.getUniqueId(), new CustomScoreboard(player.getUniqueId()));
         }
-        player.setScoreboard(Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard());
+        player.setScoreboard(CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard());
 
         joinInteraction(player, false);
 
@@ -192,7 +191,7 @@ public class WarlordsEvents implements Listener {
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             if (fromGame) {
-                Warlords.PLAYER_SCOREBOARDS.get(uuid).giveMainLobbyScoreboard();
+                CustomScoreboard.PLAYER_SCOREBOARDS.get(uuid).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
                 if (DatabaseManager.playerService != null) {
                     //check all spec prestige
@@ -647,8 +646,8 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        if (!Warlords.PLAYER_CHAT_CHANNELS.containsKey(uuid) || Warlords.PLAYER_CHAT_CHANNELS.get(uuid) == null) {
-            Warlords.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
+        if (!ChatChannels.PLAYER_CHAT_CHANNELS.containsKey(uuid) || ChatChannels.PLAYER_CHAT_CHANNELS.get(uuid) == null) {
+            ChatChannels.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
         }
 
         String prefixWithColor = Permissions.getPrefixWithColor(player);
@@ -656,7 +655,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Player has invalid rank or permissions have not been set up properly!");
         }
 
-        ChatChannels channel = Warlords.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);
+        ChatChannels channel = ChatChannels.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);
         channel.onPlayerChatEvent(e, prefixWithColor);
     }
 

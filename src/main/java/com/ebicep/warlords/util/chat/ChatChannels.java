@@ -27,6 +27,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum ChatChannels {
 
@@ -135,7 +136,7 @@ public enum ChatChannels {
                 setRecipients(player, e.getRecipients());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
-                Warlords.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
+                PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
                 e.setCancelled(true);
             }
@@ -173,7 +174,7 @@ public enum ChatChannels {
                 setRecipients(player, e.getRecipients());
                 SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
             } else {
-                Warlords.PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
+                PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
                 e.setCancelled(true);
             }
@@ -181,6 +182,7 @@ public enum ChatChannels {
     },
 
     ;
+    public static final ConcurrentHashMap<UUID, ChatChannels> PLAYER_CHAT_CHANNELS = new ConcurrentHashMap<>();
 
     public static final String CHAT_ARROW = ChatColor.DARK_GRAY + " > ";
     public final String name;
@@ -198,44 +200,6 @@ public enum ChatChannels {
                 player.chat(message);
             }
         }.runTaskAsynchronously(Warlords.getInstance());
-    }
-
-    /**
-     * @param player          Sender of the message
-     * @param message         Message to send
-     * @param chatChannel     Channel to send the message to
-     * @param asyncPlayerChat If true, the message will be sent through async player.chat(message) calling AsyncPlayerChatEvent.
-     *                        If false, the message will be sent synchronously through player.sendMessage(message) to each online player.
-     */
-    public static void playerSendMessage(Player player, String message, ChatChannels chatChannel, boolean asyncPlayerChat) {
-        if (message.startsWith("/")) {
-            message = "§r" + message;
-        }
-        if (asyncPlayerChat) {
-            UUID uuid = player.getUniqueId();
-            String finalMessage = message;
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    ChatChannels oldChatChannel = Warlords.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ALL);
-                    Warlords.PLAYER_CHAT_CHANNELS.put(uuid, chatChannel == null ? ALL : chatChannel);
-                    player.chat(finalMessage);
-                    Warlords.PLAYER_CHAT_CHANNELS.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
-                }
-            }.runTaskAsynchronously(Warlords.getInstance());
-        } else {
-            try {
-                String formattedMessage = String.format(chatChannel.getFormat(player, Permissions.getPrefixWithColor(player)), player.getName(), message);
-                Set<Player> players = new HashSet<>(Bukkit.getOnlinePlayers());
-                chatChannel.setRecipients(player, players);
-                for (Player recipient : players) {
-                    recipient.sendMessage(formattedMessage);
-                }
-                Bukkit.getServer().getConsoleSender().sendMessage(formattedMessage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static void playerSpigotSendMessage(Player player, ChatChannels chatChannel, BaseComponent... components) {
@@ -262,8 +226,12 @@ public enum ChatChannels {
         }
     }
 
+    public abstract String getFormat(Player player, String prefixWithColor);
+
+    public abstract void setRecipients(Player player, Set<Player> players);
+
     public static void switchChannels(Player player, ChatChannels chatChannel) {
-        Warlords.PLAYER_CHAT_CHANNELS.put(player.getUniqueId(), chatChannel);
+        PLAYER_CHAT_CHANNELS.put(player.getUniqueId(), chatChannel);
         player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name() + ChatColor.GREEN + " channel");
     }
 
@@ -271,13 +239,47 @@ public enum ChatChannels {
         return prefixWithColor + "%1$s" + ChatColor.WHITE + ": %2$s";
     }
 
-    public static void sendDebugMessage(Player player, String message, boolean asyncPlayerChat) {
-        ChatChannels.playerSendMessage(player, message, ChatChannels.DEBUG, asyncPlayerChat);
-    }
-
     public static void sendDebugMessage(WarlordsPlayer warlordsPlayer, String message, boolean asyncPlayerChat) {
         if (warlordsPlayer.getEntity() instanceof Player) {
             ChatChannels.playerSendMessage((Player) warlordsPlayer.getEntity(), message, ChatChannels.DEBUG, asyncPlayerChat);
+        }
+    }
+
+    /**
+     * @param player          Sender of the message
+     * @param message         Message to send
+     * @param chatChannel     Channel to send the message to
+     * @param asyncPlayerChat If true, the message will be sent through async player.chat(message) calling AsyncPlayerChatEvent.
+     *                        If false, the message will be sent synchronously through player.sendMessage(message) to each online player.
+     */
+    public static void playerSendMessage(Player player, String message, ChatChannels chatChannel, boolean asyncPlayerChat) {
+        if (message.startsWith("/")) {
+            message = "§r" + message;
+        }
+        if (asyncPlayerChat) {
+            UUID uuid = player.getUniqueId();
+            String finalMessage = message;
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    ChatChannels oldChatChannel = PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ALL);
+                    PLAYER_CHAT_CHANNELS.put(uuid, chatChannel == null ? ALL : chatChannel);
+                    player.chat(finalMessage);
+                    PLAYER_CHAT_CHANNELS.put(uuid, oldChatChannel == DEBUG ? ALL : oldChatChannel);
+                }
+            }.runTaskAsynchronously(Warlords.getInstance());
+        } else {
+            try {
+                String formattedMessage = String.format(chatChannel.getFormat(player, Permissions.getPrefixWithColor(player)), player.getName(), message);
+                Set<Player> players = new HashSet<>(Bukkit.getOnlinePlayers());
+                chatChannel.setRecipients(player, players);
+                for (Player recipient : players) {
+                    recipient.sendMessage(formattedMessage);
+                }
+                Bukkit.getServer().getConsoleSender().sendMessage(formattedMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -296,15 +298,14 @@ public enum ChatChannels {
         }
     }
 
-
-    public abstract String getFormat(Player player, String prefixWithColor);
-
-    public abstract void setRecipients(Player player, Set<Player> players);
-
-    public abstract void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor);
+    public static void sendDebugMessage(Player player, String message, boolean asyncPlayerChat) {
+        ChatChannels.playerSendMessage(player, message, ChatChannels.DEBUG, asyncPlayerChat);
+    }
 
     public String getColoredName() {
         return chatColor + name;
     }
+
+    public abstract void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor);
 
 }

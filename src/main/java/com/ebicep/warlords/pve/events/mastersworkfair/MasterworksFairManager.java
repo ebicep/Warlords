@@ -8,8 +8,8 @@ import com.ebicep.warlords.database.repositories.masterworksfair.pojos.Masterwor
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.rewards.Currencies;
-import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;

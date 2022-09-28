@@ -15,11 +15,12 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
-import com.ebicep.warlords.pve.rewards.Currencies;
-import com.ebicep.warlords.pve.rewards.MasterworksFairReward;
+import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -136,6 +137,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
             currencies.put(currency, 0L);
         }
         this.currencies.put(currency, this.currencies.get(currency) + amount);
+        CustomScoreboard.reloadPvEScoreboard(this);
     }
 
     @Override

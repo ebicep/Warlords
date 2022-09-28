@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -33,10 +33,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 
 public class WeaponManagerMenu {
 
-    public static final List<Currencies> CURRENCIES_TO_DISPLAY = Arrays.asList(
-            Currencies.SYNTHETIC_SHARD,
-            Currencies.LEGEND_FRAGMENTS,
-            Currencies.FAIRY_ESSENCE,
+    public static final List<Currencies> STAR_PIECES = Arrays.asList(
             Currencies.COMMON_STAR_PIECE,
             Currencies.RARE_STAR_PIECE,
             Currencies.EPIC_STAR_PIECE,
@@ -113,11 +110,11 @@ public class WeaponManagerMenu {
 
         DatabasePlayerPvE databasePlayerPvE = DatabaseManager.playerService.findByUUID(player.getUniqueId()).getPveStats();
         menu.setItem(1, 5,
-                new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.GREEN + "Your Drops")
-                        .lore(CURRENCIES_TO_DISPLAY.stream()
-                                .map(rewardTypes -> rewardTypes.getColoredName() + (databasePlayerPvE.getCurrencyValue(rewardTypes) != 1 ? "s" : "") + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(
-                                        rewardTypes) + (rewardTypes == Currencies.FAIRY_ESSENCE ? "\n" : ""))
+                new ItemBuilder(Material.NETHER_STAR)
+                        .name(ChatColor.GREEN + "Your Star Pieces")
+                        .lore(STAR_PIECES.stream()
+                                .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
+                                        starPiece) != 1 ? "s" : ""))
                                 .collect(Collectors.joining("\n"))
                         )
                         .get(),

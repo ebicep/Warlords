@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.rewards;
 
+import com.ebicep.warlords.pve.Currencies;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;

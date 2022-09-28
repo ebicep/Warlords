@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -36,7 +36,7 @@ public class WeaponRerollMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayer.getPveStats().getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN) >= rerollCost) {
+                    if (databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN) >= rerollCost) {
                         databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
                         rerollWeapon(player, (AbstractWeapon & StatsRerollable) weapon);
                     } else {
@@ -70,15 +70,20 @@ public class WeaponRerollMenu {
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
+            TextComponent oldWeapon = new TextComponentBuilder(weapon.getName())
+                    .setHoverItem(weapon.generateItemStack())
+                    .getTextComponent();
             weapon.reroll();
-
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "Reroll Result: "),
+                    oldWeapon,
+                    new TextComponent(ChatColor.GRAY + " to "),
                     new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent());
+                            .getTextComponent()
+            );
         }
     }
 

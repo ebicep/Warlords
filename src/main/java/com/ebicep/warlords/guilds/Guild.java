@@ -11,7 +11,7 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

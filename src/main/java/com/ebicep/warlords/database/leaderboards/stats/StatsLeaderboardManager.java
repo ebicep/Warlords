@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -49,15 +50,25 @@ public class StatsLeaderboardManager {
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
-        if (!PLAYER_LEADERBOARD_INFOS.containsKey(player.getUniqueId()) || PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()) == null) {
-            PLAYER_LEADERBOARD_INFOS.put(player.getUniqueId(), new PlayerLeaderboardInfo());
+        validatePlayerHolograms(player.getUniqueId());
+    }
+
+    public static void validatePlayerHolograms(UUID uuid) {
+        if (!PLAYER_LEADERBOARD_INFOS.containsKey(uuid) || PLAYER_LEADERBOARD_INFOS.get(uuid) == null) {
+            PLAYER_LEADERBOARD_INFOS.put(uuid, new PlayerLeaderboardInfo());
         }
     }
 
     public static void addHologramLeaderboards(boolean init) {
-        if (!Warlords.holographicDisplaysEnabled) return;
-        if (!DatabaseManager.enabled) return;
-        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
+        if (!DatabaseManager.enabled) {
+            return;
+        }
+        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
+            return;
+        }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.addLeaderboards());
 
@@ -92,7 +103,7 @@ public class StatsLeaderboardManager {
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
-                            Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
@@ -127,11 +138,13 @@ public class StatsLeaderboardManager {
         }
     }
 
-    public static StatsLeaderboardCategory<?> getLeaderboardCategoryFromPlayer(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) return null;
-        validatePlayerHolograms(player);
+    public static StatsLeaderboardCategory<?> getLeaderboardCategoryFromUUID(UUID uuid) {
+        if (!Warlords.holographicDisplaysEnabled) {
+            return null;
+        }
+        validatePlayerHolograms(uuid);
 
-        PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+        PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
         Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
@@ -145,7 +158,7 @@ public class StatsLeaderboardManager {
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
         int page = playerLeaderboardInfo.getPage();
-        StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromPlayer(player);
+        StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
 
         getAllLeaderboardCategories().forEach(category -> {
             category.getAllHolograms()
@@ -156,8 +169,8 @@ public class StatsLeaderboardManager {
                     .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
-        if (Warlords.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
-            Warlords.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
+        if (CustomScoreboard.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
+            CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -201,7 +214,12 @@ public class StatsLeaderboardManager {
                 GameType.getBefore(selectedType),
                 GameType.getAfter(selectedType),
                 gameType -> gameType.name,
-                playerLeaderboardInfo::setStatsGameType);
+                playerLeaderboardInfo::setStatsGameType
+        );
+        if (selectedType == GameType.PVE) {
+            playerLeaderboardInfo.setStatsCategory(Category.ALL);
+            playerLeaderboardInfo.setStatsTime(PlayersCollections.LIFETIME);
+        }
         //CATEGORY
         Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
         createLeaderboardSwitcherHologram(player,
@@ -210,16 +228,18 @@ public class StatsLeaderboardManager {
                 selectedType == GameType.PVE ? selectedCategory : Category.getBefore(selectedCategory),
                 selectedType == GameType.PVE ? selectedCategory : Category.getAfter(selectedCategory),
                 category -> category.name,
-                playerLeaderboardInfo::setStatsCategory);
+                playerLeaderboardInfo::setStatsCategory
+        );
         //TIME
         PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION,
                 selectedTime,
-                PlayersCollections.getBeforeCollection(selectedTime),
-                PlayersCollections.getAfterCollection(selectedTime),
+                selectedType == GameType.PVE ? selectedTime : PlayersCollections.getBeforeCollection(selectedTime),
+                selectedType == GameType.PVE ? selectedTime : PlayersCollections.getAfterCollection(selectedTime),
                 playersCollections -> playersCollections.name,
-                playerLeaderboardInfo::setStatsTime);
+                playerLeaderboardInfo::setStatsTime
+        );
         //PAGE
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
@@ -246,7 +266,7 @@ public class StatsLeaderboardManager {
             validatePlayerHolograms(player);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
             PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
-            StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromPlayer(player);
+            StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
             if (statsLeaderboardCategory == null) return;
             List<Hologram> playerHolograms = new ArrayList<>();
             for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.getStatsLeaderboards()) {
@@ -299,7 +319,7 @@ public class StatsLeaderboardManager {
     }
 
     public enum GameType {
-        ALL("All Modes", "", StatsLeaderboardGeneral::new),
+        ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new),
         CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
         PVE("Player vs Environment", "PvE", StatsLeaderboardPvE::new);
 

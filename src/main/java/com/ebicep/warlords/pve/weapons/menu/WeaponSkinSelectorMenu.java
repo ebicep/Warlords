@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Weapons;
-import com.ebicep.warlords.pve.rewards.Currencies;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -60,18 +60,24 @@ public class WeaponSkinSelectorMenu {
                 );
             } else {
                 boolean isUnlocked = unlockedWeaponSkins.contains(weaponSkin);
+                ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
+                        .name(ChatColor.GREEN + weaponSkin.getName())
+                        .lore(
+                                ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
+                                ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
+                                "",
+                                isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "Unlocked" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkinCost + " Fairy Essence"
+                        );
+                if (weapon.getSelectedWeaponSkin() == weaponSkin) {
+                    itemBuilder.addLore(
+                            "",
+                            ChatColor.YELLOW + "SELECTED"
+                    );
+                }
                 menu.setItem(
                         (i - (pageNumber - 1) * 21) % 7 + 1,
                         (i - (pageNumber - 1) * 21) / 7 + 1,
-                        new ItemBuilder(weaponSkin.getItem())
-                                .name(ChatColor.GREEN + weaponSkin.getName())
-                                .lore(
-                                        ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
-                                        ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
-                                        "",
-                                        isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "UNLOCKED" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkinCost + " Fairy Essence"
-                                )
-                                .get(),
+                        itemBuilder.get(),
                         (m, e) -> {
                             if (isUnlocked) {
                                 if (weaponSkin != weapon.getSelectedWeaponSkin()) {
@@ -99,7 +105,8 @@ public class WeaponSkinSelectorMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber - 1));
+                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber - 1)
+            );
         }
         if (weaponSkins.size() > pageNumber * 21) {
             menu.setItem(
@@ -109,7 +116,8 @@ public class WeaponSkinSelectorMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber + 1));
+                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber + 1)
+            );
         }
 
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
@@ -134,12 +142,15 @@ public class WeaponSkinSelectorMenu {
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
             databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, -weapon.getRarity().fairyEssenceCost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            openWeaponSkinSelectorMenu(player, weapon, page);
+
             player.spigot().sendMessage(
                     new TextComponent(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for "),
                     new TextComponentBuilder(weapon.getName())
                             .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent());
+                            .getTextComponent()
+            );
+
+            openWeaponSkinSelectorMenu(player, weapon, page);
         }
     }
 

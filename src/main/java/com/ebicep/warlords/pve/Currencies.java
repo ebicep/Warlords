@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.rewards;
+package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;

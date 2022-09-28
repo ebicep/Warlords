@@ -25,6 +25,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -45,6 +46,7 @@ public class DatabaseManager {
             put(value, new HashSet<>());
         }
     }};
+    public static final ConcurrentSet<DatabasePlayer> LOADED_PLAYERS = new ConcurrentSet<>();
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsDatabase;
     public static PlayerService playerService;
@@ -151,6 +153,7 @@ public class DatabaseManager {
                         if (collections == PlayersCollections.LIFETIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.accept(databasePlayer);
+                            LOADED_PLAYERS.add(databasePlayer);
                         }
                     }).execute();
         } else {
@@ -159,6 +162,7 @@ public class DatabaseManager {
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.accept(foundPlayer);
+                            LOADED_PLAYERS.add(foundPlayer);
                             ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
                         }).execute();
             }
