@@ -9,7 +9,6 @@ import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -31,6 +30,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     protected float skillCritChanceBonus;
     @Field("skill_crit_multiplier_bonus")
     protected float skillCritMultiplierBonus;
+
     public AbstractLegendaryWeapon() {
     }
 
@@ -50,11 +50,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GOLD;
-    }
-
-    @Override
     public String getName() {
         if (getTitle().isEmpty()) {
             return super.getName();
@@ -62,6 +57,13 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
             return ChatColor.GOLD + getTitle() + " " + super.getName();
         }
     }
+
+    @Override
+    public ChatColor getChatColor() {
+        return ChatColor.GOLD;
+    }
+
+    public abstract String getTitle();
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
@@ -106,8 +108,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     public abstract String getPassiveEffect();
 
-    public abstract String getTitle();
-
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
@@ -121,30 +121,30 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     @Override
     public void upgrade() {
         super.upgrade();
-        this.energyPerSecondBonus *= getUpgradeMultiplier();
-        this.energyPerHitBonus *= getUpgradeMultiplier();
-        this.skillCritChanceBonus *= getUpgradeMultiplier();
-        this.skillCritMultiplierBonus *= getUpgradeMultiplier();
+        this.energyPerSecondBonus *= energyPerSecondBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.energyPerHitBonus *= energyPerHitBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.skillCritChanceBonus *= skillCritChanceBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.skillCritMultiplierBonus *= skillCritMultiplierBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
     }
 
     @Override
     public List<String> getUpgradeLore() {
         List<String> upgradeLore = new ArrayList<>(super.getUpgradeLore());
         if (energyPerSecondBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(energyPerSecondBonus) + " > " + NumberFormat.formatOptionalHundredths(
-                    energyPerSecondBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(energyPerSecondBonus) + " > " +
+                    format(energyPerSecondBonus * (energyPerSecondBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }
         if (energyPerHitBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(energyPerHitBonus) + " > " + NumberFormat.formatOptionalHundredths(
-                    energyPerHitBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(energyPerHitBonus) + " > " +
+                    format(energyPerHitBonus * (energyPerHitBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }
         if (skillCritChanceBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(skillCritChanceBonus) + " > " + NumberFormat.formatOptionalHundredths(
-                    skillCritChanceBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(skillCritChanceBonus) + " > " +
+                    format(skillCritChanceBonus * (skillCritChanceBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }
         if (skillCritMultiplierBonus != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(skillCritMultiplierBonus) + " > " + NumberFormat.formatOptionalHundredths(
-                    skillCritMultiplierBonus * getUpgradeMultiplier()));
+            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(skillCritMultiplierBonus) + " > " +
+                    format(skillCritMultiplierBonus * (skillCritMultiplierBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())));
         }
         return upgradeLore;
     }

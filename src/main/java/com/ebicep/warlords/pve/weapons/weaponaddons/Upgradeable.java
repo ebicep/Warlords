@@ -19,6 +19,10 @@ public interface Upgradeable {
         return 1.1f;
     }
 
+    default float getUpgradeMultiplierNegative() {
+        return 0.9f;
+    }
+
     default ItemStack getUpgradeItem() {
         List<String> upgradeLore = new ArrayList<>(getUpgradeLore());
         upgradeLore.add("");

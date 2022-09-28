@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
-import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
+
+import static com.ebicep.warlords.util.java.NumberFormat.formatOptionalTenths;
 
 /**
  * Abstract class for weapons that are above starter/common/rare
@@ -61,23 +62,25 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     @Override
     public void upgrade() {
         this.upgradeLevel++;
-        this.meleeDamage *= getUpgradeMultiplier();
-        this.critChance *= getUpgradeMultiplier();
-        this.critMultiplier *= getUpgradeMultiplier();
-        this.healthBonus *= getUpgradeMultiplier();
-        this.speedBonus *= getUpgradeMultiplier();
+        this.meleeDamage *= meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.critChance *= critChance < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.critMultiplier *= critMultiplier < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.healthBonus *= healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
+        this.speedBonus *= speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
     }
 
     @Override
     public List<String> getUpgradeLore() {
+        float upgradedMeleeDamage = meleeDamage * (meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier());
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                        meleeDamage + getMeleeDamageRange()) + ChatColor.GREEN + " > " +
-                        ChatColor.RED + NumberFormat.formatOptionalTenths(meleeDamage * getUpgradeMultiplier()) + ChatColor.GRAY + " - " + ChatColor.RED + NumberFormat.formatOptionalHundredths(
-                        meleeDamage * getUpgradeMultiplier() + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + NumberFormat.formatOptionalTenths(
+                ChatColor.GRAY + "Damage: " + ChatColor.RED +
+                        formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(meleeDamage + getMeleeDamageRange()) +
+                        ChatColor.GREEN + " > " +
+                        ChatColor.RED + formatOptionalTenths(upgradedMeleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(
+                        upgradedMeleeDamage + getMeleeDamageRange()),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + formatOptionalTenths(
                         critChance * getUpgradeMultiplier()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + NumberFormat.formatOptionalTenths(
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " + ChatColor.RED + formatOptionalTenths(
                         critMultiplier * getUpgradeMultiplier()) + "%",
                 "",
                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " + format(healthBonus * getUpgradeMultiplier()),
