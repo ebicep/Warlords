@@ -4,10 +4,8 @@ import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.guilds.Guild;
-import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.GuildPermissions;
-import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.*;
+import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
@@ -165,8 +163,23 @@ public enum ChatChannels {
 
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
             if (guildPlayerPair != null) {
-                if (guildPlayerPair.getA().isMuted() && !guildPlayerPair.getA().playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
-                    player.sendMessage(ChatColor.RED + "The guild is currently muted.");
+                Guild guild = guildPlayerPair.getA();
+                GuildPlayer guildPlayer = guildPlayerPair.getB();
+                if (guild.isMuted() && !guild.playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
+                    Guild.sendGuildMessage(player, ChatColor.RED + "The guild is currently muted.");
+                    e.setCancelled(true);
+                    return;
+                }
+                if (guildPlayer.isMuted()) {
+                    GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
+                    if (muteEntry.getTimeUnit() == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
+                        Guild.sendGuildMessage(player, ChatColor.RED + "You are currently permanently muted in the guild.");
+                    } else {
+                        Guild.sendGuildMessage(player,
+                                ChatColor.RED + "You are currently muted in the guild.\n" + ChatColor.GRAY + "Expires at " + AbstractGuildLog.FORMATTER.format(
+                                        muteEntry.getEnd())
+                        );
+                    }
                     e.setCancelled(true);
                     return;
                 }

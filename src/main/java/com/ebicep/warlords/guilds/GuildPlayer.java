@@ -35,6 +35,8 @@ public class GuildPlayer {
     private boolean dailyCoinBonusReceived = false;
     @Field("daily_coins_converted")
     private long dailyCoinsConverted = 0;
+    @Field("mute_entry")
+    private GuildPlayerMuteEntry muteEntry;
 
     public GuildPlayer() {
     }
@@ -127,6 +129,33 @@ public class GuildPlayer {
     public void addDailyCoinsConverted(long dailyCoinsConverted) {
         this.coinsConverted += dailyCoinsConverted;
         this.dailyCoinsConverted += dailyCoinsConverted;
+    }
+
+    public GuildPlayerMuteEntry getMuteEntry() {
+        return muteEntry;
+    }
+
+    public void mute() {
+        this.muteEntry = new GuildPlayerMuteEntry();
+    }
+
+    public void mute(GuildPlayerMuteEntry.TimeUnit timeUnit, int duration) {
+        this.muteEntry = new GuildPlayerMuteEntry(timeUnit, duration);
+    }
+
+    public void unmute() {
+        this.muteEntry = null;
+    }
+
+    public boolean isMuted() {
+        if (muteEntry != null) {
+            if (muteEntry.getEnd().isAfter(Instant.now())) {
+                return true;
+            } else {
+                unmute();
+            }
+        }
+        return false;
     }
 
     @Override

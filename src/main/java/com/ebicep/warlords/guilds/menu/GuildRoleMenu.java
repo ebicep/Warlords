@@ -75,7 +75,7 @@ public class GuildRoleMenu {
     }
 
     public static void openRoleEditor(Guild guild, GuildRole role, Player player) {
-        Menu menu = new Menu("Role Editor", 9 * 4);
+        Menu menu = new Menu("Role Editor", 9 * 5);
 
         List<GuildRole> guildRoles = guild.getRoles();
 
@@ -106,7 +106,7 @@ public class GuildRoleMenu {
         }
 
         if (!guild.getDefaultRole().equals(role)) {
-            menu.setItem(1, 3,
+            menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
                             .name(ChatColor.GREEN + "Click to set as default role")
                             .lore(ChatColor.GRAY + "Current default: " + ChatColor.GREEN + guild.getDefaultRoleName())
@@ -119,7 +119,7 @@ public class GuildRoleMenu {
                     }
             );
         } else {
-            menu.setItem(1, 3,
+            menu.setItem(1, 4,
                     new ItemBuilder(Material.GRASS)
                             .name(ChatColor.GREEN + "This is the default role")
                             .get(),
@@ -128,7 +128,7 @@ public class GuildRoleMenu {
                     }
             );
         }
-        menu.setItem(3, 3,
+        menu.setItem(3, 4,
                 new ItemBuilder(Material.NAME_TAG)
                         .name(ChatColor.GREEN + "Click to rename role")
                         .lore(ChatColor.GRAY + "Current name: " + ChatColor.GREEN + role.getRoleName())
@@ -161,7 +161,7 @@ public class GuildRoleMenu {
         for (int i = 1; i < guildRoles.size(); i++) {
             lore.add("" + (guildRoles.get(i).equals(role) ? ChatColor.GREEN : ChatColor.GRAY) + i + ". " + guildRoles.get(i).getRoleName());
         }
-        menu.setItem(5, 3,
+        menu.setItem(5, 4,
                 new ItemBuilder(Material.SIGN)
                         .name(ChatColor.GREEN + "Click to change role level")
                         .lore(lore)
@@ -182,7 +182,7 @@ public class GuildRoleMenu {
                 }
         );
 
-        menu.setItem(7, 3,
+        menu.setItem(7, 4,
                 new ItemBuilder(Material.LAVA_BUCKET)
                         .name(ChatColor.GREEN + "Click to delete role")
                         .get(),
@@ -213,7 +213,7 @@ public class GuildRoleMenu {
         );
 
 
-        menu.setItem(4, 3, MENU_BACK, (m, e) -> openRoleSelectorMenu(guild, player));
+        menu.setItem(4, 4, MENU_BACK, (m, e) -> openRoleSelectorMenu(guild, player));
         menu.openForPlayer(player);
     }
 }

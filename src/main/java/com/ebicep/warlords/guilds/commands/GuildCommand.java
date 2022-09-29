@@ -9,10 +9,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
-import com.ebicep.warlords.guilds.Guild;
-import com.ebicep.warlords.guilds.GuildManager;
-import com.ebicep.warlords.guilds.GuildPermissions;
-import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.menu.GuildMenu;
 import com.ebicep.warlords.pve.Currencies;
@@ -69,7 +66,7 @@ public class GuildCommand extends BaseCommand {
         }
         if (!optionalGuild.get().isOpen() && GuildManager.getGuildFromInvite(player, guildName).isEmpty()) {
             Guild.sendGuildMessage(player,
-                                   ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
+                    ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
             );
             return;
         }
@@ -117,8 +114,8 @@ public class GuildCommand extends BaseCommand {
         }
         GuildManager.addInvite(player, target, guild);
         Guild.sendGuildMessage(player,
-                               ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
-                                       ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
+                ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
+                        ChatColor.YELLOW + "They have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept!"
         );
     }
 
@@ -141,6 +138,90 @@ public class GuildCommand extends BaseCommand {
         guild.setMuted(true);
     }
 
+    @Subcommand("unmute")
+    @Description("Unmutes the guild")
+    public void unmute(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MUTE") GuildPlayerWrapper guildPlayerWrapper
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE)) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to unmute your guild.");
+            return;
+        }
+        if (!guild.isMuted()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "The guild is already unmuted.");
+            return;
+        }
+        guild.setMuted(false);
+    }
+
+    @Subcommand("muteplayer")
+    @CommandCompletion("@guildmembers")
+    @Description("Mutes a player in the guild")
+    public void mutePlayer(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MUTE") GuildPlayerWrapper guildPlayerWrapper,
+            @Conditions("lowerRank") GuildPlayer target,
+            GuildPlayerMuteEntry.TimeUnit timeUnit,
+            @co.aikar.commands.annotation.Optional Integer duration
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE_PLAYERS)) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to mute players in the guild.");
+            return;
+        }
+        if (target.isMuted()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "That player is already muted.");
+            return;
+        }
+        if (duration == null || timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
+            if (timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
+                target.mute();
+                guild.queueUpdate();
+                Guild.sendGuildMessage(player, ChatColor.GREEN + "Muted " + target.getName() + " permanently.");
+            } else {
+                Guild.sendGuildMessage(player, ChatColor.RED + "You must specify a duration for temporary mutes.");
+            }
+        } else if (duration <= 0) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Duration must be greater than 0.");
+        } else if (duration > timeUnit.maxAmount) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Duration must be less than " + timeUnit.maxAmount + "for " + timeUnit.lyName + " mutes.");
+        } else {
+            target.mute(timeUnit, duration);
+            guild.queueUpdate();
+            Guild.sendGuildMessage(player,
+                    ChatColor.RED + "Muted " + ChatColor.AQUA + target.getName() + ChatColor.RED + " for " + duration + " " +
+                            ChatColor.DARK_RED + timeUnit.name + (duration > 1 ? "s" : "") + "."
+            );
+        }
+    }
+
+    @Subcommand("unmuteplayer")
+    @CommandCompletion("@guildmembers")
+    @Description("Unmutes a player in the guild")
+    public void unmutePlayer(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MUTE") GuildPlayerWrapper guildPlayerWrapper,
+            @Conditions("lowerRank") GuildPlayer target
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MUTE_PLAYERS)) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "You do not have permission to unmute players in the guild.");
+            return;
+        }
+        if (!target.isMuted()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "That player is not muted.");
+            return;
+        }
+        target.unmute();
+        guild.queueUpdate();
+        Guild.sendGuildMessage(player, ChatColor.GREEN + "Unmuted " + ChatColor.AQUA + target.getName());
+    }
+
     @Subcommand("disband")
     @Description("Disbands your guild")
     public void disband(
@@ -156,7 +237,7 @@ public class GuildCommand extends BaseCommand {
                 guild.disband();
             } else {
                 Guild.sendGuildMessage(player,
-                                       ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
+                        ChatColor.RED + "Guild was not disbanded because your input did not match your guild name."
                 );
             }
         });
@@ -168,9 +249,7 @@ public class GuildCommand extends BaseCommand {
         Guild guild = guildPlayerWrapper.getGuild();
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getCurrentMaster().equals(player.getUniqueId())) {
-            Guild.sendGuildMessage(player,
-                                   ChatColor.RED + "Guild Masters can only leave through disbanding or transferring the guild!"
-            );
+            Guild.sendGuildMessage(player, ChatColor.RED + "Guild Masters can only leave through disbanding or transferring the guild!");
             return;
         }
         guild.leave(player);
@@ -196,7 +275,7 @@ public class GuildCommand extends BaseCommand {
                 guild.transfer(target);
             } else {
                 Guild.sendGuildMessage(player,
-                                       ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
+                        ChatColor.RED + "Guild was not transferred because you did not input CONFIRM"
                 );
             }
         });
@@ -236,7 +315,7 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoleLevel(guildPlayer) + 1 == guild.getRoleLevel(target)) {
             Guild.sendGuildMessage(player,
-                                   ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!"
+                    ChatColor.RED + "You cannot promote " + ChatColor.AQUA + target.getName() + ChatColor.RED + " any higher!"
             );
             return;
         }
@@ -255,7 +334,7 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         if (guild.getRoles().get(guild.getRoles().size() - 1).getPlayers().contains(target.getUUID())) {
             Guild.sendGuildMessage(player,
-                                   ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!"
+                    ChatColor.AQUA + target.getName() + ChatColor.RED + " already has the lowest role!"
             );
             return;
         }
@@ -295,8 +374,8 @@ public class GuildCommand extends BaseCommand {
         ChatUtils.sendMessageToPlayer(
                 player,
                 guild.getAuditLog().stream()
-                     .map(AbstractGuildLog::getFormattedLog)
-                     .collect(Collectors.joining("\n")),
+                        .map(AbstractGuildLog::getFormattedLog)
+                        .collect(Collectors.joining("\n")),
                 ChatColor.GREEN,
                 false
         );

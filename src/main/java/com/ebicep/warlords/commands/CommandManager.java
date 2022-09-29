@@ -303,7 +303,7 @@ public class CommandManager {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {
                 return GuildManager.GUILDS.stream()
-                        .filter(party -> party.hasUUID(((Player) sender).getUniqueId()))
+                        .filter(guild -> guild.hasUUID(((Player) sender).getUniqueId()))
                         .map(Guild::getPlayers)
                         .flatMap(Collection::stream)
                         .map(GuildPlayer::getUUID)

@@ -10,6 +10,7 @@ public enum GuildPermissions {
     INVITE("Invite Players", "Invite players to the guild.", Material.DARK_OAK_DOOR_ITEM),
     KICK("Kick Players", "Kicks players from the guild.", Material.PISTON_BASE),
     MUTE("Mute the Guild", "Mute the guild chat.", Material.JUKEBOX),
+    MUTE_PLAYERS("Mutes Players", "Mute players in the guild.", Material.JUKEBOX),
     BYPASS_MUTE("Bypass Mute", "Bypass guild chat mute", Material.NOTE_BLOCK),
     CHANGE_ROLE("Promote/Demote Players", "Promote or demote players up to their own rank", Material.PISTON_STICKY_BASE),
     CHANGE_NAME("Change Guild Name", "Change the guild's name", Material.BOOK_AND_QUILL),
