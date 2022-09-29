@@ -243,10 +243,15 @@ public class Guild {
     }
 
     public boolean playerHasPermission(GuildPlayer guildPlayer, GuildPermissions permission) {
+        UUID uuid = guildPlayer.getUUID();
         for (GuildRole role : roles) {
-            if (role.getPlayers().contains(guildPlayer.getUUID())) {
+            if (role.getPlayers().contains(uuid)) {
                 return role.getPermissions().contains(permission);
             }
+        }
+        if (uuid.equals(currentMaster)) {
+            getRoleOfPlayer(uuid).getPermissions().add(permission);
+            return true;
         }
         return false;
     }
