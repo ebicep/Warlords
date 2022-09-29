@@ -29,6 +29,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     protected int totalWavesCleared;
     @Field("total_time_played")
     protected long totalTimePlayed = 0;
+    @Field("fastest_game_finished")
+    protected long fastestGameFinished = 0;
     @Field("mob_kills")
     protected Map<String, Long> mobKills = new LinkedHashMap<>();
     @Field("mob_assists")
@@ -66,6 +68,9 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         if (multiplier > 0 && databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
             this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
         }
+        if (multiplier > 0 && databaseGamePvE.getTimeElapsed() < fastestGameFinished) {
+            this.fastestGameFinished += databaseGamePvE.getTimeElapsed();
+        }
         this.totalWavesCleared += databaseGamePvE.getWavesCleared();
         databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
@@ -98,6 +103,10 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public long getTotalTimePlayed() {
         return totalTimePlayed;
+    }
+
+    public long getFastestGameFinished() {
+        return fastestGameFinished;
     }
 
     public Map<String, Long> getMobKills() {
