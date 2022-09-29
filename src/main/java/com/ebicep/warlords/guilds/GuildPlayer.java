@@ -149,7 +149,7 @@ public class GuildPlayer {
 
     public boolean isMuted() {
         if (muteEntry != null) {
-            if (muteEntry.getEnd().isAfter(Instant.now())) {
+            if (muteEntry.getEnd() == null || muteEntry.getEnd().isAfter(Instant.now())) {
                 return true;
             } else {
                 unmute();

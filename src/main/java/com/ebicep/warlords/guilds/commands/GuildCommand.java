@@ -179,9 +179,8 @@ public class GuildCommand extends BaseCommand {
         }
         if (duration == null || timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
             if (timeUnit == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
-                target.mute();
-                guild.queueUpdate();
-                Guild.sendGuildMessage(player, ChatColor.GREEN + "Muted " + target.getName() + " permanently.");
+                guild.mutePlayer(guildPlayer, target);
+                Guild.sendGuildMessage(player, ChatColor.GREEN + "Muted " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " permanently.");
             } else {
                 Guild.sendGuildMessage(player, ChatColor.RED + "You must specify a duration for temporary mutes.");
             }
@@ -190,8 +189,7 @@ public class GuildCommand extends BaseCommand {
         } else if (duration > timeUnit.maxAmount) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Duration must be less than " + timeUnit.maxAmount + "for " + timeUnit.lyName + " mutes.");
         } else {
-            target.mute(timeUnit, duration);
-            guild.queueUpdate();
+            guild.mutePlayer(guildPlayer, target, timeUnit, duration);
             Guild.sendGuildMessage(player,
                     ChatColor.RED + "Muted " + ChatColor.AQUA + target.getName() + ChatColor.RED + " for " + duration + " " +
                             ChatColor.DARK_RED + timeUnit.name + (duration > 1 ? "s" : "") + "."
@@ -217,8 +215,7 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "That player is not muted.");
             return;
         }
-        target.unmute();
-        guild.queueUpdate();
+        guild.unmutePlayer(guildPlayer, target);
         Guild.sendGuildMessage(player, ChatColor.GREEN + "Unmuted " + ChatColor.AQUA + target.getName());
     }
 

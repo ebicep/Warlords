@@ -6,10 +6,7 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogJoin;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogLeave;
-import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogDemote;
-import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogKick;
-import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogPromote;
-import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogTransfer;
+import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -356,6 +353,24 @@ public class Guild {
 
     public Optional<GuildPlayer> getPlayerMatchingName(String name) {
         return players.stream().filter(player -> player.getName().equalsIgnoreCase(name)).findFirst();
+    }
+
+    public void mutePlayer(GuildPlayer from, GuildPlayer target) {
+        target.mute();
+        log(new GuildLogMute(from.getUUID(), target.getUUID(), GuildPlayerMuteEntry.TimeUnit.PERMANENT));
+        queueUpdate();
+    }
+
+    public void mutePlayer(GuildPlayer from, GuildPlayer target, GuildPlayerMuteEntry.TimeUnit timeUnit, Integer duration) {
+        target.mute(timeUnit, duration);
+        log(new GuildLogMute(from.getUUID(), target.getUUID(), timeUnit, duration));
+        queueUpdate();
+    }
+
+    public void unmutePlayer(GuildPlayer from, GuildPlayer target) {
+        target.unmute();
+        log(new GuildLogUnmute(from.getUUID(), target.getUUID()));
+        queueUpdate();
     }
 
     public int getPlayerLimit() {
