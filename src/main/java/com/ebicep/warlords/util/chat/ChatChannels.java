@@ -193,8 +193,62 @@ public enum ChatChannels {
             }
         }
     },
+    GUILD_OFFICER("Guild Officer",
+            ChatColor.GREEN
+    ) {
+        @Override
+        public String getFormat(Player player, String prefixWithColor) {
+            return getColoredName() + CHAT_ARROW + getChatFormat(prefixWithColor);
+        }
+
+        @Override
+        public void setRecipients(Player player, Set<Player> players) {
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair != null) {
+                players.retainAll(guildPlayerPair.getA().getOnlinePlayersWithPermission(GuildPermissions.OFFICER_CHAT));
+            }
+        }
+
+        @Override
+        public void onPlayerChatEvent(AsyncPlayerChatEvent e, String prefixWithColor) {
+            Player player = e.getPlayer();
+            UUID uuid = player.getUniqueId();
+
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+            if (guildPlayerPair != null) {
+                Guild guild = guildPlayerPair.getA();
+                GuildPlayer guildPlayer = guildPlayerPair.getB();
+                if (guild.isMuted() && !guild.playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
+                    Guild.sendGuildMessage(player, ChatColor.RED + "The guild is currently muted.");
+                    e.setCancelled(true);
+                    return;
+                }
+                if (guildPlayer.isMuted()) {
+                    GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
+                    if (muteEntry.getTimeUnit() == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
+                        Guild.sendGuildMessage(player, ChatColor.RED + "You are currently permanently muted in the guild.");
+                    } else {
+                        Guild.sendGuildMessage(player,
+                                ChatColor.RED + "You are currently muted in the guild.\n" + ChatColor.GRAY + "Expires at " + AbstractGuildLog.FORMATTER.format(
+                                        muteEntry.getEnd())
+                        );
+                    }
+                    e.setCancelled(true);
+                    return;
+                }
+                e.setFormat(getFormat(player, prefixWithColor));
+                setRecipients(player, e.getRecipients());
+                SeeAllChatsCommand.addPlayerSeeAllChats(e.getRecipients());
+            } else {
+                PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
+                player.sendMessage(ChatColor.RED + "You are not in a guild and were moved to the ALL channel.");
+                e.setCancelled(true);
+            }
+        }
+    },
 
     ;
+
     public static final ConcurrentHashMap<UUID, ChatChannels> PLAYER_CHAT_CHANNELS = new ConcurrentHashMap<>();
 
     public static final String CHAT_ARROW = ChatColor.DARK_GRAY + " > ";

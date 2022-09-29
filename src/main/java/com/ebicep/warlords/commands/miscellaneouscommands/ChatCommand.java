@@ -33,6 +33,12 @@ public class ChatCommand extends BaseCommand {
         switchChannels(player, ChatChannels.GUILD);
     }
 
+    @Subcommand("guildofficer|go")
+    @Description("Switch to GUILD OFFICER chat channel")
+    public void guildOfficerChat(@Conditions("guild:true|otherChatChannel:target=GUILD") Player player) {
+        switchChannels(player, ChatChannels.GUILD_OFFICER);
+    }
+
     @CommandAlias("achat|ac")
     @Description("Send a message to the ALL chat channel")
     public void allChat(Player player, String message) {
@@ -49,6 +55,12 @@ public class ChatCommand extends BaseCommand {
     @Description("Send a message to the GUILD chat channel")
     public void guildChat(@Conditions("guild:true") Player player, String message) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD, true);
+    }
+
+    @CommandAlias("gochat|goc")
+    @Description("Send a message to the GUILD OFFICER chat channel")
+    public void guildOfficerChat(@Conditions("guild:true") Player player, String message) {
+        ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD_OFFICER, true);
     }
 
     @HelpCommand

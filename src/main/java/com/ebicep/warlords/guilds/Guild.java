@@ -10,6 +10,7 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogMuteGuild;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogUnmuteGuild;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -217,9 +218,21 @@ public class Guild {
     }
 
     public List<Player> getOnlinePlayers() {
-        List<UUID> guildPlayerUUIDs = players.stream().map(GuildPlayer::getUUID).collect(Collectors.toList());
+        List<UUID> guildPlayerUUIDs = players.stream()
+                .map(GuildPlayer::getUUID)
+                .collect(Collectors.toList());
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> guildPlayerUUIDs.contains(player.getUniqueId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Player> getOnlinePlayersWithPermission(GuildPermissions permission) {
+        List<UUID> uuidsWithPermission = players.stream()
+                .filter(guildPlayer -> playerHasPermission(guildPlayer, permission))
+                .map(GuildPlayer::getUUID)
+                .collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> uuidsWithPermission.contains(player.getUniqueId()))
                 .collect(Collectors.toList());
     }
 
