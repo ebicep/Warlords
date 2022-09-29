@@ -218,7 +218,6 @@ public class StatsLeaderboardManager {
         );
         if (selectedType == GameType.PVE) {
             playerLeaderboardInfo.setStatsCategory(Category.ALL);
-            playerLeaderboardInfo.setStatsTime(PlayersCollections.LIFETIME);
         }
         //CATEGORY
         Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
@@ -235,8 +234,8 @@ public class StatsLeaderboardManager {
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION,
                 selectedTime,
-                selectedType == GameType.PVE ? selectedTime : PlayersCollections.getBeforeCollection(selectedTime),
-                selectedType == GameType.PVE ? selectedTime : PlayersCollections.getAfterCollection(selectedTime),
+                PlayersCollections.getBeforeCollection(selectedTime),
+                PlayersCollections.getAfterCollection(selectedTime),
                 playersCollections -> playersCollections.name,
                 playerLeaderboardInfo::setStatsTime
         );
