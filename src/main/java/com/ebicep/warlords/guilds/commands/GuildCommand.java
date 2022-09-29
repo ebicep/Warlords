@@ -135,7 +135,7 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "The guild is already muted.");
             return;
         }
-        guild.setMuted(true);
+        guild.setMuted(guildPlayer, true);
     }
 
     @Subcommand("unmute")
@@ -154,7 +154,7 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "The guild is already unmuted.");
             return;
         }
-        guild.setMuted(false);
+        guild.setMuted(guildPlayer, false);
     }
 
     @Subcommand("muteplayer")
