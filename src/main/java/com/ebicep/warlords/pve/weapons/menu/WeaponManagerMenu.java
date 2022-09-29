@@ -42,6 +42,10 @@ public class WeaponManagerMenu {
     public static HashMap<UUID, PlayerMenuSettings> playerMenuSettings = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player) {
+        if (DatabaseManager.playerService == null) {
+            return;
+        }
+
         UUID uuid = player.getUniqueId();
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();

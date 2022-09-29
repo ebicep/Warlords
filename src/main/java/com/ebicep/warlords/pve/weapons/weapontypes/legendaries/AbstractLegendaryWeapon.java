@@ -45,15 +45,22 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     public AbstractLegendaryWeapon(AbstractLegendaryWeapon legendaryWeapon) {
         this.uuid = legendaryWeapon.getUUID();
-        this.specialization = legendaryWeapon.getSpecializations();
-        this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
-        this.unlockedSkillBoosts.add(selectedSkillBoost);
+        this.date = legendaryWeapon.getDate();
         this.selectedWeaponSkin = legendaryWeapon.getSelectedWeaponSkin();
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
+        this.specialization = legendaryWeapon.getSpecializations();
+        this.isBound = legendaryWeapon.isBound();
+
+        this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
+        this.unlockedSkillBoosts.add(selectedSkillBoost);
         generateStats();
         for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
             upgrade();
         }
+    }
+
+    public SkillBoosts getSelectedSkillBoost() {
+        return selectedSkillBoost;
     }
 
     @Override
@@ -213,9 +220,5 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
                 break;
         }
         return cost;
-    }
-
-    public SkillBoosts getSelectedSkillBoost() {
-        return selectedSkillBoost;
     }
 }
