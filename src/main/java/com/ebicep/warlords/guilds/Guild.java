@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -37,7 +38,9 @@ public class Guild {
                 .getWins()) >= 20;
     };
 
-    //TODO local cache of uuids for faster lookup
+    //Local cache of uuids for faster lookup
+    @Transient
+    public HashMap<UUID, GuildPlayer> guildPlayerUUIDCache = new HashMap<>();
 
     @Id
     private String id;
@@ -80,7 +83,6 @@ public class Guild {
         this.createdBy = player.getUniqueId();
         this.currentMaster = player.getUniqueId();
         GuildRole masterRole = new GuildRole("Master", GuildPermissions.VALUES);
-        masterRole.addPlayer(player.getUniqueId());
         GuildRole officerRole = new GuildRole("Officer", GuildPermissions.INVITE, GuildPermissions.KICK);
         GuildRole memberRole = new GuildRole("Member");
 
@@ -115,6 +117,13 @@ public class Guild {
         queueUpdateGuild(this);
     }
 
+    public void reloadPlayerCache() {
+        guildPlayerUUIDCache.clear();
+        for (GuildPlayer guildPlayer : players) {
+            guildPlayerUUIDCache.put(guildPlayer.getUUID(), guildPlayer);
+        }
+    }
+
     public void join(Player player) {
         addPlayer(player, getDefaultRole());
         sendGuildMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " has joined the guild!", true);
@@ -124,6 +133,7 @@ public class Guild {
 
     public void leave(Player player) {
         this.players.removeIf(guildPlayer -> guildPlayer.getUUID().equals(player.getUniqueId()));
+        this.guildPlayerUUIDCache.remove(player.getUniqueId());
         sendGuildMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " has left the guild!", true);
         sendGuildMessage(player, ChatColor.RED + "You left the guild!");
         log(new GuildLogLeave(player.getUniqueId()));
@@ -218,19 +228,16 @@ public class Guild {
     }
 
     public List<Player> getOnlinePlayers() {
-        List<UUID> guildPlayerUUIDs = players.stream()
-                .map(GuildPlayer::getUUID)
-                .collect(Collectors.toList());
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> guildPlayerUUIDs.contains(player.getUniqueId()))
+                .filter(player -> guildPlayerUUIDCache.containsKey(player.getUniqueId()))
                 .collect(Collectors.toList());
     }
 
     public List<Player> getOnlinePlayersWithPermission(GuildPermissions permission) {
-        List<UUID> uuidsWithPermission = players.stream()
+        Set<UUID> uuidsWithPermission = players.stream()
                 .filter(guildPlayer -> playerHasPermission(guildPlayer, permission))
                 .map(GuildPlayer::getUUID)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> uuidsWithPermission.contains(player.getUniqueId()))
                 .collect(Collectors.toList());
@@ -275,12 +282,7 @@ public class Guild {
     }
 
     public boolean hasUUID(UUID uuid) {
-        for (GuildPlayer guildPlayer : players) {
-            if (guildPlayer.getUUID().equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
+        return guildPlayerUUIDCache.containsKey(uuid);
     }
 
     public String getName() {
@@ -370,10 +372,11 @@ public class Guild {
         GuildPlayer guildPlayer = new GuildPlayer(player);
         role.addPlayer(player.getUniqueId());
         this.players.add(guildPlayer);
+        this.guildPlayerUUIDCache.put(player.getUniqueId(), guildPlayer);
     }
 
     public Optional<GuildPlayer> getPlayerMatchingUUID(UUID uuid) {
-        return players.stream().filter(player -> player.getUUID().equals(uuid)).findFirst();
+        return Optional.ofNullable(guildPlayerUUIDCache.get(uuid));
     }
 
     public Optional<GuildPlayer> getPlayerMatchingName(String name) {

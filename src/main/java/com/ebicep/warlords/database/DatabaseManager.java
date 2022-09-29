@@ -17,6 +17,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
@@ -106,6 +107,7 @@ public class DatabaseManager {
                     ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkStatsTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
+                    GuildManager.reloadPlayerCaches();
                 })
                 .execute();
 
@@ -220,17 +222,23 @@ public class DatabaseManager {
     }
 
     public static void updateQueue() {
-        PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer, playersCollections)));
+        PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
+                playersCollections
+        )));
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
-        if (playerService == null || !enabled) return;
+        if (playerService == null || !enabled) {
+            return;
+        }
         PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
-        if (playerService == null || !enabled) return;
+        if (playerService == null || !enabled) {
+            return;
+        }
         PLAYERS_TO_UPDATE.get(collections).add(databasePlayer);
         //Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }

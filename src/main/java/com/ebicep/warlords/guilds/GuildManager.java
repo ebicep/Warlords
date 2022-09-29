@@ -74,6 +74,10 @@ public class GuildManager {
         GUILDS_TO_UPDATE.add(guild);
     }
 
+    public static void reloadPlayerCaches() {
+        GUILDS.forEach(Guild::reloadPlayerCache);
+    }
+
     public static boolean existingGuildWithName(String name) {
         return GUILDS.stream().anyMatch(guild -> guild.getName().equalsIgnoreCase(name));
     }
@@ -97,10 +101,9 @@ public class GuildManager {
             if (guild.getDisbandDate() != null) {
                 continue;
             }
-            for (GuildPlayer guildPlayer : guild.getPlayers()) {
-                if (guildPlayer.getUUID().equals(uuid)) {
-                    return new Pair<>(guild, guildPlayer);
-                }
+            Optional<GuildPlayer> optionalGuildPlayer = guild.getPlayerMatchingUUID(uuid);
+            if (optionalGuildPlayer.isPresent()) {
+                return new Pair<>(guild, optionalGuildPlayer.get());
             }
         }
         return null;
