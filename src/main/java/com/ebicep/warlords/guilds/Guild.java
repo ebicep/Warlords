@@ -256,6 +256,7 @@ public class Guild {
                 if (uuid.equals(currentMaster)) {
                     if (!hasPermission) {
                         getRoleOfPlayer(uuid).getPermissions().add(permission);
+                        queueUpdate();
                         return true;
                     }
                 }

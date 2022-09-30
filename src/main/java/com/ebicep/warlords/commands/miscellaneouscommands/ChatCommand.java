@@ -35,7 +35,7 @@ public class ChatCommand extends BaseCommand {
 
     @Subcommand("guildofficer|go")
     @Description("Switch to GUILD OFFICER chat channel")
-    public void guildOfficerChat(@Conditions("guild:true|otherChatChannel:target=GUILD") Player player) {
+    public void guildOfficerChat(@Conditions("guild:true|otherChatChannel:target=GUILD_OFFICER") Player player) {
         switchChannels(player, ChatChannels.GUILD_OFFICER);
     }
 

@@ -299,7 +299,7 @@ public enum ChatChannels {
 
     public static void switchChannels(Player player, ChatChannels chatChannel) {
         PLAYER_CHAT_CHANNELS.put(player.getUniqueId(), chatChannel);
-        player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name() + ChatColor.GREEN + " channel");
+        player.sendMessage(ChatColor.GREEN + "You are now in the " + ChatColor.GOLD + chatChannel.name.toUpperCase() + ChatColor.GREEN + " channel");
     }
 
     public static String getChatFormat(String prefixWithColor) {
