@@ -372,6 +372,31 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
 
+//        ConcurrentHashMap<UUID, Integer> playerClicks = new ConcurrentHashMap<>();
+//        getServer().getPluginManager().registerEvents(new Listener() {
+//            @EventHandler
+//            public void onEvent(PlayerInteractEvent event) {
+//                Action action = event.getAction();
+//                if(action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+//                    playerClicks.merge(event.getPlayer().getUniqueId(), 1, Integer::sum);
+////                    System.out.println("Left click: " + playerClicks.get(event.getPlayer().getUniqueId()));
+//                }
+//            }
+//        }, this);
+//        new BukkitRunnable() {
+//
+//            @Override
+//            public void run() {
+//                playerClicks.forEach((uuid, integer) -> {
+//                    Player player = Bukkit.getPlayer(uuid);
+//                    if(player != null) {
+//                        Bukkit.broadcastMessage(player.getName() + " - " + (integer));
+//                    }
+//                });
+//                playerClicks.clear();
+//            }
+//        }.runTaskTimer(this, 0, 21);
+
         CommandManager.init(this);
 
         HeadUtils.updateHeads();

@@ -10,7 +10,6 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogMuteGuild;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogUnmuteGuild;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -253,12 +252,15 @@ public class Guild {
         UUID uuid = guildPlayer.getUUID();
         for (GuildRole role : roles) {
             if (role.getPlayers().contains(uuid)) {
-                return role.getPermissions().contains(permission);
+                boolean hasPermission = role.getPermissions().contains(permission);
+                if (uuid.equals(currentMaster)) {
+                    if (!hasPermission) {
+                        getRoleOfPlayer(uuid).getPermissions().add(permission);
+                        return true;
+                    }
+                }
+                return hasPermission;
             }
-        }
-        if (uuid.equals(currentMaster)) {
-            getRoleOfPlayer(uuid).getPermissions().add(permission);
-            return true;
         }
         return false;
     }
