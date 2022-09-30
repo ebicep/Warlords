@@ -218,11 +218,6 @@ public enum ChatChannels {
             if (guildPlayerPair != null) {
                 Guild guild = guildPlayerPair.getA();
                 GuildPlayer guildPlayer = guildPlayerPair.getB();
-                if (guild.isMuted() && !guild.playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
-                    Guild.sendGuildMessage(player, ChatColor.RED + "The guild is currently muted.");
-                    e.setCancelled(true);
-                    return;
-                }
                 if (guildPlayer.isMuted()) {
                     GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
                     if (muteEntry.getTimeUnit() == GuildPlayerMuteEntry.TimeUnit.PERMANENT) {
