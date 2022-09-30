@@ -71,11 +71,26 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate(),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate() * 100) + "%"
         ));
-        //TODO find location
-        statsLeaderboards.add(new StatsLeaderboard("Fastest Win", LEAD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),
-                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() / 20),
-                true
+        statsLeaderboards.add(new StatsLeaderboard("Fastest Normal Win", UPPER_CENTER_1,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getNormalStats().getFastestGameFinished(),
+                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
+                        .apply(databasePlayer)
+                        .getNormalStats()
+                        .getFastestGameFinished() / 20)
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Highest Endless Wave Cleared", UPPER_CENTER_2,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getEndlessStats().getHighestWaveCleared(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
+                        .apply(databasePlayer)
+                        .getEndlessStats()
+                        .getHighestWaveCleared())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Fastest Hard Win", UPPER_CENTER_3,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHardStats().getFastestGameFinished(),
+                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
+                        .apply(databasePlayer)
+                        .getHardStats()
+                        .getFastestGameFinished() / 20)
         ));
 
         statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", SPAWN_POINT,

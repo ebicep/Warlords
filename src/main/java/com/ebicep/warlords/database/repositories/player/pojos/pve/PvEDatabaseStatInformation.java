@@ -15,8 +15,21 @@ import java.util.Map;
 
 public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation {
 
+    //CUMULATIVE STATS
     @Field("experience_pve")
     protected long experiencePvE;
+    @Field("total_waves_cleared")
+    protected int totalWavesCleared;
+    @Field("total_time_played")
+    protected long totalTimePlayed = 0;
+    @Field("mob_kills")
+    protected Map<String, Long> mobKills = new LinkedHashMap<>();
+    @Field("mob_assists")
+    protected Map<String, Long> mobAssists = new LinkedHashMap<>();
+    @Field("mob_deaths")
+    protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
+
+    //TOP STATS
     @Field("highest_wave_cleared")
     protected int highestWaveCleared;
     @Field("longest_time_in_combat")
@@ -25,18 +38,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     protected long mostDamageInRound;
     @Field("most_damage_in_wave")
     protected long mostDamageInWave;
-    @Field("total_waves_cleared")
-    protected int totalWavesCleared;
-    @Field("total_time_played")
-    protected long totalTimePlayed = 0;
-    @Field("fastest_game_finished")
+    @Field("fastest_normal_game_finished")
     protected long fastestGameFinished = 0;
-    @Field("mob_kills")
-    protected Map<String, Long> mobKills = new LinkedHashMap<>();
-    @Field("mob_assists")
-    protected Map<String, Long> mobAssists = new LinkedHashMap<>();
-    @Field("mob_deaths")
-    protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
 
     public PvEDatabaseStatInformation() {
     }
@@ -56,21 +59,24 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         DatabaseGamePvE databaseGamePvE = (DatabaseGamePvE) databaseGame;
         DatabaseGamePlayerPvE databaseGamePlayerPvE = (DatabaseGamePlayerPvE) gamePlayer;
 
-        if (multiplier > 0 && databaseGamePvE.getWavesCleared() > highestWaveCleared) {
-            this.highestWaveCleared = databaseGamePvE.getWavesCleared();
+        if (multiplier > 0) {
+            if (databaseGamePvE.getWavesCleared() > highestWaveCleared) {
+                this.highestWaveCleared = databaseGamePvE.getWavesCleared();
+            }
+            if (databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
+                this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
+            }
+            if (databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
+                this.mostDamageInRound = databaseGamePlayerPvE.getMostDamageInRound();
+            }
+            if (databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
+                this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
+            }
+            if (databaseGamePvE.getTimeElapsed() < fastestGameFinished) {
+                this.fastestGameFinished += databaseGamePvE.getTimeElapsed();
+            }
         }
-        if (multiplier > 0 && databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
-            this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
-        }
-        if (multiplier > 0 && databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
-            this.mostDamageInRound = databaseGamePlayerPvE.getMostDamageInRound();
-        }
-        if (multiplier > 0 && databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
-            this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
-        }
-        if (multiplier > 0 && databaseGamePvE.getTimeElapsed() < fastestGameFinished) {
-            this.fastestGameFinished += databaseGamePvE.getTimeElapsed();
-        }
+
         this.totalWavesCleared += databaseGamePvE.getWavesCleared();
         databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
