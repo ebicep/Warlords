@@ -33,8 +33,6 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
                 .recordStats()
         );
         cacheManager.setAllowNullValues(false);
-        //cacheManager.setAllowNullValues(false);
-
         return cacheManager;
     }
 

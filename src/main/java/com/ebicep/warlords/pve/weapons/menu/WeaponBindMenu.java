@@ -24,7 +24,7 @@ import java.util.List;
 
 public class WeaponBindMenu {
 
-    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<Classes, Pair<Integer, Integer>>() {{
+    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(1, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
         put(Classes.PALADIN, new Pair<>(7, 1));
@@ -32,8 +32,7 @@ public class WeaponBindMenu {
         put(Classes.ROGUE, new Pair<>(6, 3));
     }};
 
-    public static void openWeaponBindMenu(Player player, AbstractWeapon selectedWeapon) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+    public static void openWeaponBindMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon selectedWeapon) {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         BidiMap<AbstractWeapon, Specializations> boundWeapons = new DualHashBidiMap<>();
         weaponInventory.stream()
@@ -99,7 +98,7 @@ public class WeaponBindMenu {
                                     }
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openWeaponBindMenu(player, selectedWeapon);
+                                    openWeaponBindMenu(player, databasePlayer, selectedWeapon);
                                     PlayerHotBarItemListener.updateWeaponManagerItem(player);
                                 }
                         );
@@ -128,7 +127,7 @@ public class WeaponBindMenu {
                                     //bind the new weapon
                                     selectedWeapon.setBound(true);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openWeaponBindMenu(player, selectedWeapon);
+                                    openWeaponBindMenu(player, databasePlayer, selectedWeapon);
 
                                     player.spigot().sendMessage(
                                             new TextComponent(ChatColor.AQUA + "You bound "),
@@ -142,7 +141,7 @@ public class WeaponBindMenu {
             }
         }
 
-        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> WeaponManagerMenu.openWeaponEditor(player, selectedWeapon));
+        menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, selectedWeapon));
         menu.openForPlayer(player);
     }
 }

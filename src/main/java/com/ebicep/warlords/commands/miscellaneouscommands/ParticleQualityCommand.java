@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import org.bukkit.ChatColor;
@@ -19,14 +18,10 @@ public class ParticleQualityCommand extends BaseCommand {
     public void particleQuality(Player player, Settings.ParticleQuality particleQuality) {
         PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         settings.setParticleQuality(particleQuality);
-
         player.sendMessage(ChatColor.GREEN + "Particle Quality set to " + particleQuality);
-
-        if (DatabaseManager.playerService != null) {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.setParticleQuality(particleQuality);
-            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        }
+        });
     }
 
 }

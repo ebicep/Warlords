@@ -16,6 +16,7 @@ public class DateUtil {
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
+                .withNano(0)
                 .toInstant();
     }
 
@@ -25,6 +26,7 @@ public class DateUtil {
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
+                .withNano(0)
                 .toInstant();
     }
 
@@ -35,6 +37,7 @@ public class DateUtil {
                 .withHour(10)
                 .withMinute(0)
                 .withSecond(0)
+                .withNano(0)
                 .toInstant();
     }
 

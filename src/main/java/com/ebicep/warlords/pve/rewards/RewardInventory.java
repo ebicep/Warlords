@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.rewards;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
@@ -32,28 +31,54 @@ public class RewardInventory {
     }
 
     public static void openRewardInventory(Player player, int page) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        List<MasterworksFairReward> masterworksFairRewards = databasePlayerPvE.getRewards().stream()
-                .filter(reward -> reward.getTimeClaimed() == null)
-                .collect(Collectors.toList());
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+            List<MasterworksFairReward> masterworksFairRewards = databasePlayerPvE.getRewards().stream()
+                    .filter(reward -> reward.getTimeClaimed() == null)
+                    .collect(Collectors.toList());
 
-        Menu menu = new Menu("Your Rewards", 9 * 6);
+            Menu menu = new Menu("Your Rewards", 9 * 6);
 
-        if (masterworksFairRewards.isEmpty()) {
-            menu.setItem(4, 2, new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "You have no rewards to claim!").get(), (m, e) -> {
-            });
-        } else {
-            for (int i = 0; i < 45; i++) {
-                int rewardNumber = ((page - 1) * 45) + i;
-                if (rewardNumber < masterworksFairRewards.size()) {
-                    MasterworksFairReward masterworksFairReward = masterworksFairRewards.get(rewardNumber);
-                    menu.setItem(i % 9, i / 9,
-                            masterworksFairReward.getItem(),
-                            (m, e) -> {
+            if (masterworksFairRewards.isEmpty()) {
+                menu.setItem(4, 2, new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "You have no rewards to claim!").get(), (m, e) -> {
+                });
+            } else {
+                for (int i = 0; i < 45; i++) {
+                    int rewardNumber = ((page - 1) * 45) + i;
+                    if (rewardNumber < masterworksFairRewards.size()) {
+                        MasterworksFairReward masterworksFairReward = masterworksFairRewards.get(rewardNumber);
+                        menu.setItem(i % 9, i / 9,
+                                masterworksFairReward.getItem(),
+                                (m, e) -> {
+                                    masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
+                                    masterworksFairReward.setTimeClaimed();
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                                    sendRewardMessage(
+                                            player.getUniqueId(),
+                                            new TextComponent(ChatColor.GREEN + "Claimed: "),
+                                            new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
+                                                    .setHoverItem(masterworksFairReward.getItemWithoutClaim())
+                                                    .getTextComponent()
+                                    );
+
+                                    openRewardInventory(player, page);
+                                }
+                        );
+
+                    } else {
+                        break;
+                    }
+                }
+
+                menu.setItem(3, 5,
+                        new ItemBuilder(Material.GOLD_BLOCK)
+                                .name(ChatColor.GREEN + "Click to claim all rewards!")
+                                .get(),
+                        (m, e) -> {
+                            for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
                                 masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
                                 masterworksFairReward.setTimeClaimed();
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                 sendRewardMessage(
                                         player.getUniqueId(),
@@ -62,66 +87,41 @@ public class RewardInventory {
                                                 .setHoverItem(masterworksFairReward.getItemWithoutClaim())
                                                 .getTextComponent()
                                 );
-
-                                openRewardInventory(player, page);
                             }
-                    );
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            openRewardInventory(player, page);
+                        }
+                );
 
-                } else {
-                    break;
-                }
             }
 
-            menu.setItem(3, 5,
-                    new ItemBuilder(Material.GOLD_BLOCK)
-                            .name(ChatColor.GREEN + "Click to claim all rewards!")
-                            .get(),
-                    (m, e) -> {
-                        for (MasterworksFairReward masterworksFairReward : masterworksFairRewards) {
-                            masterworksFairReward.getRewards().forEach(databasePlayerPvE::addCurrency);
-                            masterworksFairReward.setTimeClaimed();
-
-                            sendRewardMessage(
-                                    player.getUniqueId(),
-                                    new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                    new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
-                                            .setHoverItem(masterworksFairReward.getItemWithoutClaim())
-                                            .getTextComponent()
-                            );
+            if (page - 1 > 0) {
+                menu.setItem(0, 5,
+                        new ItemBuilder(Material.ARROW)
+                                .name(ChatColor.GREEN + "Previous Page")
+                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                                .get(),
+                        (m, e) -> {
+                            openRewardInventory(player, page - 1);
                         }
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        openRewardInventory(player, page);
-                    }
-            );
-
-        }
-
-        if (page - 1 > 0) {
-            menu.setItem(0, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                            .get(),
-                    (m, e) -> {
-                        openRewardInventory(player, page - 1);
-                    }
-            );
-        }
-        if (masterworksFairRewards.size() > (page * 45)) {
-            menu.setItem(8, 5,
-                    new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                            .get(),
-                    (m, e) -> {
-                        openRewardInventory(player, page + 1);
-                    }
-            );
-        }
+                );
+            }
+            if (masterworksFairRewards.size() > (page * 45)) {
+                menu.setItem(8, 5,
+                        new ItemBuilder(Material.ARROW)
+                                .name(ChatColor.GREEN + "Next Page")
+                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                                .get(),
+                        (m, e) -> {
+                            openRewardInventory(player, page + 1);
+                        }
+                );
+            }
 
 
-        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
+            menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
+        });
     }
 
 }

@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class WeaponUpgradeMenu {
 
-    public static <T extends AbstractWeapon & Upgradeable> void openWeaponUpgradeMenu(Player player, T weapon) {
+    public static <T extends AbstractWeapon & Upgradeable> void openWeaponUpgradeMenu(Player player, DatabasePlayer databasePlayer, T weapon) {
         if (weapon == null) {
             return;
         }
@@ -28,7 +28,6 @@ public class WeaponUpgradeMenu {
         menu.setItem(2, 1,
                 weapon.getUpgradeItem(),
                 (m, e) -> {
-                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     LinkedHashMap<Currencies, Long> upgradeCost = weapon.getUpgradeCost(weapon.getUpgradeLevel() + 1);
                     for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
                         if (databasePlayer.getPveStats().getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
@@ -37,8 +36,8 @@ public class WeaponUpgradeMenu {
                             return;
                         }
                     }
-                    upgradeWeapon(player, weapon);
-                    WeaponManagerMenu.openWeaponEditor(player, weapon);
+                    upgradeWeapon(player, databasePlayer, weapon);
+                    WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 }
         );
 
@@ -53,18 +52,16 @@ public class WeaponUpgradeMenu {
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
-                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, weapon)
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
 
         menu.openForPlayer(player);
     }
 
-    public static <T extends AbstractWeapon & Upgradeable> void upgradeWeapon(Player player, T weapon) {
+    public static <T extends AbstractWeapon & Upgradeable> void upgradeWeapon(Player player, DatabasePlayer databasePlayer, T weapon) {
         if (weapon == null) {
             return;
         }
-
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             LinkedHashMap<Currencies, Long> upgradeCost = weapon.getUpgradeCost(weapon.getUpgradeLevel() + 1);
             for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {

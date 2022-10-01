@@ -25,10 +25,6 @@ public class DiscordCommand extends BaseCommand {
 
     public static BidiMap<UUID, Long> playerLinkKeys = new DualHashBidiMap<>();
 
-    public static Long getRandomNumber(int min, int max) {
-        return min + (long) (Math.random() * (max - min));
-    }
-
     @Subcommand("link")
     @Description("Links your discord account to your minecraft account")
     public void link(Player player) {
@@ -37,6 +33,10 @@ public class DiscordCommand extends BaseCommand {
             return;
         }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        if (databasePlayer == null) {
+            player.sendMessage(ChatColor.RED + "Contact an Administrator.");
+            return;
+        }
         if (databasePlayer.getDiscordID() != null) {
             player.sendMessage(ChatColor.RED + "Your account is already linked! (/discord unlink) to unlink your account.");
             return;
@@ -59,32 +59,40 @@ public class DiscordCommand extends BaseCommand {
         );
     }
 
+    public static Long getRandomNumber(int min, int max) {
+        return min + (long) (Math.random() * (max - min));
+    }
+
     @Subcommand("unlink")
     @Description("Unlinks your discord account from your minecraft account")
     public void unlink(Player player) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        if (databasePlayer.getDiscordID() == null) {
-            player.sendMessage(ChatColor.RED + "Your account has not been linked! (/discord link) to link your account.");
-            return;
-        }
-        Long oldID = databasePlayer.getDiscordID();
-        databasePlayer.setDiscordID(null);
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        player.sendMessage(ChatColor.GRAY + "Your account has been unlinked.");
+        DatabaseManager.updatePlayer(player, databasePlayer -> {
+            if (databasePlayer.getDiscordID() == null) {
+                player.sendMessage(ChatColor.RED + "Your account has not been linked! (/discord link) to link your account.");
+                return;
+            }
+            Long oldID = databasePlayer.getDiscordID();
+            databasePlayer.setDiscordID(null);
+            player.sendMessage(ChatColor.GRAY + "Your account has been unlinked. You will need to relink it /discord link");
 
-        BotManager.sendDebugMessage(
-                new EmbedBuilder()
-                        .setColor(15158332)
-                        .setTitle("Player Unlinked - " + oldID)
-                        .setDescription("UUID: " + player.getUniqueId() + "\n" + "IGN: " + player.getName())
-                        .build()
-        );
+            BotManager.sendDebugMessage(
+                    new EmbedBuilder()
+                            .setColor(15158332)
+                            .setTitle("Player Unlinked - " + oldID)
+                            .setDescription("UUID: " + player.getUniqueId() + "\n" + "IGN: " + player.getName())
+                            .build()
+            );
+        });
     }
 
     @Subcommand("info")
     @Description("Shows information about your linked discord account")
     public void info(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        if (databasePlayer == null) {
+            player.sendMessage(ChatColor.RED + "Contact an Administrator.");
+            return;
+        }
         if (databasePlayer.getDiscordID() == null) {
             player.sendMessage(ChatColor.RED + "Your account has not been linked! (/discord link) to link your account.");
         } else {

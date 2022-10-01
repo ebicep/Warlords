@@ -17,7 +17,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
-import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
@@ -26,16 +25,18 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import io.netty.util.internal.ConcurrentSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
 
@@ -47,7 +48,6 @@ public class DatabaseManager {
             put(value, new HashSet<>());
         }
     }};
-    public static final ConcurrentSet<DatabasePlayer> LOADED_PLAYERS = new ConcurrentSet<>();
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsDatabase;
     public static PlayerService playerService;
@@ -147,33 +147,49 @@ public class DatabaseManager {
         if (playerService == null || !enabled) {
             return;
         }
-        DatabasePlayer foundPlayer = playerService.findByUUID(uuid, collections);
-        if (foundPlayer == null) {
-            Warlords.newChain()
-                    .asyncFirst(() -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
-                    .syncLast((databasePlayer) -> {
-                        if (collections == PlayersCollections.LIFETIME) {
-                            loadPlayerInfo(Bukkit.getPlayer(uuid));
-                            callback.accept(databasePlayer);
-                            LOADED_PLAYERS.add(databasePlayer);
-                        }
-                    }).execute();
+        getPlayer(uuid, collections,
+                databasePlayer -> {
+                    if (collections == PlayersCollections.LIFETIME) {
+                        Warlords.newChain()
+                                .sync(() -> {
+                                    loadPlayerInfo(Bukkit.getPlayer(uuid), databasePlayer);
+                                    callback.accept(databasePlayer);
+                                    ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
+                                }).execute();
+                    }
+                },
+                () -> {
+                    Warlords.newChain()
+                            .asyncFirst(() -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
+                            .syncLast((databasePlayer) -> {
+                                if (collections == PlayersCollections.LIFETIME) {
+                                    loadPlayerInfo(Bukkit.getPlayer(uuid), databasePlayer);
+                                    callback.accept(databasePlayer);
+                                }
+                            }).execute();
+                }
+        );
+    }
+
+    public static void updateQueue() {
+        PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
+                playersCollections
+        )));
+    }
+
+    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
+        if (playerService == null || !enabled) {
+            return;
+        }
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);
+        if (databasePlayer != null) {
+            databasePlayerConsumer.accept(databasePlayer);
         } else {
-            if (collections == PlayersCollections.LIFETIME) {
-                Warlords.newChain()
-                        .sync(() -> {
-                            loadPlayerInfo(Bukkit.getPlayer(uuid));
-                            callback.accept(foundPlayer);
-                            LOADED_PLAYERS.add(foundPlayer);
-                            ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
-                        }).execute();
-            }
+            onNotFound.run();
         }
     }
 
-    private static void loadPlayerInfo(Player player) {
-        DatabasePlayer databasePlayer = playerService.findByUUID(player.getUniqueId());
-
+    private static void loadPlayerInfo(Player player, DatabasePlayer databasePlayer) {
         if (!Objects.equals(databasePlayer.getName(), player.getName())) {
             databasePlayer.setName(player.getName());
             queueUpdatePlayerAsync(databasePlayer);
@@ -221,18 +237,16 @@ public class DatabaseManager {
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
     }
 
-    public static void updateQueue() {
-        PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
-                playersCollections
-        )));
-    }
-
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {
         if (playerService == null || !enabled) {
             return;
         }
         PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
+    }
+
+    public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
+        getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, onNotFound);
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
@@ -251,15 +265,43 @@ public class DatabaseManager {
         Warlords.newChain().async(() -> gameService.save(databaseGame, databaseGame.getGameMode().gamesCollections)).execute();
     }
 
+    public static void updatePlayer(Player player, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        updatePlayer(player.getUniqueId(), databasePlayerConsumer);
+    }
+
     public static void updatePlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        updatePlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer);
+    }
+
+    public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
         if (playerService == null || !enabled) {
             return;
         }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        if (databasePlayer != null) {
+        getPlayer(uuid, playersCollections, databasePlayer -> {
             databasePlayerConsumer.accept(databasePlayer);
             queueUpdatePlayerAsync(databasePlayer);
+        });
+    }
+
+    public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(uuid, playersCollections, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static Map<UUID, DatabasePlayer> getLoadedPlayers(PlayersCollections playersCollections) {
+        CaffeineCache cache = (CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(playersCollections.cacheName);
+        if (cache == null) {
+            return new HashMap<>();
         }
+        ConcurrentMap<Object, Object> objectMap = cache.getNativeCache().asMap();
+        return objectMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> (UUID) entry.getKey(), entry -> (DatabasePlayer) entry.getValue()));
     }
 
 }

@@ -7,7 +7,6 @@ import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -38,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -88,18 +88,23 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         if (DatabaseManager.playerService != null) {
-            Warlords.newChain()
-                    .delay(40)
-                    .async(() -> game.forEachOfflineWarlordsPlayer((player, team) -> {
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_6, (dp) -> {
-                        });
-                        DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, (dp) -> {
-                        });
-                        DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, (dp) -> {
-                        });
-                    })).execute();
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    game.forEachOfflineWarlordsPlayer((player, team) -> {
+                        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                            if (activeCollection == PlayersCollections.LIFETIME) {
+                                DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+                                });
+                                continue;
+                            }
+                            DatabaseManager.loadPlayer(player.getUniqueId(), activeCollection, (dp) -> {
+                            });
+                        }
+                    });
+                }
+            }.runTaskLater(Warlords.getInstance(), 40);
         } else {
             System.out.println("ATTENTION - playerService is null");
         }

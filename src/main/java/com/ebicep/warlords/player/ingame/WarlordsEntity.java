@@ -9,7 +9,6 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.game.Game;
@@ -2025,13 +2024,14 @@ public abstract class WarlordsEntity {
 
     public void unlockAchievement(ChallengeAchievements achievement) {
         achievementsUnlocked.add(new ChallengeAchievements.ChallengeAchievementRecord(achievement));
-        if (entity instanceof Player && DatabaseManager.playerService != null) {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-            //only display achievement if they have never got it before
-            if (!databasePlayer.hasAchievement(achievement)) {
-                achievement.sendAchievementUnlockMessage((Player) entity);
-                achievement.sendAchievementUnlockMessageToOthers(this);
-            }
+        if (entity instanceof Player) {
+            DatabaseManager.getPlayer(uuid, databasePlayer -> {
+                //only display achievement if they have never got it before
+                if (!databasePlayer.hasAchievement(achievement)) {
+                    achievement.sendAchievementUnlockMessage((Player) entity);
+                    achievement.sendAchievementUnlockMessageToOthers(this);
+                }
+            });
         }
         System.out.println(name + " unlocked achievement: " + achievement.name);
     }

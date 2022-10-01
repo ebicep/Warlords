@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -140,13 +141,13 @@ public abstract class DatabaseGameBase {
             if (updatePlayerStats) {
                 ChatUtils.MessageTypes.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
 
-                //if(!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                //CHALLENGE ACHIEVEMENTS
-//                game.warlordsPlayers().forEachOrdered(warlordsPlayer -> {
-//                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid());
-//                    databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked());
-//                });
-                //}
+                if (!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                    //CHALLENGE ACHIEVEMENTS
+                    game.warlordsPlayers()
+                            .forEachOrdered(warlordsPlayer -> DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
+                                    databasePlayer -> databasePlayer.addAchievements(warlordsPlayer.getAchievementsUnlocked())
+                            ));
+                }
             }
 
             DatabaseGameBase databaseGame = game.getGameMode().createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
@@ -234,7 +235,7 @@ public abstract class DatabaseGameBase {
                         .delay(4, TimeUnit.SECONDS)
                         .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
                         .sync(() -> {
-                            for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
+                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                                 StatsLeaderboardManager.reloadLeaderboardsFromCache(activeCollection, false);
                             }
                             StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
@@ -292,46 +293,44 @@ public abstract class DatabaseGameBase {
     }
 
     protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
-        if (DatabaseManager.playerService == null) {
-            System.out.println("playerService is null - cannot update player stats");
-            return;
-        }
-
-        HashMap<PlayersCollections, DatabasePlayer> playerInCollectionMap = new HashMap<>();
-        for (PlayersCollections activeCollection : PlayersCollections.getActiveCollections()) {
-            playerInCollectionMap.put(activeCollection, DatabaseManager.playerService.findByUUID(gamePlayer.getUuid(), activeCollection));
-        }
-        playerInCollectionMap.forEach((collections, databasePlayer) -> {
-            if (databasePlayer == null) {
-                System.out.println("WARNING - " + gamePlayer.getName() + " was not found in " + collections.name());
-            } else {
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            if (!activeCollection.shouldUpdate(databaseGame.getExactDate())) {
+                return; //Can return because if game is not in the same week then it will not be in the same day
+            }
+            DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 if (databaseGame.getGameMode() == GameMode.WAVE_DEFENSE) {
                     databasePlayer.updateCustomStats(databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
                             multiplier,
-                            collections
+                            activeCollection
                     );
-                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
                 } else {
-                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, collections);
-                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collections);
+                    databasePlayer.updateStats(databaseGame, gamePlayer, multiplier, activeCollection);
                 }
-                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(collections,
-                        v -> new HashSet<>()
-                );
+                if (activeCollection == PlayersCollections.LIFETIME) {
+                    databasePlayer.addAchievements(
+                            Arrays.stream(TieredAchievements.values())
+                                    .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
+                                    .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
+                                    .map(TieredAchievements.TieredAchievementRecord::new)
+                                    .collect(Collectors.toList())
+                    );
+                }
+                Set<DatabasePlayer> databasePlayers = StatsLeaderboardManager.CACHED_PLAYERS.computeIfAbsent(activeCollection, v -> new HashSet<>());
                 databasePlayers.remove(databasePlayer);
                 databasePlayers.add(databasePlayer);
-            }
-        });
-//            databasePlayerAllTime.addAchievements(
-//                    Arrays.stream(TieredAchievements.values())
-//                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
-//                            .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayerAllTime))
-//                            .map(TieredAchievements.TieredAchievementRecord::new)
-//                            .collect(Collectors.toList())
-//            );
+            });
+        }
+    }
+
+    public Instant getExactDate() {
+        return exactDate;
+    }
+
+    public void setExactDate(Instant exactDate) {
+        this.exactDate = exactDate;
     }
 
     private static int getGameBefore(int currentGame) {
@@ -497,14 +496,6 @@ public abstract class DatabaseGameBase {
 
     public String getId() {
         return id;
-    }
-
-    public Instant getExactDate() {
-        return exactDate;
-    }
-
-    public void setExactDate(Instant exactDate) {
-        this.exactDate = exactDate;
     }
 
     public String getDate() {

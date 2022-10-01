@@ -1,7 +1,6 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
@@ -139,12 +138,13 @@ public class RegularGamesMenu {
                         Specializations spec = teamPlayer.getSelectedSpec();
                         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
                         PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(spec);
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                        databasePlayer.setLastSpec(spec);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        DatabaseManager.updatePlayer(uuid, databasePlayer -> {
+                            databasePlayer.setLastSpec(spec);
+                        });
                         if (offlinePlayer.getPlayer() != null) {
                             offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
-                            offlinePlayer.getPlayer().sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec.name + ChatColor.GREEN + "!");
+                            offlinePlayer.getPlayer()
+                                    .sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec.name + ChatColor.GREEN + "!");
                             offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
                         }
                     }

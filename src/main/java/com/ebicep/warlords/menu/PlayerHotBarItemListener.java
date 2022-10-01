@@ -139,12 +139,10 @@ public class PlayerHotBarItemListener implements Listener {
 
     public static void updateWeaponManagerItem(Player player) {
         UUID uuid = player.getUniqueId();
-        if (DatabaseManager.playerService != null) {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-            updateWeaponManagerItem(player, databasePlayer);
-        } else {
-            setItem(player, 6, WEAPONS_MENU);
-        }
+        DatabaseManager.getPlayer(uuid,
+                databasePlayer -> updateWeaponManagerItem(player, databasePlayer),
+                () -> setItem(player, 6, WEAPONS_MENU)
+        );
     }
 
     public static void updateWeaponManagerItem(Player player, DatabasePlayer databasePlayer) {

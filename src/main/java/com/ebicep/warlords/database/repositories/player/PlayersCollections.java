@@ -1,21 +1,67 @@
 package com.ebicep.warlords.database.repositories.player;
 
+import com.ebicep.warlords.util.java.DateUtil;
+
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
 
 public enum PlayersCollections {
 
-    LIFETIME("Lifetime", "Players_Information", "playersAllTime"),
-    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6"),
-    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5"),
-    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4"),
-    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly"),
-    DAILY("Daily", "Players_Information_Daily", "playersDaily"),
+    LIFETIME("Lifetime", "Players_Information", "playersAllTime") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return true;
+        }
+    },
+    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return ACTIVE_COLLECTIONS.contains(this);
+        }
+    },
+    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return ACTIVE_COLLECTIONS.contains(this);
+        }
+    },
+    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return ACTIVE_COLLECTIONS.contains(this);
+        }
+    },
+    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return Instant.now()
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                    .atZone(ZoneOffset.UTC)
+                    .withHour(0)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0)
+                    .toInstant()
+                    .isBefore(dateOfGame);
+        }
+    },
+    DAILY("Daily", "Players_Information_Daily", "playersDaily") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return DateUtil.getResetDateToday()
+                    .isBefore(dateOfGame);
+        }
+    },
     //TEMP2("TEMP2", "TEMP2", "TEMP2"),
 
     ;
 
     public static final PlayersCollections[] VALUES = values();
+    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, SEASON_6, WEEKLY, DAILY);
     public final String name;
     public final String collectionName;
     public final String cacheName;
@@ -24,10 +70,6 @@ public enum PlayersCollections {
         this.name = name;
         this.collectionName = collectionName;
         this.cacheName = cacheName;
-    }
-
-    public static List<PlayersCollections> getActiveCollections() {
-        return Arrays.asList(LIFETIME, SEASON_6, WEEKLY, DAILY);
     }
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
@@ -65,4 +107,6 @@ public enum PlayersCollections {
         }
         return LIFETIME;
     }
+
+    public abstract boolean shouldUpdate(Instant dateOfGame);
 }

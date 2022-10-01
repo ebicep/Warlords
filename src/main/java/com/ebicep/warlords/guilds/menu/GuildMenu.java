@@ -1,8 +1,6 @@
 package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
@@ -153,9 +151,6 @@ public class GuildMenu {
     }
 
     public static void onCoinConversion(Guild guild, Player player) {
-        if (DatabaseManager.playerService == null) {
-            return;
-        }
         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
         if (guildPlayerPair == null) {
             return;
@@ -167,71 +162,72 @@ public class GuildMenu {
             return;
         }
         int coinConversionRatio = Guild.getConversionRatio(guild);
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        Long playerCoins = pveStats.getCurrencyValue(Currencies.COIN);
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            Long playerCoins = databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN);
 
-        int maxCoinsCanConvert = (int) ((10000 - dailyCoinsConverted) * coinConversionRatio);
-        SignGUI.open(
-                player,
-                new String[]{
-                        "",
-                        "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
-                        "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
-                        "Ratio: " + coinConversionRatio + ":1",
-                },
-                (p, lines) -> {
-                    String amountString = lines[0];
-                    try {
-                        int playerCoinsToConvert = Integer.parseInt(amountString);
-                        if (playerCoinsToConvert <= 0) {
-                            player.sendMessage(ChatColor.RED + "You must enter a positive number.");
+            int maxCoinsCanConvert = (int) ((10000 - dailyCoinsConverted) * coinConversionRatio);
+            SignGUI.open(
+                    player,
+                    new String[]{
+                            "",
+                            "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
+                            "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
+                            "Ratio: " + coinConversionRatio + ":1",
+                    },
+                    (p, lines) -> {
+                        String amountString = lines[0];
+                        try {
+                            int playerCoinsToConvert = Integer.parseInt(amountString);
+                            if (playerCoinsToConvert <= 0) {
+                                player.sendMessage(ChatColor.RED + "You must enter a positive number.");
+                                openGuildMenu(guild, player, 1);
+                                return;
+                            }
+                            if (playerCoinsToConvert > playerCoins) {
+                                player.sendMessage(ChatColor.RED + "You do not have enough player coins to convert to guild coins.");
+                                openGuildMenu(guild, player, 1);
+                                return;
+                            }
+                            if (playerCoinsToConvert > maxCoinsCanConvert) {
+                                player.sendMessage(ChatColor.RED + "You cannot exceed the max convertable amount.");
+                                openGuildMenu(guild, player, 1);
+                                return;
+                            }
+                            int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
+                            Menu.openConfirmationMenu(
+                                    player,
+                                    "Confirm Conversion",
+                                    3,
+                                    Arrays.asList(
+                                            ChatColor.GREEN + "+" + guildCoinsGained + " Guild Coins",
+                                            ChatColor.RED + "-" + playerCoinsToConvert + " Player Coins"
+                                    ),
+                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    (m2, e2) -> {
+                                        guild.addCoins(guildCoinsGained);
+                                        guildPlayer.addDailyCoinsConverted(guildCoinsGained);
+                                        guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
+                                        guild.queueUpdate();
+                                        guild.sendGuildMessageToOnlinePlayers(
+                                                ChatColor.AQUA + player.getName() + ChatColor.GRAY + " converted " +
+                                                        ChatColor.GREEN + playerCoinsToConvert + ChatColor.GRAY + " player coins to " +
+                                                        ChatColor.GREEN + guildCoinsGained + ChatColor.GRAY + " guild coins.",
+                                                true
+                                        );
+                                        openGuildMenu(guild, player, 1);
+                                    },
+                                    (m2, e2) -> openGuildMenu(guild, player, 1),
+                                    (m2) -> {
+                                    }
+                            );
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage(ChatColor.RED + "Invalid Number!");
                             openGuildMenu(guild, player, 1);
-                            return;
                         }
-                        if (playerCoinsToConvert > playerCoins) {
-                            player.sendMessage(ChatColor.RED + "You do not have enough player coins to convert to guild coins.");
-                            openGuildMenu(guild, player, 1);
-                            return;
-                        }
-                        if (playerCoinsToConvert > maxCoinsCanConvert) {
-                            player.sendMessage(ChatColor.RED + "You cannot exceed the max convertable amount.");
-                            openGuildMenu(guild, player, 1);
-                            return;
-                        }
-                        int guildCoinsGained = playerCoinsToConvert / coinConversionRatio;
-                        Menu.openConfirmationMenu(
-                                player,
-                                "Confirm Conversion",
-                                3,
-                                Arrays.asList(
-                                        ChatColor.GREEN + "+" + guildCoinsGained + " Guild Coins",
-                                        ChatColor.RED + "-" + playerCoinsToConvert + " Player Coins"
-                                ),
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
-                                (m2, e2) -> {
-                                    guild.addCoins(guildCoinsGained);
-                                    guildPlayer.addDailyCoinsConverted(guildCoinsGained);
-                                    guild.log(new GuildLogCoinsConverted(player.getUniqueId(), playerCoinsToConvert, guildCoinsGained));
-                                    guild.queueUpdate();
-                                    guild.sendGuildMessageToOnlinePlayers(
-                                            ChatColor.AQUA + player.getName() + ChatColor.GRAY + " converted " +
-                                                    ChatColor.GREEN + playerCoinsToConvert + ChatColor.GRAY + " player coins to " +
-                                                    ChatColor.GREEN + guildCoinsGained + ChatColor.GRAY + " guild coins.",
-                                            true
-                                    );
-                                    openGuildMenu(guild, player, 1);
-                                },
-                                (m2, e2) -> openGuildMenu(guild, player, 1),
-                                (m2) -> {
-                                }
-                        );
-                    } catch (NumberFormatException ex) {
-                        player.sendMessage(ChatColor.RED + "Invalid Number!");
-                        openGuildMenu(guild, player, 1);
                     }
-                }
-        );
+            );
+        });
+
     }
 
 }

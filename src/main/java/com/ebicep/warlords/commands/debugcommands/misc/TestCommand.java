@@ -49,7 +49,7 @@ public class TestCommand extends BaseCommand {
     @Default
     @Description("Universal test command")
     public void test(CommandIssuer issuer) {
-
+        doTest(issuer);
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", true);
     }
 

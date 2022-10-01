@@ -30,38 +30,40 @@ public class AchievementsMenu {
     //TIERED ACHIEVEMENTS - CHALLENGES
     //ACHIEVEMENT HISTORY
     public static void openAchievementsMenu(Player player) {
-        Menu menu = new Menu("Achievements", 9 * 4);
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            Menu menu = new Menu("Achievements", 9 * 4);
 
-        menu.setItem(
-                1,
-                1,
-                new ItemBuilder(Material.STONE_AXE)
-                        .name(ChatColor.GREEN + "General")
-                        .get(),
-                (m, e) -> openAchievementTypeMenu(player, null)
-        );
-
-        int x = 0;
-        for (GameMode gameMode : GameMode.VALUES) {
-            if (gameMode.getItemStack() == null) {
-                continue;
-            }
             menu.setItem(
-                    x + 1,
                     1,
-                    new ItemBuilder(gameMode.getItemStack())
-                            .name(ChatColor.GREEN + gameMode.getName())
+                    1,
+                    new ItemBuilder(Material.STONE_AXE)
+                            .name(ChatColor.GREEN + "General")
                             .get(),
-                    (m, e) -> openAchievementTypeMenu(player, gameMode)
+                    (m, e) -> openAchievementTypeMenu(player, databasePlayer, null)
             );
-            x++;
-        }
 
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
+            int x = 0;
+            for (GameMode gameMode : GameMode.VALUES) {
+                if (gameMode.getItemStack() == null) {
+                    continue;
+                }
+                menu.setItem(
+                        x + 2,
+                        1,
+                        new ItemBuilder(gameMode.getItemStack())
+                                .name(ChatColor.GREEN + gameMode.getName())
+                                .get(),
+                        (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode)
+                );
+                x++;
+            }
+
+            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
+        });
     }
 
-    public static void openAchievementTypeMenu(Player player, GameMode gameMode) {
+    public static void openAchievementTypeMenu(Player player, DatabasePlayer databasePlayer, GameMode gameMode) {
         Menu menu = new Menu("Achievements - " + (gameMode == null ? "General" : gameMode.getName()), 9 * 4);
 
         menu.setItem(
@@ -71,6 +73,7 @@ public class AchievementsMenu {
                         .name(ChatColor.GREEN + "Challenge Achievements")
                         .get(),
                 (m, e) -> openAchievementsGameModeMenu(player,
+                        databasePlayer,
                         gameMode,
                         "Challenge Achievements",
                         ChallengeAchievements.ChallengeAchievementRecord.class,
@@ -84,6 +87,7 @@ public class AchievementsMenu {
                         .name(ChatColor.GREEN + "Tiered Achievements")
                         .get(),
                 (m, e) -> openAchievementsGameModeMenu(player,
+                        databasePlayer,
                         gameMode,
                         "Tiered Achievements",
                         TieredAchievements.TieredAchievementRecord.class,
@@ -98,22 +102,19 @@ public class AchievementsMenu {
 
     public static <T extends Achievement.AbstractAchievementRecord<R>, R extends Enum<R> & Achievement> void openAchievementsGameModeMenu(
             Player player,
+            DatabasePlayer databasePlayer,
             GameMode gameMode,
             String menuName,
             Class<T> recordClass,
             R[] enumsValues
     ) {
-        if (DatabaseManager.playerService == null) {
-            return;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         List<R> unlockedAchievements = databasePlayer.getAchievements().stream()
                 .filter(recordClass::isInstance)
                 .map(recordClass::cast)
                 .map(Achievement.AbstractAchievementRecord::getAchievement)
                 .collect(Collectors.toList());
 
-        Menu menu = new Menu(menuName + " - " + gameMode.abbreviation, 9 * 6);
+        Menu menu = new Menu(menuName + " - " + (gameMode == null ? "General" : gameMode.getName()), 9 * 6);
         int x = 0;
         int y = 0;
         for (R achievement : enumsValues) {
@@ -145,9 +146,9 @@ public class AchievementsMenu {
                     (m, e) -> {
                         if (hasAchievement) {
                             openAchievementHistoryMenu(player,
-                                    recordClass,
+                                    databasePlayer, recordClass,
                                     achievement,
-                                    (m2, e2) -> openAchievementsGameModeMenu(player, gameMode, menuName,
+                                    (m2, e2) -> openAchievementsGameModeMenu(player, databasePlayer, gameMode, menuName,
                                             recordClass, enumsValues
                                     )
                             );
@@ -163,21 +164,18 @@ public class AchievementsMenu {
         }
 
 
-        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementTypeMenu(player, gameMode));
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
     public static <T extends Achievement.AbstractAchievementRecord<R>, R extends Enum<R> & Achievement> void openAchievementHistoryMenu(
             Player player,
+            DatabasePlayer databasePlayer,
             Class<T> recordClass,
             R achievement,
             BiConsumer<Menu, InventoryClickEvent> menuBack
     ) {
-        if (DatabaseManager.playerService == null) {
-            return;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         List<T> achievementRecords = databasePlayer.getAchievements().stream()
                 .filter(recordClass::isInstance)
                 .map(recordClass::cast)

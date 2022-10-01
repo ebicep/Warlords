@@ -69,7 +69,7 @@ public class CustomScoreboard {
     }
 
     public static void reloadPvEScoreboard(DatabasePlayerPvE databasePlayerPvE) {
-        for (DatabasePlayer loadedPlayer : DatabaseManager.LOADED_PLAYERS) {
+        for (DatabasePlayer loadedPlayer : DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).values()) {
             if (loadedPlayer.getPveStats() == databasePlayerPvE) {
                 Player player = Bukkit.getPlayer(loadedPlayer.getUuid());
                 if (player != null && player.getWorld().getName().equalsIgnoreCase("MainLobby")) {
@@ -86,32 +86,27 @@ public class CustomScoreboard {
         }
     }
 
-    public Scoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public Objective getHealth() {
-        return health;
-    }
-
-    public void setHealth(Objective health) {
-        this.health = health;
-    }
-
-    public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
-        if (prefix.length() > 16) {
-            prefix = "Error";
-        }
-        if (suffix.length() > 16) {
-            suffix = "Error";
-        }
-        scoreboard.getTeam("team_" + team).setPrefix(prefix);
-        scoreboard.getTeam("team_" + team).setSuffix(suffix);
-    }
-
-    public void giveNewSideBar(boolean forceClear, List<String> entries) {
-        // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
-        giveNewSideBar(forceClear, entries.toArray(new String[0]));
+    private void givePvEScoreboard(DatabasePlayerPvE pveStats, boolean forceClear) {
+        giveNewSideBar(forceClear,
+                ChatColor.GRAY + "PvE",
+                "",
+                "Kills: " + ChatColor.GREEN + addCommaAndRound(pveStats.getKills()),
+                "Assists: " + ChatColor.GREEN + addCommaAndRound(pveStats.getAssists()),
+                "Plays: " + ChatColor.GREEN + addCommaAndRound(pveStats.getPlays()),
+                " ",
+                "Coins: " + Currencies.COIN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COIN)),
+                "Synthetic Shards: " + Currencies.SYNTHETIC_SHARD.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SYNTHETIC_SHARD)),
+                "Legend Fragment: " + Currencies.LEGEND_FRAGMENTS.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.LEGEND_FRAGMENTS)),
+                "Star Pieces: " + ChatColor.GREEN + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
+                        pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +
+                        pveStats.getCurrencyValue(Currencies.EPIC_STAR_PIECE) +
+                        pveStats.getCurrencyValue(Currencies.LEGENDARY_STAR_PIECE)),
+                "Supply Drop Tokens: " + Currencies.SUPPLY_DROP_TOKEN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)),
+                "Fairy Essence: " + Currencies.FAIRY_ESSENCE.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.FAIRY_ESSENCE)),
+                "  ",
+                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
+                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+        );
     }
 
     public void giveNewSideBar(boolean forceClear, String... entries) {
@@ -166,6 +161,34 @@ public class CustomScoreboard {
         }
     }
 
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    public Objective getHealth() {
+        return health;
+    }
+
+    public void setHealth(Objective health) {
+        this.health = health;
+    }
+
+    public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
+        if (prefix.length() > 16) {
+            prefix = "Error";
+        }
+        if (suffix.length() > 16) {
+            suffix = "Error";
+        }
+        scoreboard.getTeam("team_" + team).setPrefix(prefix);
+        scoreboard.getTeam("team_" + team).setSuffix(suffix);
+    }
+
+    public void giveNewSideBar(boolean forceClear, List<String> entries) {
+        // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
+        giveNewSideBar(forceClear, entries.toArray(new String[0]));
+    }
+
     public void giveMainLobbyScoreboard() {
         if (scoreboard.getObjective("health") != null) {
             scoreboard.getObjective("health").unregister();
@@ -204,7 +227,7 @@ public class CustomScoreboard {
             }
             scoreboardSelection += selectedCollection.name;
 
-            if (DatabaseManager.playerService != null && selectedGameType == GameType.PVE) {
+            if (selectedGameType == GameType.PVE) {
                 givePvEScoreboard();
                 return;
             }
@@ -236,27 +259,30 @@ public class CustomScoreboard {
             }
             return;
         }
-        if (DatabaseManager.playerService == null) {
-            giveNASidebar("Lifetime");
-            return;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        giveNewSideBar(true,
-                ChatColor.GRAY + "Lifetime",
-                " ",
-                "Kills: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getKills()),
-                "Assists: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getAssists()),
-                "Deaths: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getDeaths()),
-                " ",
-                "Wins: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getWins()),
-                "Losses: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getLosses()),
-                "  ",
-                "Damage: " + ChatColor.RED + addCommaAndRound(databasePlayer.getDamage()),
-                "Healing: " + ChatColor.DARK_GREEN + addCommaAndRound(databasePlayer.getHealing()),
-                "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
-                "    ",
-                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+
+        DatabaseManager.getPlayer(uuid,
+                databasePlayer -> {
+                    giveNewSideBar(true,
+                            ChatColor.GRAY + "Lifetime",
+                            " ",
+                            "Kills: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getKills()),
+                            "Assists: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getAssists()),
+                            "Deaths: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getDeaths()),
+                            " ",
+                            "Wins: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getWins()),
+                            "Losses: " + ChatColor.GREEN + addCommaAndRound(databasePlayer.getLosses()),
+                            "  ",
+                            "Damage: " + ChatColor.RED + addCommaAndRound(databasePlayer.getDamage()),
+                            "Healing: " + ChatColor.DARK_GREEN + addCommaAndRound(databasePlayer.getHealing()),
+                            "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
+                            "    ",
+                            "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
+                            "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                    );
+                },
+                () -> {
+                    giveNASidebar("Lifetime");
+                }
         );
     }
 
@@ -281,30 +307,9 @@ public class CustomScoreboard {
     }
 
     private void givePvEScoreboard() {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        givePvEScoreboard(databasePlayer.getPveStats(), true);
-    }
-
-    private void givePvEScoreboard(DatabasePlayerPvE pveStats, boolean forceClear) {
-        giveNewSideBar(forceClear,
-                ChatColor.GRAY + "PvE",
-                "",
-                "Kills: " + ChatColor.GREEN + addCommaAndRound(pveStats.getKills()),
-                "Assists: " + ChatColor.GREEN + addCommaAndRound(pveStats.getAssists()),
-                "Plays: " + ChatColor.GREEN + addCommaAndRound(pveStats.getPlays()),
-                " ",
-                "Coins: " + Currencies.COIN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COIN)),
-                "Synthetic Shards: " + Currencies.SYNTHETIC_SHARD.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SYNTHETIC_SHARD)),
-                "Legend Fragment: " + Currencies.LEGEND_FRAGMENTS.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.LEGEND_FRAGMENTS)),
-                "Star Pieces: " + ChatColor.GREEN + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.EPIC_STAR_PIECE) +
-                        pveStats.getCurrencyValue(Currencies.LEGENDARY_STAR_PIECE)),
-                "Supply Drop Tokens: " + Currencies.SUPPLY_DROP_TOKEN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SUPPLY_DROP_TOKEN)),
-                "Fairy Essence: " + Currencies.FAIRY_ESSENCE.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.FAIRY_ESSENCE)),
-                "  ",
-                "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+        DatabaseManager.getPlayer(uuid,
+                databasePlayer -> givePvEScoreboard(databasePlayer.getPveStats(), true),
+                () -> giveNASidebar("PvE")
         );
     }
 

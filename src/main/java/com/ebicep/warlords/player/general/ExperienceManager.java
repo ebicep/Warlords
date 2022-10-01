@@ -60,7 +60,7 @@ public class ExperienceManager {
             new Pair<>(ChatColor.DARK_BLUE, Color.BLUE), //13
             new Pair<>(ChatColor.DARK_PURPLE, Color.PURPLE) //13
     );
-    private static final Map<String, int[]> awardOrder = new LinkedHashMap<String, int[]>() {{
+    private static final Map<String, int[]> awardOrder = new LinkedHashMap<>() {{
         put("wins", new int[]{1000, 750, 500});
         put("losses", new int[]{200, 150, 100});
         put("kills", new int[]{850, 600, 350});
@@ -74,7 +74,7 @@ public class ExperienceManager {
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
     }};
-    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<Classes, Pair<Integer, Integer>>() {{
+    private static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(2, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
         put(Classes.PALADIN, new Pair<>(6, 1));
@@ -100,45 +100,42 @@ public class ExperienceManager {
     }
 
     public static void openLevelingRewardsMenu(Player player) {
-        Menu menu = new Menu("Rewards Menu", 9 * 6);
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            Menu menu = new Menu("Rewards Menu", 9 * 6);
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+            for (Classes value : Classes.VALUES) {
+                Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
 
-        for (Classes value : Classes.VALUES) {
-            Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
+                List<String> specLore = new ArrayList<>();
+                for (Specializations spec : value.subclasses) {
+                    int prestige = databasePlayer.getSpec(spec).getPrestige();
+                    int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
+                    long experience = databasePlayer.getSpec(spec).getExperience();
 
-            List<String> specLore = new ArrayList<>();
-            for (Specializations spec : value.subclasses) {
-                int prestige = databasePlayer.getSpec(spec).getPrestige();
-                int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
-                long experience = databasePlayer.getSpec(spec).getExperience();
+                    specLore.add(ChatColor.GOLD + spec.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(
+                            level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige));
+                    specLore.add(getProgressStringWithPrestige(experience, level + 1, prestige));
+                    specLore.add("");
+                }
 
-                specLore.add(ChatColor.GOLD + spec.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(
-                        level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige));
-                specLore.add(getProgressStringWithPrestige(experience, level + 1, prestige));
-                specLore.add("");
+                menu.setItem(
+                        menuLocation.getA(),
+                        menuLocation.getB(),
+                        new ItemBuilder(value.item)
+                                .name(ChatColor.GREEN + value.name)
+                                .lore(specLore)
+                                .get(),
+                        (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
+                );
             }
 
-            menu.setItem(
-                    menuLocation.getA(),
-                    menuLocation.getB(),
-                    new ItemBuilder(value.item)
-                            .name(ChatColor.GREEN + value.name)
-                            .lore(specLore)
-                            .get(),
-                    (m, e) -> openLevelingRewardsMenuForClass(player, value)
-            );
-        }
-
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
+        });
     }
 
-    public static void openLevelingRewardsMenuForClass(Player player, Classes classes) {
+    public static void openLevelingRewardsMenuForClass(Player player, DatabasePlayer databasePlayer, Classes classes) {
         Menu menu = new Menu(classes.name, 9 * 4);
-
-        Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
 
         List<Specializations> values = classes.subclasses;
         for (int i = 0; i < values.size(); i++) {
@@ -156,7 +153,7 @@ public class ExperienceManager {
                             .lore(getProgressStringWithPrestige(experience, level + 1, prestige))
                             .get(),
                     (m, e) -> openLevelingRewardsMenuForSpec(player,
-                            spec,
+                            databasePlayer, spec,
                             1,
                             databasePlayer.getSpec(spec).getPrestige()
                     )
@@ -170,13 +167,13 @@ public class ExperienceManager {
 
     public static void openLevelingRewardsMenuForSpec(
             Player player,
+            DatabasePlayer databasePlayer,
             Specializations spec,
             int page,
             int selectedPrestige
     ) {
         Menu menu = new Menu(spec.name, 9 * 6);
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         DatabaseSpecialization databaseSpecialization = databasePlayer.getSpec(spec);
         int currentPrestige = databasePlayer.getSpec(spec).getPrestige();
         int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
@@ -249,7 +246,7 @@ public class ExperienceManager {
                                 databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
                                 player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openLevelingRewardsMenuForSpec(player, spec, page, selectedPrestige);
+                                openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                             }
                         } else {
                             player.sendMessage(ChatColor.RED + "You can't claim this reward yet!");
@@ -270,9 +267,9 @@ public class ExperienceManager {
                     itemBuilder.get(),
                     (m, e) -> {
                         if (selectedPrestige == currentPrestige) {
-                            openLevelingRewardsMenuForSpec(player, spec, page, 0);
+                            openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, 0);
                         } else {
-                            openLevelingRewardsMenuForSpec(player, spec, page, selectedPrestige + 1);
+                            openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige + 1);
                         }
                     }
             );
@@ -286,7 +283,7 @@ public class ExperienceManager {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
-                    (m, e) -> openLevelingRewardsMenuForSpec(player, spec, page - 1, selectedPrestige)
+                    (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
             );
         }
         if (page + 1 < 5) {
@@ -297,7 +294,7 @@ public class ExperienceManager {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
-                    (m, e) -> openLevelingRewardsMenuForSpec(player, spec, page + 1, selectedPrestige)
+                    (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
             );
 
         }
@@ -306,7 +303,7 @@ public class ExperienceManager {
         menu.setItem(3,
                 5,
                 MENU_BACK,
-                (m, e) -> openLevelingRewardsMenuForClass(player, Specializations.getClass(spec))
+                (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, Specializations.getClass(spec))
         );
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -444,26 +441,26 @@ public class ExperienceManager {
                 expGain.put("Flags Returned", (long) (flagRetExp * multiplier));
             }
 
-
-            if (DatabaseManager.playerService != null) {
-                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
-                if (databasePlayer != null) {
-                    int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
-                    switch (plays) {
-                        case 0:
-                            expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
-                            break;
-                        case 1:
-                            expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
-                            break;
-                        case 2:
-                            expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
-                            break;
+            DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
+                    PlayersCollections.DAILY,
+                    databasePlayer -> {
+                        int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
+                        switch (plays) {
+                            case 0:
+                                expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
+                                break;
+                            case 1:
+                                expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
+                                break;
+                            case 2:
+                                expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
+                                break;
+                        }
+                    },
+                    () -> {
+                        System.out.println("ERROR: Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
                     }
-                } else {
-                    System.out.println("Could not find player: " + warlordsPlayer.getName() + " during experience calculation");
-                }
-            }
+            );
         }
 
 

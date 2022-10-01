@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -258,23 +257,23 @@ public class WaveDefenseOption implements Option {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (DatabaseManager.playerService != null && player instanceof WarlordsPlayer) {
-            DatabasePlayerPvE pveStats = DatabaseManager.playerService.findByUUID(player.getUuid()).getPveStats();
-            Optional<AbstractWeapon> optionalWeapon = pveStats.getWeaponInventory()
-                    .stream()
-                    .filter(AbstractWeapon::isBound)
-                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                    .findFirst();
-            optionalWeapon.ifPresent(abstractWeapon -> {
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
+        if (player instanceof WarlordsPlayer) {
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                Optional<AbstractWeapon> optionalWeapon = databasePlayer.getPveStats().getWeaponInventory()
+                        .stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                        .findFirst();
+                optionalWeapon.ifPresent(abstractWeapon -> {
+                    WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
 
-                ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                warlordsPlayer.setWeapon(abstractWeapon);
-                abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
-                player.updateEntity();
+                    ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    warlordsPlayer.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer);
+                    player.updateEntity();
+                });
             });
         }
-
     }
 
     @Override

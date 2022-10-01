@@ -42,23 +42,20 @@ public class WeaponManagerMenu {
     public static HashMap<UUID, PlayerMenuSettings> playerMenuSettings = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player) {
-        if (DatabaseManager.playerService == null) {
-            return;
-        }
-
         UUID uuid = player.getUniqueId();
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
 
-        playerMenuSettings.putIfAbsent(uuid, new PlayerMenuSettings());
-        PlayerMenuSettings menuSettings = playerMenuSettings.get(uuid);
-        menuSettings.setWeaponInventory(weaponInventory);
-        menuSettings.sort();
+            playerMenuSettings.putIfAbsent(uuid, new PlayerMenuSettings());
+            PlayerMenuSettings menuSettings = playerMenuSettings.get(uuid);
+            menuSettings.setWeaponInventory(weaponInventory);
+            menuSettings.sort();
 
-        openWeaponInventoryFromInternal(player);
+            openWeaponInventoryFromInternal(player, databasePlayer);
+        });
     }
 
-    public static void openWeaponInventoryFromInternal(Player player) {
+    public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
         PlayerMenuSettings menuSettings = playerMenuSettings.get(player.getUniqueId());
         int page = menuSettings.getPage();
         menuSettings.sort();
@@ -80,7 +77,7 @@ public class WeaponManagerMenu {
 
                 menu.setItem(column, row,
                         abstractWeapon.generateItemStack(),
-                        (m, e) -> openWeaponEditor(player, abstractWeapon)
+                        (m, e) -> openWeaponEditor(player, databasePlayer, abstractWeapon)
                 );
             } else {
                 break;
@@ -95,7 +92,7 @@ public class WeaponManagerMenu {
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
-                        openWeaponInventoryFromInternal(player);
+                        openWeaponInventoryFromInternal(player, databasePlayer);
                     }
             );
         }
@@ -107,12 +104,12 @@ public class WeaponManagerMenu {
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);
-                        openWeaponInventoryFromInternal(player);
+                        openWeaponInventoryFromInternal(player, databasePlayer);
                     }
             );
         }
 
-        DatabasePlayerPvE databasePlayerPvE = DatabaseManager.playerService.findByUUID(player.getUniqueId()).getPveStats();
+        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
         menu.setItem(1, 5,
                 new ItemBuilder(Material.NETHER_STAR)
                         .name(ChatColor.GREEN + "Your Star Pieces")
@@ -134,7 +131,7 @@ public class WeaponManagerMenu {
                     menuSettings.setRarityFilter(WeaponsPvE.NONE);
                     menuSettings.setSortOption(SortOptions.DATE);
                     menuSettings.setAscending(true);
-                    openWeaponInventoryFromInternal(player);
+                    openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
         menu.setItem(5, 5,
@@ -147,7 +144,7 @@ public class WeaponManagerMenu {
                         .get(),
                 (m, e) -> {
                     menuSettings.setRarityFilter(filterBy.next());
-                    openWeaponInventoryFromInternal(player);
+                    openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
         menu.setItem(6, 5,
@@ -160,7 +157,7 @@ public class WeaponManagerMenu {
                         .get(),
                 (m, e) -> {
                     menuSettings.setSortOption(sortedBy.next());
-                    openWeaponInventoryFromInternal(player);
+                    openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
         menu.setItem(7, 5,
@@ -173,7 +170,7 @@ public class WeaponManagerMenu {
                         .get(),
                 (m, e) -> {
                     menuSettings.setAscending(!menuSettings.isAscending());
-                    openWeaponInventoryFromInternal(player);
+                    openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
 
@@ -181,12 +178,7 @@ public class WeaponManagerMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openWeaponEditor(Player player, AbstractWeapon weapon) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        if (databasePlayer == null) {
-            return;
-        }
-
+    public static void openWeaponEditor(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
         Menu menu = new Menu("Weapon Editor", 9 * 6);
 
         menu.setItem(
@@ -203,14 +195,14 @@ public class WeaponManagerMenu {
                 new ItemBuilder(Material.SLIME_BALL)
                         .name(ChatColor.GREEN + "Bind Weapon")
                         .get(),
-                (m, e) -> openWeaponBindMenu(player, weapon)
+                (m, e) -> openWeaponBindMenu(player, databasePlayer, weapon)
         ));
         //fairy essence reskin commmon/rare/epic/legendary
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.PAINTING)
                         .name(ChatColor.GREEN + "Skin Selector")
                         .get(),
-                (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, weapon, 1)
+                (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, databasePlayer, weapon, 1)
         ));
         if (weapon instanceof AbstractTierOneWeapon) {
             //star piece
@@ -223,7 +215,7 @@ public class WeaponManagerMenu {
                             player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
                             return;
                         }
-                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, (AbstractTierOneWeapon) weapon);
+                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, (AbstractTierOneWeapon) weapon);
                     }
             ));
         }
@@ -269,10 +261,10 @@ public class WeaponManagerMenu {
                         }
 
                         if (!(weapon instanceof AbstractTierTwoWeapon) && e.isShiftClick()) {
-                            WeaponSalvageMenu.salvageWeapon(player, (AbstractWeapon & Salvageable) weapon);
-                            openWeaponInventoryFromInternal(player);
+                            WeaponSalvageMenu.salvageWeapon(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
+                            openWeaponInventoryFromInternal(player, databasePlayer);
                         } else {
-                            WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, (AbstractWeapon & Salvageable) weapon);
+                            WeaponSalvageMenu.openWeaponSalvageConfirmMenu(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
                         }
                     }
             ));
@@ -283,7 +275,7 @@ public class WeaponManagerMenu {
                     new ItemBuilder(Material.WORKBENCH)
                             .name(ChatColor.GREEN + "Weapon Stats Reroll")
                             .get(),
-                    (m, e) -> WeaponRerollMenu.openWeaponRerollMenu(player, weapon)
+                    (m, e) -> WeaponRerollMenu.openWeaponRerollMenu(player, databasePlayer, weapon)
             ));
         }
         //upgrade epic/legendary
@@ -297,7 +289,7 @@ public class WeaponManagerMenu {
                             player.sendMessage(ChatColor.RED + "You can't upgrade this weapon anymore.");
                             return;
                         }
-                        WeaponUpgradeMenu.openWeaponUpgradeMenu(player, (AbstractWeapon & Upgradeable) weapon);
+                        WeaponUpgradeMenu.openWeaponUpgradeMenu(player, databasePlayer, (AbstractWeapon & Upgradeable) weapon);
                     }
             ));
         }
@@ -308,7 +300,7 @@ public class WeaponManagerMenu {
                             .name(ChatColor.GREEN + "Apply Title to Weapon")
                             .get(),
                     (m, e) -> {
-                        WeaponTitleMenu.openWeaponTitleMenu(player, (AbstractLegendaryWeapon) weapon);
+                        WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
                     }
             ));
         }
@@ -329,7 +321,7 @@ public class WeaponManagerMenu {
             }
         }
 
-        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player));
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player, databasePlayer));
         menu.openForPlayer(player);
     }
 

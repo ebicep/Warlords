@@ -65,28 +65,33 @@ public class MyPositionCommand extends BaseCommand {
     @Default
     @Description("Displays your general stats position in the leaderboards")
     public void myStats(Player player) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 
-        StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats");
-        for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.ALL).getGeneral().getStatsLeaderboards()) {
-            if (statsLeaderboard.getTitle().equals("Experience")) {
-                stats.append("\n").append(ChatColor.GREEN).append("Level")
-                        .append(": ").append(NumberFormat.addCommaAndRound(databasePlayer.getLevel()));
-                int index = statsLeaderboard.getSortedPlayers(PlayersCollections.LIFETIME).indexOf(databasePlayer);
-                if (index != -1) {
-                    stats.append(ChatColor.YELLOW).append(" (#").append(index + 1).append(")");
+            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats");
+            for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.ALL)
+                    .getGeneral()
+                    .getStatsLeaderboards()) {
+                if (statsLeaderboard.getTitle().equals("Experience")) {
+                    stats.append("\n").append(ChatColor.GREEN).append("Level")
+                            .append(": ").append(NumberFormat.addCommaAndRound(databasePlayer.getLevel()));
+                    int index = statsLeaderboard.getSortedPlayers(PlayersCollections.LIFETIME).indexOf(databasePlayer);
+                    if (index != -1) {
+                        stats.append(ChatColor.YELLOW).append(" (#").append(index + 1).append(")");
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        for (int i = 0, size = STAT_LEADERBOARD_TARGETS.length; i < size; i++) {
-            if (i == 0) continue;
-            StatLeaderboardTarget statLeaderboardTarget = STAT_LEADERBOARD_TARGETS[i];
-            appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
-        }
+            for (int i = 0, size = STAT_LEADERBOARD_TARGETS.length; i < size; i++) {
+                if (i == 0) {
+                    continue;
+                }
+                StatLeaderboardTarget statLeaderboardTarget = STAT_LEADERBOARD_TARGETS[i];
+                appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
+            }
 
-        ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+        });
     }
 
     @Subcommand("class")
@@ -97,14 +102,15 @@ public class MyPositionCommand extends BaseCommand {
         if (classes == null) {
             throw new InvalidCommandArgument("Invalid Class");
         }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 
-        StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + classes.name + ")");
-        for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
-            appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
-        }
-        ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + classes.name + ")");
+            for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
+                appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
+            }
+            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+        });
     }
 
     @Subcommand("spec")
@@ -115,35 +121,40 @@ public class MyPositionCommand extends BaseCommand {
         if (specializations == null) {
             throw new InvalidCommandArgument("Invalid Specialization");
         }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 
-        StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + specializations.name + ")");
-        for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
-            appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
-        }
-        ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + specializations.name + ")");
+            for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
+                appendStats(statLeaderboardTarget, databasePlayer, databasePlayerPvE, "", stats);
+            }
+            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+        });
     }
 
     @Subcommand("masterworksfair|mwf")
     public void myStatsMasterworksFair(Player player) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (Masterworks Fair)");
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (Masterworks Fair)");
 
-        appendStat("Masterworks Fair Wins", databasePlayer, stats);
-        for (WeaponsPvE value : WeaponsPvE.VALUES) {
-            if (value.getPlayerEntries == null) continue;
-            appendStat("Masterworks Fair " + value.name + " Wins", databasePlayer, stats);
-        }
-        stats.append("\n");
-        appendStat("Average Masterworks Fair Placement", databasePlayer, stats);
-        for (WeaponsPvE value : WeaponsPvE.VALUES) {
-            if (value.getPlayerEntries == null) continue;
-            appendStat("Average Masterworks Fair " + value.name + " Placement", databasePlayer, stats);
-        }
+            appendStat("Masterworks Fair Wins", databasePlayer, stats);
+            for (WeaponsPvE value : WeaponsPvE.VALUES) {
+                if (value.getPlayerEntries == null) {
+                    continue;
+                }
+                appendStat("Masterworks Fair " + value.name + " Wins", databasePlayer, stats);
+            }
+            stats.append("\n");
+            appendStat("Average Masterworks Fair Placement", databasePlayer, stats);
+            for (WeaponsPvE value : WeaponsPvE.VALUES) {
+                if (value.getPlayerEntries == null) {
+                    continue;
+                }
+                appendStat("Average Masterworks Fair " + value.name + " Placement", databasePlayer, stats);
+            }
 
-        ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+            ChatUtils.sendMessageToPlayer(player, stats.toString(), ChatColor.GREEN, true);
+        });
     }
 
     @HelpCommand

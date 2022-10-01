@@ -6,7 +6,6 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
@@ -27,21 +26,22 @@ import java.util.List;
 @Conditions("database:player")
 public class WeaponCommand extends BaseCommand {
 
-    public static void giveWeapon(Player player, AbstractWeapon abstractWeapon) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                new TextComponent(ChatColor.GRAY + "Spawned weapon: "),
-                new TextComponentBuilder(abstractWeapon.getName())
-                        .setHoverItem(abstractWeapon.generateItemStack())
-                        .getTextComponent());
-    }
-
     @Subcommand("starter")
     @Description("Gives you a starter weapon")
     public void stater(Player player) {
         giveWeapon(player, new StarterWeapon(player.getUniqueId()));
+    }
+
+    public static void giveWeapon(Player player, AbstractWeapon abstractWeapon) {
+        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+            databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
+            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                    new TextComponent(ChatColor.GRAY + "Spawned weapon: "),
+                    new TextComponentBuilder(abstractWeapon.getName())
+                            .setHoverItem(abstractWeapon.generateItemStack())
+                            .getTextComponent()
+            );
+        });
     }
 
     @Subcommand("common")
@@ -75,26 +75,29 @@ public class WeaponCommand extends BaseCommand {
     @Subcommand("clear")
     @Description("Clears your weapon inventory")
     public void clear(Player player) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        databasePlayer.getPveStats().getWeaponInventory().clear();
-        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                new TextComponent(ChatColor.GRAY + "Cleared weapon inventory."));
+        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
+            databasePlayer.getPveStats().getWeaponInventory().clear();
+            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                    new TextComponent(ChatColor.GRAY + "Cleared weapon inventory.")
+            );
+        });
     }
 
     @Subcommand("list")
     @Description("Lists all your weapons")
     public void list(Player player) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-        for (int i = 0; i < weaponInventory.size(); i++) {
-            AbstractWeapon weapon = weaponInventory.get(i);
-            player.spigot().sendMessage(
-                    new TextComponent(ChatColor.GOLD.toString() + (i + 1) + ". "),
-                    new TextComponentBuilder(weapon.getName())
-                            .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent());
-        }
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+            for (int i = 0; i < weaponInventory.size(); i++) {
+                AbstractWeapon weapon = weaponInventory.get(i);
+                player.spigot().sendMessage(
+                        new TextComponent(ChatColor.GOLD.toString() + (i + 1) + ". "),
+                        new TextComponentBuilder(weapon.getName())
+                                .setHoverItem(weapon.generateItemStack())
+                                .getTextComponent()
+                );
+            }
+        });
     }
 
     @HelpCommand

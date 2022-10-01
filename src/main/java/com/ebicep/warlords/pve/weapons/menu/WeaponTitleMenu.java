@@ -22,7 +22,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 
 public class WeaponTitleMenu {
 
-    public static void openWeaponTitleMenu(Player player, AbstractLegendaryWeapon weapon) {
+    public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
         Menu menu = new Menu("Apply Title to Weapon", 9 * 6);
 
         menu.setItem(
@@ -54,12 +54,10 @@ public class WeaponTitleMenu {
                                     Collections.singletonList(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title"),
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
-                                        AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, weapon, title);
-                                        if (newTitledWeapon != null) {
-                                            openWeaponTitleMenu(player, newTitledWeapon);
-                                        }
+                                        AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
+                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon);
                                     },
-                                    (m2, e2) -> openWeaponTitleMenu(player, weapon),
+                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon),
                                     (m2) -> {
                                     }
                             );
@@ -70,15 +68,11 @@ public class WeaponTitleMenu {
             );
         }
 
-        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponEditor(player, weapon));
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
         menu.openForPlayer(player);
     }
 
-    public static AbstractLegendaryWeapon titleWeapon(Player player, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        if (databasePlayer == null) {
-            return null;
-        }
+    public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
         AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         weaponInventory.remove(weapon);

@@ -7,7 +7,6 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
@@ -32,27 +31,28 @@ public class GuildCommand extends BaseCommand {
     @Subcommand("create")
     @Description("Creates a guild")
     public void create(@Conditions("guild:false") Player player, String guildName) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        if (!Guild.CAN_CREATE.test(databasePlayer)) {
-            player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 20 Normal PvE wins to create a guild.");
-            return;
-        }
-        if (guildName.length() > 15) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
-            return;
-        }
-        //check if name has special characters
-        if (!guildName.matches("[a-zA-Z0-9 ]+")) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot contain special characters.");
-            return;
-        }
-        if (GuildManager.existingGuildWithName(guildName)) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that name already exists.");
-            return;
-        }
-        databasePlayer.getPveStats().addCurrency(Currencies.COIN, -Guild.CREATE_COIN_COST);
-        GuildManager.addGuild(new Guild(player, guildName));
-        Guild.sendGuildMessage(player, ChatColor.GREEN + "You created guild " + ChatColor.GOLD + guildName);
+        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            if (!Guild.CAN_CREATE.test(databasePlayer)) {
+                player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 20 Normal PvE wins to create a guild.");
+                return;
+            }
+            if (guildName.length() > 15) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot be longer than 15 characters.");
+                return;
+            }
+            //check if name has special characters
+            if (!guildName.matches("[a-zA-Z0-9 ]+")) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot contain special characters.");
+                return;
+            }
+            if (GuildManager.existingGuildWithName(guildName)) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that name already exists.");
+                return;
+            }
+            databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, Guild.CREATE_COIN_COST);
+            GuildManager.addGuild(new Guild(player, guildName));
+            Guild.sendGuildMessage(player, ChatColor.GREEN + "You created guild " + ChatColor.GOLD + guildName);
+        });
     }
 
     @Subcommand("join")

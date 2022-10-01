@@ -15,11 +15,7 @@ import org.bukkit.entity.Player;
 
 public class WeaponRerollMenu {
 
-    public static void openWeaponRerollMenu(Player player, AbstractWeapon weapon) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-
-        if (databasePlayer == null) return;
-
+    public static void openWeaponRerollMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
         Menu menu = new Menu("Confirm Reroll", 9 * 3);
 
         StatsRerollable weaponRerollable = (StatsRerollable) weapon;
@@ -38,11 +34,11 @@ public class WeaponRerollMenu {
                 (m, e) -> {
                     if (databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN) >= rerollCost) {
                         databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
-                        rerollWeapon(player, (AbstractWeapon & StatsRerollable) weapon);
+                        rerollWeapon(player, databasePlayer, (AbstractWeapon & StatsRerollable) weapon);
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have enough coins to reroll this weapon.");
                     }
-                    WeaponManagerMenu.openWeaponEditor(player, weapon);
+                    WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 }
         );
 
@@ -57,18 +53,16 @@ public class WeaponRerollMenu {
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
-                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, weapon)
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
 
         menu.openForPlayer(player);
     }
 
-    public static <T extends AbstractWeapon & StatsRerollable> void rerollWeapon(Player player, T weapon) {
+    public static <T extends AbstractWeapon & StatsRerollable> void rerollWeapon(Player player, DatabasePlayer databasePlayer, T weapon) {
         if (weapon == null) {
             return;
         }
-
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             TextComponent oldWeapon = new TextComponentBuilder(weapon.getName())
                     .setHoverItem(weapon.generateItemStack())

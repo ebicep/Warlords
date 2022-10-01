@@ -196,92 +196,92 @@ public class MasterworksFairManager {
 
         Menu menu = new Menu("Masterworks Fair", 9 * 6);
         UUID uuid = player.getUniqueId();
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
-        List<AbstractWeapon> weaponInventory = databasePlayerPvE.getWeaponInventory();
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+            List<AbstractWeapon> weaponInventory = databasePlayerPvE.getWeaponInventory();
 
-        WeaponsPvE[] values = WeaponsPvE.VALUES;
-        int column = 2;
-        for (WeaponsPvE value : values) {
-            if (value.getPlayerEntries != null) {
-                List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
-                Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
-                        .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
-                        .findFirst();
+            WeaponsPvE[] values = WeaponsPvE.VALUES;
+            int column = 2;
+            for (WeaponsPvE value : values) {
+                if (value.getPlayerEntries != null) {
+                    List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
+                    Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
+                            .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
+                            .findFirst();
 
-                ItemBuilder itemBuilder;
-                if (!playerEntry.isPresent()) {
-                    itemBuilder = new ItemBuilder(value.glassItem);
-                    itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
-                } else {
-                    itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
-                    itemBuilder.addLore(
-                            "",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to change your submission",
-                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to remove your submission"
-                    );
-                }
-                menu.setItem(column, 2,
-                        itemBuilder.get(),
-                        (m, e) -> {
-                            if (!playerEntry.isPresent() || e.isLeftClick()) { //submit | change weapon
-                                openSubmissionMenu(player, value, 1);
-                            } else { //remove weapon
-                                weaponInventory.add(playerEntry.get().getWeapon());
-                                weaponPlayerEntries.remove(playerEntry.get());
+                    ItemBuilder itemBuilder;
+                    if (playerEntry.isEmpty()) {
+                        itemBuilder = new ItemBuilder(value.glassItem);
+                        itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
+                    } else {
+                        itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
+                        itemBuilder.addLore(
+                                "",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to change your submission",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to remove your submission"
+                        );
+                    }
+                    menu.setItem(column, 2,
+                            itemBuilder.get(),
+                            (m, e) -> {
+                                if (playerEntry.isEmpty() || e.isLeftClick()) { //submit | change weapon
+                                    openSubmissionMenu(player, databasePlayer, value, 1);
+                                } else { //remove weapon
+                                    weaponInventory.add(playerEntry.get().getWeapon());
+                                    weaponPlayerEntries.remove(playerEntry.get());
 
-                                updateFair.set(true);
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    updateFair.set(true);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                                openMasterworksFairMenu(player);
+                                    openMasterworksFairMenu(player);
+                                }
                             }
-                        }
-                );
+                    );
 
-                //last 10 placements
-                List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
-                List<String> placementHistory = masterworksFairEntries
-                        .stream()
-                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                        .collect(Utils.lastN(10))
-                        .stream()
-                        .map(masterworksFairEntry -> ChatColor.GRAY + FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
-                        .collect(Collectors.toList());
-                menu.setItem(column, 3,
-                        new ItemBuilder(Material.BOOK)
-                                .name(ChatColor.GREEN + "Your most recent placements")
-                                .lore(IntStream.range(0, placementHistory.size())
-                                        .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
-                                        .collect(Collectors.toList()))
-                                .get(), (m, e) -> {
+                    //last 10 placements
+                    List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
+                    List<String> placementHistory = masterworksFairEntries
+                            .stream()
+                            .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                            .collect(Utils.lastN(10))
+                            .stream()
+                            .map(masterworksFairEntry -> ChatColor.GRAY + FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
+                            .collect(Collectors.toList());
+                    menu.setItem(column, 3,
+                            new ItemBuilder(Material.BOOK)
+                                    .name(ChatColor.GREEN + "Your most recent placements")
+                                    .lore(IntStream.range(0, placementHistory.size())
+                                            .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
+                                            .collect(Collectors.toList()))
+                                    .get(), (m, e) -> {
 
-                        }
-                );
-                column += 2;
+                            }
+                    );
+                    column += 2;
+                }
             }
-        }
 
-        ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK)
-                .name(ChatColor.GREEN + "Current Submissions");
-        List<String> infoLore = new ArrayList<>();
-        for (WeaponsPvE value : values) {
-            if (value.getPlayerEntries != null) {
-                List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
-                infoLore.add(value.getChatColorName() + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
+            ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK)
+                    .name(ChatColor.GREEN + "Current Submissions");
+            List<String> infoLore = new ArrayList<>();
+            for (WeaponsPvE value : values) {
+                if (value.getPlayerEntries != null) {
+                    List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
+                    infoLore.add(value.getChatColorName() + ": " + ChatColor.AQUA + weaponPlayerEntries.size());
+                }
             }
-        }
-        infoItemBuilder.lore(infoLore);
-        menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {
+            infoItemBuilder.lore(infoLore);
+            menu.setItem(4, 0, infoItemBuilder.get(), (m, e) -> {
+            });
+
+            menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
         });
-
-        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
     }
 
-    public static void openSubmissionMenu(Player player, WeaponsPvE weaponType, int page) {
+    public static void openSubmissionMenu(Player player, DatabasePlayer databasePlayer, WeaponsPvE weaponType, int page) {
         Menu menu = new Menu("Choose a weapon", 9 * 6);
         UUID uuid = player.getUniqueId();
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         List<AbstractWeapon> filteredWeaponInventory = new ArrayList<>(weaponInventory);
         filteredWeaponInventory.removeIf(weapon -> weapon.getRarity() != weaponType);
@@ -341,7 +341,7 @@ public class MasterworksFairManager {
                             .lore(ChatColor.YELLOW + "Page " + (page - 1))
                             .get(),
                     (m, e) -> {
-                        openSubmissionMenu(player, weaponType, page - 1);
+                        openSubmissionMenu(player, databasePlayer, weaponType, page - 1);
                     }
             );
         }
@@ -352,7 +352,7 @@ public class MasterworksFairManager {
                             .lore(ChatColor.YELLOW + "Page " + (page + 1))
                             .get(),
                     (m, e) -> {
-                        openSubmissionMenu(player, weaponType, page + 1);
+                        openSubmissionMenu(player, databasePlayer, weaponType, page + 1);
                     }
             );
         }

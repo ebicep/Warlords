@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -24,7 +25,7 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponE
 
 public class WeaponSkinSelectorMenu {
 
-    public static void openWeaponSkinSelectorMenu(Player player, AbstractWeapon weapon, int pageNumber) {
+    public static void openWeaponSkinSelectorMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon, int pageNumber) {
         Menu menu = new Menu("Bind Weapons", 9 * 6);
 
         menu.setItem(
@@ -37,7 +38,6 @@ public class WeaponSkinSelectorMenu {
 
         List<Weapons> weaponSkins = new ArrayList<>(Arrays.asList(Weapons.VALUES));
         List<Weapons> unlockedWeaponSkins = weapon.getUnlockedWeaponSkins();
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         int weaponSkinCost = weapon.getRarity().fairyEssenceCost;
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < weaponSkins.size(); i++) {
             Weapons weaponSkin = weaponSkins.get(i);
@@ -89,9 +89,9 @@ public class WeaponSkinSelectorMenu {
                                     player.sendMessage(ChatColor.RED + "You do not have enough Fairy Essence to purchase this skin.");
                                     return;
                                 }
-                                unlockWeaponSkin(player, weapon, weaponSkin, pageNumber);
+                                unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin, pageNumber);
                             }
-                            openWeaponSkinSelectorMenu(player, weapon, pageNumber);
+                            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
                         }
                 );
             }
@@ -105,7 +105,7 @@ public class WeaponSkinSelectorMenu {
                             .name(ChatColor.GREEN + "Previous Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
                             .get(),
-                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber - 1)
+                    (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber - 1)
             );
         }
         if (weaponSkins.size() > pageNumber * 21) {
@@ -116,7 +116,7 @@ public class WeaponSkinSelectorMenu {
                             .name(ChatColor.GREEN + "Next Page")
                             .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
                             .get(),
-                    (m, e) -> openWeaponSkinSelectorMenu(player, weapon, pageNumber + 1)
+                    (m, e) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber + 1)
             );
         }
 
@@ -127,15 +127,14 @@ public class WeaponSkinSelectorMenu {
                 new ItemBuilder(Material.BOOKSHELF)
                         .name(ChatColor.LIGHT_PURPLE + "Total Fairy Essence: " + ChatColor.AQUA + databasePlayerPvE.getCurrencyValue(Currencies.FAIRY_ESSENCE))
                         .get(),
-                (m, e) -> openWeaponEditor(player, weapon)
+                (m, e) -> openWeaponEditor(player, databasePlayer, weapon)
         );
 
-        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponEditor(player, weapon));
+        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
         menu.openForPlayer(player);
     }
 
-    public static void unlockWeaponSkin(Player player, AbstractWeapon weapon, Weapons weaponSkin, int page) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+    public static void unlockWeaponSkin(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon, Weapons weaponSkin, int page) {
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
         if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
             weapon.setSelectedWeaponSkin(weaponSkin);
@@ -149,8 +148,9 @@ public class WeaponSkinSelectorMenu {
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent()
             );
+            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
 
-            openWeaponSkinSelectorMenu(player, weapon, page);
+            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, page);
         }
     }
 

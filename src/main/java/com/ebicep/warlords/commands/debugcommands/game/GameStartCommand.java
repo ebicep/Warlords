@@ -291,7 +291,7 @@ public class GameStartCommand extends BaseCommand {
                         .filter(AbstractWeapon::isBound)
                         .filter(abstractWeapon -> abstractWeapon.getSpecializations() == selectedSpec)
                         .findFirst();
-                if (!optionalBoundWeapon.isPresent()) {
+                if (optionalBoundWeapon.isEmpty()) {
                     allHaveBoundWeapons = false;
                     for (Player p : people) {
                         p.sendMessage(ChatColor.AQUA + person.getName() + ChatColor.RED + " does not have a bound weapon for their selected specialization. This is required to play!");

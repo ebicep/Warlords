@@ -15,8 +15,7 @@ import org.bukkit.entity.Player;
 
 public class WeaponStarPieceMenu {
 
-    public static void openWeaponStarPieceMenu(Player player, AbstractTierOneWeapon weapon) {
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+    public static void openWeaponStarPieceMenu(Player player, DatabasePlayer databasePlayer, AbstractTierOneWeapon weapon) {
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
 
         Menu menu = new Menu("Confirm Star Piece Application", 9 * 3);
@@ -56,7 +55,7 @@ public class WeaponStarPieceMenu {
                                 new TextComponent(ChatColor.GRAY + "!")
                         );
 
-                        WeaponManagerMenu.openWeaponEditor(player, weapon);
+                        WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                     }
                 }
         );
@@ -72,7 +71,7 @@ public class WeaponStarPieceMenu {
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
-                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, weapon)
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
 
         menu.openForPlayer(player);

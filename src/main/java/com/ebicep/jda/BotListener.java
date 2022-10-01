@@ -3,7 +3,6 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
@@ -57,26 +56,27 @@ public class BotListener extends ListenerAdapter implements Listener {
                 Long key = Long.parseLong(message.getContentRaw());
                 if (DiscordCommand.playerLinkKeys.containsValue(key)) {
                     UUID uuid = DiscordCommand.playerLinkKeys.getKey(key);
-                    if (DatabaseManager.playerService == null) return;
-                    Warlords.newChain()
-                            .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                            .syncLast(databasePlayer -> {
-                                Long id = event.getAuthor().getIdLong();
-                                databasePlayer.setDiscordID(id);
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                event.getPrivateChannel().sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").").queue();
-                                if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-                                    Bukkit.getOfflinePlayer(uuid).getPlayer().sendMessage(ChatColor.GREEN + "Your account was linked to the discord account " + event.getAuthor().getAsTag() + " (" + id + ").");
-                                }
+                    DatabaseManager.updatePlayer(uuid, databasePlayer -> {
+                        Long id = event.getAuthor().getIdLong();
+                        databasePlayer.setDiscordID(id);
+                        event.getPrivateChannel()
+                                .sendMessage("You linked **" + Bukkit.getOfflinePlayer(uuid).getName() + "** to your discord account (" + id + ").")
+                                .queue();
+                        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+                            Bukkit.getOfflinePlayer(uuid)
+                                    .getPlayer()
+                                    .sendMessage(ChatColor.GREEN + "Your account was linked to the discord account " + event.getAuthor()
+                                            .getAsTag() + " (" + id + ").");
+                        }
 
-                                BotManager.sendDebugMessage(
-                                        new EmbedBuilder()
-                                                .setColor(3066993)
-                                                .setTitle("Player Linked - " + id)
-                                                .setDescription("UUID: " + uuid + "\n" + "IGN: " + databasePlayer.getName() + "\n" + "KEY: " + key)
-                                                .build()
-                                );
-                            }).execute();
+                        BotManager.sendDebugMessage(
+                                new EmbedBuilder()
+                                        .setColor(3066993)
+                                        .setTitle("Player Linked - " + id)
+                                        .setDescription("UUID: " + uuid + "\n" + "IGN: " + databasePlayer.getName() + "\n" + "KEY: " + key)
+                                        .build()
+                        );
+                    });
                 }
             } catch (Exception e) {
                 System.out.println(message);
@@ -202,11 +202,9 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             }
                                             if (!spec.isEmpty()) {
                                                 PlayerSettings.getPlayerSettings(uuid).setSelectedSpec(Specializations.getSpecFromName(spec));
-                                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                                                if (databasePlayer != null) {
+                                                DatabaseManager.updatePlayer(uuid, databasePlayer -> {
                                                     databasePlayer.setLastSpec(Specializations.getSpecFromName(spec));
-                                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                                }
+                                                });
                                                 if (!isExperimental) {
                                                     if (partyPlayerPair != null) {
                                                         partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers().add(

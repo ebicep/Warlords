@@ -51,9 +51,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
         super(warlordsPlayer);
-        this.prestige = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid())
-                .getSpec(warlordsPlayer.getSpecClass())
-                .getPrestige();
+        DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
+            this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
+        });
         this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
         this.weapon = warlordsPlayer.getAbstractWeapon();
         this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();

@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 public class WeaponSalvageMenu {
 
-    public static <T extends AbstractWeapon & Salvageable> void openWeaponSalvageConfirmMenu(Player player, T weapon) {
+    public static <T extends AbstractWeapon & Salvageable> void openWeaponSalvageConfirmMenu(Player player, DatabasePlayer databasePlayer, T weapon) {
         Menu menu = new Menu("Confirm salvage", 9 * 3);
 
         menu.setItem(2, 1,
@@ -28,8 +28,8 @@ public class WeaponSalvageMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    salvageWeapon(player, weapon);
-                    WeaponManagerMenu.openWeaponInventoryFromInternal(player);
+                    salvageWeapon(player, databasePlayer, weapon);
+                    WeaponManagerMenu.openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
 
@@ -44,19 +44,17 @@ public class WeaponSalvageMenu {
                         .name(ChatColor.RED + "Deny")
                         .lore(ChatColor.GRAY + "Go back.")
                         .get(),
-                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, weapon)
+                (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
 
         menu.openForPlayer(player);
     }
 
-    public static <T extends AbstractWeapon & Salvageable> void salvageWeapon(Player player, T weapon) {
+    public static <T extends AbstractWeapon & Salvageable> void salvageWeapon(Player player, DatabasePlayer databasePlayer, T weapon) {
         if (weapon == null) {
             return;
         }
         int salvageAmount = weapon.getSalvageAmount();
-
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
             databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount);
