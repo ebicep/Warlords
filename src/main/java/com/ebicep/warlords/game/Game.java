@@ -399,6 +399,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.state.onPlayerJoinGame(player, asSpectator);
         Player p = player.getPlayer();
         if (p != null) {
+            p.getInventory().setHeldItemSlot(0);
             this.state.onPlayerReJoinGame(p);
             Warlords.getInstance().hideAndUnhidePeople(p);
         }
@@ -443,6 +444,7 @@ public final class Game implements Runnable, AutoCloseable {
         if (removePlayer0(player)) {
             Player p = Bukkit.getPlayer(player);
             if (p != null) {
+                p.getInventory().setHeldItemSlot(0);
                 Warlords.getInstance().hideAndUnhidePeople(p);
             }
             return true;

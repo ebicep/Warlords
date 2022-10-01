@@ -87,17 +87,17 @@ public class WarlordsEvents implements Listener {
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             //checking if in game lobby
-            e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+            player.setAllowFlight(true);
+            e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
 
             if (DatabaseManager.playerService == null || !DatabaseManager.enabled) {
-                HeadUtils.updateHead(e.getPlayer());
+                HeadUtils.updateHead(player);
             }
             Warlords.newChain()
                     .async(() -> {
-                        DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
+                        DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
                             PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
-                            HeadUtils.updateHead(e.getPlayer());
+                            HeadUtils.updateHead(player);
 
                             Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
                             if (Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {

@@ -81,6 +81,10 @@ public class PlayingState implements State, TimerDebugAble {
                         team
                 ));
             }
+            Player p = player.getPlayer();
+            if (p != null) {
+                p.getInventory().setHeldItemSlot(0);
+            }
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = CustomScoreboard.PLAYER_SCOREBOARDS.get(wp.getUuid());
