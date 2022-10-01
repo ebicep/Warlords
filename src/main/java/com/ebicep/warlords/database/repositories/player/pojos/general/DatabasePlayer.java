@@ -250,10 +250,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         return futureMessages;
     }
 
-    public void clearFutureMessages() {
-        futureMessages.clear();
-    }
-
     public DatabaseMage getMage() {
         return mage;
     }

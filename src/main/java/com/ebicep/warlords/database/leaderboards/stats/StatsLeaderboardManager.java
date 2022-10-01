@@ -103,7 +103,7 @@ public class StatsLeaderboardManager {
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
-                            CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                         });
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
@@ -169,10 +169,7 @@ public class StatsLeaderboardManager {
                     .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
-        if (CustomScoreboard.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId())) {
-            CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
-        }
-
+        CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         createLeaderboardSwitcherHologram(player);
         addPlayerPositionLeaderboards(player);
     }

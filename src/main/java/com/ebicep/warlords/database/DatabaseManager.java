@@ -152,7 +152,7 @@ public class DatabaseManager {
                     if (collections == PlayersCollections.LIFETIME) {
                         Warlords.newChain()
                                 .sync(() -> {
-                                    loadPlayerInfo(Bukkit.getPlayer(uuid), databasePlayer);
+                                    loadPlayerInfo(uuid, databasePlayer);
                                     callback.accept(databasePlayer);
                                     ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid);
                                 }).execute();
@@ -163,7 +163,7 @@ public class DatabaseManager {
                             .asyncFirst(() -> playerService.create(new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()), collections))
                             .syncLast((databasePlayer) -> {
                                 if (collections == PlayersCollections.LIFETIME) {
-                                    loadPlayerInfo(Bukkit.getPlayer(uuid), databasePlayer);
+                                    loadPlayerInfo(uuid, databasePlayer);
                                     callback.accept(databasePlayer);
                                 }
                             }).execute();
@@ -189,23 +189,18 @@ public class DatabaseManager {
         }
     }
 
-    private static void loadPlayerInfo(Player player, DatabasePlayer databasePlayer) {
-        if (!Objects.equals(databasePlayer.getName(), player.getName())) {
-            databasePlayer.setName(player.getName());
-            queueUpdatePlayerAsync(databasePlayer);
-        }
-
+    private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
         //check weapon inventory
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         for (Specializations value : Specializations.VALUES) {
             int count = (int) weaponInventory.stream().filter(w -> w.getSpecializations() == value).count();
             if (count == 0) {
-                weaponInventory.add(new StarterWeapon(player.getUniqueId(), value));
+                weaponInventory.add(new StarterWeapon(uuid, value));
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
 
         for (Classes classes : Classes.VALUES) {
@@ -235,6 +230,13 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
+    }
+
+    public static void checkUpdatePlayerName(Player player, DatabasePlayer databasePlayer) {
+        if (!Objects.equals(databasePlayer.getName(), player.getName())) {
+            databasePlayer.setName(player.getName());
+            queueUpdatePlayerAsync(databasePlayer);
+        }
     }
 
     public static void queueUpdatePlayerAsync(DatabasePlayer databasePlayer) {

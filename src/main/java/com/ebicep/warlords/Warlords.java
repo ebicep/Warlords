@@ -34,7 +34,6 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
-import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
@@ -415,7 +414,6 @@ public class Warlords extends JavaPlugin {
             player.teleport(getRejoinPoint(uuid));
             player.getInventory().clear();
             player.setAllowFlight(true);
-            CustomScoreboard.PLAYER_SCOREBOARDS.put(uuid, new CustomScoreboard(uuid));
             PlayerHotBarItemListener.giveLobbyHotBar(player, false);
         });
 

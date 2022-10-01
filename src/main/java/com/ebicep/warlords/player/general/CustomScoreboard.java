@@ -25,7 +25,7 @@ import static com.ebicep.warlords.util.java.NumberFormat.addCommaAndRound;
 
 public class CustomScoreboard {
 
-    public static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
     private static final String[] teamEntries = new String[]{
             "🎂",
             "🎉",
@@ -68,6 +68,14 @@ public class CustomScoreboard {
         }
     }
 
+    public static CustomScoreboard getPlayerScoreboard(UUID uuid) {
+        return PLAYER_SCOREBOARDS.computeIfAbsent(uuid, CustomScoreboard::new);
+    }
+
+    public static CustomScoreboard getPlayerScoreboard(Player player) {
+        return getPlayerScoreboard(player.getUniqueId());
+    }
+
     public static void reloadPvEScoreboard(DatabasePlayerPvE databasePlayerPvE) {
         for (DatabasePlayer loadedPlayer : DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).values()) {
             if (loadedPlayer.getPveStats() == databasePlayerPvE) {
@@ -77,7 +85,7 @@ public class CustomScoreboard {
                     validatePlayerHolograms(playerUUID);
                     PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(playerUUID);
                     if (playerLeaderboardInfo.getStatsGameType() == GameType.PVE) {
-                        CustomScoreboard customScoreboard = PLAYER_SCOREBOARDS.get(playerUUID);
+                        CustomScoreboard customScoreboard = getPlayerScoreboard(playerUUID);
                         customScoreboard.givePvEScoreboard(databasePlayerPvE, false);
                     }
                 }

@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
@@ -71,8 +72,30 @@ public class WarlordsEvents implements Listener {
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+        } else {
+            UUID uuid = event.getUniqueId();
+            Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME);
+            if (loadedPlayers == null) {
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+                return;
+            }
+            if (!loadedPlayers.containsKey(uuid)) {
+                DatabaseManager.loadPlayer(uuid, PlayersCollections.LIFETIME, (databasePlayer) -> {
+                    //TODO DISCORD
+                });
+            }
+        }
+    }
 
-            //TODO DISCORD
+    @EventHandler
+    public static void onPlayerLogin(PlayerLoginEvent event) {
+        if (!DatabaseManager.enabled || DatabaseManager.playerService == null) {
+            return;
+        }
+        Map<UUID, DatabasePlayer> loadedPlayers = DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME);
+        DatabasePlayer databasePlayer = loadedPlayers.get(event.getPlayer().getUniqueId());
+        if (databasePlayer == null) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Unable to load player data. Report this if this issue persists.");
         }
     }
 
@@ -86,57 +109,43 @@ public class WarlordsEvents implements Listener {
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
-            //checking if in game lobby
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                HeadUtils.updateHead(player);
+                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
+                player.setScoreboard(CustomScoreboard.getPlayerScoreboard(player).getScoreboard());
+                if (player.getWorld().getName().equalsIgnoreCase("MainLobby")) {
+                    ExperienceManager.giveExperienceBar(player);
+                    if (StatsLeaderboardManager.loaded) {
+                        StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                        DatabaseGameBase.setGameHologramVisibility(player);
+                        CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
+                    }
+                    //future messages
+                    Warlords.newChain()
+                            .delay(20)
+                            .async(() -> {
+                                List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
+                                if (!futureMessages.isEmpty()) {
+                                    futureMessages.forEach(futureMessage -> {
+                                        if (futureMessage.isCentered()) {
+                                            futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
+                                        } else {
+                                            futureMessage.getMessages().forEach(player::sendMessage);
+                                        }
+                                    });
+                                    futureMessages.clear();
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                }
+                            }).execute();
+                    Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
+                }
+                DatabaseManager.checkUpdatePlayerName(player, databasePlayer);
+            }, () -> {
+                player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
+            });
             player.setAllowFlight(true);
             e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
-
-            if (DatabaseManager.playerService == null || !DatabaseManager.enabled) {
-                HeadUtils.updateHead(player);
-            }
-            Warlords.newChain()
-                    .async(() -> {
-                        DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, (databasePlayer) -> {
-                            PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
-                            HeadUtils.updateHead(player);
-
-                            Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                            if (Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
-                                if (StatsLeaderboardManager.loaded) {
-                                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                                    DatabaseGameBase.setGameHologramVisibility(player);
-                                    CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).giveMainLobbyScoreboard();
-
-                                }
-                                ExperienceManager.giveExperienceBar(player);
-
-                                //future messages
-                                Warlords.newChain()
-                                        .delay(20)
-                                        .async(() -> {
-                                            List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
-                                            futureMessages.forEach(futureMessage -> {
-                                                if (futureMessage.isCentered()) {
-                                                    futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
-                                                } else {
-                                                    futureMessage.getMessages().forEach(player::sendMessage);
-                                                }
-                                            });
-                                            databasePlayer.clearFutureMessages();
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        }).execute();
-
-                                Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
-                            }
-                        });
-                    })
-                    .execute();
         }
-
-        //scoreboard
-        if (!CustomScoreboard.PLAYER_SCOREBOARDS.containsKey(player.getUniqueId()) || CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()) == null) {
-            CustomScoreboard.PLAYER_SCOREBOARDS.put(player.getUniqueId(), new CustomScoreboard(player.getUniqueId()));
-        }
-        player.setScoreboard(CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId()).getScoreboard());
 
         joinInteraction(player, false);
 
@@ -177,10 +186,16 @@ public class WarlordsEvents implements Listener {
                     ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie"
             );
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!");
+            ChatUtils.sendCenteredMessage(player,
+                    ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu."
+            );
+            ChatUtils.sendCenteredMessage(player,
+                    ChatColor.GOLD + "You can start private games using the " + ChatColor.GREEN + "Blaze Powder" + ChatColor.GOLD + " in your inventory!"
+            );
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
+            ChatUtils.sendCenteredMessage(player,
+                    ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7"
+            );
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player,
                     ChatColor.GOLD + "We highly recommend you to download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3J1lGGn"
@@ -193,7 +208,7 @@ public class WarlordsEvents implements Listener {
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             if (fromGame) {
-                CustomScoreboard.PLAYER_SCOREBOARDS.get(uuid).giveMainLobbyScoreboard();
+                CustomScoreboard.getPlayerScoreboard(uuid).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
                 if (DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).containsKey(uuid)) {
                     DatabaseManager.updatePlayer(uuid, databasePlayer -> {

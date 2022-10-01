@@ -428,7 +428,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     public void giveLobbyScoreboard(boolean init, Player player) {
-        CustomScoreboard customScoreboard = CustomScoreboard.PLAYER_SCOREBOARDS.get(player.getUniqueId());
+        CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
 
         String dateString = DateUtil.formatCurrentDateEST("MM/dd/yyyy");
 
