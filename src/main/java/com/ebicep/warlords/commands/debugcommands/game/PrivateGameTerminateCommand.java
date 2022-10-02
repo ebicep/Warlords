@@ -61,18 +61,13 @@ public class PrivateGameTerminateCommand extends BaseCommand {
                         player.sendMessage(ChatColor.RED + "You are not the party leader, unable to terminate game.");
                     }
                 } else {
-                    int gamePlayers = 0;
                     // Remove dummies in case of Practice map
                     Warlords.removePlayer(UUID.fromString("8b41f2a4-4a0e-3012-b77b-c2dede582103"));
                     Warlords.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
                     game.removePlayer(UUID.fromString("8b41f2a4-4a0e-3012-b77b-c2dede582103"));
                     game.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
 
-                    for (UUID ignored : game.getPlayers().keySet()) {
-                        gamePlayers++;
-                    }
-
-                    if (gamePlayers > 1) {
+                    if (game.warlordsPlayers().count() > 1) {
                         player.sendMessage(ChatColor.RED + "You are not the only player in the game, unable to terminate game.");
                     } else {
                         endGameInstance(player, gameHolder, game);
