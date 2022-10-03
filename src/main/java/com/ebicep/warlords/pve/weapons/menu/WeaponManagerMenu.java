@@ -222,7 +222,7 @@ public class WeaponManagerMenu {
                             .get(),
                     (m, e) -> {
                         if (databasePlayer.getPveStats().getCurrencyValue(weapon.getRarity().starPieceCurrency) <= 0) {
-                            player.sendMessage(ChatColor.RED + "You do not have any star pieces to apply!");
+                            player.sendMessage(ChatColor.RED + "You do not have a " + weapon.getRarity().starPieceCurrency.getColoredName() + ChatColor.RED + "!");
                             return;
                         }
                         WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, (AbstractTierOneWeapon) weapon);

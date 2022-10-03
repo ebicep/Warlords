@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class WeaponSkillBoostMenu {
@@ -60,8 +61,20 @@ public class WeaponSkillBoostMenu {
                                     ChatColor.RED + " to change boosts!");
                             return;
                         }
-                        unlockSkillBoost(player, databasePlayer, weapon, skillBoost);
-                        openWeaponSkillBoostMenu(player, databasePlayer, weapon);
+                        Menu.openConfirmationMenu(
+                                player,
+                                "Change Skill Boost",
+                                3,
+                                Collections.singletonList(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name),
+                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                (m2, e2) -> {
+                                    unlockSkillBoost(player, databasePlayer, weapon, skillBoost);
+                                    openWeaponSkillBoostMenu(player, databasePlayer, weapon);
+                                },
+                                (m2, e2) -> openWeaponSkillBoostMenu(player, databasePlayer, weapon),
+                                (m2) -> {
+                                }
+                        );
                     }
             );
         }

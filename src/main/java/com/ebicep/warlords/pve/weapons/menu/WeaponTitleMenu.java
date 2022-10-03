@@ -64,7 +64,8 @@ public class WeaponTitleMenu {
                         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                         for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
                             if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                                player.sendMessage(ChatColor.RED + "You do not have enough " + currenciesLongEntry.getKey().name + "s to apply this title.");
+                                player.sendMessage(ChatColor.RED + "You do not have enough " + currenciesLongEntry.getKey()
+                                        .getColoredName() + "s" + ChatColor.RED + " to apply this title!");
                                 return;
                             }
                         }
