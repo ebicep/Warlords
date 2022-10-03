@@ -145,10 +145,18 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     @Override
     public List<WeaponStats> getRandomStatBonus() {
         List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
-        randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
-        randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
-        randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
-        randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
+        if (energyPerSecondBonus != 0) {
+            randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
+        }
+        if (energyPerHitBonus != 0) {
+            randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
+        }
+        if (skillCritChanceBonus != 0) {
+            randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
+        }
+        if (skillCritMultiplierBonus != 0) {
+            randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
+        }
         return randomStatBonus;
     }
 
