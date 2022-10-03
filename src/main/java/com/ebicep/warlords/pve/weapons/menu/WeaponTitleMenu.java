@@ -80,9 +80,9 @@ public class WeaponTitleMenu {
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
-                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, 1);
+                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, page);
                                     },
-                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, 1),
+                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, page),
                                     (m2) -> {
                                     }
                             );
