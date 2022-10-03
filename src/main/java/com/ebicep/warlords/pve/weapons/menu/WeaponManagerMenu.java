@@ -309,7 +309,7 @@ public class WeaponManagerMenu {
                             .name(ChatColor.GREEN + "Apply Title to Weapon")
                             .get(),
                     (m, e) -> {
-                        WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
+                        WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon, 1);
                     }
             ));
             weaponOptions.add(new Pair<>(
