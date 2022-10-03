@@ -139,7 +139,7 @@ public class WeaponSkinSelectorMenu {
         if (databasePlayerPvE.getWeaponInventory().contains(weapon)) {
             weapon.setSelectedWeaponSkin(weaponSkin);
             weapon.getUnlockedWeaponSkins().add(weaponSkin);
-            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, -weapon.getRarity().fairyEssenceCost);
+            databasePlayerPvE.subtractCurrency(Currencies.FAIRY_ESSENCE, weapon.getRarity().fairyEssenceCost);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
