@@ -109,40 +109,6 @@ public class WarlordsEvents implements Listener {
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                HeadUtils.updateHead(player);
-                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
-                player.setScoreboard(CustomScoreboard.getPlayerScoreboard(player).getScoreboard());
-                if (player.getWorld().getName().equalsIgnoreCase("MainLobby")) {
-                    ExperienceManager.giveExperienceBar(player);
-                    if (StatsLeaderboardManager.loaded) {
-                        StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                        DatabaseGameBase.setGameHologramVisibility(player);
-                        CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
-                    }
-                    //future messages
-                    Warlords.newChain()
-                            .delay(20)
-                            .async(() -> {
-                                List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
-                                if (!futureMessages.isEmpty()) {
-                                    futureMessages.forEach(futureMessage -> {
-                                        if (futureMessage.isCentered()) {
-                                            futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
-                                        } else {
-                                            futureMessage.getMessages().forEach(player::sendMessage);
-                                        }
-                                    });
-                                    futureMessages.clear();
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                }
-                            }).execute();
-                    Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
-                }
-                DatabaseManager.checkUpdatePlayerName(player, databasePlayer);
-            }, () -> {
-                player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
-            });
             player.setAllowFlight(true);
             e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
         }
@@ -204,43 +170,73 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
-            if (fromGame) {
-                CustomScoreboard.getPlayerScoreboard(uuid).giveMainLobbyScoreboard();
-                ExperienceManager.giveExperienceBar(player);
-                if (DatabaseManager.getLoadedPlayers(PlayersCollections.LIFETIME).containsKey(uuid)) {
-                    DatabaseManager.updatePlayer(uuid, databasePlayer -> {
-                        //check all spec prestige
-                        for (Specializations value : Specializations.VALUES) {
-                            int level = ExperienceManager.getLevelForSpec(uuid, value);
-                            if (level >= ExperienceManager.LEVEL_TO_PRESTIGE) {
-                                databasePlayer.getSpec(value).addPrestige();
-                                int prestige = databasePlayer.getSpec(value).getPrestige();
-                                FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                        .with(FireworkEffect.Type.BALL)
-                                        .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
-                                        .build()
-                                );
-                                PacketUtils.sendTitle(player,
-                                        ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + Specializations.CRYOMANCER.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
-                                        ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
-                                                .getA()
-                                                .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige)
-                                                .getA() + prestige,
-                                        20,
-                                        140,
-                                        20
-                                );
-                                //sumSmash is now prestige level 5 in Pyromancer!
-                                Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(
-                                        prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
-                            }
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                if (fromGame) {
+                    //check all spec prestige
+                    for (Specializations value : Specializations.VALUES) {
+                        int level = ExperienceManager.getLevelForSpec(uuid, value);
+                        if (level >= ExperienceManager.LEVEL_TO_PRESTIGE) {
+                            databasePlayer.getSpec(value).addPrestige();
+                            int prestige = databasePlayer.getSpec(value).getPrestige();
+                            FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
+                                    .with(FireworkEffect.Type.BALL)
+                                    .withColor(ExperienceManager.PRESTIGE_COLORS.get(prestige).getB())
+                                    .build()
+                            );
+                            PacketUtils.sendTitle(player,
+                                    ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + Specializations.CRYOMANCER.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
+                                    ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
+                                            .getA()
+                                            .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige)
+                                            .getA() + prestige,
+                                    20,
+                                    140,
+                                    20
+                            );
+                            //sumSmash is now prestige level 5 in Pyromancer!
+                            Bukkit.broadcastMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " is now prestige level " + ExperienceManager.PRESTIGE_COLORS.get(
+                                    prestige).getA() + prestige + ChatColor.GRAY + " in " + ChatColor.GOLD + value.name);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         }
-                    });
+                    }
+                } else {
+                    HeadUtils.updateHead(player);
+                    //future messages
+                    Warlords.newChain()
+                            .delay(20)
+                            .async(() -> {
+                                List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
+                                if (!futureMessages.isEmpty()) {
+                                    futureMessages.forEach(futureMessage -> {
+                                        if (futureMessage.isCentered()) {
+                                            futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
+                                        } else {
+                                            futureMessage.getMessages().forEach(player::sendMessage);
+                                        }
+                                    });
+                                    futureMessages.clear();
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                }
+                            }).execute();
+                    Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                 }
-            }
+                CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
+                player.setScoreboard(customScoreboard.getScoreboard());
+                customScoreboard.giveMainLobbyScoreboard();
+                ExperienceManager.giveExperienceBar(player);
+                PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
+                if (StatsLeaderboardManager.loaded) {
+                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                    DatabaseGameBase.setGameHologramVisibility(player);
+                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
+                }
+            }, () -> {
+                if (!fromGame) {
+                    player.kickPlayer("Unable to load player data. Report this if this issue persists.*");
+                }
+            });
         }
 
         WarlordsEntity wp1 = Warlords.getPlayer(player);
