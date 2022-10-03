@@ -12,8 +12,7 @@ import static com.ebicep.warlords.util.java.Utils.generateRandomIndexFromListSiz
 public interface StarPieceBonus {
 
     default int getStarPieceBonusCost() {
-        //TODO
-        return 0;
+        return 10000;
     }
 
     int getStarPieceBonusValue();

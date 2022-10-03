@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,20 +28,20 @@ public class WeaponStarPieceMenu {
                                 ChatColor.GRAY + "Apply a star piece to your weapon.",
                                 ChatColor.GRAY + "This will override any previous star piece.",
                                 "",
-                                ChatColor.GRAY + "Cost: " + ChatColor.WHITE + weapon.getStarPieceBonusCost() + " Synthetic Shards",
+                                ChatColor.GRAY + "Cost: " + Currencies.COIN.chatColor + NumberFormat.addCommas(weapon.getStarPieceBonusCost()) + " Coins",
                                 "",
                                 ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayerPvE.getCurrencyValue(Currencies.SYNTHETIC_SHARD) < weapon.getStarPieceBonusCost()) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough synthetic shards to apply this star piece.");
+                    if (databasePlayerPvE.getCurrencyValue(Currencies.COIN) < weapon.getStarPieceBonusCost()) {
+                        player.sendMessage(ChatColor.RED + "You do not have enough coins to apply this star piece.");
                     } else {
                         TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
                                 .setHoverItem(weapon.generateItemStack())
                                 .getTextComponent();
                         databasePlayerPvE.subtractOneCurrency(weapon.getRarity().starPieceCurrency);
-                        databasePlayerPvE.subtractCurrency(Currencies.SYNTHETIC_SHARD, weapon.getStarPieceBonusCost());
+                        databasePlayerPvE.subtractCurrency(Currencies.COIN, weapon.getStarPieceBonusCost());
                         weapon.setStarPieceBonus();
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
