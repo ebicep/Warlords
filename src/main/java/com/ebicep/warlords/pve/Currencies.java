@@ -63,7 +63,7 @@ public enum Currencies {
     ),
     SKILL_BOOST_MODIFIER(
             "Skill Boost Modifier",
-            ChatColor.BLACK,
+            ChatColor.DARK_GRAY,
             new ItemStack(Material.GOLD_NUGGET)
     ),
 

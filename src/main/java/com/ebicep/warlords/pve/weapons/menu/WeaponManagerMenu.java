@@ -22,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -118,6 +119,15 @@ public class WeaponManagerMenu {
                                         starPiece) != 1 ? "s" : ""))
                                 .collect(Collectors.joining("\n"))
                         )
+                        .get(),
+                (m, e) -> {
+                }
+        );
+        menu.setItem(2, 5,
+                new ItemBuilder(Material.FIREWORK_CHARGE)
+                        .name(Currencies.SKILL_BOOST_MODIFIER.getColoredName() + "s" + ChatColor.GRAY + ": " +
+                                ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER))
+                        .flags(ItemFlag.HIDE_POTION_EFFECTS)
                         .get(),
                 (m, e) -> {
                 }
@@ -294,13 +304,20 @@ public class WeaponManagerMenu {
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon) {
-            //synthetic alloy title legendary
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
                             .name(ChatColor.GREEN + "Apply Title to Weapon")
                             .get(),
                     (m, e) -> {
                         WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
+                    }
+            ));
+            weaponOptions.add(new Pair<>(
+                    new ItemBuilder(Material.BOOKSHELF)
+                            .name(ChatColor.GREEN + "Change Skill Boost")
+                            .get(),
+                    (m, e) -> {
+                        WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
                     }
             ));
         }

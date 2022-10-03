@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.player.general.SkillBoosts.*;
 
@@ -173,11 +172,26 @@ public enum Specializations {
     }
 
     public static Classes getClass(Specializations selected) {
-        return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
-    }
-
-    public static Classes getClass(String specName) {
-        return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.stream().anyMatch(subClass -> subClass.name.equalsIgnoreCase(specName))).collect(Collectors.toList()).get(0);
+        switch (selected) {
+            case PYROMANCER:
+            case CRYOMANCER:
+            case AQUAMANCER:
+                return Classes.MAGE;
+            case BERSERKER:
+            case DEFENDER:
+            case REVENANT:
+                return Classes.WARRIOR;
+            case AVENGER:
+            case CRUSADER:
+            case PROTECTOR:
+                return Classes.PALADIN;
+            case THUNDERLORD:
+            case SPIRITGUARD:
+            case EARTHWARDEN:
+                return Classes.SHAMAN;
+        }
+        return Classes.ROGUE;
+        //return Arrays.stream(Classes.VALUES).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
 }

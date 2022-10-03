@@ -63,6 +63,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         return selectedSkillBoost;
     }
 
+    public void setSelectedSkillBoost(SkillBoosts selectedSkillBoost) {
+        this.selectedSkillBoost = selectedSkillBoost;
+    }
+
     @Override
     public WeaponsPvE getRarity() {
         return WeaponsPvE.LEGENDARY;
@@ -92,9 +96,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         AbstractPlayerClass playerClass = player.getSpec();
         playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + getEnergyPerHitBonus());
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
-        AbstractAbility weapon = playerClass.getWeapon();
-        weapon.setCritChance(weapon.getCritChance() + getSkillCritChanceBonus());
-        weapon.setCritMultiplier(weapon.getCritMultiplier() + getSkillCritMultiplierBonus());
+        for (AbstractAbility ability : playerClass.getAbilities()) {
+            if (ability.getClass().equals(selectedSkillBoost.ability)) {
+                if (ability.getCritChance() != -1) {
+                    ability.setCritChance(ability.getCritChance() + getSkillCritChanceBonus());
+                    ability.setCritMultiplier(ability.getCritMultiplier() + getSkillCritMultiplierBonus());
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -106,6 +116,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         if (energyPerHitBonus != 0) {
             lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
         }
+        lore.addAll(Arrays.asList(
+                "",
+                ChatColor.GREEN + "Skill Boost (" + selectedSkillBoost.name + "):",
+                ChatColor.GRAY + WordWrap.wrapWithNewline("1 Free Ability Upgrade", 175)
+        ));
         if (skillCritChanceBonus != 0) {
             lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
         }

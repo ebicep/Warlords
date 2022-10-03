@@ -48,7 +48,7 @@ public class WarlordsShopMenu {
             .name(ChatColor.AQUA + "Weapon Skill Boost")
             .lore("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
                     "",
-                    "§cWARNING: §7Skill boosts are not available in PvE.",
+                    "§cWARNING: §7This does not apply to PvE.",
                     "",
                     "§eClick to change skill boost!"
             )
