@@ -31,11 +31,11 @@ public class ArcaneShield extends AbstractAbility {
     private float shieldHealth = 0;
 
     public ArcaneShield() {
-        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
+        super("Arcane Shield", 0, 0, 31.32f, 40);
     }
 
     public ArcaneShield(int shieldHealth) {
-        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
+        super("Arcane Shield", 0, 0, 31.32f, 40);
         this.shieldHealth = shieldHealth;
     }
 

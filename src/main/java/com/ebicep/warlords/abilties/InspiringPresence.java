@@ -32,7 +32,7 @@ public class InspiringPresence extends AbstractAbility {
     private double energyGivenFromStrikeAndPresence = 0;
 
     public InspiringPresence() {
-        super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
+        super("Inspiring Presence", 0, 0, 60f + 10.47f, 0);
     }
 
     @Override

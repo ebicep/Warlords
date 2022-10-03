@@ -27,7 +27,7 @@ public class Inferno extends AbstractAbility {
     private int critMultiplierIncrease = 30;
 
     public Inferno() {
-        super("Inferno", 0, 0, 46.98f, 0, 0, 0);
+        super("Inferno", 0, 0, 46.98f, 0);
     }
 
     @Override

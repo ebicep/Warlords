@@ -24,7 +24,7 @@ public class BloodLust extends AbstractAbility {
     private float amountHealed = 0;
 
     public BloodLust() {
-        super("Blood Lust", 0, 0, 31.32f, 20, 0, 0);
+        super("Blood Lust", 0, 0, 31.32f, 20);
     }
 
     @Override

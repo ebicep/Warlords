@@ -22,7 +22,7 @@ public class Repentance extends AbstractAbility {
     private int damageConvertPercent = 10;
 
     public Repentance() {
-        super("Repentance", 0, 0, 31.32f, 20, 0, 0);
+        super("Repentance", 0, 0, 31.32f, 20);
     }
 
     @Override

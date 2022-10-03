@@ -43,7 +43,7 @@ public class OrbsOfLife extends AbstractAbility {
     protected int orbsProduced = 0;
 
     public OrbsOfLife() {
-        super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20, 0, 0);
+        super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);
     }
 
     @Override

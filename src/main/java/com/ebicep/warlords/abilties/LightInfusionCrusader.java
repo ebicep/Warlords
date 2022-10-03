@@ -22,7 +22,7 @@ public class LightInfusionCrusader extends AbstractAbility {
     private int energyGiven = 120;
 
     public LightInfusionCrusader(float cooldown) {
-        super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
+        super("Light Infusion", 0, 0, cooldown, 0);
     }
 
     @Override

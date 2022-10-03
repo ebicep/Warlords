@@ -24,7 +24,7 @@ public class LightInfusion extends AbstractAbility {
     private int strikesUsed = 0;
 
     public LightInfusion(float cooldown) {
-        super("Light Infusion", 0, 0, cooldown, 0, 0, 0);
+        super("Light Infusion", 0, 0, cooldown, 0);
     }
 
     @Override

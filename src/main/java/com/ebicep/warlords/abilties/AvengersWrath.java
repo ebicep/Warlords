@@ -30,7 +30,7 @@ public class AvengersWrath extends AbstractAbility {
     private int maxTargets = 2;
 
     public AvengersWrath() {
-        super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
+        super("Avenger's Wrath", 0, 0, 52.85f, 0);
     }
 
     @Override

@@ -31,11 +31,11 @@ public class Intervene extends AbstractAbility {
     private WarlordsEntity target;
 
     public Intervene() {
-        super("Intervene", 0, 0, 14.09f, 20, 0, 0);
+        super("Intervene", 0, 0, 14.09f, 20);
     }
 
     public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target) {
-        super("Intervene", 0, 0, 14.09f, 20, 0, 0);
+        super("Intervene", 0, 0, 14.09f, 20);
         this.maxDamagePrevented = maxDamagePrevented;
         this.caster = caster;
         this.target = target;

@@ -11,7 +11,7 @@ import java.util.List;
 public class Temp extends AbstractAbility {
 
     public Temp() {
-        super("Placeholder Ability", 0, 0, 0, 0, 0, 0);
+        super("Placeholder Ability", 0, 0, 0, 0);
     }
 
     @Override

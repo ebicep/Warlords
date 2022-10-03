@@ -32,11 +32,11 @@ public class IceBarrier extends AbstractAbility {
     }
 
     public IceBarrier() {
-        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0);
+        super("Ice Barrier", 0, 0, 46.98f, 0);
     }
 
     public IceBarrier(int damageReductionPercent) {
-        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0);
+        super("Ice Barrier", 0, 0, 46.98f, 0);
         this.damageReductionPercent = damageReductionPercent;
     }
 

@@ -35,11 +35,11 @@ public class LastStand extends AbstractAbility {
     private float amountPrevented = 0;
 
     public LastStand() {
-        super("Last Stand", 0, 0, 56.38f, 40, 0, 0);
+        super("Last Stand", 0, 0, 56.38f, 40);
     }
 
     public LastStand(int selfDamageReductionPercent, int teammateDamageReductionPercent) {
-        super("Last Stand", 0, 0, 56.38f, 40, 0, 0);
+        super("Last Stand", 0, 0, 56.38f, 40);
         this.selfDamageReductionPercent = selfDamageReductionPercent;
         this.teammateDamageReductionPercent = teammateDamageReductionPercent;
     }

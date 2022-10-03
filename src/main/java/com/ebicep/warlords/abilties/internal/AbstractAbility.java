@@ -53,6 +53,10 @@ public abstract class AbstractAbility {
         boosted = false;
     }
 
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
+    }
+
     public abstract void updateDescription(Player player);
 
     public abstract List<Pair<String, String>> getAbilityInfo();

@@ -302,7 +302,7 @@ public abstract class WarlordsEntity {
         }
 
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
-            if (critChance != -1) {
+            if (critChance > 0) {
                 critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
                 critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
             }

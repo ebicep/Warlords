@@ -28,7 +28,7 @@ public class LightningRod extends AbstractAbility {
     private final int knockbackRadius = 5;
 
     public LightningRod() {
-        super("Lightning Rod", 0, 0, 31.32f, 0, -1, 0);
+        super("Lightning Rod", 0, 0, 31.32f, 0);
     }
 
     @Override
