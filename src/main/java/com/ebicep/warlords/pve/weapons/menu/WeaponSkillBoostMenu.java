@@ -73,6 +73,7 @@ public class WeaponSkillBoostMenu {
     public static void unlockSkillBoost(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, SkillBoosts skillBoost) {
         SkillBoosts oldSkillBoost = weapon.getSelectedSkillBoost();
         weapon.setSelectedSkillBoost(skillBoost);
+        databasePlayer.getPveStats().subtractCurrency(Currencies.SKILL_BOOST_MODIFIER, 1);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         player.spigot().sendMessage(
