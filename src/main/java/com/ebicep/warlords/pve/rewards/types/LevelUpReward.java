@@ -56,6 +56,9 @@ public class LevelUpReward extends AbstractReward {
             } else {
                 rewards.put(Currencies.FAIRY_ESSENCE, 20L);
                 rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                if (level == 50) {
+                    rewards.put(Currencies.SKILL_BOOST_MODIFIER, 1L);
+                }
             }
         }
         return rewards;
