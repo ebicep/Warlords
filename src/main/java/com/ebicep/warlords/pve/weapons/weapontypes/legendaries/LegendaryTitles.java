@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
+import com.ebicep.warlords.pve.Currencies;
+
+import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -33,4 +36,12 @@ public enum LegendaryTitles {
         this.create = create;
         this.titleWeapon = titleWeapon;
     }
+
+    public LinkedHashMap<Currencies, Long> getCost() {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 50000L);
+            put(Currencies.SYNTHETIC_SHARD, 1000L);
+        }};
+    }
+
 }

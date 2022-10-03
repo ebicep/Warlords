@@ -2,12 +2,15 @@ package com.ebicep.warlords.pve.weapons.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +19,8 @@ import org.bukkit.inventory.ItemFlag;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponEditor;
@@ -36,8 +41,14 @@ public class WeaponTitleMenu {
         for (int i = 0; i < LegendaryTitles.VALUES.length; i++) {
             LegendaryTitles title = LegendaryTitles.VALUES[i];
             AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
+            Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
 
-            ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack());
+            ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack())
+                    .addLore("", ChatColor.AQUA + "Title Cost: ");
+            for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+                itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.GREEN + NumberFormat.addCommas(currenciesLongEntry.getValue()) + " " +
+                        currenciesLongEntry.getKey().getColoredName() + "s");
+            }
             boolean equals = weapon.getClass().equals(title.clazz);
             if (equals) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -46,24 +57,31 @@ public class WeaponTitleMenu {
             menu.setItem(i * 3 + 1, 1 + (i / 3),
                     itemBuilder.get(),
                     (m, e) -> {
-                        if (!equals) {
-                            Menu.openConfirmationMenu(
-                                    player,
-                                    "Apply Title",
-                                    3,
-                                    Collections.singletonList(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title"),
-                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
-                                    (m2, e2) -> {
-                                        AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
-                                        openWeaponTitleMenu(player, databasePlayer, newTitledWeapon);
-                                    },
-                                    (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon),
-                                    (m2) -> {
-                                    }
-                            );
-                        } else {
+                        if (equals) {
                             player.sendMessage(ChatColor.RED + "You already have this title on your weapon!");
+                            return;
                         }
+                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+                            if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
+                                player.sendMessage(ChatColor.RED + "You do not have enough " + currenciesLongEntry.getKey().name + "s to apply this title.");
+                                return;
+                            }
+                        }
+                        Menu.openConfirmationMenu(
+                                player,
+                                "Apply Title",
+                                3,
+                                Collections.singletonList(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title"),
+                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                (m2, e2) -> {
+                                    AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
+                                    openWeaponTitleMenu(player, databasePlayer, newTitledWeapon);
+                                },
+                                (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon),
+                                (m2) -> {
+                                }
+                        );
                     }
             );
         }
