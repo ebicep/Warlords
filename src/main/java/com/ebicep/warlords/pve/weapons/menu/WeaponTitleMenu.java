@@ -31,6 +31,16 @@ public class WeaponTitleMenu {
     public static void openWeaponTitleMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, int page) {
         Menu menu = new Menu("Apply Title to Weapon", 9 * 5);
 
+        for (int i = 0; i < 9 * 5; i++) {
+            menu.addItem(
+                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                            .name(" ")
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+
         menu.setItem(
                 4,
                 0,
@@ -38,6 +48,21 @@ public class WeaponTitleMenu {
                 (m, e) -> {
                 }
         );
+
+//        int[] colors = new int[] {4,5,3};
+//        for (int i = 0; i < 9; i++) {
+//            for (int j = 0; j < 3; j++) {
+//                menu.setItem(
+//                        i,
+//                        j + 1,
+//                        new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) colors[i / 3])
+//                                .name("")
+//                                .get(),
+//                        (m, e) -> {
+//                        }
+//                );
+//            }
+//        }
 
         for (int i = 0; i < 3; i++) {
             int titleIndex = ((page - 1) * 3) + i;
@@ -56,6 +81,29 @@ public class WeaponTitleMenu {
                 if (equals) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                }
+                for (int k = 0; k < 3; k++) {
+                    for (int j = 0; j < 3; j++) {
+                        if (j == 1) {
+                            menu.setItem(
+                                    k + i * 3,
+                                    j + 1,
+                                    null,
+                                    (m, e) -> {
+                                    }
+                            );
+                            continue;
+                        }
+                        menu.setItem(
+                                k + i * 3,
+                                j + 1,
+                                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) title.color)
+                                        .name(" ")
+                                        .get(),
+                                (m, e) -> {
+                                }
+                        );
+                    }
                 }
                 menu.setItem((i % 3) * 3 + 1, 2,
                         itemBuilder.get(),

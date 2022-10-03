@@ -8,12 +8,12 @@ import java.util.function.Function;
 
 public enum LegendaryTitles {
 
-    TITANIC("Titanic", LegendaryTitanic.class, LegendaryTitanic::new, LegendaryTitanic::new),
-    VIGOROUS("Vigorous", LegendaryVigorous.class, LegendaryVigorous::new, LegendaryVigorous::new),
-    SUSPICIOUS("Suspicious", LegendarySuspicious.class, LegendarySuspicious::new, LegendarySuspicious::new),
-    BENEVOLENT("Benevolent", LegendaryBenevolent.class, LegendaryBenevolent::new, LegendaryBenevolent::new),
-    VORPAL("Vorpal", LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new),
-    DIVINE("Divine", LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new),
+    TITANIC("Titanic", LegendaryTitanic.class, LegendaryTitanic::new, LegendaryTitanic::new, 0),
+    VIGOROUS("Vigorous", LegendaryVigorous.class, LegendaryVigorous::new, LegendaryVigorous::new, 1),
+    SUSPICIOUS("Suspicious", LegendarySuspicious.class, LegendarySuspicious::new, LegendarySuspicious::new, 2),
+    BENEVOLENT("Benevolent", LegendaryBenevolent.class, LegendaryBenevolent::new, LegendaryBenevolent::new, 3),
+    VORPAL("Vorpal", LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new, 4),
+    DIVINE("Divine", LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new, 5),
 
     ;
 
@@ -24,17 +24,20 @@ public enum LegendaryTitles {
     public final Class<?> clazz;
     public final Function<UUID, AbstractLegendaryWeapon> create;
     public final Function<AbstractLegendaryWeapon, AbstractLegendaryWeapon> titleWeapon;
+    public final int color;
 
     LegendaryTitles(
             String title,
             Class<?> clazz,
             Function<UUID, AbstractLegendaryWeapon> create,
-            Function<AbstractLegendaryWeapon, AbstractLegendaryWeapon> titleWeapon
+            Function<AbstractLegendaryWeapon, AbstractLegendaryWeapon> titleWeapon,
+            int color
     ) {
         this.title = title;
         this.clazz = clazz;
         this.create = create;
         this.titleWeapon = titleWeapon;
+        this.color = color;
     }
 
     public LinkedHashMap<Currencies, Long> getCost() {

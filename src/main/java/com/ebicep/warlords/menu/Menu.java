@@ -146,4 +146,12 @@ public class Menu extends AbstractMenuBase {
     public void addItem(ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
         this.setItem(nextItemIndex, item, clickHandler);
     }
+
+    public void fillEmptySlots(ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) {
+                setItem(i, item, clickHandler);
+            }
+        }
+    }
 }
