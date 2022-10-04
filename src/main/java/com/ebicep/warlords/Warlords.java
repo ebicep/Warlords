@@ -85,6 +85,9 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
     public static final AtomicInteger LOOP_TICK_COUNTER = new AtomicInteger(0);
+    public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
+    public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
+    public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
     private static final HashMap<UUID, WarlordsEntity> PLAYERS = new HashMap<>();
     public static String VERSION = "";
     public static String serverIP;
@@ -92,9 +95,6 @@ public class Warlords extends JavaPlugin {
     public static boolean citizensEnabled;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
-    public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
-    public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
-    public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
 
     static {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
@@ -108,8 +108,8 @@ public class Warlords extends JavaPlugin {
         return getInstance().gameManager;
     }
 
-    public static <T> TaskChain<T> newChain() {
-        return taskChainFactory.newChain();
+    public static Warlords getInstance() {
+        return instance;
     }
 
     public static <T> TaskChain<T> newSharedChain(String name) {
@@ -174,22 +174,6 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
-        return hasPlayer(player.getUniqueId());
-    }
-
-    public static boolean hasPlayer(@Nonnull UUID player) {
-        return PLAYERS.containsKey(player);
-    }
-
-    public static boolean onCustomServer() {
-        return !serverIP.equals("51.81.49.127");
-    }
-
-    public static Warlords getInstance() {
-        return instance;
-    }
-
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
         return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
@@ -203,23 +187,34 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-
     @Override
     public void onDisable() {
-        if (BotManager.task != null) {
-            BotManager.task.cancel();
-        }
         try {
-            //updates all queues, locks main thread to ensure update is complete before disabling
-            if (DatabaseManager.enabled) {
-                DatabaseManager.updateQueue();
-                if (MasterworksFairManager.currentFair != null) {
-                    DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
-                }
-                GuildManager.updateGuilds();
+            if (BotManager.task != null) {
+                BotManager.task.cancel();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (DatabaseManager.enabled) {
+            //updates all queues, locks main thread to ensure update is complete before disabling
+            try {
+                DatabaseManager.updateQueue();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (MasterworksFairManager.currentFair != null) {
+                    DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                GuildManager.updateGuilds();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         try {
             taskChainFactory.shutdown(10, TimeUnit.SECONDS);
@@ -252,6 +247,7 @@ public class Warlords extends JavaPlugin {
         }
         try {
             if (holographicDisplaysEnabled) {
+                ChatUtils.MessageTypes.WARLORDS.sendMessage("Deleting holograms...");
                 HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
             }
         } catch (Exception e) {
@@ -354,7 +350,7 @@ public class Warlords extends JavaPlugin {
         //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));
         //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-2")));
 
-    //   gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, new LocationFactory(Bukkit.getWorld("FrozenDivide-0")));
+        //   gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, new LocationFactory(Bukkit.getWorld("FrozenDivide-0")));
 
         // PRACTICE
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));
@@ -524,6 +520,17 @@ public class Warlords extends JavaPlugin {
         }
     }
 
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
+    public static boolean onCustomServer() {
+        return !serverIP.equals("51.81.49.127");
+    }
+
+    public static boolean hasPlayer(@Nonnull OfflinePlayer player) {
+        return hasPlayer(player.getUniqueId());
+    }
 
     private void startWarlordsEntitiesLoop() {
         new BukkitRunnable() {
@@ -946,6 +953,9 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 20, 1000);
     }
 
+    public static boolean hasPlayer(@Nonnull UUID player) {
+        return PLAYERS.containsKey(player);
+    }
 
     public void hideAndUnhidePeople(@Nonnull Player player) {
         Map<UUID, Game> players = getPlayersToGame();
@@ -953,27 +963,6 @@ public class Warlords extends JavaPlugin {
         for (Player p : Bukkit.getOnlinePlayers()) {
             Game game1 = players.get(p.getUniqueId());
             if (p != player) {
-                if (game1 == game) {
-                    p.showPlayer(player);
-                    player.showPlayer(p);
-                } else {
-                    p.hidePlayer(player);
-                    player.hidePlayer(p);
-                }
-            }
-        }
-    }
-
-    public void hideAndUnhidePeople() {
-        Map<UUID, Game> players = getPlayersToGame();
-        List<Player> peeps = new ArrayList<>(Bukkit.getOnlinePlayers());
-        int length = peeps.size();
-        for (int i = 0; i < length - 1; i++) {
-            Player player = peeps.get(i);
-            Game game = players.get(player.getUniqueId());
-            for (int j = i + 1; j < length; j++) {
-                Player p = peeps.get(j);
-                Game game1 = players.get(p.getUniqueId());
                 if (game1 == game) {
                     p.showPlayer(player);
                     player.showPlayer(p);
@@ -997,6 +986,27 @@ public class Warlords extends JavaPlugin {
             }
         }
         return players;
+    }
+
+    public void hideAndUnhidePeople() {
+        Map<UUID, Game> players = getPlayersToGame();
+        List<Player> peeps = new ArrayList<>(Bukkit.getOnlinePlayers());
+        int length = peeps.size();
+        for (int i = 0; i < length - 1; i++) {
+            Player player = peeps.get(i);
+            Game game = players.get(player.getUniqueId());
+            for (int j = i + 1; j < length; j++) {
+                Player p = peeps.get(j);
+                Game game1 = players.get(p.getUniqueId());
+                if (game1 == game) {
+                    p.showPlayer(player);
+                    player.showPlayer(p);
+                } else {
+                    p.hidePlayer(player);
+                    player.hidePlayer(p);
+                }
+            }
+        }
     }
 
 }

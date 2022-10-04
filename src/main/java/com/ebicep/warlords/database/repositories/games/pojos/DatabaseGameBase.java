@@ -387,37 +387,36 @@ public abstract class DatabaseGameBase {
 
         ClickableHologramLine beforeLine;
         ClickableHologramLine afterLine;
-        if (gameBefore == previousGames.size() - 1) {
-            beforeLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
-        } else {
-            beforeLine = gameSwitcher.getLines()
-                    .appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
+        if (previousGames.size() > 1) {
+            if (gameBefore == previousGames.size() - 1) {
+                beforeLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
+            } else {
+                beforeLine = gameSwitcher.getLines()
+                        .appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
+            }
+            beforeLine.setClickListener((clicker) -> {
+                playerLeaderboardInfo.setGameHologram(gameBefore);
+                setGameHologramVisibility(player);
+            });
         }
-
         if (selectedGame == previousGames.size() - 1) {
             gameSwitcher.getLines().appendText(ChatColor.GREEN + "Latest Game");
         } else {
             gameSwitcher.getLines()
                     .appendText(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
         }
-
-        if (gameAfter == previousGames.size() - 1) {
-            afterLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
-        } else {
-            afterLine = gameSwitcher.getLines()
-                    .appendText(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
+        if (previousGames.size() > 2) {
+            if (gameAfter == previousGames.size() - 1) {
+                afterLine = gameSwitcher.getLines().appendText(ChatColor.GRAY + "Latest Game");
+            } else {
+                afterLine = gameSwitcher.getLines()
+                        .appendText(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
+            }
+            afterLine.setClickListener((clicker) -> {
+                playerLeaderboardInfo.setGameHologram(gameAfter);
+                setGameHologramVisibility(player);
+            });
         }
-
-        beforeLine.setClickListener((clicker) -> {
-            playerLeaderboardInfo.setGameHologram(gameBefore);
-            setGameHologramVisibility(player);
-        });
-
-        afterLine.setClickListener((clicker) -> {
-            playerLeaderboardInfo.setGameHologram(gameAfter);
-            setGameHologramVisibility(player);
-        });
-
         gameSwitcher.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
         gameSwitcher.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
     }
