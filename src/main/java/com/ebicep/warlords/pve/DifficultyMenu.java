@@ -89,16 +89,10 @@ public class DifficultyMenu {
             }
         }
 
-        GameMap map;
-        if (endless) {
-            map = GameMap.ILLUSION_CROSSFIRE;
-        } else {
-            map = hardMode ? GameMap.ILLUSION_APERTURE : GameMap.ILLUSION_RIFT;
-        }
         Warlords.getGameManager()
                 .newEntry(people)
                 .setGamemode(GameMode.WAVE_DEFENSE)
-                .setMap(map)
+                .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
                 .setPriority(0)
                 .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME, GameAddon.PVE)
                 .setOnResult((result, game) -> {

@@ -40,16 +40,6 @@ public class Physira extends AbstractZombie implements BossMob {
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Physira & Mithra",
-                        ChatColor.WHITE + "The Envoy King and Queen of Illusion",
-                        20, 30, 20
-                );
-            }
-        }
     }
 
     @Override

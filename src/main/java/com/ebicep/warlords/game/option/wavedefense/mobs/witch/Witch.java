@@ -23,7 +23,7 @@ public class Witch extends AbstractWitch implements EliteMob {
                 "Illusion Deacon",
                 MobTier.ELITE,
                 null,
-                3000,
+                3500,
                 0.05f,
                 10,
                 0,
