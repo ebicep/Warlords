@@ -56,6 +56,54 @@ public class TestCommand extends BaseCommand {
     @CommandAlias("testdatabase")
     @Description("Database test command")
     public void testDatabase(CommandIssuer issuer) {
+//        List<DatabasePlayer> temp = DatabaseManager.playerService.findAll(PlayersCollections.TEMP);
+//        for (DatabasePlayer databasePlayer : temp) {
+//            for (DatabaseBaseGeneral aClass : databasePlayer.getClasses()) {
+//                ArmorManager.ArmorSets armor = aClass.getArmor();
+//                switch (armor) {
+//                    case SIMPLE_CHESTPLATE_MAGE:
+//                    case SIMPLE_CHESTPLATE_WARRIOR:
+//                    case SIMPLE_CHESTPLATE_PALADIN:
+//                    case SIMPLE_CHESTPLATE_SHAMAN:
+//                    case SIMPLE_CHESTPLATE_ROGUE:
+//                        aClass.setArmor(ArmorManager.ArmorSets.SIMPLE_CHESTPLATE);
+//                        break;
+//                    case GREATER_CHESTPLATE_MAGE:
+//                    case GREATER_CHESTPLATE_WARRIOR:
+//                    case GREATER_CHESTPLATE_PALADIN:
+//                    case GREATER_CHESTPLATE_SHAMAN:
+//                    case GREATER_CHESTPLATE_ROGUE:
+//                        aClass.setArmor(ArmorManager.ArmorSets.GREATER_CHESTPLATE);
+//                        break;
+//                    default:
+//                        aClass.setArmor(ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE);
+//                        break;
+//                }
+//            }
+//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEMP2);
+//        }
+
+//        Warlords.newChain()
+//                .asyncFirst(() -> DatabaseManager.gameService.findAll(GamesCollections.TEMP2))
+//                .asyncLast((games) -> {
+//                    int counter = 0;
+//                    for (DatabaseGameBase game : games) {
+////                        if(game instanceof DatabaseGameCTF) {
+////                            DatabaseGameCTF databaseGameCTF = (DatabaseGameCTF) game;
+////                            databaseGameCTF.getTeamPlayers().put(Team.BLUE, databaseGameCTF.getPlayers().getBlue());
+////                            databaseGameCTF.getTeamPlayers().put(Team.RED, databaseGameCTF.getPlayers().getRed());
+////                        }
+////                        DatabaseManager.gameService.delete(game, GamesCollections.TEMP);
+//                        DatabaseManager.gameService.save(game, GamesCollections.TEMP2);
+//                        System.out.println(counter++);
+//                    }
+//                }).execute();
+
+//        Warlords.newChain()
+//                        .async(() -> {
+//                            DatabaseManager.gameService.updateMany(new Query(), new Update().rename("team_players", "players"), DatabaseGameCTF.class, GamesCollections.TEMP2);
+//                        }).execute();
+
 
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed", true);
     }

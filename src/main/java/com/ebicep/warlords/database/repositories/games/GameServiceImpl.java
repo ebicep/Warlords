@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,6 +60,12 @@ public class GameServiceImpl implements GameService {
     public void delete(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.remove(game, collection.collectionName);
         ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
+    }
+
+    @Override
+    public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, GamesCollections collection) {
+        mongoTemplate.updateMulti(query, update, clazz, collection.collectionName);
+        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
     }
 
     @Override

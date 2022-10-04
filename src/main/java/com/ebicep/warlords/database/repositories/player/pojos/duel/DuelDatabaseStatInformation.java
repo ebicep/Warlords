@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
-import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayersCTF;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -28,7 +28,7 @@ public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation
             PlayersCollections playersCollection
     ) {
         assert databaseGame instanceof DatabaseGameCTF;
-        assert gamePlayer instanceof DatabaseGamePlayersCTF.DatabaseGamePlayerCTF;
+        assert gamePlayer instanceof DatabaseGamePlayerCTF;
 
         this.totalTimePlayed += (long) (900 - ((DatabaseGameCTF) databaseGame).getTimeLeft()) * multiplier;
     }

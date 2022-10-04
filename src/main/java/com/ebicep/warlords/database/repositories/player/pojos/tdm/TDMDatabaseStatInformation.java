@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.tdm;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayersTDM;
+import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
@@ -28,7 +28,7 @@ public class TDMDatabaseStatInformation extends AbstractDatabaseStatInformation 
             PlayersCollections playersCollection
     ) {
         assert databaseGame instanceof DatabaseGameTDM;
-        assert gamePlayer instanceof DatabaseGamePlayersTDM.DatabaseGamePlayerTDM;
+        assert gamePlayer instanceof DatabaseGamePlayerTDM;
 
         this.totalTimePlayed += (long) (900 - ((DatabaseGameTDM) databaseGame).getTimeLeft()) * multiplier;
     }

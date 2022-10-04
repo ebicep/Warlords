@@ -22,11 +22,6 @@ public class ArmorManager {
         resetArmor(player, playerSettings.getHelmet(selectedSpec), playerSettings.getArmorSet(selectedSpec), playerSettings.getWantedTeam());
     }
 
-    public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
-        CosmeticSettings cosmeticSettings = warlordsPlayer.getCosmeticSettings();
-        resetArmor(player, cosmeticSettings.getHelmet(), cosmeticSettings.getArmorSet(), warlordsPlayer.getTeam());
-    }
-
     public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
@@ -73,6 +68,11 @@ public class ArmorManager {
                     .get();
         }
         player.getInventory().setArmorContents(armor);
+    }
+
+    public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
+        CosmeticSettings cosmeticSettings = warlordsPlayer.getCosmeticSettings();
+        resetArmor(player, cosmeticSettings.getHelmet(), cosmeticSettings.getArmorSet(), warlordsPlayer.getTeam());
     }
 
     public enum Helmets {
@@ -220,23 +220,6 @@ public class ArmorManager {
     }
 
     public enum ArmorSets {
-        //TODO REMOVE
-//        SIMPLE_CHESTPLATE_MAGE("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
-//        GREATER_CHESTPLATE_MAGE("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
-//        MASTERWORK_CHESTPLATE_MAGE("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-//        SIMPLE_CHESTPLATE_WARRIOR("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
-//        GREATER_CHESTPLATE_WARRIOR("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
-//        MASTERWORK_CHESTPLATE_WARRIOR("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-//        SIMPLE_CHESTPLATE_PALADIN("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
-//        GREATER_CHESTPLATE_PALADIN("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
-//        MASTERWORK_CHESTPLATE_PALADIN("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-//        SIMPLE_CHESTPLATE_SHAMAN("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
-//        GREATER_CHESTPLATE_SHAMAN("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
-//        MASTERWORK_CHESTPLATE_SHAMAN("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-//        SIMPLE_CHESTPLATE_ROGUE("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
-//        GREATER_CHESTPLATE_ROGUE("Greater Chestplate", new ItemStack(Material.CHAINMAIL_CHESTPLATE), new ItemStack(Material.IRON_CHESTPLATE)),
-//        MASTERWORK_CHESTPLATE_ROGUE("Masterwork Chestplate", new ItemStack(Material.DIAMOND_CHESTPLATE), new ItemStack(Material.GOLD_CHESTPLATE)),
-//
 
         SIMPLE_CHESTPLATE("Simple Chestplate", new ItemStack(Material.LEATHER_CHESTPLATE), new ItemStack(Material.LEATHER_CHESTPLATE)),
         SIMPLE_LEGGINGS("Simple Leggings", new ItemStack(Material.LEATHER_LEGGINGS), new ItemStack(Material.LEATHER_LEGGINGS)),

@@ -25,10 +25,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_CTF")
 public class DatabaseGameCTF extends DatabaseGameBase {
 
+    @Transient
+    public static String lastWarlordsPlusString = "";
     @Field("time_left")
     protected int timeLeft;
     protected Team winner;
@@ -36,9 +39,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     protected int bluePoints;
     @Field("red_points")
     protected int redPoints;
-    protected DatabaseGamePlayersCTF players;
-    @Field("stat_info")
-    protected String statInfo;
+    protected Map<Team, List<DatabaseGamePlayerCTF>> players = new LinkedHashMap<>();
 
     public DatabaseGameCTF() {
     }
@@ -49,8 +50,89 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
-        this.players = new DatabaseGamePlayersCTF(game);
-        this.statInfo = getWarlordsPlusEndGameStats(game);
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerCTF(warlordsPlayer));
+        });
+    }
+
+    public static String getWarlordsPlusEndGameStats(Game game) {
+        StringBuilder output = new StringBuilder("Winners:");
+        int bluePoints = game.getPoints(Team.BLUE);
+        int redPoints = game.getPoints(Team.RED);
+        if (bluePoints > redPoints) {
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+        } else if (redPoints > bluePoints) {
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+        } else {
+            output.setLength(0);
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", ""))
+                        .append("[")
+                        .append(player.getMinuteStats().total().getKills())
+                        .append(":")
+                        .append(player.getMinuteStats().total().getDeaths())
+                        .append("],");
+            }
+        }
+        output.setLength(output.length() - 1);
+        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
+            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
+                BotManager.getTextChannelCompsByName("games-backlog")
+                        .ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+            }
+        } else {
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+            }
+        }
+        lastWarlordsPlusString = output.toString();
+        return output.toString();
+    }
+
+    public static String getLastWarlordsPlusString() {
+        return lastWarlordsPlusString;
     }
 
     @Override
@@ -68,29 +150,32 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 ", bluePoints=" + bluePoints +
                 ", redPoints=" + redPoints +
                 ", players=" + players +
-                ", statInfo='" + statInfo + '\'' +
                 '}';
     }
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.blue.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier));
-        players.red.forEach(gamePlayerCTF -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier));
+        for (List<DatabaseGamePlayerCTF> gamePlayerCTFList : players.values()) {
+            for (DatabaseGamePlayerCTF gamePlayerCTF : gamePlayerCTFList) {
+                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
+            }
+        }
     }
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayersCTF.DatabaseGamePlayerCTF;
+        assert player instanceof DatabaseGamePlayerCTF;
 
-        if (bluePoints > redPoints) {
-            return players.blue.contains((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else if (redPoints > bluePoints) {
-            return players.red.contains((DatabaseGamePlayersCTF.DatabaseGamePlayerCTF) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else {
+        if (winner == null) {
             return DatabaseGamePlayerResult.DRAW;
         }
+        for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
+            if (teamListEntry.getValue().contains(player)) {
+                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            }
+        }
+        return DatabaseGamePlayerResult.NONE;
     }
-
 
     @Override
     public void createHolograms() {
@@ -128,24 +213,33 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         //last game stats
         int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
         lastGameStats.getLines().appendText(ChatColor.GRAY + date);
-        lastGameStats.getLines().appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        lastGameStats.getLines()
+                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
         lastGameStats.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
 
 
-        List<DatabaseGamePlayersCTF.DatabaseGamePlayerCTF> bluePlayers = players.blue;
-        List<DatabaseGamePlayersCTF.DatabaseGamePlayerCTF> redPlayers = players.red;
-        List<DatabaseGamePlayersCTF.DatabaseGamePlayerCTF> allPlayers = new ArrayList<>();
-        allPlayers.addAll(bluePlayers);
-        allPlayers.addAll(redPlayers);
+        List<DatabaseGamePlayerCTF> allPlayers = players.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        HashMap<DatabaseGamePlayerCTF, ChatColor> playerColor = new HashMap<>();
+        for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
+            for (DatabaseGamePlayerCTF gamePlayerCTF : teamListEntry.getValue()) {
+                playerColor.put(gamePlayerCTF, teamListEntry.getKey().teamColor);
+            }
+        }
         List<String> players = new ArrayList<>();
 
         for (String s : Utils.specsOrdered) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
-            allPlayers.stream().filter(o -> o.getSpec().name.equalsIgnoreCase(s)).forEach(p -> {
-                playerSpecs.append(bluePlayers.contains(p) ? ChatColor.BLUE : ChatColor.RED).append(p.getName()).append(p.getKDAString()).append(ChatColor.GRAY).append(", ");
-                add[0] = true;
-            });
+            allPlayers.stream()
+                    .filter(o -> o.getSpec().name.equalsIgnoreCase(s))
+                    .forEach(p -> {
+                        playerSpecs.append(playerColor.getOrDefault(p, ChatColor.WHITE))
+                                .append(p.getName())
+                                .append(p.getKDAString())
+                                .append(ChatColor.GRAY)
+                                .append(", ");
+                        add[0] = true;
+                    });
             if (add[0]) {
                 playerSpecs.setLength(playerSpecs.length() - 2);
                 players.add(playerSpecs.toString());
@@ -165,36 +259,53 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         Map<ChatColor, Long> totalHealing = new HashMap<>();
         Map<ChatColor, Long> totalAbsorbed = new HashMap<>();
 
-        allPlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayersCTF.DatabaseGamePlayerCTF::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
-            totalDamage.put(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, totalDamage.getOrDefault(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, 0L) + databaseGamePlayer.getTotalDamage());
-            topDamagePlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
-        });
+        allPlayers.stream()
+                .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalDamage).reversed())
+                .forEach(databaseGamePlayer -> {
+                    totalDamage.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalDamage(), Long::sum);
+                    topDamagePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
+                });
 
-        allPlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayersCTF.DatabaseGamePlayerCTF::getTotalHealing).reversed()).forEach(databaseGamePlayer -> {
-            totalHealing.put(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, totalHealing.getOrDefault(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, 0L) + databaseGamePlayer.getTotalHealing());
-            topHealingPlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
-        });
+        allPlayers.stream()
+                .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalHealing).reversed())
+                .forEach(databaseGamePlayer -> {
+                    totalHealing.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalHealing(), Long::sum);
+                    topHealingPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
+                });
 
-        allPlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayersCTF.DatabaseGamePlayerCTF::getTotalAbsorbed).reversed()).forEach(databaseGamePlayer -> {
-            totalAbsorbed.put(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, totalAbsorbed.getOrDefault(bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED, 0L) + databaseGamePlayer.getTotalAbsorbed());
-            topAbsorbedPlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
-        });
+        allPlayers.stream()
+                .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalAbsorbed).reversed())
+                .forEach(databaseGamePlayer -> {
+                    totalAbsorbed.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalAbsorbed(), Long::sum);
+                    topAbsorbedPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
+                });
 
-        allPlayers.stream().sorted((o1, o2) -> {
-            Long p1DHPPerGame = o1.getTotalDHP() / minutes;
-            Long p2DHPPerGame = o2.getTotalDHP() / minutes;
-            return p2DHPPerGame.compareTo(p1DHPPerGame);
-        }).forEach(databaseGamePlayer -> {
-            topDHPPerGamePlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
-        });
+        allPlayers.stream()
+                .sorted((o1, o2) -> {
+                    Long p1DHPPerGame = o1.getTotalDHP() / minutes;
+                    Long p2DHPPerGame = o2.getTotalDHP() / minutes;
+                    return p2DHPPerGame.compareTo(p1DHPPerGame);
+                }).forEach(databaseGamePlayer -> {
+                    topDHPPerGamePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+                });
 
-        allPlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayersCTF.DatabaseGamePlayerCTF::getTotalDamageOnCarrier).reversed()).forEach(databaseGamePlayer -> {
-            topDamageOnCarrierPlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()));
-        });
+        allPlayers.stream()
+                .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalDamageOnCarrier).reversed())
+                .forEach(databaseGamePlayer -> {
+                    topDamageOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()));
+                });
 
-        allPlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayersCTF.DatabaseGamePlayerCTF::getTotalHealingOnCarrier).reversed()).forEach(databaseGamePlayer -> {
-            topHealingOnCarrierPlayers.add((bluePlayers.contains(databaseGamePlayer) ? ChatColor.BLUE : ChatColor.RED) + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
-        });
+        allPlayers.stream()
+                .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalHealingOnCarrier).reversed())
+                .forEach(databaseGamePlayer -> {
+                    topHealingOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                            ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
+                });
 
         appendTeamDHP(topDamage, totalDamage);
         appendTeamDHP(topHealing, totalHealing);
@@ -229,56 +340,8 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 ChatColor.GRAY + "Winner: " + winner.teamColor + winner.name,
                 ChatColor.GRAY + "Blue Points: " + ChatColor.BLUE + bluePoints,
                 ChatColor.GRAY + "Red Points: " + ChatColor.RED + redPoints,
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + (players.getBlue().size() + players.getRed().size())
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.values().stream().mapToLong(Collection::size).sum()
         );
-    }
-
-    @Transient
-    public static String lastWarlordsPlusString = "";
-
-    public static String getWarlordsPlusEndGameStats(Game game) {
-        StringBuilder output = new StringBuilder("Winners:");
-        int bluePoints = game.getPoints(Team.BLUE);
-        int redPoints = game.getPoints(Team.RED);
-        if (bluePoints > redPoints) {
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-            output.setLength(output.length() - 1);
-            output.append("Losers:");
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-        } else if (redPoints > bluePoints) {
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-            output.setLength(output.length() - 1);
-            output.append("Losers:");
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-        } else {
-            output.setLength(0);
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-            for (WarlordsEntity player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getMinuteStats().total().getKills()).append(":").append(player.getMinuteStats().total().getDeaths()).append("],");
-            }
-        }
-        output.setLength(output.length() - 1);
-        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
-            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
-            }
-        } else {
-            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
-                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
-            }
-        }
-        lastWarlordsPlusString = output.toString();
-        return output.toString();
     }
 
     public int getTimeLeft() {
@@ -313,23 +376,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         this.redPoints = redPoints;
     }
 
-    public DatabaseGamePlayersCTF getPlayers() {
+    public Map<Team, List<DatabaseGamePlayerCTF>> getPlayers() {
         return players;
-    }
-
-    public void setPlayers(DatabaseGamePlayersCTF players) {
-        this.players = players;
-    }
-
-    public String getStatInfo() {
-        return statInfo;
-    }
-
-    public void setStatInfo(String statInfo) {
-        this.statInfo = statInfo;
-    }
-
-    public static String getLastWarlordsPlusString() {
-        return lastWarlordsPlusString;
     }
 }

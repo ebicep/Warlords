@@ -14,8 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Document(collection = "Games_Information_Interception")
 public class DatabaseGameInterception extends DatabaseGameBase {
@@ -27,7 +26,8 @@ public class DatabaseGameInterception extends DatabaseGameBase {
     protected int bluePoints;
     @Field("red_points")
     protected int redPoints;
-    protected DatabaseGamePlayersInterception players;
+    protected Map<Team, List<DatabaseGamePlayerInterception>> players = new LinkedHashMap<>();
+
 
     public DatabaseGameInterception() {
     }
@@ -38,30 +38,33 @@ public class DatabaseGameInterception extends DatabaseGameBase {
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
-        this.players = new DatabaseGamePlayersInterception(game);
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerInterception(warlordsPlayer));
+        });
     }
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.blue.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception,
-                multiplier
-        ));
-        players.red.forEach(gamePlayerInterception -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerInterception,
-                multiplier
-        ));
+        for (List<DatabaseGamePlayerInterception> gamePlayerCTFList : players.values()) {
+            for (DatabaseGamePlayerInterception gamePlayerCTF : gamePlayerCTFList) {
+                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
+            }
+        }
     }
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
+        assert player instanceof DatabaseGamePlayerInterception;
 
-        if (bluePoints > redPoints) {
-            return players.blue.contains((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else if (redPoints > bluePoints) {
-            return players.red.contains((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else {
+        if (winner == null) {
             return DatabaseGamePlayerResult.DRAW;
         }
+        for (Map.Entry<Team, List<DatabaseGamePlayerInterception>> teamListEntry : players.entrySet()) {
+            if (teamListEntry.getValue().contains(player)) {
+                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            }
+        }
+        return DatabaseGamePlayerResult.NONE;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class DatabaseGameInterception extends DatabaseGameBase {
                 ChatColor.GRAY + "Winner: " + winner.teamColor + winner.name,
                 ChatColor.GRAY + "Blue Points: " + ChatColor.BLUE + bluePoints,
                 ChatColor.GRAY + "Red Points: " + ChatColor.RED + redPoints,
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + (players.getBlue().size() + players.getRed().size())
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.values().stream().mapToLong(Collection::size).sum()
         );
     }
 

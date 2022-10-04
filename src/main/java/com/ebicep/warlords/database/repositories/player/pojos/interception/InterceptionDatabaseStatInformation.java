@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayersInterception;
+import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
@@ -32,10 +32,10 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
             PlayersCollections playersCollection
     ) {
         assert databaseGame instanceof DatabaseGameInterception;
-        assert gamePlayer instanceof DatabaseGamePlayersInterception.DatabaseGamePlayerInterception;
+        assert gamePlayer instanceof DatabaseGamePlayerInterception;
 
-        this.pointsCaptured += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured() * multiplier;
-        this.pointsDefended += ((DatabaseGamePlayersInterception.DatabaseGamePlayerInterception) gamePlayer).getPointsDefended() * multiplier;
+        this.pointsCaptured += ((DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured() * multiplier;
+        this.pointsDefended += ((DatabaseGamePlayerInterception) gamePlayer).getPointsDefended() * multiplier;
         this.totalTimePlayed += (long) (900 - ((DatabaseGameInterception) databaseGame).getTimeLeft()) * multiplier;
     }
 

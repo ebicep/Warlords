@@ -14,8 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Document(collection = "Games_Information_Duel")
 public class DatabaseGameDuel extends DatabaseGameBase {
@@ -23,7 +22,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
     @Field("time_left")
     protected int timeLeft;
     protected Team winner;
-    protected DatabaseGamePlayersDuel players;
+    protected Map<Team, List<DatabaseGamePlayerDuel>> players = new LinkedHashMap<>();
 
     public DatabaseGameDuel() {
     }
@@ -32,27 +31,34 @@ public class DatabaseGameDuel extends DatabaseGameBase {
         super(game, counted);
         this.timeLeft = WinAfterTimeoutOption.getTimeRemaining(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
-        this.players = new DatabaseGamePlayersDuel(game);
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerDuel(warlordsPlayer));
+        });
     }
 
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.blue.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier));
-        players.red.forEach(gamePlayerDuel -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier));
+        for (List<DatabaseGamePlayerDuel> value : players.values()) {
+            for (DatabaseGamePlayerDuel gamePlayerDuel : value) {
+                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerDuel, multiplier);
+            }
+        }
     }
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayersDuel.DatabaseGamePlayerDuel;
+        assert player instanceof DatabaseGamePlayerDuel;
 
-        if (winner == Team.BLUE) {
-            return players.blue.contains((DatabaseGamePlayersDuel.DatabaseGamePlayerDuel) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else if (winner == Team.RED) {
-            return players.red.contains((DatabaseGamePlayersDuel.DatabaseGamePlayerDuel) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else {
+        if (winner == null) {
             return DatabaseGamePlayerResult.DRAW;
         }
+        for (Map.Entry<Team, List<DatabaseGamePlayerDuel>> teamListEntry : players.entrySet()) {
+            if (teamListEntry.getValue().contains(player)) {
+                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            }
+        }
+        return DatabaseGamePlayerResult.NONE;
     }
 
     @Override
@@ -81,7 +87,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
         return winner;
     }
 
-    public DatabaseGamePlayersDuel getPlayers() {
+    public Map<Team, List<DatabaseGamePlayerDuel>> getPlayers() {
         return players;
     }
 }

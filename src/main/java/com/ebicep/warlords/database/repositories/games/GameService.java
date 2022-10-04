@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface GameService {
     void save(DatabaseGameBase game, GamesCollections collection);
 
     void delete(DatabaseGameBase game, GamesCollections collection);
+
+    void updateMany(Query query, UpdateDefinition update, Class<?> clazz, GamesCollections collection);
 
     DatabaseGameBase findByDate(String date);
 

@@ -14,8 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Document(collection = "Games_Information_TDM")
 public class DatabaseGameTDM extends DatabaseGameBase {
@@ -27,7 +26,8 @@ public class DatabaseGameTDM extends DatabaseGameBase {
     protected int bluePoints;
     @Field("red_points")
     protected int redPoints;
-    protected DatabaseGamePlayersTDM players;
+    protected Map<Team, List<DatabaseGamePlayerTDM>> players = new LinkedHashMap<>();
+
 
     public DatabaseGameTDM() {
 
@@ -39,7 +39,9 @@ public class DatabaseGameTDM extends DatabaseGameBase {
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
-        this.players = new DatabaseGamePlayersTDM(game);
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerTDM(warlordsPlayer));
+        });
     }
 
     @Override
@@ -59,21 +61,26 @@ public class DatabaseGameTDM extends DatabaseGameBase {
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.blue.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, multiplier));
-        players.red.forEach(gamePlayerTDM -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerTDM, multiplier));
+        for (List<DatabaseGamePlayerTDM> gamePlayerCTFList : players.values()) {
+            for (DatabaseGamePlayerTDM gamePlayerCTF : gamePlayerCTFList) {
+                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
+            }
+        }
     }
 
     @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayersTDM.DatabaseGamePlayerTDM;
+        assert player instanceof DatabaseGamePlayerTDM;
 
-        if (bluePoints > redPoints) {
-            return players.blue.contains((DatabaseGamePlayersTDM.DatabaseGamePlayerTDM) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else if (redPoints > bluePoints) {
-            return players.red.contains((DatabaseGamePlayersTDM.DatabaseGamePlayerTDM) player) ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-        } else {
+        if (winner == null) {
             return DatabaseGamePlayerResult.DRAW;
         }
+        for (Map.Entry<Team, List<DatabaseGamePlayerTDM>> teamListEntry : players.entrySet()) {
+            if (teamListEntry.getValue().contains(player)) {
+                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            }
+        }
+        return DatabaseGamePlayerResult.NONE;
     }
 
     @Override
@@ -96,7 +103,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
                 ChatColor.GRAY + "Winner: " + winner.teamColor + winner.name,
                 ChatColor.GRAY + "Blue Points: " + ChatColor.BLUE + bluePoints,
                 ChatColor.GRAY + "Red Points: " + ChatColor.RED + redPoints,
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + (players.getBlue().size() + players.getRed().size())
+                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + players.values().stream().mapToLong(Collection::size).sum()
         );
     }
 
@@ -132,11 +139,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
         this.redPoints = redPoints;
     }
 
-    public DatabaseGamePlayersTDM getPlayers() {
+    public Map<Team, List<DatabaseGamePlayerTDM>> getPlayers() {
         return players;
-    }
-
-    public void setPlayers(DatabaseGamePlayersTDM players) {
-        this.players = players;
     }
 }

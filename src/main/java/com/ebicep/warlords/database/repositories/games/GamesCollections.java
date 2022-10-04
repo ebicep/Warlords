@@ -8,6 +8,8 @@ public enum GamesCollections {
     INTERCEPTION("Interception", "Games_Information_Interception"),
     DUEL("Duel", "Games_Information_Duel"),
     PVE("PvE", "Games_Information_PvE"),
+//    TEMP("TEMP1", "TEMP1"),
+//    TEMP2("TEMP2", "TEMP2"),
 
 
     ;

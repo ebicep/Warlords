@@ -56,7 +56,18 @@ public enum PlayersCollections {
                     .isBefore(dateOfGame);
         }
     },
-    //TEMP2("TEMP2", "TEMP2", "TEMP2"),
+//    TEMP("TEMP1", "TEMP1", "TEMP1") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return false;
+//        }
+//    },
+//    TEMP2("TEMP2", "TEMP2", "TEMP2") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return false;
+//        }
+//    },
 
     ;
 
