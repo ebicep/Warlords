@@ -35,11 +35,11 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         Weapons.VORPAL_SWORD.getItem()
                 ),
-                28000,
+                27000,
                 0.4f,
                 20,
-                1600,
-                2400
+                1000,
+                1600
         );
     }
 
@@ -82,13 +82,13 @@ public class Zenith extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 200 == 0) {
+        if (ticksElapsed % 600 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new EnvoyLegionair(warlordsNPC.getLocation()));
             }
         }
 
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 800 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new MagmaCube(warlordsNPC.getLocation()));
             }
@@ -100,7 +100,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         Utils.addKnockback(attacker.getLocation(), receiver, -3, 0.3);
 
-        if (!event.getAbility().equals("Uppercut") || !event.getAbility().equals("Armageddon")) {
+        if (!event.getAbility().equals("Uppercut")) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
                 @Override
@@ -145,7 +145,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .entitiesAround(loc, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    we.addDamageInstance(warlordsNPC, "Armageddon", 600, 900, -1, 100, false);
+                    we.addDamageInstance(warlordsNPC, "Armageddon", 500, 800, -1, 100, false);
                     Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
                 }
             }

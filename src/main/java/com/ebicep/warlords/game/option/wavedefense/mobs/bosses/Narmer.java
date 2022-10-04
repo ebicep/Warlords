@@ -109,7 +109,6 @@ public class Narmer extends AbstractZombie implements BossMob {
 
                 if (eventPlayer.isTeammate(warlordsNPC)) {
                     warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.15f);
-                    //Bukkit.broadcastMessage("healed 15% current hp");
                 }
 
                 if (acolytes.contains(eventPlayer)) {
@@ -124,7 +123,6 @@ public class Narmer extends AbstractZombie implements BossMob {
                     );
 
                     if (acolyteDeathTickWindow > 0) {
-                        //Bukkit.broadcastMessage("mega execute");
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(location, false, 12);

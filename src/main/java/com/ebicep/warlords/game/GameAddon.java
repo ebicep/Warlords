@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -163,7 +164,7 @@ public enum GameAddon {
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setInPve(true);
             if (player.getEntity() instanceof Player) {
-                player.setTeam(Team.BLUE);
+                game.setPlayerTeam((OfflinePlayer) player, Team.BLUE);
                 player.updateArmor();
             }
         }

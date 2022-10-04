@@ -24,12 +24,12 @@ public class EnvoyLegionair extends AbstractZombie implements BossMob {
                 MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 100, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 80),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 100, 0, 80),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
-                8000,
+                7000,
                 0.3f,
                 10,
                 300,

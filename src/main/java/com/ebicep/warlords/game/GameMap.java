@@ -1188,8 +1188,8 @@ public enum GameMap {
                             .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
                             .add(0.05, Mobs.IRON_GOLEM)
-                            .add(0.01, Mobs.BLAZE)
-                            .add(0.01, Mobs.WITCH)
+                            .add(0.02, Mobs.BLAZE)
+                            .add(0.02, Mobs.WITCH)
                             //envoy
                             .add(0.02, Mobs.ENVOY_ZOMBIE)
                             .add(0.02, Mobs.ENVOY_SKELETON)
@@ -1197,8 +1197,7 @@ public enum GameMap {
                             //void
                             .add(0.03, Mobs.VOID_ZOMBIE)
                     )
-                    .add(20, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.PHYSIRA)
+                    .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
                     )
                     .add(21, new SimpleWave(25, 10 * SECOND, null)
@@ -1215,8 +1214,8 @@ public enum GameMap {
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
                             .add(0.15, Mobs.IRON_GOLEM)
-                            .add(0.02, Mobs.BLAZE)
-                            .add(0.02, Mobs.WITCH)
+                            .add(0.06, Mobs.BLAZE)
+                            .add(0.06, Mobs.WITCH)
                             //envoy
                             .add(0.05, Mobs.ENVOY_ZOMBIE)
                             .add(0.05, Mobs.ENVOY_SKELETON)
