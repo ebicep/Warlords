@@ -357,6 +357,7 @@ public enum ChatChannels {
             if (commandIssuer != null) {
                 commandIssuer.sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
             }
+            Bukkit.getServer().getConsoleSender().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + ChatColor.YELLOW + "Console: " + ChatColor.WHITE + message);
         }
     }
 
