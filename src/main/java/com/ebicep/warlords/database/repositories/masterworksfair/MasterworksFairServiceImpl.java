@@ -6,6 +6,8 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("masterworksFairService")
 public class MasterworksFairServiceImpl implements MasterworksFairService {
 
@@ -34,6 +36,11 @@ public class MasterworksFairServiceImpl implements MasterworksFairService {
     @Override
     public MasterworksFair findFirstByOrderByStartDateDesc() {
         return masterworksFairRepository.findFirstByOrderByStartDateDesc();
+    }
+
+    @Override
+    public List<MasterworksFair> findAll() {
+        return masterworksFairRepository.findAll();
     }
 
 }

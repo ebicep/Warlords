@@ -6,6 +6,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,28 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
 
     public AbstractTierOneWeapon(WarlordsPlayer warlordsPlayer) {
         super(warlordsPlayer);
+    }
+
+    public WeaponStats getStarPieceBonus() {
+        return starPieceBonus;
+    }
+
+    @Override
+    public List<WeaponStats> getRandomStatBonus() {
+        List<WeaponStats> randomStatBonus = new ArrayList<>();
+        if (meleeDamage > 0) {
+            randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
+        }
+        if (critChance > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
+        }
+        if (critMultiplier > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
+        }
+        if (healthBonus > 0) {
+            randomStatBonus.add(WeaponStats.HEALTH_BONUS);
+        }
+        return randomStatBonus;
     }
 
     @Override
@@ -76,8 +99,5 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
         return starPieceBonus == weaponStats ? getStarPieceBonusString() : "";
     }
 
-    public WeaponStats getStarPieceBonus() {
-        return starPieceBonus;
-    }
 
 }

@@ -22,6 +22,10 @@ public class MasterworksFair {
     private List<MasterworksFairPlayerEntry> rarePlayerEntries = new ArrayList<>();
     @Field("epic_entries")
     private List<MasterworksFairPlayerEntry> epicPlayerEntries = new ArrayList<>();
+    @Field("ended")
+    private boolean ended = false;
+    @Field("fair_number")
+    private int fairNumber;
 
     public MasterworksFair() {
     }
@@ -44,6 +48,22 @@ public class MasterworksFair {
 
     public List<MasterworksFairPlayerEntry> getEpicPlayerEntries() {
         return epicPlayerEntries;
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public void setEnded(boolean ended) {
+        this.ended = ended;
+    }
+
+    public int getFairNumber() {
+        return fairNumber;
+    }
+
+    public void setFairNumber(int fairNumber) {
+        this.fairNumber = fairNumber;
     }
 
     @Override

@@ -15,9 +15,12 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,7 +56,11 @@ public class MasterworksFairManager {
             ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
             return;
         }
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!");
+        }
         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Resetting fair");
+        masterworksFair.setEnded(true);
         //give out rewards
         awardEntries(masterworksFair, throughRewardsInventory);
         //reset fair
@@ -65,6 +72,10 @@ public class MasterworksFairManager {
                 onlinePlayer.closeInventory();
             }
         }
+    }
+
+    public static void sendMasterworksFairMessage(Player player, String message) {
+        player.sendMessage(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > " + message);
     }
 
     public static void awardEntries(MasterworksFair masterworksFair, boolean throughRewardsInventory) {
@@ -98,50 +109,33 @@ public class MasterworksFairManager {
                                         pveStats.addMasterworksFairEntry(playerRecordEntry);
                                         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
                                         if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
-                                            if (throughRewardsInventory) {
-                                                rewards.put(rarity.starPieceCurrency, 1L);
-                                            } else {
-                                                pveStats.addOneCurrency(rarity.starPieceCurrency);
-                                            }
+                                            rewards.put(rarity.starPieceCurrency, 1L);
                                             switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                                                 case 0:
-                                                    if (throughRewardsInventory) {
-                                                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                                                    } else {
-                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 10);
-                                                    }
+                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
                                                     break;
                                                 case 1:
                                                 case 2:
-                                                    if (throughRewardsInventory) {
-                                                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
-                                                    } else {
-                                                        pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 7);
-                                                    }
+                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
                                                     break;
                                             }
                                         } else {
                                             if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
-                                                if (throughRewardsInventory) {
-                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-                                                } else {
-                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 5);
-                                                }
+                                                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
                                             } else if (((WeaponScore) entry.getWeapon()).getWeaponScore() >= 85) { //Players who submit a 85%+ weapon will be guaranteed at least 3 supply drop opportunities
-                                                if (throughRewardsInventory) {
-                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
-                                                } else {
-                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 3);
-                                                }
+                                                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
                                             } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
-                                                if (throughRewardsInventory) {
-                                                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
-                                                } else {
-                                                    pveStats.addCurrency(Currencies.SUPPLY_DROP_TOKEN, 1);
-                                                }
+                                                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
                                             }
                                         }
-                                        pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                        if (masterworksFair.getFairNumber() != 0 && masterworksFair.getFairNumber() % 10 == 0) {
+                                            rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
+                                        }
+                                        if (throughRewardsInventory) {
+                                            pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                        } else {
+                                            rewards.forEach(pveStats::addCurrency);
+                                        }
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     })
                                     .execute();
@@ -156,10 +150,16 @@ public class MasterworksFairManager {
                 execute();
     }
 
-    public static void createFair(MasterworksFair masterworksFair) {
-        Warlords.newChain()
-                .async(() -> DatabaseManager.masterworksFairService.create(masterworksFair))
-                .execute();
+    public static void sendMasterworksFairMessage(Player player, BaseComponent... components) {
+        List<BaseComponent> baseComponents = new ArrayList<>(Arrays.asList(components));
+        baseComponents.add(0, new TextComponent(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > "));
+        player.spigot().sendMessage(baseComponents.toArray(new BaseComponent[0]));
+    }
+
+    public static void createFair() {
+        MasterworksFair newFair = new MasterworksFair();
+        initializeFair(newFair);
+        createFair(newFair);
     }
 
     public static void initializeFair(MasterworksFair masterworksFair) {
@@ -182,6 +182,22 @@ public class MasterworksFairManager {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 60, 20 * 30);
+    }
+
+    private static void createFair(MasterworksFair masterworksFair) {
+        Warlords.newChain()
+                .async(() -> DatabaseManager.masterworksFairService.create(masterworksFair))
+                .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
+                .syncLast(masterworksFairs -> {
+                    int size = masterworksFairs.size();
+                    masterworksFair.setFairNumber(size);
+                    DatabaseManager.masterworksFairService.update(masterworksFair);
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + size + " has just started!" +
+                                (size != 0 && size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""));
+                    }
+                })
+                .execute();
     }
 
     public static void openMasterworksFairMenu(Player player) {
@@ -227,12 +243,20 @@ public class MasterworksFairManager {
                                 if (playerEntry.isEmpty() || e.isLeftClick()) { //submit | change weapon
                                     openSubmissionMenu(player, databasePlayer, value, 1);
                                 } else { //remove weapon
-                                    weaponInventory.add(playerEntry.get().getWeapon());
+                                    AbstractWeapon weapon = playerEntry.get().getWeapon();
+                                    weaponInventory.add(weapon);
                                     weaponPlayerEntries.remove(playerEntry.get());
 
                                     updateFair.set(true);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
+                                    sendMasterworksFairMessage(player,
+                                            new TextComponent(ChatColor.GRAY + "Retracted "),
+                                            new TextComponentBuilder(weapon.getName())
+                                                    .setHoverItem(weapon.generateItemStack())
+                                                    .getTextComponent(),
+                                            new TextComponent(ChatColor.GRAY + " from the Masterworks Fair.")
+                                    );
                                     openMasterworksFairMenu(player);
                                 }
                             }
@@ -307,14 +331,23 @@ public class MasterworksFairManager {
                         (m, e) -> {
                             //check bound
                             if (abstractWeapon.isBound()) {
-                                player.sendMessage(ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
+                                sendMasterworksFairMessage(player, ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
                                 return;
                             }
                             //submit weapon to fair
                             MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(uuid));
                             if (playerEntry.isPresent()) {
                                 //remove old weapon
-                                weaponInventory.add(masterworksFairPlayerEntry.getWeapon());
+                                AbstractWeapon oldWeapon = masterworksFairPlayerEntry.getWeapon();
+                                weaponInventory.add(oldWeapon);
+
+                                sendMasterworksFairMessage(player,
+                                        new TextComponent(ChatColor.GRAY + "Retracted "),
+                                        new TextComponentBuilder(oldWeapon.getName())
+                                                .setHoverItem(oldWeapon.generateItemStack())
+                                                .getTextComponent(),
+                                        new TextComponent(ChatColor.GRAY + " from the Masterworks Fair.")
+                                );
                             } else {
                                 //add new entry if there wasnt already one
                                 weaponPlayerEntries.add(masterworksFairPlayerEntry);
@@ -327,6 +360,14 @@ public class MasterworksFairManager {
                             //update database stuff
                             updateFair.set(true);
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                            sendMasterworksFairMessage(player,
+                                    new TextComponent(ChatColor.GRAY + "Submitted "),
+                                    new TextComponentBuilder(abstractWeapon.getName())
+                                            .setHoverItem(abstractWeapon.generateItemStack())
+                                            .getTextComponent(),
+                                    new TextComponent(ChatColor.GRAY + " to the Masterworks Fair.")
+                            );
 
                             openMasterworksFairMenu(player);
                         }

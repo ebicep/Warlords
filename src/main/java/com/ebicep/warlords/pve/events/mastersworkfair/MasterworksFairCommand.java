@@ -19,12 +19,13 @@ public class MasterworksFairCommand extends BaseCommand {
 
     @Subcommand("end")
     @Description("Ends the current masterworks fair event")
-    public void end(CommandIssuer issuer, Boolean awardThroughRewardsInventory, @Optional @Default("5") @Conditions("limits:min=1,max=5") Integer startMinuteDelay) {
+    public void end(CommandIssuer issuer, Boolean awardThroughRewardsInventory, @Default("5") @Conditions("limits:min=1,max=5") Integer startMinuteDelay) {
         if (currentFair == null) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "No current masterworks fair event to end", true);
             return;
         }
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Ending current masterworks fair event with start delay of " + startMinuteDelay, true);
+        currentFair.setEnded(true);
         resetFair(currentFair, awardThroughRewardsInventory, startMinuteDelay);
     }
 

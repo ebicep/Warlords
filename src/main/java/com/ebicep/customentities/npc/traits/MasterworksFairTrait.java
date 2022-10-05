@@ -40,10 +40,7 @@ public class MasterworksFairTrait extends Trait {
                     if (Instant.now().isAfter(startTime)) {
                         startTime = null;
                         //create new fair
-                        MasterworksFair newFair = new MasterworksFair();
-                        initializeFair(newFair);
-
-                        createFair(newFair);
+                        MasterworksFairManager.createFair();
                     }
                 } else {
                     PAUSED.set(true);
@@ -53,9 +50,7 @@ public class MasterworksFairTrait extends Trait {
                                 if (masterworksFair == null) {
                                     ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
                                     ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
-                                    MasterworksFair newFair = new MasterworksFair();
-                                    initializeFair(newFair);
-                                    createFair(newFair);
+                                    MasterworksFairManager.createFair();
                                 } else {
                                     checkForReset(masterworksFair);
                                 }
@@ -75,6 +70,9 @@ public class MasterworksFairTrait extends Trait {
         if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
             ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
             resetFair(masterworksFair);
+        } else if (masterworksFair.isEnded()) {
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Ended");
+            MasterworksFairManager.createFair();
         } else {
             initializeFair(masterworksFair);
         }
@@ -83,7 +81,8 @@ public class MasterworksFairTrait extends Trait {
     public void updateHologram() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair");
+        int fairNumber = currentFair == null ? 0 : currentFair.getFairNumber();
+        hologramTrait.setLine(1, ChatColor.GREEN + "The Masterworks Fair" + (fairNumber != 0 ? " #" + fairNumber : ""));
         if (currentFair == null) {
             if (startTime != null) {
                 hologramTrait.setLine(2, ChatColor.GOLD + "Starts in " + DateUtil.getTimeTill(startTime, true, true, true, true));
@@ -101,6 +100,9 @@ public class MasterworksFairTrait extends Trait {
                         true
                 ) + ChatColor.BOLD + " left"
         );
+        if (fairNumber != 0 && fairNumber % 10 == 0) {
+            hologramTrait.setLine(3, ChatColor.RED + "10x REWARDS!");
+        }
     }
 
     @EventHandler
