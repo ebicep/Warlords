@@ -6,10 +6,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
     public static final int MELEE_DAMAGE_MIN = 140;
@@ -48,8 +50,8 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
-        final int[] cooldown = new int[1];
-        final float[] energyUsed = new float[1];
+        final AtomicInteger cooldown = new AtomicInteger(0);
+        final AtomicDouble energyUsed = new AtomicDouble(0);
 
         player.getGame().registerEvents(new Listener() {
 
@@ -58,14 +60,14 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                 if (event.getPlayer() != player) {
                     return;
                 }
-                if (cooldown[0] > 0) {
+                if (cooldown.get() > 0) {
                     return;
                 }
-                energyUsed[0] += event.getEnergyUsed();
-                if (energyUsed[0] >= 500) {
-                    cooldown[0] = PASSIVE_EFFECT_COOLDOWN;
-                    energyUsed[0] = 0;
-                    player.getCooldownManager().addCooldown(new RegularCooldown<LegendaryVigorous>(
+                energyUsed.getAndAdd(event.getEnergyUsed());
+                if (energyUsed.get() >= 500) {
+                    cooldown.set(PASSIVE_EFFECT_COOLDOWN);
+                    energyUsed.set(0);
+                    player.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "LegendaryVigorous",
                             "VIGOR",
                             LegendaryVigorous.class,
@@ -89,8 +91,8 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
             @Override
             public void run() {
-                if (cooldown[0] > 0) {
-                    cooldown[0]--;
+                if (cooldown.get() > 0) {
+                    cooldown.getAndDecrement();
                 }
             }
         }.runTaskTimer(0, 20);
