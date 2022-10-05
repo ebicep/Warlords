@@ -28,14 +28,6 @@ public class WeaponUpgradeMenu {
         menu.setItem(2, 1,
                 weapon.getUpgradeItem(),
                 (m, e) -> {
-                    LinkedHashMap<Currencies, Long> upgradeCost = weapon.getUpgradeCost(weapon.getUpgradeLevel() + 1);
-                    for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
-                        if (databasePlayer.getPveStats().getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                            player.sendMessage(ChatColor.RED + "You don't have enough " + currenciesLongEntry.getKey()
-                                    .getColoredName() + "s " + ChatColor.RED + "to upgrade this weapon.");
-                            return;
-                        }
-                    }
                     upgradeWeapon(player, databasePlayer, weapon);
                     WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 }

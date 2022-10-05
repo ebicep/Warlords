@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEve
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,7 +31,12 @@ public enum Currencies {
             "Fairy Essence",
             ChatColor.LIGHT_PURPLE,
             new ItemStack(Material.INK_SACK, 1, (short) 13)
-    ),
+    ) {
+        @Override
+        public boolean pluralIncludeS() {
+            return false;
+        }
+    },
     COMMON_STAR_PIECE(
             "Common Star Piece",
             ChatColor.GREEN,
@@ -119,8 +125,16 @@ public enum Currencies {
         }
     }
 
+    public boolean pluralIncludeS() {
+        return true;
+    }
+
     public String getColoredName() {
         return chatColor + name;
+    }
+
+    public String getCostColoredName(long cost) {
+        return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
     }
 
     public static class PvECoinSummary {

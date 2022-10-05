@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,10 +17,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
 import static com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu.openWeaponEditor;
@@ -70,13 +66,10 @@ public class WeaponTitleMenu {
                 LegendaryTitles title = LegendaryTitles.VALUES[titleIndex];
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
                 Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
+                List<String> loreCost = title.getCostLore();
 
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack())
-                        .addLore("", ChatColor.AQUA + "Title Cost: ");
-                for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-                    itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.GREEN + NumberFormat.addCommas(currenciesLongEntry.getValue()) + " " +
-                            currenciesLongEntry.getKey().getColoredName() + "s");
-                }
+                        .addLore(loreCost);
                 boolean equals = weapon.getClass().equals(title.clazz);
                 if (equals) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
@@ -115,16 +108,22 @@ public class WeaponTitleMenu {
                             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                             for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
                                 if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                                    player.sendMessage(ChatColor.RED + "You do not have enough " + currenciesLongEntry.getKey()
-                                            .getColoredName() + "s" + ChatColor.RED + " to apply this title!");
+                                    player.sendMessage(ChatColor.RED + "You need " + currenciesLongEntry.getKey()
+                                            .getCostColoredName(currenciesLongEntry.getValue()) +
+                                            ChatColor.RED + " to apply this title!");
                                     return;
                                 }
                             }
+                            List<String> confirmLore = new ArrayList<>();
+                            confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title");
+                            confirmLore.addAll(loreCost);
+                            confirmLore.add("");
+                            confirmLore.add(ChatColor.YELLOW + "NOTE: " + ChatColor.GRAY + "This will remove your current star piece.");
                             Menu.openConfirmationMenu(
                                     player,
                                     "Apply Title",
                                     3,
-                                    Collections.singletonList(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title"),
+                                    confirmLore,
                                     Collections.singletonList(ChatColor.GRAY + "Go back"),
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);

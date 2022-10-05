@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,43 +20,41 @@ public class WeaponStarPieceMenu {
 
         Menu menu = new Menu("Confirm Star Piece Application", 9 * 3);
 
+        Currencies starPieceCurrency = weapon.getRarity().starPieceCurrency;
         menu.setItem(2, 1,
                 new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
                         .name(ChatColor.GREEN + "Confirm")
                         .lore(
                                 ChatColor.GRAY + "Apply a star piece to your weapon.",
-                                ChatColor.GRAY + "This will override any previous star piece.",
-                                "",
-                                ChatColor.GRAY + "Cost: " + Currencies.COIN.chatColor + NumberFormat.addCommas(weapon.getStarPieceBonusCost()) + " Coins",
+                                ChatColor.GRAY + "This will override any previous star piece."
+                        )
+                        .addLore(weapon.getStarPieceCostLore(starPieceCurrency))
+                        .addLore(
                                 "",
                                 ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayerPvE.getCurrencyValue(Currencies.COIN) < weapon.getStarPieceBonusCost()) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough coins to apply this star piece.");
-                    } else {
-                        TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
-                                .setHoverItem(weapon.generateItemStack())
-                                .getTextComponent();
-                        databasePlayerPvE.subtractOneCurrency(weapon.getRarity().starPieceCurrency);
-                        databasePlayerPvE.subtractCurrency(Currencies.COIN, weapon.getStarPieceBonusCost());
-                        weapon.setStarPieceBonus();
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
+                            .setHoverItem(weapon.generateItemStack())
+                            .getTextComponent();
+                    databasePlayerPvE.subtractOneCurrency(starPieceCurrency);
+                    databasePlayerPvE.subtractCurrency(Currencies.COIN, weapon.getStarPieceBonusCost());
+                    weapon.setStarPieceBonus();
+                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                        TextComponent weaponAfter = new TextComponentBuilder(weapon.getName())
-                                .setHoverItem(weapon.generateItemStack())
-                                .getTextComponent();
-                        player.spigot().sendMessage(
-                                new TextComponent(ChatColor.GRAY + "You applied a star piece onto "),
-                                weaponBefore,
-                                new TextComponent(ChatColor.GRAY + " and it became "),
-                                weaponAfter,
-                                new TextComponent(ChatColor.GRAY + "!")
-                        );
+                    TextComponent weaponAfter = new TextComponentBuilder(weapon.getName())
+                            .setHoverItem(weapon.generateItemStack())
+                            .getTextComponent();
+                    player.spigot().sendMessage(
+                            new TextComponent(ChatColor.GRAY + "You applied a star piece onto "),
+                            weaponBefore,
+                            new TextComponent(ChatColor.GRAY + " and it became "),
+                            weaponAfter,
+                            new TextComponent(ChatColor.GRAY + "!")
+                    );
 
-                        WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
-                    }
+                    WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 }
         );
 

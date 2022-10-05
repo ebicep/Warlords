@@ -15,29 +15,23 @@ import org.bukkit.entity.Player;
 
 public class WeaponRerollMenu {
 
-    public static void openWeaponRerollMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
+    public static <T extends AbstractWeapon & StatsRerollable> void openWeaponRerollMenu(Player player, DatabasePlayer databasePlayer, T weapon) {
         Menu menu = new Menu("Confirm Reroll", 9 * 3);
 
-        StatsRerollable weaponRerollable = (StatsRerollable) weapon;
-        int rerollCost = weaponRerollable.getRerollCost();
+        int rerollCost = weapon.getRerollCost();
         menu.setItem(2, 1,
                 new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
                         .name(ChatColor.GREEN + "Confirm")
-                        .lore(
-                                ChatColor.GRAY + "Reroll this weapon and reset its stats.",
-                                "",
-                                ChatColor.GRAY + "Cost: " + ChatColor.GOLD + rerollCost + " coins",
+                        .lore(ChatColor.GRAY + "Reroll this weapon and reset its stats.")
+                        .addLore(weapon.getRerollCostLore())
+                        .addLore(
                                 "",
                                 ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
                         )
                         .get(),
                 (m, e) -> {
-                    if (databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN) >= rerollCost) {
-                        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
-                        rerollWeapon(player, databasePlayer, (AbstractWeapon & StatsRerollable) weapon);
-                    } else {
-                        player.sendMessage(ChatColor.RED + "You do not have enough coins to reroll this weapon.");
-                    }
+                    databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, rerollCost);
+                    rerollWeapon(player, databasePlayer, weapon);
                     WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 }
         );

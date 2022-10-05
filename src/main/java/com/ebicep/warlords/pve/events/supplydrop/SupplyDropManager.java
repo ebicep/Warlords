@@ -42,7 +42,7 @@ public class SupplyDropManager {
                     new ItemBuilder(Material.GOLD_NUGGET)
                             .name(ChatColor.GREEN + "Click to buy a supply drop token")
                             .lore(
-                                    ChatColor.GREEN + "Cost: " + ChatColor.YELLOW + "10,000 coins",
+                                    ChatColor.GREEN + "Cost: " + Currencies.COIN.getCostColoredName(10000),
                                     ChatColor.GREEN + "Balance: " + ChatColor.YELLOW + NumberFormat.addCommas(databasePlayerPvE.getCurrencyValue(Currencies.COIN)) + " coins"
                             )
                             .get(),
@@ -66,8 +66,8 @@ public class SupplyDropManager {
                     new ItemBuilder(Material.GOLD_BARDING)
                             .name(ChatColor.GREEN + "Click to call a supply drop")
                             .lore(
-                                    ChatColor.GRAY + "Cost: " + ChatColor.GOLD + "1 Token",
-                                    ChatColor.GRAY + "Balance: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
+                                    ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(1),
+                                    ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     "",
                                     ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK" + ChatColor.GRAY + " to INSTANTLY call a supply drop"
                             )
@@ -92,8 +92,8 @@ public class SupplyDropManager {
                     new ItemBuilder(Material.DIAMOND_BARDING)
                             .name(ChatColor.GREEN + "Click to call all available supply drops (Max 25)")
                             .lore(
-                                    ChatColor.GRAY + "Cost: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
-                                    ChatColor.GRAY + "Balance: " + ChatColor.GOLD + NumberFormat.addCommas(tokens) + " Token" + (tokens != 1 ? "s" : ""),
+                                    ChatColor.GRAY + "Cost: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
+                                    ChatColor.GRAY + "Balance: " + Currencies.SUPPLY_DROP_TOKEN.getCostColoredName(tokens),
                                     "",
                                     ChatColor.GRAY + "NOTE: Max 25 at a time",
                                     "",

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,10 +45,6 @@ public class WeaponSkillBoostMenu {
                 lore.add(ChatColor.GREEN + "Currently selected!");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
-                lore.add(ChatColor.GRAY + "Cost: ");
-                lore.add(" - " + ChatColor.GREEN + "10,000 " + Currencies.COIN.getColoredName());
-                lore.add(" - " + ChatColor.GREEN + "1 " + Currencies.SKILL_BOOST_MODIFIER.getColoredName());
-                lore.add("");
                 lore.add(ChatColor.YELLOW + "Click to select!");
             }
             builder.lore(lore);
@@ -60,21 +57,17 @@ public class WeaponSkillBoostMenu {
                             player.sendMessage(ChatColor.RED + "You already have this skill boost selected!");
                             return;
                         }
-                        if (databasePlayer.getPveStats().getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER) < 1) {
-                            player.sendMessage(ChatColor.RED + "You need a " + Currencies.SKILL_BOOST_MODIFIER.getColoredName() +
-                                    ChatColor.RED + " to change boosts!");
-                            return;
-                        }
-                        if (databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN) < 10000) {
-                            player.sendMessage(ChatColor.RED + "You need 10,000 " + Currencies.COIN.getColoredName() + "s" +
-                                    ChatColor.RED + " to change skill boosts!");
-                            return;
-                        }
                         Menu.openConfirmationMenu(
                                 player,
                                 "Change Skill Boost",
                                 3,
-                                Collections.singletonList(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name),
+                                Arrays.asList(
+                                        ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name,
+                                        "",
+                                        ChatColor.AQUA + "Cost: ",
+                                        ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(10000),
+                                        ChatColor.GRAY + " - " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1)
+                                ),
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     unlockSkillBoost(player, databasePlayer, weapon, skillBoost);

@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.MENU_BACK;
@@ -66,7 +67,9 @@ public class WeaponSkinSelectorMenu {
                                 ChatColor.GRAY + "This change is cosmetic only \nand has no effect on gameplay.",
                                 ChatColor.GRAY + "Obtain " + ChatColor.LIGHT_PURPLE + "Fairy Essence" + ChatColor.GRAY + " through \ndifferent rewards.",
                                 "",
-                                isUnlocked ? ChatColor.GRAY + "Cost: " + ChatColor.GREEN + "Unlocked" : ChatColor.GRAY + "Cost: " + ChatColor.LIGHT_PURPLE + weaponSkinCost + " Fairy Essence"
+                                isUnlocked ?
+                                        ChatColor.AQUA + "Cost: " + ChatColor.GREEN + "Unlocked" :
+                                        ChatColor.AQUA + "Cost: \n" + ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
                         );
                 if (weapon.getSelectedWeaponSkin() == weaponSkin) {
                     itemBuilder.addLore(
@@ -83,15 +86,33 @@ public class WeaponSkinSelectorMenu {
                                 if (weaponSkin != weapon.getSelectedWeaponSkin()) {
                                     weapon.setSelectedWeaponSkin(weaponSkin);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
                                 }
                             } else {
                                 if (databasePlayer.getPveStats().getCurrencyValue(Currencies.FAIRY_ESSENCE) < weaponSkinCost) {
-                                    player.sendMessage(ChatColor.RED + "You do not have enough Fairy Essence to purchase this skin.");
+                                    player.sendMessage(ChatColor.RED + "You need " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost) + ChatColor.RED + " to unlock this skin.");
                                     return;
                                 }
-                                unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin, pageNumber);
+                                Menu.openConfirmationMenu(
+                                        player,
+                                        "Unlock Weapon Skin",
+                                        3,
+                                        Arrays.asList(
+                                                ChatColor.GRAY + "Unlock" + ChatColor.LIGHT_PURPLE + " " + weaponSkin.getName() + ChatColor.GRAY + " Weapon Skin",
+                                                "",
+                                                ChatColor.AQUA + "Cost: ",
+                                                ChatColor.GRAY + " - " + Currencies.FAIRY_ESSENCE.getCostColoredName(weaponSkinCost)
+                                        ),
+                                        Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                        (m2, e2) -> {
+                                            unlockWeaponSkin(player, databasePlayer, weapon, weaponSkin, pageNumber);
+                                            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
+                                        },
+                                        (m2, e2) -> openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber),
+                                        (m2) -> {
+                                        }
+                                );
                             }
-                            openWeaponSkinSelectorMenu(player, databasePlayer, weapon, pageNumber);
                         }
                 );
             }

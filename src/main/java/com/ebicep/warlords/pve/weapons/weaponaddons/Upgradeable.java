@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -27,10 +26,7 @@ public interface Upgradeable {
         List<String> upgradeLore = new ArrayList<>(getUpgradeLore());
         upgradeLore.add("");
         upgradeLore.add(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + (getUpgradeLevel() + 1) + "/" + getMaxUpgradeLevel() + "]");
-        upgradeLore.add("");
-        upgradeLore.add(ChatColor.AQUA + "Upgrade Cost: ");
-        getUpgradeCost(getUpgradeLevel() + 1).forEach((currency, amount) -> upgradeLore.add(ChatColor.GRAY + " - " + ChatColor.GREEN +
-                NumberFormat.addCommas(amount) + " " + currency.getColoredName() + "s"));
+        upgradeLore.addAll(getUpgradeCostLore());
         return new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
                 .name(ChatColor.GREEN + "Confirm")
                 .lore(upgradeLore)
@@ -42,6 +38,16 @@ public interface Upgradeable {
     int getUpgradeLevel();
 
     int getMaxUpgradeLevel();
+
+    default List<String> getUpgradeCostLore() {
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatColor.AQUA + "Upgrade Cost: ");
+        getUpgradeCost(getUpgradeLevel() + 1).forEach((currencies, aLong) -> {
+            lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
+        });
+        return lore;
+    }
 
     LinkedHashMap<Currencies, Long> getUpgradeCost(int tier);
 

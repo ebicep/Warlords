@@ -214,18 +214,28 @@ public class WeaponManagerMenu {
                         .get(),
                 (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, databasePlayer, weapon, 1)
         ));
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         if (weapon instanceof AbstractTierOneWeapon) {
             //star piece
+            AbstractTierOneWeapon tierOneWeapon = (AbstractTierOneWeapon) weapon;
+            int starPieceBonusCost = tierOneWeapon.getStarPieceBonusCost();
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
                             .name(ChatColor.GREEN + "Apply a Star Piece")
+                            .lore(tierOneWeapon.getStarPieceCostLore(weapon.getRarity().starPieceCurrency))
                             .get(),
                     (m, e) -> {
-                        if (databasePlayer.getPveStats().getCurrencyValue(weapon.getRarity().starPieceCurrency) <= 0) {
-                            player.sendMessage(ChatColor.RED + "You do not have a " + weapon.getRarity().starPieceCurrency.getColoredName() + ChatColor.RED + "!");
+                        if (pveStats.getCurrencyValue(Currencies.COIN) < starPieceBonusCost) {
+                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(starPieceBonusCost) +
+                                    ChatColor.RED + " to apply a star piece to this weapon!");
                             return;
                         }
-                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, (AbstractTierOneWeapon) weapon);
+                        if (pveStats.getCurrencyValue(weapon.getRarity().starPieceCurrency) <= 0) {
+                            player.sendMessage(ChatColor.RED + "You need " + weapon.getRarity().starPieceCurrency.getCostColoredName(1) +
+                                    ChatColor.RED + " to apply a star piece to this weapon!");
+                            return;
+                        }
+                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, tierOneWeapon);
                     }
             ));
         }
@@ -261,7 +271,7 @@ public class WeaponManagerMenu {
                             return;
                         }
                         Specializations weaponSpec = weapon.getSpecializations();
-                        List<AbstractWeapon> sameSpecWeapons = databasePlayer.getPveStats().getWeaponInventory()
+                        List<AbstractWeapon> sameSpecWeapons = pveStats.getWeaponInventory()
                                 .stream()
                                 .filter(w -> w.getSpecializations() == weaponSpec)
                                 .collect(Collectors.toList());
@@ -284,20 +294,40 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.WORKBENCH)
                             .name(ChatColor.GREEN + "Weapon Stats Reroll")
+                            .lore(((StatsRerollable) weapon).getRerollCostLore())
                             .get(),
-                    (m, e) -> WeaponRerollMenu.openWeaponRerollMenu(player, databasePlayer, weapon)
+                    (m, e) -> {
+                        int rerollCost = ((StatsRerollable) weapon).getRerollCost();
+                        if (pveStats.getCurrencyValue(Currencies.COIN) < rerollCost) {
+                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(rerollCost) +
+                                    ChatColor.RED + " to reroll the stats of this weapon!");
+                            return;
+                        }
+                        WeaponRerollMenu.openWeaponRerollMenu(player, databasePlayer, (AbstractWeapon & StatsRerollable) weapon);
+                    }
             ));
         }
         //upgrade epic/legendary
         if (weapon instanceof Upgradeable) {
+            Upgradeable upgradeable = (Upgradeable) weapon;
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
                             .name(ChatColor.GREEN + "Upgrade Weapon")
+                            .lore(upgradeable.getUpgradeCostLore())
                             .get(),
                     (m, e) -> {
-                        if (((Upgradeable) weapon).getUpgradeLevel() >= ((Upgradeable) weapon).getMaxUpgradeLevel()) {
+                        if (upgradeable.getUpgradeLevel() >= upgradeable.getMaxUpgradeLevel()) {
                             player.sendMessage(ChatColor.RED + "You can't upgrade this weapon anymore.");
                             return;
+                        }
+                        LinkedHashMap<Currencies, Long> upgradeCost = upgradeable.getUpgradeCost(upgradeable.getUpgradeLevel() + 1);
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
+                            if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
+                                player.sendMessage(ChatColor.RED + "You need " + currenciesLongEntry.getKey()
+                                        .getCostColoredName(currenciesLongEntry.getValue()) +
+                                        ChatColor.RED + " to upgrade this weapon!");
+                                return;
+                            }
                         }
                         WeaponUpgradeMenu.openWeaponUpgradeMenu(player, databasePlayer, (AbstractWeapon & Upgradeable) weapon);
                     }
@@ -315,8 +345,24 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.BOOKSHELF)
                             .name(ChatColor.GREEN + "Change Skill Boost")
+                            .lore(
+                                    "",
+                                    ChatColor.AQUA + "Cost: ",
+                                    ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(10000),
+                                    ChatColor.GRAY + " - " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1)
+                            )
                             .get(),
                     (m, e) -> {
+                        if (pveStats.getCurrencyValue(Currencies.COIN) < 10000) {
+                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(10000) +
+                                    ChatColor.RED + " to change skill boosts!");
+                            return;
+                        }
+                        if (pveStats.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER) < 1) {
+                            player.sendMessage(ChatColor.RED + "You need " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1) +
+                                    ChatColor.RED + " to change boosts!");
+                            return;
+                        }
                         WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
                     }
             ));
