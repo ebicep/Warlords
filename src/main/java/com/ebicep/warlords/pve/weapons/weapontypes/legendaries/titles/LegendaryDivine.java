@@ -1,4 +1,6 @@
-package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
+package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
+
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 
 import java.util.UUID;
 

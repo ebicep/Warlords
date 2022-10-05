@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.*;
 import org.bukkit.ChatColor;
 
 import java.util.*;
