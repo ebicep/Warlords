@@ -13,8 +13,9 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     public static final int MELEE_DAMAGE_MAX = 150;
     public static final int CRIT_CHANCE = 15;
     public static final int CRIT_MULTIPLIER = 160;
-    public static final int HEALTH_BONUS = 1500;
+    public static final int HEALTH_BONUS = 1000;
     public static final int SPEED_BONUS = 5;
+    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.03f;
 
     public LegendaryTitanic() {
     }
@@ -33,11 +34,6 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Increase maximum health by 0.5% per upgrade purchased.";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
@@ -51,10 +47,15 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
                     if (baseMaxHealth == -1) {
                         baseMaxHealth = player.getMaxHealth();
                     }
-                    player.setMaxHealth(baseMaxHealth * (1 + (++upgradeCount * 0.05f)));
+                    player.setMaxHealth(baseMaxHealth * (1 + (++upgradeCount * HEALTH_INCREASE_PER_UPGRADE)));
                 }
             }
         });
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Increase maximum health by 0.5% per upgrade purchased.";
     }
 
     @Override
