@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.GameFreezeOption;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -31,6 +32,10 @@ public class DebugCommand extends BaseCommand {
     @Description("Freezes/Unfreezes the game")
     public void freezeGame(@Conditions("requireGame") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        if (game.getState() instanceof EndState) {
+            sendDebugMessage(player, ChatColor.RED + "Cannot freeze game in end state", true);
+            return;
+        }
         if (!game.isUnfreezeCooldown()) {
             if (game.isFrozen()) {
                 GameFreezeOption.resumeGame(game);
