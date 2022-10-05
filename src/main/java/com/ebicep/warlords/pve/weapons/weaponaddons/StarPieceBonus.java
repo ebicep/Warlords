@@ -6,7 +6,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -19,14 +18,7 @@ public interface StarPieceBonus {
         return randomStatBonus.get(generateRandomIndexFromListSize(randomStatBonus.size()));
     }
 
-    default List<WeaponStats> getRandomStatBonus() {
-        return Arrays.asList(
-                WeaponStats.MELEE_DAMAGE,
-                WeaponStats.CRIT_CHANCE,
-                WeaponStats.CRIT_MULTIPLIER,
-                WeaponStats.HEALTH_BONUS
-        );
-    }
+    List<WeaponStats> getRandomStatBonus();
 
     default String getStarPieceBonusString() {
         return ChatColor.WHITE + " (+" + getStarPieceBonusValue() + "%)";

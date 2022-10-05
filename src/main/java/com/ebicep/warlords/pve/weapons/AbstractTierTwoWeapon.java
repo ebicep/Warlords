@@ -54,8 +54,22 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<WeaponStats> getRandomStatBonus() {
-        List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
-        randomStatBonus.add(WeaponStats.SPEED_BONUS);
+        List<WeaponStats> randomStatBonus = new ArrayList<>();
+        if (meleeDamage > 0) {
+            randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
+        }
+        if (critChance > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
+        }
+        if (critMultiplier > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
+        }
+        if (healthBonus > 0) {
+            randomStatBonus.add(WeaponStats.HEALTH_BONUS);
+        }
+        if (speedBonus > 0) {
+            randomStatBonus.add(WeaponStats.SPEED_BONUS);
+        }
         return randomStatBonus;
     }
 
