@@ -15,6 +15,7 @@ public enum LegendaryTitles {
     BENEVOLENT("Benevolent", LegendaryBenevolent.class, LegendaryBenevolent::new, LegendaryBenevolent::new, 3),
     VORPAL("Vorpal", LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new, 4),
     DIVINE("Divine", LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new, 5),
+    GALE("Gale", LegendaryGale.class, LegendaryGale::new, LegendaryGale::new, 6),
 
     ;
 
