@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -14,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -103,7 +101,7 @@ public class HeartToHeart extends AbstractAbility {
         Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, tempHeartToHeart, vindDuration * 20);
 
         List<WarlordsEntity> playersHit = new ArrayList<>();
-        new BukkitRunnable() {
+        new GameRunnable(wp.getGame()) {
             final Location playerLoc = wp.getLocation();
             int timer = 0;
 
@@ -173,7 +171,7 @@ public class HeartToHeart extends AbstractAbility {
                     );
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }.runTaskTimer(0, 1);
     }
 
     public void setVindDuration(int vindDuration) {

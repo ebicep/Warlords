@@ -42,9 +42,12 @@ public class AFKDetectionOption implements Option, Listener {
 
             @Override
             public void run() {
-                if (!enabled) return;
-                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE)
+                if (!enabled) {
                     return;
+                }
+                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE) {
+                    return;
+                }
 
                 //skips right after unfreeze
                 if (wasFrozen) {
@@ -54,9 +57,15 @@ public class AFKDetectionOption implements Option, Listener {
 
                 game.getState(PlayingState.class).ifPresent(state -> {
                     for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-                        if (we.isDead()) continue;
-                        if (!(we.getEntity() instanceof Player)) continue;
-                        if (we.isSneaking()) continue; //make sure no ppl that are sneaking are marked as AFK
+                        if (we.isDead()) {
+                            continue;
+                        }
+                        if (!(we.getEntity() instanceof Player)) {
+                            continue;
+                        }
+                        if (we.isSneaking()) {
+                            continue; //make sure no ppl that are sneaking are marked as AFK
+                        }
                         playerLocations.computeIfAbsent((WarlordsPlayer) we, k -> new ArrayList<>()).add(we.getLocation());
                         List<Location> locations = playerLocations.get(we);
                         if (locations.size() >= 2) {
@@ -68,11 +77,14 @@ public class AFKDetectionOption implements Option, Listener {
                                     Location fourthLastLocation = locations.get(locations.size() - 4);
                                     if (locations.size() >= 5) {
                                         Location fifthLastLocation = locations.get(locations.size() - 5);
-                                        if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
+                                        if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(
+                                                fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
                                             //hasnt moved for 12.5 seconds
                                             for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                                 Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                                Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)");
+                                                Permissions.sendMessageToDebug(wp,
+                                                        ChatColor.AQUA + we.getName() + ChatColor.RED + " is AFK. (Hasn't moved for 12.5 seconds)"
+                                                );
                                                 Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                             }
                                             game.addFrozenCause(ChatColor.AQUA + we.getName() + ChatColor.RED + " has been detected as AFK.");
@@ -84,7 +96,9 @@ public class AFKDetectionOption implements Option, Listener {
                                         //hasnt moved for 10 seconds
                                         for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                             Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                            Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)");
+                                            Permissions.sendMessageToDebug(wp,
+                                                    ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 10 seconds)"
+                                            );
                                             Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                         }
                                     }
@@ -94,7 +108,9 @@ public class AFKDetectionOption implements Option, Listener {
                                     //hasnt moved for 7.5 seconds
                                     for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                         Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                        Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)");
+                                        Permissions.sendMessageToDebug(wp,
+                                                ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 7.5 seconds)"
+                                        );
                                         Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                     }
                                 }
@@ -104,7 +120,9 @@ public class AFKDetectionOption implements Option, Listener {
                                 //hasnt moved for 5 seconds
                                 for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
                                     Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
-                                    Permissions.sendMessageToDebug(wp, ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)");
+                                    Permissions.sendMessageToDebug(wp,
+                                            ChatColor.AQUA + we.getName() + ChatColor.RED + " is possibly AFK. (Hasn't moved for 5 seconds)"
+                                    );
                                     Permissions.sendMessageToDebug(wp, ChatColor.RED + "----------------------------------------");
                                 }
                             }

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -10,11 +9,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class Earthliving extends AbstractAbility {
                         if (pveUpgrade) {
                             energyPulseOnHit(attacker, victim);
                         }
-                        new BukkitRunnable() {
+                        new GameRunnable(victim.getGame()) {
                             int counter = 0;
 
                             @Override
@@ -145,7 +144,7 @@ public class Earthliving extends AbstractAbility {
                                     this.cancel();
                                 }
                             }
-                        }.runTaskTimer(Warlords.getInstance(), 3, 8);
+                        }.runTaskTimer(3, 8);
                     }
                 }
             }

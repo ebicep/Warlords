@@ -946,6 +946,7 @@ public class Warlords extends JavaPlugin {
                     if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
                         Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 15 minutes.");
                         SENT_FIFTEEN_MINUTE_REMINDER.set(true);
+                        cancel(); // Can cancel since there are no more checks
                     }
                 }
 

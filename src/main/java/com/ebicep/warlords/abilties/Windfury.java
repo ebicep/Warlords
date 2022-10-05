@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -8,9 +7,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class Windfury extends AbstractAbility {
                     }
                     if (windfuryActivate < procChance) {
                         timesProcd++;
-                        new BukkitRunnable() {
+                        new GameRunnable(victim.getGame()) {
                             int counter = 0;
 
                             @Override
@@ -119,7 +118,7 @@ public class Windfury extends AbstractAbility {
                                     this.cancel();
                                 }
                             }
-                        }.runTaskTimer(Warlords.getInstance(), 3, 3);
+                        }.runTaskTimer(3, 3);
                     }
                 }
             }

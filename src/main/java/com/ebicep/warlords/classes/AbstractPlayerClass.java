@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.ArcaneShield;
 import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
@@ -9,12 +8,12 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public abstract class AbstractPlayerClass {
                             weapon.addTimesUsed();
                             sendRightClickPacket(player);
                         }
-                        resetAbilityCD();
+                        resetAbilityCD(wp);
                     } else {
                         player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                     }
@@ -171,7 +170,7 @@ public abstract class AbstractPlayerClass {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
                 ability.runSecondAbilities();
-                resetSecondaryAbilityCD();
+                resetSecondaryAbilityCD(wp);
             }
             return;
         }
@@ -184,31 +183,31 @@ public abstract class AbstractPlayerClass {
                 }
                 sendRightClickPacket(player);
             }
-            resetAbilityCD();
+            resetAbilityCD(wp);
         }
 
     }
 
-    private void resetAbilityCD() {
+    private void resetAbilityCD(WarlordsEntity we) {
         abilityCD = false;
-        new BukkitRunnable() {
+        new GameRunnable(we.getGame()) {
 
             @Override
             public void run() {
                 abilityCD = true;
             }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        }.runTaskLater(1);
     }
 
-    private void resetSecondaryAbilityCD() {
+    private void resetSecondaryAbilityCD(WarlordsEntity we) {
         secondaryAbilityCD = false;
-        new BukkitRunnable() {
+        new GameRunnable(we.getGame()) {
 
             @Override
             public void run() {
                 secondaryAbilityCD = true;
             }
-        }.runTaskLater(Warlords.getInstance(), 5);
+        }.runTaskLater(5);
     }
 
     public int getMaxHealth() {
