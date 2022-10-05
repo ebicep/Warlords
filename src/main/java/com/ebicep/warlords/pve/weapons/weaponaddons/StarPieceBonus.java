@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.ebicep.warlords.util.java.Utils.generateRandomIndexFromListSize;
@@ -46,13 +47,16 @@ public interface StarPieceBonus {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.AQUA + "Cost: ");
-        lore.add(ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(getStarPieceBonusCost()));
-        lore.add(ChatColor.GRAY + " - " + starPieceCurrency.getCostColoredName(1));
+        getStarPieceBonusCost(starPieceCurrency).forEach((currencies, cost) -> lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(cost)));
         return lore;
     }
 
-    default int getStarPieceBonusCost() {
-        return 10000;
+    default LinkedHashMap<Currencies, Long> getStarPieceBonusCost(Currencies starPieceCurrency) {
+        return new LinkedHashMap<>() {{
+            put(Currencies.COIN, 10000L);
+            put(Currencies.SYNTHETIC_SHARD, 50L);
+            put(starPieceCurrency, 1L);
+        }};
     }
 
 }

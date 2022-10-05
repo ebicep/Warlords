@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,7 +43,7 @@ public class CurrencyOnEventOption implements Option, Listener {
             @Nonnull
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(player != null ? "Insignia: " + ChatColor.GOLD + "❂ " + player.getCurrency() : "");
+                return Collections.singletonList(player != null ? "Insignia: " + ChatColor.GOLD + "❂ " + NumberFormat.addCommas(player.getCurrency()) : "");
             }
         });
     }

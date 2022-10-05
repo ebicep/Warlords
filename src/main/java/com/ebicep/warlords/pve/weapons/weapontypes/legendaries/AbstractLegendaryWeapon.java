@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -91,7 +92,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
-        player.getAbilityTree().addFreeUpgrades(1);
+        for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
+            if (upgradeBranch.getAbility().getClass().equals(selectedSkillBoost.ability)) {
+                upgradeBranch.setFreeUpgrades(1);
+                break;
+            }
+        }
 
         AbstractPlayerClass playerClass = player.getSpec();
         playerClass.setEnergyOnHit(playerClass.getEnergyOnHit() + getEnergyPerHitBonus());

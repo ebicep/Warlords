@@ -1,9 +1,6 @@
 package com.ebicep.customentities.npc;
 
-import com.ebicep.customentities.npc.traits.GameStartTrait;
-import com.ebicep.customentities.npc.traits.MasterworksFairTrait;
-import com.ebicep.customentities.npc.traits.PveStartTrait;
-import com.ebicep.customentities.npc.traits.SupplyDropTrait;
+import com.ebicep.customentities.npc.traits.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
@@ -28,10 +25,14 @@ public class NPCManager {
     public static NPC pveStartNPC;
     public static NPC masterworksFairNPC;
     public static NPC supplyDropNPC;
+    public static NPC weaponManagerNPC;
+    public static NPC legendaryWeaponNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
     public static void createGameJoinNPCs() {
-        if (!Warlords.citizensEnabled) return;
+        if (!Warlords.citizensEnabled) {
+            return;
+        }
 
         Warlords.newChain()
                 .sync(() -> {
@@ -48,6 +49,8 @@ public class NPCManager {
         Warlords.newChain()
                 .sync(() -> {
                     createMasterworksFairNPC();
+                    createWeaponsManagerNPC();
+                    createLegendaryWeaponNPC();
                 })
                 .execute();
     }
@@ -78,10 +81,10 @@ public class NPCManager {
     }
 
     private static void createPvENPC() {
-        registerTrait(PveStartTrait.class, "PveStartTrait");
+        registerTrait(PvEStartTrait.class, "PveStartTrait");
 
         pveStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "pve-mode");
-        pveStartNPC.addTrait(PveStartTrait.class);
+        pveStartNPC.addTrait(PvEStartTrait.class);
         pveStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         pveStartNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
@@ -94,7 +97,7 @@ public class NPCManager {
         }
         registerTrait(MasterworksFairTrait.class, "MasterworksFairTrait");
 
-        masterworksFairNPC = npcRegistry.createNPC(EntityType.VILLAGER, "masterworks-fair");
+        masterworksFairNPC = npcRegistry.createNPC(EntityType.PIG_ZOMBIE, "masterworks-fair");
         masterworksFairNPC.addTrait(MasterworksFairTrait.class);
 
         masterworksFairNPC.data().set(NPC.VILLAGER_BLOCK_TRADES, true);
@@ -120,6 +123,31 @@ public class NPCManager {
         lookClose.toggle();
 
         supplyDropNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
+    }
+
+    public static void createWeaponsManagerNPC() {
+        registerTrait(WeaponMangerTrait.class, "WeaponMangerTrait");
+
+        weaponManagerNPC = npcRegistry.createNPC(EntityType.VILLAGER, "weapon-manager");
+        weaponManagerNPC.addTrait(WeaponMangerTrait.class);
+        HologramTrait hologramTrait = weaponManagerNPC.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "The Weaponsmith");
+
+        weaponManagerNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        weaponManagerNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2533.5, 50, 722.5, 45, 0));
+
+    }
+
+    public static void createLegendaryWeaponNPC() {
+        registerTrait(LegendaryWeaponTrait.class, "LegendaryWeaponTrait");
+
+        legendaryWeaponNPC = npcRegistry.createNPC(EntityType.WITCH, "legendary-weapon");
+        legendaryWeaponNPC.addTrait(LegendaryWeaponTrait.class);
+
+        legendaryWeaponNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        legendaryWeaponNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2544, 50, 753, 90, 0));
+
     }
 
 

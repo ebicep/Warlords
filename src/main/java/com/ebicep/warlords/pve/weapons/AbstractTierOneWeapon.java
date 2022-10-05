@@ -80,7 +80,4 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon implements St
         return starPieceBonus;
     }
 
-    public void setStarPieceBonus() {
-        this.starPieceBonus = generateRandomStatBonus();
-    }
 }

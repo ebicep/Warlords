@@ -934,17 +934,17 @@ public class Warlords extends JavaPlugin {
                 Instant now = Instant.now();
                 if (!SENT_HOUR_REMINDER.get()) {
                     if (now.plus(1, ChronoUnit.HOURS).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 1 hour.");
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 1 hour.");
                         SENT_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_HALF_HOUR_REMINDER.get()) {
                     if (now.plus(30, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 30 minutes.");
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 30 minutes.");
                         SENT_HALF_HOUR_REMINDER.set(true);
                     }
                 } else if (!SENT_FIFTEEN_MINUTE_REMINDER.get()) {
                     if (now.plus(15, ChronoUnit.MINUTES).isAfter(nextReset)) {
-                        Bukkit.broadcastMessage(ChatColor.RED + "The server will reset in 15 minutes.");
+                        Bukkit.broadcastMessage(ChatColor.RED + "The server will restart in 15 minutes.");
                         SENT_FIFTEEN_MINUTE_REMINDER.set(true);
                         cancel(); // Can cancel since there are no more checks
                     }

@@ -164,7 +164,7 @@ public enum GameAddon {
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setInPve(true);
             if (player.getEntity() instanceof Player) {
-                game.setPlayerTeam((OfflinePlayer) player, Team.BLUE);
+                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
                 player.updateArmor();
             }
         }

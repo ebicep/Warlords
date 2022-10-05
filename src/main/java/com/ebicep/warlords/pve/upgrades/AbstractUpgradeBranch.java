@@ -32,6 +32,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     protected Upgrade masterUpgrade;
 
     private int maxUpgrades = 6;
+    private int freeUpgrades = 0;
 
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
         this.abilityTree = abilityTree;
@@ -119,7 +120,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                             }
                         }
 
-                        if (player.getCurrency() < upgrade.getCurrencyCost() && abilityTree.getFreeUpgrades() <= 0) {
+                        if (player.getCurrency() < upgrade.getCurrencyCost() && freeUpgrades <= 0) {
                             player.sendMessage(ChatColor.RED + "You do not have enough Insignia (❂) to buy this upgrade!");
                             return;
                         }
@@ -132,8 +133,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         upgrade.setUnlocked(true);
                         maxUpgrades--;
 
-                        if (abilityTree.getFreeUpgrades() > 0) {
-                            abilityTree.subtractFreeUpgrades(1);
+                        if (freeUpgrades > 0) {
+                            freeUpgrades--;
                         } else {
                             player.subtractCurrency(upgrade.getCurrencyCost());
                         }
@@ -180,18 +181,22 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         game.forEachOnlinePlayer((p, t) -> {
             if (upgrade.getName().equals("Master Upgrade") || (upgrade.getSubName() != null && upgrade.getSubName().contains("Master Upgrade"))) {
                 p.sendMessage(
-                        ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                        ability.getName() + " - §c§l" +
-                        upgrade.getName() + "§e!"
+                        ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
+                                ability.getName() + " - §c§l" +
+                                upgrade.getName() + "§e!"
                 );
             } else {
                 p.sendMessage(
-                        ChatColor.GOLD + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
-                        ability.getName() + " - " +
-                        upgrade.getName() + "§e!"
+                        ChatColor.AQUA + abilityTree.getPlayer().getName() + " §ehas unlocked §6" +
+                                ability.getName() + " - " +
+                                upgrade.getName() + "§e!"
                 );
             }
         });
+    }
+
+    public T getAbility() {
+        return ability;
     }
 
     public ItemStack getItemStack() {
@@ -213,5 +218,13 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public void setMaxUpgrades(int maxUpgrades) {
         this.maxUpgrades = maxUpgrades;
+    }
+
+    public int getFreeUpgrades() {
+        return freeUpgrades;
+    }
+
+    public void setFreeUpgrades(int freeUpgrades) {
+        this.freeUpgrades = freeUpgrades;
     }
 }

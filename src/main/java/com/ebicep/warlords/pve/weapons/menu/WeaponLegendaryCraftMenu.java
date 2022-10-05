@@ -5,51 +5,57 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 public class WeaponLegendaryCraftMenu {
 
+    public static LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>() {{
+        put(Currencies.COIN, 1000000L);
+        put(Currencies.SYNTHETIC_SHARD, 10000L);
+    }};
+    public static List<String> costLore = new ArrayList<>() {{
+        add("");
+        add(ChatColor.AQUA + "Craft Cost: ");
+        cost.forEach((currencies, amount) -> add(ChatColor.GRAY + " - " + currencies.getCostColoredName(amount)));
+    }};
+
     public static void openWeaponLegendaryCraftMenu(Player player, DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost.entrySet()) {
+            if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
+                player.sendMessage(ChatColor.RED + "You are not worthy of crafting a legendary weapon.");
+                return;
+            }
+        }
+
         Menu menu = new Menu("Craft Legendary Weapon", 9 * 6);
 
-        menu.setItem(4, 3,
-                new ItemBuilder(Material.DIAMOND_SWORD)
+        menu.setItem(4, 2,
+                new ItemBuilder(Material.SULPHUR)
                         .name(ChatColor.GREEN + "Craft Legendary Weapon")
-                        .lore(
-                                ChatColor.AQUA + "Craft Cost: ",
-                                ChatColor.GRAY + " - " + ChatColor.GREEN + "?" + Currencies.COIN.getColoredName()
-                        )
+                        .lore(costLore)
                         .get(),
                 (m, e) -> {
-                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                    if (pveStats.getCurrencyValue(Currencies.COIN) < 0) {
-                        player.sendMessage(ChatColor.RED + "You do not have enough " + Currencies.COIN.getColoredName() +
-                                ChatColor.RED + " to craft a legendary weapon.");
-                        return;
-                    }
+                    List<String> confirmLore = new ArrayList<>();
+                    confirmLore.add(ChatColor.GRAY + "Craft a Legendary Weapon");
+                    confirmLore.addAll(costLore);
                     Menu.openConfirmationMenu(
                             player,
                             "Craft Legendary Weapon",
                             3,
-                            Arrays.asList(
-                                    ChatColor.GRAY + "Craft a Legendary Weapon for",
-                                    ChatColor.GREEN + "?" + Currencies.COIN.getColoredName()
-                            ),
+                            confirmLore,
                             Collections.singletonList(ChatColor.GRAY + "Go back"),
                             (m2, e2) -> {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
-                                pveStats.subtractCurrency(Currencies.COIN, 0);
+                                cost.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
                                 player.spigot().sendMessage(
                                         new TextComponent(ChatColor.GRAY + "Crafted Legendary Weapon: "),
@@ -64,6 +70,14 @@ public class WeaponLegendaryCraftMenu {
                             (m2) -> {
                             }
                     );
+                }
+        );
+
+        menu.fillEmptySlots(
+                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
+                        .name(" ")
+                        .get(),
+                (m, e) -> {
                 }
         );
 

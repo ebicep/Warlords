@@ -218,22 +218,22 @@ public class WeaponManagerMenu {
         if (weapon instanceof AbstractTierOneWeapon) {
             //star piece
             AbstractTierOneWeapon tierOneWeapon = (AbstractTierOneWeapon) weapon;
-            int starPieceBonusCost = tierOneWeapon.getStarPieceBonusCost();
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
                             .name(ChatColor.GREEN + "Apply a Star Piece")
                             .lore(tierOneWeapon.getStarPieceCostLore(weapon.getRarity().starPieceCurrency))
                             .get(),
                     (m, e) -> {
-                        if (pveStats.getCurrencyValue(Currencies.COIN) < starPieceBonusCost) {
-                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(starPieceBonusCost) +
-                                    ChatColor.RED + " to apply a star piece to this weapon!");
-                            return;
-                        }
-                        if (pveStats.getCurrencyValue(weapon.getRarity().starPieceCurrency) <= 0) {
-                            player.sendMessage(ChatColor.RED + "You need " + weapon.getRarity().starPieceCurrency.getCostColoredName(1) +
-                                    ChatColor.RED + " to apply a star piece to this weapon!");
-                            return;
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : tierOneWeapon.getStarPieceBonusCost(weapon.getRarity().starPieceCurrency)
+                                .entrySet()
+                        ) {
+                            Currencies currency = currenciesLongEntry.getKey();
+                            Long cost = currenciesLongEntry.getValue();
+                            if (pveStats.getCurrencyValue(currency) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to apply a star piece");
+                                return;
+                            }
+
                         }
                         WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, tierOneWeapon);
                     }
@@ -322,10 +322,10 @@ public class WeaponManagerMenu {
                         }
                         LinkedHashMap<Currencies, Long> upgradeCost = upgradeable.getUpgradeCost(upgradeable.getUpgradeLevel() + 1);
                         for (Map.Entry<Currencies, Long> currenciesLongEntry : upgradeCost.entrySet()) {
-                            if (pveStats.getCurrencyValue(currenciesLongEntry.getKey()) < currenciesLongEntry.getValue()) {
-                                player.sendMessage(ChatColor.RED + "You need " + currenciesLongEntry.getKey()
-                                        .getCostColoredName(currenciesLongEntry.getValue()) +
-                                        ChatColor.RED + " to upgrade this weapon!");
+                            Currencies currency = currenciesLongEntry.getKey();
+                            Long cost = currenciesLongEntry.getValue();
+                            if (pveStats.getCurrencyValue(currency) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to upgrade this weapon!");
                                 return;
                             }
                         }

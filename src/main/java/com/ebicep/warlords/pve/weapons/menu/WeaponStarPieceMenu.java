@@ -39,8 +39,7 @@ public class WeaponStarPieceMenu {
                             .setHoverItem(weapon.generateItemStack())
                             .getTextComponent();
                     databasePlayerPvE.subtractOneCurrency(starPieceCurrency);
-                    databasePlayerPvE.subtractCurrency(Currencies.COIN, weapon.getStarPieceBonusCost());
-                    weapon.setStarPieceBonus();
+                    weapon.getStarPieceBonusCost(starPieceCurrency).forEach(databasePlayerPvE::subtractCurrency);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                     TextComponent weaponAfter = new TextComponentBuilder(weapon.getName())

@@ -10,9 +10,9 @@ import org.bukkit.event.EventHandler;
 
 import static com.ebicep.warlords.pve.DifficultyMenu.openPveMenu;
 
-public class PveStartTrait extends Trait {
+public class PvEStartTrait extends Trait {
 
-    public PveStartTrait() {
+    public PvEStartTrait() {
         super("PveStartTrait");
     }
 
