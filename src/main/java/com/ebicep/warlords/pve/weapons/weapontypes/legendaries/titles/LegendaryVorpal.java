@@ -9,12 +9,13 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 public class LegendaryVorpal extends AbstractLegendaryWeapon {
-    public static final int MELEE_DAMAGE_MIN = 200;
-    public static final int MELEE_DAMAGE_MAX = 220;
+    public static final int MELEE_DAMAGE_MIN = 180;
+    public static final int MELEE_DAMAGE_MAX = 200;
     public static final int CRIT_CHANCE = 35;
-    public static final int CRIT_MULTIPLIER = 245;
+    public static final int CRIT_MULTIPLIER = 200;
     public static final int HEALTH_BONUS = 300;
     public static final int SPEED_BONUS = 14;
+    public static final int ENERGY_PER_SECOND_BONUS = -5;
 
     public LegendaryVorpal() {
     }
@@ -63,6 +64,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
         this.critMultiplier = CRIT_MULTIPLIER;
         this.healthBonus = HEALTH_BONUS;
         this.speedBonus = SPEED_BONUS;
+        this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
     }
 
     @Override
