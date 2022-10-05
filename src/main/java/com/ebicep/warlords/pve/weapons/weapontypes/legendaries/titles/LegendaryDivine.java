@@ -7,8 +7,8 @@ import java.util.UUID;
 public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int MELEE_DAMAGE_MIN = 100;
     public static final int MELEE_DAMAGE_MAX = 120;
-    public static final int CRIT_CHANCE = 10;
-    public static final int CRIT_MULTIPLIER = 150;
+    public static final int CRIT_CHANCE = 25;
+    public static final int CRIT_MULTIPLIER = 175;
     public static final int HEALTH_BONUS = 600;
     public static final int SPEED_BONUS = 5;
     public static final int ENERGY_PER_SECOND_BONUS = 5;
