@@ -262,6 +262,10 @@ public class GameStartCommand extends BaseCommand {
     }
 
     public static void startGame(Player player, boolean excludeStarter, GameMode gameMode, GameMap map, EnumSet<GameAddon> addons) {
+        if (GameManager.gameStartingDisabled) {
+            player.sendMessage(ChatColor.RED + "Games are currently disabled.");
+            return;
+        }
         List<Player> people;
         UUID uuid = player.getUniqueId();
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class GameManager implements AutoCloseable {
 
+    public static boolean gameStartingDisabled = false;
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
 

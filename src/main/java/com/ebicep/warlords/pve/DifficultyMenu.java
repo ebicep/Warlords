@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
@@ -55,6 +56,10 @@ public class DifficultyMenu {
                     (m, e) -> {
                         if (Warlords.SENT_HALF_HOUR_REMINDER.get()) {
                             player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
+                            return;
+                        }
+                        if (GameManager.gameStartingDisabled) {
+                            player.sendMessage(ChatColor.RED + "Games are currently disabled.");
                             return;
                         }
                         switch (finalI) {

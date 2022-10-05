@@ -1,9 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,6 +32,13 @@ public class AdminCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Enabled Bypassing Currencies", true);
             }
         });
+    }
+
+    @Subcommand("disablegames")
+    @Description("Prevents games from being started")
+    public void disableGames(CommandIssuer issuer) {
+        GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disabled Games = " + GameManager.gameStartingDisabled, true);
     }
 
 }

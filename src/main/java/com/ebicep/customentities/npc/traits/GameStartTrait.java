@@ -1,6 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
@@ -56,6 +57,10 @@ public class GameStartTrait extends Trait {
     }
 
     private void tryToJoinQueue(Player player) {
+        if (GameManager.gameStartingDisabled) {
+            player.sendMessage(ChatColor.RED + "Games are currently disabled.");
+            return;
+        }
 
         //check if player is in a party, they must be leader to join
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
