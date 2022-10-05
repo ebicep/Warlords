@@ -345,23 +345,16 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.BOOKSHELF)
                             .name(ChatColor.GREEN + "Change Skill Boost")
-                            .lore(
-                                    "",
-                                    ChatColor.AQUA + "Cost: ",
-                                    ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(10000),
-                                    ChatColor.GRAY + " - " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1)
-                            )
+                            .lore(WeaponSkillBoostMenu.costLore)
                             .get(),
                     (m, e) -> {
-                        if (pveStats.getCurrencyValue(Currencies.COIN) < 10000) {
-                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(10000) +
-                                    ChatColor.RED + " to change skill boosts!");
-                            return;
-                        }
-                        if (pveStats.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER) < 1) {
-                            player.sendMessage(ChatColor.RED + "You need " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1) +
-                                    ChatColor.RED + " to change boosts!");
-                            return;
+                        for (Map.Entry<Currencies, Long> currenciesLongEntry : WeaponSkillBoostMenu.cost.entrySet()) {
+                            Currencies currency = currenciesLongEntry.getKey();
+                            Long cost = currenciesLongEntry.getValue();
+                            if (pveStats.getCurrencyValue(currency) < cost) {
+                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to change the skill boost of this weapon!");
+                                return;
+                            }
                         }
                         WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
                     }

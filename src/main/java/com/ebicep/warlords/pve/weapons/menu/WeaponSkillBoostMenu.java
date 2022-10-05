@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
@@ -15,11 +16,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class WeaponSkillBoostMenu {
+
+    public static LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>() {{
+        put(Currencies.COIN, 10000L);
+        put(Currencies.SKILL_BOOST_MODIFIER, 1L);
+    }};
+
+    public static List<String> costLore = new ArrayList<>() {{
+        add("");
+        add(ChatColor.AQUA + "Cost: ");
+        cost.forEach((currency, amount) -> add(ChatColor.GRAY + " - " + currency.getCostColoredName(amount)));
+    }};
 
     public static void openWeaponSkillBoostMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
         Menu menu = new Menu("Skill Boost", 9 * 6);
@@ -57,17 +69,14 @@ public class WeaponSkillBoostMenu {
                             player.sendMessage(ChatColor.RED + "You already have this skill boost selected!");
                             return;
                         }
+                        List<String> confirmLore = new ArrayList<>();
+                        confirmLore.add(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name);
+                        confirmLore.addAll(costLore);
                         Menu.openConfirmationMenu(
                                 player,
                                 "Change Skill Boost",
                                 3,
-                                Arrays.asList(
-                                        ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name,
-                                        "",
-                                        ChatColor.AQUA + "Cost: ",
-                                        ChatColor.GRAY + " - " + Currencies.COIN.getCostColoredName(10000),
-                                        ChatColor.GRAY + " - " + Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(1)
-                                ),
+                                confirmLore,
                                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                                 (m2, e2) -> {
                                     unlockSkillBoost(player, databasePlayer, weapon, skillBoost);
@@ -86,10 +95,10 @@ public class WeaponSkillBoostMenu {
     }
 
     public static void unlockSkillBoost(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, SkillBoosts skillBoost) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         SkillBoosts oldSkillBoost = weapon.getSelectedSkillBoost();
         weapon.setSelectedSkillBoost(skillBoost);
-        databasePlayer.getPveStats().subtractCurrency(Currencies.COIN, 10000);
-        databasePlayer.getPveStats().subtractCurrency(Currencies.SKILL_BOOST_MODIFIER, 1);
+        cost.forEach(pveStats::subtractCurrency);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         player.spigot().sendMessage(
