@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
@@ -35,7 +36,7 @@ public interface StarPieceBonus {
         return 1 + getStarPieceBonusValue() / 100.0f;
     }
 
-    default List<String> getStarPieceCostLore(Currencies starPieceCurrency) {
+    default List<String> getStarPieceCostLore(StarPieces starPieceCurrency) {
         List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatColor.AQUA + "Cost: ");
@@ -43,11 +44,11 @@ public interface StarPieceBonus {
         return lore;
     }
 
-    default LinkedHashMap<Currencies, Long> getStarPieceBonusCost(Currencies starPieceCurrency) {
+    default LinkedHashMap<Currencies, Long> getStarPieceBonusCost(StarPieces starPieceCurrency) {
         return new LinkedHashMap<>() {{
             put(Currencies.COIN, 10000L);
             put(Currencies.SYNTHETIC_SHARD, 50L);
-            put(starPieceCurrency, 1L);
+            put(starPieceCurrency.currency, 1L);
         }};
     }
 

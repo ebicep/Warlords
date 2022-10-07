@@ -7,7 +7,6 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
-import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
@@ -16,7 +15,7 @@ import java.util.*;
 
 import static com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore.getAverageValue;
 
-public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, WeaponScore, StatsRerollable {
+public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, WeaponScore {
 
     public static final int MELEE_DAMAGE_MIN = 120;
     public static final int MELEE_DAMAGE_MAX = 180;
@@ -96,21 +95,6 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     @Override
     public int getMaxSalvageAmount() {
         return 18;
-    }
-
-    @Override
-    public int getRerollCost() {
-        return 500;
-    }
-
-    @Override
-    public void reroll() {
-        generateStats();
-    }
-
-    @Override
-    public int getStarPieceBonusValue() {
-        return 40;
     }
 
     @Override

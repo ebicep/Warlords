@@ -1,19 +1,21 @@
 package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static com.ebicep.warlords.util.java.NumberFormat.formatOptionalTenths;
 
 /**
  * Abstract class for weapons that are above starter/common/rare
  */
-public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implements StarPieceBonus, Upgradeable {
+public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implements Upgradeable {
 
     @Field("speed_bonus")
     protected float speedBonus;
@@ -39,8 +41,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
 
     @Override
     public List<String> getLore() {
-        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + getStarPieceBonusString(
-                WeaponStats.SPEED_BONUS));
+        return Collections.singletonList(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%");
     }
 
     @Override
@@ -49,16 +50,7 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     }
 
     public float getSpeedBonus() {
-        return starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
-    }
-
-    @Override
-    public List<WeaponStats> getRandomStatBonus() {
-        List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
-        if (speedBonus > 0) {
-            randomStatBonus.add(WeaponStats.SPEED_BONUS);
-        }
-        return randomStatBonus;
+        return speedBonus;
     }
 
     @Override

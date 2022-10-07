@@ -83,7 +83,7 @@ public class StarterWeapon extends AbstractWeapon {
 
     @Override
     public float getCritChance() {
-        return -1;
+        return 0;
     }
 
     @Override

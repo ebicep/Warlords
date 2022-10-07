@@ -5,19 +5,26 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
+public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon implements StarPieceBonus {
 
+    @Field("star_piece")
+    protected StarPieces starPiece;
+    @Field("star_piece_bonus")
+    protected WeaponStats starPieceBonus;
     @Field("skill_boost")
     protected SkillBoosts selectedSkillBoost;
     @Field("unlocked_skill_boosts")
@@ -66,6 +73,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
 
     public void setSelectedSkillBoost(SkillBoosts selectedSkillBoost) {
         this.selectedSkillBoost = selectedSkillBoost;
+    }
+
+    public WeaponStats getStarPieceBonus() {
+        return starPieceBonus;
     }
 
     @Override
@@ -146,24 +157,15 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         return lore;
     }
 
+    public String getStarPieceBonusString(WeaponStats weaponStats) {
+        return starPieceBonus == weaponStats ? getStarPieceBonusString() : "";
+    }
+
     public abstract String getPassiveEffect();
 
     @Override
-    public List<WeaponStats> getRandomStatBonus() {
-        List<WeaponStats> randomStatBonus = new ArrayList<>(super.getRandomStatBonus());
-        if (energyPerSecondBonus > 0) {
-            randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
-        }
-        if (energyPerHitBonus > 0) {
-            randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
-        }
-        if (skillCritChanceBonus > 0) {
-            randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
-        }
-        if (skillCritMultiplierBonus > 0) {
-            randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
-        }
-        return randomStatBonus;
+    public float getSpeedBonus() {
+        return starPieceBonus == WeaponStats.SPEED_BONUS ? speedBonus * getStarPieceBonusMultiplicativeValue() : speedBonus;
     }
 
     @Override
@@ -214,8 +216,80 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
     }
 
     @Override
+    public List<String> getBaseStats() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
+                        getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
+                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + getStarPieceBonusString(
+                        WeaponStats.CRIT_CHANCE),
+                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(
+                        WeaponStats.CRIT_MULTIPLIER),
+                "",
+                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
+        );
+    }
+
+    @Override
+    public float getMeleeDamageMin() {
+        return starPieceBonus == WeaponStats.MELEE_DAMAGE ? meleeDamage * getStarPieceBonusMultiplicativeValue() : meleeDamage;
+    }
+
+    @Override
+    public float getMeleeDamageMax() {
+        return starPieceBonus == WeaponStats.MELEE_DAMAGE ? (meleeDamage + getMeleeDamageRange()) * getStarPieceBonusMultiplicativeValue() : meleeDamage + getMeleeDamageRange();
+    }
+
+    @Override
+    public float getCritChance() {
+        return starPieceBonus == WeaponStats.CRIT_CHANCE ? critChance * getStarPieceBonusMultiplicativeValue() : critChance;
+    }
+
+    @Override
+    public float getCritMultiplier() {
+        return starPieceBonus == WeaponStats.CRIT_MULTIPLIER ? critMultiplier * getStarPieceBonusMultiplicativeValue() : critMultiplier;
+    }
+
+    @Override
+    public float getHealthBonus() {
+        return starPieceBonus == WeaponStats.HEALTH_BONUS ? healthBonus * getStarPieceBonusMultiplicativeValue() : healthBonus;
+    }
+
+    @Override
+    public List<WeaponStats> getRandomStatBonus() {
+        List<WeaponStats> randomStatBonus = new ArrayList<>();
+        if (meleeDamage > 0) {
+            randomStatBonus.add(WeaponStats.MELEE_DAMAGE);
+        }
+        if (critChance > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_CHANCE);
+        }
+        if (critMultiplier > 0) {
+            randomStatBonus.add(WeaponStats.CRIT_MULTIPLIER);
+        }
+        if (healthBonus > 0) {
+            randomStatBonus.add(WeaponStats.HEALTH_BONUS);
+        }
+        if (speedBonus > 0) {
+            randomStatBonus.add(WeaponStats.SPEED_BONUS);
+        }
+        if (energyPerSecondBonus > 0) {
+            randomStatBonus.add(WeaponStats.ENERGY_PER_SECOND_BONUS);
+        }
+        if (energyPerHitBonus > 0) {
+            randomStatBonus.add(WeaponStats.ENERGY_PER_HIT_BONUS);
+        }
+        if (skillCritChanceBonus > 0) {
+            randomStatBonus.add(WeaponStats.SKILL_CRIT_CHANCE_BONUS);
+        }
+        if (skillCritMultiplierBonus > 0) {
+            randomStatBonus.add(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS);
+        }
+        return randomStatBonus;
+    }
+
+    @Override
     public int getStarPieceBonusValue() {
-        return 50;
+        return starPiece.starPieceBonusValue;
     }
 
     @Override
@@ -250,4 +324,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon {
         }
         return cost;
     }
+
+    public void setStarPiece(StarPieces starPiece, WeaponStats starPieceBonus) {
+        this.starPiece = starPiece;
+        this.starPieceBonus = starPieceBonus;
+    }
+
 }

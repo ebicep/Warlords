@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
+import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -34,21 +34,15 @@ import static com.ebicep.warlords.pve.weapons.menu.WeaponBindMenu.openWeaponBind
 
 public class WeaponManagerMenu {
 
-    public static final List<Currencies> STAR_PIECES = Arrays.asList(
-            Currencies.COMMON_STAR_PIECE,
-            Currencies.RARE_STAR_PIECE,
-            Currencies.EPIC_STAR_PIECE,
-            Currencies.LEGENDARY_STAR_PIECE
-    );
-    public static HashMap<UUID, PlayerMenuSettings> playerMenuSettings = new HashMap<>();
+    public static final HashMap<UUID, PlayerMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
     public static void openWeaponInventoryFromExternal(Player player) {
         UUID uuid = player.getUniqueId();
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
 
-            playerMenuSettings.putIfAbsent(uuid, new PlayerMenuSettings());
-            PlayerMenuSettings menuSettings = playerMenuSettings.get(uuid);
+            PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
+            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setWeaponInventory(weaponInventory);
             menuSettings.sort();
 
@@ -57,7 +51,7 @@ public class WeaponManagerMenu {
     }
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
-        PlayerMenuSettings menuSettings = playerMenuSettings.get(player.getUniqueId());
+        PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
         int page = menuSettings.getPage();
         menuSettings.sort();
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
@@ -114,7 +108,7 @@ public class WeaponManagerMenu {
         menu.setItem(1, 5,
                 new ItemBuilder(Material.NETHER_STAR)
                         .name(ChatColor.GREEN + "Your Star Pieces")
-                        .lore(STAR_PIECES.stream()
+                        .lore(Currencies.STAR_PIECES.stream()
                                 .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
                                         starPiece) != 1 ? "s" : ""))
                                 .collect(Collectors.joining("\n"))
@@ -189,16 +183,6 @@ public class WeaponManagerMenu {
     }
 
     public static void openWeaponEditor(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
-        Menu menu = new Menu("Weapon Editor", 9 * 6);
-
-        menu.setItem(
-                4,
-                0,
-                weapon.generateItemStack(),
-                (m, e) -> {
-                }
-        );
-
         List<Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>>> weaponOptions = new ArrayList<>();
         //bind common/rare/epic/legendary
         weaponOptions.add(new Pair<>(
@@ -215,30 +199,6 @@ public class WeaponManagerMenu {
                 (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, databasePlayer, weapon, 1)
         ));
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        if (weapon instanceof AbstractTierOneWeapon) {
-            //star piece
-            AbstractTierOneWeapon tierOneWeapon = (AbstractTierOneWeapon) weapon;
-            weaponOptions.add(new Pair<>(
-                    new ItemBuilder(Material.NETHER_STAR)
-                            .name(ChatColor.GREEN + "Apply a Star Piece")
-                            .lore(tierOneWeapon.getStarPieceCostLore(weapon.getRarity().starPieceCurrency))
-                            .get(),
-                    (m, e) -> {
-                        for (Map.Entry<Currencies, Long> currenciesLongEntry : tierOneWeapon.getStarPieceBonusCost(weapon.getRarity().starPieceCurrency)
-                                .entrySet()
-                        ) {
-                            Currencies currency = currenciesLongEntry.getKey();
-                            Long cost = currenciesLongEntry.getValue();
-                            if (pveStats.getCurrencyValue(currency) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to apply a star piece");
-                                return;
-                            }
-
-                        }
-                        WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, tierOneWeapon);
-                    }
-            ));
-        }
         //salvage common/rare/epic
         if (weapon instanceof Salvageable) {
             weaponOptions.add(new Pair<>(
@@ -334,12 +294,45 @@ public class WeaponManagerMenu {
             ));
         }
         if (weapon instanceof AbstractLegendaryWeapon) {
+            PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
+            StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
+            //star piece
+            AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
+            weaponOptions.add(new Pair<>(
+                    new ItemBuilder(Material.NETHER_STAR)
+                            .name(ChatColor.GREEN + "Apply a " + selectedStarPiece.currency.name)
+                            .lore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
+                            .addLore(
+                                    "",
+                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GRAY + "to apply star piece.",
+                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GRAY + "to change star piece selection."
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (e.isLeftClick()) {
+                            for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
+                                    .entrySet()
+                            ) {
+                                Currencies currency = currenciesLongEntry.getKey();
+                                Long cost = currenciesLongEntry.getValue();
+                                if (pveStats.getCurrencyValue(currency) < cost) {
+                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to apply this star piece!");
+                                    return;
+                                }
+                            }
+                            WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
+                        } else if (e.isRightClick()) {
+                            menuSettings.setSelectedStarPiece(selectedStarPiece.next());
+                            openWeaponEditor(player, databasePlayer, weapon);
+                        }
+                    }
+            ));
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
                             .name(ChatColor.GREEN + "Apply Title to Weapon")
                             .get(),
                     (m, e) -> {
-                        WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon, 1);
+                        WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, legendaryWeapon, 1);
                     }
             ));
             weaponOptions.add(new Pair<>(
@@ -356,13 +349,25 @@ public class WeaponManagerMenu {
                                 return;
                             }
                         }
-                        WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, (AbstractLegendaryWeapon) weapon);
+                        WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, legendaryWeapon);
                     }
             ));
         }
 
+        boolean bigMenu = weaponOptions.size() > 3;
+        int rows = bigMenu ? 6 : 5;
+        Menu menu = new Menu("Weapon Editor", 9 * rows);
+
+        menu.setItem(
+                4,
+                0,
+                weapon.generateItemStack(),
+                (m, e) -> {
+                }
+        );
+
         int x = 2;
-        int y = 1;
+        int y = bigMenu ? 1 : 2;
         for (Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>> option : weaponOptions) {
             menu.setItem(
                     x,
@@ -377,7 +382,7 @@ public class WeaponManagerMenu {
             }
         }
 
-        menu.setItem(4, 5, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player, databasePlayer));
+        menu.setItem(4, rows - 1, MENU_BACK, (m, e) -> openWeaponInventoryFromInternal(player, databasePlayer));
         menu.openForPlayer(player);
     }
 
@@ -424,6 +429,7 @@ public class WeaponManagerMenu {
         private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
+        private StarPieces selectedStarPiece = StarPieces.COMMON;
 
         public void sort() {
             sortedWeaponInventory = new ArrayList<>(weaponInventory);
@@ -477,7 +483,13 @@ public class WeaponManagerMenu {
             this.ascending = ascending;
         }
 
+        public StarPieces getSelectedStarPiece() {
+            return selectedStarPiece;
+        }
 
+        public void setSelectedStarPiece(StarPieces selectedStarPiece) {
+            this.selectedStarPiece = selectedStarPiece;
+        }
     }
 
 

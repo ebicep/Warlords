@@ -11,9 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 
 public enum Currencies {
 
@@ -75,7 +73,12 @@ public enum Currencies {
 
 
     ;
-
+    public static final List<Currencies> STAR_PIECES = Arrays.asList(
+            COMMON_STAR_PIECE,
+            RARE_STAR_PIECE,
+            EPIC_STAR_PIECE,
+            LEGENDARY_STAR_PIECE
+    );
     public static final Currencies[] VALUES = values();
     public static final HashMap<UUID, PvECoinSummary> CACHED_PLAYER_COIN_STATS = new HashMap<>();
     public final String name;
@@ -125,16 +128,16 @@ public enum Currencies {
         }
     }
 
-    public boolean pluralIncludeS() {
-        return true;
-    }
-
     public String getColoredName() {
         return chatColor + name;
     }
 
     public String getCostColoredName(long cost) {
         return chatColor.toString() + NumberFormat.addCommas(cost) + " " + name + (cost == 1 || !pluralIncludeS() ? "" : "s");
+    }
+
+    public boolean pluralIncludeS() {
+        return true;
     }
 
     public static class PvECoinSummary {
