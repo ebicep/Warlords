@@ -65,6 +65,7 @@ public class WeaponLegendaryCraftMenu {
                                 );
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
+                                player.closeInventory();
                             },
                             (m2, e2) -> openWeaponLegendaryCraftMenu(player, databasePlayer),
                             (m2) -> {
