@@ -292,6 +292,13 @@ public class WaveDefenseOption implements Option {
         player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
     }
 
+    @Override
+    public void onSpecChange(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            ((WarlordsPlayer) player).resetAbilityTree();
+        }
+    }
+
     private List<String> healthScoreboard(Game game) {
         List<String> list = new ArrayList<>();
         for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {

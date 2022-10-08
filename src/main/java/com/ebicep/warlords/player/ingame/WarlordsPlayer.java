@@ -306,6 +306,11 @@ public final class WarlordsPlayer extends WarlordsEntity {
         return abilityTree;
     }
 
+    public void resetAbilityTree() {
+        this.abilityTree.getUpgradeBranches().clear();
+        this.spec.setUpgradeBranches(this);
+    }
+
     public AbstractWeapon getAbstractWeapon() {
         return weapon;
     }

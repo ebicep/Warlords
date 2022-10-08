@@ -109,7 +109,6 @@ public class DebugMenuPlayerOptions {
                     Team otherTeam = target.getTeam().enemy();
                     game.setPlayerTeam(player, otherTeam);
                     target.setTeam(otherTeam);
-
                     target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                     PlayerSettings.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
