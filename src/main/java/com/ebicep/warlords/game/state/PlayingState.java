@@ -46,6 +46,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,7 +57,7 @@ public class PlayingState implements State, TimerDebugAble {
     private int counter = 0;
     private int timer = 0;
 
-    private boolean gameAdded = false;
+    private AtomicBoolean gameAdded = new AtomicBoolean(false);
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
@@ -283,7 +284,6 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void end() {
-
         this.getGame().forEachOfflineWarlordsEntity(e -> e.setActive(false));
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
@@ -302,17 +302,17 @@ public class PlayingState implements State, TimerDebugAble {
             return;
         }
 
-        //TODO pve win event
-        if (winEvent != null || game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
-            boolean isCompGame = game.getAddons()
-                    .contains(GameAddon.PRIVATE_GAME) && players.size() >= game.getGameMode().minPlayersToAddToDatabase && timer >= 6000;
+        if (winEvent != null) {
+            boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
+                    players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
+                    timer >= 6000;
             //comps
             if (isCompGame) {
-                gameAdded = DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames);
+                gameAdded.set(DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames));
             }
             //pubs
             else if (players.size() >= game.getMap().getMinPlayers()) {
-                gameAdded = DatabaseGameBase.addGame(game, winEvent, true);
+                gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 if (DatabaseManager.playerService == null) {
                     return;
                 }

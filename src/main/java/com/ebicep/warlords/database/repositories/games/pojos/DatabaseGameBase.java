@@ -104,6 +104,7 @@ public abstract class DatabaseGameBase {
                 for (Option option : game.getOptions()) {
                     if (option instanceof WaveDefenseOption) {
                         if (((WaveDefenseOption) option).getWavesCleared() == 0) {
+                            System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
                             break;
                         }
@@ -116,6 +117,7 @@ public abstract class DatabaseGameBase {
                     case DUEL:
                     case DEBUG:
                     case SIMULATION_TRIAL:
+                    case WAVE_DEFENSE:
                         updatePlayerStats = false;
                         break;
                 }

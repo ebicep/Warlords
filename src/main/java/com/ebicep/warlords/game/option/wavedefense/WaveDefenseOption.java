@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
+import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
@@ -35,6 +37,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -55,6 +58,7 @@ public class WaveDefenseOption implements Option {
     private final WaveList waves;
     private final DifficultyIndex difficulty;
     private final int maxWave;
+    private final WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
     SimpleScoreboardHandler scoreboard;
     private int waveCounter = 0;
     private int spawnCount = 0;
@@ -64,7 +68,6 @@ public class WaveDefenseOption implements Option {
     private Location lastLocation = new Location(null, 0, 0, 0);
     @Nullable
     private BukkitTask spawner;
-    private WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
         this.team = team;
@@ -147,6 +150,12 @@ public class WaveDefenseOption implements Option {
                         .add(event.getWeapon());
             }
 
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
+                waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
+            }
+
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
@@ -179,6 +188,7 @@ public class WaveDefenseOption implements Option {
             @Override
             public void skipTimer(int delay) {
                 newWave();
+                Bukkit.getPluginManager().callEvent(new WarlordsGameWaveEditEvent(game, waveCounter - 1));
             }
 
         }.register(game);
@@ -211,6 +221,11 @@ public class WaveDefenseOption implements Option {
 
             @Override
             public void run() {
+                if (game.getState() instanceof EndState) {
+                    this.cancel();
+                    return;
+                }
+
                 if (mobs.isEmpty() && spawnCount == 0) {
                     newWave();
 
@@ -233,22 +248,6 @@ public class WaveDefenseOption implements Option {
                 for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
                     mob.whileAlive(counter, WaveDefenseOption.this);
                 }
-
-                if (waveCounter > maxWave) {
-                    waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
-                    waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
-                    game.setNextState(new EndState(game, null, true)); //TODO event + gameAdded bolean
-                    this.cancel();
-                }
-
-//                for (WarlordsEntity player : PlayerFilter
-//                        .playingGame(getGame())
-//                ) {
-//                    if (player.isDead() && player instanceof Player) {
-//                        game.setNextState(new EndState(game, null));
-//                        this.cancel();
-//                    }
-//                }
 
                 counter++;
             }
@@ -319,7 +318,6 @@ public class WaveDefenseOption implements Option {
     }
 
     public void newWave() {
-
         if (currentWave != null) {
             String message;
             if (currentWave.getMessage() != null) {
@@ -439,6 +437,11 @@ public class WaveDefenseOption implements Option {
 
             @Override
             public void run() {
+                if (game.getState() instanceof EndState) {
+                    this.cancel();
+                    return;
+                }
+
                 counter++;
                 if (lastSpawn == null) {
                     lastSpawn = spawn(lastLocation);

@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SpecType;
@@ -246,6 +247,8 @@ public enum GameMode {
             ));
             options.add(new RecordTimeElapsedOption());
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new WinByMaxWaveClearOption());
+            options.add(new WinByAllDeathOption());
             return options;
         }
     },

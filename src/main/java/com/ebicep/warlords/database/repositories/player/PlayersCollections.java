@@ -4,6 +4,7 @@ import com.ebicep.warlords.util.java.DateUtil;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
@@ -38,9 +39,9 @@ public enum PlayersCollections {
     WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
-            return Instant.now()
+            return OffsetDateTime
+                    .now(ZoneOffset.UTC)
                     .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                    .atZone(ZoneOffset.UTC)
                     .withHour(0)
                     .withMinute(0)
                     .withSecond(0)

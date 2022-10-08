@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
@@ -44,14 +45,14 @@ public class EndState implements State, TimerDebugAble {
     private final WarlordsGameTriggerWinEvent winEvent;
     private int timer;
 
-    private boolean gameAdded = false;
+    private AtomicBoolean gameAdded = new AtomicBoolean(false);
 
     public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event) {
         this.game = game;
         this.winEvent = event;
     }
 
-    public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event, boolean gameAdded) {
+    public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event, AtomicBoolean gameAdded) {
         this.game = game;
         this.winEvent = event;
         this.gameAdded = gameAdded;
@@ -181,7 +182,7 @@ public class EndState implements State, TimerDebugAble {
 
         //EXPERIENCE
         System.out.println("Game Added = " + gameAdded);
-        if (gameAdded && DatabaseManager.playerService != null) {
+        if (gameAdded.get() && DatabaseManager.playerService != null) {
             sendGlobalMessage(game,
                     "" + ChatColor.GREEN + ChatColor.BOLD + " ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                     true
