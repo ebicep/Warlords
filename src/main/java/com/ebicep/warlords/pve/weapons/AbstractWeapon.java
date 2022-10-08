@@ -89,8 +89,11 @@ public abstract class AbstractWeapon {
         List<String> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        lore.add("");
-        lore.addAll(getLoreAddons());
+        List<String> loreAddons = getLoreAddons();
+        if (!loreAddons.isEmpty() || isBound) {
+            lore.add("");
+        }
+        lore.addAll(loreAddons);
         if (isBound) {
             lore.add(ChatColor.AQUA + "BOUND");
         }
