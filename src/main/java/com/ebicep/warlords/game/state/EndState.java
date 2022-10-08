@@ -76,9 +76,17 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords 2.0", true);
         sendGlobalMessage(game, "", false);
         if (teamBlueWins) {
-            sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
+            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "PLAYERS", true);
+            } else {
+                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
+            }
         } else if (teamRedWins) {
-            sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
+            if (game.getGameMode() == com.ebicep.warlords.game.GameMode.WAVE_DEFENSE) {
+                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "MONSTERS", true);
+            } else {
+                sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
+            }
         } else {
             if (game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                 sendGlobalMessage(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
