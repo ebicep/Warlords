@@ -40,12 +40,17 @@ public interface Upgradeable {
     int getMaxUpgradeLevel();
 
     default List<String> getUpgradeCostLore() {
+        LinkedHashMap<Currencies, Long> upgradeCost = getUpgradeCost(getUpgradeLevel() + 1);
         List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.AQUA + "Upgrade Cost: ");
-        getUpgradeCost(getUpgradeLevel() + 1).forEach((currencies, aLong) -> {
-            lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
-        });
+        if (upgradeCost.isEmpty()) {
+            lore.add(ChatColor.LIGHT_PURPLE + "Max Level!");
+        } else {
+            lore.add("");
+            lore.add(ChatColor.AQUA + "Upgrade Cost: ");
+            upgradeCost.forEach((currencies, aLong) -> {
+                lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(aLong));
+            });
+        }
         return lore;
     }
 
