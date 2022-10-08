@@ -189,12 +189,12 @@ public class MasterworksFairManager {
                 .async(() -> DatabaseManager.masterworksFairService.create(masterworksFair))
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(masterworksFairs -> {
-                    int size = masterworksFairs.size();
+                    int size = masterworksFairs.size() + 1;
                     masterworksFair.setFairNumber(size);
                     DatabaseManager.masterworksFairService.update(masterworksFair);
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                         sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + size + " has just started!" +
-                                (size != 0 && size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""));
+                                (size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""));
                     }
                 })
                 .execute();
@@ -219,70 +219,50 @@ public class MasterworksFairManager {
             WeaponsPvE[] values = WeaponsPvE.VALUES;
             int column = 2;
             for (WeaponsPvE value : values) {
-                if (value.getPlayerEntries != null) {
-                    List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
-                    Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
-                            .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
-                            .findFirst();
-
-                    ItemBuilder itemBuilder;
-                    if (playerEntry.isEmpty()) {
-                        itemBuilder = new ItemBuilder(value.glassItem);
-                        itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
-                    } else {
-                        itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
-                        itemBuilder.addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" + ChatColor.GREEN + " to change your submission",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to remove your submission"
-                        );
-                    }
-                    menu.setItem(column, 2,
-                            itemBuilder.get(),
-                            (m, e) -> {
-                                if (playerEntry.isEmpty() || e.isLeftClick()) { //submit | change weapon
-                                    openSubmissionMenu(player, databasePlayer, value, 1);
-                                } else { //remove weapon
-                                    AbstractWeapon weapon = playerEntry.get().getWeapon();
-                                    weaponInventory.add(weapon);
-                                    weaponPlayerEntries.remove(playerEntry.get());
-
-                                    updateFair.set(true);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
-                                    sendMasterworksFairMessage(player,
-                                            new TextComponent(ChatColor.GRAY + "Retracted "),
-                                            new TextComponentBuilder(weapon.getName())
-                                                    .setHoverItem(weapon.generateItemStack())
-                                                    .getTextComponent(),
-                                            new TextComponent(ChatColor.GRAY + " from the Masterworks Fair.")
-                                    );
-                                    openMasterworksFairMenu(player);
-                                }
-                            }
-                    );
-
-                    //last 10 placements
-                    List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
-                    List<String> placementHistory = masterworksFairEntries
-                            .stream()
-                            .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                            .collect(Utils.lastN(10))
-                            .stream()
-                            .map(masterworksFairEntry -> ChatColor.GRAY + FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
-                            .collect(Collectors.toList());
-                    menu.setItem(column, 3,
-                            new ItemBuilder(Material.BOOK)
-                                    .name(ChatColor.GREEN + "Your most recent placements")
-                                    .lore(IntStream.range(0, placementHistory.size())
-                                            .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
-                                            .collect(Collectors.toList()))
-                                    .get(), (m, e) -> {
-
-                            }
-                    );
-                    column += 2;
+                if (value.getPlayerEntries == null) {
+                    continue;
                 }
+                List<MasterworksFairPlayerEntry> weaponPlayerEntries = value.getPlayerEntries.apply(currentFair);
+                Optional<MasterworksFairPlayerEntry> playerEntry = weaponPlayerEntries.stream()
+                        .filter(masterworksFairPlayerEntry -> masterworksFairPlayerEntry.getUuid().equals(uuid))
+                        .findFirst();
+
+                ItemBuilder itemBuilder;
+                if (playerEntry.isEmpty()) {
+                    itemBuilder = new ItemBuilder(value.glassItem);
+                    itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
+                } else {
+                    itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
+                    itemBuilder.addLore(
+                            "",
+                            ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to change your submission"
+                    );
+                }
+                menu.setItem(column, 2,
+                        itemBuilder.get(),
+                        (m, e) -> openSubmissionMenu(player, databasePlayer, value, 1)
+                );
+
+                //last 10 placements
+                List<MasterworksFairEntry> masterworksFairEntries = databasePlayerPvE.getMasterworksFairEntries();
+                List<String> placementHistory = masterworksFairEntries
+                        .stream()
+                        .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
+                        .collect(Utils.lastN(10))
+                        .stream()
+                        .map(masterworksFairEntry -> ChatColor.GRAY + FORMATTER.format(masterworksFairEntry.getTime()) + ": " + value.chatColor + "#" + masterworksFairEntry.getPlacement() + ChatColor.GRAY + " - " + ChatColor.YELLOW + masterworksFairEntry.getScore() + "\n")
+                        .collect(Collectors.toList());
+                menu.setItem(column, 3,
+                        new ItemBuilder(Material.BOOK)
+                                .name(ChatColor.GREEN + "Your most recent placements")
+                                .lore(IntStream.range(0, placementHistory.size())
+                                        .mapToObj(index -> placementHistory.get(placementHistory.size() - index - 1))
+                                        .collect(Collectors.toList()))
+                                .get(), (m, e) -> {
+
+                        }
+                );
+                column += 2;
             }
 
             ItemBuilder infoItemBuilder = new ItemBuilder(Material.FIREWORK)
@@ -319,7 +299,7 @@ public class MasterworksFairManager {
         for (int i = 0; i < 45; i++) {
             int weaponNumber = ((page - 1) * 45) + i;
             if (weaponNumber < filteredWeaponInventory.size()) {
-                AbstractWeapon abstractWeapon = filteredWeaponInventory.get(weaponNumber);
+                AbstractWeapon weapon = filteredWeaponInventory.get(weaponNumber);
 
                 int column = i % 9;
                 int row = i / 9;
@@ -327,49 +307,60 @@ public class MasterworksFairManager {
                 menu.setItem(
                         column,
                         row,
-                        abstractWeapon.generateItemStack(),
+                        weapon.generateItemStack(),
                         (m, e) -> {
                             //check bound
-                            if (abstractWeapon.isBound()) {
+                            if (weapon.isBound()) {
                                 sendMasterworksFairMessage(player, ChatColor.RED + "You cannot submit a bound weapon. Unbind it first!");
                                 return;
                             }
-                            //submit weapon to fair
-                            MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(uuid));
-                            if (playerEntry.isPresent()) {
-                                //remove old weapon
-                                AbstractWeapon oldWeapon = masterworksFairPlayerEntry.getWeapon();
-                                weaponInventory.add(oldWeapon);
+                            Menu.openConfirmationMenu(
+                                    player,
+                                    "Submit Weapon",
+                                    3,
+                                    Arrays.asList(
+                                            ChatColor.GRAY + "Submit " + weapon.getName(),
+                                            ChatColor.GRAY + "to the Masterworks Fair?",
+                                            "",
+                                            ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override any previous",
+                                            ChatColor.GRAY + "weapon and you cannot get this weapon back!"
+                                    ),
+                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    (m2, e2) -> {
+                                        //submit weapon to fair
+                                        MasterworksFairPlayerEntry masterworksFairPlayerEntry = playerEntry.orElseGet(() -> new MasterworksFairPlayerEntry(uuid));
+                                        if (playerEntry.isEmpty()) {
+                                            //add new entry if there wasnt already one
+                                            weaponPlayerEntries.add(masterworksFairPlayerEntry);
+                                        }
+                                        //remove new weapon
+                                        weaponInventory.remove(weapon);
+                                        //set new weapon
+                                        masterworksFairPlayerEntry.setWeapon(weapon);
 
-                                sendMasterworksFairMessage(player,
-                                        new TextComponent(ChatColor.GRAY + "Retracted "),
-                                        new TextComponentBuilder(oldWeapon.getName())
-                                                .setHoverItem(oldWeapon.generateItemStack())
-                                                .getTextComponent(),
-                                        new TextComponent(ChatColor.GRAY + " from the Masterworks Fair.")
-                                );
-                            } else {
-                                //add new entry if there wasnt already one
-                                weaponPlayerEntries.add(masterworksFairPlayerEntry);
-                            }
-                            //remove new weapon
-                            weaponInventory.remove(abstractWeapon);
-                            //set new weapon
-                            masterworksFairPlayerEntry.setWeapon(abstractWeapon);
+                                        //update database stuff
+                                        updateFair.set(true);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                            //update database stuff
-                            updateFair.set(true);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        sendMasterworksFairMessage(player,
+                                                new TextComponent(ChatColor.GRAY + "Submitted "),
+                                                new TextComponentBuilder(weapon.getName())
+                                                        .setHoverItem(weapon.generateItemStack())
+                                                        .getTextComponent(),
+                                                new TextComponent(ChatColor.GRAY + " to the Masterworks Fair.")
+                                        );
 
-                            sendMasterworksFairMessage(player,
-                                    new TextComponent(ChatColor.GRAY + "Submitted "),
-                                    new TextComponentBuilder(abstractWeapon.getName())
-                                            .setHoverItem(abstractWeapon.generateItemStack())
-                                            .getTextComponent(),
-                                    new TextComponent(ChatColor.GRAY + " to the Masterworks Fair.")
+                                        openMasterworksFairMenu(player);
+                                    },
+                                    (m2, e2) -> openSubmissionMenu(player, databasePlayer, weaponType, page),
+                                    (m2) -> {
+                                        m2.setItem(4, 1,
+                                                weapon.generateItemStack(),
+                                                (m3, e3) -> {
+                                                }
+                                        );
+                                    }
                             );
-
-                            openMasterworksFairMenu(player);
                         }
                 );
             }
