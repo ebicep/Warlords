@@ -76,7 +76,6 @@ public class WaveDefenseOption implements Option {
         this.maxWave = difficulty.getMaxWaves();
     }
 
-
     @Override
     public void register(Game game) {
         this.game = game;
@@ -257,6 +256,12 @@ public class WaveDefenseOption implements Option {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
+            player.setInPve(true);
+            if (player.getEntity() instanceof Player) {
+                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
             DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
                 Optional<AbstractWeapon> optionalWeapon = databasePlayer.getPveStats().getWeaponInventory()
                         .stream()

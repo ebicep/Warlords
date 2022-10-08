@@ -100,7 +100,7 @@ public class DifficultyMenu {
                 .setGamemode(GameMode.WAVE_DEFENSE)
                 .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
                 .setPriority(0)
-                .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME, GameAddon.PVE)
+                .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
                 .setOnResult((result, game) -> {
                     if (game == null) {
                         player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
