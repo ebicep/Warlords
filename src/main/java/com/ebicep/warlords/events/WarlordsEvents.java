@@ -113,6 +113,8 @@ public class WarlordsEvents implements Listener {
             e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
         }
 
+        CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
+        player.setScoreboard(customScoreboard.getScoreboard());
         joinInteraction(player, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
@@ -222,9 +224,7 @@ public class WarlordsEvents implements Listener {
                             }).execute();
                     Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                 }
-                CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);
-                player.setScoreboard(customScoreboard.getScoreboard());
-                customScoreboard.giveMainLobbyScoreboard();
+                CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
                 PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
                 if (StatsLeaderboardManager.loaded) {
