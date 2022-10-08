@@ -1,7 +1,9 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -10,6 +12,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +22,7 @@ import java.util.Set;
 public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
+    public static boolean DISABLE_RESTART_CHECK = false;
 
     @Subcommand("bypasscurrencies")
     @Description("Bypasses player pve currency costs - Prevents any from being added")
@@ -39,6 +43,19 @@ public class AdminCommand extends BaseCommand {
     public void disableGames(CommandIssuer issuer) {
         GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disabled Games = " + GameManager.gameStartingDisabled, true);
+    }
+
+    @Subcommand("disablerestartcheck")
+    @Description("Removes restart check that prevents games from being started")
+    public void disableRestartCheck(CommandIssuer issuer) {
+        DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Restart Check = " + DISABLE_RESTART_CHECK, true);
+    }
+
+    @HelpCommand
+    public void help(CommandIssuer issuer, CommandHelp help) {
+        help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
+        help.showHelp();
     }
 
 }
