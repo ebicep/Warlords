@@ -5,32 +5,32 @@ import java.util.function.Consumer;
 
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;
-    private float baseSpeedToWalkingSpeed = 0.2825f / 113 * 100 / BASE_SPEED;
-    private float baseModifier;
-    private float minSpeed;
+    private final Modifier baseModifier;
     private final float maxSpeed;
     private final List<Modifier> modifiers = new LinkedList<>();
     private final Consumer<Float> updateWalkingSpeed;
+    private float baseSpeedToWalkingSpeed = 0.2825f / 113 * 100 / BASE_SPEED;
+    private float minSpeed;
     private float lastSpeed = 0;
     private boolean changed = true;
     private boolean hasPendingTimers = false;
     private boolean hasEffectAlteringEffects = false;
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifier) {
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifierValue) {
         // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
-        this.baseModifier = baseModifier;
-        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
+        this.minSpeed = BASE_SPEED * (1 + baseModifierValue / 100f) * (1 - .35f);
         this.maxSpeed = BASE_SPEED * 1.40f;
         this.updateWalkingSpeed = updateWalkingSpeed;
-        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
+        this.baseModifier = new Modifier("BASE", baseModifierValue, 0, Collections.emptyList(), false);
+        this.modifiers.add(this.baseModifier);
     }
 
-    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifier, boolean isPve) {
-        this.baseModifier = baseModifier;
-        this.minSpeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - 0.99f);
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, float baseModifierValue, boolean isPve) {
+        this.minSpeed = BASE_SPEED * (1 + baseModifierValue / 100f) * (1 - 0.99f);
         this.maxSpeed = BASE_SPEED * 2;
         this.updateWalkingSpeed = updateWalkingSpeed;
-        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
+        this.baseModifier = new Modifier("BASE", baseModifierValue, 0, Collections.emptyList(), false);
+        this.modifiers.add(this.baseModifier);
     }
 
     /**
@@ -139,12 +139,13 @@ public class CalculateSpeed {
         return addSpeedModifier(name, modifier, duration, false, toDisable);
     }
 
-    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, String... toDisable) {
-        return addSpeedModifier(name, modifier, duration, afterLimit, Arrays.asList(toDisable));
-    }
-
     public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
-        Modifier mod = new Modifier(name, modifier, duration == 0 ? 0 : duration + 1, toDisable, afterLimit); // add 1 tick to deal with effects lasting exactly as long
+        Modifier mod = new Modifier(name,
+                modifier,
+                duration == 0 ? 0 : duration + 1,
+                toDisable,
+                afterLimit
+        ); // add 1 tick to deal with effects lasting exactly as long
         ListIterator<Modifier> iterator = this.modifiers.listIterator();
         while (iterator.hasNext()) {
             Modifier next = iterator.next();
@@ -161,20 +162,19 @@ public class CalculateSpeed {
         };
     }
 
+    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(name, modifier, duration, afterLimit, Arrays.asList(toDisable));
+    }
+
     // Removes negative speed effects.
     public void removeSlownessModifiers() {
         boolean isChanged = this.modifiers.removeIf(modifier -> modifier.duration > 0 && modifier.calculatedModifier < 1);
         this.changed = changed || isChanged;
     }
 
-    public void reset() {
-        this.modifiers.clear();
-        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
-    }
-
     public void addBaseModifier(float add) {
-        this.baseModifier += add;
-        reset();
+        baseModifier.setModifier(baseModifier.modifier + add);
+        changed = true;
     }
 
     public void setBaseSpeedToWalkingSpeed(float baseSpeedToWalkingSpeed) {
@@ -183,11 +183,11 @@ public class CalculateSpeed {
 
     private static class Modifier {
         public final String name;
-        public final float modifier;
-        public final float calculatedModifier;
-        public int duration;
         public final boolean afterLimit;
         public final Collection<String> toDisable;
+        public float modifier;
+        public float calculatedModifier;
+        public int duration;
 
         public Modifier(String name, float modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
             this.name = name;
@@ -196,6 +196,11 @@ public class CalculateSpeed {
             this.duration = duration;
             this.afterLimit = afterLimit;
             this.toDisable = toDisable;
+        }
+
+        public void setModifier(float modifier) {
+            this.modifier = modifier;
+            this.calculatedModifier = 1 + modifier / 100f;
         }
 
         @Override

@@ -49,7 +49,6 @@ public class MobCommand extends BaseCommand {
     @Subcommand("speed")
     public void giveSpeed(@Conditions("requireGame:gamemode=WAVE_DEFENSE") WarlordsPlayer warlordsPlayer, Integer speed) {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
-            spawnedMob.getWarlordsNPC().getSpeed().reset();
             spawnedMob.getWarlordsNPC().getSpeed().addSpeedModifier("Test", speed, 30 * 20, "BASE");
         }
         ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs", true);
