@@ -15,7 +15,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 185;
     public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 18;
-    public static final int BLOCKS_TO_MOVE = 50;
+    public static final int BLOCKS_TO_MOVE = 100;
     public static final int COOLDOWN = 60;
 
     public LegendaryGale() {
