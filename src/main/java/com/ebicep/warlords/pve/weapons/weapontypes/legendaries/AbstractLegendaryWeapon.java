@@ -126,7 +126,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
 
     @Override
     public List<String> getLore() {
-        List<String> lore = new ArrayList<>(super.getLore());
+        List<String> lore = new ArrayList<>();
+        if (speedBonus != 0) {
+            lore.add(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
+        }
         if (energyPerSecondBonus != 0) {
             lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
         }
