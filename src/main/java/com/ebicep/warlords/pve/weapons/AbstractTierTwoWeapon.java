@@ -57,8 +57,6 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
     public void upgrade() {
         this.upgradeLevel++;
         this.meleeDamage *= meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.critChance *= critChance < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
-        this.critMultiplier *= critMultiplier < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
         this.healthBonus *= healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
         this.speedBonus *= speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier();
     }
@@ -73,9 +71,9 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon implem
                         ChatColor.RED + formatOptionalTenths(upgradedMeleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(
                         upgradedMeleeDamage + getMeleeDamageRange()),
                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critChance * (critChance < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%",
+                        ChatColor.RED + formatOptionalTenths(critChance) + "%",
                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critMultiplier * (critMultiplier < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%",
+                        ChatColor.RED + formatOptionalTenths(critMultiplier) + "%",
                 "",
                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
                         format(healthBonus * (healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())),

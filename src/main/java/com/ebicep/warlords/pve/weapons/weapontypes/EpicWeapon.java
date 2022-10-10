@@ -67,7 +67,6 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
         this.critChance = Utils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
         this.critMultiplier = Utils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
         this.healthBonus = Utils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
-
         this.speedBonus = Utils.generateRandomValueBetweenInclusive(SPEED_BONUS_MIN, SPEED_BONUS_MAX);
     }
 
@@ -80,8 +79,8 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     public List<Double> getWeaponScoreAverageValues() {
         return Arrays.asList(
                 getAverageValue(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX - getMeleeDamageRange(), meleeDamage / Math.pow(getUpgradeMultiplier(), upgradeLevel)),
-                getAverageValue(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX, critChance / Math.pow(getUpgradeMultiplier(), upgradeLevel)),
-                getAverageValue(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX, critMultiplier / Math.pow(getUpgradeMultiplier(), upgradeLevel)),
+                getAverageValue(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX, critChance),
+                getAverageValue(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX, critMultiplier),
                 getAverageValue(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX, healthBonus / Math.pow(getUpgradeMultiplier(), upgradeLevel)),
                 getAverageValue(SPEED_BONUS_MIN, SPEED_BONUS_MAX, speedBonus / Math.pow(getUpgradeMultiplier(), upgradeLevel))
         );
