@@ -7,9 +7,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -48,7 +50,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
                 "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
-                "§e" + maxBounces  + " §7additional targets within §e" + bounceRange + "\n" +
+                "§e" + maxBounces + " §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
                 "§7You gain §e" + damageReductionPerBounce + "% §7damage resistance for\n" +
@@ -56,6 +58,21 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 "§7resistance. This buff lasts §64.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "§7Discharge a bolt of lightning at the\n" +
+                                "§7targeted enemy player that deals\n" +
+                                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
+                                "§e" + maxBounces + " §7additional targets within §e" + bounceRange + "\n" +
+                                "§7blocks. Each time the lightning jumps\n" +
+                                "§7the damage is decreased by §c15%§7.\n" +
+                                "§7You gain §e" + damageReductionPerBounce + "% §7damage resistance for\n" +
+                                "§7each target hit, up to §e" + maxDamageReduction + "% §7damage\n" +
+                                "§7resistance. This buff lasts §64.5 §7seconds." +
+                                "\n\n" +
+                                "§7Has an initial cast range of §e" + radius + " §7blocks.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

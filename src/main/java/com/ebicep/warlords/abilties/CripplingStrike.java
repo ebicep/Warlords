@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -43,8 +44,18 @@ public class CripplingStrike extends AbstractStrikeBase {
                 "§7and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
                 "§7A §ccrippled §7player deals §c" + cripple + "% §7less\n" +
                 "§7damage for the duration of the effect.\n" +
-                "§7Adds §c" + cripplePerStrike  +"% §7less damage dealt per\n" +
+                "§7Adds §c" + cripplePerStrike + "% §7less damage dealt per\n" +
                 "§7additional strike. (max " + (cripple + (cripplePerStrike * 2)) + "%)";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Strike the targeted enemy player,\n" +
+                        "causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
+                        "and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
+                        "A §ccrippled §7player deals §c" + cripple + "% §7less\n" +
+                        "damage for the duration of the effect.\n" +
+                        "Adds §c" + cripplePerStrike + "% §7less damage dealt per\n" +
+                        "additional strike. (max " + (cripple + (cripplePerStrike * 2)) + "%)",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

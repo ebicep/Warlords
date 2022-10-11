@@ -5,9 +5,11 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -47,6 +49,15 @@ public class CapacitorTotem extends AbstractTotemBase {
                 "§7or Lightning Rod on the totem will cause\n" +
                 "§7it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies nearby. Lasts §6" + duration + " §7seconds.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "Place a highly conductive totem\n" +
+                                "on the ground. Casting Chain Lightning\n" +
+                                "or Lightning Rod on the totem will cause\n" +
+                                "it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
+                                "to all enemies nearby. Lasts §6" + duration + " §7seconds.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

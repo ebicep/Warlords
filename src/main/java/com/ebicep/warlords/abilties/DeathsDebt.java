@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -58,7 +59,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 "§64 §7- §66 §7seconds (increases with higher health),\n" +
                 "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
                 "\n" +
-                "§dDeath’s Debt§7: Take §c" +  Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
+                "§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
                 "§7that you take. If you survive, deal §c" + format(damagePercent) + "% §7of the\n" +
@@ -66,6 +67,24 @@ public class DeathsDebt extends AbstractTotemBase {
                 "\n\n" +
                 "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
                 "§7to your totem duration. (cap of §66 §7seconds)";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "§2Spirits’ Respite§7: Place down a totem that\n" +
+                                "§7delays §c100% §7of incoming damage towards\n" +
+                                "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
+                                "§64 §7- §66 §7seconds (increases with higher health),\n" +
+                                "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
+                                "\n" +
+                                "§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
+                                "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
+                                "§7will heal nearby allies for §a15% §7of all damage\n" +
+                                "§7that you take. If you survive, deal §c" + format(damagePercent) + "% §7of the\n" +
+                                "§7damage delayed to nearby enemies." +
+                                "\n\n" +
+                                "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
+                                "§7to your totem duration. (cap of §66 §7seconds)",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

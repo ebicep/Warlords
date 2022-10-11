@@ -7,10 +7,12 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -56,6 +58,18 @@ public class EarthenSpike extends AbstractAbility {
                 "§7launches them up into the air." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "§7Send forth an underground earth spike\n" +
+                                "§7that locks onto a targeted enemy player.\n" +
+                                "§7When the spike reaches its target it\n" +
+                                "§7emerges from the ground, dealing §c" + format(minDamageHeal) + " §7-\n" +
+                                "§c" + format(maxDamageHeal) + " §7damage to any nearby enemies and\n" +
+                                "§7launches them up into the air." +
+                                "\n\n" +
+                                "§7Has an initial cast range of §e" + radius + " §7blocks.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

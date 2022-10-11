@@ -2,9 +2,11 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractChainBase;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +37,20 @@ public class ChainHeal extends AbstractChainBase {
                 "§7Boulder by §62.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "Discharge a beam of energizing lightning\n" +
+                                "that heals you and a targeted friendly\n" +
+                                "player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
+                                "jumps to §e1 §7additional target within\n" +
+                                "§e" + bounceRange + " §7blocks." +
+                                "\n\n" +
+                                "Each ally healed reduces the cooldown of\n" +
+                                "Boulder by §62.5 §7seconds." +
+                                "\n\n" +
+                                "Has an initial cast range of §e" + radius + " §7blocks.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

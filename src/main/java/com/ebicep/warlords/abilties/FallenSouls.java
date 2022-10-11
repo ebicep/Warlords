@@ -6,9 +6,11 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,6 +39,13 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                 "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
                 "§7cooldown of Spirit Link by §62 §7seconds.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "§7Summon a wave of fallen souls, dealing\n" +
+                        "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
+                        "§7pass through. Each target hit reduces the\n" +
+                        "§7cooldown of Spirit Link by §62 §7seconds.",
+                40
+        );
     }
 
     @Override

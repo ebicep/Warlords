@@ -8,9 +8,11 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
@@ -45,6 +47,17 @@ public class DrainingMiasma extends AbstractAbility {
                 "\n\n" +
                 "§7Each enemy hit will be afflicted with §aLEECH §7for\n" +
                 "§6" + leechDuration + " §7seconds.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Summon a toxin-filled cloud around you," +
+                        "poisoning all enemies inside the area. Poisoned" +
+                        "enemies take §c50 §7+ §c" + maxHealthDamage + "% §7of their max health as" +
+                        "damage per second, for §6" + duration + " §7seconds. Enemies" +
+                        "poisoned by your Draining Miasma are slowed by" +
+                        "§e25% §7for §63 §7seconds on cast." +
+                        "Each enemy hit will be afflicted with §aLEECH §7for" +
+                        "§6" + leechDuration + " §7seconds.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

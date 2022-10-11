@@ -8,10 +8,12 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -53,6 +55,18 @@ public class Consecrate extends AbstractAbility {
                 "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
                 "§7your paladin strikes. Lasts §65\n" +
                 "§7seconds.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "§7Consecrate the ground below your\n" +
+                                "§7feet, declaring it sacred. Enemies\n" +
+                                "§7standing on it will take §c" + format(minDamageHeal) + " §7-\n" +
+                                "§c" + format(maxDamageHeal) + " §7damage per second and\n" +
+                                "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
+                                "§7your paladin strikes. Lasts §65\n" +
+                                "§7seconds.",
+                        DESCRIPTION_WIDTH
+                );
+
     }
 
     @Override

@@ -4,10 +4,12 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -40,6 +42,17 @@ public class FrostBolt extends AbstractProjectileBase {
                 "§7damage." +
                 "\n\n" +
                 "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Shoot a frostbolt that will shatter\n" +
+                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and slow\n" +
+                        "by §e" + slowness + "% §7for §62 §7seconds. A\n" +
+                        "direct hit will cause the enemy\n" +
+                        "to take an additional §c15% §7extra\n" +
+                        "damage." +
+                        "\n\n" +
+                        "Has an optimal range of §e" + maxFullDistance + " \u00A77blocks.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

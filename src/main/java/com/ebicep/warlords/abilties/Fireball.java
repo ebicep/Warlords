@@ -6,9 +6,11 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +40,16 @@ public class Fireball extends AbstractProjectileBase {
                 "§7damage." +
                 "\n\n" +
                 "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Shoot a fireball that will explode\n" +
+                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
+                        "direct hit will cause the enemy\n" +
+                        "to take an additional §c15% §7extra\n" +
+                        "damage." +
+                        "\n\n" +
+                        "Has an optimal range of §e" + maxFullDistance + " §7blocks.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

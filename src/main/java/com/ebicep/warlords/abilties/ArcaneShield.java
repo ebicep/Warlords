@@ -8,10 +8,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -45,6 +47,13 @@ public class ArcaneShield extends AbstractAbility {
                 "§7energy, creating a shield that will\n" +
                 "§7absorb up to §e" + maxShieldHealth + " §7(§e" + shieldPercentage + "% §7of your maximum\n" +
                 "§7health) incoming damage. Lasts §6" + duration + " §7seconds.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "Surround yourself with arcane energy, creating a shield that will absorb up to " +
+                                maxShieldHealth + " (§e" + shieldPercentage + "% §7of your maximum health) incoming damage. " +
+                                "Lasts §6" + duration + " §7seconds.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

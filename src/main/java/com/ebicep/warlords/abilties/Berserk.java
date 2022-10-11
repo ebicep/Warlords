@@ -6,8 +6,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -36,6 +38,14 @@ public class Berserk extends AbstractAbility {
                 "§7increasing your damage by §c" + format(damageIncrease) + "% §7and\n" +
                 "§7movement speed by §e" + speedBuff + "%§7. While active,\n" +
                 "§7you also take §c" + format(damageTakenIncrease) + "% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "You go into a berserker rage," +
+                                "increasing your damage by §c" + format(damageIncrease) + "% §7and" +
+                                "movement speed by §e" + speedBuff + "%§7. While active," +
+                                "you also take §c" + format(damageTakenIncrease) + "% §7more damage." + "§7Lasts §6" + duration + " §7seconds.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override
@@ -82,6 +92,7 @@ public class Berserk extends AbstractAbility {
                 })
         ) {
             int multiplier = 0;
+
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 hitsTakenAmplified++;

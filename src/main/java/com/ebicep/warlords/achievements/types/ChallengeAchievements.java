@@ -799,7 +799,7 @@ public enum ChallengeAchievements implements Achievement {
     public void sendAchievementUnlockMessage(Player player) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()
+                new ComponentBuilder(WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200)).create()
         ));
         ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true);
     }
@@ -808,7 +808,7 @@ public enum ChallengeAchievements implements Achievement {
     public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
         TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
         message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(WordWrap.wrapWithNewlineWithColor(description, 200, ChatColor.GREEN)).create()
+                new ComponentBuilder(WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200)).create()
         ));
         warlordsEntity.getGame().warlordsPlayers()
                 //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())

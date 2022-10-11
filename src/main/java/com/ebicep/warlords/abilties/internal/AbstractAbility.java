@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 public abstract class AbstractAbility {
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    protected static final int DESCRIPTION_WIDTH = 175;
 
     static {
         decimalFormat.setDecimalSeparatorAlwaysShown(false);

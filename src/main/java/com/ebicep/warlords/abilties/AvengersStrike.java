@@ -5,8 +5,10 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -30,6 +32,13 @@ public class AvengersStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and removing §e" + format(energySteal) + " §7energy.";
+        description =
+                WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                "Strike the targeted enemy player," +
+                                "causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage" +
+                                "and removing §e" + format(energySteal) + " §7energy.",
+                        DESCRIPTION_WIDTH
+                );
     }
 
     @Override

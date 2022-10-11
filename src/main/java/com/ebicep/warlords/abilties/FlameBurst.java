@@ -4,9 +4,11 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -34,6 +36,13 @@ public class FlameBurst extends AbstractProjectileBase {
                 "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
                 "§7chance increases by §c1% §7for each\n" +
                 "§7travelled block. Up to 100%.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Launch a flame burst that will explode\n" +
+                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
+                        "chance increases by §c1% §7for each\n" +
+                        "travelled block. Up to 100%.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

@@ -10,10 +10,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -68,6 +70,24 @@ public class HammerOfLight extends AbstractAbility {
                 "§7energy cost of your Protector's Strike by\n" +
                 "§e10 §7energy. You cannot put the Hammer of Light\n" +
                 "§7back down after you converted it.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "§7Throw down a Hammer of Light on\n" +
+                        "§7the ground, dealing §c" + format(minDamage) + " §7- §c" + format(maxDamage) + "§7damage\n" +
+                        "§7damage every second to nearby enemies and\n" +
+                        "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
+                        "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
+                        "§7pierces shields and defenses of enemies\n" +
+                        "§7standing on top of the Hammer of Light.\n" +
+                        "§7Lasts §6" + duration + " §7seconds." +
+                        "\n\n" +
+                        "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
+                        "§7Removing the damage and piercing BUT increasing\n" +
+                        "§7the healing §7by §a50% §7and reducing the\n" +
+                        "§7energy cost of your Protector's Strike by\n" +
+                        "§e10 §7energy. You cannot put the Hammer of Light\n" +
+                        "§7back down after you converted it.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     public static boolean isStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
@@ -106,7 +126,9 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
+        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) {
+            return false;
+        }
         wp.subtractEnergy(energyCost, false);
         wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);

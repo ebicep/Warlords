@@ -8,10 +8,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -49,6 +51,13 @@ public class FreezingBreath extends AbstractAbility {
                 "§7of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
                 "§e" + slowness + "% §7for §6" + slowDuration + " §7seconds.";
+        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
+                        "Breathe cold air in a cone in front\n" +
+                        "of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
+                        "to all enemies hit and slowing them by\n" +
+                        "§e" + slowness + "% §7for §6" + slowDuration + " §7seconds.",
+                DESCRIPTION_WIDTH
+        );
     }
 
     @Override

@@ -57,6 +57,7 @@ public class HealingRain extends AbstractAbility {
                 "§7Healing Rain can overheal allies for up to\n" +
                 "§a10% §7of their max health as bonus health\n" +
                 "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
+
     }
 
     @Override
