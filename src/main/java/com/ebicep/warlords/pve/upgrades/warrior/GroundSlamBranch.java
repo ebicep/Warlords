@@ -21,7 +21,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Zeal - Tier II",
                 "-5% Cooldown reduction",
                 10000,
                 () -> {
@@ -29,7 +29,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-7.5% Cooldown reduction",
                 15000,
                 () -> {
@@ -37,7 +37,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-10% Cooldown reduction",
                 20000,
                 () -> {

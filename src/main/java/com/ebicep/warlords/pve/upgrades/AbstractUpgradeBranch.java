@@ -108,7 +108,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     y - i,
                     branchItem(upgrade),
                     (m, e) -> {
-                        //updateInventory(player);
                         if (upgrade.isUnlocked()) {
                             player.sendMessage(ChatColor.RED + "You already unlocked this upgrade.");
                             return;

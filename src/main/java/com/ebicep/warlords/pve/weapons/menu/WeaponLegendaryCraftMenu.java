@@ -10,7 +10,9 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -57,7 +59,11 @@ public class WeaponLegendaryCraftMenu {
                                 LegendaryWeapon weapon = new LegendaryWeapon(player.getUniqueId());
                                 cost.forEach(pveStats::subtractCurrency);
                                 pveStats.getWeaponInventory().add(weapon);
-                                player.spigot().sendMessage(
+                                Location loc = player.getLocation();
+                                player.playSound(loc, Sound.NOTE_PLING, 500, 2);
+                                player.playSound(loc, Sound.AMBIENCE_THUNDER, 500, 0.1f);
+                                player.playSound(loc, "legendaryfind", 500, 1);
+                                player.getPlayer().spigot().sendMessage(
                                         new TextComponent(ChatColor.GRAY + "Crafted Legendary Weapon: "),
                                         new TextComponentBuilder(weapon.getName())
                                                 .setHoverItem(weapon.generateItemStack())

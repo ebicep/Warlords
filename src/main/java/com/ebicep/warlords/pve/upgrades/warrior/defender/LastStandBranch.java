@@ -16,7 +16,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
+                "Fortify - Tier I",
                 "+3% Damage reduction",
                 5000,
                 () -> {
@@ -25,7 +25,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Fortify - Tier II",
                 "+6% Damage reduction",
                 10000,
                 () -> {
@@ -34,7 +34,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Fortify - Tier III",
                 "+9% Damage reduction",
                 15000,
                 () -> {
@@ -43,7 +43,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Fortify - Tier IV",
                 "+12% Damage reduction",
                 20000,
                 () -> {

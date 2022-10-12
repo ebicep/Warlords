@@ -19,15 +19,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
-    private final int duration = 12;
     protected int playersBinded = 0;
     protected int soulProcs = 0;
     protected int linkProcs = 0;
     protected int soulTeammatesCDReductions = 0;
     protected int linkTeammatesHealed = 0;
-    private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private int bindDuration = 2;
 
+    private final int duration = 12;
+    private float bindDuration = 2;
+
+    private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
 
@@ -156,11 +157,11 @@ public class Soulbinding extends AbstractAbility {
         return false;
     }
 
-    public int getBindDuration() {
+    public float getBindDuration() {
         return bindDuration;
     }
 
-    public void setBindDuration(int bindDuration) {
+    public void setBindDuration(float bindDuration) {
         this.bindDuration = bindDuration;
     }
 
@@ -178,7 +179,7 @@ public class Soulbinding extends AbstractAbility {
         private boolean hitWithLink;
         private boolean hitWithSoul;
 
-        public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft) {
+        public SoulBoundPlayer(WarlordsEntity boundPlayer, float timeLeft) {
             this.boundPlayer = boundPlayer;
             this.timeLeft = timeLeft;
             hitWithLink = false;
