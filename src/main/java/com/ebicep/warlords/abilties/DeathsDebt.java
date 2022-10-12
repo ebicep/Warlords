@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -53,38 +52,13 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§2Spirits’ Respite§7: Place down a totem that\n" +
-                "§7delays §c100% §7of incoming damage towards\n" +
-                "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
-                "§64 §7- §66 §7seconds (increases with higher health),\n" +
-                "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
-                "\n" +
-                "§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
-                "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
-                "§7will heal nearby allies for §a15% §7of all damage\n" +
-                "§7that you take. If you survive, deal §c" + format(damagePercent) + "% §7of the\n" +
-                "§7damage delayed to nearby enemies." +
-                "\n\n" +
-                "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
-                "§7to your totem duration. (cap of §66 §7seconds)";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "§2Spirits’ Respite§7: Place down a totem that\n" +
-                                "§7delays §c100% §7of incoming damage towards\n" +
-                                "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
-                                "§64 §7- §66 §7seconds (increases with higher health),\n" +
-                                "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
-                                "\n" +
-                                "§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) + "% §7of the damage delayed\n" +
-                                "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
-                                "§7will heal nearby allies for §a15% §7of all damage\n" +
-                                "§7that you take. If you survive, deal §c" + format(damagePercent) + "% §7of the\n" +
-                                "§7damage delayed to nearby enemies." +
-                                "\n\n" +
-                                "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
-                                "§7to your totem duration. (cap of §66 §7seconds)",
-                        DESCRIPTION_WIDTH
-                );
+        description = "§2Spirits’ Respite§7: Place down a totem that delays §c100% §7of incoming damage towards yourself. Transforms into §dDeath’s Debt " +
+                "§7after §64 §7- §66 §7seconds (increases with higher health), or when you exit its §e" + respiteRadius + " §7block radius." +
+                "\n\n§dDeath’s Debt§7: Take §c" + Math.round((selfDamageInPercentPerSecond * 6) * 100) +
+                "% §7of the damage delayed by §2Spirit's Respite §7over §66 §7seconds. The totem will heal nearby allies for §a15% §7of all damage " +
+                "that you take. If you survive, deal §c" + format(damagePercent) +
+                "% §7of the damage delayed to nearby enemies." +
+                "\n\nSuccessful Soulbind procs on enemies add §60.5 §7seconds to your totem duration. (Cap of §66 §7seconds)";
     }
 
     @Override
@@ -157,7 +131,9 @@ public class DeathsDebt extends AbstractTotemBase {
                             cooldownManagerDebt -> {
                                 totemStand.remove();
                                 effectTask.cancel();
-                                if (wp.isDead()) return;
+                                if (wp.isDead()) {
+                                    return;
+                                }
 
                                 wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                 // Final enemy damage tick
@@ -229,12 +205,22 @@ public class DeathsDebt extends AbstractTotemBase {
         });
     }
 
+    public boolean isPlayerInRadius() {
+        return playerInRadius;
+    }
+
+    public float getDelayedDamage() {
+        return delayedDamage;
+    }
+
     public void onDebtTick(WarlordsEntity wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
         Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
 
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
-        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()));
+        float debtTrueDamage = (float) (damage * Math.pow(.8,
+                (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()
+        ));
         // Player damage
         wp.addDamageInstance(
                 wp,
@@ -269,24 +255,8 @@ public class DeathsDebt extends AbstractTotemBase {
         }
     }
 
-    public int getRespiteRadius() {
-        return respiteRadius;
-    }
-
-    public void setRespiteRadius(int respiteRadius) {
-        this.respiteRadius = respiteRadius;
-    }
-
-    public int getDebtRadius() {
-        return debtRadius;
-    }
-
-    public void setDebtRadius(int debtRadius) {
-        this.debtRadius = debtRadius;
-    }
-
-    public float getDelayedDamage() {
-        return delayedDamage;
+    public boolean isInDebt() {
+        return inDebt;
     }
 
     public void addDelayedDamage(float delayedDamage) {
@@ -301,20 +271,28 @@ public class DeathsDebt extends AbstractTotemBase {
         this.selfDamageInPercentPerSecond = selfDamageInPercentPerSecond;
     }
 
-    public boolean isInDebt() {
-        return inDebt;
-    }
-
     public void setInDebt(boolean inDebt) {
         this.inDebt = inDebt;
     }
 
-    public boolean isPlayerInRadius() {
-        return playerInRadius;
-    }
-
     public void setPlayerInRadius(boolean playerInRadius) {
         this.playerInRadius = playerInRadius;
+    }
+
+    public int getRespiteRadius() {
+        return respiteRadius;
+    }
+
+    public void setRespiteRadius(int respiteRadius) {
+        this.respiteRadius = respiteRadius;
+    }
+
+    public int getDebtRadius() {
+        return debtRadius;
+    }
+
+    public void setDebtRadius(int debtRadius) {
+        this.debtRadius = debtRadius;
     }
 
     public float getDamagePercent() {

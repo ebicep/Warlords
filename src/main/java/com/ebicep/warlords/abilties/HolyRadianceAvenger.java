@@ -31,15 +31,9 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Radiate with holy energy, healing\n" +
-                "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7You may look at an enemy to mark\n" +
-                "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks. Reducing\n" +
-                "§7their energy per second by\n" +
-                "§e" + energyDrainPerSecond + " §7for the duration.";
+        description = "Radiate with holy energy, healing yourself and all nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
+                "\n\nYou may look at an enemy to mark them for §6" + markDuration + " §7seconds. Mark has an optimal range of §e" + markRadius +
+                " §7blocks. Reducing their energy per second by §e" + energyDrainPerSecond + " §7for the duration.";
     }
 
     @Override
@@ -71,7 +65,9 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveUpgrade) return true;
+            if (pveUpgrade) {
+                return true;
+            }
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 

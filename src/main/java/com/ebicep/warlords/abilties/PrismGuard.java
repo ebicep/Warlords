@@ -14,7 +14,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -25,11 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int timesProjectilesReduced = 0;
     protected int timesOtherReduced = 0;
-
+    private boolean pveUpgrade = false;
     private int bubbleRadius = 4;
     private int duration = 6;
     private int bubbleHealing = 200;
@@ -45,15 +42,11 @@ public class PrismGuard extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Create a bubble shield around you that\n" +
-                "§7lasts §6" + duration + " §7seconds. All projectiles that pass through\n" +
-                "§7the barrier have their damage reduced by §c" + projectileDamageReduction + "%§7.\n" +
-                "\n" +
-                "§7After §6" + duration + " §7seconds the bubble will burst, healing\n" +
-                "§7you and all allies for §a" + bubbleHealing + " §7+ §a" + bubbleMissingHealing + "% §7missing health and\n" +
-                "§7grant §e" + damageReduction + "% §7damage reduction (max 30%) for §6" + duration + " §7seconds\n" +
-                "§7based on how many hits you took while Prism\n" +
-                "§7Guard was active.";
+        description = "Create a bubble shield around you that lasts §6" + duration +
+                " §7seconds. All projectiles that pass through the barrier have their damage reduced by §c" + projectileDamageReduction +
+                "%§7.\nAfter §6" + duration + " §7seconds the bubble will burst, healing you and all allies for §a" + bubbleHealing +
+                " §7+ §a" + bubbleMissingHealing + "% §7missing health and grant §e" + damageReduction +
+                "% §7damage reduction (max 30%) for §6" + duration + " §7seconds based on how many hits you took while Prism Guard was active.";
     }
 
     @Override
@@ -98,7 +91,9 @@ public class PrismGuard extends AbstractAbility {
                     if (tempPrismGuard.getDamageReduced() >= 8000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.VENERED_REFRACTION);
                     }
-                    if (wp.isDead()) return;
+                    if (wp.isDead()) {
+                        return;
+                    }
                     Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
 
@@ -135,7 +130,7 @@ public class PrismGuard extends AbstractAbility {
                             String s = wp == entity ? "Your " : wp.getName() + "'s ";
                             entity.sendMessage(
                                     WarlordsEntity.GIVE_ARROW_GREEN + " §7" + s + "§7Prism Guard granted you §e" +
-                                    (hits.get() * damageReduction) + "% §7damage reduction for §6" + duration + " §7seconds!"
+                                            (hits.get() * damageReduction) + "% §7damage reduction for §6" + duration + " §7seconds!"
                             );
                             entity.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                     "Prism Guard",
@@ -250,6 +245,14 @@ public class PrismGuard extends AbstractAbility {
         return true;
     }
 
+    public float getDamageReduced() {
+        return damageReduced;
+    }
+
+    public void addDamageReduced(float amount) {
+        damageReduced += amount;
+    }
+
     private boolean isProjectile(String ability) {
         return ability.equals("Fireball") ||
                 ability.equals("Frostbolt") ||
@@ -298,14 +301,6 @@ public class PrismGuard extends AbstractAbility {
 
     public void setBubbleMissingHealing(float bubbleMissingHealing) {
         this.bubbleMissingHealing = bubbleMissingHealing;
-    }
-
-    public void addDamageReduced(float amount) {
-        damageReduced += amount;
-    }
-
-    public float getDamageReduced() {
-        return damageReduced;
     }
 
     public boolean isPveUpgrade() {

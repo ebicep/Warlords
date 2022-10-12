@@ -5,10 +5,8 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -19,8 +17,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AvengersStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
     protected float energyStole = 0;
+    private boolean pveUpgrade = false;
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -29,16 +27,8 @@ public class AvengersStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and removing §e" + format(energySteal) + " §7energy.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "Strike the targeted enemy player," +
-                                "causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage" +
-                                "and removing §e" + format(energySteal) + " §7energy.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and removing §e" + format(energySteal) + " §7energy.";
     }
 
     @Override
@@ -96,7 +86,8 @@ public class AvengersStrike extends AbstractStrikeBase {
                 1,
                 4,
                 location.clone().add(0, 1, 0),
-                500);
+                500
+        );
     }
 
     public boolean isPveUpgrade() {

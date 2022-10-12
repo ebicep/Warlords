@@ -27,12 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncendiaryCurse extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
-    protected int playersHit = 0;
-
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
+    protected int playersHit = 0;
+    private boolean pveUpgrade = false;
     private float hitbox = 5;
 
     private int blindDurationInTicks = 40;
@@ -43,9 +41,8 @@ public class IncendiaryCurse extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Ignite the targeted area with a cross flame,\n" +
-                "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. Enemies\n" +
-                "§7hit are blinded for §6" + format(blindDurationInTicks / 20f) + " §7seconds.";
+        description = "Ignite the targeted area with a cross flame, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage. Enemies hit are blinded for §6" + format(blindDurationInTicks / 20f) + " §7seconds.";
     }
 
     @Override
@@ -111,10 +108,10 @@ public class IncendiaryCurse extends AbstractAbility {
 
                 WarlordsEntity directHit;
                 if (
-                    !newLoc.getBlock().isEmpty()
-                    && newLoc.getBlock().getType() != Material.GRASS
-                    && newLoc.getBlock().getType() != Material.BARRIER
-                    && newLoc.getBlock().getType() != Material.VINE
+                        !newLoc.getBlock().isEmpty()
+                                && newLoc.getBlock().getType() != Material.GRASS
+                                && newLoc.getBlock().getType() != Material.BARRIER
+                                && newLoc.getBlock().getType() != Material.VINE
                 ) {
                     // Explode based on collision
                     shouldExplode = true;

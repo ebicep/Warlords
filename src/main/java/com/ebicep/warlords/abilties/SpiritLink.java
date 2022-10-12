@@ -30,12 +30,9 @@ public class SpiritLink extends AbstractChainBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Links your spirit with up to §c3 §7enemy\n" +
-                "§7players, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7to the first target hit. Each additional hit\n" +
-                "§7deals §c20% §7reduced damage. You gain §e40%\n" +
-                "§7speed for §6" + speedDuration  + " §7seconds, and take §c15%\n" +
-                "§7reduced damage for §6" + damageReductionDuration + " §7seconds.";
+        description = "Links your spirit with up to §c3 §7enemy players, dealing " + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to the first target hit. Each additional hit deals §c20% §7reduced damage. You gain §e40% §7speed for §6" + speedDuration +
+                " §7seconds, and take §c15% §7reduced damage for §6" + damageReductionDuration + " §7seconds.";
     }
 
     @Override
@@ -132,7 +129,8 @@ public class SpiritLink extends AbstractChainBase {
                 new SpiritLink(),
                 warlordsPlayer,
                 CooldownTypes.BUFF,
-                cooldownManager -> { },
+                cooldownManager -> {
+                },
                 (int) (damageReductionDuration * 20)
         ) {
             @Override

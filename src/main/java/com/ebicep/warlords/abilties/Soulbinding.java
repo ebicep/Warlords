@@ -19,13 +19,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
+    private final int duration = 12;
     protected int playersBinded = 0;
     protected int soulProcs = 0;
     protected int linkProcs = 0;
     protected int soulTeammatesCDReductions = 0;
     protected int linkTeammatesHealed = 0;
-
-    private final int duration = 12;
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private int bindDuration = 2;
 
@@ -38,20 +37,11 @@ public class Soulbinding extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Your melee attacks §dBIND\n" +
-                "§7enemies for §6" + bindDuration + " §7seconds.\n" +
-                "§7Against §dBOUND §7targets, your\n" +
-                "§7next Spirit Link will heal you for\n" +
-                "§a400 §7health (half for §e2 §7nearby allies.)\n" +
-                "§7Your next Fallen Souls will reduce the\n" +
-                "§7cooldown of all abilities by §61.5\n" +
-                "§7seconds. (§61 §7second for §e2 §7nearby\n" +
-                "§7allies). Both buffs may be activated for\n" +
-                "§7every melee hit. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7Successful soulbind procs will grant you\n" +
-                "§7§625% §7knockback resistance for §61.2\n" +
-                "§7seconds. (max §63.6 §7seconds)";
+        description = "Your melee attacks §dBIND enemies for §6" + bindDuration + " §7seconds. Against §dBOUND §7targets, " +
+                "your next Spirit Link will heal you for §a400 §7health (half for §e2 §7nearby allies.) Your next Fallen Souls " +
+                "will reduce the cooldown of all abilities by §61.5 §7seconds. (§61 §7second for §e2 §7nearby allies). " +
+                "Both buffs may be activated for every melee hit. Lasts §6" + duration + " §7seconds." +
+                "\n\nSuccessful soulbind procs will grant you §625% §7knockback resistance for §61.2 §7seconds. (max §63.6 §7seconds)";
     }
 
     @Override
@@ -105,6 +95,10 @@ public class Soulbinding extends AbstractAbility {
         return true;
     }
 
+    public List<SoulBoundPlayer> getSoulBindedPlayers() {
+        return soulBindedPlayers;
+    }
+
     public void addPlayersBinded() {
         playersBinded++;
     }
@@ -123,10 +117,6 @@ public class Soulbinding extends AbstractAbility {
 
     public void addLinkTeammatesHealed() {
         linkTeammatesHealed++;
-    }
-
-    public List<SoulBoundPlayer> getSoulBindedPlayers() {
-        return soulBindedPlayers;
     }
 
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {

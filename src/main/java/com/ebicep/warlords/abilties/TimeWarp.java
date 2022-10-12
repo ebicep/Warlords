@@ -17,15 +17,19 @@ import java.util.Collections;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int timesSuccessful = 0;
-
+    private boolean pveUpgrade = false;
     private int duration = 5;
     private int warpHealPercentage = 30;
 
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = "Activate to place a time rune on the ground. After §6" + duration +
+                " §7seconds, you will warp back to that location and restore §a" + warpHealPercentage + "% §7of your health";
     }
 
     @Override
@@ -35,14 +39,6 @@ public class TimeWarp extends AbstractAbility {
         info.add(new Pair<>("Times Successful", "" + timesSuccessful));
 
         return info;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Activate to place a time rune on\n" +
-                "§7the ground. After §6" + duration + " §7seconds,\n" +
-                "§7you will warp back to that location\n" +
-                "§7and restore §a" + warpHealPercentage + "% §7of your health";
     }
 
     @Override
@@ -113,10 +109,6 @@ public class TimeWarp extends AbstractAbility {
         return true;
     }
 
-    public void setWarpHealPercentage(int warpHealPercentage) {
-        this.warpHealPercentage = warpHealPercentage;
-    }
-
     public int getTimesSuccessful() {
         return timesSuccessful;
     }
@@ -131,6 +123,10 @@ public class TimeWarp extends AbstractAbility {
 
     public int getWarpHealPercentage() {
         return warpHealPercentage;
+    }
+
+    public void setWarpHealPercentage(int warpHealPercentage) {
+        this.warpHealPercentage = warpHealPercentage;
     }
 
     public int getDuration() {

@@ -5,12 +5,10 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -26,12 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Boulder extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int playersHit = 0;
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;
-
+    private boolean pveUpgrade = false;
     private double boulderSpeed = 0.290;
     private double boulderGravity = -0.0059;
     private double hitbox = 5.5;
@@ -43,18 +39,8 @@ public class Boulder extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Launch a giant boulder that shatters\n" +
-                "§7and deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7to all enemies near the impact point\n" +
-                "§7and knocks them back slightly.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "Launch a giant boulder that shatters\n" +
-                                "and deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                                "to all enemies near the impact point\n" +
-                                "and knocks them back slightly.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Launch a giant boulder that shatters and deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies near the impact point and knocks them back slightly.";
     }
 
     @Override

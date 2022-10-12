@@ -6,11 +6,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -33,23 +31,9 @@ public class Fireball extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Shoot a fireball that will explode\n" +
-                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
-                "§7direct hit will cause the enemy\n" +
-                "§7to take an additional §c15% §7extra\n" +
-                "§7damage." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Shoot a fireball that will explode\n" +
-                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
-                        "direct hit will cause the enemy\n" +
-                        "to take an additional §c15% §7extra\n" +
-                        "damage." +
-                        "\n\n" +
-                        "Has an optimal range of §e" + maxFullDistance + " §7blocks.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Shoot a fireball that will explode for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage. A direct hit will cause the enemy to take an additional §c15% §7extra damage." +
+                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks.";
     }
 
     @Override
@@ -86,12 +70,6 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-        this.playEffect(projectile);
-    }
-
-    @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
@@ -106,7 +84,9 @@ public class Fireball extends AbstractProjectileBase {
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                 1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-        if (toReduceBy < .2) toReduceBy = .2;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
@@ -119,7 +99,8 @@ public class Fireball extends AbstractProjectileBase {
                     (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                     critChance,
                     critMultiplier,
-                    false);
+                    false
+            );
 
             if (pveUpgrade) {
                 hit.getCooldownManager().removeCooldown(Fireball.class);
@@ -130,7 +111,8 @@ public class Fireball extends AbstractProjectileBase {
                         new Fireball(),
                         shooter,
                         CooldownTypes.DEBUFF,
-                        cooldownManager -> {},
+                        cooldownManager -> {
+                        },
                         5 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksLeft % 20 == 0) {
@@ -173,10 +155,17 @@ public class Fireball extends AbstractProjectileBase {
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
-                    false);
+                    false
+            );
         }
 
         return playersHit;
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
     }
 
     public int getMaxFullDistance() {

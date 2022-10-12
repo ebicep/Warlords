@@ -21,11 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int playersLinked = 0;
     protected int numberOfBrokenLinks = 0;
-
+    private boolean pveUpgrade = false;
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
     private int duration = 8;
@@ -39,17 +37,12 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, increasing\n" +
-                "§7the damage they deal by §c" + format(allyDamageIncrease) + "% §7as long as the\n" +
-                "§7link is active. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7When the link expires you and the allies\n" +
-                "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
-                "§7the link early will only heal the allies\n" +
-                "§7for §a" + healingMultiplier + "% §7of the original amount for\n" +
-                "each second they have been linked." +
-                "\n\n" +
-                "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
+        description = "Bind yourself to §e" + alliesAffected + " §7allies near you, increasing the damage they deal by §c" +
+                format(allyDamageIncrease) + "% §7as long as the link is active. Lasts §6" + duration + " §7seconds." +
+                "\n\nWhen the link expires you and the allies are healed for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
+                "health. Breaking the link early will only heal the allies for §a" + healingMultiplier +
+                "% §7of the original amount for each second they have been linked." +
+                "\n\nThe link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
     }
 
     @Override
@@ -84,7 +77,9 @@ public class RemedicChains extends AbstractAbility {
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
-                        if (wp.isDead()) return;
+                        if (wp.isDead()) {
+                            return;
+                        }
 
                         wp.addHealingInstance(
                                 wp,

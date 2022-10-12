@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
@@ -20,15 +21,16 @@ import java.util.function.Predicate;
 
 public abstract class AbstractAbility {
 
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-    protected static final int DESCRIPTION_WIDTH = 175;
+    protected static final int DESCRIPTION_WIDTH = 165;
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
     static {
-        decimalFormat.setDecimalSeparatorAlwaysShown(false);
+        DECIMAL_FORMAT.setDecimalSeparatorAlwaysShown(false);
     }
 
+    //Sneak ability
+    protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
-
     protected String name;
     protected float minDamageHeal;
     protected float maxDamageHeal;
@@ -40,8 +42,9 @@ public abstract class AbstractAbility {
     protected String description;
     protected boolean boosted;
 
-    //Sneak ability
-    protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
+    }
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         this.name = name;
@@ -52,10 +55,6 @@ public abstract class AbstractAbility {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         boosted = false;
-    }
-
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
     }
 
     public abstract void updateDescription(Player player);
@@ -88,11 +87,6 @@ public abstract class AbstractAbility {
 
     public void setTimesUsed(int timesUsed) {
         this.timesUsed = timesUsed;
-    }
-
-
-    public String getName() {
-        return name;
     }
 
     public float getMinDamageHeal() {
@@ -139,42 +133,6 @@ public abstract class AbstractAbility {
         }
     }
 
-    public float getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(float cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public float getEnergyCost() {
-        return energyCost;
-    }
-
-    public void setEnergyCost(float energyCost) {
-        this.energyCost = energyCost;
-    }
-
-    public float getCritChance() {
-        return critChance;
-    }
-
-    public void setCritChance(float critChance) {
-        this.critChance = critChance;
-    }
-
-    public float getCritMultiplier() {
-        return critMultiplier;
-    }
-
-    public void setCritMultiplier(float critMultiplier) {
-        this.critMultiplier = critMultiplier;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public List<SecondaryAbility> getSecondaryAbilities() {
         return secondaryAbilities;
     }
@@ -218,8 +176,68 @@ public abstract class AbstractAbility {
                 .get();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public float getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(float cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public float getEnergyCost() {
+        return energyCost;
+    }
+
+    public void setEnergyCost(float energyCost) {
+        this.energyCost = energyCost;
+    }
+
+    public float getCritChance() {
+        return critChance;
+    }
+
+    public void setCritChance(float critChance) {
+        this.critChance = critChance;
+    }
+
+    public float getCritMultiplier() {
+        return critMultiplier;
+    }
+
+    public void setCritMultiplier(float critMultiplier) {
+        this.critMultiplier = critMultiplier;
+    }
+
+    public String getDescription() {
+        return WordWrap.wrapWithNewline(ChatColor.GRAY + description, DESCRIPTION_WIDTH);
+    }
+
+    public String formatRangeDamage(float min, float max) {
+        return formatRange(min, max, ChatColor.RED);
+    }
+
+    public String formatRange(float min, float max, ChatColor chatColor) {
+        return " " +
+                chatColor +
+                format(min) +
+                ChatColor.GRAY +
+                " - " +
+                chatColor +
+                format(max) +
+                ChatColor.GRAY +
+                " ";
+    }
+
     public String format(double input) {
-        return decimalFormat.format(input);
+        return DECIMAL_FORMAT.format(input);
+    }
+
+    public String formatRangeHealing(float min, float max) {
+        return formatRange(min, max, ChatColor.GREEN);
     }
 
     /**
@@ -237,9 +255,9 @@ public abstract class AbstractAbility {
 
     public static class SecondaryAbility {
 
+        public final Predicate<SecondaryAbility> shouldRemove;
         private final Runnable runnable;
         private final boolean hasInfiniteUses;
-        public final Predicate<SecondaryAbility> shouldRemove;
 
         public SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
             this.runnable = runnable;

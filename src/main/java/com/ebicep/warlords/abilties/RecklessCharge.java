@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
-    protected int playersCharged = 0;
-
     private static final List<UUID> stunnedPlayers = new ArrayList<>();
+    protected int playersCharged = 0;
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {
@@ -34,12 +33,9 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
-                "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
-                "§7you pass through. Enemies hit are\n" +
-                "§5IMMOBILIZED§7, preventing movement\n" +
-                "§7for §6" + (stunTimeInTicks / 20f) + " §7seconds. Charge is reduced\n" +
-                "§7when carrying a flag.";
+        description = "Charge forward, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies you pass through. Enemies hit are §5IMMOBILIZED§7, preventing movement for §6" + (stunTimeInTicks / 20f) +
+                " §7seconds.";
     }
 
     @Override
@@ -101,7 +97,8 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                     ParticleEffect.REDSTONE.display(
                             new ParticleEffect.OrdinaryColor(255, 0, 0),
                             wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
-                            500);
+                            500
+                    );
                 }
                 PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5)
                         .excluding(playersHit)
@@ -131,24 +128,24 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         return true;
     }
 
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
-            if (
-                (e.getFrom().getX() != e.getTo().getX() ||
-                e.getFrom().getZ() != e.getTo().getZ()) &&
-                !(e instanceof PlayerTeleportEvent)
-            ) {
-                e.getPlayer().teleport(e.getFrom());
-            }
-        }
-    }
-
     public int getStunTimeInTicks() {
         return stunTimeInTicks;
     }
 
     public void setStunTimeInTicks(int stunTimeInTicks) {
         this.stunTimeInTicks = stunTimeInTicks;
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
+            if (
+                    (e.getFrom().getX() != e.getTo().getX() ||
+                            e.getFrom().getZ() != e.getTo().getZ()) &&
+                            !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
+        }
     }
 }

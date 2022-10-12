@@ -34,10 +34,8 @@ public class SeismicWave extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Send a wave of incredible force\n" +
-                "§7forward that deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "\n" +
-                "§7damage to all enemies hit and\n" +
-                "knocks them back slightly.";
+        description = "Send a wave of incredible force forward that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies hit and knocks them back slightly.";
     }
 
     @Override
@@ -159,7 +157,8 @@ public class SeismicWave extends AbstractAbility {
         }
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
                 type,
-                data);
+                data
+        );
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;

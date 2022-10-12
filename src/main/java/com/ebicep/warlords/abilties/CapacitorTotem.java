@@ -5,11 +5,9 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -44,20 +42,8 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Place a highly conductive totem\n" +
-                "§7on the ground. Casting Chain Lightning\n" +
-                "§7or Lightning Rod on the totem will cause\n" +
-                "§7it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7to all enemies nearby. Lasts §6" + duration + " §7seconds.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "Place a highly conductive totem\n" +
-                                "on the ground. Casting Chain Lightning\n" +
-                                "or Lightning Rod on the totem will cause\n" +
-                                "it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                                "to all enemies nearby. Lasts §6" + duration + " §7seconds.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing" +
+                formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage to all enemies nearby. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -140,6 +126,18 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     }
 
+    public void addPLayersKilledWithFinalHit() {
+        playersKilledWithFinalHit++;
+    }
+
+    public boolean isTeamCarrierPassedThrough() {
+        return teamCarrierPassedThrough;
+    }
+
+    public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
+        this.teamCarrierPassedThrough = teamCarrierPassedThrough;
+    }
+
     public void pulseDamage() {
         pulseDamage.run();
     }
@@ -188,25 +186,12 @@ public class CapacitorTotem extends AbstractTotemBase {
         return numberOfProcsAfterCarrierPassed;
     }
 
-
-    public boolean isTeamCarrierPassedThrough() {
-        return teamCarrierPassedThrough;
-    }
-
-    public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
-        this.teamCarrierPassedThrough = teamCarrierPassedThrough;
-    }
-
     public boolean isPveUpgrade() {
         return pveUpgrade;
     }
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
-    }
-
-    public void addPLayersKilledWithFinalHit() {
-        playersKilledWithFinalHit++;
     }
 
     public int getPlayersKilledWithFinalHit() {

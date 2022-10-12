@@ -26,14 +26,12 @@ import java.util.List;
 
 
 public class UndyingArmy extends AbstractAbility {
-    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
-    protected int playersArmied = 0;
-
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(ChatColor.RED + "Instant Kill")
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
-
+    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
+    protected int playersArmied = 0;
     private int radius = 15;
     private int duration = 10;
     private int maxArmyAllies = 6;
@@ -41,27 +39,21 @@ public class UndyingArmy extends AbstractAbility {
     private float flatHealing = 100;
     private float missingHealing = 3.5f;
 
-    public UndyingArmy() {
-        super("Undying Army", 0, 0, 62.64f, 60);
-    }
-
     public UndyingArmy(int maxHealthDamage) {
         this();
         this.maxHealthDamage = maxHealthDamage;
     }
 
+    public UndyingArmy() {
+        super("Undying Army", 0, 0, 62.64f, 60);
+    }
+
     @Override
     public void updateDescription(Player player) {
-        description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
-                "§7block radius to heal them for §a" + format(flatHealing) + " §7+\n" +
-                "§7§a" + missingHealing + "% §7of their missing health every second.\n" +
-                "Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7Chained allies that take fatal damage\n" +
-                "§7will be revived with §a100% §7of their max health\n" +
-                "§7and §e100% §7max energy. Revived allies rapidly\n" +
-                "§7take §c" + maxHealthDamage + "% §7of their max health as damage every\n" +
-                "§7second.";
+        description = "You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + " §7block radius to heal them for §a" +
+                format(flatHealing) + " §7+ §a" + missingHealing + "% §7of their missing health every second. Lasts §6" + duration + " §7seconds." +
+                "\n\nChained allies that take fatal damage will be revived with §a100% §7of their max health and §e100% §7max energy. Revived allies rapidly " +
+                "take §c" + maxHealthDamage + "% §7of their max health as damage every second.";
     }
 
     @Override
@@ -92,7 +84,8 @@ public class UndyingArmy extends AbstractAbility {
                 double width = 1.5;
 
                 ParticleEffect.ENCHANTMENT_TABLE.display(0, 0.1f, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                );
             }
 
             for (int c = 0; c < 15; c++) {
@@ -100,7 +93,8 @@ public class UndyingArmy extends AbstractAbility {
                 double width = 0.6;
 
                 ParticleEffect.SPELL.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                );
             }
         }
 

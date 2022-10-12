@@ -28,10 +28,8 @@ public class SoulSwitch extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Switch locations with an enemy, blinding\n" +
-                "§7them for §61.5 §7seconds. Has an optimal range\n" +
-                "§7of §e" + radius + " §7blocks. Soul Switch has low\n" +
-                "§7vertical range.";
+        description = "Switch locations with an enemy, blinding them for §61.5 §7seconds. Has an optimal range of §e" + radius +
+                " §7blocks. Soul Switch has low vertical range.";
     }
 
     @Override
@@ -73,7 +71,8 @@ public class SoulSwitch extends AbstractAbility {
                         ownLocation.getY(),
                         ownLocation.getZ(),
                         swapLocation.getYaw(),
-                        swapLocation.getPitch()));
+                        swapLocation.getPitch()
+                ));
 
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You swapped with " + ChatColor.YELLOW + swapTarget.getName() + "!");
                 wp.teleport(new Location(
@@ -82,7 +81,8 @@ public class SoulSwitch extends AbstractAbility {
                         swapLocation.getY(),
                         swapLocation.getZ(),
                         ownLocation.getYaw(),
-                        ownLocation.getPitch()));
+                        ownLocation.getPitch()
+                ));
 
                 return true;
             }

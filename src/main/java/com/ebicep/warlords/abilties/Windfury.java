@@ -17,11 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Windfury extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    protected int timesProcd = 0;
-
-    private int procChance = 35;
     private final int duration = 8;
+    protected int timesProcd = 0;
+    private boolean pveUpgrade = false;
+    private int procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;
 
@@ -31,13 +30,9 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Imbue your weapon with the power\n" +
-                "§7of the wind, causing each of your\n" +
-                "§7melee attacks to have a §e" + procChance + "% §7chance\n" +
-                "§7to hit §e" + maxHits + " §7additional times for §c" + format(weaponDamage) + "%\n" +
-                "§7weapon damage. The first melee hit is\n" +
-                "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +
-                "§7seconds.";
+        description = "Imbue your weapon with the power of the wind, causing each of your melee attacks to have a §e" + procChance +
+                "% §7chance to hit §e" + maxHits + " §7additional times for §c" + format(weaponDamage) +
+                "% §7weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override

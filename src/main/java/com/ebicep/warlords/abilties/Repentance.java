@@ -27,10 +27,8 @@ public class Repentance extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Taking damage empowers your damaging\n" +
-                "§7abilities and melee hits, restoring health\n" +
-                "§7and energy based on §c10 §7+ §c" + damageConvertPercent + "% §7of the\n" +
-                "§7damage you've recently took. Lasts §6" + duration + " §7seconds.";
+        description = "Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on §c10 §7+ §c" +
+                damageConvertPercent + "% §7of the damage you've recently took. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -77,6 +75,14 @@ public class Repentance extends AbstractAbility {
         return true;
     }
 
+    @Override
+    public void runEverySecond() {
+        if (pool > 0) {
+            float newPool = pool * .8f - poolDecay;
+            pool = Math.max(newPool, 0);
+        }
+    }
+
     public float getPool() {
         return pool;
     }
@@ -95,14 +101,6 @@ public class Repentance extends AbstractAbility {
 
     public void addToPool(float amount) {
         this.pool += amount;
-    }
-
-    @Override
-    public void runEverySecond() {
-        if (pool > 0) {
-            float newPool = pool * .8f - poolDecay;
-            pool = Math.max(newPool, 0);
-        }
     }
 
     public int getDuration() {

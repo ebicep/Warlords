@@ -17,9 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Inferno extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int hitsAmplified = 0;
+    private boolean pveUpgrade = false;
     private int maxHits = 10;
 
     private int duration = 18;
@@ -32,10 +31,9 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Combust into a molten inferno,\n" +
-                "§7increasing your Crit Chance by §c" + critChanceIncrease + "%\n" +
-                "§7and your Crit Multiplier by §c" + critMultiplierIncrease + "%§7. Lasts\n" +
-                "§6" + duration + " §7seconds.";
+        description = "Combust into a molten inferno, increasing your Crit Chance by §c" + critChanceIncrease +
+                "% §7and your Crit Multiplier by §c" + critMultiplierIncrease +
+                "%§7. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -71,6 +69,8 @@ public class Inferno extends AbstractAbility {
                     }
                 })
         ) {
+            int finalMaxHits = maxHits;
+
             @Override
             public boolean distinct() {
                 return true;
@@ -92,8 +92,6 @@ public class Inferno extends AbstractAbility {
                 }
                 return currentCritMultiplier + critMultiplierIncrease;
             }
-
-            int finalMaxHits = maxHits;
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -118,12 +116,12 @@ public class Inferno extends AbstractAbility {
         return critChanceIncrease;
     }
 
-    public int getCritMultiplierIncrease() {
-        return critMultiplierIncrease;
-    }
-
     public void setCritChanceIncrease(int critChanceIncrease) {
         this.critChanceIncrease = critChanceIncrease;
+    }
+
+    public int getCritMultiplierIncrease() {
+        return critMultiplierIncrease;
     }
 
     public void setCritMultiplierIncrease(int critMultiplierIncrease) {

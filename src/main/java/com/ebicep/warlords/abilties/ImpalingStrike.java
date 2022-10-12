@@ -31,12 +31,11 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Impale an enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and afflict them with the §aLEECH §7effect for §6" + leechDuration + " §7seconds.\n" +
-                "§7Whenever an ally (including yourself) deals\n" +
-                "§7damage to a leeched enemy, they heal for §a" + leechAllyAmount + "%\n" +
-                "§7of the damage dealt. You heal for §a" + leechSelfAmount + "% §7of the\n" +
-                "§7damage you deal to a leeched enemy instead.";
+        description = "Impale an enemy, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and afflict them with the §aLEECH §7effect for §6" + leechDuration +
+                " §7seconds. Whenever an ally (including yourself) deals damage to a leeched enemy, they heal for §a" + format(leechAllyAmount) +
+                "% §7of the damage dealt. You heal for §a" + format(leechSelfAmount) +
+                "% §7of the damage you deal to a leeched enemy instead.";
     }
 
     @Override
@@ -111,6 +110,10 @@ public class ImpalingStrike extends AbstractStrikeBase {
         randomHitEffect(location, 7, 100, 255, 100);
     }
 
+    public void addHealingDoneFromEnemyCarrier(float amount) {
+        this.healingDoneFromEnemyCarrier += amount;
+    }
+
     public int getLeechDuration() {
         return leechDuration;
     }
@@ -121,10 +124,6 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     public float getHealingDoneFromEnemyCarrier() {
         return healingDoneFromEnemyCarrier;
-    }
-
-    public void addHealingDoneFromEnemyCarrier(float amount) {
-        this.healingDoneFromEnemyCarrier += amount;
     }
 
     public float getLeechSelfAmount() {

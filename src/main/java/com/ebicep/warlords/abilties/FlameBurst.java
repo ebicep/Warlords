@@ -4,11 +4,9 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -32,17 +30,8 @@ public class FlameBurst extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Launch a flame burst that will explode\n" +
-                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
-                "§7chance increases by §c1% §7for each\n" +
-                "§7travelled block. Up to 100%.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Launch a flame burst that will explode\n" +
-                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
-                        "chance increases by §c1% §7for each\n" +
-                        "travelled block. Up to 100%.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Launch a flame burst that will explode for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage. The critical chance increases by §c1% §7for each travelled block. Up to 100%.";
     }
 
     @Override
@@ -53,11 +42,6 @@ public class FlameBurst extends AbstractProjectileBase {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
-    }
-
-    @Override
-    protected void updateSpeed(Vector speedVector, int ticksLived) {
-        speedVector.multiply(acceleration);
     }
 
     @Override
@@ -83,7 +67,8 @@ public class FlameBurst extends AbstractProjectileBase {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
             double width = projectileWidth;
             ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
-                    center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                    center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+            );
         }
     }
 
@@ -135,6 +120,11 @@ public class FlameBurst extends AbstractProjectileBase {
         }
 
         return playersHit;
+    }
+
+    @Override
+    protected void updateSpeed(Vector speedVector, int ticksLived) {
+        speedVector.multiply(acceleration);
     }
 
     public float getHitbox() {

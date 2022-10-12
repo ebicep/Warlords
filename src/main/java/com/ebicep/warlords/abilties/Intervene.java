@@ -19,11 +19,10 @@ import java.util.List;
 
 
 public class Intervene extends AbstractAbility {
+    private final int duration = 5;
     protected int playersIntervened = 0;
     protected int carriersIntervened = 0;
     private float damagePrevented = 0;
-
-    private final int duration = 5;
     private float maxDamagePrevented = 3600;
     private int radius = 10;
     private int breakRadius = 15;
@@ -43,15 +42,10 @@ public class Intervene extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Protect the target ally, reducing\n" +
-                "§7the damage they take by §e100%\n" +
-                "§7and redirecting §e50% §7of the damage\n" +
-                "§7they would have taken back to you.\n" +
-                "§7You can protect the target for a maximum\n" +
-                "§7of §c" + format(maxDamagePrevented) + " §7damage. You must remain within\n" +
-                "§e" + breakRadius + " §7blocks of each other. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7Has an initial cast range of §e" + radius + " §7blocks.";
+        description = "Protect the target ally, reducing the damage they take by §e100% §7and redirecting §e50% §7of the damage they would " +
+                "have taken back to you. You can protect the target for a maximum of §c" + format(maxDamagePrevented) +
+                " §7damage. You must remain within §e" + breakRadius + " §7blocks of each other. Lasts §6" + duration + " §7seconds." +
+                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override

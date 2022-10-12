@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotemBase {
-    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
     protected int playersCrippled = 0;
-
+    private boolean pveUpgrade = false;
     private int radius = 7;
     private int duration = 6;
     private int crippleDuration = 6;
@@ -48,18 +47,11 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Place a totem on the ground that\n" +
-                "§7pulses constantly, healing nearby\n" +
-                "§7allies in a §e" + radius + " §7block radius for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + "\n" +
-                "§7every second. The healing will gradually\n" +
-                "§7increase by §a35% §7(up to " + (35 * duration) + "%) every\n" +
-                "§7second. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7Pressing SHIFT or re-activating\n " +
-                "§7the ability causes your totem to\n" +
-                "§7pulse with immense force, crippling all\n" +
-                "§7enemies for §6" + crippleDuration + " §7seconds. Crippled enemies\n" +
-                "§7deal §c25% §7less damage.";
+        description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
+                " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "every second. " +
+                "The healing will gradually increase by §a35% §7 (Up to " + (35 * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
+                "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
+                crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
     }
 
     @Override
@@ -141,7 +133,8 @@ public class HealingTotem extends AbstractTotemBase {
                                 0.05F,
                                 5,
                                 totemStand.getLocation().clone().add(0, 1.6, 0),
-                                500);
+                                500
+                        );
 
                         Location totemLoc = totemStand.getLocation();
                         totemLoc.add(0, 2, 0);
@@ -245,6 +238,13 @@ public class HealingTotem extends AbstractTotemBase {
         );
     }
 
+    public void addAmountHealed(float amount) {
+        amountHealed += amount;
+    }
+
+    public float getAmountHealed() {
+        return amountHealed;
+    }
 
     public int getRadius() {
         return radius;
@@ -276,13 +276,5 @@ public class HealingTotem extends AbstractTotemBase {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
-    }
-
-    public void addAmountHealed(float amount) {
-        amountHealed += amount;
-    }
-
-    public float getAmountHealed() {
-        return amountHealed;
     }
 }

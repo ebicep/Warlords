@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class RighteousStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
-
     protected int silencedTargetStruck = 0;
-
+    private boolean pveUpgrade = false;
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
@@ -27,14 +25,11 @@ public class RighteousStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Each strike reduces the duration of your struck\n" +
-                "§7target's active ability timers by §6" + (abilityReductionInTicks / 20f) + " §7seconds." +
-                "\n\n" +
-                "§7Additionally, if your struck target is silenced,\n" +
-                "§7reduce the cooldown of your Prism Guard by §6" + ((abilityReductionInTicks * 1.6f) / 20f) + "\n" +
-                "§7seconds and reduce their active ability timers\n" +
-                "§7by §60.8 §7seconds instead.";
+        description = "Strike the targeted enemy for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage. Each strike reduces the duration of your struck target's active ability timers by §6" +
+                (abilityReductionInTicks / 20f) + " §7seconds." +
+                "\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by §6" +
+                ((abilityReductionInTicks * 1.6f) / 20f) + " §7seconds and reduce their active ability timers by §60.8 §7seconds instead.";
     }
 
     @Override

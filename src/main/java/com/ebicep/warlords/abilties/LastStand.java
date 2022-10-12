@@ -22,13 +22,11 @@ import java.util.List;
 
 
 public class LastStand extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
+    private final int radius = 7;
     protected int playersLastStanded = 0;
-
+    private boolean pveUpgrade = false;
     private int selfDuration = 12;
     private int allyDuration = 6;
-    private final int radius = 7;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
 
@@ -46,15 +44,10 @@ public class LastStand extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Enter a defensive stance,\n" +
-                "§7reducing all damage you take by\n" +
-                "§c" + selfDamageReductionPercent + "% §7for §6" + selfDuration + " §7seconds and also\n" +
-                "§7reduces all damage nearby allies take\n" +
-                "§7by §c" + teammateDamageReductionPercent + "% §7for §6" + allyDuration + " §7seconds. You are\n" +
-                "§7healed §7for the amount of damage\n" +
-                "§7prevented on allies." +
-                "\n\n" +
-                "§7Has a maximum range of §e" + radius + " §7blocks.";
+        description = "Enter a defensive stance, reducing all damage you take by §c" + selfDamageReductionPercent +
+                "% §7for §6" + selfDuration + " §7seconds and also reduces all damage nearby allies take by §c" + teammateDamageReductionPercent +
+                "% §7for §6" + allyDuration + " §7seconds. You are healed §7for the amount of damage prevented on allies." +
+                "\n\nHas a maximum range of §e" + radius + " §7blocks.";
     }
 
     @Override
@@ -124,7 +117,7 @@ public class LastStand extends AbstractAbility {
                             name,
                             currentDamageValue,
                             currentDamageValue,
-                            isCrit ? 100 : -1,
+                            isCrit ? 100 : 0,
                             100,
                             false,
                             true
@@ -140,7 +133,7 @@ public class LastStand extends AbstractAbility {
                             name,
                             currentDamageValue,
                             currentDamageValue,
-                            isCrit ? 100 : -1,
+                            isCrit ? 100 : 0,
                             100,
                             false,
                             false
@@ -185,7 +178,8 @@ public class LastStand extends AbstractAbility {
                 double distance = 3;
 
                 ParticleEffect.FLAME.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                );
             }
 
             for (int c = 0; c < 10; c++) {
@@ -194,11 +188,16 @@ public class LastStand extends AbstractAbility {
                 double distance = 3;
 
                 ParticleEffect.REDSTONE.display(0, 0, 0, 0, 1,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                );
             }
         }
 
         return true;
+    }
+
+    public void addAmountPrevented(float amountPrevented) {
+        this.amountPrevented += amountPrevented;
     }
 
     public float getSelfDamageReduction() {
@@ -215,10 +214,6 @@ public class LastStand extends AbstractAbility {
 
     public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
         this.teammateDamageReductionPercent = teammateDamageReductionPercent;
-    }
-
-    public void addAmountPrevented(float amountPrevented) {
-        this.amountPrevented += amountPrevented;
     }
 
     public float getAmountPrevented() {

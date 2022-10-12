@@ -8,12 +8,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -23,10 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FreezingBreath extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    protected int playersHit = 0;
-
     private final int slowDuration = 4;
+    protected int playersHit = 0;
+    private boolean pveUpgrade = false;
     private int slowness = 35;
 
     private float hitbox = 10;
@@ -37,27 +34,18 @@ public class FreezingBreath extends AbstractAbility {
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = "Breathe cold air in a cone in front of you, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies hit and slowing them by §e" + slowness + "% §7for §6" + slowDuration + " §7seconds.";
+    }
+
+    @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
         info.add(new Pair<>("Players Hit", "" + playersHit));
 
         return info;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Breathe cold air in a cone in front\n" +
-                "§7of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7to all enemies hit and slowing them by\n" +
-                "§e" + slowness + "% §7for §6" + slowDuration + " §7seconds.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Breathe cold air in a cone in front\n" +
-                        "of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                        "to all enemies hit and slowing them by\n" +
-                        "§e" + slowness + "% §7for §6" + slowDuration + " §7seconds.",
-                DESCRIPTION_WIDTH
-        );
     }
 
     @Override
@@ -86,13 +74,15 @@ public class FreezingBreath extends AbstractAbility {
                 }
 
                 ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
-                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0), 500);
+                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0), 500
+                );
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
                     ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    );
                 }
 
                 animationTimer++;

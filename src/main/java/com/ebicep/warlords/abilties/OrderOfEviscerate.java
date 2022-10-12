@@ -40,20 +40,12 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Cloak yourself for §6" + duration + " §7seconds, granting\n" +
-                "§7you §e40% §7movement speed and making you §einvisible\n" +
-                "§7to the enemy for the duration. However, taking up to\n" +
-                "§c600 §7fall damage or any type of ability damage will\n" +
-                "§7end your invisibility." +
-                "\n\n" +
-                "§7All your attacks against an enemy will mark them vulnerable.\n" +
-                "§7Vulnerable enemies take §c20% §7more damage. Additionally,\n" +
-                "§7enemies hit from behind take an additional §c10% §7more damage." +
-                "\n\n" +
-                "§7Successfully killing your mark will §ereset §7both your\n" +
-                "§7Shadow Step and Order of Eviscerate's cooldown\n" +
-                "§7and refund the energy cost. Assisting in killing your\n" +
-                "§7mark will only refund half the cooldown.";
+        description = "Cloak yourself for §6" + duration + " §7seconds, granting you §e40% §7movement speed and making you §einvisible §7to the enemy for the " +
+                "duration. However, taking up to §c600 §7fall damage or any type of ability damage will end your invisibility." +
+                "\n\nAll your attacks against an enemy will mark them vulnerable. Vulnerable enemies take §c20% §7more damage. " +
+                "Additionally, enemies hit from behind take an additional §c10% §7more damage." +
+                "\n\nSuccessfully killing your mark will §ereset §7both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. " +
+                "Assisting in killing your mark will only refund half the cooldown.";
     }
 
     @Override
@@ -109,8 +101,8 @@ public class OrderOfEviscerate extends AbstractAbility {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
-                    Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
-                    !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
+                        Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
+                                !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * 1.3f;
@@ -219,13 +211,6 @@ public class OrderOfEviscerate extends AbstractAbility {
         return true;
     }
 
-    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
-        addToDamageThreshold(damageValue);
-        if (getDamageThreshold() >= 600) {
-            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
-        }
-    }
-
     public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
         if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
             warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
@@ -234,27 +219,34 @@ public class OrderOfEviscerate extends AbstractAbility {
         }
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public WarlordsEntity getMarkedPlayer() {
         return markedPlayer;
     }
 
-    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
-        this.markedPlayer = markedPlayer;
+    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
+        addToDamageThreshold(damageValue);
+        if (getDamageThreshold() >= 600) {
+            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
+        }
+    }
+
+    public void addToDamageThreshold(float damageThreshold) {
+        this.damageThreshold += damageThreshold;
     }
 
     public float getDamageThreshold() {
         return damageThreshold;
     }
 
-    public void addToDamageThreshold(float damageThreshold) {
-        this.damageThreshold += damageThreshold;
+    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
+        this.markedPlayer = markedPlayer;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

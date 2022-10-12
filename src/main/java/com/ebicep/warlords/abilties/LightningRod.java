@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LightningRod extends AbstractAbility {
+    private final int knockbackRadius = 5;
     private boolean pveUpgrade = false;
-
     private int energyRestore = 160;
     private int healthRestore = 30;
-    private final int knockbackRadius = 5;
 
     public LightningRod() {
         super("Lightning Rod", 0, 0, 31.32f, 0);
@@ -33,10 +32,9 @@ public class LightningRod extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Call down an energizing bolt of lightning\n" +
-                "§7upon yourself, restoring §a" + healthRestore + "% §7health and\n" +
-                "§e" + energyRestore + " §7energy and knock all nearby enemies\n" +
-                "§7in a §e" + knockbackRadius + " §7block radius back.";
+        description = "Call down an energizing bolt of lightning upon yourself, restoring §a" + healthRestore +
+                "% §7health and §e" + energyRestore + " §7energy and knock all nearby enemies in a §e" + knockbackRadius +
+                " §7block radius back.";
     }
 
 

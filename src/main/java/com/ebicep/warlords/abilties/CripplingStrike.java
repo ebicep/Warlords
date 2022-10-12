@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -20,11 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CripplingStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
-
-    private int consecutiveStrikeCounter = 0;
-
     private final int crippleDuration = 3;
+    private boolean pveUpgrade = false;
+    private int consecutiveStrikeCounter = 0;
     private int cripple = 10;
     private int cripplePerStrike = 5;
 
@@ -39,23 +36,10 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                "§7and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
-                "§7A §ccrippled §7player deals §c" + cripple + "% §7less\n" +
-                "§7damage for the duration of the effect.\n" +
-                "§7Adds §c" + cripplePerStrike + "% §7less damage dealt per\n" +
-                "§7additional strike. (max " + (cripple + (cripplePerStrike * 2)) + "%)";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Strike the targeted enemy player,\n" +
-                        "causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
-                        "and §ccrippling §7them for §6" + crippleDuration + " §7seconds.\n" +
-                        "A §ccrippled §7player deals §c" + cripple + "% §7less\n" +
-                        "damage for the duration of the effect.\n" +
-                        "Adds §c" + cripplePerStrike + "% §7less damage dealt per\n" +
-                        "additional strike. (max " + (cripple + (cripplePerStrike * 2)) + "%)",
-                DESCRIPTION_WIDTH
-        );
+        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and §ccrippling §7them for §6" + crippleDuration + " §7seconds. A §ccrippled §7player deals §c" + cripple +
+                "% §7less damage for the duration of the effect. Adds §c" + cripplePerStrike +
+                "% §7less damage dealt per additional strike. (Max " + (cripple + (cripplePerStrike * 2)) + "%)";
     }
 
     @Override
@@ -80,7 +64,8 @@ public class CripplingStrike extends AbstractStrikeBase {
 
         Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(
                 nearPlayer,
-                RegularCooldown.class)
+                RegularCooldown.class
+        )
                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
                 .findAny();
 
@@ -107,7 +92,9 @@ public class CripplingStrike extends AbstractStrikeBase {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * (cripplePerStrike / 100f));
+                    return currentDamageValue * (((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1,
+                            2
+                    ) * (cripplePerStrike / 100f));
                 }
             });
         } else {

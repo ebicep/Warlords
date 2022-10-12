@@ -6,10 +6,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -18,11 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Berserk extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int hitsDoneAmplified = 0;
     protected int hitsTakenAmplified = 0;
-
+    private boolean pveUpgrade = false;
     private int duration = 18;
     private int speedBuff = 30;
     private float damageIncrease = 30;
@@ -34,18 +30,8 @@ public class Berserk extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7You go into a berserker rage,\n" +
-                "§7increasing your damage by §c" + format(damageIncrease) + "% §7and\n" +
-                "§7movement speed by §e" + speedBuff + "%§7. While active,\n" +
-                "§7you also take §c" + format(damageTakenIncrease) + "% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "You go into a berserker rage," +
-                                "increasing your damage by §c" + format(damageIncrease) + "% §7and" +
-                                "movement speed by §e" + speedBuff + "%§7. While active," +
-                                "you also take §c" + format(damageTakenIncrease) + "% §7more damage." + "§7Lasts §6" + duration + " §7seconds.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "You go into a berserker rage, increasing your damage by §c" + format(damageIncrease) + "% §7and movement speed by §e" + speedBuff +
+                "%§7. While active, you also take §c" + format(damageTakenIncrease) + "% §7more damage. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -94,19 +80,6 @@ public class Berserk extends AbstractAbility {
             int multiplier = 0;
 
             @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsTakenAmplified++;
-                return currentDamageValue * (1 + damageTakenIncrease / 100);
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsDoneAmplified++;
-                multiplier++;
-                return currentDamageValue * (1 + damageIncrease / 100);
-            }
-
-            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (pveUpgrade) {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
@@ -134,6 +107,19 @@ public class Berserk extends AbstractAbility {
                     return currentCritMultiplier + critBoost;
                 }
                 return currentCritMultiplier;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsTakenAmplified++;
+                return currentDamageValue * (1 + damageTakenIncrease / 100);
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsDoneAmplified++;
+                multiplier++;
+                return currentDamageValue * (1 + damageIncrease / 100);
             }
         });
 

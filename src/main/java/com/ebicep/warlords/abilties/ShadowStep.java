@@ -33,13 +33,9 @@ public class ShadowStep extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Leap forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
-                "§7all enemies close on cast or when landing\n" +
-                "§7on the ground. You take reduced fall damage\n" +
-                "§7while leaping." +
-                "\n\n" +
-                "§7Shadow Step has reduced range when\n" +
-                "§7holding a Flag.";
+        description = "Leap forward, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping." +
+                "\n\nShadow Step has reduced range when holding a Flag.";
     }
 
     @Override

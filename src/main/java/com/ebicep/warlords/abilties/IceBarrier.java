@@ -27,10 +27,6 @@ public class IceBarrier extends AbstractAbility {
     private int damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
 
-    public float getDamageReduction() {
-        return (100 - damageReductionPercent) / 100f;
-    }
-
     public IceBarrier() {
         super("Ice Barrier", 0, 0, 46.98f, 0);
     }
@@ -42,12 +38,9 @@ public class IceBarrier extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Surround yourself with a layer of\n" +
-                "§7of cold air, reducing damage taken by\n" +
-                "§c" + damageReductionPercent + "%§7, While active, taking melee\n" +
-                "§7damage reduces the attacker's movement\n" +
-                "§7speed by §e" + slownessOnMeleeHit + "% §7for §62 §7seconds. Lasts\n" +
-                "§6" + duration + " §7seconds.";
+        description = "Surround yourself with a layer of of cold air, reducing damage taken by §c" + damageReductionPercent +
+                "%§7, While active, taking melee damage reduces the attacker's movement speed by §e" + slownessOnMeleeHit +
+                "% §7for §62 §7seconds. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -136,6 +129,10 @@ public class IceBarrier extends AbstractAbility {
         }
 
         return true;
+    }
+
+    public float getDamageReduction() {
+        return (100 - damageReductionPercent) / 100f;
     }
 
     public int getDamageReductionPercent() {

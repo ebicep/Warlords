@@ -6,10 +6,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -31,16 +29,7 @@ public class BloodLust extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7You lust for blood, healing yourself\n" +
-                "§7for §a" + damageConvertPercent + "% §7of all the damage you deal.\n" +
-                "§7Lasts §6" + duration + " §7seconds.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "You lust for blood, healing yourself\n" +
-                                "for §a" + damageConvertPercent + "% §7of all the damage you deal.\n" +
-                                "Lasts §6" + duration + " §7seconds.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "You lust for blood, healing yourself for §a" + damageConvertPercent + "% §7of all the damage you deal. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -126,6 +115,10 @@ public class BloodLust extends AbstractAbility {
         this.damageConvertPercent = damageConvertPercent;
     }
 
+    public void addAmountHealed(float amountHealed) {
+        this.amountHealed += amountHealed;
+    }
+
     public boolean isPveUpgrade() {
         return pveUpgrade;
     }
@@ -140,10 +133,6 @@ public class BloodLust extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    public void addAmountHealed(float amountHealed) {
-        this.amountHealed += amountHealed;
     }
 
     public float getAmountHealed() {

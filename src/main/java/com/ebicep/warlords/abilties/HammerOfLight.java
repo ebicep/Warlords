@@ -10,12 +10,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -30,14 +28,12 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class HammerOfLight extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
+    private static final int radius = 6;
     protected int playersHealed = 0;
     protected int playersDamaged = 0;
+    private boolean pveUpgrade = false;
     private boolean isCrownOfLight = false;
     private Location location;
-
-    private static final int radius = 6;
     private int duration = 10;
     private float minDamage = 178;
     private float maxDamage = 244;
@@ -53,48 +49,19 @@ public class HammerOfLight extends AbstractAbility {
         this.location = location;
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + format(minDamage) + " §7- §c" + format(maxDamage) + "§7damage\n" +
-                "§7damage every second to nearby enemies and\n" +
-                "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
-                "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
-                "§7pierces shields and defenses of enemies\n" +
-                "§7standing on top of the Hammer of Light.\n" +
-                "§7Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
-                "§7Removing the damage and piercing BUT increasing\n" +
-                "§7the healing §7by §a50% §7and reducing the\n" +
-                "§7energy cost of your Protector's Strike by\n" +
-                "§e10 §7energy. You cannot put the Hammer of Light\n" +
-                "§7back down after you converted it.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "§7Throw down a Hammer of Light on\n" +
-                        "§7the ground, dealing §c" + format(minDamage) + " §7- §c" + format(maxDamage) + "§7damage\n" +
-                        "§7damage every second to nearby enemies and\n" +
-                        "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
-                        "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
-                        "§7pierces shields and defenses of enemies\n" +
-                        "§7standing on top of the Hammer of Light.\n" +
-                        "§7Lasts §6" + duration + " §7seconds." +
-                        "\n\n" +
-                        "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
-                        "§7Removing the damage and piercing BUT increasing\n" +
-                        "§7the healing §7by §a50% §7and reducing the\n" +
-                        "§7energy cost of your Protector's Strike by\n" +
-                        "§e10 §7energy. You cannot put the Hammer of Light\n" +
-                        "§7back down after you converted it.",
-                DESCRIPTION_WIDTH
-        );
-    }
-
     public static boolean isStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                 .filter(HammerOfLight::isHammer)
                 .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < radius * radius);
+    }
+
+    public boolean isHammer() {
+        return !isCrownOfLight;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
     public static List<WarlordsEntity> getStandingInHammer(WarlordsEntity owner) {
@@ -112,6 +79,17 @@ public class HammerOfLight extends AbstractAbility {
                     }
                 });
         return new ArrayList<>(playersInHammer);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = "Throw down a Hammer of Light on the ground, dealing" + formatRangeDamage(minDamage, maxDamage) +
+                "damage every second to nearby enemies and healing nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
+                "every second in a §e" + radius + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
+                "Hammer of Light. Lasts §6" + duration + " §7seconds." +
+                "\n\nYou may SNEAK to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
+                "increasing the healing §7by §a50% §7and reducing the energy cost of your Protector's Strike by " +
+                "§e10 §7energy. You cannot put the Hammer of Light back down after you converted it.";
     }
 
     @Override
@@ -285,6 +263,38 @@ public class HammerOfLight extends AbstractAbility {
         return true;
     }
 
+    public ArmorStand spawnHammer(Location location) {
+        Location newLocation = location.clone();
+        for (int i = 0; i < 10; i++) {
+            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                newLocation.add(0, -1, 0);
+            }
+        }
+        newLocation.add(0, -1, 0);
+
+        ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
+        //hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
+        hammer.setItemInHand(new ItemStack(Material.STRING));
+        hammer.setGravity(false);
+        hammer.setVisible(false);
+        hammer.setMarker(true);
+
+        return hammer;
+    }
+
+    public boolean isCrownOfLight() {
+        return isCrownOfLight;
+    }
+
+    public void setCrownOfLight(boolean crownOfLight) {
+        isCrownOfLight = crownOfLight;
+    }
+
+    public void addAmountHealed(float amount) {
+        this.amountHealed += amount;
+    }
+
     private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLight tempHammerOfLight) {
         new GameRunnable(wp.getGame()) {
             @Override
@@ -337,42 +347,6 @@ public class HammerOfLight extends AbstractAbility {
         }.runTaskLater(delay);
     }
 
-    public ArmorStand spawnHammer(Location location) {
-        Location newLocation = location.clone();
-        for (int i = 0; i < 10; i++) {
-            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
-                newLocation.add(0, -1, 0);
-            }
-        }
-        newLocation.add(0, -1, 0);
-
-        ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
-        //hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
-        hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
-        hammer.setItemInHand(new ItemStack(Material.STRING));
-        hammer.setGravity(false);
-        hammer.setVisible(false);
-        hammer.setMarker(true);
-
-        return hammer;
-    }
-
-    public boolean isHammer() {
-        return !isCrownOfLight;
-    }
-
-    public boolean isCrownOfLight() {
-        return isCrownOfLight;
-    }
-
-    public void setCrownOfLight(boolean crownOfLight) {
-        isCrownOfLight = crownOfLight;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
     public int getDuration() {
         return duration;
     }
@@ -403,10 +377,6 @@ public class HammerOfLight extends AbstractAbility {
 
     public void setPveUpgrade(boolean pveUpgrade) {
         this.pveUpgrade = pveUpgrade;
-    }
-
-    public void addAmountHealed(float amount) {
-        this.amountHealed += amount;
     }
 
     public float getAmountHealed() {

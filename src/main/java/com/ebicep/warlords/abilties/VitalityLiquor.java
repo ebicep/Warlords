@@ -36,16 +36,11 @@ public class VitalityLiquor extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Discharge a shockwave of special potions\n" +
-                "§7around you, healing allies in the range for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7Each enemy afflicted with your §aLEECH §7effect\n" +
-                "§7within the range will cause the enemy to\n" +
-                "§7discharge an additional shockwave of vitality\n" +
-                "§7that heals §e2 §7nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
-                "§7and increase their energy regeneration by\n" +
-                "§e" + energyPerSecond + " §7for §6" + duration + " §7seconds.";
+        description = "Discharge a shockwave of special potions around you, healing allies in the range for" +
+                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
+                "\n\nEach enemy afflicted with your §aLEECH §7effect within the range will cause the enemy to discharge an additional shockwave of vitality" +
+                "that heals §e2 §7nearby allies for" + formatRangeHealing(minWaveHealing, maxWaveHealing) +
+                "health and increase their energy regeneration by §e" + energyPerSecond + " §7for §6" + duration + " §7seconds.";
     }
 
     @Override

@@ -29,10 +29,9 @@ public class JudgementStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Every fourth attack is a §cguaranteed §7critical strike.\n" +
-                "§7Critical strikes temporarily increase your movement\n" +
-                "§7speed by §e" + speedOnCrit + "% §7for §e" + speedOnCritDuration + " §7seconds.";
+        description = "Strike the targeted enemy, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage. Every fourth attack is a §cguaranteed §7critical strike. Critical strikes temporarily increase your movement speed by §e" +
+                speedOnCrit + "% §7for §e" + speedOnCritDuration + " §7seconds.";
     }
 
     @Override
@@ -68,9 +67,9 @@ public class JudgementStrike extends AbstractStrikeBase {
             }
             if (pveUpgrade) {
                 if (
-                    nearPlayer instanceof WarlordsNPC &&
-                    finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
-                    ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
+                        nearPlayer instanceof WarlordsNPC &&
+                                finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
+                                ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
                 ) {
                     nearPlayer.die(nearPlayer);
                 }

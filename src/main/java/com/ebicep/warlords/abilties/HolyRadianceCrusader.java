@@ -32,16 +32,9 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Radiate with holy energy, healing\n" +
-                "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7You may look at an ally to mark\n" +
-                "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
-                "§7their EPS by §e" + energyPerSecond + " §7and speed by §e" + markSpeed + "%\n" +
-                "§7§7for the duration. Mark has an optimal\n" +
-                "§7range of §e" + markRadius + " §7blocks.";
-
+        description = "Radiate with holy energy, healing yourself and all nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
+                "\n\nYou may look at an ally to mark them for §6" + markDuration + " §7seconds. Increasing their EPS by §e" + energyPerSecond +
+                " §7and speed by §e" + markSpeed + "% §7for the duration. Mark has an optimal range of §e" + markRadius + " §7blocks.";
     }
 
     @Override

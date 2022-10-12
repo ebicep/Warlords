@@ -420,20 +420,20 @@ public abstract class WarlordsEntity {
                         "Intervene",
                         remainingVeneDamage,
                         remainingVeneDamage,
-                        isCrit ? 100 : -1,
+                        isCrit ? 100 : 0,
                         100,
                         true
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
-                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : -1, 100, true)
+                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100, true)
                         .ifPresent(finalEvent::set);
             } else {
                 intervenedBy.addDamageInstance(attacker,
                         "Intervene",
                         damageValue,
                         damageValue,
-                        isCrit ? 100 : -1,
+                        isCrit ? 100 : 0,
                         100,
                         false
                 );
@@ -505,7 +505,7 @@ public abstract class WarlordsEntity {
                             ability,
                             -arcaneShield.getShieldHealth(),
                             -arcaneShield.getShieldHealth(),
-                            isCrit ? 100 : -1,
+                            isCrit ? 100 : 0,
                             1,
                             false,
                             true,

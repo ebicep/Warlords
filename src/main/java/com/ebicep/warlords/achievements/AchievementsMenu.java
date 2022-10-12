@@ -127,10 +127,11 @@ public class AchievementsMenu {
                     .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (!achievement.getDescription().isEmpty()) {
-                itemBuilder.lore(WordWrap.wrapWithNewline(achievement.getDescription(),
-                        160,
-                        ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "")
-                ));
+                itemBuilder.lore(
+                        WordWrap.wrapWithNewline(
+                                ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
+                                160
+                        ));
             }
             itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
                     ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"

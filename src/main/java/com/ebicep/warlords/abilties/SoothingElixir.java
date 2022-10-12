@@ -27,15 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SoothingElixir extends AbstractAbility {
-    protected int playersHealed = 0;
-
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
-
-    private float puddleRadius = 5;
-    private int puddleDuration = 4;
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
+    protected int playersHealed = 0;
+    private float puddleRadius = 5;
+    private int puddleDuration = 4;
     private int puddleMinHealing = 158;
     private int puddleMaxHealing = 204;
 
@@ -45,12 +43,10 @@ public class SoothingElixir extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a short range elixir bottle. The bottle\n" +
-                "§7will shatter upon impact, healing nearby allies\n" +
-                "§7for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and damage nearby\n" +
-                "§7enemies for §c" + puddleMinDamage + " §7- §c" + puddleMaxDamage + " §7damage. The projectile\n" +
-                "§7will form a small puddle that heals allies for\n" +
-                "§a" + puddleMinHealing + " §7- §a" + puddleMaxHealing + " §7health per second. Lasts §6" + puddleDuration + " §7seconds.";
+        description = "Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for" +
+                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health and damage nearby enemies for" +
+                formatRangeDamage(puddleMinDamage, puddleMaxDamage) + "damage. The projectile will form a small puddle that heals allies for" +
+                formatRangeHealing(puddleMinHealing, puddleMaxHealing) + "health per second. Lasts §6" + puddleDuration + " §7seconds.";
     }
 
     @Override
@@ -74,6 +70,7 @@ public class SoothingElixir extends AbstractAbility {
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {
             int timer = 0;
+
             @Override
             public void run() {
                 quarterStep(false);
@@ -109,16 +106,17 @@ public class SoothingElixir extends AbstractAbility {
                         double angle = Math.toRadians(i * 90) + timer * 0.3;
                         double width = 0.3D;
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 2,
-                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                        );
                     }
                 }
 
                 WarlordsEntity directHit;
                 if (
-                    !newLoc.getBlock().isEmpty()
-                    && newLoc.getBlock().getType() != Material.GRASS
-                    && newLoc.getBlock().getType() != Material.BARRIER
-                    && newLoc.getBlock().getType() != Material.VINE
+                        !newLoc.getBlock().isEmpty()
+                                && newLoc.getBlock().getType() != Material.GRASS
+                                && newLoc.getBlock().getType() != Material.BARRIER
+                                && newLoc.getBlock().getType() != Material.VINE
                 ) {
                     // Explode based on collision
                     shouldExplode = true;
@@ -165,7 +163,8 @@ public class SoothingElixir extends AbstractAbility {
                                 critChance,
                                 critMultiplier,
                                 false,
-                                false);
+                                false
+                        );
                     }
 
                     new GameRunnable(wp.getGame()) {
@@ -183,7 +182,8 @@ public class SoothingElixir extends AbstractAbility {
                                             critChance,
                                             critMultiplier,
                                             false,
-                                            false));
+                                            false
+                                    ));
 
                             timeLeft--;
 
@@ -207,7 +207,8 @@ public class SoothingElixir extends AbstractAbility {
                                 puddleMaxDamage,
                                 critChance,
                                 critMultiplier,
-                                false);
+                                false
+                        );
                     }
 
                     this.cancel();

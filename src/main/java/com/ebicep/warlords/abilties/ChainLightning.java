@@ -7,11 +7,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -21,9 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
-    private boolean pveUpgrade = false;
-
     protected int numberOfDismounts = 0;
+    private boolean pveUpgrade = false;
     private int damageReduction = 0;
 
     private int radius = 20;
@@ -31,10 +28,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     private int maxBounces = 3;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 30;
-
-    public int getDamageReduction() {
-        return damageReduction;
-    }
 
     public ChainLightning() {
         super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175);
@@ -45,34 +38,18 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         this.damageReduction = damageReduction;
     }
 
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
     @Override
     public void updateDescription(Player player) {
-        description = "§7Discharge a bolt of lightning at the\n" +
-                "§7targeted enemy player that deals\n" +
-                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
-                "§e" + maxBounces + " §7additional targets within §e" + bounceRange + "\n" +
-                "§7blocks. Each time the lightning jumps\n" +
-                "§7the damage is decreased by §c15%§7.\n" +
-                "§7You gain §e" + damageReductionPerBounce + "% §7damage resistance for\n" +
-                "§7each target hit, up to §e" + maxDamageReduction + "% §7damage\n" +
-                "§7resistance. This buff lasts §64.5 §7seconds." +
-                "\n\n" +
-                "§7Has an initial cast range of §e" + radius + " §7blocks.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "§7Discharge a bolt of lightning at the\n" +
-                                "§7targeted enemy player that deals\n" +
-                                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
-                                "§e" + maxBounces + " §7additional targets within §e" + bounceRange + "\n" +
-                                "§7blocks. Each time the lightning jumps\n" +
-                                "§7the damage is decreased by §c15%§7.\n" +
-                                "§7You gain §e" + damageReductionPerBounce + "% §7damage resistance for\n" +
-                                "§7each target hit, up to §e" + maxDamageReduction + "% §7damage\n" +
-                                "§7resistance. This buff lasts §64.5 §7seconds." +
-                                "\n\n" +
-                                "§7Has an initial cast range of §e" + radius + " §7blocks.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Discharge a bolt of lightning at the targeted enemy player that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and jumps to §e" + maxBounces + " §7additional targets within §e" + bounceRange +
+                " §7blocks. Each time the lightning jumps the damage is decreased by §c15%§7. You gain §e" + format(damageReductionPerBounce) +
+                "% §7damage resistance for each target hit, up to §e" + format(maxDamageReduction) +
+                "% §7damage resistance. This buff lasts §64.5 §7seconds." +
+                "\n\nHas an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override
@@ -157,11 +134,11 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         } // no else
 
         PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                        .filter(e ->
-                            Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
-                            Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
-                        ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
-                        .lookingAtFirst(wp);
+                .filter(e ->
+                        Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
+                                Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
+                ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
+                .lookingAtFirst(wp);
 
         Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
@@ -229,18 +206,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         return Integer.compare(this.damageReduction, chainLightning.damageReduction);
     }
 
-    public void setMaxBounces(int maxBounces) {
-        this.maxBounces = maxBounces;
-    }
-
-    public void setBounceRange(int bounceRange) {
-        this.bounceRange = bounceRange;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
     public float getDamageReductionPerBounce() {
         return damageReductionPerBounce;
     }
@@ -261,12 +226,24 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         return radius;
     }
 
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
     public int getBounceRange() {
         return bounceRange;
     }
 
+    public void setBounceRange(int bounceRange) {
+        this.bounceRange = bounceRange;
+    }
+
     public int getMaxBounces() {
         return maxBounces;
+    }
+
+    public void setMaxBounces(int maxBounces) {
+        this.maxBounces = maxBounces;
     }
 
     public float getMaxDamageReduction() {

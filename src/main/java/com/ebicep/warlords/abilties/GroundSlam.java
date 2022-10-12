@@ -5,12 +5,14 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -20,12 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroundSlam extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     protected int playersHit = 0;
     protected int carrierHit = 0;
     protected int warpsKnockbacked = 0;
-
+    private boolean pveUpgrade = false;
     private int slamSize = 6;
     private float velocity = 1.25f;
 
@@ -35,15 +35,8 @@ public class GroundSlam extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Slam the ground, creating a shockwave\n" +
-                "§7around you that deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "\n" +
-                "§7damage and knocks enemies back slightly.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Slam the ground, creating a shockwave\n" +
-                        "around you that deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "\n" +
-                        "damage and knocks enemies back slightly.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Slam the ground, creating a shockwave around you that deals" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and knocks enemies back slightly.";
     }
 
     @Override
@@ -227,7 +220,8 @@ public class GroundSlam extends AbstractAbility {
         }
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
                 type,
-                data);
+                data
+        );
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);

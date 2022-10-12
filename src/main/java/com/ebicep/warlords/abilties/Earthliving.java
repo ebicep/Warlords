@@ -8,12 +8,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -39,23 +37,10 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Imbue your weapon with the power of the\n" +
-                "§7Earth, causing each of your melee attacks\n" +
-                "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
-                "§7nearby allies for §a" + weaponDamage + "% §7weapon damage.\n" +
-                "§7Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7The first hit is guaranteed to activate Earthliving.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Imbue your weapon with the power of the\n" +
-                        "Earth, causing each of your melee attacks\n" +
-                        "to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
-                        "nearby allies for §a" + weaponDamage + "% §7weapon damage.\n" +
-                        "Lasts §6" + duration + " §7seconds." +
-                        "\n\n" +
-                        "The first hit is guaranteed to activate Earthliving.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a §e" + procChance +
+                "% §7chance to heal you and §e2 §7nearby allies for §a" + weaponDamage +
+                "% §7weapon damage. Lasts §6" + duration + " §7seconds." +
+                "\n\nThe first hit is guaranteed to activate Earthliving.";
     }
 
     @Override

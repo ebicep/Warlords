@@ -26,10 +26,9 @@ public class LightInfusionProtector extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7You become infused with light,\n" +
-                "§7restoring §a" + energyGiven + " §7energy and\n" +
-                "§7increasing your movement speed by\n" +
-                "§e" + speedBuff + "% §7for §6" + duration + " §7seconds";
+        description = "You become infused with light, restoring §a" + energyGiven +
+                " §7energy and increasing your movement speed by §e" + speedBuff +
+                "% §7for §6" + duration + " §7seconds";
     }
 
     @Override

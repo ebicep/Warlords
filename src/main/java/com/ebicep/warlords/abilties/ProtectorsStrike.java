@@ -34,13 +34,9 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
-                "§7and healing two nearby allies for\n" +
-                "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
-                "§7heals yourself by §a50-75% §7of the\n" +
-                "§7damage done. Based on your current\n" +
-                "health.";
+        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and healing two nearby allies for §a" + minConvert + "-" + maxConvert +
+                "% §7of the damage done. Also heals yourself by §a50-75% §7of the damage done. Based on your current health.";
     }
 
     @Override
@@ -90,7 +86,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                     name,
                     currentDamageValue * ownHealing,
                     currentDamageValue * ownHealing,
-                    isCrit ? 100 : -1,
+                    isCrit ? 100 : 0,
                     100,
                     false,
                     false
@@ -115,7 +111,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             name,
                             healing,
                             healing,
-                            isCrit ? 100 : -1,
+                            isCrit ? 100 : 0,
                             100,
                             false,
                             false
@@ -140,7 +136,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                 name,
                                 currentDamageValue * allyHealing * 1.2f,
                                 currentDamageValue * allyHealing * 1.2f,
-                                isCrit ? 100 : -1,
+                                isCrit ? 100 : 0,
                                 100,
                                 false,
                                 false
@@ -156,7 +152,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                 name,
                                 currentDamageValue * allyHealing,
                                 currentDamageValue * allyHealing,
-                                isCrit ? 100 : -1,
+                                isCrit ? 100 : 0,
                                 100,
                                 false,
                                 false
@@ -184,7 +180,8 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                 1,
                 4,
                 location.clone().add(0, 1, 0),
-                500);
+                500
+        );
     }
 
     public int getMinConvert() {

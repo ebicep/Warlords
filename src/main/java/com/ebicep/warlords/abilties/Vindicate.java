@@ -22,9 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
-    private boolean pveUpgrade = false;
-
     private final int radius = 8;
+    private boolean pveUpgrade = false;
     private int debuffsRemovedOnCast = 0;
     private int vindicateDuration = 12;
     private int vindicateSelfDuration = 8;
@@ -34,39 +33,11 @@ public class Vindicate extends AbstractAbility {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
     }
 
-    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
-        // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
-        target.getCooldownManager().addCooldown(new RegularCooldown<T>(
-                "Vindicate Debuff Immunity",
-                "VIND",
-                cooldownClass,
-                cooldownObject,
-                from,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    target.getSpeed().removeSlownessModifiers();
-                    target.getCooldownManager().removeDebuffCooldowns();
-                })
-        ) {
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0.5);
-            }
-        });
-    }
-
     @Override
     public void updateDescription(Player player) {
-        description = "§7All allies within an §e" + radius + " §7block radius gain the\n" +
-                "§7status §6VIND§7, which clears all de-buffs. In\n" +
-                "§7addition, the status §6VIND §7prevents allies from being\n" +
-                "§7affected by de-buffs and grants §650% §7knockback\n" +
-                "§7resistance for §6" + vindicateDuration + " §7seconds. You gain §e" + format(vindicateDamageReduction) + "%\n" +
-                "§7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
+        description = "All allies within an §e" + radius + " §7block radius gain the status §6VIND§7, which clears all de-buffs. In addition, the status " +
+                "§6VIND §7prevents allies from being affected by de-buffs and grants §650% §7knockback resistance for §6" + vindicateDuration +
+                " §7seconds. You gain §e" + format(vindicateDamageReduction) + "% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds.";
     }
 
     @Override
@@ -151,6 +122,31 @@ public class Vindicate extends AbstractAbility {
         });
 
         return true;
+    }
+
+    public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
+        // remove other instances of vindicate buff to override
+        target.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+        target.getCooldownManager().addCooldown(new RegularCooldown<T>(
+                "Vindicate Debuff Immunity",
+                "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    target.getSpeed().removeSlownessModifiers();
+                    target.getCooldownManager().removeDebuffCooldowns();
+                })
+        ) {
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                currentVector.multiply(0.5);
+            }
+        });
     }
 
     public float getVindicateDamageReduction() {

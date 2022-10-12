@@ -36,17 +36,11 @@ public class WaterBolt extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Shoot a bolt of water that will burst\n" +
-                "§7for §c" + format(minDamage) + " §7- §c" + format(maxDamage) + " §7damage and restore\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to allies. A\n" +
-                "§7direct hit will cause §a15% §7increased\n" +
-                "§7damage or healing for the target hit." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks." +
-                "\n\n" +
-                "§7Water Bolt can overheal allies for up to\n" +
-                "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
+        description = "Shoot a bolt of water that will burst for" +
+                formatRangeDamage(minDamage, maxDamage) + "damage and restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
+                "health to allies. A direct hit will cause §a15% §7increased damage or healing for the target hit." +
+                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks." +
+                "\n\nWater Bolt can overheal allies for up to §a10% §7of their max health as bonus health for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
@@ -86,12 +80,6 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-        this.playEffect(projectile);
-    }
-
-    @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
@@ -105,7 +93,9 @@ public class WaterBolt extends AbstractProjectileBase {
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                 1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-        if (toReduceBy < .2) toReduceBy = .2;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.isTeammate(shooter)) {
@@ -116,12 +106,14 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false, false);
+                        false, false
+                );
                 if (hit != shooter) {
                     hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     hit.getCooldownManager().addRegularCooldown("Overheal",
                             "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Overheal.OVERHEAL_DURATION * 20);
+                            }, Overheal.OVERHEAL_DURATION * 20
+                    );
                 }
                 if (pveUpgrade) {
                     increaseDamageOnHit(shooter, hit);
@@ -137,7 +129,8 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamage * directHitMultiplier * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false);
+                        false
+                );
             }
         }
 
@@ -158,12 +151,14 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamageHeal * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false, false);
+                        false, false
+                );
                 if (nearEntity != shooter) {
                     nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     nearEntity.getCooldownManager().addRegularCooldown("Overheal",
                             "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Overheal.OVERHEAL_DURATION * 20);
+                            }, Overheal.OVERHEAL_DURATION * 20
+                    );
                     ;
                 }
                 if (pveUpgrade) {
@@ -181,11 +176,18 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamage * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false);
+                        false
+                );
             }
         }
 
         return playersHit;
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
     }
 
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {

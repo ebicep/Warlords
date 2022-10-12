@@ -8,12 +8,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -24,12 +22,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class ArcaneShield extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    private int timesBroken = 0;
-
-    private int duration = 6;
     public int maxShieldHealth;
     public int shieldPercentage = 50;
+    private boolean pveUpgrade = false;
+    private int timesBroken = 0;
+    private int duration = 6;
     private float shieldHealth = 0;
 
     public ArcaneShield() {
@@ -43,17 +40,8 @@ public class ArcaneShield extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Surround yourself with arcane\n" +
-                "§7energy, creating a shield that will\n" +
-                "§7absorb up to §e" + maxShieldHealth + " §7(§e" + shieldPercentage + "% §7of your maximum\n" +
-                "§7health) incoming damage. Lasts §6" + duration + " §7seconds.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "Surround yourself with arcane energy, creating a shield that will absorb up to " +
-                                maxShieldHealth + " (§e" + shieldPercentage + "% §7of your maximum health) incoming damage. " +
-                                "Lasts §6" + duration + " §7seconds.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Surround yourself with arcane energy, creating a shield that will absorb up to §e" + maxShieldHealth +
+                " §7(§e" + shieldPercentage + "% §7of your maximum health) incoming damage. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -120,6 +108,18 @@ public class ArcaneShield extends AbstractAbility {
         }
     }
 
+    public void setMaxShieldHealth(int maxShieldHealth) {
+        this.maxShieldHealth = maxShieldHealth;
+    }
+
+    public int getShieldPercentage() {
+        return shieldPercentage;
+    }
+
+    public void setShieldPercentage(int shieldPercentage) {
+        this.shieldPercentage = shieldPercentage;
+    }
+
     public void addTimesBroken() {
         timesBroken++;
     }
@@ -134,18 +134,6 @@ public class ArcaneShield extends AbstractAbility {
 
     public void addShieldHealth(float amount) {
         this.shieldHealth += amount;
-    }
-
-    public void setMaxShieldHealth(int maxShieldHealth) {
-        this.maxShieldHealth = maxShieldHealth;
-    }
-
-    public int getShieldPercentage() {
-        return shieldPercentage;
-    }
-
-    public void setShieldPercentage(int shieldPercentage) {
-        this.shieldPercentage = shieldPercentage;
     }
 
     public int getDuration() {

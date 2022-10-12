@@ -6,11 +6,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -34,22 +32,9 @@ public class CrusadersStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and\n" +
-                "§7restoring §e" + energyGiven + " §7energy to " + energyMaxAllies + " nearby\n" +
-                "§7allies within §e" + energyRadius + " §7blocks." +
-                "\n\n" +
-                "§7MARKED allies get priority in restoring energy and\n" +
-                "§7increases their speed by §e40% §7for §61 §7second.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Strike the targeted enemy player, causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and" +
-                        "restoring §e" + energyGiven + " §7energy to " + energyMaxAllies + " nearby" +
-                        "allies within §e" + energyRadius + " §7blocks." +
-                        "\n\n" +
-                        "MARKED allies get priority in restoring energy and" +
-                        "increases their speed by §e40% §7for §61 §7second.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Strike the targeted enemy player, causing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and restoring §e" + energyGiven + " §7energy to " + energyMaxAllies + " nearby allies within §e" + energyRadius + " §7blocks." +
+                "\n\nMARKED allies get priority in restoring energy and increases their speed by §e40% §7for §61 §7second.";
     }
 
     @Override
@@ -120,7 +105,8 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 1,
                 4,
                 location.clone().add(0, 1, 0),
-                500);
+                500
+        );
     }
 
     public int getEnergyGiven() {

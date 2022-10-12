@@ -33,14 +33,9 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a chain towards an ally in a §e15 §7block\n" +
-                "§7radius, grappling the Vindicator towards the ally.\n" +
-                "§7You and the targeted ally gain §6VIND §7for §6" + vindDuration + " §7seconds,\n" +
-                "§7granting immunity to de-buffs. You are healed\n" +
-                "§7for §a" + format(healthRestore) + " §7health after reaching your ally." +
-                "\n\n" +
-                "§7Heart To Heart's range is greatly reduced when\n" +
-                "§7holding a flag.";
+        description = "Throw a chain towards an ally in a §e15 §7block radius, grappling the Vindicator towards the ally. You and the targeted ally gain " +
+                "§6VIND §7for §6" + vindDuration + " §7seconds, granting immunity to de-buffs. You are healed for §a" + format(healthRestore) +
+                " §7health after reaching your ally.\nHeart To Heart's range is greatly reduced when holding a flag.";
     }
 
     @Override
@@ -86,6 +81,18 @@ public class HeartToHeart extends AbstractAbility {
         }
 
         return false;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getVerticalRadius() {
+        return verticalRadius;
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
@@ -134,7 +141,8 @@ public class HeartToHeart extends AbstractAbility {
                     double angle = Math.toRadians(i * 90) + timer * 0.6;
                     double width = 1.5D;
                     ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1,
-                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    );
                 }
 
                 if (pveUpgrade) {
@@ -174,6 +182,10 @@ public class HeartToHeart extends AbstractAbility {
         }.runTaskTimer(0, 1);
     }
 
+    public void setVerticalRadius(int verticalRadius) {
+        this.verticalRadius = verticalRadius;
+    }
+
     public void setVindDuration(int vindDuration) {
         this.vindDuration = vindDuration;
     }
@@ -184,22 +196,6 @@ public class HeartToHeart extends AbstractAbility {
 
     public void setHealthRestore(float healthRestore) {
         this.healthRestore = healthRestore;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getVerticalRadius() {
-        return verticalRadius;
-    }
-
-    public void setVerticalRadius(int verticalRadius) {
-        this.verticalRadius = verticalRadius;
     }
 
     public boolean isPveUpgrade() {

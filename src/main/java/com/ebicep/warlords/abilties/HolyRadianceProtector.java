@@ -20,9 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
-    private boolean pveUpgrade = false;
-
     private final int markRadius = 15;
+    private boolean pveUpgrade = false;
     private int markDuration = 6;
     private float markHealing = 50;
 
@@ -32,16 +31,10 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Radiate with holy energy, healing\n" +
-                "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7You may look at an ally to mark\n" +
-                "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks. Your marked\n" +
-                "§7ally will emit a second Holy Radiance\n" +
-                "§7for §a" + markHealing + "% §7of the original healing amount\n" +
-                "§7after the mark ends.";
+        description = "Radiate with holy energy, healing yourself and all nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health." +
+                "\n\nYou may look at an ally to mark them for §6" + markDuration + " §7seconds. Mark has an optimal range of §e" + markRadius +
+                " §7blocks. Your marked ally will emit a second Holy Radiance for §a" + format(markHealing) +
+                "% §7of the original healing amount after the mark ends.";
     }
 
     @Override
@@ -73,7 +66,9 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveUpgrade) return true;
+            if (pveUpgrade) {
+                return true;
+            }
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 // chain particles
@@ -118,7 +113,9 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
                 giver,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
-                    if (target.isDead()) return;
+                    if (target.isDead()) {
+                        return;
+                    }
 
                     ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, target.getLocation(), 500);
                     Utils.playGlobalSound(target.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);

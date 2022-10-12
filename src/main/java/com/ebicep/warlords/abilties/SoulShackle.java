@@ -23,48 +23,8 @@ import java.util.List;
 
 public class SoulShackle extends AbstractAbility {
 
-    public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
-        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
-        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
-            if (shackleTarget.getEntity() instanceof Player) {
-                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, tickDuration, 0);
-            }
-        }
-        shackleTarget.getCooldownManager().addRegularCooldown(
-                "Shackle Silence",
-                "SILENCE",
-                SoulShackle.class,
-                new SoulShackle(),
-                wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 10 == 0) {
-                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
-
-                        Location playerLoc = shackleTarget.getLocation();
-                        Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 10; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 1.075;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
-                            }
-                        }
-                    }
-                })
-        );
-    }
-
-    private boolean pveUpgrade = false;
-
     private final int shackleRange = 15;
+    private boolean pveUpgrade = false;
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
     private int minSilenceDurationInTicks = 40;
@@ -76,15 +36,11 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Shackle up to §e" + maxShackleTargets + " §7enemy and deal §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Shackled enemies are silenced for §6" + format(minSilenceDurationInTicks / 20f) + "§7-§6" + format(maxSilenceDurationInTicks / 20f) + " §7seconds,\n" +
-                "§7making them unable to use their main attack for\n" +
-                "§7the duration. The silence duration increases by §60.5\n" +
-                "§7second for every §c500 §7damage you took in the last\n" +
-                "§66 §7seconds. Gain a short burst of §e40% §7movement speed\n" +
-                "for §61.5 §7seconds after shackling an enemy." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + shackleRange + " §7blocks.";
+        description = "Shackle up to §e" + maxShackleTargets + " §7enemy and deal" + formatRangeDamage(minDamageHeal, maxDamageHeal) + "damage. Shackled " +
+                "enemies are silenced for" + formatRange(minSilenceDurationInTicks / 20f, maxSilenceDurationInTicks / 20f, ChatColor.GOLD) +
+                "seconds, making them unable to use their main attack for the duration. The silence duration increases by §60.5 §7second for every §c500 " +
+                "§7damage you took in the last §66 §7seconds. Gain a short burst of §e40% §7movement speed for §61.5 §7seconds after shackling an enemy." +
+                "\n\nHas an optimal range of §e" + shackleRange + " §7blocks.";
     }
 
     @Override
@@ -165,12 +121,43 @@ public class SoulShackle extends AbstractAbility {
         shacklePlayer(wp, shackleTarget, silenceDuration);
     }
 
-    public float getShacklePool() {
-        return shacklePool;
-    }
+    public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
+        shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class);
+        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            if (shackleTarget.getEntity() instanceof Player) {
+                PacketUtils.sendTitle((Player) shackleTarget.getEntity(), "", "§cSILENCED", 0, tickDuration, 0);
+            }
+        }
+        shackleTarget.getCooldownManager().addRegularCooldown(
+                "Shackle Silence",
+                "SILENCE",
+                SoulShackle.class,
+                new SoulShackle(),
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        Utils.playGlobalSound(shackleTarget.getLocation(), Sound.DIG_SAND, 2, 2);
 
-    public void addToShacklePool(float amount) {
-        this.shacklePool += amount;
+                        Location playerLoc = shackleTarget.getLocation();
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = 1.075;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                            }
+                        }
+                    }
+                })
+        );
     }
 
     @Override
@@ -181,12 +168,12 @@ public class SoulShackle extends AbstractAbility {
         }
     }
 
-    public void setMaxSilenceDurationInTicks(int maxSilenceDurationInTicks) {
-        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
+    public float getShacklePool() {
+        return shacklePool;
     }
 
-    public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
-        this.minSilenceDurationInTicks = minSilenceDurationInTicks;
+    public void addToShacklePool(float amount) {
+        this.shacklePool += amount;
     }
 
     public int getMaxShackleTargets() {
@@ -209,7 +196,15 @@ public class SoulShackle extends AbstractAbility {
         return maxSilenceDurationInTicks;
     }
 
+    public void setMaxSilenceDurationInTicks(int maxSilenceDurationInTicks) {
+        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
+    }
+
     public int getMinSilenceDurationInTicks() {
         return minSilenceDurationInTicks;
+    }
+
+    public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
+        this.minSilenceDurationInTicks = minSilenceDurationInTicks;
     }
 }

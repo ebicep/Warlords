@@ -7,11 +7,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -37,21 +35,9 @@ public class AvengersWrath extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Burst with incredible holy power,\n" +
-                "§7causing your Avenger's Strikes to\n" +
-                "§7hit up to §e" + maxTargets + " §7additional enemies\n" +
-                "§7that are within §e5 §7blocks of your\n" +
-                "§7target. Your energy per second is\n" +
-                "§7increased by §e" + format(energyPerSecond) + " §7for the duration\n" +
-                "§7of the effect. Lasts §6" + duration + " §7seconds.";
-        description =
-                WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                "Burst with incredible holy power, causing your Avenger's Strikes to" +
-                                "hit up to §e" + maxTargets + " §7additional enemies that are within §e5 §7blocks of your" +
-                                "target. Your energy per second is increased by §e" + format(energyPerSecond) + " §7for the duration" +
-                                "of the effect. Lasts §6" + duration + " §7seconds.",
-                        DESCRIPTION_WIDTH
-                );
+        description = "Burst with incredible holy power, causing your Avenger's Strikes to " +
+                "hit up to §e" + maxTargets + " §7additional enemies that are within §e5 §7blocks of your target. Your energy per second is increased by §e" +
+                format(energyPerSecond) + " §7for the duration of the effect. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override

@@ -22,10 +22,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility {
-    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
     protected int debuffsRemoved = 0;
-
+    private boolean pveUpgrade = false;
     private int maxAnimationTime = 12;
     private int maxAnimationEffects = 4;
     private float hitbox = 10;
@@ -37,14 +36,10 @@ public class WaterBreath extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Breathe water in a cone in front of you,\n" +
-                "§7knocking back enemies, cleansing all §ede-buffs\n" +
-                "§7and restoring §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to\n" +
-                "§7yourself and all allies hit." +
-                "\n\n" +
-                "§7Water Breath can overheal allies for up to\n" +
-                "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
+        description = "Breathe water in a cone in front of you, knocking back enemies, cleansing all §ede-buffs §7and restoring" +
+                formatRangeHealing(minDamageHeal, maxDamageHeal) + "health to yourself and all allies hit." +
+                "\n\nWater Breath can overheal allies for up to §a10% §7of their max health as bonus health for §6" +
+                Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
@@ -68,14 +63,14 @@ public class WaterBreath extends AbstractAbility {
                 .add(0, 1.7, 0);
         new GameRunnable(wp.getGame()) {
 
+            final Matrix4d center = new Matrix4d(playerLoc);
+            int animationTimer = 0;
+
             @Override
             public void run() {
                 this.playEffect();
                 this.playEffect();
             }
-
-            int animationTimer = 0;
-            final Matrix4d center = new Matrix4d(playerLoc);
 
             public void playEffect() {
 
@@ -87,11 +82,14 @@ public class WaterBreath extends AbstractAbility {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
                     ParticleEffect.DRIP_WATER.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    );
                     ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    );
                     ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500
+                    );
                 }
 
                 animationTimer++;

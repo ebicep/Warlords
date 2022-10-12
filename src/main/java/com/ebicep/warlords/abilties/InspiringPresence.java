@@ -20,11 +20,10 @@ import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
+    protected int playersHit = 0;
     private boolean pveUpgrade = false;
-
     private int speedBuff = 30;
     private double radius = 10;
-    protected int playersHit = 0;
     private int duration = 12;
     private int energyPerSecond = 10;
 
@@ -37,13 +36,9 @@ public class InspiringPresence extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Your presence on the battlefield\n" +
-                "§7inspires your allies, increasing\n" +
-                "§7their energy regeneration by §e" + energyPerSecond + "\n" +
-                "§7per second and their movement\n" +
-                "§7by §e" + speedBuff + "% §7for §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7Has a maximum range of §e" + radius + " §7blocks.";
+        description = "Your presence on the battlefield inspires your allies, increasing their energy regeneration by §e" + energyPerSecond +
+                " §7per second and their movement by §e" + speedBuff + "% §7for §6" + duration + " §7seconds." +
+                "\n\nHas a maximum range of §e" + format(radius) + " §7blocks.";
     }
 
     @Override
@@ -133,6 +128,10 @@ public class InspiringPresence extends AbstractAbility {
         return true;
     }
 
+    public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
+        this.energyGivenFromStrikeAndPresence += energyGivenFromStrikeAndPresence;
+    }
+
     private void resetCooldowns(WarlordsEntity we) {
         we.setRedCurrentCooldown(0);
         we.setPurpleCurrentCooldown(0);
@@ -143,16 +142,16 @@ public class InspiringPresence extends AbstractAbility {
         we.updateItems();
     }
 
+    public List<WarlordsEntity> getPlayersAffected() {
+        return playersAffected;
+    }
+
     public int getDuration() {
         return duration;
     }
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    public List<WarlordsEntity> getPlayersAffected() {
-        return playersAffected;
     }
 
     public int getEnergyPerSecond() {
@@ -177,10 +176,6 @@ public class InspiringPresence extends AbstractAbility {
 
     public void setRadius(double radius) {
         this.radius = radius;
-    }
-
-    public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
-        this.energyGivenFromStrikeAndPresence += energyGivenFromStrikeAndPresence;
     }
 
     public double getEnergyGivenFromStrikeAndPresence() {

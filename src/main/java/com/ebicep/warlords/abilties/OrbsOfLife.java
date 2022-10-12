@@ -48,18 +48,12 @@ public class OrbsOfLife extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Spawn §e2 §7initial orbs on cast." +
-                "\n\n" +
-                "§7Striking and hitting enemies with abilities\n" +
-                "§7causes them to drop an orb of life that lasts §68\n" +
-                "§7§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that\n" +
-                "§7picks it up. Other nearby allies recover §a" + format(minDamageHeal) + "\n" +
-                "§7health. After 1.5 seconds the healing will increase\n" +
-                "§7by §a40% §7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "§7You may SNEAK to make the orbs levitate\n" +
-                "§7towards you or the nearest ally in\n" +
-                "§7a §e" + floatingOrbRadius + " §7block radius.";
+        description = "Spawn §e2 §7initial orbs on cast." +
+                "\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts §68 " +
+                "§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that picks it up. Other nearby allies recover §a" +
+                format(minDamageHeal) + " §7health. After 1.5 seconds the healing will increase by §a40% §7over 6.5 seconds. " +
+                "Lasts §6" + duration + " §7seconds." +
+                "\n\nYou may SNEAK to make the orbs levitate towards you or the nearest ally in a §e" + floatingOrbRadius + " §7block radius.";
     }
 
     @Override
@@ -188,17 +182,17 @@ public class OrbsOfLife extends AbstractAbility {
         return true;
     }
 
-    public void addOrbProduced(int amount) {
-        this.orbsProduced += amount;
-    }
-
-    public int getOrbsProduced() {
-        return orbsProduced;
+    public List<Orb> getSpawnedOrbs() {
+        return spawnedOrbs;
     }
 
     public void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
-        if (ability.isEmpty() || ability.equals("Intervene")) return;
-        if (cooldown.isHidden()) return;
+        if (ability.isEmpty() || ability.equals("Intervene")) {
+            return;
+        }
+        if (cooldown.isHidden()) {
+            return;
+        }
         owner.doOnStaticAbility(OrbsOfLife.class, orbsOfLife -> orbsOfLife.addOrbProduced(1));
 
         OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
@@ -212,6 +206,10 @@ public class OrbsOfLife extends AbstractAbility {
         if (cooldown.getCooldownObject().getOrbsProduced() >= 50) {
             ChallengeAchievements.checkForAchievement(owner, ChallengeAchievements.ORBIFICATION);
         }
+    }
+
+    public void addOrbProduced(int amount) {
+        this.orbsProduced += amount;
     }
 
     public Location generateSpawnLocation(Location location) {
@@ -229,6 +227,10 @@ public class OrbsOfLife extends AbstractAbility {
         return spawnLocation;
     }
 
+    public int getOrbsProduced() {
+        return orbsProduced;
+    }
+
     public boolean orbsInsideBlock(Location location) {
         return location.getBlock().getType() != Material.AIR;
     }
@@ -236,16 +238,12 @@ public class OrbsOfLife extends AbstractAbility {
     public boolean nearLocation(Location location) {
         for (Orb orb : spawnedOrbs) {
             double distance = orb.getArmorStand().getLocation().distanceSquared(location);
-            if (distance < 1)
+            if (distance < 1) {
                 return true;
+            }
         }
         return false;
     }
-
-    public List<Orb> getSpawnedOrbs() {
-        return spawnedOrbs;
-    }
-
 
     public static class Orb extends EntityExperienceOrb {
 
@@ -280,6 +278,13 @@ public class OrbsOfLife extends AbstractAbility {
             }.runTaskTimer(30, 0);
         }
 
+        public Orb spawn(Location loc) {
+            World w = ((CraftWorld) loc.getWorld()).getHandle();
+            this.setPosition(loc.getX(), loc.getY(), loc.getZ());
+            w.addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            return this;
+        }
+
         @Override
         public String toString() {
             return "Orb{" +
@@ -293,13 +298,6 @@ public class OrbsOfLife extends AbstractAbility {
         @Override
         public void d(EntityHuman entityHuman) {
 
-        }
-
-        public Orb spawn(Location loc) {
-            World w = ((CraftWorld) loc.getWorld()).getHandle();
-            this.setPosition(loc.getX(), loc.getY(), loc.getZ());
-            w.addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
-            return this;
         }
 
         public void remove() {

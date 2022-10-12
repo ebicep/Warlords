@@ -6,11 +6,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,17 +33,8 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Summon a wave of fallen souls, dealing\n" +
-                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
-                "§7pass through. Each target hit reduces the\n" +
-                "§7cooldown of Spirit Link by §62 §7seconds.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "§7Summon a wave of fallen souls, dealing\n" +
-                        "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
-                        "§7pass through. Each target hit reduces the\n" +
-                        "§7cooldown of Spirit Link by §62 §7seconds.",
-                40
-        );
+        description = "Summon a wave of fallen souls, dealing" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by §62 §7seconds.";
     }
 
     @Override
@@ -71,6 +60,16 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     @Override
     protected float getSoundVolume() {
         return 2;
+    }
+
+    @Override
+    @Deprecated
+    protected void playEffect(Location currentLocation, int ticksLived) {
+    }
+
+    @Override
+    protected void playEffect(InternalProjectile projectile) {
+        super.playEffect(projectile);
     }
 
     @Override
@@ -131,38 +130,6 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
         return playersHit;
     }
 
-    private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
-        new CooldownFilter<>(wp, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
-                .forEachOrdered(soulbinding -> {
-                    wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
-
-                    wp.getRedAbility().subtractCooldown(1.5F);
-                    wp.getPurpleAbility().subtractCooldown(1.5F);
-                    wp.getBlueAbility().subtractCooldown(1.5F);
-                    wp.getOrangeAbility().subtractCooldown(1.5F);
-
-                    wp.updateItems();
-
-                    for (WarlordsEntity teammate : PlayerFilter
-                            .entitiesAround(wp.getLocation(), 8, 8, 8)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                            .closestFirst(wp.getLocation())
-                            .limit(2)
-                    ) {
-                        wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
-
-                        teammate.getRedAbility().subtractCooldown(1);
-                        teammate.getPurpleAbility().subtractCooldown(1);
-                        teammate.getBlueAbility().subtractCooldown(1);
-                        teammate.getOrangeAbility().subtractCooldown(1);
-
-                        teammate.updateItems();
-                    }
-                });
-    }
-
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
@@ -198,14 +165,36 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
         });
     }
 
-    @Override
-    protected void playEffect(InternalProjectile projectile) {
-        super.playEffect(projectile);
-    }
+    private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
+        new CooldownFilter<>(wp, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
+                .forEachOrdered(soulbinding -> {
+                    wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
-    @Override
-    @Deprecated
-    protected void playEffect(Location currentLocation, int ticksLived) {
+                    wp.getRedAbility().subtractCooldown(1.5F);
+                    wp.getPurpleAbility().subtractCooldown(1.5F);
+                    wp.getBlueAbility().subtractCooldown(1.5F);
+                    wp.getOrangeAbility().subtractCooldown(1.5F);
+
+                    wp.updateItems();
+
+                    for (WarlordsEntity teammate : PlayerFilter
+                            .entitiesAround(wp.getLocation(), 8, 8, 8)
+                            .aliveTeammatesOfExcludingSelf(wp)
+                            .closestFirst(wp.getLocation())
+                            .limit(2)
+                    ) {
+                        wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
+
+                        teammate.getRedAbility().subtractCooldown(1);
+                        teammate.getPurpleAbility().subtractCooldown(1);
+                        teammate.getBlueAbility().subtractCooldown(1);
+                        teammate.getOrangeAbility().subtractCooldown(1);
+
+                        teammate.updateItems();
+                    }
+                });
     }
 
 }

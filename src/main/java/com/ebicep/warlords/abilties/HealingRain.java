@@ -25,14 +25,22 @@ import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
-    private boolean pveUpgrade = false;
     protected int playersHealed = 0;
-
+    private boolean pveUpgrade = false;
     private int duration = 12;
     private int radius = 8;
 
     public HealingRain() {
         super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = "§7Conjure rain at targeted location that will restore" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
+                "health every 0.5 seconds to allies. Lasts §6" + duration + " §7seconds." +
+                "\n\nYou may move Healing Rain to your location using your SNEAK key." +
+                "\n\n§7Healing Rain can overheal allies for up to §a10% §7of their max health as bonus health §7for §6" +
+                Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
@@ -45,24 +53,10 @@ public class HealingRain extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = "§7Conjure rain at targeted\n" +
-                "location that will restore §a" + format(minDamageHeal) + "\n" +
-                "§7- §a" + format(maxDamageHeal) + " §7health every 0.5 seconds\n" +
-                "to allies. Lasts §6" + duration + " §7seconds." +
-                "\n\n" +
-                "You may move Healing Rain to your location\n" +
-                "using your SNEAK key." +
-                "\n\n" +
-                "§7Healing Rain can overheal allies for up to\n" +
-                "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
-
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
+        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) {
+            return false;
+        }
         wp.subtractEnergy(energyCost, false);
         wp.setOrangeCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
@@ -108,13 +102,15 @@ public class HealingRain extends AbstractAbility {
                                     critChance,
                                     critMultiplier,
                                     false,
-                                    false);
+                                    false
+                            );
 
                             if (teammateInRain != wp) {
                                 teammateInRain.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                                 teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
                                         "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                        }, Overheal.OVERHEAL_DURATION * 20);
+                                        }, Overheal.OVERHEAL_DURATION * 20
+                                );
                             }
                         }
                     }

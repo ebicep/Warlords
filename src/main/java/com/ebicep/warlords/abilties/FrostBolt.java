@@ -4,12 +4,10 @@ import com.ebicep.warlords.abilties.internal.AbstractProjectileBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -34,25 +32,9 @@ public class FrostBolt extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Shoot a frostbolt that will shatter\n" +
-                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and slow\n" +
-                "§7by §e" + slowness + "% §7for §62 §7seconds. A\n" +
-                "§7direct hit will cause the enemy\n" +
-                "§7to take an additional §c15% §7extra\n" +
-                "§7damage." +
-                "\n\n" +
-                "§7Has an optimal range of §e" + maxFullDistance + " §7blocks.";
-        description = WordWrap.wrapWithNewline(ChatColor.GRAY +
-                        "Shoot a frostbolt that will shatter\n" +
-                        "for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and slow\n" +
-                        "by §e" + slowness + "% §7for §62 §7seconds. A\n" +
-                        "direct hit will cause the enemy\n" +
-                        "to take an additional §c15% §7extra\n" +
-                        "damage." +
-                        "\n\n" +
-                        "Has an optimal range of §e" + maxFullDistance + " \u00A77blocks.",
-                DESCRIPTION_WIDTH
-        );
+        description = "Shoot a frostbolt that will shatter for" + formatRangeDamage(minDamageHeal, maxDamageHeal) +
+                "damage and slow by §e" + slowness + "% §7for §62 §7seconds. A direct hit will cause the enemy to take an additional §c15% §7extra damage." +
+                "\n\nHas an optimal range of §e" + maxFullDistance + " §7blocks.";
     }
 
     @Override
@@ -87,12 +69,6 @@ public class FrostBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-        this.playEffect(projectile);
-    }
-
-    @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
@@ -106,7 +82,9 @@ public class FrostBolt extends AbstractProjectileBase {
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                 1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-        if (toReduceBy < .2) toReduceBy = .2;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
@@ -120,7 +98,8 @@ public class FrostBolt extends AbstractProjectileBase {
                     (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                     critChance,
                     critMultiplier,
-                    false);
+                    false
+            );
             if (pveUpgrade) {
                 freezeExplodeOnHit(shooter, hit);
             }
@@ -145,10 +124,17 @@ public class FrostBolt extends AbstractProjectileBase {
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
-                    false);
+                    false
+            );
         }
 
         return playersHit;
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
     }
 
     private void freezeExplodeOnHit(WarlordsEntity giver, WarlordsEntity hit) {
