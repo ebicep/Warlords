@@ -17,8 +17,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AvengersStrike extends AbstractStrikeBase {
-    protected float energyStole = 0;
-    private boolean pveUpgrade = false;
+
+    public float energyStole = 0;
+
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -38,6 +39,21 @@ public class AvengersStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Energy Removed", "" + Math.round(energyStole)));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
+        randomHitEffect(location, 5, 255, 0, 0);
+        ParticleEffect.SPELL.display(
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                1,
+                4,
+                location.clone().add(0, 1, 0),
+                500
+        );
     }
 
     @Override
@@ -73,29 +89,6 @@ public class AvengersStrike extends AbstractStrikeBase {
         );
         energyStole += nearPlayer.subtractEnergy(energySteal, true);
         return true;
-    }
-
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
-        randomHitEffect(location, 5, 255, 0, 0);
-        ParticleEffect.SPELL.display(
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                1,
-                4,
-                location.clone().add(0, 1, 0),
-                500
-        );
-    }
-
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
     }
 
     public float getEnergySteal() {

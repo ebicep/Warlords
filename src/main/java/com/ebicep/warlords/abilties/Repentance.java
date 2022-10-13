@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Repentance extends AbstractAbility {
-    private float pool = 0;
 
+    private float pool = 0;
     private int duration = 12;
     private int poolDecay = 60;
     private int damageConvertPercent = 10;

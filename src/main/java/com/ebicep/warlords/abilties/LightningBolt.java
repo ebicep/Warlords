@@ -46,61 +46,13 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected String getActivationSound() {
-        return "shaman.lightningbolt.activation";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    @Deprecated
-    protected void playEffect(Location currentLocation, int ticksLived) {
-    }
-
-    @Override
     protected void playEffect(InternalProjectile projectile) {
         super.playEffect(projectile);
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
-        return true;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
-        maxReductions = 0;
-        return false;
-    }
-
-    @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
-        if (!projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            playersHit++;
-            maxReductions++;
-            if (hit.onHorse()) {
-                numberOfDismounts++;
-            }
-            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
-
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-
-            //reducing chain cooldown
-            if (!(wp.isInPve() && maxReductions >= 2)) {
-                wp.getRedAbility().subtractCooldown(2);
-                wp.updateRedItem();
-            }
-        }
+    @Deprecated
+    protected void playEffect(Location currentLocation, int ticksLived) {
     }
 
     @Override
@@ -139,6 +91,39 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+        maxReductions = 0;
+        return false;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+    @Override
+    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            playersHit++;
+            maxReductions++;
+            if (hit.onHorse()) {
+                numberOfDismounts++;
+            }
+            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
+
+            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+
+            //reducing chain cooldown
+            if (!(wp.isInPve() && maxReductions >= 2)) {
+                wp.getRedAbility().subtractCooldown(2);
+                wp.updateRedItem();
+            }
+        }
+    }
+
+    @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.1).get();
     }
@@ -169,6 +154,21 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 armorStand.remove();
             }
         });
+    }
+
+    @Override
+    protected String getActivationSound() {
+        return "shaman.lightningbolt.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
     }
 
     public double getHitbox() {

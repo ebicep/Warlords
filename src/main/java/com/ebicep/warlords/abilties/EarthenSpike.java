@@ -27,17 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
+
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
             "shaman.earthenspike.animation.b",
             "shaman.earthenspike.animation.c",
             "shaman.earthenspike.animation.d",
     };
-    private boolean pveUpgrade = false;
+
+    public int playersSpiked = 0;
+    public int carrierSpiked = 0;
 
     private int radius = 10;
-    private int playersSpiked = 0;
-    private int carrierSpiked = 0;
     private float speed = 1;
     private double spikeHitbox = 2.5;
     private double verticalVelocity = .625;
@@ -271,13 +272,6 @@ public class EarthenSpike extends AbstractAbility {
         this.speed = speed;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public double getVerticalVelocity() {
         return verticalVelocity;

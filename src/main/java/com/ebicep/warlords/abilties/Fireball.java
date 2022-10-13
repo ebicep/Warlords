@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Fireball extends AbstractProjectileBase {
-    private boolean pveUpgrade = false;
 
     private int maxFullDistance = 50;
     private double directHitMultiplier = 1.15;
@@ -45,21 +44,6 @@ public class Fireball extends AbstractProjectileBase {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
-    }
-
-    @Override
-    protected String getActivationSound() {
-        return "mage.fireball.activation";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
     }
 
     @Override
@@ -168,6 +152,21 @@ public class Fireball extends AbstractProjectileBase {
         this.playEffect(projectile);
     }
 
+    @Override
+    protected String getActivationSound() {
+        return "mage.fireball.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
     public int getMaxFullDistance() {
         return maxFullDistance;
     }
@@ -192,11 +191,5 @@ public class Fireball extends AbstractProjectileBase {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

@@ -18,7 +18,8 @@ import java.util.List;
 
 
 public class SpiritLink extends AbstractChainBase {
-    protected int numberOfDismounts = 0;
+
+    public int numberOfDismounts = 0;
 
     private int bounceRange = 10;
     private double speedDuration = 1.5;

@@ -22,9 +22,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility {
-    protected int playersHealed = 0;
-    protected int debuffsRemoved = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersHealed = 0;
+    public int debuffsRemoved = 0;
+
     private int maxAnimationTime = 12;
     private int maxAnimationEffects = 4;
     private float hitbox = 10;
@@ -202,13 +203,6 @@ public class WaterBreath extends AbstractAbility {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getMaxAnimationEffects() {
         return maxAnimationEffects;

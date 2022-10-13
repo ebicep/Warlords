@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Earthliving extends AbstractAbility {
-    private boolean pveUpgrade = false;
-    protected int timesProcd = 0;
-    protected int playersHealed = 0;
+
+    public int timesProcd = 0;
+    public int playersHealed = 0;
 
     private final int duration = 8;
     private int procChance = 40;
@@ -223,13 +223,7 @@ public class Earthliving extends AbstractAbility {
         this.maxHits = maxHits;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }
 
 

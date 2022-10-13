@@ -20,8 +20,6 @@ import java.util.Optional;
 
 public class WoundingStrikeDefender extends AbstractStrikeBase {
 
-    private boolean pveUpgrade = false;
-
     private int wounding = 25;
 
     public WoundingStrikeDefender() {
@@ -41,6 +39,12 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         info.add(new Pair<>("Players Stuck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
+        randomHitEffect(location, 7, 255, 0, 0);
     }
 
     @Override
@@ -109,20 +113,6 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
                 return currentDamageValue * 0.7f;
             }
         });
-    }
-
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
-        randomHitEffect(location, 7, 255, 0, 0);
-    }
-
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
     }
 
     public int getWounding() {

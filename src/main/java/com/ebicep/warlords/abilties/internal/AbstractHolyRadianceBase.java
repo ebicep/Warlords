@@ -17,17 +17,25 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 
 public abstract class AbstractHolyRadianceBase extends AbstractAbility {
-    protected int playersHealed = 0;
-    protected int playersMarked = 0;
+
+    public int playersHealed = 0;
+    public int playersMarked = 0;
 
     private int radius;
 
-    public AbstractHolyRadianceBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, int radius) {
+    public AbstractHolyRadianceBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            int radius
+    ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.radius = radius;
     }
-
-    public abstract boolean chain(WarlordsEntity wp, Player player);
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
@@ -64,6 +72,8 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         return true;
     }
 
+    public abstract boolean chain(WarlordsEntity wp, Player player);
+
     public int getRadius() {
         return radius;
     }
@@ -90,12 +100,6 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
             this.owner = owner;
             this.minHeal = minHeal;
             this.maxHeal = maxHeal;
-        }
-
-        @Override
-        public void cancel() {
-            super.cancel();
-            armorStand.remove();
         }
 
         @Override
@@ -147,6 +151,12 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
                 ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
             }
+        }
+
+        @Override
+        public void cancel() {
+            super.cancel();
+            armorStand.remove();
         }
     }
 }

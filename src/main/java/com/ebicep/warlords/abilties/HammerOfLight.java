@@ -28,17 +28,19 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class HammerOfLight extends AbstractAbility {
-    private static final int radius = 6;
-    protected int playersHealed = 0;
-    protected int playersDamaged = 0;
-    private boolean pveUpgrade = false;
+
+    private static final int RADIUS = 6;
+
+    public int playersHealed = 0;
+    public int playersDamaged = 0;
+
+    protected float amountHealed = 0;
+
     private boolean isCrownOfLight = false;
     private Location location;
     private int duration = 10;
     private float minDamage = 178;
     private float maxDamage = 244;
-
-    private float amountHealed = 0;
 
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
@@ -53,7 +55,7 @@ public class HammerOfLight extends AbstractAbility {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                 .filter(HammerOfLight::isHammer)
-                .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < radius * radius);
+                .anyMatch(hammerOfLight -> hammerOfLight.getLocation().distanceSquared(standing.getLocation()) < RADIUS * RADIUS);
     }
 
     public boolean isHammer() {
@@ -72,7 +74,7 @@ public class HammerOfLight extends AbstractAbility {
                 .map(HammerOfLight::getLocation)
                 .forEach(loc -> {
                     for (WarlordsEntity enemy : PlayerFilter
-                            .entitiesAround(loc, radius, 4, radius)
+                            .entitiesAround(loc, RADIUS, 4, RADIUS)
                             .enemiesOf(owner)
                             .isAlive()) {
                         playersInHammer.add(enemy);
@@ -85,7 +87,7 @@ public class HammerOfLight extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "Throw down a Hammer of Light on the ground, dealing" + formatRangeDamage(minDamage, maxDamage) +
                 "damage every second to nearby enemies and healing nearby allies for" + formatRangeHealing(minDamageHeal, maxDamageHeal) +
-                "every second in a §e" + radius + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
+                "every second in a §e" + RADIUS + " §7block radius. Your Protector Strike pierces shields and defenses of enemies standing on top of the " +
                 "Hammer of Light. Lasts §6" + duration + " §7seconds." +
                 "\n\nYou may SNEAK to turn your hammer into Crown of Light. Removing the damage and piercing BUT " +
                 "increasing the healing §7by §a50% §7and reducing the energy cost of your Protector's Strike by " +
@@ -129,7 +131,7 @@ public class HammerOfLight extends AbstractAbility {
                 wp.getGame(),
                 wp.getTeam(),
                 location,
-                radius,
+                RADIUS,
                 new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
                 new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
         );
@@ -155,7 +157,7 @@ public class HammerOfLight extends AbstractAbility {
                         if (tempHammerOfLight.isCrownOfLight()) {
                             if (wp.isAlive()) {
                                 for (WarlordsEntity allyTarget : PlayerFilter
-                                        .entitiesAround(wp.getLocation(), radius, radius, radius)
+                                        .entitiesAround(wp.getLocation(), RADIUS, RADIUS, RADIUS)
                                         .aliveTeammatesOf(wp)
                                 ) {
                                     playersHealed++;
@@ -175,7 +177,7 @@ public class HammerOfLight extends AbstractAbility {
                             }
                         } else {
                             for (WarlordsEntity hammerTarget : PlayerFilter
-                                    .entitiesAround(location, radius, radius, radius)
+                                    .entitiesAround(location, RADIUS, RADIUS, RADIUS)
                                     .isAlive()
                             ) {
                                 if (wp.isTeammate(hammerTarget)) {
@@ -239,7 +241,7 @@ public class HammerOfLight extends AbstractAbility {
                                         wp.getGame(),
                                         wp.getTeam(),
                                         wp.getLocation().add(0, 0.75f, 0),
-                                        radius / 2f,
+                                        RADIUS / 2f,
                                         new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f)
                                 ).playEffects();
                             }
@@ -301,17 +303,17 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.4f);
                 EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
-                EffectUtils.playHelixAnimation(wp.getLocation(), radius * radiusMultiplier, ParticleEffect.SPELL_WITCH, 1, 20);
+                EffectUtils.playHelixAnimation(wp.getLocation(), RADIUS * radiusMultiplier, ParticleEffect.SPELL_WITCH, 1, 20);
                 new CircleEffect(
                         wp.getGame(),
                         wp.getTeam(),
                         wp.getLocation().add(0, 0.75f, 0),
-                        radius * radiusMultiplier,
+                        RADIUS * radiusMultiplier,
                         new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(1)
                 ).playEffects();
 
                 for (WarlordsEntity allyTarget : PlayerFilter
-                        .entitiesAround(wp.getLocation(), radius * radiusMultiplier, radius * radiusMultiplier, radius * radiusMultiplier)
+                        .entitiesAround(wp.getLocation(), RADIUS * radiusMultiplier, RADIUS * radiusMultiplier, RADIUS * radiusMultiplier)
                         .aliveTeammatesOf(wp)
                 ) {
                     playersHealed++;
@@ -330,7 +332,7 @@ public class HammerOfLight extends AbstractAbility {
                 }
 
                 for (WarlordsEntity enemyTarget : PlayerFilter
-                        .entitiesAround(wp.getLocation(), radius * radiusMultiplier, radius * radiusMultiplier, radius * radiusMultiplier)
+                        .entitiesAround(wp.getLocation(), RADIUS * radiusMultiplier, RADIUS * radiusMultiplier, RADIUS * radiusMultiplier)
                         .aliveEnemiesOf(wp)
                 ) {
                     enemyTarget.addDamageInstance(
@@ -371,13 +373,6 @@ public class HammerOfLight extends AbstractAbility {
         this.maxDamage = maxDamage;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public float getAmountHealed() {
         return amountHealed;

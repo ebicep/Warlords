@@ -28,14 +28,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotemBase {
-    protected int playersHealed = 0;
-    protected int playersCrippled = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersHealed = 0;
+    public int playersCrippled = 0;
+
+    protected float amountHealed = 0;
+
     private int radius = 7;
     private int duration = 6;
     private int crippleDuration = 6;
-
-    private float amountHealed = 0;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -65,13 +66,13 @@ public class HealingTotem extends AbstractTotemBase {
     }
 
     @Override
-    protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 7);
+    protected void playSound(Player player, Location location) {
+        Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
 
     @Override
-    protected void playSound(Player player, Location location) {
-        Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
+    protected ItemStack getTotemItemStack() {
+        return new ItemStack(Material.RED_ROSE, 1, (short) 7);
     }
 
     @Override
@@ -270,11 +271,5 @@ public class HealingTotem extends AbstractTotemBase {
         this.crippleDuration = crippleDuration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

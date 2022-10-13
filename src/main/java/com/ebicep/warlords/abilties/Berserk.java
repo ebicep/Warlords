@@ -16,10 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Berserk extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
-    protected int hitsDoneAmplified = 0;
-    protected int hitsTakenAmplified = 0;
+    public int hitsDoneAmplified = 0;
+    public int hitsTakenAmplified = 0;
 
     private int duration = 18;
     private int speedBuff = 30;
@@ -152,13 +151,6 @@ public class Berserk extends AbstractAbility {
         this.speedBuff = speedBuff;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getDuration() {
         return duration;

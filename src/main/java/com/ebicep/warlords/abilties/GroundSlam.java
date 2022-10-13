@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroundSlam extends AbstractAbility {
-    protected int playersHit = 0;
-    protected int carrierHit = 0;
-    protected int warpsKnockbacked = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersHit = 0;
+    public int carrierHit = 0;
+    public int warpsKnockbacked = 0;
+
     private int slamSize = 6;
     private float velocity = 1.25f;
 
@@ -236,13 +237,6 @@ public class GroundSlam extends AbstractAbility {
         this.slamSize = slamSize;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public float getVelocity() {
         return velocity;

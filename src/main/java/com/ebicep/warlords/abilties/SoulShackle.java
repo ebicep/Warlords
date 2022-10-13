@@ -24,7 +24,6 @@ import java.util.List;
 public class SoulShackle extends AbstractAbility {
 
     private final int shackleRange = 15;
-    private boolean pveUpgrade = false;
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
     private int minSilenceDurationInTicks = 40;
@@ -184,13 +183,6 @@ public class SoulShackle extends AbstractAbility {
         this.maxShackleTargets = maxShackleTargets;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getMaxSilenceDurationInTicks() {
         return maxSilenceDurationInTicks;

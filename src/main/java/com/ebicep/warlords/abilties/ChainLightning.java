@@ -19,10 +19,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
-    protected int numberOfDismounts = 0;
-    private boolean pveUpgrade = false;
-    private int damageReduction = 0;
 
+    public int numberOfDismounts = 0;
+
+    private int damageReduction = 0;
     private int radius = 20;
     private int bounceRange = 10;
     private int maxBounces = 3;
@@ -214,13 +214,6 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         this.damageReductionPerBounce = damageReductionPerBounce;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getRadius() {
         return radius;

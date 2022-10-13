@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.ebicep.warlords.util.warlords.Utils.lerp;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
 
     private int minConvert = 75; // %
     private int maxConvert = 100; // %
@@ -45,6 +44,21 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Times Struck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
+        randomHitEffect(location, 5, 255, 0, 0);
+        ParticleEffect.SPELL.display(
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                1,
+                4,
+                location.clone().add(0, 1, 0),
+                500
+        );
     }
 
     @Override
@@ -169,21 +183,6 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
-        randomHitEffect(location, 5, 255, 0, 0);
-        ParticleEffect.SPELL.display(
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                1,
-                4,
-                location.clone().add(0, 1, 0),
-                500
-        );
-    }
-
     public int getMinConvert() {
         return minConvert;
     }
@@ -200,13 +199,6 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         this.maxConvert = selfConvertPercent;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getMaxAllies() {
         return maxAllies;

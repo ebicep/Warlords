@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SoothingElixir extends AbstractAbility {
+
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
+
+    public int playersHealed = 0;
+
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
-    protected int playersHealed = 0;
     private float puddleRadius = 5;
     private int puddleDuration = 4;
     private int puddleMinHealing = 158;

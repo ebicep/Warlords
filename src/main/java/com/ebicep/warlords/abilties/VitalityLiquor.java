@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VitalityLiquor extends AbstractAbility {
-    protected int numberOfAdditionalWaves = 0;
+
+    public int numberOfAdditionalWaves = 0;
 
     private int vitalityRange = 8;
-    private int duration = 3;
+    private final int duration = 3;
     private int energyPerSecond = 15;
     private float minWaveHealing = 268;
     private float maxWaveHealing = 324;

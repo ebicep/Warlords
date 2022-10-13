@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FallenSouls extends AbstractPiercingProjectileBase {
-    protected int playersHit = 0;
-    protected int numberOfDismounts = 0;
+
+    public int playersHit = 0;
+    public int numberOfDismounts = 0;
 
     public FallenSouls() {
         super("Fallen Souls", 164f, 212f, 0, 55, 20, 180, 2, 35, false);
@@ -48,58 +49,13 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
     }
 
     @Override
-    protected String getActivationSound() {
-        return "shaman.lightningbolt.impact";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1.5f;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    @Deprecated
-    protected void playEffect(Location currentLocation, int ticksLived) {
-    }
-
-    @Override
     protected void playEffect(InternalProjectile projectile) {
         super.playEffect(projectile);
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
-        return true;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
-        return false;
-    }
-
-    @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
-        if (!projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            playersHit++;
-            if (hit.onHorse()) {
-                numberOfDismounts++;
-            }
-            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
-
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-
-            wp.getRedAbility().subtractCooldown(2);
-            wp.updateRedItem();
-
-            reduceCooldowns(wp, hit);
-        }
+    @Deprecated
+    protected void playEffect(Location currentLocation, int ticksLived) {
     }
 
     @Override
@@ -128,6 +84,36 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
         }
 
         return playersHit;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+    @Override
+    protected void onNonCancellingHit(InternalProjectile projectile, WarlordsEntity hit, Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            playersHit++;
+            if (hit.onHorse()) {
+                numberOfDismounts++;
+            }
+            Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
+
+            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+
+            wp.getRedAbility().subtractCooldown(2);
+            wp.updateRedItem();
+
+            reduceCooldowns(wp, hit);
+        }
     }
 
     @Override
@@ -163,6 +149,21 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, projectile.getCurrentLocation(), 500);
             }
         });
+    }
+
+    @Override
+    protected String getActivationSound() {
+        return "shaman.lightningbolt.impact";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1.5f;
     }
 
     private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {

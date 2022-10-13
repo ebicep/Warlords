@@ -22,10 +22,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class ArcaneShield extends AbstractAbility {
-    public int maxShieldHealth;
-    public int shieldPercentage = 50;
-    private boolean pveUpgrade = false;
-    private int timesBroken = 0;
+
+    public int timesBroken = 0;
+
+    private int maxShieldHealth;
+    private int shieldPercentage = 50;
     private int duration = 6;
     private float shieldHealth = 0;
 
@@ -144,11 +145,5 @@ public class ArcaneShield extends AbstractAbility {
         this.duration = duration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
-    private int timesUsedWithFlag = 0;
+    public int timesUsedWithFlag = 0;
+
     private int radius = 15;
     private int verticalRadius = 15;
     private int vindDuration = 6;
@@ -198,11 +198,5 @@ public class HeartToHeart extends AbstractAbility {
         this.healthRestore = healthRestore;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

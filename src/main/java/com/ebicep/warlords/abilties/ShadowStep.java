@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShadowStep extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
-    private int totalPlayersHit = 0;
+    public int totalPlayersHit = 0;
 
     private int fallDamageNegation = 10;
 
@@ -158,11 +157,5 @@ public class ShadowStep extends AbstractAbility {
         this.fallDamageNegation = fallDamageNegation;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

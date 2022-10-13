@@ -85,10 +85,10 @@ public class WonderTrap extends AbstractAbility {
     private class Trap extends BukkitRunnable {
 
         private final WarlordsEntity trapOwner;
-        private int timeToLive;
-        private int trapArmTime;
         private final double trapRadius;
         private final ArmorStand trapStand;
+        private int timeToLive;
+        private int trapArmTime;
         private boolean canEndEarly = false;
 
         public Trap(Location location, WarlordsEntity trapOwner, int timeToLive, int trapArmTime, double trapRadius) {
@@ -105,45 +105,41 @@ public class WonderTrap extends AbstractAbility {
         }
 
         @Override
-        public void cancel() {
-            super.cancel();
-            trapStand.remove();
-        }
-
-        @Override
         public void run() {
-                timeToLive--;
-                trapArmTime--;
+            timeToLive--;
+            trapArmTime--;
 
-                if (trapOwner.isSneaking() && canEndEarly) {
+            if (trapOwner.isSneaking() && canEndEarly) {
 
-                    Utils.playGlobalSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
+                Utils.playGlobalSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
 
-                    EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, ParticleEffect.FIREWORKS_SPARK);
+                EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, ParticleEffect.FIREWORKS_SPARK);
 
-                    PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
-                            .aliveEnemiesOf(trapOwner)
-                            .forEach((trapTarget) -> {
-                                trapTarget.addDamageInstance(
-                                        trapOwner,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false);
+                PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
+                        .aliveEnemiesOf(trapOwner)
+                        .forEach((trapTarget) -> {
+                            trapTarget.addDamageInstance(
+                                    trapOwner,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false
+                            );
 
-                                //final Location loc = trapStand.getLocation();
-                                //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
-                                //trapTarget.setVelocity(v);
+                            //final Location loc = trapStand.getLocation();
+                            //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
+                            //trapTarget.setVelocity(v);
 
-                                WonderTrap tempTrap = new WonderTrap();
+                            WonderTrap tempTrap = new WonderTrap();
 
-                                trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
-                                }, 30 * 20);
-                            });
-                    this.cancel();
-                }
+                            trapTarget.getCooldownManager()
+                                    .addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
+                                    }, 30 * 20);
+                        });
+                this.cancel();
+            }
 
                 /*if (trapArmTime < 0) {
                     setCanEndEarly(true);
@@ -163,9 +159,15 @@ public class WonderTrap extends AbstractAbility {
                             });
                 }*/
 
-                if (timeToLive <= 0) {
-                    this.cancel();
-                }
+            if (timeToLive <= 0) {
+                this.cancel();
+            }
+        }
+
+        @Override
+        public void cancel() {
+            super.cancel();
+            trapStand.remove();
         }
 
         public boolean isCanEndEarly() {

@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class LightInfusionProtector extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
     private int duration = 3;
     private int speedBuff = 40;
@@ -112,12 +111,6 @@ public class LightInfusionProtector extends AbstractAbility {
         this.energyGiven = energyGiven;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }
 

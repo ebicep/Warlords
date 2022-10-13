@@ -22,12 +22,6 @@ public abstract class AbstractChainBase extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    protected abstract int getHitCounterAndActivate(WarlordsEntity warlordsPlayer, Player player);
-
-    protected abstract void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter);
-
-    protected abstract ItemStack getChainItem();
-
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull Player player) {
         int hitCounter = getHitCounterAndActivate(warlordsPlayer, player);
@@ -44,6 +38,10 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
         return false;
     }
+
+    protected abstract int getHitCounterAndActivate(WarlordsEntity warlordsPlayer, Player player);
+
+    protected abstract void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter);
 
     protected void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);
@@ -65,7 +63,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
             chain.setHelmet(getChainItem());
             from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
-            if(to.distanceSquared(from) < .4) {
+            if (to.distanceSquared(from) < .4) {
                 break;
             }
         }
@@ -91,5 +89,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
+
+    protected abstract ItemStack getChainItem();
 
 }

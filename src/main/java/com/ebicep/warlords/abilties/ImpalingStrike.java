@@ -17,9 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class ImpalingStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
 
-    private float healingDoneFromEnemyCarrier = 0;
+    protected float healingDoneFromEnemyCarrier = 0;
 
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
@@ -44,6 +43,13 @@ public class ImpalingStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Players Struck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "rogue.apothecarystrike.activation", 2, 0.5f);
+        Utils.playGlobalSound(location, "mage.fireball.activation", 2, 1.8f);
+        randomHitEffect(location, 7, 100, 255, 100);
     }
 
     @Override
@@ -103,13 +109,6 @@ public class ImpalingStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "rogue.apothecarystrike.activation", 2, 0.5f);
-        Utils.playGlobalSound(location, "mage.fireball.activation", 2, 1.8f);
-        randomHitEffect(location, 7, 100, 255, 100);
-    }
-
     public void addHealingDoneFromEnemyCarrier(float amount) {
         this.healingDoneFromEnemyCarrier += amount;
     }
@@ -142,11 +141,5 @@ public class ImpalingStrike extends AbstractStrikeBase {
         this.leechAllyAmount = leechAllyAmount;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

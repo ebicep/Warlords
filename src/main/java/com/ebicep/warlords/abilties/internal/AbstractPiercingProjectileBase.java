@@ -28,26 +28,35 @@ import java.util.List;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
-    protected int playersHit = 0;
-    protected int playersHitBySplash = 0;
-    protected int directHits = 0;
-    protected int numberOfDismounts = 0;
+    public int playersHit = 0;
+    public int playersHitBySplash = 0;
+    public int directHits = 0;
+    public int numberOfDismounts = 0;
 
-    protected float forwardTeleportAmount = 0;
-    protected int maxAngleOfShots = 45;
-    protected int shotsFiredAtATime = 1;
-    protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
-
-    private final List<PendingHit> PENDING_HITS = new ArrayList<>();
-
-    protected double projectileSpeed;
     protected final int maxTicks;
     protected final double maxDistance;
     protected final boolean hitTeammates;
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
+    private final List<PendingHit> PENDING_HITS = new ArrayList<>();
+    protected float forwardTeleportAmount = 0;
+    protected int maxAngleOfShots = 45;
+    protected int shotsFiredAtATime = 1;
+    protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
+    protected double projectileSpeed;
 
-    public AbstractPiercingProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
+    public AbstractPiercingProjectileBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            double projectileSpeed,
+            double maxDistance,
+            boolean hitTeammates
+    ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
@@ -55,21 +64,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         this.hitTeammates = hitTeammates;
         //this.canBeReflected = canBeReflected;
     }
-
-    /**
-     * Gets the sound used when this projectile is activated
-     *
-     * @return
-     */
-    @Nullable
-    protected abstract String getActivationSound();
-
-    protected abstract float getSoundPitch();
-
-    protected abstract float getSoundVolume();
-
-    @Deprecated
-    protected abstract void playEffect(@Nonnull Location currentLocation, int ticksLived);
 
     /**
      * Plays this projectile effect at a location
@@ -84,36 +78,8 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         playEffect(projectile.currentLocation, projectile.ticksLived);
     }
 
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param block
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
-
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param wp
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
-
-    /**
-     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
-     *
-     * @param projectile
-     * @param hit
-     * @param impactLocation
-     */
-    protected abstract void onNonCancellingHit(
-            @Nonnull InternalProjectile projectile,
-            @Nonnull WarlordsEntity hit,
-            @Nonnull Location impactLocation
-    );
+    @Deprecated
+    protected abstract void playEffect(@Nonnull Location currentLocation, int ticksLived);
 
     /**
      * Called when the projectile is destroyed by an collision
@@ -122,14 +88,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      * @param hit        The player that this projectile impacted on, if any
      */
     protected abstract int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit);
-
-    @Nullable
-    protected WarlordsEntity getFromEntity(Entity e) {
-        if (e instanceof Horse) {
-            return Warlords.getPlayer(e.getPassenger());
-        }
-        return Warlords.getPlayer(e);
-    }
 
     /**
      * Modifies the speed every tick, in case it is needed
@@ -248,6 +206,45 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         return hit;
     }
 
+    @Nullable
+    protected WarlordsEntity getFromEntity(Entity e) {
+        if (e instanceof Horse) {
+            return Warlords.getPlayer(e.getPassenger());
+        }
+        return Warlords.getPlayer(e);
+    }
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param wp
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param block
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
+
+    /**
+     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
+     *
+     * @param projectile
+     * @param hit
+     * @param impactLocation
+     */
+    protected abstract void onNonCancellingHit(
+            @Nonnull InternalProjectile projectile,
+            @Nonnull WarlordsEntity hit,
+            @Nonnull Location impactLocation
+    );
+
     /**
      * Calculated the initial projectile location
      *
@@ -268,15 +265,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
      */
     protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
         return startingLocation.getDirection().multiply(projectileSpeed);
-    }
-
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        final String activationSound = getActivationSound();
-        final float soundVolume = getSoundVolume();
-        final float soundPitch = getSoundPitch();
-        if (activationSound != null) {
-            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
-        }
     }
 
     @Override
@@ -303,7 +291,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         return true;
     }
 
-
     /**
      * @param player Player that fires the shots
      * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
@@ -323,6 +310,27 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
         return locations;
     }
+
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        final String activationSound = getActivationSound();
+        final float soundVolume = getSoundVolume();
+        final float soundPitch = getSoundPitch();
+        if (activationSound != null) {
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
+        }
+    }
+
+    /**
+     * Gets the sound used when this projectile is activated
+     *
+     * @return
+     */
+    @Nullable
+    protected abstract String getActivationSound();
+
+    protected abstract float getSoundVolume();
+
+    protected abstract float getSoundPitch();
 
     public int getDirectHits() {
         return directHits;
@@ -354,14 +362,21 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         this.projectileSpeed = projectileSpeed;
     }
 
+    public interface InternalProjectileTask {
+        void run(InternalProjectile projectile);
+
+        default void onDestroy(InternalProjectile projectile) {
+        }
+    }
+
     public class InternalProjectile extends BukkitRunnable {
         private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
         private final Location startingLocation;
         private final Location currentLocation;
         private final Vector speed;
-        private int ticksLived = 0;
         private final WarlordsEntity shooter;
+        private int ticksLived = 0;
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = getProjectileStartingLocation(shooter, startingLocation);
@@ -381,14 +396,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
                     ", ticksLived=" + ticksLived +
                     ", shooter=" + shooter +
                     '}';
-        }
-
-        @Override
-        public synchronized void cancel() throws IllegalStateException {
-            super.cancel();
-            for (InternalProjectileTask task : tasks) {
-                task.onDestroy(this);
-            }
         }
 
         @Override
@@ -416,6 +423,14 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
                         cancel();
                     }
                 }
+            }
+        }
+
+        @Override
+        public synchronized void cancel() throws IllegalStateException {
+            super.cancel();
+            for (InternalProjectileTask task : tasks) {
+                task.onDestroy(this);
             }
         }
 
@@ -459,13 +474,6 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             return tasks;
         }
 
-    }
-
-    public interface InternalProjectileTask {
-        void run(InternalProjectile projectile);
-
-        default void onDestroy(InternalProjectile projectile) {
-        }
     }
 
     private final class PendingHit implements Comparable<PendingHit> {

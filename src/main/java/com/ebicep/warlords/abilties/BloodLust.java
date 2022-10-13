@@ -16,12 +16,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class BloodLust extends AbstractAbility {
-    private boolean pveUpgrade = false;
+
+    public float amountHealed = 0;
 
     private int duration = 15;
     private int damageConvertPercent = 65;
-
-    private float amountHealed = 0;
 
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20);
@@ -119,13 +118,6 @@ public class BloodLust extends AbstractAbility {
         this.amountHealed += amountHealed;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getDuration() {
         return duration;

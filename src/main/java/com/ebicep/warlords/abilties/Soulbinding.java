@@ -19,18 +19,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
-    protected int playersBinded = 0;
-    protected int soulProcs = 0;
-    protected int linkProcs = 0;
-    protected int soulTeammatesCDReductions = 0;
-    protected int linkTeammatesHealed = 0;
+
+    public int playersBinded = 0;
+    public int soulProcs = 0;
+    public int linkProcs = 0;
+    public int soulTeammatesCDReductions = 0;
+    public int linkTeammatesHealed = 0;
 
     private final int duration = 12;
+    private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+    private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
+    private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
     private float bindDuration = 2;
-
-    private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
-    private List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
 
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);

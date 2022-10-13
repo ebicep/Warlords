@@ -21,9 +21,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility {
-    protected int playersLinked = 0;
-    protected int numberOfBrokenLinks = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersLinked = 0;
+    public int numberOfBrokenLinks = 0;
+
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
     private int duration = 8;
@@ -262,11 +263,5 @@ public class RemedicChains extends AbstractAbility {
         this.allyDamageIncrease = allyDamageIncrease;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

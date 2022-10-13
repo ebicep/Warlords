@@ -20,8 +20,6 @@ public class LightInfusionAvenger extends AbstractAbility {
 
     // TODO: abstract class? Although the base effects get altered so much per spec so IDK
 
-    private boolean pveUpgrade = false;
-
     private int duration = 3;
     private int speedBuff = 40;
     private int energyGiven = 120;
@@ -134,11 +132,5 @@ public class LightInfusionAvenger extends AbstractAbility {
         this.energyGiven = energyGiven;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

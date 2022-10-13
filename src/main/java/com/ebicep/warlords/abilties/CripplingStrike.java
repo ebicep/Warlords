@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CripplingStrike extends AbstractStrikeBase {
+
     private final int crippleDuration = 3;
-    private boolean pveUpgrade = false;
     private int consecutiveStrikeCounter = 0;
     private int cripple = 10;
     private int cripplePerStrike = 5;
@@ -48,6 +48,12 @@ public class CripplingStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Players Struck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
+        randomHitEffect(location, 7, 255, 0, 0);
     }
 
     @Override
@@ -121,12 +127,6 @@ public class CripplingStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
-        randomHitEffect(location, 7, 255, 0, 0);
-    }
-
     public int getConsecutiveStrikeCounter() {
         return consecutiveStrikeCounter;
     }
@@ -147,11 +147,5 @@ public class CripplingStrike extends AbstractStrikeBase {
         this.cripplePerStrike = cripplePerStrike;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

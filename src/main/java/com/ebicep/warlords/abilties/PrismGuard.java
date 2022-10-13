@@ -24,17 +24,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility {
-    protected int timesProjectilesReduced = 0;
-    protected int timesOtherReduced = 0;
-    private boolean pveUpgrade = false;
+
+    public int timesProjectilesReduced = 0;
+    public int timesOtherReduced = 0;
+
+    protected float damageReduced = 0;
+
+    private int damageReduction = 3;
     private int bubbleRadius = 4;
     private int duration = 6;
     private int bubbleHealing = 200;
     private float bubbleMissingHealing = 1.5f;
     private int projectileDamageReduction = 75;
-    private int damageReduction = 3;
-
-    private float damageReduced = 0;
 
     public PrismGuard() {
         super("Prism Guard", 0, 0, 26, 40, -1, 100);
@@ -303,11 +304,5 @@ public class PrismGuard extends AbstractAbility {
         this.bubbleMissingHealing = bubbleMissingHealing;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

@@ -41,6 +41,8 @@ public abstract class AbstractAbility {
     protected float critMultiplier;
     protected String description;
     protected boolean boosted;
+    //pve
+    protected boolean pveUpgrade = false;
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
@@ -251,6 +253,14 @@ public abstract class AbstractAbility {
     }
 
     public void runEveryTick() {
+    }
+
+    public boolean isPveUpgrade() {
+        return pveUpgrade;
+    }
+
+    public void setPveUpgrade(boolean pveUpgrade) {
+        this.pveUpgrade = pveUpgrade;
     }
 
     public static class SecondaryAbility {

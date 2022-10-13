@@ -22,9 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
-    private int debuffsRemovedOnCast = 0;
+    public int debuffsRemovedOnCast = 0;
 
     private final int radius = 8;
     private int vindicateDuration = 12;
@@ -159,13 +158,6 @@ public class Vindicate extends AbstractAbility {
         this.vindicateDamageReduction = vindicateDamageReduction;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getVindicateDuration() {
         return vindicateDuration;

@@ -19,14 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WaterBolt extends AbstractProjectileBase {
-    private boolean pveUpgrade = false;
-    private int teammatesHit = 0;
-    private int enemiesHit = 0;
+
+    public int teammatesHit = 0;
+    public int enemiesHit = 0;
 
     private int maxFullDistance = 40;
     private double directHitMultiplier = 1.15;
     private float hitbox = 4;
-
     private float minDamage = 231;
     private float maxDamage = 299;
 
@@ -54,21 +53,6 @@ public class WaterBolt extends AbstractProjectileBase {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
-    }
-
-    @Override
-    protected String getActivationSound() {
-        return "mage.waterbolt.activation";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
     }
 
     @Override
@@ -159,7 +143,6 @@ public class WaterBolt extends AbstractProjectileBase {
                             "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
                             }, Overheal.OVERHEAL_DURATION * 20
                     );
-                    ;
                 }
                 if (pveUpgrade) {
                     increaseDamageOnHit(shooter, nearEntity);
@@ -188,6 +171,21 @@ public class WaterBolt extends AbstractProjectileBase {
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
         this.playEffect(projectile);
+    }
+
+    @Override
+    protected String getActivationSound() {
+        return "mage.waterbolt.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
     }
 
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
@@ -250,11 +248,5 @@ public class WaterBolt extends AbstractProjectileBase {
         this.maxDamage = maxDamage;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

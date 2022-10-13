@@ -30,15 +30,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeathsDebt extends AbstractTotemBase {
-    protected int playersDamaged = 0;
-    protected int playersHealed = 0;
-    private float delayedDamage = 0;
 
+    public int playersDamaged = 0;
+    public int playersHealed = 0;
+
+    private float delayedDamage = 0;
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float damagePercent = 15;
     private float selfDamageInPercentPerSecond = .1667f;
-
     private boolean inDebt = false;
     private boolean playerInRadius = true;
 
@@ -72,14 +72,14 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     @Override
-    protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.JUNGLE_FENCE_GATE);
-    }
-
-    @Override
     protected void playSound(Player player, Location location) {
         //TODO find the right sound - this aint right chief
         Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);
+    }
+
+    @Override
+    protected ItemStack getTotemItemStack() {
+        return new ItemStack(Material.JUNGLE_FENCE_GATE);
     }
 
     @Override

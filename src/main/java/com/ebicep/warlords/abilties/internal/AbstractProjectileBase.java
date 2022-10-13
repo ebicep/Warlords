@@ -6,7 +6,18 @@ import org.bukkit.block.Block;
 
 public abstract class AbstractProjectileBase extends AbstractPiercingProjectileBase {
 
-    public AbstractProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
+    public AbstractProjectileBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            double projectileSpeed,
+            double maxDistance,
+            boolean hitTeammates
+    ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, projectileSpeed, maxDistance, hitTeammates);
     }
 

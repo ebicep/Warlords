@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Boulder extends AbstractAbility {
-    protected int playersHit = 0;
-    protected int carrierHit = 0;
-    protected int warpsKnockbacked = 0;
-    private boolean pveUpgrade = false;
-    private double boulderSpeed = 0.290;
+
+    public int playersHit = 0;
+    public int carrierHit = 0;
+    public int warpsKnockbacked = 0;
+
     private double boulderGravity = -0.0059;
+    private double boulderSpeed = 0.290;
     private double hitbox = 5.5;
     private double velocity = 1.15;
 
@@ -246,11 +247,5 @@ public class Boulder extends AbstractAbility {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

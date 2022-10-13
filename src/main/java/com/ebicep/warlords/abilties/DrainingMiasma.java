@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility {
-    private final int maxHealthDamage = 4;
-    protected int playersHit = 0;
-    private boolean pveUpgrade = false;
+    public int playersHit = 0;
+
+    private int maxHealthDamage = 4;
     private int duration = 5;
     private int leechDuration = 5;
     private int enemyHitRadius = 8;
@@ -207,11 +207,5 @@ public class DrainingMiasma extends AbstractAbility {
         this.duration = duration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

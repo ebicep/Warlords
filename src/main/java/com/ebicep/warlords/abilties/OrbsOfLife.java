@@ -35,12 +35,15 @@ import java.util.List;
 import java.util.Random;
 
 public class OrbsOfLife extends AbstractAbility {
+
     public static final double SPAWN_RADIUS = 1.15;
     public static float ORB_HEALING = 225;
+
+    public int orbsProduced = 0;
+
     private final List<Orb> spawnedOrbs = new ArrayList<>();
     private final int duration = 14;
     private final int floatingOrbRadius = 20;
-    protected int orbsProduced = 0;
 
     public OrbsOfLife() {
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);

@@ -30,8 +30,10 @@ public class UndyingArmy extends AbstractAbility {
             .name(ChatColor.RED + "Instant Kill")
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
+
+    public int playersArmied = 0;
+
     private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
-    protected int playersArmied = 0;
     private int radius = 15;
     private int duration = 10;
     private int maxArmyAllies = 6;

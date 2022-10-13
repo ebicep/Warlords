@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LightningRod extends AbstractAbility {
+
     private final int knockbackRadius = 5;
-    private boolean pveUpgrade = false;
     private int energyRestore = 160;
     private int healthRestore = 30;
 
@@ -132,11 +132,5 @@ public class LightningRod extends AbstractAbility {
         this.energyRestore = energyRestore;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

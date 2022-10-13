@@ -34,10 +34,6 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
     }
 
-    protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
-
-    protected abstract void playSoundAndEffect(Location location);
-
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
@@ -67,6 +63,10 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
         return hitPlayer.get();
     }
+
+    protected abstract void playSoundAndEffect(Location location);
+
+    protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
 
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
@@ -98,7 +98,8 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
             ParticleEffect.REDSTONE.display(
                     new ParticleEffect.OrdinaryColor(red, green, blue),
                     location.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                    500);
+                    500
+            );
 
         }
     }

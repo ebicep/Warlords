@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlameBurst extends AbstractProjectileBase {
-    private boolean pveUpgrade = false;
 
     private float hitbox = 5;
     private double acceleration = 1.0275;
-
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
@@ -42,21 +40,6 @@ public class FlameBurst extends AbstractProjectileBase {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
-    }
-
-    @Override
-    protected String getActivationSound() {
-        return "mage.fireball.activation";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
     }
 
     @Override
@@ -127,6 +110,21 @@ public class FlameBurst extends AbstractProjectileBase {
         speedVector.multiply(acceleration);
     }
 
+    @Override
+    protected String getActivationSound() {
+        return "mage.fireball.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
     public float getHitbox() {
         return hitbox;
     }
@@ -135,13 +133,6 @@ public class FlameBurst extends AbstractProjectileBase {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public double getAcceleration() {
         return acceleration;

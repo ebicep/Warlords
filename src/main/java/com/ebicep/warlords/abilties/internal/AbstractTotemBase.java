@@ -26,17 +26,49 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, ArmorStand totem, WarlordsEntity owner) {
+    public AbstractTotemBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            ArmorStand totem,
+            WarlordsEntity owner
+    ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.totem = totem;
         this.owner = owner;
     }
 
-    protected abstract ItemStack getTotemItemStack();
+    public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
+        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(AbstractTotemBase.class)
+                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
+                .findFirst();
+    }
 
-    protected abstract void playSound(Player player, Location location);
+    public ArmorStand getTotem() {
+        return totem;
+    }
 
-    protected abstract void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand);
+    public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(clazz)
+                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
+                .findFirst();
+    }
+
+    public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(clazz)
+                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
@@ -58,32 +90,6 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         return true;
     }
 
-
-    public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
-        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(AbstractTotemBase.class)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
-                .findFirst();
-    }
-
-    public static <T extends AbstractTotemBase> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
-        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
-                .findFirst();
-    }
-
-    public static <T extends AbstractTotemBase> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
-        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
-                .collect(Collectors.toList());
-    }
-
-
     private double getLocationUnderPlayer(Player player) {
         Location location = player.getLocation().clone();
         location.setY(location.getBlockY() + 2);
@@ -97,6 +103,12 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         return location.getY();
     }
 
+    protected abstract void playSound(Player player, Location location);
+
+    protected abstract ItemStack getTotemItemStack();
+
+    protected abstract void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand);
+
     public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
         if (!(warlordsPlayer.getEntity() instanceof Player)) {
             return false;
@@ -106,9 +118,5 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         Vector toEntity = this.totem.getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
         return dot > .93f;
-    }
-
-    public ArmorStand getTotem() {
-        return totem;
     }
 }

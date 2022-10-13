@@ -20,15 +20,16 @@ import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
-    protected int playersHit = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersHit = 0;
+
+    protected List<WarlordsEntity> playersAffected = new ArrayList<>();
+    protected double energyGivenFromStrikeAndPresence = 0;
+
     private int speedBuff = 30;
     private double radius = 10;
     private int duration = 12;
     private int energyPerSecond = 10;
-
-    private List<WarlordsEntity> playersAffected = new ArrayList<>();
-    private double energyGivenFromStrikeAndPresence = 0;
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0);
@@ -162,13 +163,6 @@ public class InspiringPresence extends AbstractAbility {
         this.energyPerSecond = energyPerSecond;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public double getRadius() {
         return radius;

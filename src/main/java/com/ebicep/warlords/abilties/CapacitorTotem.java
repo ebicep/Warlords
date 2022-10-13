@@ -20,17 +20,16 @@ import java.util.List;
 
 
 public class CapacitorTotem extends AbstractTotemBase {
-    private boolean pveUpgrade = false;
+
+    public int numberOfProcs = 0;
+
+    protected int numberOfProcsAfterCarrierPassed = 0;
+    protected int playersKilledWithFinalHit = 0;
 
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
-    private int numberOfProcs = 0;
-    private int numberOfProcsAfterCarrierPassed = 0;
-
     private int duration = 8;
     private double radius = 6;
-
-    private int playersKilledWithFinalHit = 0;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
@@ -56,13 +55,13 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
     @Override
-    protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.RED_ROSE, 1, (short) 4);
+    protected void playSound(Player player, Location location) {
+        Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
 
     @Override
-    protected void playSound(Player player, Location location) {
-        Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
+    protected ItemStack getTotemItemStack() {
+        return new ItemStack(Material.RED_ROSE, 1, (short) 4);
     }
 
     @Override
@@ -186,13 +185,6 @@ public class CapacitorTotem extends AbstractTotemBase {
         return numberOfProcsAfterCarrierPassed;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getPlayersKilledWithFinalHit() {
         return playersKilledWithFinalHit;

@@ -14,7 +14,6 @@ import java.util.List;
 
 
 public class ChainHeal extends AbstractChainBase {
-    private boolean pveUpgrade = false;
 
     private int radius = 15;
     private int bounceRange = 10;
@@ -138,11 +137,5 @@ public class ChainHeal extends AbstractChainBase {
         this.bounceRange = bounceRange;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

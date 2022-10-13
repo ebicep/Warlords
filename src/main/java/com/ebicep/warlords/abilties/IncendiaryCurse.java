@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncendiaryCurse extends AbstractAbility {
+
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
-    protected int playersHit = 0;
-    private boolean pveUpgrade = false;
-    private float hitbox = 5;
 
+    public int playersHit = 0;
+
+    private float hitbox = 5;
     private int blindDurationInTicks = 40;
 
     public IncendiaryCurse() {
@@ -206,11 +207,5 @@ public class IncendiaryCurse extends AbstractAbility {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

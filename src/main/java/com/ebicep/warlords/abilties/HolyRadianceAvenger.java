@@ -19,10 +19,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
-    private boolean pveUpgrade = false;
 
     private int markRadius = 15;
-    private int markDuration = 8;
+    private final int markDuration = 8;
     private int energyDrainPerSecond = 8;
 
     public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
@@ -191,11 +190,5 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
         this.energyDrainPerSecond = energyDrainPerSecond;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

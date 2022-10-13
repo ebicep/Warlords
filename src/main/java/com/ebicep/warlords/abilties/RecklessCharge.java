@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
-    private static final List<UUID> stunnedPlayers = new ArrayList<>();
-    protected int playersCharged = 0;
+
+    private static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
+
+    public int playersCharged = 0;
+
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {
@@ -107,12 +110,12 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                             playersCharged++;
 
                             playersHit.add(enemy);
-                            stunnedPlayers.add(enemy.getUuid());
+                            STUNNED_PLAYERS.add(enemy.getUuid());
                             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             new GameRunnable(wp.getGame()) {
                                 @Override
                                 public void run() {
-                                    stunnedPlayers.remove(enemy.getUuid());
+                                    STUNNED_PLAYERS.remove(enemy.getUuid());
                                 }
                             }.runTaskLater(getStunTimeInTicks()); //.5 seconds
                             if (enemy.getEntity() instanceof Player) {
@@ -138,7 +141,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        if (stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
+        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
             if (
                     (e.getFrom().getX() != e.getTo().getX() ||
                             e.getFrom().getZ() != e.getTo().getZ()) &&

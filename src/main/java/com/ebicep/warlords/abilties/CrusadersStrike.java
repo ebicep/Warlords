@@ -20,8 +20,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class CrusadersStrike extends AbstractStrikeBase {
-    protected int energyGivenToPlayers = 0;
-    private boolean pveUpgrade = false;
+
+    public int energyGivenToPlayers = 0;
+
     private int energyGiven = 24;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
@@ -44,6 +45,21 @@ public class CrusadersStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Energy Given", "" + energyGivenToPlayers));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
+        randomHitEffect(location, 5, 255, 0, 0);
+        ParticleEffect.SPELL.display(
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                (float) ((Math.random() * 2) - 1),
+                1,
+                4,
+                location.clone().add(0, 1, 0),
+                500
+        );
     }
 
     @Override
@@ -94,21 +110,6 @@ public class CrusadersStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
-        randomHitEffect(location, 5, 255, 0, 0);
-        ParticleEffect.SPELL.display(
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                1,
-                4,
-                location.clone().add(0, 1, 0),
-                500
-        );
-    }
-
     public int getEnergyGiven() {
         return energyGiven;
     }
@@ -125,13 +126,6 @@ public class CrusadersStrike extends AbstractStrikeBase {
         this.energyRadius = energyRadius;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getEnergyMaxAllies() {
         return energyMaxAllies;

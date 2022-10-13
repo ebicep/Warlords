@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
 
     private int woundingDuration = 3;
 
@@ -41,6 +40,12 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         info.add(new Pair<>("Players Struck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
+        randomHitEffect(location, 7, 255, 0, 0);
     }
 
     @Override
@@ -92,12 +97,6 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
-        randomHitEffect(location, 7, 255, 0, 0);
-    }
-
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
         hit.getCooldownManager().addCooldown(new RegularCooldown<WoundingStrikeBerserker>(
@@ -140,11 +139,5 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         this.woundingDuration = woundingDuration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

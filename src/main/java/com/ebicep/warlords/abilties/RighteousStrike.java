@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class RighteousStrike extends AbstractStrikeBase {
-    protected int silencedTargetStruck = 0;
-    private boolean pveUpgrade = false;
+
+    public int silencedTargetStruck = 0;
+
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
@@ -39,6 +40,13 @@ public class RighteousStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Times Silenced Target Struck", "" + silencedTargetStruck));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "rogue.vindicatorstrike.activation", 2, 0.7f);
+        Utils.playGlobalSound(location, "shaman.earthenspike.impact", 2, 2);
+        randomHitEffect(location, 7, 255, 255, 255);
     }
 
     @Override
@@ -69,13 +77,6 @@ public class RighteousStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "rogue.vindicatorstrike.activation", 2, 0.7f);
-        Utils.playGlobalSound(location, "shaman.earthenspike.impact", 2, 2);
-        randomHitEffect(location, 7, 255, 255, 255);
-    }
-
     public int getAbilityReductionInTicks() {
         return abilityReductionInTicks;
     }
@@ -84,11 +85,5 @@ public class RighteousStrike extends AbstractStrikeBase {
         this.abilityReductionInTicks = abilityReductionInTicks;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

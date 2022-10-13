@@ -20,8 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
+
     private final int markRadius = 15;
-    private boolean pveUpgrade = false;
+
     private int markDuration = 6;
     private float markHealing = 50;
 
@@ -160,13 +161,6 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
         this.markDuration = markDuration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public float getMarkHealing() {
         return markHealing;

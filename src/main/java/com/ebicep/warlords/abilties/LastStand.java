@@ -22,15 +22,16 @@ import java.util.List;
 
 
 public class LastStand extends AbstractAbility {
-    private final int radius = 7;
-    protected int playersLastStanded = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersLastStanded = 0;
+
+    protected float amountPrevented = 0;
+
+    private int radius = 7;
     private int selfDuration = 12;
     private int allyDuration = 6;
     private int selfDamageReductionPercent = 50;
     private int teammateDamageReductionPercent = 40;
-
-    private float amountPrevented = 0;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40);
@@ -236,11 +237,5 @@ public class LastStand extends AbstractAbility {
         this.allyDuration = allyDuration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

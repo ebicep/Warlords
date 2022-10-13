@@ -26,9 +26,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility {
-    protected int numberOfFullResets = 0;
-    protected int numberOfHalfResets = 0;
-    protected int numberOfBackstabs = 0;
+
+    public int numberOfFullResets = 0;
+    public int numberOfHalfResets = 0;
+    public int numberOfBackstabs = 0;
 
     private int duration = 8;
     private float damageThreshold = 0;

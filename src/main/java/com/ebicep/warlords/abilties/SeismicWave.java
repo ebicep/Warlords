@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeismicWave extends AbstractAbility {
-    protected int playersHit = 0;
-    protected int carrierHit = 0;
-    protected int warpsKnockbacked = 0;
+
+    public int playersHit = 0;
+    public int carrierHit = 0;
+    public int warpsKnockbacked = 0;
 
     private float velocity = 1.25f;
     private int waveSize = 8;

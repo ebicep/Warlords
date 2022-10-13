@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class IceBarrier extends AbstractAbility {
-    private boolean pveUpgrade = false;
 
     private int duration = 6;
     private int damageReductionPercent = 50;
@@ -151,13 +150,6 @@ public class IceBarrier extends AbstractAbility {
         this.duration = duration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getSlownessOnMeleeHit() {
         return slownessOnMeleeHit;

@@ -25,8 +25,9 @@ import java.util.Set;
 
 
 public class HealingRain extends AbstractAbility {
-    protected int playersHealed = 0;
-    private boolean pveUpgrade = false;
+
+    public int playersHealed = 0;
+
     private int duration = 12;
     private int radius = 8;
 
@@ -179,11 +180,5 @@ public class HealingRain extends AbstractAbility {
         this.duration = duration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

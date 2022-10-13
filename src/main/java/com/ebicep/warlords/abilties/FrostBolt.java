@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FrostBolt extends AbstractProjectileBase {
-    private boolean pveUpgrade = false;
 
     private int maxFullDistance = 30;
     private double directHitMultiplier = 1.15;
@@ -46,21 +45,6 @@ public class FrostBolt extends AbstractProjectileBase {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
-    }
-
-    @Override
-    protected String getActivationSound() {
-        return "mage.frostbolt.activation";
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
     }
 
     @Override
@@ -137,6 +121,21 @@ public class FrostBolt extends AbstractProjectileBase {
         this.playEffect(projectile);
     }
 
+    @Override
+    protected String getActivationSound() {
+        return "mage.frostbolt.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
     private void freezeExplodeOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         new GameRunnable(giver.getGame()) {
             @Override
@@ -187,11 +186,5 @@ public class FrostBolt extends AbstractProjectileBase {
         this.slowness = slowness;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

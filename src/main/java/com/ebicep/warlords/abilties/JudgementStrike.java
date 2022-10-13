@@ -14,13 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrikeBase {
-    private boolean pveUpgrade = false;
 
     private int attacksDone = 0;
     private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
-
     private float strikeHeal = 0;
 
     public JudgementStrike() {
@@ -40,6 +38,13 @@ public class JudgementStrike extends AbstractStrikeBase {
         info.add(new Pair<>("Players Struck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    protected void playSoundAndEffect(Location location) {
+        Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
+        Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
+        randomHitEffect(location, 7, 255, 255, 255);
     }
 
     @Override
@@ -79,13 +84,6 @@ public class JudgementStrike extends AbstractStrikeBase {
         return true;
     }
 
-    @Override
-    protected void playSoundAndEffect(Location location) {
-        Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
-        Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
-        randomHitEffect(location, 7, 255, 255, 255);
-    }
-
     public int getSpeedOnCrit() {
         return speedOnCrit;
     }
@@ -110,13 +108,6 @@ public class JudgementStrike extends AbstractStrikeBase {
         this.speedOnCritDuration = speedOnCritDuration;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public float getStrikeHeal() {
         return strikeHeal;

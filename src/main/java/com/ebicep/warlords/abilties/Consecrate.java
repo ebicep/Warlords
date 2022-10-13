@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Consecrate extends AbstractAbility {
-    protected int strikesBoosted = 0;
-    protected int playersHit = 0;
 
-    protected int strikeDamageBoost;
-    protected float radius;
-    protected Location location;
+    public int strikesBoosted = 0;
+    public int playersHit = 0;
 
+    private int strikeDamageBoost;
+    private float radius;
+    private Location location;
     private int duration = 5;
 
     public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {

@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FreezingBreath extends AbstractAbility {
-    private final int slowDuration = 4;
-    protected int playersHit = 0;
-    private boolean pveUpgrade = false;
-    private int slowness = 35;
 
+    public int playersHit = 0;
+
+    private final int slowDuration = 4;
+    private int slowness = 35;
     private float hitbox = 10;
     private int maxAnimationTime = 12;
 
@@ -155,13 +155,6 @@ public class FreezingBreath extends AbstractAbility {
         this.hitbox = hitbox;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getMaxAnimationTime() {
         return maxAnimationTime;

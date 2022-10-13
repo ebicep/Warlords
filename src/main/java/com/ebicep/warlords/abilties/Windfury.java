@@ -17,9 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Windfury extends AbstractAbility {
+
+    public int timesProcd = 0;
+
     private final int duration = 8;
-    protected int timesProcd = 0;
-    private boolean pveUpgrade = false;
     private int procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;
@@ -146,11 +147,5 @@ public class Windfury extends AbstractAbility {
         this.weaponDamage = weaponDamage;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
 
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 }

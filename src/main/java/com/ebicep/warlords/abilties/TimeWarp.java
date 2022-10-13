@@ -17,8 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
-    protected int timesSuccessful = 0;
-    private boolean pveUpgrade = false;
+
+    public int timesSuccessful = 0;
+
     private int duration = 5;
     private int warpHealPercentage = 30;
 
@@ -113,13 +114,6 @@ public class TimeWarp extends AbstractAbility {
         return timesSuccessful;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getWarpHealPercentage() {
         return warpHealPercentage;

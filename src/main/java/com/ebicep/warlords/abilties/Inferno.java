@@ -17,10 +17,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Inferno extends AbstractAbility {
-    protected int hitsAmplified = 0;
-    private boolean pveUpgrade = false;
-    private int maxHits = 10;
 
+    public int hitsAmplified = 0;
+
+    private int maxHits = 10;
     private int duration = 18;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
@@ -128,13 +128,6 @@ public class Inferno extends AbstractAbility {
         this.critMultiplierIncrease = critMultiplierIncrease;
     }
 
-    public boolean isPveUpgrade() {
-        return pveUpgrade;
-    }
-
-    public void setPveUpgrade(boolean pveUpgrade) {
-        this.pveUpgrade = pveUpgrade;
-    }
 
     public int getDuration() {
         return duration;

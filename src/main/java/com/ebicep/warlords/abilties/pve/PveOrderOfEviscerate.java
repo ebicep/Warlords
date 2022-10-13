@@ -218,13 +218,6 @@ public class PveOrderOfEviscerate extends AbstractAbility {
         return true;
     }
 
-    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
-        addToDamageThreshold(damageValue);
-        if (getDamageThreshold() >= 600) {
-            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
-        }
-    }
-
     public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
         if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
             warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
@@ -233,28 +226,35 @@ public class PveOrderOfEviscerate extends AbstractAbility {
         }
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public WarlordsEntity getMarkedPlayer() {
         return markedPlayer;
     }
 
-    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
-        this.markedPlayer = markedPlayer;
+    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
+        addToDamageThreshold(damageValue);
+        if (getDamageThreshold() >= 600) {
+            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
+        }
+    }
+
+    public void addToDamageThreshold(float damageThreshold) {
+        this.damageThreshold += damageThreshold;
     }
 
     public float getDamageThreshold() {
         return damageThreshold;
     }
 
-    public void addToDamageThreshold(float damageThreshold) {
-        this.damageThreshold += damageThreshold;
+    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
+        this.markedPlayer = markedPlayer;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
 
