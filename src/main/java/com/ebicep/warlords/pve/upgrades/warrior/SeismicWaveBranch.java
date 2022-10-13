@@ -24,11 +24,11 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+8% Damage",
+                "+7.5% Damage",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.08f);
-                    ability.setMaxDamageHeal(maxDamage * 1.08f);
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -59,15 +59,15 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier II",
-                "-8% Cooldown reduction",
+                "Zeal - Tier II",
+                "-7.5% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.92f);
+                    ability.setCooldown(cooldown * 0.925f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-11.25% Cooldown reduction",
                 15000,
                 () -> {
@@ -75,7 +75,7 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-15% Cooldown reduction",
                 20000,
                 () -> {

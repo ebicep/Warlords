@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class Vindicate extends AbstractAbility {
-    private final int radius = 8;
     private boolean pveUpgrade = false;
+
     private int debuffsRemovedOnCast = 0;
+
+    private final int radius = 8;
     private int vindicateDuration = 12;
     private int vindicateSelfDuration = 8;
     private float vindicateDamageReduction = 30;

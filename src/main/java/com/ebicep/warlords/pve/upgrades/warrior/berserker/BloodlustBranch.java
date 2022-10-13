@@ -55,15 +55,15 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier II",
-                "-8% Cooldown reduction",
+                "Zeal - Tier II",
+                "-7.5% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.92f);
+                    ability.setCooldown(cooldown * 0.925f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-11.25% Cooldown reduction",
                 15000,
                 () -> {
@@ -71,7 +71,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-15% Cooldown reduction",
                 20000,
                 () -> {

@@ -19,11 +19,11 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+10% Damage\n+2 Blocks cast and bounce range",
+                "+7.5% Damage\n+2 Blocks cast and bounce range",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
                     ability.setRadius(radius + 2);
                     ability.setBounceRange(bounceRange + 2);
                 }
@@ -41,22 +41,22 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+20% Damage\n+6 Blocks cast and bounce range",
+                "+22.5% Damage\n+6 Blocks cast and bounce range",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
                     ability.setRadius(radius + 6);
                     ability.setBounceRange(bounceRange + 6);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+25% Damage\n+8 Blocks cast and bounce range",
+                "+30% Damage\n+8 Blocks cast and bounce range",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.25f);
-                    ability.setMaxDamageHeal(maxDamage * 1.25f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                     ability.setRadius(radius + 8);
                     ability.setBounceRange(bounceRange + 8);
                 }
