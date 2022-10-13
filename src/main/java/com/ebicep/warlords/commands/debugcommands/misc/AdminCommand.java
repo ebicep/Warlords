@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @CommandAlias("admin")
-@CommandPermission("group.adminisrator")
+@CommandPermission("group.administrator")
 @Conditions("database:player")
 public class AdminCommand extends BaseCommand {
 
