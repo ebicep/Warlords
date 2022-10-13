@@ -85,7 +85,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 "",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }

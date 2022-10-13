@@ -18,10 +18,12 @@ import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
@@ -159,6 +161,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void setTarget(WarlordsEntity target) {
         this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
+    }
+
+    public void setTarget(LivingEntity target) {
+        this.entity.setTarget((((EntityLiving) ((CraftEntity) target).getHandle())));
     }
 
     public WarlordsNPC getWarlordsNPC() {

@@ -4,12 +4,16 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -83,6 +87,43 @@ public class SoulSwitch extends AbstractAbility {
                         ownLocation.getYaw(),
                         ownLocation.getPitch()
                 ));
+
+                if (pveUpgrade) {
+                    if (swapTarget instanceof WarlordsNPC) {
+                        ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
+                        decoy.setVisible(false);
+                        decoy.setGravity(false);
+                        decoy.setCustomNameVisible(true);
+                        decoy.setCustomName(wp.getColoredName() + "'s Decoy");
+                        decoy.setItemInHand(player.getInventory().getItem(0));
+                        decoy.setHelmet(HeadUtils.getHead(player.getUniqueId()));
+                        //decoy.setHelmet(player.getInventory().getHelmet());
+                        decoy.setChestplate(player.getInventory().getChestplate());
+                        decoy.setLeggings(player.getInventory().getLeggings());
+                        decoy.setBoots(player.getInventory().getBoots());
+
+                        PlayerFilter.entitiesAround(ownLocation, 10, 10, 10)
+                                .aliveEnemiesOf(wp)
+                                .forEach(warlordsEntity -> {
+                                    if (warlordsEntity instanceof WarlordsNPC) {
+                                        ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
+                                    }
+                                });
+                        new GameRunnable(wp.getGame()) {
+
+                            @Override
+                            public void run() {
+                                decoy.remove();
+                                PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(warlordsEntity -> {
+                                            warlordsEntity.addDamageInstance(wp, name, 1004 / 10, 1218 / 10, 0, 100, false);
+                                        });
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
+                            }
+                        }.runTaskLater(60);
+                    }
+                }
 
                 return true;
             }
