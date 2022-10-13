@@ -30,7 +30,7 @@ public class Assassin extends AbstractRogue {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
         branch.add(new JudgementStrikeBranch(abilityTree, (JudgementStrike) weapon));
-        branch.add(new IncendiaryCureBranch(abilityTree, (IncendiaryCurse) red));
+        branch.add(new IncendiaryCurseBranch(abilityTree, (IncendiaryCurse) red));
         branch.add(new ShadowStepBranch(abilityTree, (ShadowStep) purple));
         branch.add(new SoulSwitchBranch(abilityTree, (SoulSwitch) blue));
         branch.add(new OrderOfEviscerateBranch(abilityTree, (OrderOfEviscerate) orange));

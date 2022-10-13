@@ -82,7 +82,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }

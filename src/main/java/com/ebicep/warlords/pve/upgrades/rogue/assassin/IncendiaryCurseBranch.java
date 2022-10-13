@@ -5,14 +5,14 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class IncendiaryCureBranch extends AbstractUpgradeBranch<IncendiaryCurse> {
+public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float hitbox = ability.getHitbox();
     float cooldown = ability.getCooldown();
 
-    public IncendiaryCureBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
+    public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

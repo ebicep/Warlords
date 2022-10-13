@@ -1494,7 +1494,7 @@ public abstract class WarlordsEntity {
         } else {
             this.energy = 1;
         }
-        if ((int) amount != 0) {
+        if ((int) energyGiven != 0) {
             if (this == giver) {
                 sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + " " + ChatColor.GRAY + "energy.");
             } else {

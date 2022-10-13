@@ -106,7 +106,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                 !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * 1.3f;
+                    return currentDamageValue * (pveUpgrade ? 1.4f : 1.3f);
                 } else {
                     return currentDamageValue * 1.2f;
                 }
@@ -123,24 +123,36 @@ public class OrderOfEviscerate extends AbstractAbility {
                 if (!Objects.equals(event.getPlayer(), this.getCooldownObject().getMarkedPlayer())) {
                     return;
                 }
-                this.setTicksLeft(0);
+                if (!pveUpgrade) {
+                    this.setTicksLeft(0);
+                }
                 if (isKiller) {
                     numberOfFullResets++;
 
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                    ChatColor.GRAY + " You killed your mark," +
-                                    ChatColor.YELLOW + " your cooldowns have been reset" +
-                                    ChatColor.GRAY + "!"
-                            );
-
-                            wp.setPurpleCurrentCooldown(0);
-                            wp.setOrangeCurrentCooldown(0);
+                            if (pveUpgrade) {
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
+                                        ChatColor.GRAY + " You killed your mark," +
+                                        ChatColor.YELLOW + " your cooldowns have been reduced by 1 second" +
+                                        ChatColor.GRAY + "!"
+                                );
+                                wp.getPurpleAbility().subtractCooldown(1);
+                                wp.getOrangeAbility().subtractCooldown(1);
+                            } else {
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
+                                        ChatColor.GRAY + " You killed your mark," +
+                                        ChatColor.YELLOW + " your cooldowns have been reset" +
+                                        ChatColor.GRAY + "!"
+                                );
+                                wp.setPurpleCurrentCooldown(0);
+                                wp.setOrangeCurrentCooldown(0);
+                                wp.addEnergy(wp, name, energyCost);
+                            }
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
-                            wp.addEnergy(wp, name, energyCost);
+
                         }
                     }.runTaskLater(2);
                 } else {
@@ -149,17 +161,26 @@ public class OrderOfEviscerate extends AbstractAbility {
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                                    ChatColor.GRAY + " You assisted in killing your mark," +
-                                    ChatColor.YELLOW + " your cooldowns have been reduced by half" +
-                                    ChatColor.GRAY + "!"
-                            );
-
-                            wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
-                            wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
+                            if (pveUpgrade) {
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
+                                        ChatColor.GRAY + " You assisted in killing your mark," +
+                                        ChatColor.YELLOW + " your cooldowns have been reduced by half a second" +
+                                        ChatColor.GRAY + "!"
+                                );
+                                wp.getPurpleAbility().subtractCooldown(.5f);
+                                wp.getOrangeAbility().subtractCooldown(.5f);
+                            } else {
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
+                                        ChatColor.GRAY + " You assisted in killing your mark," +
+                                        ChatColor.YELLOW + " your cooldowns have been reduced by half" +
+                                        ChatColor.GRAY + "!"
+                                );
+                                wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
+                                wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
+                                wp.addEnergy(wp, name, energyCost / 2f);
+                            }
                             wp.updatePurpleItem();
                             wp.updateOrangeItem();
-                            wp.addEnergy(wp, name, energyCost / 2f);
                         }
                     }.runTaskLater(2);
                 }
