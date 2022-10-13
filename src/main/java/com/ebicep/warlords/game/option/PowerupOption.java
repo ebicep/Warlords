@@ -152,7 +152,7 @@ public class PowerupOption implements Option {
                 }
             }
 
-        }.runTaskTimer(0, 5);
+        }.runTaskTimer(0, 4);
     }
 
     private void remove() {
