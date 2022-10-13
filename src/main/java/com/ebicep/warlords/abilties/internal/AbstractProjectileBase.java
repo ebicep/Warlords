@@ -22,12 +22,12 @@ public abstract class AbstractProjectileBase extends AbstractPiercingProjectileB
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
         return true;
     }
 
     @Override
-    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, WarlordsEntity wp) {
+    protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
         return true;
     }
 

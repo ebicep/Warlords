@@ -30,7 +30,7 @@ public class PrismGuard extends AbstractAbility {
 
     protected float damageReduced = 0;
 
-    private int damageReduction = 3;
+    private final int damageReduction = 3;
     private int bubbleRadius = 4;
     private int duration = 6;
     private int bubbleHealing = 200;

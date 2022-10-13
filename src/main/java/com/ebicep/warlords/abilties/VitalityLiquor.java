@@ -24,9 +24,8 @@ import java.util.List;
 public class VitalityLiquor extends AbstractAbility {
 
     public int numberOfAdditionalWaves = 0;
-
-    private int vitalityRange = 8;
     private final int duration = 3;
+    private int vitalityRange = 8;
     private int energyPerSecond = 15;
     private float minWaveHealing = 268;
     private float maxWaveHealing = 324;

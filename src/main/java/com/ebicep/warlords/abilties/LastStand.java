@@ -27,7 +27,7 @@ public class LastStand extends AbstractAbility {
 
     protected float amountPrevented = 0;
 
-    private int radius = 7;
+    private final int radius = 7;
     private int selfDuration = 12;
     private int allyDuration = 6;
     private int selfDamageReductionPercent = 50;

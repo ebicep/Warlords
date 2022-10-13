@@ -24,7 +24,7 @@ import java.util.List;
 public class DrainingMiasma extends AbstractAbility {
     public int playersHit = 0;
 
-    private int maxHealthDamage = 4;
+    private final int maxHealthDamage = 4;
     private int duration = 5;
     private int leechDuration = 5;
     private int enemyHitRadius = 8;

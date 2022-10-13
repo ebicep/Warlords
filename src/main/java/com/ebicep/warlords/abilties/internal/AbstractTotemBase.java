@@ -19,29 +19,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractTotemBase extends AbstractAbility {
 
-    protected WarlordsEntity owner;
-    protected ArmorStand totem;
-
-    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-    }
-
-    public AbstractTotemBase(
-            String name,
-            float minDamageHeal,
-            float maxDamageHeal,
-            float cooldown,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            ArmorStand totem,
-            WarlordsEntity owner
-    ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-        this.totem = totem;
-        this.owner = owner;
-    }
-
     public static Optional<AbstractTotemBase> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
@@ -68,6 +45,29 @@ public abstract class AbstractTotemBase extends AbstractAbility {
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
                 .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
                 .collect(Collectors.toList());
+    }
+
+    protected WarlordsEntity owner;
+    protected ArmorStand totem;
+
+    public AbstractTotemBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    public AbstractTotemBase(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            ArmorStand totem,
+            WarlordsEntity owner
+    ) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        this.totem = totem;
+        this.owner = owner;
     }
 
     @Override

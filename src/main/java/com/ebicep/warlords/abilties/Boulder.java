@@ -29,7 +29,7 @@ public class Boulder extends AbstractAbility {
     public int carrierHit = 0;
     public int warpsKnockbacked = 0;
 
-    private double boulderGravity = -0.0059;
+    private final double boulderGravity = -0.0059;
     private double boulderSpeed = 0.290;
     private double hitbox = 5.5;
     private double velocity = 1.15;

@@ -31,26 +31,6 @@ public class HammerOfLight extends AbstractAbility {
 
     private static final int RADIUS = 6;
 
-    public int playersHealed = 0;
-    public int playersDamaged = 0;
-
-    protected float amountHealed = 0;
-
-    private boolean isCrownOfLight = false;
-    private Location location;
-    private int duration = 10;
-    private float minDamage = 178;
-    private float maxDamage = 244;
-
-    public HammerOfLight() {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
-    }
-
-    public HammerOfLight(Location location) {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
-        this.location = location;
-    }
-
     public static boolean isStandingInHammer(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
@@ -81,6 +61,24 @@ public class HammerOfLight extends AbstractAbility {
                     }
                 });
         return new ArrayList<>(playersInHammer);
+    }
+
+    public int playersHealed = 0;
+    public int playersDamaged = 0;
+    protected float amountHealed = 0;
+    private boolean isCrownOfLight = false;
+    private Location location;
+    private int duration = 10;
+    private float minDamage = 178;
+    private float maxDamage = 244;
+
+    public HammerOfLight() {
+        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+    }
+
+    public HammerOfLight(Location location) {
+        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+        this.location = location;
     }
 
     @Override

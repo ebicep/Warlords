@@ -38,12 +38,12 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected final boolean hitTeammates;
     //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
-    private final List<PendingHit> PENDING_HITS = new ArrayList<>();
     protected float forwardTeleportAmount = 0;
     protected int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
     protected double projectileSpeed;
+    private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
     public AbstractPiercingProjectileBase(
             String name,
