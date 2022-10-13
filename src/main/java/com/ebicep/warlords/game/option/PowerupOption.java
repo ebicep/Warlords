@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PowerupOption implements Option {
 
@@ -41,11 +42,21 @@ public class PowerupOption implements Option {
     @Nonnegative
     private int maxCooldown;
     private boolean hasStarted = false;
+    private boolean randomPowerup = false;
     @Nonnull
     private Game game;
 
-    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type) {
-        this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
+    public PowerupOption(
+            @Nonnull Location location,
+            @Nonnegative int maxCooldown,
+            @Nonnegative int timeToSpawn
+    ) {
+        this.location = Objects.requireNonNull(location, "location");
+        this.type = PowerupType.getRandomPowerupType();
+        this.duration = type.duration;
+        this.maxCooldown = maxCooldown;
+        this.cooldown = timeToSpawn * 4;
+        this.randomPowerup = true;
     }
 
     public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
@@ -55,7 +66,22 @@ public class PowerupOption implements Option {
         this.cooldown = timeToSpawn * 4;
     }
 
-    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int duration, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
+    public PowerupOption(@Nonnull Location location) {
+        this(location, PowerupType.getRandomPowerupType());
+        this.randomPowerup = true;
+    }
+
+    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type) {
+        this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
+    }
+
+    public PowerupOption(
+            @Nonnull Location location,
+            @Nonnull PowerupType type,
+            @Nonnegative int duration,
+            @Nonnegative int maxCooldown,
+            @Nonnegative int timeToSpawn
+    ) {
         this.location = Objects.requireNonNull(location, "location");
         this.type = Objects.requireNonNull(type, "type");
         this.duration = duration;
@@ -82,16 +108,16 @@ public class PowerupOption implements Option {
         ));
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
             @Override
+            public int getDelay() {
+                return cooldown * 20;
+            }
+
+            @Override
             public void skipTimer(int delayInTicks) {
                 cooldown = Math.max(cooldown - delayInTicks / 20, 0);
                 if (cooldown == 0) {
                     spawn();
                 }
-            }
-
-            @Override
-            public int getDelay() {
-                return cooldown * 20;
             }
 
         });
@@ -117,6 +143,10 @@ public class PowerupOption implements Option {
                 } else {
                     cooldown--;
                     if (cooldown == 0) {
+                        if (randomPowerup) {
+                            type = PowerupType.getRandomPowerupType();
+                            duration = type.getDuration();
+                        }
                         spawn();
                     }
                 }
@@ -131,6 +161,51 @@ public class PowerupOption implements Option {
         }
         entity.remove();
         entity = null;
+    }
+
+    @Nonnull
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        if (hasStarted) {
+            throw new IllegalStateException("Cannot change location after starting.");
+        }
+        this.location = location;
+    }
+
+    @Nonnull
+    public PowerupType getType() {
+        return type;
+    }
+
+    public void setType(PowerupType type) {
+        if (hasStarted) {
+            throw new IllegalStateException("Cannot change type after starting.");
+        }
+        this.type = type;
+        this.remove();
+    }
+
+    public int getCooldown() {
+        return cooldown;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(@Nonnegative int duration) {
+        this.duration = duration;
+    }
+
+    public int getMaxCooldown() {
+        return maxCooldown;
+    }
+
+    public ArmorStand getEntity() {
+        return entity;
     }
 
     private void spawn() {
@@ -148,49 +223,8 @@ public class PowerupOption implements Option {
         Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        if (hasStarted) {
-            throw new IllegalStateException("Cannot change location after starting.");
-        }
-        this.location = location;
-    }
-
-    public PowerupType getType() {
-        return type;
-    }
-
-    public void setType(PowerupType type) {
-        if (hasStarted) {
-            throw new IllegalStateException("Cannot change type after starting.");
-        }
-        this.type = type;
-        this.remove();
-    }
-
-    public void setTypeAndDuration(PowerupType type) {
-        setType(type);
-        this.duration = type.getDuration();
-        this.remove();
-    }
-
-    public ArmorStand getEntity() {
-        return entity;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(@Nonnegative int duration) {
-        this.duration = duration;
-    }
-
-    public int getCooldown() {
-        return cooldown;
+    public void setMaxCooldown(@Nonnegative int maxCooldown) {
+        this.maxCooldown = maxCooldown;
     }
 
     public void setCooldown(@Nonnegative int cooldown) {
@@ -204,12 +238,10 @@ public class PowerupOption implements Option {
         }
     }
 
-    public int getMaxCooldown() {
-        return maxCooldown;
-    }
-
-    public void setMaxCooldown(@Nonnegative int maxCooldown) {
-        this.maxCooldown = maxCooldown;
+    public void setTypeAndDuration(PowerupType type) {
+        setType(type);
+        this.duration = type.getDuration();
+        this.remove();
     }
 
     public enum PowerupType {
@@ -253,7 +285,9 @@ public class PowerupOption implements Option {
                         cooldownManager -> we.sendMessage(ChatColor.GOLD + "Your " + ChatColor.GREEN + ChatColor.BOLD + "HEALING" + ChatColor.GOLD + " powerup has worn off."),
                         option.getDuration() * 20
                 );
-                we.sendMessage(String.format("§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!", option.getDuration()));
+                we.sendMessage(String.format("§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!",
+                        option.getDuration()
+                ));
             }
 
             @Override
@@ -340,7 +374,9 @@ public class PowerupOption implements Option {
                         option.getDuration() * 20
                 );
                 we.setCooldownModifier(0.75);
-                we.sendMessage(String.format("§6You activated the §b§lCOOLDOWN §6powerup! §a+25%% §6Cooldown reduction for §a%d §6seconds!", option.getDuration()));
+                we.sendMessage(String.format("§6You activated the §b§lCOOLDOWN §6powerup! §a+25%% §6Cooldown reduction for §a%d §6seconds!",
+                        option.getDuration()
+                ));
             }
 
             @Override
@@ -376,6 +412,8 @@ public class PowerupOption implements Option {
             }
         };
 
+        public static final PowerupType[] VALUES = values();
+        public static final PowerupType[] DEFAULT_POWERUPS = {ENERGY, HEALING};
         private final int duration;
         private final Material debugMaterial;
         private final int debugData;
@@ -384,6 +422,10 @@ public class PowerupOption implements Option {
             this.duration = duration;
             this.debugMaterial = debugMaterial;
             this.debugData = debugData;
+        }
+
+        public static PowerupType getRandomPowerupType() {
+            return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
         }
 
         public int getDuration() {
