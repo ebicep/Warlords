@@ -81,7 +81,8 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 "",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
+                    ability.setOrbTickMultiplier(2);
                 }
         );
     }

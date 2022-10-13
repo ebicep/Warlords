@@ -44,6 +44,7 @@ public class OrbsOfLife extends AbstractAbility {
     private final List<Orb> spawnedOrbs = new ArrayList<>();
     private final int duration = 14;
     private final int floatingOrbRadius = 20;
+    private int orbTickMultiplier = 1;
 
     public OrbsOfLife() {
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);
@@ -115,6 +116,9 @@ public class OrbsOfLife extends AbstractAbility {
 
         spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
         spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
+        if (pveUpgrade) {
+            spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
+        }
 
         addSecondaryAbility(() -> {
                     if (wp.isAlive()) {
@@ -202,7 +206,7 @@ public class OrbsOfLife extends AbstractAbility {
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom());
+        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom(), orbTickMultiplier);
         orbsOfLife.getSpawnedOrbs().add(orb);
 
         orbsOfLife.addOrbProduced(1);
@@ -248,14 +252,19 @@ public class OrbsOfLife extends AbstractAbility {
         return false;
     }
 
+    public void setOrbTickMultiplier(int orbTickMultiplier) {
+        this.orbTickMultiplier = orbTickMultiplier;
+    }
+
     public static class Orb extends EntityExperienceOrb {
 
         private final ArmorStand armorStand;
         private final WarlordsEntity owner;
         private int ticksLived = 0;
+        private int tickMultiplier = 1;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public Orb(World world, Location location, WarlordsEntity owner) {
+        public Orb(World world, Location location, WarlordsEntity owner, int tickMultiplier) {
             super(world, location.getX(), location.getY() + 2, location.getZ(), 2500);
             this.owner = owner;
             ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
@@ -268,6 +277,7 @@ public class OrbsOfLife extends AbstractAbility {
                 }
             }
             this.armorStand = orbStand;
+            this.tickMultiplier = tickMultiplier;
             new GameRunnable(owner.getGame()) {
 
                 @Override
@@ -275,7 +285,7 @@ public class OrbsOfLife extends AbstractAbility {
                     if (!armorStand.isValid()) {
                         this.cancel();
                     } else {
-                        ticksLived++;
+                        ticksLived += tickMultiplier;
                     }
                 }
             }.runTaskTimer(30, 0);
@@ -321,6 +331,10 @@ public class OrbsOfLife extends AbstractAbility {
 
         public int getTicksLived() {
             return ticksLived;
+        }
+
+        public int getTicksToLive() {
+            return 160 * tickMultiplier;
         }
 
         public WarlordsEntity getPlayerToMoveTowards() {
