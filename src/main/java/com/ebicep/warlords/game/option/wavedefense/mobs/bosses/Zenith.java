@@ -37,7 +37,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 ),
                 27000,
                 0.4f,
-                20,
+                30,
                 1000,
                 1600
         );
@@ -70,14 +70,14 @@ public class Zenith extends AbstractZombie implements BossMob {
             shockwave(loc, 20, 20);
         }
 
-        if (ticksElapsed % 40 == 0) {
+        if (ticksElapsed % 60 == 0) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
             EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(loc, 4, 4, 4)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.addDamageInstance(warlordsNPC, "Cleanse", 300, 450, -1, 100, false);
+                we.addDamageInstance(warlordsNPC, "Cleanse", 300, 400, -1, 100, false);
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
         }
@@ -88,9 +88,18 @@ public class Zenith extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 800 == 0) {
+        if (ticksElapsed % 1000 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new MagmaCube(warlordsNPC.getLocation()));
+            }
+        }
+
+        if (ticksElapsed % 10 == 0) {
+            for (WarlordsEntity legionair : PlayerFilter
+                    .entitiesAround(warlordsNPC, 15, 15, 15)
+                    .aliveTeammatesOf(warlordsNPC)
+            ) {
+                EffectUtils.playParticleLinkAnimation(loc, legionair.getLocation(), ParticleEffect.SPELL_WITCH);
             }
         }
     }
@@ -100,7 +109,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         Utils.addKnockback(attacker.getLocation(), receiver, -3, 0.3);
 
-        if (!event.getAbility().equals("Uppercut")) {
+        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
                 @Override

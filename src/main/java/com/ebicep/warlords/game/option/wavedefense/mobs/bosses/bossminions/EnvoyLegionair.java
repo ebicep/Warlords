@@ -30,7 +30,7 @@ public class EnvoyLegionair extends AbstractZombie implements BossMob {
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
                 7000,
-                0.3f,
+                0.25f,
                 10,
                 300,
                 500
@@ -44,17 +44,7 @@ public class EnvoyLegionair extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 200 == 0) {
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 9, 9, 9)
-                    .aliveEnemiesOf(warlordsNPC)
-                    .closestFirst(warlordsNPC)
-                    .limit(1)
-            ) {
-                we.teleport(warlordsNPC.getLocation());
-                warlordsNPC.teleport(we.getLocation());
-            }
-        }
+
     }
 
     @Override
