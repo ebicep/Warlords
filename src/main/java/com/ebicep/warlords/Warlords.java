@@ -339,8 +339,15 @@ public class Warlords extends JavaPlugin {
 
         // WAVE DEFENSE
         gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
-        //gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
-        //gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
+        gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
+        gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
+        gameManager.addGameHolder("IllusionRift-3", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-3")));
+        gameManager.addGameHolder("IllusionRift-4", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-4")));
+        gameManager.addGameHolder("IllusionRift-5", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-5")));
+        gameManager.addGameHolder("IllusionRift-6", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-6")));
+        gameManager.addGameHolder("IllusionRift-7", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-7")));
+        gameManager.addGameHolder("IllusionRift-8", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-8")));
+        gameManager.addGameHolder("IllusionRift-9", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-9")));
 
         gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
         //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-1")));

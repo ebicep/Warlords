@@ -20,7 +20,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 180;
     public static final int HEALTH_BONUS = 600;
     public static final int SPEED_BONUS = 10;
-    public static final int ENERGY_PER_SECOND_BONUS = 2;
+    public static final int ENERGY_PER_SECOND_BONUS = 4;
 
     private static final int PASSIVE_EFFECT_DURATION = 10;
     private static final int PASSIVE_EFFECT_COOLDOWN = 20;
@@ -43,7 +43,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "+2 Energy per Second for 10 seconds after using 500 energy. Can be triggered once per 30 seconds.";
+        return "+4 Energy per Second for 10 seconds after using 400 energy. Can be triggered once per 20 seconds.";
     }
 
     @Override
@@ -64,7 +64,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                     return;
                 }
                 energyUsed.getAndAdd(event.getEnergyUsed());
-                if (energyUsed.get() >= 500) {
+                if (energyUsed.get() >= 400) {
                     cooldown.set(PASSIVE_EFFECT_COOLDOWN);
                     energyUsed.set(0);
                     player.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -80,7 +80,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                     ) {
                         @Override
                         public float addEnergyGainPerTick(float energyGainPerTick) {
-                            return energyGainPerTick + 0.2f;
+                            return energyGainPerTick + 0.4f;
                         }
                     });
                 }

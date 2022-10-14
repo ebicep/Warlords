@@ -15,8 +15,8 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 180;
     public static final int HEALTH_BONUS = 800;
     public static final int SPEED_BONUS = 10;
-    public static final int SKILL_CRIT_CHANCE_BONUS = 2;
-    public static final int SKILL_CRIT_MULTIPLIER_BONUS = 4;
+    public static final int SKILL_CRIT_CHANCE_BONUS = 5;
+    public static final int SKILL_CRIT_MULTIPLIER_BONUS = 5;
 
     public LegendaryBenevolent() {
     }
@@ -36,7 +36,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase healing provided by 10%.";
+        return "Increase healing provided by 15%.";
     }
 
     @Override
@@ -47,8 +47,8 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
                 if (event.isHealingInstance() && event.getPlayer() == player) {
-                    event.setMin(event.getMin() * 1.1f);
-                    event.setMax(event.getMax() * 1.1f);
+                    event.setMin(event.getMin() * 1.15f);
+                    event.setMax(event.getMax() * 1.15f);
                 }
             }
         });

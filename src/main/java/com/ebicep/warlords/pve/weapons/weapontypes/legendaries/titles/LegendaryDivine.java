@@ -9,9 +9,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int MELEE_DAMAGE_MAX = 120;
     public static final int CRIT_CHANCE = 25;
     public static final int CRIT_MULTIPLIER = 175;
-    public static final int HEALTH_BONUS = 600;
+    public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 5;
-    public static final int ENERGY_PER_SECOND_BONUS = 5;
+    public static final int ENERGY_PER_SECOND_BONUS = 7;
     public static final int ENERGY_PER_HIT_BONUS = -5;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
 
@@ -33,7 +33,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase the next ability damage by 1% per targets hit.";
+        return "Increase the next ability damage by 2% per targets hit.";
     }
 
     @Override

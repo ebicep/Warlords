@@ -153,21 +153,6 @@ public enum GameAddon {
             null,
             "Tournament Mode"
     ),
-//    PVE(
-//            "PVE",
-//            null,
-//            "Test"
-//    ) {
-//        @Override
-//        public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
-//            player.setInPve(true);
-//            if (player.getEntity() instanceof Player) {
-//                player.setTeam(Team.BLUE);
-//                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-//                player.updateArmor();
-//            }
-//        }
-//    }
 
     ;
 

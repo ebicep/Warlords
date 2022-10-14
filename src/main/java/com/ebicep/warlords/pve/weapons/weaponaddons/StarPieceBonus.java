@@ -22,7 +22,7 @@ public interface StarPieceBonus {
     List<WeaponStats> getRandomStatBonus();
 
     default String getStarPieceBonusString() {
-        return ChatColor.WHITE + " (+" + getStarPieceBonusValue() + "%)";
+        return ChatColor.WHITE + " (+" + getStarPieceBonusValue() + "% ★)";
     }
 
     int getStarPieceBonusValue();

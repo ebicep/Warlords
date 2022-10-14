@@ -1550,7 +1550,6 @@ public enum GameMap {
                             .add(0.01, Mobs.VOID_ZOMBIE)
                     )
                     .add(80, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
-                            .add(Mobs.PHYSIRA)
                             .add(Mobs.MITHRA)
                     )
                     .add(81, new SimpleWave(30, 10 * SECOND, null)

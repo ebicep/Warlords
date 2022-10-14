@@ -65,13 +65,11 @@ public class DifficultyMenu {
                         }
                         switch (finalI) {
                             case 0:
-                                startNormalGame(player, false, false);
-                                break;
                             case 1:
-                                startNormalGame(player, false, true);
+                                startGame(player, false);
                                 break;
                             case 2:
-                                startNormalGame(player, true, false);
+                                startGame(player, true);
                                 break;
                         }
                     }
@@ -82,7 +80,7 @@ public class DifficultyMenu {
         menu.openForPlayer(player);
     }
 
-    private static void startNormalGame(Player player, boolean endless, boolean hardMode) {
+    private static void startGame(Player player, boolean endless) {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);
         if (partyPlayerPair != null) {
