@@ -1659,7 +1659,7 @@ public abstract class WarlordsEntity {
         int size = entries.size();
         if (size > MINUTE_STATS_SPLITS) {
             int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
-            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": 50,000" + NumberFormat.addCommaAndRound(
+            String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": " + NumberFormat.addCommaAndRound(
                     minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
             int stringLength = 0;
             for (int i = 0; i < splitString.length; i++) {

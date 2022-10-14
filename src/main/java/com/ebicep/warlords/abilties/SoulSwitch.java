@@ -117,7 +117,7 @@ public class SoulSwitch extends AbstractAbility {
                                 PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
                                         .aliveEnemiesOf(wp)
                                         .forEach(warlordsEntity -> {
-                                            warlordsEntity.addDamageInstance(wp, name, 1004 / 10, 1218 / 10, 0, 100, false);
+                                            warlordsEntity.addDamageInstance(wp, name, 1004, 1218, 0, 100, false);
                                         });
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
                             }

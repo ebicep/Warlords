@@ -93,7 +93,8 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 "",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
+                    ability.setStunTimeInTicks(60);
                 }
         );
     }

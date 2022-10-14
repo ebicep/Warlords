@@ -2,14 +2,22 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,6 +69,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         Location chargeLocation = location.clone();
         double chargeDistance;
         List<WarlordsEntity> playersHit = new ArrayList<>();
+        playersHit.add(wp);
         boolean inAir = false;
 
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {
@@ -105,21 +114,64 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                 }
                 PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5)
                         .excluding(playersHit)
-                        .aliveEnemiesOf(wp)
-                        .forEach(enemy -> {
-                            playersCharged++;
+                        .forEach(otherPlayer -> {
+                            playersHit.add(otherPlayer);
 
-                            playersHit.add(enemy);
-                            STUNNED_PLAYERS.add(enemy.getUuid());
-                            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                            new GameRunnable(wp.getGame()) {
-                                @Override
-                                public void run() {
-                                    STUNNED_PLAYERS.remove(enemy.getUuid());
+                            if (otherPlayer.isEnemyAlive(wp)) {
+                                playersCharged++;
+                                otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+
+                                if (otherPlayer instanceof WarlordsNPC) {
+                                    AbstractMob<?> mob = ((WarlordsNPC) otherPlayer).getMob();
+                                    EntityInsentient entityInsentient = mob.getEntityInsentient();
+                                    PathfinderGoalSelector oldGoalSelector = entityInsentient.goalSelector;
+                                    mob.getEntity().resetGoalAI(((CraftWorld) wp.getWorld()).getHandle());
+                                    new GameRunnable(wp.getGame()) {
+                                        @Override
+                                        public void run() {
+                                            entityInsentient.goalSelector = oldGoalSelector;
+                                        }
+                                    }.runTaskLater(getStunTimeInTicks());
+//                                new GameRunnable(wp.getGame()) {
+//                                    Location location = enemy.getLocation();
+//                                    int counter = 0;
+//                                    @Override
+//                                    public void run() {
+//                                        enemy.teleport(location);
+//                                        if(counter++ == 60) {
+//                                            this.cancel();
+//                                        }
+//                                    }
+//                                }.runTaskTimer(0, 0);
+                                } else {
+                                    STUNNED_PLAYERS.add(otherPlayer.getUuid());
+                                    new GameRunnable(wp.getGame()) {
+                                        @Override
+                                        public void run() {
+                                            STUNNED_PLAYERS.remove(otherPlayer.getUuid());
+                                        }
+                                    }.runTaskLater(getStunTimeInTicks());
+                                    if (otherPlayer.getEntity() instanceof Player) {
+                                        PacketUtils.sendTitle((Player) otherPlayer.getEntity(), "", "§dIMMOBILIZED", 0, stunTimeInTicks, 0);
+                                    }
                                 }
-                            }.runTaskLater(getStunTimeInTicks()); //.5 seconds
-                            if (enemy.getEntity() instanceof Player) {
-                                PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, stunTimeInTicks, 0);
+                            } else if (otherPlayer.isTeammateAlive(wp) && pveUpgrade) {
+                                otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                        "Probiotic",
+                                        "PROBIO",
+                                        RecklessCharge.class,
+                                        null,
+                                        wp,
+                                        CooldownTypes.ABILITY,
+                                        cooldownManager -> {
+                                        },
+                                        5 * 20
+                                ) {
+                                    @Override
+                                    public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                        return currentHealValue * 1.3f;
+                                    }
+                                });
                             }
                         });
 
