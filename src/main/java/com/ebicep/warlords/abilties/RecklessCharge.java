@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
 
-    private static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
+    public static final List<UUID> STUNNED_PLAYERS = new ArrayList<>();
 
     public int playersCharged = 0;
 
@@ -155,7 +155,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                         PacketUtils.sendTitle((Player) otherPlayer.getEntity(), "", "§dIMMOBILIZED", 0, stunTimeInTicks, 0);
                                     }
                                 }
-                            } else if (otherPlayer.isTeammateAlive(wp) && pveUpgrade) {
+                            } else if (pveUpgrade && otherPlayer.isTeammateAlive(wp)) {
                                 otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                         "Probiotic",
                                         "PROBIO",

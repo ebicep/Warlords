@@ -88,41 +88,38 @@ public class SoulSwitch extends AbstractAbility {
                         ownLocation.getPitch()
                 ));
 
-                if (pveUpgrade) {
-                    if (swapTarget instanceof WarlordsNPC) {
-                        ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
-                        decoy.setVisible(false);
-                        decoy.setGravity(false);
-                        decoy.setCustomNameVisible(true);
-                        decoy.setCustomName(wp.getColoredName() + "'s Decoy");
-                        decoy.setItemInHand(player.getInventory().getItem(0));
-                        decoy.setHelmet(HeadUtils.getHead(player.getUniqueId()));
-                        //decoy.setHelmet(player.getInventory().getHelmet());
-                        decoy.setChestplate(player.getInventory().getChestplate());
-                        decoy.setLeggings(player.getInventory().getLeggings());
-                        decoy.setBoots(player.getInventory().getBoots());
+                if (pveUpgrade && swapTarget instanceof WarlordsNPC) {
+                    ArmorStand decoy = wp.getWorld().spawn(ownLocation, ArmorStand.class);
+                    decoy.setVisible(false);
+                    decoy.setGravity(false);
+                    decoy.setCustomNameVisible(true);
+                    decoy.setCustomName(wp.getColoredName() + "'s Decoy");
+                    decoy.setItemInHand(player.getInventory().getItem(0));
+                    decoy.setHelmet(HeadUtils.getHead(player.getUniqueId()));
+                    decoy.setChestplate(player.getInventory().getChestplate());
+                    decoy.setLeggings(player.getInventory().getLeggings());
+                    decoy.setBoots(player.getInventory().getBoots());
 
-                        PlayerFilter.entitiesAround(ownLocation, 10, 10, 10)
-                                .aliveEnemiesOf(wp)
-                                .forEach(warlordsEntity -> {
-                                    if (warlordsEntity instanceof WarlordsNPC) {
-                                        ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
-                                    }
-                                });
-                        new GameRunnable(wp.getGame()) {
+                    PlayerFilter.entitiesAround(ownLocation, 10, 10, 10)
+                            .aliveEnemiesOf(wp)
+                            .forEach(warlordsEntity -> {
+                                if (warlordsEntity instanceof WarlordsNPC) {
+                                    ((WarlordsNPC) warlordsEntity).getMob().setTarget(decoy);
+                                }
+                            });
+                    new GameRunnable(wp.getGame()) {
 
-                            @Override
-                            public void run() {
-                                decoy.remove();
-                                PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
-                                        .aliveEnemiesOf(wp)
-                                        .forEach(warlordsEntity -> {
-                                            warlordsEntity.addDamageInstance(wp, name, 1004, 1218, 0, 100, false);
-                                        });
-                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
-                            }
-                        }.runTaskLater(60);
-                    }
+                        @Override
+                        public void run() {
+                            decoy.remove();
+                            PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.addDamageInstance(wp, name, 1004, 1218, 0, 100, false);
+                                    });
+                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
+                        }
+                    }.runTaskLater(60);
                 }
 
                 return true;

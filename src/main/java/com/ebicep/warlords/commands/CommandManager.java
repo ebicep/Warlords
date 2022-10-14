@@ -471,6 +471,7 @@ public class CommandManager {
 
         manager.registerCommand(new DebugModeCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new RecklessChargeStunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
         manager.registerCommand(new ToggleAFKDetectionCommand());
@@ -481,6 +482,7 @@ public class CommandManager {
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
+        manager.registerCommand(new FlyCommand());
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
         manager.registerCommand(new GetPlayersCommand());
