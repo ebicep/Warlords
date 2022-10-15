@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -106,10 +108,10 @@ public class GameManager implements AutoCloseable {
             GameHolder selected;
             try {
                 selected = findSuitableGame(entry);
-            } catch(Throwable e) {
-				entry.onResult(QueueResult.ERROR_FIND_GAME, null);
+            } catch (Throwable e) {
+                entry.onResult(QueueResult.ERROR_FIND_GAME, null);
                 throw e;
-			}
+            }
             if (selected == null) {
                 if (now > entry.getExpireTime()) {
                     itr.remove();
@@ -120,14 +122,14 @@ public class GameManager implements AutoCloseable {
             }
             // We found a game, mark the entry as removed
             itr.remove();
-			boolean isNewGame = selected.getGame() == null;
-			Game game;
-			try {
-				game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
-			} catch(Throwable e) {
-				entry.onResult(QueueResult.ERROR_NEW_GAME, null);
-				throw e;
-			}
+            boolean isNewGame = selected.getGame() == null;
+            Game game;
+            try {
+                game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
+            } catch (Throwable e) {
+                entry.onResult(QueueResult.ERROR_NEW_GAME, null);
+                throw e;
+            }
             entry.onResult(isNewGame ? QueueResult.READY_NEW : QueueResult.READY_JOIN, game);
             for (OfflinePlayer player : entry.getPlayers()) {
                 game.addPlayer(player, false);
@@ -140,7 +142,7 @@ public class GameManager implements AutoCloseable {
     }
 
     private void dropPlayerFromQueueOrGames(OfflinePlayer player, boolean wouldBeReplaced) {
-        for (Iterator<QueueEntry> itr = queue.iterator(); itr.hasNext();) {
+        for (Iterator<QueueEntry> itr = queue.iterator(); itr.hasNext(); ) {
             QueueEntry entry = itr.next();
             if (entry.players.contains(player)) {
                 itr.remove();
@@ -216,8 +218,8 @@ public class GameManager implements AutoCloseable {
         if (!valid) {
             entry.onResult(
                     invalidOversize ? QueueResult.INVALID_OVERSIZE :
-                    invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
-                    QueueResult.INVALID_GENERIC,
+                            invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
+                                    QueueResult.INVALID_GENERIC,
                     null
             );
             return false;
@@ -248,8 +250,8 @@ public class GameManager implements AutoCloseable {
             AtomicReference<QueueResult> res = new AtomicReference<>(null);
             AtomicReference<Game> game = new AtomicReference<>(null);
             entry.setOnResult((result, g) -> {
-                    res.set(result);
-                    game.set(g);
+                res.set(result);
+                game.set(g);
             });
             if (!queue(entry)) {
                 return new Pair<>(QueueResult.INVALID_GENERIC, null);
@@ -295,6 +297,15 @@ public class GameManager implements AutoCloseable {
         games.clear();
     }
 
+    public void addGameHolder(String name, GameMap map) {
+        World world = Bukkit.getWorld(name);
+        if (world == null) {
+            ChatUtils.MessageTypes.WARLORDS.sendErrorMessage("Could not find game world " + name);
+            return;
+        }
+        this.addGameHolder(name, map, world);
+    }
+
     public void addGameHolder(String name, GameMap map, World world) {
         addGameHolder(name, map, new LocationFactory(world));
     }
@@ -303,19 +314,41 @@ public class GameManager implements AutoCloseable {
         this.games.add(new GameHolder(map, locations, name));
     }
 
-    public static class GameHolder {
+    public enum QueueResult {
+        READY_JOIN("You have joined an existing game."),
+        READY_NEW("A new game has been made for you."),
+        ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error. Please report this."),
+        ERROR_NEW_GAME("We were unable to find a new for you because of an internal error. Please report this."),
+        EXPIRED("No game found in time"),
+        CANCELLED("Cancelled queueing"),
+        REPLACED("Replaced with another queue entry"),
+        INVALID_GENERIC("Your request to queue was invalid because of an unknown reason. Please report this."),
+        INVALID_OVERSIZE("Your request to queue was invalid because your party was too big for the specified map/game."),
+        INVALID_MAP_CATEGORY("Your request to queue was invalid because the combination of map/category was not found."),
+        CLOSE("The queue has been closed"),
+        ;
+        private final String message;
 
-        @Nullable
-        private Game game;
+        QueueResult(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
+
+    public static class GameHolder {
 
         @Nonnull
         private final GameMap map;
-
         @Nonnull
         private final LocationFactory locations;
-
         @Nonnull
         private final String name;
+        @Nullable
+        private Game game;
 
         public GameHolder(GameMap map, LocationFactory locations, String name) {
             this.map = map;
@@ -379,10 +412,10 @@ public class GameManager implements AutoCloseable {
         private final GameMode category;
         @Nullable
         private final GameMap map;
-        @Nullable
-        private BiConsumer<QueueResult, Game> onResult;
         private final int priority;
         private final int insertionId;
+        @Nullable
+        private BiConsumer<QueueResult, Game> onResult;
 
         public QueueEntry(
                 @Nonnull List<OfflinePlayer> players,
@@ -431,14 +464,14 @@ public class GameManager implements AutoCloseable {
             return onResult;
         }
 
+        public void setOnResult(BiConsumer<QueueResult, Game> onResult) {
+            this.onResult = onResult;
+        }
+
         public void onResult(@Nonnull QueueResult res, @Nullable Game game) {
             if (onResult != null) {
                 onResult.accept(res, game);
             }
-        }
-
-        public void setOnResult(BiConsumer<QueueResult, Game> onResult) {
-            this.onResult = onResult;
         }
 
         @Override
@@ -450,30 +483,6 @@ public class GameManager implements AutoCloseable {
             return Integer.compare(this.insertionId, o.insertionId);
         }
 
-    }
-
-    public enum QueueResult {
-        READY_JOIN("You have joined an existing game."),
-        READY_NEW("A new game has been made for you."),
-        ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error. Please report this."),
-        ERROR_NEW_GAME("We were unable to find a new for you because of an internal error. Please report this."),
-        EXPIRED("No game found in time"),
-        CANCELLED("Cancelled queueing"),
-        REPLACED("Replaced with another queue entry"),
-        INVALID_GENERIC("Your request to queue was invalid because of an unknown reason. Please report this."),
-        INVALID_OVERSIZE("Your request to queue was invalid because your party was too big for the specified map/game."),
-        INVALID_MAP_CATEGORY("Your request to queue was invalid because the combination of map/category was not found."),
-        CLOSE("The queue has been closed"),;
-        private final String message;
-
-        QueueResult(String message) {
-            this.message = message;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
     }
 
     public class QueueEntryBuilder {
@@ -496,9 +505,24 @@ public class GameManager implements AutoCloseable {
             this.onResult = onResult;
         }
 
+        public QueueEntryBuilder setGamemode(@Nullable GameMode category) {
+            this.category = category;
+            return this;
+        }
+
+        @Nonnull
+        public List<OfflinePlayer> getPlayers() {
+            return players;
+        }
+
         public QueueEntryBuilder setPlayers(@Nonnull Collection<? extends OfflinePlayer> players) {
             this.players = new ArrayList<>(players);
             return this;
+        }
+
+        @Nonnull
+        public EnumSet<GameAddon> getRequestedGameAddons() {
+            return requestedGameAddons;
         }
 
         public QueueEntryBuilder setRequestedGameAddons(@Nonnull EnumSet<GameAddon> requestedGameAddons) {
@@ -508,31 +532,6 @@ public class GameManager implements AutoCloseable {
 
         public QueueEntryBuilder setRequestedGameAddons(@Nonnull GameAddon... rga) {
             return setRequestedGameAddons(rga.length == 0 ? EnumSet.noneOf(GameAddon.class) : EnumSet.copyOf(Arrays.asList(rga)));
-        }
-
-        public QueueEntryBuilder setGamemode(@Nullable GameMode category) {
-            this.category = category;
-            return this;
-        }
-
-        public QueueEntryBuilder setMap(@Nullable GameMap map) {
-            this.map = map;
-            return this;
-        }
-
-        public QueueEntryBuilder setPriority(int priority) {
-            this.priority = priority;
-            return this;
-        }
-
-        @Nonnull
-        public List<OfflinePlayer> getPlayers() {
-            return players;
-        }
-
-        @Nonnull
-        public EnumSet<GameAddon> getRequestedGameAddons() {
-            return requestedGameAddons;
         }
 
         @Nullable
@@ -545,17 +544,17 @@ public class GameManager implements AutoCloseable {
             return map;
         }
 
+        public QueueEntryBuilder setMap(@Nullable GameMap map) {
+            this.map = map;
+            return this;
+        }
+
         public int getPriority() {
             return priority;
         }
 
-        public QueueEntryBuilder setExpiresTime(long expiresTime) {
-            this.expiresTime = expiresTime;
-            return this;
-        }
-
-        public QueueEntryBuilder setOnResult(@Nonnull BiConsumer<QueueResult, Game> onResult) {
-            this.onResult = onResult;
+        public QueueEntryBuilder setPriority(int priority) {
+            this.priority = priority;
             return this;
         }
 
@@ -564,8 +563,18 @@ public class GameManager implements AutoCloseable {
             return onResult;
         }
 
+        public QueueEntryBuilder setOnResult(@Nonnull BiConsumer<QueueResult, Game> onResult) {
+            this.onResult = onResult;
+            return this;
+        }
+
         public long getExpiresTime() {
             return expiresTime;
+        }
+
+        public QueueEntryBuilder setExpiresTime(long expiresTime) {
+            this.expiresTime = expiresTime;
+            return this;
         }
 
         public void queue() {

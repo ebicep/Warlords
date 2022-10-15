@@ -1897,16 +1897,17 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void addPotionEffect(PotionEffect potionEffect) {
+    public boolean addPotionEffect(PotionEffect potionEffect) {
         if (this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
             if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
                     PotionEffectType.CONFUSION.equals(potionEffect.getType())
             ) {
-                return;
+                return false;
             }
         }
         //addPotionEffect(effect, force);
         this.getEntity().addPotionEffect(potionEffect, true);
+        return true;
     }
 
     public CooldownManager getCooldownManager() {

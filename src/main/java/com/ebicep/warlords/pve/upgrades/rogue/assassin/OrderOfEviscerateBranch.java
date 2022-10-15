@@ -9,6 +9,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
+        ability.setPveUpgrade(true);
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
@@ -82,7 +83,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setMasterUpgrade(true);
                 }
         );
     }

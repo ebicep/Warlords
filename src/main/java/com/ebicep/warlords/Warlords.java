@@ -44,7 +44,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
-import com.ebicep.warlords.util.bukkit.*;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -293,76 +296,76 @@ public class Warlords extends JavaPlugin {
          */
 
         // CTF
-        gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-0")));
-        gameManager.addGameHolder("Rift-1", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-1")));
-        gameManager.addGameHolder("Rift-2", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift-2")));
+        gameManager.addGameHolder("Rift-0", GameMap.RIFT);
+        gameManager.addGameHolder("Rift-1", GameMap.RIFT);
+        gameManager.addGameHolder("Rift-2", GameMap.RIFT);
 
-        gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-0")));
-        gameManager.addGameHolder("Crossfire-1", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-1")));
-        gameManager.addGameHolder("Crossfire-2", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire-2")));
+        gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE);
+        gameManager.addGameHolder("Crossfire-1", GameMap.CROSSFIRE);
+        gameManager.addGameHolder("Crossfire-2", GameMap.CROSSFIRE);
 
-        gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-0")));
-        gameManager.addGameHolder("Valley-1", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-1")));
-        gameManager.addGameHolder("Valley-2", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley-2")));
+        gameManager.addGameHolder("Valley-0", GameMap.VALLEY);
+        gameManager.addGameHolder("Valley-1", GameMap.VALLEY);
+        gameManager.addGameHolder("Valley-2", GameMap.VALLEY);
 
-        gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-0")));
-        gameManager.addGameHolder("Warsong-1", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-1")));
-        gameManager.addGameHolder("Warsong-2", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong-2")));
+        gameManager.addGameHolder("Warsong-0", GameMap.WARSONG);
+        gameManager.addGameHolder("Warsong-1", GameMap.WARSONG);
+        gameManager.addGameHolder("Warsong-2", GameMap.WARSONG);
 
-        gameManager.addGameHolder("Aperture-0", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-0")));
-        gameManager.addGameHolder("Aperture-1", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-1")));
-        gameManager.addGameHolder("Aperture-2", GameMap.APERTURE, new LocationFactory(Bukkit.getWorld("Aperture-2")));
+        gameManager.addGameHolder("Aperture-0", GameMap.APERTURE);
+        gameManager.addGameHolder("Aperture-1", GameMap.APERTURE);
+        gameManager.addGameHolder("Aperture-2", GameMap.APERTURE);
 
-        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-0")));
-        gameManager.addGameHolder("Arathi-1", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-1")));
-        gameManager.addGameHolder("Arathi-2", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi-2")));
+        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI);
+        gameManager.addGameHolder("Arathi-1", GameMap.ARATHI);
+        gameManager.addGameHolder("Arathi-2", GameMap.ARATHI);
 
-        //gameManager.addGameHolder("Gorge-0", GameMap.GORGE, new LocationFactory(Bukkit.getWorld("Gorge-0")));
+        //gameManager.addGameHolder("Gorge-0", GameMap.GORGE, "Gorge-0");
 
         // TDM
-        gameManager.addGameHolder("Siege-0", GameMap.SIEGE, new LocationFactory(Bukkit.getWorld("Siege-0")));
-        gameManager.addGameHolder("Ruins-0", GameMap.RUINS, new LocationFactory(Bukkit.getWorld("Ruins-0")));
-        gameManager.addGameHolder("FalstadGate-0", GameMap.FALSTAD_GATE, new LocationFactory(Bukkit.getWorld("FalstadGate-0")));
-        gameManager.addGameHolder("Stormwind-0", GameMap.STORMWIND, new LocationFactory(Bukkit.getWorld("Stormwind-0")));
-        gameManager.addGameHolder("BlackTemple-0", GameMap.BLACK_TEMPLE, new LocationFactory(Bukkit.getWorld("BlackTemple-0")));
+        gameManager.addGameHolder("Siege-0", GameMap.SIEGE);
+        gameManager.addGameHolder("Ruins-0", GameMap.RUINS);
+        gameManager.addGameHolder("FalstadGate-0", GameMap.FALSTAD_GATE);
+        gameManager.addGameHolder("Stormwind-0", GameMap.STORMWIND);
+        gameManager.addGameHolder("BlackTemple-0", GameMap.BLACK_TEMPLE);
 
         // DOM
-        gameManager.addGameHolder("SunAndMoon-0", GameMap.SUN_AND_MOON, new LocationFactory(Bukkit.getWorld("SunAndMoon-0")));
-        gameManager.addGameHolder("Phantom-0", GameMap.PHANTOM, new LocationFactory(Bukkit.getWorld("Phantom-0")));
-        gameManager.addGameHolder("Neolithic-0", GameMap.NEOLITHIC, new LocationFactory(Bukkit.getWorld("Neolithic-0")));
-        gameManager.addGameHolder("DorivenBasin-0", GameMap.DORIVEN_BASIN, new LocationFactory(Bukkit.getWorld("DorivenBasin-0")));
-        gameManager.addGameHolder("DeathValley-0", GameMap.DEATH_VALLEY, new LocationFactory(Bukkit.getWorld("DeathValley-0")));
-        //gameManager.addGameHolder("TheVale-0", GameMap.THE_VALE, new LocationFactory(Bukkit.getWorld("TheVale-0")));
+        gameManager.addGameHolder("SunAndMoon-0", GameMap.SUN_AND_MOON);
+        gameManager.addGameHolder("Phantom-0", GameMap.PHANTOM);
+        gameManager.addGameHolder("Neolithic-0", GameMap.NEOLITHIC);
+        gameManager.addGameHolder("DorivenBasin-0", GameMap.DORIVEN_BASIN);
+        gameManager.addGameHolder("DeathValley-0", GameMap.DEATH_VALLEY);
+        //gameManager.addGameHolder("TheVale-0", GameMap.THE_VALE, "TheVale-0");
 
         // DUEL
-        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven-0")));
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL);
 
         // WAVE DEFENSE
-        gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-0")));
-        gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-1")));
-        gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-2")));
-        gameManager.addGameHolder("IllusionRift-3", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-3")));
-        gameManager.addGameHolder("IllusionRift-4", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-4")));
-        gameManager.addGameHolder("IllusionRift-5", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-5")));
-        gameManager.addGameHolder("IllusionRift-6", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-6")));
-        gameManager.addGameHolder("IllusionRift-7", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-7")));
-        gameManager.addGameHolder("IllusionRift-8", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-8")));
-        gameManager.addGameHolder("IllusionRift-9", GameMap.ILLUSION_RIFT, new LocationFactory(Bukkit.getWorld("IllusionRift-9")));
+        gameManager.addGameHolder("IllusionRift-0", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-1", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-2", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-3", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-4", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-5", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-6", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-7", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-8", GameMap.ILLUSION_RIFT);
+        gameManager.addGameHolder("IllusionRift-9", GameMap.ILLUSION_RIFT);
 
-        gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-0")));
-        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-1")));
-        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, new LocationFactory(Bukkit.getWorld("IllusionAperture-2")));
+        gameManager.addGameHolder("IllusionAperture-0", GameMap.ILLUSION_APERTURE);
+        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, "IllusionAperture-1");
+        //gameManager.addGameHolder("IllusionAperture-2", GameMap.ILLUSION_APERTURE, "IllusionAperture-2");
 
-        gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-0")));
-        //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-1")));
-        //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, new LocationFactory(Bukkit.getWorld("IllusionCrossfire-2")));
+        gameManager.addGameHolder("IllusionCrossfire-0", GameMap.ILLUSION_CROSSFIRE);
+        //gameManager.addGameHolder("IllusionCrossfire-1", GameMap.ILLUSION_CROSSFIRE, "IllusionCrossfire-1");
+        //gameManager.addGameHolder("IllusionCrossfire-2", GameMap.ILLUSION_CROSSFIRE, "IllusionCrossfire-2");
 
-        //   gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, new LocationFactory(Bukkit.getWorld("FrozenDivide-0")));
+        //   gameManager.addGameHolder("FrozenDivide-0", GameMap.FROZEN_DIVIDE, "FrozenDivide-0");
 
         // PRACTICE
-        gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-0")));
-        gameManager.addGameHolder("Debug-1", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-1")));
-        gameManager.addGameHolder("Debug-2", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("WLDebug-2")));
+        gameManager.addGameHolder("Debug-0", GameMap.DEBUG);
+        gameManager.addGameHolder("Debug-1", GameMap.DEBUG);
+        gameManager.addGameHolder("Debug-2", GameMap.DEBUG);
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 

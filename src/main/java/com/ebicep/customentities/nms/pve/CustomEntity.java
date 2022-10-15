@@ -14,6 +14,14 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 public interface CustomEntity<T extends EntityInsentient> {
 
+    default EntityLiving getTarget() {
+        return get().getGoalTarget();
+    }
+
+    default void removeTarget() {
+        get().setGoalTarget(null, EntityTargetEvent.TargetReason.CUSTOM, true);
+    }
+
     default void setTarget(Player player) {
         get().setGoalTarget((EntityLiving) ((CraftEntity) player).getHandle(), EntityTargetEvent.TargetReason.CUSTOM, true);
     }

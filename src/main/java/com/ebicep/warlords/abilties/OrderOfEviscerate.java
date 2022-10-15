@@ -31,6 +31,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     public int numberOfHalfResets = 0;
     public int numberOfBackstabs = 0;
 
+    private boolean masterUpgrade = false;
     private int duration = 8;
     private float damageThreshold = 0;
     private WarlordsEntity markedPlayer;
@@ -125,6 +126,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 }
                 if (!pveUpgrade) {
                     this.setTicksLeft(0);
+                } else {
+                    removeCloak(wp, false);
                 }
                 if (isKiller) {
                     numberOfFullResets++;
@@ -133,13 +136,14 @@ public class OrderOfEviscerate extends AbstractAbility {
                         @Override
                         public void run() {
                             if (pveUpgrade) {
+                                int reduction = masterUpgrade ? 9 : 8;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You killed your mark," +
-                                        ChatColor.YELLOW + " your cooldowns have been reduced by 1 second" +
+                                        ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
                                         ChatColor.GRAY + "!"
                                 );
-                                wp.getPurpleAbility().subtractCooldown(1);
-                                wp.getOrangeAbility().subtractCooldown(1);
+                                //wp.getPurpleAbility().subtractCooldown(reduction);
+                                wp.getOrangeAbility().subtractCooldown(reduction);
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You killed your mark," +
@@ -162,13 +166,14 @@ public class OrderOfEviscerate extends AbstractAbility {
                         @Override
                         public void run() {
                             if (pveUpgrade) {
+                                float reduction = masterUpgrade ? 4.5f : 4f;
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You assisted in killing your mark," +
-                                        ChatColor.YELLOW + " your cooldowns have been reduced by half a second" +
+                                        ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
                                         ChatColor.GRAY + "!"
                                 );
-                                wp.getPurpleAbility().subtractCooldown(.5f);
-                                wp.getOrangeAbility().subtractCooldown(.5f);
+                                //wp.getPurpleAbility().subtractCooldown(reduction);
+                                wp.getOrangeAbility().subtractCooldown(reduction);
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                                         ChatColor.GRAY + " You assisted in killing your mark," +
@@ -270,5 +275,13 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public boolean isMasterUpgrade() {
+        return masterUpgrade;
+    }
+
+    public void setMasterUpgrade(boolean masterUpgrade) {
+        this.masterUpgrade = masterUpgrade;
     }
 }

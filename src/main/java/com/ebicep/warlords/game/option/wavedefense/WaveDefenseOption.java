@@ -34,11 +34,17 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -53,13 +59,13 @@ import static com.ebicep.warlords.util.warlords.Utils.iterable;
 
 public class WaveDefenseOption implements Option {
     private static final int SCOREBOARD_PRIORITY = 5;
+    SimpleScoreboardHandler scoreboard;
     private final Set<AbstractMob<?>> mobs = new HashSet<>();
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
     private final int maxWave;
     private final WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
-    SimpleScoreboardHandler scoreboard;
     private int waveCounter = 0;
     private int spawnCount = 0;
     private Wave currentWave;
@@ -153,6 +159,19 @@ public class WaveDefenseOption implements Option {
             public void onWin(WarlordsGameTriggerWinEvent event) {
                 waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
                 waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
+            }
+
+            @EventHandler
+            public void onMobTarget(EntityTargetLivingEntityEvent event) {
+                EntityLiving entityLiving = (EntityLiving) ((CraftEntity) event.getEntity()).getHandle();
+                if (entityLiving instanceof EntityInsentient) {
+                    LivingEntity target = event.getTarget();
+                    if (target != null) {
+                        if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                            event.setCancelled(true);
+                        }
+                    }
+                }
             }
 
         });

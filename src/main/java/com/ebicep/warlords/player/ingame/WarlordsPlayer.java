@@ -8,6 +8,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -30,6 +32,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +43,23 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public final class WarlordsPlayer extends WarlordsEntity {
+
+    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
+        jimmy.setBaby(false);
+        jimmy.setCustomNameVisible(true);
+
+        if (inv != null) {
+            jimmy.getEquipment().setBoots(inv.getBoots());
+            jimmy.getEquipment().setLeggings(inv.getLeggings());
+            jimmy.getEquipment().setChestplate(inv.getChestplate());
+            jimmy.getEquipment().setHelmet(inv.getHelmet());
+            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
+        } else {
+            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+        }
+        return jimmy;
+    }
 
     private final AbilityTree abilityTree = new AbilityTree(this);
     private final CosmeticSettings cosmeticSettings;
@@ -86,23 +107,6 @@ public final class WarlordsPlayer extends WarlordsEntity {
 
         updatePlayerReference(player.getPlayer());
         updateInventory(true);
-    }
-
-    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby(false);
-        jimmy.setCustomNameVisible(true);
-
-        if (inv != null) {
-            jimmy.getEquipment().setBoots(inv.getBoots());
-            jimmy.getEquipment().setLeggings(inv.getLeggings());
-            jimmy.getEquipment().setChestplate(inv.getChestplate());
-            jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        return jimmy;
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
@@ -245,6 +249,21 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 player.closeInventory();
             }
         }
+    }
+
+    @Override
+    public boolean addPotionEffect(PotionEffect potionEffect) {
+        boolean applied = super.addPotionEffect(potionEffect);
+        if (applied) {
+            if (potionEffect.getType() == PotionEffectType.INVISIBILITY) {
+                PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                        .stream()
+                        .map(WarlordsNPC::getMob)
+                        .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueID().equals(uuid))
+                        .forEach(AbstractMob::removeTarget);
+            }
+        }
+        return applied;
     }
 
     @Override

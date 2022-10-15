@@ -22,6 +22,8 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,6 +198,17 @@ public final class WarlordsNPC extends WarlordsEntity {
         }
 
         return entity;
+    }
+
+    @Override
+    public boolean addPotionEffect(PotionEffect potionEffect) {
+        boolean applied = super.addPotionEffect(potionEffect);
+        if (applied) {
+            if (potionEffect.getType() == PotionEffectType.BLINDNESS) {
+                mob.removeTarget();
+            }
+        }
+        return applied;
     }
 
     public float getMinMeleeDamage() {

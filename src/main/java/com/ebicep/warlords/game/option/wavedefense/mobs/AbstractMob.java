@@ -159,6 +159,14 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
+    public EntityLiving getTarget() {
+        return this.entity.getTarget();
+    }
+
+    public void removeTarget() {
+        this.entity.removeTarget();
+    }
+
     public void setTarget(WarlordsEntity target) {
         this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
     }
