@@ -30,7 +30,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Rift",
+            3,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -90,7 +91,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Crossfire",
+            3,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -150,7 +152,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Warsong",
+            3,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -210,7 +213,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Atherrough_Valley",
+            3,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -270,7 +274,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Aperture",
+            3,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -333,7 +338,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Gorge",
+            0,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -393,7 +399,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Siege",
+            1,
             GameMode.TEAM_DEATHMATCH
     ) {
         @Override
@@ -456,7 +463,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "FalstadGate",
+            1,
             GameMode.TEAM_DEATHMATCH
     ) {
         @Override
@@ -520,7 +528,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "Ruins",
+            1,
             GameMode.TEAM_DEATHMATCH
     ) {
         @Override
@@ -576,7 +585,8 @@ public enum GameMap {
             32,
             12,
             60 * SECOND,
-            "",
+            "BlackTemple",
+            1,
             GameMode.TEAM_DEATHMATCH
     ) {
         @Override
@@ -639,7 +649,8 @@ public enum GameMap {
             28,
             12,
             60 * SECOND,
-            "",
+            "Stormwind",
+            1,
             GameMode.TEAM_DEATHMATCH
     ) {
         @Override
@@ -707,7 +718,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "Arathi",
+            3,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -756,7 +768,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "DorivenBasin",
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -803,7 +816,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "Scorched",
+            0,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -848,7 +862,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "Phantom",
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -896,7 +911,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "Neolithic",
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -944,7 +960,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "SunAndMoon",
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -1001,7 +1018,8 @@ public enum GameMap {
             60,
             18,
             60 * SECOND,
-            "",
+            "DeathValley",
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -1049,7 +1067,8 @@ public enum GameMap {
             2,
             2,
             60 * SECOND,
-            "",
+            "Heaven",
+            1,
             GameMode.DUEL
     ) {
         @Override
@@ -1086,7 +1105,8 @@ public enum GameMap {
             4,
             1,
             60 * SECOND,
-            "",
+            "IllusionRift",
+            10,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1256,7 +1276,8 @@ public enum GameMap {
             4,
             1,
             60 * SECOND,
-            "",
+            "IllusionAperture",
+            1,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1423,7 +1444,8 @@ public enum GameMap {
             4,
             1,
             60 * SECOND,
-            "",
+            "IllusionCrossfire",
+            1,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1612,7 +1634,8 @@ public enum GameMap {
             4,
             1,
             60 * SECOND,
-            "",
+            "FrozenDivide",
+            0,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1647,6 +1670,7 @@ public enum GameMap {
             1,
             60 * SECOND,
             "WLDebug",
+            3,
             GameMode.DEBUG
     ) {
         @Override
@@ -1704,21 +1728,6 @@ public enum GameMap {
     ;
 
     public static final GameMap[] VALUES = values();
-    private final String mapName;
-    private final int maxPlayers;
-    private final int minPlayers;
-    private final int lobbyCountdown;
-    private final String mapDirPath;
-    private final List<GameMode> gameMode;
-
-    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int lobbyCountdown, @Nonnull String mapDirPath, @Nonnull GameMode... gameMode) {
-        this.mapName = mapName;
-        this.maxPlayers = maxPlayers;
-        this.minPlayers = minPlayers;
-        this.lobbyCountdown = lobbyCountdown;
-        this.mapDirPath = mapDirPath;
-        this.gameMode = Collections.unmodifiableList(Arrays.asList(gameMode));
-    }
 
     public static GameMap getGameMap(String mapName) {
         for (GameMap value : GameMap.VALUES) {
@@ -1727,6 +1736,46 @@ public enum GameMap {
             }
         }
         return null;
+    }
+
+    /**
+     * <p>Each map instance presents a game server, every map can hold up to 3 games at once.</p>
+     * <p>Adding a new map must start with -0 at the end and increment from there on out.</p>
+     * <p>Adding additional game servers will require a config update in @see MultiWorld Plugin</p>
+     *
+     * @param gameManager The game manager to add gameholders to.
+     */
+    public static void addGameHolders(GameManager gameManager) {
+        for (GameMap map : VALUES) {
+            for (int i = 0; i < map.numberOfMaps; i++) {
+                gameManager.addGameHolder(map.fileName + "-" + i, map);
+            }
+        }
+    }
+
+    private final String mapName;
+    private final int maxPlayers;
+    private final int minPlayers;
+    private final int lobbyCountdown;
+    private final String fileName;
+    private final int numberOfMaps;
+    private final List<GameMode> gameMode;
+
+    GameMap(
+            @Nonnull String mapName,
+            int maxPlayers,
+            int minPlayers,
+            int lobbyCountdown,
+            String fileName, int numberOfMaps,
+            @Nonnull GameMode... gameMode
+    ) {
+        this.mapName = mapName;
+        this.maxPlayers = maxPlayers;
+        this.minPlayers = minPlayers;
+        this.lobbyCountdown = lobbyCountdown;
+        this.fileName = fileName;
+        this.numberOfMaps = numberOfMaps;
+        this.gameMode = Collections.unmodifiableList(Arrays.asList(gameMode));
     }
 
     /**
@@ -1758,10 +1807,6 @@ public enum GameMap {
 
     public int getLobbyCountdown() {
         return lobbyCountdown;
-    }
-
-    public String getMapDirPath() {
-        return mapDirPath;
     }
 
     public List<GameMode> getGameModes() {
