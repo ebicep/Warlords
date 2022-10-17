@@ -824,6 +824,10 @@ public final class Game implements Runnable, AutoCloseable {
         Warlords.getInstance().getLogger().info(String.valueOf(this));
     }
 
+    public EnumMap<Team, Integer> getPoints() {
+        return points;
+    }
+
     public int getPoints(@Nonnull Team team) {
         Integer oldPointsObj = this.points.get(team);
         if (oldPointsObj == null) {

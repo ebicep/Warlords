@@ -1766,7 +1766,8 @@ public enum GameMap {
             int maxPlayers,
             int minPlayers,
             int lobbyCountdown,
-            String fileName, int numberOfMaps,
+            String fileName,
+            int numberOfMaps,
             @Nonnull GameMode... gameMode
     ) {
         this.mapName = mapName;
