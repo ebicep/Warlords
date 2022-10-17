@@ -63,7 +63,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 60 == 0) {
+        if (ticksElapsed % 80 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
@@ -110,7 +110,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
-                knockTarget.setVelocity(new Vector(0, 1.5, 0), false);
+                knockTarget.setVelocity(new Vector(0, 1.1, 0), false);
                 knockTarget.addDamageInstance(warlordsNPC, "Virtue Strike", 400, 600, 0, 100, false);
             }
         }
@@ -120,7 +120,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }
 
-        if (ticksElapsed % 200 == 0) {
+        if (ticksElapsed % 230 == 0) {
             for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
                 option.spawnNewMob(new Spider(spawnLocation));
             }

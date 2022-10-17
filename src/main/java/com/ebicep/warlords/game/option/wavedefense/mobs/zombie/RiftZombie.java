@@ -42,7 +42,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 40 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.CREEPER_HISS, 2, 0.2f);
         }
 
