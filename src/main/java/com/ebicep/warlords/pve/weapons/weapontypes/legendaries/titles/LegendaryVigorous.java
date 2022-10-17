@@ -43,7 +43,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "+4 Energy per Second for 10 seconds after using 400 energy. Can be triggered once per 20 seconds.";
+        return "+5 Energy per Second for 10 seconds after using 400 energy. Can be triggered once per 20 seconds.";
     }
 
     @Override
@@ -80,7 +80,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                     ) {
                         @Override
                         public float addEnergyGainPerTick(float energyGainPerTick) {
-                            return energyGainPerTick + 0.4f;
+                            return energyGainPerTick + 0.25f;
                         }
                     });
                 }

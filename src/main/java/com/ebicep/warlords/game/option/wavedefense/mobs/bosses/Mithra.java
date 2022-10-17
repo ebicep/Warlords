@@ -102,7 +102,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 200 == 0) {
+        if (ticksElapsed % 160 == 0) {
             EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), hitRadius, ParticleEffect.FLAME, 1);
             for (WarlordsEntity knockTarget : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
@@ -120,7 +120,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }
 
-        if (ticksElapsed % 190 == 0) {
+        if (ticksElapsed % 200 == 0) {
             for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
                 option.spawnNewMob(new Spider(spawnLocation));
             }
@@ -129,6 +129,11 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
+                .withColor(Color.BLACK)
+                .withColor(Color.WHITE)
+                .with(FireworkEffect.Type.BALL)
+                .build());
     }
 
     @Override

@@ -90,7 +90,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
         masterUpgrade = new Upgrade(
                 "Reckless Rampage",
                 "Reckless Charge - Master Upgrade",
-                "",
+                "Reckless Charge stuns enemies for 3 seconds.\nAdditionally, allies you charge through will\nreceive 30% more healing for 5 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

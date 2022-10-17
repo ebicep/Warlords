@@ -46,7 +46,6 @@ public class SoulSwitch extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-
         for (WarlordsEntity swapTarget : PlayerFilter
                 .entitiesAround(wp.getLocation(), radius, radius / 2f, radius)
                 .aliveEnemiesOf(wp)
@@ -120,6 +119,10 @@ public class SoulSwitch extends AbstractAbility {
                             ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 5, ownLocation.add(0, 1, 0), 500);
                         }
                     }.runTaskLater(60);
+                }
+
+                if (wp.isInPve()) {
+                    setCooldown(cooldown * 0.5f);
                 }
 
                 return true;
