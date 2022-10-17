@@ -50,7 +50,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         if (ticksElapsed % 10 == 0) {
-            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 30);
+            EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 20);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -60,13 +60,13 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
             }
         }
 
-        if (ticksElapsed % 5 == 0) {
+        if (ticksElapsed % 8 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     voidRadius,
-                    new CircumferenceEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(0.75),
+                    new CircumferenceEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.FIREWORKS_SPARK).particlesPerCircumference(0.6),
                     new DoubleLineEffect(ParticleEffect.SPELL)
             ).playEffects();
         }

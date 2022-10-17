@@ -55,6 +55,8 @@ public enum Mobs {
 
     // Elite Tier 4 - Exiled
     EXILED_ZOMBIE(ExiledZombie::new),
+    EXILED_ZOMBIE_RIFT(RiftZombie::new),
+    EXILED_ZOMBIE_LAVA(LavaZombie::new),
 
     // Boss
     BOLTARO(Boltaro::new),

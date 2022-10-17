@@ -77,6 +77,6 @@ public class Blaze extends AbstractBlaze implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIRE_IGNITE, 2, 0.2f);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, ParticleEffect.FLAME, 1, 10);
     }
 }
