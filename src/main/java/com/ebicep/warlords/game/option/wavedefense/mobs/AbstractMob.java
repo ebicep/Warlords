@@ -106,7 +106,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         game.addNPC(warlordsNPC);
 
         double scale = 600.0;
-        long playerCount = 4;//game.warlordsPlayers().count();
+        long playerCount = game.warlordsPlayers().count();
         double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
         float health = (float) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
         if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {

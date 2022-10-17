@@ -89,9 +89,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 1000 == 0) {
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new MagmaCube(warlordsNPC.getLocation()));
-            }
+            option.spawnNewMob(new MagmaCube(warlordsNPC.getLocation()));
         }
 
         if (ticksElapsed % 10 == 0) {
@@ -142,6 +140,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                     .with(FireworkEffect.Type.BALL_LARGE)
                     .build());
         }
+
+        EffectUtils.strikeLightning(deathLocation, false, 5);
     }
 
     private void shockwave(Location loc, double radius, int tickDelay) {

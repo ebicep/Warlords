@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,14 +18,15 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class Mithra extends AbstractZombie implements BossMob {
+
+    private final int hitRadius = 15;
 
     public Mithra(Location spawnLocation) {
         super(spawnLocation,
@@ -37,7 +40,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
                 20000,
-                0.2f,
+                0.22f,
                 20,
                 1000,
                 1300
@@ -60,19 +63,20 @@ public class Mithra extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 100 == 0) {
+        if (ticksElapsed % 60 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
-                    8,
+                    10,
                     new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2.5)
             ).playEffects();
             for (WarlordsEntity swapTarget : PlayerFilter
-                    .entitiesAround(warlordsNPC, 8, 8, 8)
+                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)
                     .lookingAtFirst(warlordsNPC)
             ) {
+                Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = warlordsNPC.getLocation();
                 EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
@@ -97,15 +101,48 @@ public class Mithra extends AbstractZombie implements BossMob {
                 );
             }
         }
+
+        if (ticksElapsed % 200 == 0) {
+            EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), hitRadius, ParticleEffect.FLAME, 1);
+            for (WarlordsEntity knockTarget : PlayerFilter
+                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .closestFirst(warlordsNPC)
+            ) {
+                EffectUtils.strikeLightning(knockTarget.getLocation(), false);
+                knockTarget.setVelocity(new Vector(0, 1.5, 0), false);
+                knockTarget.addDamageInstance(warlordsNPC, "Virtue Strike", 400, 600, 0, 100, false);
+            }
+        }
+
+        if (ticksElapsed % 170 == 0) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
+            warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
+        }
+
+        if (ticksElapsed % 190 == 0) {
+            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                option.spawnNewMob(new Spider(spawnLocation));
+            }
+        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                .withColor(Color.BLACK)
+                .withColor(Color.WHITE)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .build());
+        EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 }

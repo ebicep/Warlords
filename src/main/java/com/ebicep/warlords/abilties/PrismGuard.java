@@ -80,7 +80,7 @@ public class PrismGuard extends AbstractAbility {
 
         Set<WarlordsEntity> isInsideBubble = new HashSet<>();
         PrismGuard tempPrismGuard = new PrismGuard();
-        AtomicInteger hits = new AtomicInteger();
+        AtomicInteger hits = new AtomicInteger(0);
         wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",

@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -46,7 +47,7 @@ public class WeaponOption implements Option {
                                 ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
                                 "",
                                 ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                wp.getSkillBoost().selectedDescription,
+                                WordWrap.wrapWithNewline(wp.getSkillBoost().selectedDescription, 150),
                                 "",
                                 ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
                                 ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",

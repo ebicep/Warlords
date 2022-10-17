@@ -1629,7 +1629,7 @@ public enum GameMap {
             return options;
         }
     },
-    FROZEN_DIVIDE(
+    /*FROZEN_DIVIDE(
             "Frozen Divide",
             4,
             1,
@@ -1663,7 +1663,7 @@ public enum GameMap {
 
             return options;
         }
-    },
+    },*/
     DEBUG(
             "Practice",
             300,
