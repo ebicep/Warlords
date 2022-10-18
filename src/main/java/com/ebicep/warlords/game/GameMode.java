@@ -274,6 +274,41 @@ public enum GameMode {
             return options;
         }
     },
+    TUTORIAL(
+            "Tutorial",
+            "Tutorial",
+            null,
+            null,
+            null,
+            Integer.MAX_VALUE
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+
+            options.add(TextOption.Type.TITLE.create(
+                    3,
+                    ChatColor.LIGHT_PURPLE + "Hi! Welcome to the server."
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    6,
+                    ChatColor.LIGHT_PURPLE + "It appears that you haven’t played Warlords before. On this server at least! "
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    9,
+                    ChatColor.LIGHT_PURPLE + "Here’s a quick tutorial to get you started."
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    12,
+                    ChatColor.LIGHT_PURPLE + "I promise you that this won’t take long!"
+            ));
+
+            options.add(new WeaponOption());
+
+            return options;
+        }
+    },
 
     ;
 
