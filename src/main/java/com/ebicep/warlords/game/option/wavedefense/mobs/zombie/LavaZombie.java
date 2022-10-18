@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 public class LavaZombie extends AbstractZombie implements EliteMob {
 
@@ -43,7 +42,7 @@ public class LavaZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        if (ticksElapsed % 20 == 0) {
+        if (ticksElapsed % 40 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIRE, 2, 0.5f);
         }
     }

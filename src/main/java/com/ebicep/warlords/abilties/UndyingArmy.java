@@ -39,7 +39,7 @@ public class UndyingArmy extends AbstractAbility {
     private int maxArmyAllies = 6;
     private int maxHealthDamage = 10;
     private float flatHealing = 100;
-    private float missingHealing = 3.5f;
+    private float missingHealing = 3.5f; // %
 
     public UndyingArmy(int maxHealthDamage) {
         this();

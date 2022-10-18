@@ -20,7 +20,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
     public EnvoyBerserkZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Envoy Berserker Vanguard",
+                "Envoy Berserker",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
@@ -30,7 +30,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                         new ItemStack(Material.COOKED_FISH, 1, (short) 1)
                 ),
                 7000,
-                0.494f,
+                0.43f,
                 20,
                 450,
                 600,

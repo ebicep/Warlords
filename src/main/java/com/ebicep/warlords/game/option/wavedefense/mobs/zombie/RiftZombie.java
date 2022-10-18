@@ -18,7 +18,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
     public RiftZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Rift Particle",
+                "Exiled Rift Walker",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.PURPLE_RIFT),
@@ -27,7 +27,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 229, 69, 176),
                         Weapons.VORPAL_SWORD.getItem()
                 ),
-                12000,
+                10000,
                 0.33f,
                 10,
                 800,
@@ -59,7 +59,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+        self.getSpeed().addSpeedModifier("Rift Speed On Damage", 40, 5);
     }
 
     @Override

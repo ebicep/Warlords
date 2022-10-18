@@ -17,7 +17,7 @@ import org.bukkit.*;
 
 public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
 
-    private int voidRadius = 3;
+    private int voidRadius = 7;
 
     public VoidSkeleton(Location spawnLocation) {
         super(
@@ -50,14 +50,14 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
             warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
         }
 
-        if (ticksElapsed % 60 == 0) {
+        if (ticksElapsed % 100 == 0) {
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, ParticleEffect.SMOKE_NORMAL, 1, 30);
             for (WarlordsEntity wp : PlayerFilter
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 100, 150, -1, 100, true);
-                wp.getSpeed().addSpeedModifier("Void Slowness", -70, 10, "BASE");
+                wp.addDamageInstance(warlordsNPC, "Void Shred", 150, 300, -1, 100, true);
+                wp.getSpeed().addSpeedModifier("Void Slowness", -30, 10, "BASE");
             }
         }
     }
@@ -75,10 +75,10 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, WaveDefenseOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
+                .withColor(Color.WHITE)
                 .with(FireworkEffect.Type.BURST)
                 .withTrail()
                 .build());
-        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.4f);
+        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.2f);
     }
 }
