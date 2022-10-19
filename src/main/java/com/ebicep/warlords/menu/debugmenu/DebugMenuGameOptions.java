@@ -69,8 +69,10 @@ public class DebugMenuGameOptions {
             GameMode[] values = GameMode.VALUES;
             int rows = values.length / 7 + 4;
             Menu menu = new Menu("Gamemode Picker", 9 * rows);
-            for (int i = 0; i < values.length; i++) {
-                GameMode gm = values[i];
+            int i = -1;
+            for (GameMode gm : values) {
+                if (gm.isHiddenInMenu()) continue;
+                i++;
                 menu.setItem(i % 7 + 1, i / 7 + 1,
                         new ItemBuilder(Material.WOOL, 1, (short) 15)
                                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + gm.getName())

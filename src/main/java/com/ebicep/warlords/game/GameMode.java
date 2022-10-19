@@ -44,7 +44,8 @@ public enum GameMode {
             new ItemStack(Material.BANNER),
             DatabaseGameCTF::new,
             GamesCollections.CTF,
-            16
+            16,
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -77,7 +78,8 @@ public enum GameMode {
             null,//new ItemStack(Material.WOOL),
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
-            16
+            16,
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -110,7 +112,8 @@ public enum GameMode {
             new ItemStack(Material.DIAMOND_BARDING),
             DatabaseGameTDM::new,
             GamesCollections.TDM,
-            16
+            16,
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -145,7 +148,8 @@ public enum GameMode {
             null,//new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
             GamesCollections.DUEL,
-            2
+            2,
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -175,7 +179,8 @@ public enum GameMode {
             null,
             null,
             null,
-            Integer.MAX_VALUE
+            Integer.MAX_VALUE,
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -202,12 +207,13 @@ public enum GameMode {
         }
     },
     WAVE_DEFENSE(
-            "[WIP] USE NPC TO START PVE - Wave Defense",
+            "Wave Defense",
             "PVE",
             new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             DatabaseGamePvE::new,
             GamesCollections.PVE,
-            1
+            1,
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -259,7 +265,8 @@ public enum GameMode {
             null,
             null,
             null,
-            16
+            16,
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -281,7 +288,8 @@ public enum GameMode {
             null,
             null,
             null,
-            Integer.MAX_VALUE
+            Integer.MAX_VALUE,
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -304,13 +312,15 @@ public enum GameMode {
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame;
     public final GamesCollections gamesCollections;
     public final int minPlayersToAddToDatabase;
+    private final boolean isHiddenInMenu;
 
     GameMode(
             String name,
             String abbreviation, ItemStack itemStack,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame,
             GamesCollections gamesCollections,
-            int minPlayersToAddToDatabase
+            int minPlayersToAddToDatabase,
+            boolean isHiddenInMenu
     ) {
         this.name = name;
         this.abbreviation = abbreviation;
@@ -318,6 +328,7 @@ public enum GameMode {
         this.createDatabaseGame = createDatabaseGame;
         this.gamesCollections = gamesCollections;
         this.minPlayersToAddToDatabase = minPlayersToAddToDatabase;
+        this.isHiddenInMenu = isHiddenInMenu;
     }
 
     public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -423,5 +434,9 @@ public enum GameMode {
 
     public ItemStack getItemStack() {
         return itemStack;
+    }
+
+    public boolean isHiddenInMenu() {
+        return isHiddenInMenu;
     }
 }
