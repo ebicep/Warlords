@@ -49,7 +49,7 @@ public abstract class AbstractTierOneWeapon extends AbstractWeapon {
 
     @Override
     public float getMeleeDamageMax() {
-        return meleeDamage;
+        return meleeDamage + getMeleeDamageRange();
     }
 
     @Override
