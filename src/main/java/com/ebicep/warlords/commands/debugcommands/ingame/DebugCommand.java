@@ -93,6 +93,9 @@ public class DebugCommand extends BaseCommand {
     public void setCooldown(CommandIssuer issuer, @Values("@enabledisable") String option, @Optional WarlordsPlayer target) {
         boolean disable = option.equals("disable");
         target.setDisableCooldowns(disable);
+        if (disable) {
+            target.resetAbilities();
+        }
         sendDebugMessage(issuer, target.getColoredName() + ChatColor.GREEN + "'s Cooldown Timers have been " + option + "d!", true);
     }
 

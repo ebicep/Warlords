@@ -1412,6 +1412,13 @@ public abstract class WarlordsEntity {
         return spec;
     }
 
+    public void resetAbilities() {
+        for (AbstractAbility ability : spec.getAbilities()) {
+            ability.setCurrentCooldown(0);
+        }
+        updateInventory(true);
+    }
+
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         this.spec = spec.create.get();
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));

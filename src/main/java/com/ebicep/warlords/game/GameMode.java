@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.PlayerSettings;
@@ -286,25 +287,8 @@ public enum GameMode {
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
 
-
-            options.add(TextOption.Type.TITLE.create(
-                    3,
-                    ChatColor.LIGHT_PURPLE + "Hi! Welcome to the server."
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    6,
-                    ChatColor.LIGHT_PURPLE + "It appears that you haven’t played Warlords before. On this server at least! "
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    9,
-                    ChatColor.LIGHT_PURPLE + "Here’s a quick tutorial to get you started."
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    12,
-                    ChatColor.LIGHT_PURPLE + "I promise you that this won’t take long!"
-            ));
-
             options.add(new WeaponOption());
+            options.add(new TutorialOption());
 
             return options;
         }

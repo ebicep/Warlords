@@ -61,6 +61,9 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
+        if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
+            return;
+        }
         RecklessCharge.STUNNED_PLAYERS.removeAll(game.getPlayers().keySet());
         for (Option option : game.getOptions()) {
             option.onGameEnding(game);

@@ -5,12 +5,14 @@ import com.ebicep.warlords.abilties.EarthenSpike;
 import com.ebicep.warlords.abilties.SoulShackle;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -120,14 +122,41 @@ public abstract class AbstractPlayerClass {
 
         if (!wp.getGame().isFrozen()) {
 
+            AbstractAbility ability = null;
+
             switch (slot) {
                 case 0:
-                    if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
-                        player.sendMessage(ChatColor.RED + "You have been silenced!");
-                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                        break;
-                    }
+                    ability = weapon;
+                    break;
+                case 1:
+                    ability = red;
+                    break;
+                case 2:
+                    ability = purple;
+                    break;
+                case 3:
+                    ability = blue;
+                    break;
+                case 4:
+                    ability = orange;
+                    break;
+            }
+
+            if (ability == null) {
+                return;
+            }
+
+            if (slot == 0) {
+                if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                    player.sendMessage(ChatColor.RED + "You have been silenced!");
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                } else {
                     if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+                        WarlordsPlayerAbilityActivateEvent event = new WarlordsPlayerAbilityActivateEvent(wp, ability);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            return;
+                        }
                         weapon.onActivate(wp, player);
                         if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
                             weapon.addTimesUsed();
@@ -137,25 +166,13 @@ public abstract class AbstractPlayerClass {
                     } else {
                         player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                     }
-                    break;
-                case 1:
-                    onRightClickAbility(red, wp, player);
-                    break;
-                case 2:
-                    onRightClickAbility(purple, wp, player);
-                    break;
-                case 3:
-                    onRightClickAbility(blue, wp, player);
-                    break;
-                case 4:
-                    onRightClickAbility(orange, wp, player);
-                    break;
+                }
+            } else {
+                onRightClickAbility(ability, wp, player);
             }
 
-            if (slot == 0 || slot == 1 || slot == 2 || slot == 3 || slot == 4) {
-                if (player.getVehicle() != null) {
-                    player.getVehicle().remove();
-                }
+            if (player.getVehicle() != null) {
+                player.getVehicle().remove();
             }
 
         }
@@ -175,6 +192,11 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+            WarlordsPlayerAbilityActivateEvent event = new WarlordsPlayerAbilityActivateEvent(wp, ability);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
             boolean shouldApplyCooldown = ability.onActivate(wp, player);
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();

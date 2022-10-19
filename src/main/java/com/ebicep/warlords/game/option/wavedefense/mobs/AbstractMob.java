@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerDropWeaponEven
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -29,6 +30,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.UnaryOperator;
@@ -96,25 +98,27 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 this
         );
 
-        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) game.getOptions()
+        Optional<Option> waveDefenseOptional = game.getOptions()
                 .stream()
                 .filter(option -> option instanceof WaveDefenseOption)
-                .findFirst()
-                .get();
+                .findFirst();
+        if (waveDefenseOptional.isPresent()) {
+            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) waveDefenseOptional.get();
 
-        onSpawn(waveDefenseOption);
-        game.addNPC(warlordsNPC);
+            onSpawn(waveDefenseOption);
+            game.addNPC(warlordsNPC);
 
-        double scale = 600.0;
-        long playerCount = game.warlordsPlayers().count();
-        double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
-        float health = (float) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
-        if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-            warlordsNPC.setMaxHealth(health * (1 + (0.25f * playerCount)));
-            warlordsNPC.setHealth(health * (1 + (0.25f * playerCount)));
-        } else {
-            warlordsNPC.setMaxHealth(health);
-            warlordsNPC.setHealth(health);
+            double scale = 600.0;
+            long playerCount = game.warlordsPlayers().count();
+            double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
+            float health = (float) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
+            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
+                warlordsNPC.setMaxHealth(health * (1 + (0.25f * playerCount)));
+                warlordsNPC.setHealth(health * (1 + (0.25f * playerCount)));
+            } else {
+                warlordsNPC.setMaxHealth(health);
+                warlordsNPC.setHealth(health);
+            }
         }
 
         return warlordsNPC;

@@ -1799,16 +1799,12 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(726.5, 9, 176.5).yaw(-140), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(756.5, 8, 143.5).yaw(40), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0, 2, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0, 2, 0), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 9, 176.5).yaw(-140), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 8, 143.5).yaw(40), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 2, 0), Team.BLUE));
 
-            options.add(new AbstractScoreOnEventOption.OnKill(5));
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
+            //options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
 
             return options;

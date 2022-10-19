@@ -38,6 +38,9 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
+        if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
+            return;
+        }
         this.maxTimer = game.getMap().getLobbyCountdown();
         this.resetTimer();
         game.setAcceptsPlayers(true);
@@ -57,6 +60,9 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public State run() {
+        if (game.getGameMode() == com.ebicep.warlords.game.GameMode.TUTORIAL) {
+            return new SyncTimerState(game);
+        }
         if (hasEnoughPlayers() || timerHasBeenSkipped) {
             timerHasBeenSkipped = false;
             if (timer % 20 == 0) {

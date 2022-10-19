@@ -66,11 +66,12 @@ public class DebugMenuGameOptions {
     public static class StartMenu {
 
         public static void openGamemodeMenu(Player player) {
-            Menu menu = new Menu("Gamemode Picker", 9 * 4);
             GameMode[] values = GameMode.VALUES;
+            int rows = values.length / 7 + 4;
+            Menu menu = new Menu("Gamemode Picker", 9 * rows);
             for (int i = 0; i < values.length; i++) {
                 GameMode gm = values[i];
-                menu.setItem(9 / 2 - values.length / 2 + i, 1,
+                menu.setItem(i % 7 + 1, i / 7 + 1,
                         new ItemBuilder(Material.WOOL, 1, (short) 15)
                                 .name(ChatColor.GOLD + ChatColor.BOLD.toString() + gm.getName())
                                 .get(),
@@ -79,10 +80,10 @@ public class DebugMenuGameOptions {
             }
 
             if (player.hasPermission("warlords.game.customtoggle")) {
-                menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameMenu(player));
+                menu.setItem(3, rows - 1, MENU_BACK, (m, e) -> openGameMenu(player));
             }
 
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(4, rows - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
