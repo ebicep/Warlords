@@ -3,16 +3,14 @@ package com.ebicep.warlords.pve.weapons.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -63,6 +61,7 @@ public class WeaponLegendaryCraftMenu {
                                 player.playSound(loc, Sound.NOTE_PLING, 500, 2);
                                 player.playSound(loc, Sound.AMBIENCE_THUNDER, 500, 0.1f);
                                 player.playSound(loc, "legendaryfind", 500, 1);
+                                EffectUtils.strikeLightning(loc, false, 2);
                                 player.getPlayer().spigot().sendMessage(
                                         new TextComponent(ChatColor.GRAY + "Crafted Legendary Weapon: "),
                                         new TextComponentBuilder(weapon.getName())

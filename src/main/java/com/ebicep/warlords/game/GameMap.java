@@ -1289,8 +1289,8 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(584.5, 18, 235.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(584.5, 18, 235.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 18, 227.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 18, 240.5), Team.RED));
@@ -1456,18 +1456,19 @@ public enum GameMap {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 9, 65.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 9, 65.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(126.5, 8, 74.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(96.5, 9, 50.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(90, 5, 75), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(135.5, 5, 50.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(125.5, 9, 60.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(101.5, 9, 67.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(97.5, 7, 52.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(101.5, 8, 59.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(118.5, 8, 54.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(124.5, 7, 63.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(124.5, 7, 72.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(113.5, 8, 73.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(88.5, 6, 75.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(116.5, 6, 44.5), Team.RED));
 
-            options.add(new RespawnWaveOption());
+            options.add(new RespawnWaveOption(1, 20, 30));
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -1498,17 +1499,40 @@ public enum GameMap {
                             //void
                             .add(0, Mobs.VOID_ZOMBIE)
                     )
+                    .add(10, new SimpleWave(18, 5 * SECOND, null)
+                            //basic
+                            .add(0.7, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SKELETON)
+                            .add(0.1, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.15, Mobs.BASIC_SLIME)
+                            .add(0.05, Mobs.SPIDER)
+                            .add(0.02, Mobs.WOLF)
+                            //elite
+                            .add(0.15, Mobs.ELITE_ZOMBIE)
+                            .add(0.01, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.01, Mobs.MAGMA_CUBE)
+                            .add(0.02, Mobs.IRON_GOLEM)
+                            .add(0.01, Mobs.BLAZE)
+                            .add(0.01, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                    )
                     .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
                     .add(21, new SimpleWave(20, 10 * SECOND, null)
                             //basic
-                            .add(0.8, Mobs.BASIC_ZOMBIE)
+                            .add(0.7, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0.1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.05, Mobs.SPIDER)
-                            .add(0.01, Mobs.WOLF)
+                            .add(0.02, Mobs.WOLF)
                             //elite
                             .add(0.3, Mobs.ELITE_ZOMBIE)
                             .add(0.01, Mobs.ELITE_SKELETON)
@@ -1517,6 +1541,29 @@ public enum GameMap {
                             .add(0, Mobs.IRON_GOLEM)
                             .add(0.02, Mobs.BLAZE)
                             .add(0.02, Mobs.WITCH)
+                            //envoy
+                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0, Mobs.ENVOY_SKELETON)
+                            .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //void
+                            .add(0, Mobs.VOID_ZOMBIE)
+                    )
+                    .add(30, new SimpleWave(22, 5 * SECOND, null)
+                            //basic
+                            .add(0.7, Mobs.BASIC_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SKELETON)
+                            .add(0.1, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.15, Mobs.BASIC_SLIME)
+                            .add(0.05, Mobs.SPIDER)
+                            .add(0.02, Mobs.WOLF)
+                            //elite
+                            .add(0.15, Mobs.ELITE_ZOMBIE)
+                            .add(0.01, Mobs.ELITE_SKELETON)
+                            .add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.01, Mobs.MAGMA_CUBE)
+                            .add(0.02, Mobs.IRON_GOLEM)
+                            .add(0.01, Mobs.BLAZE)
+                            .add(0.01, Mobs.WITCH)
                             //envoy
                             .add(0, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
