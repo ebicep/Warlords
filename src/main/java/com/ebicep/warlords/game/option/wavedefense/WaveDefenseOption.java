@@ -251,9 +251,9 @@ public class WaveDefenseOption implements Option {
                         getGame().forEachOnlineWarlordsPlayer(wp -> {
                             AtomicInteger currency = new AtomicInteger();
                             if (waveCounter % 5 == 1) {
-                                currency.set(1000);
+                                currency.set(5000);
                             } else {
-                                currency.set(200);
+                                currency.set(1000);
                             }
                             Bukkit.getPluginManager().callEvent(new WarlordsPlayerAddCurrencyEvent(wp, currency));
                             wp.addCurrency(currency.get());

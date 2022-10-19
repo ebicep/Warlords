@@ -1174,7 +1174,7 @@ public enum GameMap {
                             .add(0.01, Mobs.ELITE_SKELETON)
                             .add(0.05, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0, Mobs.MAGMA_CUBE)
-                            .add(0.05, Mobs.IRON_GOLEM)
+                            .add(0.03, Mobs.IRON_GOLEM)
                             .add(0.005, Mobs.BLAZE)
                             //envoy
                             .add(0, Mobs.ENVOY_ZOMBIE)
@@ -1450,7 +1450,7 @@ public enum GameMap {
             1,
             60 * SECOND,
             "IllusionCrossfire",
-            1,
+            10,
             GameMode.WAVE_DEFENSE
     ) {
         @Override

@@ -39,7 +39,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                20000,
+                19000,
                 0.22f,
                 20,
                 1000,
@@ -110,8 +110,8 @@ public class Mithra extends AbstractZombie implements BossMob {
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
-                knockTarget.setVelocity(new Vector(0, 1.1, 0), false);
-                knockTarget.addDamageInstance(warlordsNPC, "Virtue Strike", 400, 600, 0, 100, false);
+                knockTarget.setVelocity(new Vector(0, 1, 0), false);
+                knockTarget.addDamageInstance(warlordsNPC, "Virtue Strike", 400, 500, 0, 100, false);
             }
         }
 
@@ -120,8 +120,8 @@ public class Mithra extends AbstractZombie implements BossMob {
             warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }
 
-        if (ticksElapsed % 230 == 0) {
-            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+        if (ticksElapsed % 400 == 0) {
+            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new Spider(spawnLocation));
             }
         }

@@ -389,7 +389,7 @@ public class TutorialOption implements Option {
             }
 
 
-        }.runTaskTimer(20, 18);
+        }.runTaskTimer(10, 48);
     }
 
     @Override
@@ -418,7 +418,7 @@ public class TutorialOption implements Option {
     }
 
     private static void sendTutorialMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GRAY + ">> " + ChatColor.LIGHT_PURPLE + message);
+        player.sendMessage(ChatColor.GRAY + ">> " + ChatColor.GREEN + message);
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
     }
 

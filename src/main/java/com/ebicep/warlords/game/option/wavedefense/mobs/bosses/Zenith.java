@@ -37,9 +37,9 @@ public class Zenith extends AbstractZombie implements BossMob {
                 ),
                 27000,
                 0.4f,
-                30,
+                20,
                 1000,
-                1600
+                1500
         );
     }
 
@@ -82,7 +82,7 @@ public class Zenith extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 600 == 0) {
+        if (ticksElapsed % 800 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new EnvoyLegionair(warlordsNPC.getLocation()));
             }
@@ -154,7 +154,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .entitiesAround(loc, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    we.addDamageInstance(warlordsNPC, "Armageddon", 500, 800, -1, 100, false);
+                    we.addDamageInstance(warlordsNPC, "Armageddon", 500, 750, -1, 100, false);
                     Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
                 }
             }
