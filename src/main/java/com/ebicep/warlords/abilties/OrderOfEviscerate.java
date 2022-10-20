@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -26,6 +27,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility {
+
+    protected float damageDoneWithOrder = 0;
+    protected int mobsKilledWithOrder = 0;
 
     public int numberOfFullResets = 0;
     public int numberOfHalfResets = 0;
@@ -68,16 +72,22 @@ public class OrderOfEviscerate extends AbstractAbility {
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
+        OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();
         wp.getCooldownManager().addCooldown(new RegularCooldown<OrderOfEviscerate>(
                 "Order of Eviscerate",
                 "ORDER",
                 OrderOfEviscerate.class,
-                new OrderOfEviscerate(),
+                tempOrderOfEviscerate,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     cancelSpeed.run();
                     removeCloak(wp, true);
+                    if (pveUpgrade) {
+                        if (tempOrderOfEviscerate.damageDoneWithOrder >= 15000 && tempOrderOfEviscerate.mobsKilledWithOrder >= 6) {
+                            wp.unlockAchievement(ChallengeAchievements.SERIAL_KILLER);
+                        }
+                    }
                 },
                 duration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -88,22 +98,23 @@ public class OrderOfEviscerate extends AbstractAbility {
                     }
                 })
         ) {
+
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
                 //mark message here so it displays before damage
                 WarlordsEntity victim = event.getPlayer();
                 if (victim != wp) {
-                    if (!Objects.equals(this.getCooldownObject().getMarkedPlayer(), victim)) {
+                    if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + ChatColor.GRAY + " You have marked §e" + victim.getName());
                     }
-                    this.getCooldownObject().setMarkedPlayer(victim);
+                    tempOrderOfEviscerate.setMarkedPlayer(victim);
                 }
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
-                        Objects.equals(this.getCooldownObject().getMarkedPlayer(), event.getPlayer()) &&
+                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getPlayer()) &&
                                 !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
@@ -115,13 +126,17 @@ public class OrderOfEviscerate extends AbstractAbility {
 
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                OrderOfEviscerate orderOfEviscerate = this.getCooldownObject();
-                orderOfEviscerate.addAndCheckDamageThreshold(currentDamageValue, wp);
+                tempOrderOfEviscerate.addAndCheckDamageThreshold(currentDamageValue, wp);
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                tempOrderOfEviscerate.damageDoneWithOrder += currentDamageValue;
             }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (!Objects.equals(event.getPlayer(), this.getCooldownObject().getMarkedPlayer())) {
+                if (!Objects.equals(event.getPlayer(), tempOrderOfEviscerate.getMarkedPlayer())) {
                     return;
                 }
                 if (!pveUpgrade) {
@@ -131,6 +146,10 @@ public class OrderOfEviscerate extends AbstractAbility {
                 }
                 if (isKiller) {
                     numberOfFullResets++;
+
+                    if (pveUpgrade) {
+                        tempOrderOfEviscerate.mobsKilledWithOrder++;
+                    }
 
                     new GameRunnable(wp.getGame()) {
                         @Override
