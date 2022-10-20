@@ -1,9 +1,11 @@
 package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
 
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
@@ -12,6 +14,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -20,9 +23,16 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 public class Boltaro extends AbstractZombie implements BossMob {
+
+    private boolean split = false;
+    private int mobsKilledBeforeSplit = 0;
+    private Listener listener;
 
     public Boltaro(Location spawnLocation) {
         super(spawnLocation,
@@ -55,6 +65,14 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 );
             }
         }
+        option.getGame().registerEvents(listener = new Listener() {
+            @EventHandler
+            public void onMobDeath(WarlordsDeathEvent event) {
+                if (!split && event.getPlayer() instanceof WarlordsNPC) {
+                    mobsKilledBeforeSplit++;
+                }
+            }
+        });
     }
 
     @Override
@@ -64,6 +82,12 @@ public class Boltaro extends AbstractZombie implements BossMob {
         }
 
         if (warlordsNPC.getHealth() < 6000) {
+            split = true;
+            if (mobsKilledBeforeSplit == 0) {
+                option.getGame().warlordsPlayers().forEach(warlordsPlayer -> warlordsPlayer.unlockAchievement(ChallengeAchievements.SIRE));
+            }
+            HandlerList.unregisterAll(listener);
+
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
             for (int i = 0; i < 2; i++) {
                 option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
@@ -81,6 +105,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
         if (!event.getAbility().equals("Multi Hit")) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;

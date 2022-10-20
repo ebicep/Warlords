@@ -490,7 +490,7 @@ public enum ChallengeAchievements implements Achievement {
             null,
             true,
             warlordsEntity -> {
-                return true;
+                return true; //login in Boltaro.java
             }
     ),
     NEAR_DEATH_EXPERIENCE("Near-Death Experience",
