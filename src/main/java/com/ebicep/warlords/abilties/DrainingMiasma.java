@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.ParticleEffect;
@@ -22,6 +23,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility {
+
+    protected int numberOfLeechProcd = 0;
+
     public int playersHit = 0;
 
     private final int maxHealthDamage = 4;
@@ -81,6 +85,9 @@ public class DrainingMiasma extends AbstractAbility {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                         cancelSlowness.run();
+                        if (tempDrainingMiasma.numberOfLeechProcd >= 50) {
+                            wp.unlockAchievement(ChallengeAchievements.LIFELEECHER);
+                        }
                     },
                     duration * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -146,6 +153,7 @@ public class DrainingMiasma extends AbstractAbility {
                             false,
                             false
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        tempDrainingMiasma.numberOfLeechProcd++;
                         if (event.getPlayer().hasFlag()) {
                             this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
                         }
