@@ -154,6 +154,67 @@ public enum TieredAchievements implements Achievement {
             false,
             databasePlayer -> databasePlayer.getPveStats().getPlays() >= 1
     ),
+    ILLUSION_CONQUEROR_I("Illusion Conqueror I",
+            "Clear Wave 25 in Normal Mode 20 Times",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 20
+    ),
+    ILLUSION_CONQUEROR_II("Illusion Conqueror II",
+            "Clear Wave 25 in Normal Mode 50 Times",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 50
+    ),
+    ILLUSION_CONQUEROR_III("Illusion Conqueror III",
+            "Clear Wave 25 in Normal Mode 100 Times",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 75
+    ),
+    ILLUSION_CONQUEROR_IV("Illusion Conqueror IV",
+            "Clear Wave 25 in Normal Mode 200 Times",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 200
+    ),
+    ILLUSION_CONQUEROR_V("Illusion Conqueror V",
+            "Clear Wave 25 in Normal Mode 500 Times",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 500
+    ),
+    MIRAGE_SLAYER_I("Mirage Slayer I",
+            "Kill 5000 Mobs",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getKills() >= 5000
+    ),
+    MIRAGE_SLAYER_II("Mirage Slayer II",
+            "Kill 10000 Mobs",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getKills() >= 10000
+    ),
+    MIRAGE_SLAYER_III("Mirage Slayer III",
+            "Kill 20000 Mobs",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getKills() >= 20000
+    ),
+    MIRAGE_SLAYER_IV("Mirage Slayer IV",
+            "Kill 50000 Mobs",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getKills() >= 50000
+    ),
+    MIRAGE_SLAYER_V("Mirage Slayer V",
+            "Kill 100000 Mobs",
+            WAVE_DEFENSE,
+            false,
+            databasePlayer -> databasePlayer.getPveStats().getKills() >= 100000
+    ),
+
 
     ;
 
