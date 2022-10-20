@@ -75,7 +75,7 @@ public class AchievementsMenu {
                 (m, e) -> openAchievementsGameModeMenu(player,
                         databasePlayer,
                         gameMode,
-                        "Challenge Achievements",
+                        "Challenge",
                         ChallengeAchievements.ChallengeAchievementRecord.class,
                         ChallengeAchievements.VALUES
                 )
@@ -89,14 +89,88 @@ public class AchievementsMenu {
                 (m, e) -> openAchievementsGameModeMenu(player,
                         databasePlayer,
                         gameMode,
-                        "Tiered Achievements",
+                        "Tiered",
                         TieredAchievements.TieredAchievementRecord.class,
-                        TieredAchievements.VALUES
+                        TieredAchievements.TIERED_ACHIEVEMENTS_GROUPS.get(gameMode)
                 )
         );
 
         menu.setItem(3, 3, MENU_BACK, (m, e) -> openAchievementsMenu(player));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static <T extends Achievement.AbstractAchievementRecord<R>, R extends Enum<R> & Achievement> void openAchievementsGameModeMenu(
+            Player player,
+            DatabasePlayer databasePlayer,
+            GameMode gameMode,
+            String menuName,
+            Class<T> recordClass,
+            R[][] enumsValues
+    ) {
+        List<R> unlockedAchievements = databasePlayer.getAchievements().stream()
+                .filter(recordClass::isInstance)
+                .map(recordClass::cast)
+                .map(Achievement.AbstractAchievementRecord::getAchievement)
+                .collect(Collectors.toList());
+
+        Menu menu = new Menu((gameMode == null ? "General" : gameMode.getName() + " - " + menuName), 9 * 6);
+        int x = 0;
+        int y = 0;
+        for (R[] achievements : enumsValues) {
+            for (R achievement : achievements) {
+                if (achievement.getGameMode() != gameMode) {
+                    continue;
+                }
+                boolean hasAchievement = unlockedAchievements.contains(achievement);
+                boolean shouldObfuscate = !hasAchievement && achievement.isHidden();
+                ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Material.WATER_BUCKET : Material.BUCKET)
+                        .name(ChatColor.GREEN.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getName())
+                        .flags(ItemFlag.HIDE_ENCHANTS);
+                if (!achievement.getDescription().isEmpty()) {
+                    itemBuilder.lore(
+                            WordWrap.wrapWithNewline(
+                                    ChatColor.GRAY.toString() + (shouldObfuscate ? ChatColor.MAGIC : "") + achievement.getDescription(),
+                                    160
+                            ));
+                }
+                itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
+                        ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
+                        :
+                        "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")));
+                if (hasAchievement) {
+                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                }
+                menu.setItem(
+                        x,
+                        y,
+                        itemBuilder.get(),
+                        (m, e) -> {
+                            if (hasAchievement) {
+                                openAchievementHistoryMenu(player,
+                                        databasePlayer, recordClass,
+                                        achievement,
+                                        (m2, e2) -> openAchievementsGameModeMenu(player, databasePlayer, gameMode, menuName,
+                                                recordClass, enumsValues
+                                        )
+                                );
+                            }
+                        }
+                );
+                y++;
+            }
+            x++;
+            y = 0;
+            if (x == 9) {
+                //TODO PAGE
+                x = 0;
+
+            }
+        }
+
+
+        menu.setItem(3, 5, MENU_BACK, (m, e) -> openAchievementTypeMenu(player, databasePlayer, gameMode));
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
@@ -114,7 +188,7 @@ public class AchievementsMenu {
                 .map(Achievement.AbstractAchievementRecord::getAchievement)
                 .collect(Collectors.toList());
 
-        Menu menu = new Menu(menuName + " - " + (gameMode == null ? "General" : gameMode.getName()), 9 * 6);
+        Menu menu = new Menu((gameMode == null ? "General" : gameMode.getName() + " - " + menuName), 9 * 6);
         int x = 0;
         int y = 0;
         for (R achievement : enumsValues) {

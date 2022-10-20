@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.dv8tion.jda.api.GatewayEncoding;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.function.Predicate;
 
 import static com.ebicep.warlords.game.GameMode.*;
@@ -219,6 +221,23 @@ public enum TieredAchievements implements Achievement {
     ;
 
     public static final TieredAchievements[] VALUES = values();
+    public static final HashMap<GameMode, TieredAchievements[][]> TIERED_ACHIEVEMENTS_GROUPS = new HashMap<>() {{
+        put(null, new TieredAchievements[][]{
+                {GAMES_PLAYED_50, GAMES_PLAYED_100, GAMES_PLAYED_250, GAMES_PLAYED_500},
+                {GAMES_WON_25, GAMES_WON_50, GAMES_WON_125, GAMES_WON_250, GAMES_WON_500}
+        });
+        put(CAPTURE_THE_FLAG, new TieredAchievements[][]{
+                {GAMES_WON_CTF_10, GAMES_WON_CTF_25, GAMES_WON_CTF_50, GAMES_WON_CTF_75, GAMES_WON_CTF_100}
+        });
+        put(TEAM_DEATHMATCH, new TieredAchievements[][]{
+                {GAMES_WON_TDM_10, GAMES_WON_TDM_25, GAMES_WON_TDM_50, GAMES_WON_TDM_75, GAMES_WON_TDM_100}
+        });
+        put(WAVE_DEFENSE, new TieredAchievements[][]{
+                {GAMES_PLAYED_PVE_1},
+                {ILLUSION_CONQUEROR_I, ILLUSION_CONQUEROR_II, ILLUSION_CONQUEROR_III, ILLUSION_CONQUEROR_IV, ILLUSION_CONQUEROR_V},
+                {MIRAGE_SLAYER_I, MIRAGE_SLAYER_II, MIRAGE_SLAYER_III, MIRAGE_SLAYER_IV, MIRAGE_SLAYER_V}
+        });
+    }};
     public final String name;
     public final String description;
     public final GameMode gameMode;
