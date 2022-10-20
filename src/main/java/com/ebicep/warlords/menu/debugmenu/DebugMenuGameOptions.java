@@ -52,7 +52,7 @@ public class DebugMenuGameOptions {
                                 StartMenu.openGamemodeMenu(player);
                                 break;
                             case 2:
-                                GamesMenu.openGameSelectorMenu(player);
+                                StartMenu.GamesMenu.openGameSelectorMenu(player);
                                 break;
                         }
                     }
@@ -71,7 +71,9 @@ public class DebugMenuGameOptions {
             Menu menu = new Menu("Gamemode Picker", 9 * rows);
             int i = -1;
             for (GameMode gm : values) {
-                if (gm.isHiddenInMenu()) continue;
+                if (gm.isHiddenInMenu()) {
+                    continue;
+                }
                 i++;
                 menu.setItem(i % 7 + 1, i / 7 + 1,
                         new ItemBuilder(Material.WOOL, 1, (short) 15)
@@ -94,7 +96,9 @@ public class DebugMenuGameOptions {
             GameMap[] values = GameMap.VALUES;
             int i = -1;
             for (GameMap map : values) {
-                if (!map.getGameModes().contains(gm)) continue;
+                if (!map.getGameModes().contains(gm)) {
+                    continue;
+                }
                 i++;
                 menu.setItem(i % 7 + 1, 1 + i / 7,
                         new ItemBuilder(Utils.getWoolFromIndex(i + 5))
@@ -166,197 +170,216 @@ public class DebugMenuGameOptions {
                                 .name(ChatColor.GREEN + "Comps Preset")
                                 .lore(ChatColor.GOLD + "Select this to use the comps preset.\n- Private Game\n- Freeze Failsafe")
                                 .get(),
-                        (m, e) -> GameStartCommand.startGame(player, false, selectedGameMode, selectedGameMap, EnumSet.of(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME)));
-            }
-            menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
-            menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
-                //safe guard
-                if (!player.isOp()) {
-                    addons.remove(GameAddon.TOURNAMENT_MODE);
-                }
-                GameStartCommand.startGame(player, addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(), selectedGameMode, selectedGameMap, addons);
-            });
-            menu.openForPlayer(player);
-        }
-    }
-
-    static class GamesMenu {
-
-        public static void openGameSelectorMenu(Player player) {
-            Menu menu = new Menu("Game Selector", 9 * 5);
-            List<Game> games = Warlords.getGameManager().getGames().stream()
-                    .map(GameManager.GameHolder::getGame)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            int x = 1;
-            int y = 1;
-            for (Game game : games) {
-                ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Game - " + game.getGameId())
-                        .lore(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
-                                ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
-                                ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
-                                ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount());
-                if (Warlords.getPlayer(player) != null && Warlords.getPlayer(player).getGame() == game) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
-                }
-                menu.setItem(
-                        x,
-                        y,
-                        itemBuilder.get(),
-                        (m, e) -> openGameEditorMenu(player, game));
-                x++;
-                if (x == 7) {
-                    x = 1;
-                    y++;
-                }
-            }
-
-            menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
-            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        }
-
-        public static void openGameEditorMenu(Player player, Game game) {
-            Menu menu = new Menu("Game Editor", 9 * 5);
-            menu.setItem(1, 1,
-                    new ItemBuilder(Material.DIODE)
-                            .name(ChatColor.GREEN + "Timer")
-                            .get(),
-                    (m, e) -> openTimerMenu(player, game));
-            menu.setItem(2, 1,
-                    new ItemBuilder(Material.SIGN)
-                            .name(ChatColor.GREEN + "Edit Team Scores")
-                            .get(),
-                    (m, e) -> openTeamScoreEditorMenu(player, game));
-            menu.setItem(3, 1,
-                    new ItemBuilder(Material.ICE)
-                            .name(ChatColor.GREEN + "Freeze Game")
-                            .get(),
-                    (m, e) -> {
-                        if (game.isFrozen()) {
-                            game.removeFrozenCause("Debug");
-                        } else {
-                            game.addFrozenCause("Debug");
-                        }
-                        sendDebugMessage(player, player.getName() + " froze game " + game.getGameId(), true);
-                    });
-            WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-            if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
-                menu.setItem(1, 2,
-                        new ItemBuilder(HeadUtils.getHead(player))
-                                .name(ChatColor.GREEN + "Player Options")
-                                .get(),
-                        (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
+                        (m, e) -> GameStartCommand.startGameFromDebugMenu(player, false, queueEntryBuilder -> {
+                            queueEntryBuilder
+                                    .setMap(selectedGameMap)
+                                    .setGameMode(selectedGameMode)
+                                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME);
+                        })
                 );
+                menu.setItem(3, menuHeight - 1, MENU_BACK, (m, e) -> openMapMenu(player, selectedGameMode));
+                menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (m, e) -> {
+                    //safe guard
+                    if (!player.isOp()) {
+                        addons.remove(GameAddon.TOURNAMENT_MODE);
+                    }
+                    GameStartCommand.startGameFromDebugMenu(player,
+                            addons.contains(GameAddon.TOURNAMENT_MODE) && e.isShiftClick(),
+                            queueEntryBuilder -> {
+                                queueEntryBuilder
+                                        .setMap(selectedGameMap)
+                                        .setGameMode(selectedGameMode)
+                                        .setRequestedGameAddons(addons);
+                            }
+                    );
+                });
+                menu.openForPlayer(player);
             }
-            menu.setItem(2, 2,
-                    new ItemBuilder(Material.NOTE_BLOCK)
-                            .name(ChatColor.GREEN + "Team Options")
-                            .get(),
-                    (m, e) -> {
-                        DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
-                                    DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
-                                } else {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 20, 20);
-                    }
-            );
-
-            menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameSelectorMenu(player));
-            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
         }
 
-        public static void openTimerMenu(Player player, Game game) {
-            TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
-            Menu menu = new Menu("Timer", 9 * 4);
-            menu.setItem(3, 1,
-                    new ItemBuilder(Material.STONE_BUTTON)
-                            .name(ChatColor.GREEN + "Skip")
-                            .get(),
-                    (m, e) -> {
-                        timerDebugAble.skipTimer();
-                        sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId(), true);
-                    }
-            );
-            menu.setItem(5, 1,
-                    new ItemBuilder(Material.WATCH)
-                            .name(ChatColor.GREEN + "Set")
-                            .get(),
-                    (m, e) -> {
-                        for (Option option : game.getOptions()) {
-                            if (option instanceof WinAfterTimeoutOption) {
-                                SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new Time Left", "XX:XX"}, (p, lines) -> {
-                                    String time = lines[0];
-                                    try {
-                                        if (!time.contains(":")) {
-                                            throw new Exception();
-                                        }
-                                        int minutes = Integer.parseInt(time.split(":")[0]);
-                                        int seconds = Integer.parseInt(time.split(":")[1]);
-                                        if (minutes < 0 || seconds < 0) {
-                                            throw new Exception();
-                                        }
-                                        ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                        sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time, true);
-                                    } catch (Exception exception) {
-                                        p.sendMessage(ChatColor.RED + "Invalid time");
-                                    }
-                                    openTimerMenu(player, game);
-                                });
-                                break;
-                            }
-                        }
-                    }
-            );
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
-        }
+        static class GamesMenu {
 
-        public static void openTeamScoreEditorMenu(Player player, Game game) {
-            Menu menu = new Menu("Select Team", 9 * 4);
-            int x = 1;
-            for (Team team : TeamMarker.getTeams(game)) {
-                menu.setItem(
-                        x,
-                        1,
-                        new ItemBuilder(team.item)
-                                .name(team.teamColor + team.name)
+            public static void openGameSelectorMenu(Player player) {
+                Menu menu = new Menu("Game Selector", 9 * 5);
+                List<Game> games = Warlords.getGameManager().getGames().stream()
+                        .map(GameManager.GameHolder::getGame)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                int x = 1;
+                int y = 1;
+                for (Game game : games) {
+                    ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
+                            .name(ChatColor.GREEN + "Game - " + game.getGameId())
+                            .lore(ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
+                                    ChatColor.DARK_GRAY + "GameMode - " + ChatColor.RED + game.getGameMode(),
+                                    ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
+                                    ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                            );
+                    if (Warlords.getPlayer(player) != null && Warlords.getPlayer(player).getGame() == game) {
+                        itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                        itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                    }
+                    menu.setItem(
+                            x,
+                            y,
+                            itemBuilder.get(),
+                            (m, e) -> openGameEditorMenu(player, game)
+                    );
+                    x++;
+                    if (x == 7) {
+                        x = 1;
+                        y++;
+                    }
+                }
+
+                menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
+                menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            }
+
+            public static void openGameEditorMenu(Player player, Game game) {
+                Menu menu = new Menu("Game Editor", 9 * 5);
+                menu.setItem(1, 1,
+                        new ItemBuilder(Material.DIODE)
+                                .name(ChatColor.GREEN + "Timer")
+                                .get(),
+                        (m, e) -> openTimerMenu(player, game)
+                );
+                menu.setItem(2, 1,
+                        new ItemBuilder(Material.SIGN)
+                                .name(ChatColor.GREEN + "Edit Team Scores")
+                                .get(),
+                        (m, e) -> openTeamScoreEditorMenu(player, game)
+                );
+                menu.setItem(3, 1,
+                        new ItemBuilder(Material.ICE)
+                                .name(ChatColor.GREEN + "Freeze Game")
                                 .get(),
                         (m, e) -> {
-                            SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new score", "Team: " + team.getName()}, (p, lines) -> {
-                                String line = lines[0];
-                                try {
-                                    int score = Integer.parseInt(line);
-                                    if (score < 0) {
-                                        throw new NumberFormatException();
-                                    }
-                                    game.setPoints(team, score);
-                                    sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score, true);
-                                } catch (NumberFormatException exception) {
-                                    p.sendMessage(ChatColor.RED + "Invalid score");
-                                }
-                                openTeamScoreEditorMenu(player, game);
-                            });
+                            if (game.isFrozen()) {
+                                game.removeFrozenCause("Debug");
+                            } else {
+                                game.addFrozenCause("Debug");
+                            }
+                            sendDebugMessage(player, player.getName() + " froze game " + game.getGameId(), true);
                         }
                 );
-                x++;
+                WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+                if (warlordsPlayer != null && warlordsPlayer.getGame() == game) {
+                    menu.setItem(1, 2,
+                            new ItemBuilder(HeadUtils.getHead(player))
+                                    .name(ChatColor.GREEN + "Player Options")
+                                    .get(),
+                            (m, e) -> DebugMenuPlayerOptions.openPlayerMenu(player, Warlords.getPlayer(player))
+                    );
+                }
+                menu.setItem(2, 2,
+                        new ItemBuilder(Material.NOTE_BLOCK)
+                                .name(ChatColor.GREEN + "Team Options")
+                                .get(),
+                        (m, e) -> {
+                            DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    if (player.getOpenInventory().getTopInventory().getName().equals("Team Options")) {
+                                        DebugMenuTeamOptions.openTeamSelectorMenu(player, game);
+                                    } else {
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(Warlords.getInstance(), 20, 20);
+                        }
+                );
+
+                menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameSelectorMenu(player));
+                menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
             }
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
+
+            public static void openTimerMenu(Player player, Game game) {
+                TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
+                Menu menu = new Menu("Timer", 9 * 4);
+                menu.setItem(3, 1,
+                        new ItemBuilder(Material.STONE_BUTTON)
+                                .name(ChatColor.GREEN + "Skip")
+                                .get(),
+                        (m, e) -> {
+                            timerDebugAble.skipTimer();
+                            sendDebugMessage(player, ChatColor.GREEN + "Skip timer of game " + game.getGameId(), true);
+                        }
+                );
+                menu.setItem(5, 1,
+                        new ItemBuilder(Material.WATCH)
+                                .name(ChatColor.GREEN + "Set")
+                                .get(),
+                        (m, e) -> {
+                            for (Option option : game.getOptions()) {
+                                if (option instanceof WinAfterTimeoutOption) {
+                                    SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new Time Left", "XX:XX"}, (p, lines) -> {
+                                        String time = lines[0];
+                                        try {
+                                            if (!time.contains(":")) {
+                                                throw new Exception();
+                                            }
+                                            int minutes = Integer.parseInt(time.split(":")[0]);
+                                            int seconds = Integer.parseInt(time.split(":")[1]);
+                                            if (minutes < 0 || seconds < 0) {
+                                                throw new Exception();
+                                            }
+                                            ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
+                                            sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time, true);
+                                        } catch (Exception exception) {
+                                            p.sendMessage(ChatColor.RED + "Invalid time");
+                                        }
+                                        openTimerMenu(player, game);
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                );
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
+                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            }
+
+            public static void openTeamScoreEditorMenu(Player player, Game game) {
+                Menu menu = new Menu("Select Team", 9 * 4);
+                int x = 1;
+                for (Team team : TeamMarker.getTeams(game)) {
+                    menu.setItem(
+                            x,
+                            1,
+                            new ItemBuilder(team.item)
+                                    .name(team.teamColor + team.name)
+                                    .get(),
+                            (m, e) -> {
+                                SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new score", "Team: " + team.getName()}, (p, lines) -> {
+                                    String line = lines[0];
+                                    try {
+                                        int score = Integer.parseInt(line);
+                                        if (score < 0) {
+                                            throw new NumberFormatException();
+                                        }
+                                        game.setPoints(team, score);
+                                        sendDebugMessage(player, ChatColor.GREEN + "Set score of team " + team.getName() + " to " + score, true);
+                                    } catch (NumberFormatException exception) {
+                                        p.sendMessage(ChatColor.RED + "Invalid score");
+                                    }
+                                    openTeamScoreEditorMenu(player, game);
+                                });
+                            }
+                    );
+                    x++;
+                }
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
+                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            }
+
         }
 
     }
-
 }

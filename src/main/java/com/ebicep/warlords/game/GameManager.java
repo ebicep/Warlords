@@ -492,7 +492,7 @@ public class GameManager implements AutoCloseable {
         @Nonnull
         protected EnumSet<GameAddon> requestedGameAddons = EnumSet.noneOf(GameAddon.class);
         @Nullable
-        protected GameMode category = null;
+        protected GameMode gameMode = null;
         @Nullable
         protected GameMap map = null;
         protected int priority = 0;
@@ -505,8 +505,8 @@ public class GameManager implements AutoCloseable {
             this.onResult = onResult;
         }
 
-        public QueueEntryBuilder setGamemode(@Nullable GameMode category) {
-            this.category = category;
+        public QueueEntryBuilder setGameMode(@Nullable GameMode category) {
+            this.gameMode = category;
             return this;
         }
 
@@ -535,8 +535,8 @@ public class GameManager implements AutoCloseable {
         }
 
         @Nullable
-        public GameMode getCategory() {
-            return category;
+        public GameMode getGameMode() {
+            return gameMode;
         }
 
         @Nullable
@@ -578,12 +578,12 @@ public class GameManager implements AutoCloseable {
         }
 
         public void queue() {
-            GameManager.this.queue(new GameManager.QueueEntry(players, expiresTime, requestedGameAddons, category, map, onResult, priority));
+            GameManager.this.queue(new GameManager.QueueEntry(players, expiresTime, requestedGameAddons, gameMode, map, onResult, priority));
         }
 
         @Nonnull
         public Pair<QueueResult, Game> queueNow() {
-            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));
+            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, gameMode, map, null, priority));
         }
 
     }

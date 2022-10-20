@@ -1,23 +1,12 @@
 package com.ebicep.warlords.pve;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
-import com.ebicep.warlords.game.GameAddon;
-import com.ebicep.warlords.game.GameManager;
+import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameMap;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.PartyManager;
-import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.Collections;
-import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -55,21 +44,13 @@ public class DifficultyMenu {
                             .lore(ChatColor.GRAY + difficulty.getDescription())
                             .get(),
                     (m, e) -> {
-                        if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
-                            player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
-                            return;
-                        }
-                        if (GameManager.gameStartingDisabled) {
-                            player.sendMessage(ChatColor.RED + "Games are currently disabled.");
-                            return;
-                        }
                         switch (finalI) {
                             case 0:
                             case 1:
-                                startGame(player, false);
+                                GameStartCommand.startGamePvE(player, GameMap.ILLUSION_RIFT);
                                 break;
                             case 2:
-                                startGame(player, true);
+                                GameStartCommand.startGamePvE(player, GameMap.ILLUSION_CROSSFIRE);
                                 break;
                         }
                     }
@@ -78,31 +59,5 @@ public class DifficultyMenu {
             menu.setItem(3, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         }
         menu.openForPlayer(player);
-    }
-
-    private static void startGame(Player player, boolean endless) {
-        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
-        List<Player> people = partyPlayerPair != null ? partyPlayerPair.getA().getAllPartyPeoplePlayerOnline() : Collections.singletonList(player);
-        if (partyPlayerPair != null) {
-            if (!partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
-                player.sendMessage(ChatColor.RED + "You are not the party leader");
-                return;
-            } else if (!partyPlayerPair.getA().allOnlineAndNoAFKs()) {
-                player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
-                return;
-            }
-        }
-
-        Warlords.getGameManager()
-                .newEntry(people)
-                .setGamemode(GameMode.WAVE_DEFENSE)
-                .setMap(endless ? GameMap.ILLUSION_CROSSFIRE : GameMap.ILLUSION_RIFT)
-                .setPriority(0)
-                .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
-                .setOnResult((result, game) -> {
-                    if (game == null) {
-                        player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-                    }
-                }).queue();
     }
 }
