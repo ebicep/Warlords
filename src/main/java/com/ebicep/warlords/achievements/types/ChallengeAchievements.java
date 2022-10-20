@@ -35,6 +35,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             null,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
                 WarlordsEntity carrier = null;
@@ -85,6 +86,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             null,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(2);
                 int indexCarrierFull = -1;
@@ -135,6 +137,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.PYROMANCER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getPlayer()
@@ -147,6 +150,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.CRYOMANCER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats()
                         .getEventsAsSelfFromLastSecond(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
@@ -174,6 +178,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AQUAMANCER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> warlordsEntity.getMinuteStats().total().getHealingOnCarrier() >= 80000
     ),
     ASSASSINATE("Assassinate",
@@ -181,6 +186,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.ASSASSIN,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(10);
                 int critsOnCarrier = 0;
@@ -202,6 +208,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.VINDICATOR,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead()) {
@@ -219,6 +226,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.APOTHECARY,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return PlayerFilter.playingGame(warlordsEntity.getGame())
                         .enemiesOf(warlordsEntity)
@@ -235,6 +243,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.BERSERKER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(40);
                 float totalDamageToCarrier = 0;
@@ -256,6 +265,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.DEFENDER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -269,6 +279,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.REVENANT,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
@@ -284,6 +295,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AVENGER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 boolean carrierDeadLast5Seconds = false;
                 for (WarlordsEntity player : PlayerFilter.playingGame(warlordsEntity.getGame())
@@ -315,6 +327,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.CRUSADER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
@@ -329,48 +342,50 @@ public enum ChallengeAchievements implements Achievement {
             "Deal 3k damage to the enemy carrier while they have an active shield/damage reduction.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.PROTECTOR,
-            false, warlordsEntity -> {
-        List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
-        WarlordsEntity carrier = null;
-        int index = -1;
-        for (int i = 0; i < events.size(); i++) {
-            WarlordsDamageHealingFinalEvent event = events.get(i);
-            if (event.isHasFlag() && event.getPlayerCooldowns().stream()
-                    .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                    .filter(RegularCooldown.class::isInstance)
-                    .map(RegularCooldown.class::cast)
-                    .anyMatch(regularCooldown ->
-                            regularCooldown.getCooldownObject() instanceof ArcaneShield ||
-                                    regularCooldown.getCooldownObject() instanceof IceBarrier ||
-                                    regularCooldown.getCooldownObject() instanceof LastStand
-                    )
-            ) {
-                carrier = event.getPlayer();
-                index = i;
-                break;
-            }
-        }
+            false, Difficulty.EASY,
+            warlordsEntity -> {
+                List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(3);
+                WarlordsEntity carrier = null;
+                int index = -1;
+                for (int i = 0; i < events.size(); i++) {
+                    WarlordsDamageHealingFinalEvent event = events.get(i);
+                    if (event.isHasFlag() && event.getPlayerCooldowns().stream()
+                            .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                            .filter(RegularCooldown.class::isInstance)
+                            .map(RegularCooldown.class::cast)
+                            .anyMatch(regularCooldown ->
+                                    regularCooldown.getCooldownObject() instanceof ArcaneShield ||
+                                            regularCooldown.getCooldownObject() instanceof IceBarrier ||
+                                            regularCooldown.getCooldownObject() instanceof LastStand
+                            )
+                    ) {
+                        carrier = event.getPlayer();
+                        index = i;
+                        break;
+                    }
+                }
 
-        if (carrier != null) {
-            int totalDamage = 0;
-            for (int i = index; i < events.size(); i++) {
-                WarlordsDamageHealingFinalEvent event = events.get(i);
-                if (event.getPlayer() == carrier && event.isHasFlag()) {
-                    totalDamage += event.getValue();
+                if (carrier != null) {
+                    int totalDamage = 0;
+                    for (int i = index; i < events.size(); i++) {
+                        WarlordsDamageHealingFinalEvent event = events.get(i);
+                        if (event.getPlayer() == carrier && event.isHasFlag()) {
+                            totalDamage += event.getValue();
+                        }
+                    }
+
+                    return totalDamage >= 3000;
+                } else {
+                    return false;
                 }
             }
-
-            return totalDamage >= 3000;
-        } else {
-            return false;
-        }
-    }
     ),
     ROADBLOCK("Roadblock?!",
             "Proc your Capacitor Totem three (or more) times after your carrier passes through the totem.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.THUNDERLORD,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 return lastDamageEvent.getAttackerCooldowns().stream()
@@ -387,6 +402,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.SPIRITGUARD,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(20);
                 for (WarlordsDamageHealingFinalEvent event : events) {
@@ -411,6 +427,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.CAPTURE_THE_FLAG,
             Specializations.EARTHWARDEN,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> events = warlordsEntity.getSecondStats().getEventsAsAttackerFromLastSecond(10);
                 int indexCarrier = -1;
@@ -453,6 +470,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             true,
+            Difficulty.MEDIUM,
             warlordsEntity -> {
                 return PlayerFilterGeneric.playingGameWarlordsNPCs(warlordsEntity.getGame())
                         .filter(warlordsNPC -> warlordsNPC.getMob() instanceof Ghoulcaller)
@@ -471,6 +489,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             true,
+            Difficulty.MEDIUM,
             warlordsEntity -> {
                 return PlayerFilterGeneric.playingGame(warlordsEntity.getGame())
                         .teammatesOf(warlordsEntity)
@@ -489,6 +508,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             true,
+            Difficulty.HARD,
             warlordsEntity -> {
                 return true; //login in Boltaro.java
             }
@@ -498,6 +518,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             null,
             true,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in Narmer.java
             }
@@ -512,6 +533,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.PYROMANCER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 List<WarlordsDamageHealingFinalEvent> lastEventsAsAttacker = warlordsEntity.getSecondStats()
                         .getLastEventsAsAttacker(10, WarlordsDamageHealingFinalEvent::isDamageInstance);
@@ -529,6 +551,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.CRYOMANCER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEventAsSelf = warlordsEntity.getSecondStats().getLastEventAsSelf();
                 for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
@@ -554,7 +577,8 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.AQUAMANCER,
             false,
-            WARLORDS_ENTITY -> {
+            Difficulty.EASY,
+            warlordsEntity -> {
                 return true; //logic in WaterBreath.java
             }
     ),
@@ -563,6 +587,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.AVENGER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -575,6 +600,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.CRUSADER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -587,6 +613,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.PROTECTOR,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -599,6 +626,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.BERSERKER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -611,6 +639,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.DEFENDER,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
@@ -623,6 +652,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.REVENANT,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in OrbsOfLife.java
             }
@@ -632,6 +662,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.THUNDERLORD,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in CapacitorTotem.java
             }
@@ -641,6 +672,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.SPIRITGUARD,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in DeathsDebt.java
             }
@@ -650,6 +682,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.EARTHWARDEN,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in HealingTotem.java
             }
@@ -659,6 +692,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.ASSASSIN,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true;
             }
@@ -668,6 +702,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.VINDICATOR,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true; //logic in PrismGuard.java
             }
@@ -677,6 +712,7 @@ public enum ChallengeAchievements implements Achievement {
             GameMode.WAVE_DEFENSE,
             Specializations.APOTHECARY,
             false,
+            Difficulty.EASY,
             warlordsEntity -> {
                 return true;
             }
@@ -707,6 +743,7 @@ public enum ChallengeAchievements implements Achievement {
     public final GameMode gameMode;
     public final Specializations spec;
     public final boolean isHidden;
+    public final Difficulty difficulty;
     public final Predicate<WarlordsEntity> warlordsEntityPredicate;
 
     ChallengeAchievements(
@@ -715,13 +752,14 @@ public enum ChallengeAchievements implements Achievement {
             GameMode gameMode,
             Specializations spec,
             boolean isHidden,
-            Predicate<WarlordsEntity> warlordsEntityPredicate
+            Difficulty difficulty, Predicate<WarlordsEntity> warlordsEntityPredicate
     ) {
         this.name = name;
         this.description = description;
         this.gameMode = gameMode;
         this.spec = spec;
         this.isHidden = isHidden;
+        this.difficulty = difficulty;
         this.warlordsEntityPredicate = warlordsEntityPredicate;
     }
 
@@ -793,6 +831,11 @@ public enum ChallengeAchievements implements Achievement {
     @Override
     public boolean isHidden() {
         return isHidden;
+    }
+
+    @Override
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     @Override

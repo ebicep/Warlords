@@ -137,7 +137,15 @@ public class AchievementsMenu {
                 itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
                         ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
                         :
-                        "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")));
+                        "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any"))
+                );
+                if (achievement.getDifficulty() != null) {
+                    itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
+                            ChatColor.MAGIC + "\nDifficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
+                            :
+                            "\nDifficulty: " + ChatColor.GOLD + achievement.getDifficulty().name())
+                    );
+                }
                 if (hasAchievement) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                 }

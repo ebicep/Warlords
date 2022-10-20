@@ -19,9 +19,17 @@ public interface Achievement {
 
     boolean isHidden();
 
+    Difficulty getDifficulty();
+
     void sendAchievementUnlockMessage(Player player);
 
     void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
+
+    enum Difficulty {
+        EASY,
+        MEDIUM,
+        HARD,
+    }
 
     abstract class AbstractAchievementRecord<T extends Enum<T> & Achievement> {
 
