@@ -317,7 +317,7 @@ public class StatsLeaderboardManager {
     public enum GameType {
         ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new),
         CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
-        PVE("Player vs Environment", "PvE", StatsLeaderboardPvE::new);
+        PVE("Wave Defense", "PvE", StatsLeaderboardPvE::new);
 
         public final String name;
         public final String shortName;

@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
-import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.EnvoyLegionair;
+import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.EnvoyLegionnaire;
 import com.ebicep.warlords.game.option.wavedefense.mobs.magmacube.MagmaCube;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
@@ -20,7 +20,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
@@ -84,7 +83,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 800 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new EnvoyLegionair(warlordsNPC.getLocation()));
+                option.spawnNewMob(new EnvoyLegionnaire(warlordsNPC.getLocation()));
             }
         }
 
