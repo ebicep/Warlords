@@ -176,8 +176,8 @@ public class BotManager {
                 .setColor(3066993)
                 .setTimestamp(new Date().toInstant());
         eb.setDescription("**Players Online**: " + (onQuit ? Bukkit.getOnlinePlayers().size() - 1 : Bukkit.getOnlinePlayers().size()) + "\n");
-        eb.appendDescription("**Players In Game**: " + Warlords.getGameManager().getPlayerCount() + "\n");
-        eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby() + "\n");
+        eb.appendDescription("**Players In Game**: " + Warlords.getGameManager().getPlayerCount(null) + "\n");
+        eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby(null) + "\n");
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
 

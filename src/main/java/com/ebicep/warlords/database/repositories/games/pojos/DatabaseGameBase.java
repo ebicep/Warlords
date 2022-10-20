@@ -117,7 +117,6 @@ public abstract class DatabaseGameBase {
                     case DUEL:
                     case DEBUG:
                     case SIMULATION_TRIAL:
-                    case WAVE_DEFENSE:
                         updatePlayerStats = false;
                         break;
                 }
@@ -143,7 +142,7 @@ public abstract class DatabaseGameBase {
             if (updatePlayerStats) {
                 ChatUtils.MessageTypes.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
 
-                if (!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                     //CHALLENGE ACHIEVEMENTS
                     game.warlordsPlayers()
                             .forEachOrdered(warlordsPlayer -> DatabaseManager.getPlayer(warlordsPlayer.getUuid(),

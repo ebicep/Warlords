@@ -341,6 +341,8 @@ public class Warlords extends JavaPlugin {
             player.teleport(getRejoinPoint(uuid));
             player.getInventory().clear();
             player.setAllowFlight(true);
+            player.setMaxHealth(20);
+            player.setHealth(20);
             PlayerHotBarItemListener.giveLobbyHotBar(player, false);
         });
 

@@ -1,6 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.GameMode;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -19,9 +20,9 @@ public class PvEStartTrait extends Trait {
     @Override
     public void run() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Players");
-        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby() + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.GOLD + "WARLORDS 2 PvE Mode");
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.WAVE_DEFENSE) + " Players");
+        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.WAVE_DEFENSE) + " in Lobby");
+        hologramTrait.setLine(2, ChatColor.GOLD + "Player vs Environment");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 

@@ -156,21 +156,25 @@ public class GameManager implements AutoCloseable {
         }
     }
 
-    public long getPlayerCount() {
-        return this.games.stream().mapToInt(e -> e.getGame() == null ? 0 : (int) e.getGame().warlordsPlayers().count()).sum();
+    public long getPlayerCount(GameMode gameMode) {
+        return this.games.stream()
+                .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
+                .mapToInt(e -> e.getGame() == null ? 0 : (int) e.getGame().warlordsPlayers().count()).sum();
     }
 
-    public long getPlayerCountInLobby() {
-        return this.games.stream().mapToInt(e -> {
-            Game game = e.getGame();
-            if (game == null) {
-                return 0;
-            }
-            if (!game.acceptsPeople()) {
-                return 0;
-            }
-            return game.getPlayers().size();
-        }).sum();
+    public long getPlayerCountInLobby(GameMode gameMode) {
+        return this.games.stream()
+                .filter(gameHolder -> gameMode == null || (gameHolder.getGame() != null && gameHolder.getGame().getGameMode() == gameMode))
+                .mapToInt(e -> {
+                    Game game = e.getGame();
+                    if (game == null) {
+                        return 0;
+                    }
+                    if (!game.acceptsPeople()) {
+                        return 0;
+                    }
+                    return game.getPlayers().size();
+                }).sum();
     }
 
     public long getQueueSize() {
@@ -505,11 +509,6 @@ public class GameManager implements AutoCloseable {
             this.onResult = onResult;
         }
 
-        public QueueEntryBuilder setGameMode(@Nullable GameMode category) {
-            this.gameMode = category;
-            return this;
-        }
-
         @Nonnull
         public List<OfflinePlayer> getPlayers() {
             return players;
@@ -537,6 +536,11 @@ public class GameManager implements AutoCloseable {
         @Nullable
         public GameMode getGameMode() {
             return gameMode;
+        }
+
+        public QueueEntryBuilder setGameMode(@Nullable GameMode category) {
+            this.gameMode = category;
+            return this;
         }
 
         @Nullable
@@ -583,7 +587,7 @@ public class GameManager implements AutoCloseable {
 
         @Nonnull
         public Pair<QueueResult, Game> queueNow() {
-            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, gameMode, map, null, priority));
+            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, gameMode, map, onResult, priority));
         }
 
     }

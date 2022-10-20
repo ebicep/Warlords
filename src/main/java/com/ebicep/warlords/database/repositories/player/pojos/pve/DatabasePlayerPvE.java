@@ -61,6 +61,8 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
             put(value, 0L);
         }
     }};
+    @Field("completed_tutorial")
+    private boolean completedTutorial = false;
 
     @Override
     public void updateCustomStats(
@@ -286,4 +288,11 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.subtractCurrency(currency, 1L);
     }
 
+    public boolean isCompletedTutorial() {
+        return completedTutorial;
+    }
+
+    public void setCompletedTutorial(boolean completedTutorial) {
+        this.completedTutorial = completedTutorial;
+    }
 }

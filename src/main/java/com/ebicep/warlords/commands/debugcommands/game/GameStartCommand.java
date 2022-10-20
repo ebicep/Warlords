@@ -1,9 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.game;
 
-import co.aikar.commands.BaseCommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
-import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -24,25 +23,25 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
 
-public class GameStartCommand extends BaseCommand {
+public class GameStartCommand {
 
-    public static void startGamePvE(Player player, GameMap map) {
+    public static void startGamePvE(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         if (Warlords.SENT_HALF_HOUR_REMINDER.get() && !AdminCommand.DISABLE_RESTART_CHECK) {
             player.sendMessage(ChatColor.RED + "You cannot start a new game 30 minutes before the server restarts.");
             return;
         }
-        startGame(player, false, queueEntryBuilder -> {
-            queueEntryBuilder
-                    .setGameMode(GameMode.WAVE_DEFENSE)
-                    .setMap(map)
-                    .setPriority(0)
-                    .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.CUSTOM_GAME)
-                    .setOnResult((result, game) -> {
-                        if (game == null) {
-                            player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
-                        }
-                    });
-        });
+        startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
+                    queueEntryBuilder
+                            .setGameMode(GameMode.WAVE_DEFENSE)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
+                                }
+                            });
+                })
+        );
+
     }
 
     public static void startGame(
@@ -77,6 +76,24 @@ public class GameStartCommand extends BaseCommand {
         GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager()
                 .newEntry(people);
         entryEditor.accept(entryBuilder);
+
+        if (entryBuilder.getGameMode() == GameMode.WAVE_DEFENSE) {
+            if (people.size() == 1) {
+                DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
+                    if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
+                        entryBuilder
+                                .setGameMode(GameMode.TUTORIAL)
+                                .setMap(GameMap.TUTORIAL_MAP)
+                                .setOnResult((result, game) -> {
+                                    if (game == null) {
+                                        people.get(0).sendMessage(ChatColor.RED + "All games are currently full. Please try again later.");
+                                    }
+                                });
+                    }
+                });
+            }
+        }
+
         entryBuilder.queueNow();
     }
 

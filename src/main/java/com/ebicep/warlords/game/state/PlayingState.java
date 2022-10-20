@@ -305,13 +305,14 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (winEvent != null) {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
+                    game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE &&
                     players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
                     timer >= 6000;
             //comps
             if (isCompGame) {
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames));
             }
-            //pubs
+            //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
                 if (DatabaseManager.playerService == null) {

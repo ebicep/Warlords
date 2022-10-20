@@ -2,6 +2,7 @@ package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
+import com.ebicep.warlords.game.GameMode;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
@@ -17,9 +18,11 @@ public class GameStartTrait extends Trait {
     @Override
     public void run() {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount() + " Players");
-        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby() + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.AQUA + "WARLORDS 2 PUBLIC QUEUE");
+        hologramTrait.setLine(0,
+                ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.CAPTURE_THE_FLAG) + " Players"
+        );
+        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.CAPTURE_THE_FLAG) + " in Lobby");
+        hologramTrait.setLine(2, ChatColor.AQUA + "Capture the Flag");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 

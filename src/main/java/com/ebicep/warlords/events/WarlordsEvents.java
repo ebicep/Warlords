@@ -145,6 +145,8 @@ public class WarlordsEvents implements Listener {
             player.removePotionEffect(PotionEffectType.SLOW);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
             player.setGameMode(GameMode.ADVENTURE);
+            player.setMaxHealth(20);
+            player.setHealth(20);
 
             ChatUtils.sendCenteredMessage(player, ChatColor.GRAY + "-----------------------------------------------------");
             ChatUtils.sendCenteredMessage(player,
