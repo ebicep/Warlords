@@ -106,7 +106,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, true, false));
+            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 0, false, false, null));
         }
     }
 

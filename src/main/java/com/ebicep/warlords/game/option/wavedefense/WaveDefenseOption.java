@@ -34,8 +34,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Material;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
@@ -163,11 +163,35 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                EntityLiving entityLiving = (EntityLiving) ((CraftEntity) event.getEntity()).getHandle();
+                Entity entity = ((CraftEntity) event.getEntity()).getHandle();
+                if (!(entity instanceof EntityLiving)) {
+                    return;
+                }
+                EntityLiving entityLiving = (EntityLiving) entity;
                 if (entityLiving instanceof EntityInsentient) {
-                    LivingEntity target = event.getTarget();
-                    if (target != null) {
-                        if (target.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                    LivingEntity newTarget = event.getTarget();
+                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
+                    if (newTarget == null) {
+                        if (oldTarget instanceof EntityPlayer) {
+                            //setting target to player zombie
+                            game.warlordsPlayers()
+                                    .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
+                                    .findFirst()
+                                    .ifPresent(warlordsPlayer -> {
+                                        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+                                            event.setTarget(warlordsPlayer.getEntity());
+                                        }
+                                    });
+                        }
+                    } else {
+                        if (oldTarget instanceof EntityZombie) {
+                            //makes sure player that rejoins is still the target
+                            game.warlordsPlayers()
+                                    .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
+                                    .findFirst()
+                                    .ifPresent(warlordsPlayer -> event.setCancelled(true));
+                        }
+                        if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                             event.setCancelled(true);
                         }
                     }
