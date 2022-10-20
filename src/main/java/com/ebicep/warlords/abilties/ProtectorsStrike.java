@@ -106,7 +106,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                     false
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                        .filterCooldownFrom(wp)
                         .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                         .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
             });
@@ -131,7 +131,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                             false
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
-                                .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                .filterCooldownFrom(wp)
                                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                 .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                     });
@@ -156,7 +156,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                 false
                         ).ifPresent(event -> {
                             new CooldownFilter<>(wp, RegularCooldown.class)
-                                    .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                    .filterCooldownFrom(wp)
                                     .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                     .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                         });
@@ -172,7 +172,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
                                 false
                         ).ifPresent(event -> {
                             new CooldownFilter<>(wp, RegularCooldown.class)
-                                    .filter(regularCooldown -> regularCooldown.getFrom().equals(wp))
+                                    .filterCooldownFrom(wp)
                                     .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                     .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                         });

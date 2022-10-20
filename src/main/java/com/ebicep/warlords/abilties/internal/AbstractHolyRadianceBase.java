@@ -134,7 +134,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                             false
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         new CooldownFilter<>(owner, RegularCooldown.class)
-                                .filter(regularCooldown -> regularCooldown.getFrom().equals(owner))
+                                .filterCooldownFrom(owner)
                                 .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                 .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
                     });

@@ -392,7 +392,7 @@ public abstract class WarlordsEntity {
         // Intervene
         Optional<RegularCooldown> optionalInterveneCooldown = new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClass(Intervene.class)
-                .filter(regularCooldown -> regularCooldown.getFrom() != this)
+                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), this))
                 .findFirst();
         if (optionalInterveneCooldown.isPresent() &&
                 optionalInterveneCooldown.get().getTicksLeft() > 0 &&
