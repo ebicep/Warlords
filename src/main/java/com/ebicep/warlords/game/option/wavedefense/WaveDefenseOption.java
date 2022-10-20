@@ -98,6 +98,10 @@ public class WaveDefenseOption implements Option {
                 WarlordsEntity attacker = event.getAttacker();
                 WarlordsEntity receiver = event.getPlayer();
 
+                if (!attacker.getGame().equals(game)) {
+                    return;
+                }
+
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
@@ -119,6 +123,10 @@ public class WaveDefenseOption implements Option {
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getPlayer();
                 WarlordsEntity killer = event.getKiller();
+
+                if (!we.getGame().equals(game)) {
+                    return;
+                }
 
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
@@ -150,15 +158,19 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onWeaponDrop(WarlordsPlayerGiveWeaponEvent event) {
-                waveDefenseStats.getPlayerWeaponsFound()
-                        .computeIfAbsent(event.getPlayer().getUuid(), v -> new ArrayList<>())
-                        .add(event.getWeapon());
+                if (event.getGame().equals(game)) {
+                    waveDefenseStats.getPlayerWeaponsFound()
+                            .computeIfAbsent(event.getPlayer().getUuid(), v -> new ArrayList<>())
+                            .add(event.getWeapon());
+                }
             }
 
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
-                waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
-                waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
+                if (event.getGame().equals(game)) {
+                    waveDefenseStats.cacheBaseCoinSummary(WaveDefenseOption.this);
+                    waveDefenseStats.storeWeaponFragmentGain(WaveDefenseOption.this);
+                }
             }
 
             @EventHandler
@@ -168,6 +180,9 @@ public class WaveDefenseOption implements Option {
                     return;
                 }
                 EntityLiving entityLiving = (EntityLiving) entity;
+                if (mobs.stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                    return;
+                }
                 if (entityLiving instanceof EntityInsentient) {
                     LivingEntity newTarget = event.getTarget();
                     EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
