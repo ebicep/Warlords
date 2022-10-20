@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class WeaponSalvageMenu {
@@ -30,6 +31,8 @@ public class WeaponSalvageMenu {
                 (m, e) -> {
                     salvageWeapon(player, databasePlayer, weapon);
                     WeaponManagerMenu.openWeaponInventoryFromInternal(player, databasePlayer);
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+                    player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);
                 }
         );
 
