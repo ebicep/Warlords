@@ -125,7 +125,7 @@ public class TutorialOption implements Option {
                                             warlordsPlayer.resetAbilities();
                                             nextStageSection();
                                         }
-                                    }.runTaskLater(20 * 5);
+                                    }.runTaskLater(20 * 4);
                                 }
                                 break;
                             case 3:
@@ -138,7 +138,7 @@ public class TutorialOption implements Option {
                                             warlordsPlayer.resetAbilities();
                                             nextStageSection();
                                         }
-                                    }.runTaskLater(20 * 5);
+                                    }.runTaskLater(20 * 4);
                                 }
                                 break;
                             case 4:
@@ -200,7 +200,7 @@ public class TutorialOption implements Option {
             private final String[] tutorialCompletionPrompts = new String[]{
                     "Congratulations! You now have a basic understanding of the Pyromancer class.",
                     "There are many unique abilities in Warlords which you can read their descriptions in the lobby.",
-                    "You can also access the Warlords 2 documentation for abilities online at https://docs.flairy.me/skills/skills.html.",
+                    "You can also access the Warlords 2 documentation for abilities online at https://docs.flairy.me/skills/skills",
                     "Here’s just one more thing we want to show you before you venture into your first adventure.",
                     "You gain insignia when you kill enemies. You can use this insignia to buy in-game upgrades.",
                     "Press the nugget in your 8th slot to open the upgrade menu.",
@@ -241,8 +241,7 @@ public class TutorialOption implements Option {
                 int index = counter / 2;
                 if (index < tutorialPrompts.length) {
                     sendTutorialMessage(p, tutorialPrompts[index]);
-                } else {
-                    if (index == tutorialPrompts.length + 1) {
+                    if (index == tutorialPrompts.length - 1) {
                         nextStage();
                     }
                 }
@@ -298,8 +297,7 @@ public class TutorialOption implements Option {
                         int index = counter / 2;
                         if (index < rangeAttackPrompts.length) {
                             sendTutorialMessage(p, rangeAttackPrompts[index]);
-                        } else {
-                            if (index == rangeAttackPrompts.length + 1) {
+                            if (index == rangeAttackPrompts.length - 1) {
                                 nextStage();
                             }
                         }
@@ -378,7 +376,7 @@ public class TutorialOption implements Option {
                                 sendTutorialMessage(p,
                                         "You have now completed the tutorial. If you have any more questions, feel free to ask them in our Discord server! Hope you have fun with your first game of Warlords PvE."
                                 );
-                                sendTutorialMessage(p, "Link to join Discord Server: (insert link here)");
+                                sendTutorialMessage(p, "Link to join Discord Server: https://discord.gg/UMTjJ5Mdc8");
                                 break;
                             case 3:
                                 game.setNextState(new EndState(game, null));

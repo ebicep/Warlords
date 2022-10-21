@@ -72,7 +72,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate() * 100) + "%"
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Normal Win", UPPER_CENTER_1,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getNormalStats().getFastestGameFinished(),
+                databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getNormalStats().getFastestGameFinished(),
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
                         .apply(databasePlayer)
                         .getNormalStats()
@@ -87,7 +87,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                         .getHighestWaveCleared())
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Hard Win", UPPER_CENTER_3,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHardStats().getFastestGameFinished(),
+                databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHardStats().getFastestGameFinished(),
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
                         .apply(databasePlayer)
                         .getHardStats()

@@ -367,7 +367,7 @@ public class ExperienceManager {
                 if (option instanceof WaveDefenseOption) {
                     WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                     DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
-                    int wavesCleared = waveDefenseOption.getWavesCleared();
+                    int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), difficulty.getMaxWaves());
                     expGain.put("Waves Cleared", (long) wavesCleared * difficulty.getWaveExperienceMultiplier());
                     if (wavesCleared == 25) {
                         if (difficulty == DifficultyIndex.NORMAL) {
