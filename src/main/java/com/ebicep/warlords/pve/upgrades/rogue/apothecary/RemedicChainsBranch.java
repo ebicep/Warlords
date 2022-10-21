@@ -52,7 +52,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-5% Cooldown reduction",
+                "-5% Cooldown Reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
@@ -60,7 +60,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10% Cooldown reduction",
+                "-10% Cooldown Reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
@@ -68,7 +68,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-15% Cooldown reduction",
+                "-15% Cooldown Reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
@@ -76,7 +76,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20% Cooldown reduction",
+                "-20% Cooldown Reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
