@@ -16,7 +16,7 @@ public interface BossMob extends Mob {
 
     @Override
     default int rareDropChance() {
-        return 25;
+        return 20;
     }
 
     @Override
