@@ -205,6 +205,7 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 } else {
+                    DatabaseManager.checkUpdatePlayerName(player, databasePlayer);
                     HeadUtils.updateHead(player);
                     //future messages
                     Warlords.newChain()
