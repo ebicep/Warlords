@@ -147,7 +147,7 @@ public class PrismGuard extends AbstractAbility {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     float afterReduction;
-                                    afterReduction = currentDamageValue * (100 - (hits.get() * 3) / 100f);
+                                    afterReduction = currentDamageValue * (100 - (hits.get() * 3)) / 100f;
                                     tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
                                     return afterReduction;
                                 }

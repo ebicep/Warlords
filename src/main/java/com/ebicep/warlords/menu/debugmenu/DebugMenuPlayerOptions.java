@@ -22,6 +22,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -472,7 +473,7 @@ public class DebugMenuPlayerOptions {
                         1,
                         new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
-                                .lore(skillBoost.description,
+                                .lore(WordWrap.wrapWithNewline(skillBoost.description, 150),
                                         "",
                                         ChatColor.YELLOW + "Click to select!"
                                 ).get(),

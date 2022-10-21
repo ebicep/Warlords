@@ -14,9 +14,9 @@ public enum DifficultyIndex {
             16,
             4
     ),
-    HARD("Hard",
+    HARD("Hard §c[COMING SOON]",
             "Fight off 25 waves of monsters to\nearn greater rewards." +
-                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage",
+                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n+Tougher Mobs",
             ChatColor.GOLD,
             25,
             32,

@@ -59,7 +59,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier II",
+                "Zeal - Tier II",
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
@@ -67,7 +67,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
@@ -75,7 +75,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-20% Cooldown reduction",
                 20000,
                 () -> {

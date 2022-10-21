@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public final int MAX_SWAP_TIME = 8;//0;
-    public final int MIN_SWAP_TIME = 5;//0;
+    public final int MAX_SWAP_TIME = 80;
+    public final int MIN_SWAP_TIME = 50;
 
     private int secondsUntilNextSwap = 0;
 
