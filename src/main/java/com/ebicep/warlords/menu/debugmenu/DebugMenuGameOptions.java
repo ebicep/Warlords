@@ -72,7 +72,7 @@ public class DebugMenuGameOptions {
             int i = -1;
             for (GameMode gm : values) {
                 if (gm.isHiddenInMenu()) {
-                   // continue;
+                    continue;
                 }
                 i++;
                 menu.setItem(i % 7 + 1, i / 7 + 1,

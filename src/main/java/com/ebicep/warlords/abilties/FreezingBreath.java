@@ -107,8 +107,8 @@ public class FreezingBreath extends AbstractAbility {
                 breathTarget.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal * (pveUpgrade ? 1.8f : 1),
-                        maxDamageHeal * (pveUpgrade ? 1.8f : 1),
+                        minDamageHeal * (pveUpgrade ? 1.5f : 1),
+                        maxDamageHeal * (pveUpgrade ? 1.5f : 1),
                         critChance,
                         critMultiplier,
                         false

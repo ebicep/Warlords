@@ -39,11 +39,11 @@ public class Mithra extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
-                19000,
+                20000,
                 0.25f,
                 20,
-                1000,
-                1300
+                1200,
+                1600
         );
     }
 
@@ -68,7 +68,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
-        if (ticksElapsed % 80 == 0) {
+        if (ticksElapsed % 60 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),
@@ -128,7 +128,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 150 == 0) {
+        if (ticksElapsed % 140 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
             warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }

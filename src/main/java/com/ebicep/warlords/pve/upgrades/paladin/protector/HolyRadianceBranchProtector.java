@@ -16,38 +16,38 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+7.5% Healing",
+                "+10% Healing",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+15% Healing",
+                "+20% Healing",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+22.5% Healing",
+                "+30% Healing",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+30% Healing",
+                "+40% Healing",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
+                    ability.setMinDamageHeal(minDamage * 1.4f);
+                    ability.setMaxDamageHeal(maxDamage * 1.4f);
                 }
         ));
 

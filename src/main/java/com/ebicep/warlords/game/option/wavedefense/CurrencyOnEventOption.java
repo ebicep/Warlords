@@ -55,7 +55,7 @@ public class CurrencyOnEventOption implements Option, Listener {
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
         ) {
-            if (player instanceof WarlordsPlayer && !player.isDead()) {
+            if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
                 AtomicInteger currencyToAdd = new AtomicInteger(baseCurrencyToAdd);
                 Bukkit.getPluginManager().callEvent(new WarlordsPlayerAddCurrencyEvent(player, currencyToAdd));
                 player.sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");

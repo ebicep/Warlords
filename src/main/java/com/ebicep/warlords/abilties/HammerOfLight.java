@@ -251,8 +251,9 @@ public class HammerOfLight extends AbstractAbility {
 
                         if (pveUpgrade) {
                             pulseHeal(wp, 20, 1.5, tempHammerOfLight);
-                            pulseHeal(wp, 40, 2, tempHammerOfLight);
-                            pulseHeal(wp, 60, 2.5, tempHammerOfLight);
+                            pulseHeal(wp, 40, 2.5, tempHammerOfLight);
+                            pulseHeal(wp, 60, 3.5, tempHammerOfLight);
+                            pulseHeal(wp, 80, 4.5, tempHammerOfLight);
                         }
                     }
                 },

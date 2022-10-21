@@ -7,8 +7,8 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
-    int maxHits = ability.getMaxHits();
     int critMultiplierIncrease = ability.getCritMultiplierIncrease();
+    int duration = ability.getDuration();
 
     public InfernoBranch(AbilityTree abilityTree, Inferno ability) {
         super(abilityTree, ability);
@@ -47,44 +47,44 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 10 hits)",
+                "+1s Duration",
                 5000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setDuration(duration + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 20 hits)",
+                "+2s Duration",
                 10000,
                 () -> {
-                    ability.setMaxHits(maxHits + 10);
+                    ability.setDuration(duration + 2);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 30 hits)",
+                "+3s Duration",
                 15000,
                 () -> {
-                    ability.setMaxHits(maxHits + 20);
+                    ability.setDuration(duration + 3);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 40 hits)",
+                "+4s Duration",
                 20000,
                 () -> {
-                    ability.setMaxHits(maxHits + 30);
+                    ability.setDuration(duration + 4);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Dante’s Inferno",
                 "Inferno - Master Upgrade",
-                "WIP",
+                "Inferno cooldown gets reduced by 0.25 seconds\nfor each critical hit (max 40 hits)",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }
