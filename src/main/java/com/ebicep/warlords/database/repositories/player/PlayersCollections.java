@@ -24,28 +24,28 @@ public enum PlayersCollections {
             return ACTIVE_COLLECTIONS.contains(this);
         }
     },
-    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5") {
-        @Override
-        public boolean shouldUpdate(Instant dateOfGame) {
-            return ACTIVE_COLLECTIONS.contains(this);
-        }
-    },
-    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4") {
-        @Override
-        public boolean shouldUpdate(Instant dateOfGame) {
-            return ACTIVE_COLLECTIONS.contains(this);
-        }
-    },
-    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
-        @Override
-        public boolean shouldUpdate(Instant dateOfGame) {
-            return OffsetDateTime
-                    .now(ZoneOffset.UTC)
-                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                    .withHour(0)
-                    .withMinute(0)
-                    .withSecond(0)
-                    .withNano(0)
+//    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//    },
+//    SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//    },
+WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
+    @Override
+    public boolean shouldUpdate(Instant dateOfGame) {
+        return OffsetDateTime
+                .now(ZoneOffset.UTC)
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0)
                     .toInstant()
                     .isBefore(dateOfGame);
         }
@@ -89,11 +89,12 @@ public enum PlayersCollections {
             case LIFETIME:
                 return SEASON_6;
             case SEASON_6:
-                return SEASON_5;
-            case SEASON_5:
-                return SEASON_4;
-            case SEASON_4:
                 return WEEKLY;
+//                return SEASON_5;
+//            case SEASON_5:
+//                return SEASON_4;
+//            case SEASON_4:
+//                return WEEKLY;
             case WEEKLY:
                 return DAILY;
             case DAILY:
@@ -108,12 +109,12 @@ public enum PlayersCollections {
                 return DAILY;
             case SEASON_6:
                 return LIFETIME;
-            case SEASON_5:
-                return SEASON_6;
-            case SEASON_4:
-                return SEASON_5;
+//            case SEASON_5:
+//                return SEASON_6;
+//            case SEASON_4:
+//                return SEASON_5;
             case WEEKLY:
-                return SEASON_4;
+                return SEASON_6;
             case DAILY:
                 return WEEKLY;
         }

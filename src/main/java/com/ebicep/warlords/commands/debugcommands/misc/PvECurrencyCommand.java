@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("pvecurrency")
+@CommandPermission("group.administrator")
 @Conditions("database:player")
 public class PvECurrencyCommand extends BaseCommand {
 

@@ -14,7 +14,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.player.general.CustomScoreboard;
-import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -96,7 +95,7 @@ public class StatsLeaderboardManager {
 
                 @Override
                 public void run() {
-                    if (loadedBoards.get() == 6) {
+                    if (loadedBoards.get() == PlayersCollections.VALUES.length) {
                         loaded = true;
 
                         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
@@ -122,9 +121,15 @@ public class StatsLeaderboardManager {
     }
 
     public static void reloadLeaderboardsFromCache(PlayersCollections playersCollections, boolean init) {
-        if (!Warlords.holographicDisplaysEnabled) return;
-        if (!DatabaseManager.enabled) return;
-        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
+        if (!DatabaseManager.enabled) {
+            return;
+        }
+        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
+            return;
+        }
 
         Set<DatabasePlayer> databasePlayers = CACHED_PLAYERS.get(playersCollections);
 
@@ -132,10 +137,10 @@ public class StatsLeaderboardManager {
 
         ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name + " leaderboards");
 
-        if (playersCollections == PlayersCollections.SEASON_5 && init) {
-            SRCalculator.databasePlayerCache = databasePlayers;
-            SRCalculator.recalculateSR();
-        }
+//        if (playersCollections == PlayersCollections.SEASON_5 && init) {
+//            SRCalculator.databasePlayerCache = databasePlayers;
+//            SRCalculator.recalculateSR();
+//        }
     }
 
     public static StatsLeaderboardCategory<?> getLeaderboardCategoryFromUUID(UUID uuid) {

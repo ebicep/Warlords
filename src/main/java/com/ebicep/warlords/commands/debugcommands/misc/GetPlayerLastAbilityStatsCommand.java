@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 @CommandAlias("abilitystats")
+@CommandPermission("group.administrator")
 public class GetPlayerLastAbilityStatsCommand extends BaseCommand {
 
     public static HashMap<UUID, List<TextComponent>> playerLastAbilityStats = new HashMap<>();

@@ -2,10 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,7 +14,7 @@ import java.util.UUID;
 
 
 @CommandAlias("seeallchats")
-//@CommandPermission("group.administrator")
+@CommandPermission("group.administrator")
 public class SeeAllChatsCommand extends BaseCommand {
 
     public static final Set<UUID> playerSeeAllChats = new HashSet<>();
