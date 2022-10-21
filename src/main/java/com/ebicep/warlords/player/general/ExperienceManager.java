@@ -521,8 +521,13 @@ public class ExperienceManager {
     }
 
     private static String getProgressString(long currentExperience, int nextLevel, String progress) {
-        long experience = currentExperience - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
-        long experienceNeeded = LEVEL_TO_EXPERIENCE.get(nextLevel) - LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
+        Long exp = LEVEL_TO_EXPERIENCE.get(nextLevel);
+        Long nextExp = LEVEL_TO_EXPERIENCE.get(nextLevel - 1);
+        if (exp == null || nextExp == null) {
+            return progress + "Report this!";
+        }
+        long experience = currentExperience - nextExp;
+        long experienceNeeded = exp - nextExp;
         double progressPercentage = (double) experience / experienceNeeded * 100;
 
         progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
