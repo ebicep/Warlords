@@ -50,10 +50,14 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
                         boolean successfulStrike = onHit(wp, player, nearPlayer);
                         if (this instanceof ProtectorsStrike) {
-                            new CooldownFilter<>(wp, RegularCooldown.class)
+                            Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                    .findAny()
-                                    .ifPresent(hammerOfLight -> wp.subtractEnergy(energyCost - (hammerOfLight.isCrownOfLight() ? 10 : 0), false));
+                                    .findAny();
+                            if (optionalHammerOfLight.isPresent()) {
+                                wp.subtractEnergy(energyCost - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                            } else {
+                                wp.subtractEnergy(energyCost, false);
+                            }
                         } else {
                             wp.subtractEnergy(energyCost, false);
                         }
