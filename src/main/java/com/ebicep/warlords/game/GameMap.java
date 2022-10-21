@@ -2151,7 +2151,7 @@ public enum GameMap {
             1,
             10 * SECOND,
             "Tutorial",
-            3,
+            5,
             GameMode.TUTORIAL
     ) {
         @Override
