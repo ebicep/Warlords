@@ -389,7 +389,7 @@ public class TutorialOption implements Option {
             }
 
 
-        }.runTaskTimer(10, 40);
+        }.runTaskTimer(10, 35);
     }
 
     @Override

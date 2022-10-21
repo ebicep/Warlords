@@ -12,7 +12,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int HEALTH_BONUS = 500;
     public static final int SPEED_BONUS = 5;
     public static final int ENERGY_PER_SECOND_BONUS = 7;
-    public static final int ENERGY_PER_HIT_BONUS = -5;
+    public static final int ENERGY_PER_HIT_BONUS = -10;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
 
     public LegendaryDivine() {
