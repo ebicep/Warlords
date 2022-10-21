@@ -146,7 +146,7 @@ public class NPCManager {
         legendaryWeaponNPC.addTrait(LegendaryWeaponTrait.class);
 
         legendaryWeaponNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        legendaryWeaponNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2544, 50, 753, 90, 0));
+        legendaryWeaponNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2515.5, 54, 766.5, 180, 0));
 
     }
 
