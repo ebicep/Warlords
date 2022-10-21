@@ -145,9 +145,9 @@ public class AchievementsMenu {
                 );
                 if (achievement.getDifficulty() != null) {
                     itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
-                            ChatColor.MAGIC + "\nDifficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
+                            ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
                             :
-                            "\nDifficulty: " + ChatColor.GOLD + achievement.getDifficulty().name())
+                            "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName())
                     );
                 }
                 if (hasAchievement) {
@@ -223,6 +223,13 @@ public class AchievementsMenu {
                     ChatColor.MAGIC + "\nSpec:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "hiddenSpec"
                     :
                     "\nSpec: " + ChatColor.GOLD + (achievement.getSpec() != null ? achievement.getSpec().name : "Any")));
+            if (achievement.getDifficulty() != null) {
+                itemBuilder.addLore(ChatColor.GREEN + (shouldObfuscate ?
+                        ChatColor.MAGIC + "Difficulty:" + ChatColor.RESET + " " + ChatColor.GOLD + ChatColor.MAGIC + "difficulty"
+                        :
+                        "Difficulty: " + ChatColor.GOLD + achievement.getDifficulty().getColoredName())
+                );
+            }
             if (hasAchievement) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
             }

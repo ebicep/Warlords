@@ -3,6 +3,7 @@ package com.ebicep.warlords.achievements;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -26,9 +27,23 @@ public interface Achievement {
     void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
 
     enum Difficulty {
-        EASY,
-        MEDIUM,
-        HARD,
+        EASY("Easy", ChatColor.GREEN),
+        MEDIUM("Medium", ChatColor.GOLD),
+        HARD("Hard", ChatColor.RED),
+
+        ;
+
+        public final String name;
+        public final ChatColor chatColor;
+
+        Difficulty(String name, ChatColor chatColor) {
+            this.name = name;
+            this.chatColor = chatColor;
+        }
+
+        public String getColoredName() {
+            return chatColor + name;
+        }
     }
 
     abstract class AbstractAchievementRecord<T extends Enum<T> & Achievement> {
