@@ -35,6 +35,8 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         assert databaseGame instanceof DatabaseGamePvE;
         assert gamePlayer instanceof DatabaseGamePlayerPvE;
 
+        super.updateCustomStats(databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
