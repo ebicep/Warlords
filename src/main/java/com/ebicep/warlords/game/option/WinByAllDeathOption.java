@@ -22,7 +22,6 @@ public class WinByAllDeathOption implements Option {
     @Override
     public void start(Game game) {
         final EnumSet<Team> teams = TeamMarker.getTeams(game);
-        System.out.println(teams);
 
         game.registerEvents(new Listener() {
 
@@ -37,17 +36,14 @@ public class WinByAllDeathOption implements Option {
                                     return false;
                                 }
                                 for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                                    System.out.println(warlordsPlayer.isAlive());
                                     if (warlordsPlayer.isAlive()) {
                                         return false;
                                     }
                                 }
-                        System.out.println("Team " + team + " is dead");
                                 return true;
                             }
                     );
                     if (teams.size() == 1) {
-                        System.out.println("WinByAllDeathOption: " + teams);
                         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
                     }
                 }
