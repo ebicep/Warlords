@@ -168,17 +168,6 @@ public class SoothingElixir extends AbstractAbility {
                                 false,
                                 false
                         );
-                        if (pveUpgrade) {
-                            ImpalingStrike.giveLeechCooldown(
-                                    wp,
-                                    nearEntity,
-                                    5,
-                                    0.25f,
-                                    0.15f,
-                                    warlordsDamageHealingFinalEvent -> {
-                                    }
-                            );
-                        }
                     }
 
                     new GameRunnable(wp.getGame()) {
@@ -223,6 +212,18 @@ public class SoothingElixir extends AbstractAbility {
                                 critMultiplier,
                                 false
                         );
+                        
+                        if (pveUpgrade) {
+                            ImpalingStrike.giveLeechCooldown(
+                                    wp,
+                                    nearEntity,
+                                    5,
+                                    0.25f,
+                                    0.15f,
+                                    warlordsDamageHealingFinalEvent -> {
+                                    }
+                            );
+                        }
                     }
 
                     this.cancel();

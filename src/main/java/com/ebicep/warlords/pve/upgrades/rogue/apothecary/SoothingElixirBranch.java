@@ -88,7 +88,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
         masterUpgrade = new Upgrade(
                 "Alleviating Elixir",
                 "Soothing Elixir - Master Upgrade",
-                "Soothing Puddle now heals every 0.5s instead of 1s within the puddle radius and inflicts LEECH on all enemies hit by the elixir impact.",
+                "Soothing Puddle now heals every 0.5s instead\nof 1s within the puddle radius and inflicts\nLEECH on all enemies hit by the elixir impact.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
