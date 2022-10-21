@@ -242,7 +242,7 @@ public class TutorialOption implements Option {
                 if (index < tutorialPrompts.length) {
                     sendTutorialMessage(p, tutorialPrompts[index]);
                 } else {
-                    if (index == tutorialPrompts.length + 1) {
+                    if (index == tutorialPrompts.length) {
                         nextStage();
                     }
                 }
@@ -299,7 +299,7 @@ public class TutorialOption implements Option {
                         if (index < rangeAttackPrompts.length) {
                             sendTutorialMessage(p, rangeAttackPrompts[index]);
                         } else {
-                            if (index == rangeAttackPrompts.length + 1) {
+                            if (index == rangeAttackPrompts.length) {
                                 nextStage();
                             }
                         }

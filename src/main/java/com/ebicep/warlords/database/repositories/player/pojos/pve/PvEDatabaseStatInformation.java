@@ -72,7 +72,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             if (databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
                 this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();
             }
-            if (databaseGamePvE.getTimeElapsed() < fastestGameFinished) {
+            if (this.fastestGameFinished == 0 || databaseGamePvE.getTimeElapsed() < fastestGameFinished) {
                 this.fastestGameFinished += databaseGamePvE.getTimeElapsed();
             }
         }

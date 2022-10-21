@@ -50,7 +50,10 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         UUID uuid = warlordsPlayer.getUuid();
         WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
                 .getPlayerWaveDefenseStats(uuid);
-        this.mostDamageInWave = Collections.max(playerWaveDefenseStats.getWaveDamage().values());
+        Collection<Long> values = playerWaveDefenseStats.getWaveDamage().values();
+        if (!values.isEmpty()) {
+            this.mostDamageInWave = Collections.max(values);
+        }
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });

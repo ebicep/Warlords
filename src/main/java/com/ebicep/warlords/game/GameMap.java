@@ -1846,8 +1846,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0, 2, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0, 2, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 2, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 2, 0.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0, 2, 0), Team.BLUE));
 

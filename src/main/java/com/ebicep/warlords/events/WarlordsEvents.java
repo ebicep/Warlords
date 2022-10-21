@@ -189,7 +189,7 @@ public class WarlordsEvents implements Listener {
                                     .build()
                             );
                             PacketUtils.sendTitle(player,
-                                    ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + Specializations.CRYOMANCER.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
+                                    ChatColor.MAGIC + "###" + ChatColor.BOLD + ChatColor.GOLD + " Prestige " + value.name + " " + ChatColor.WHITE + ChatColor.MAGIC + "###",
                                     ExperienceManager.PRESTIGE_COLORS.get(prestige - 1)
                                             .getA()
                                             .toString() + (prestige - 1) + ChatColor.GRAY + " > " + ExperienceManager.PRESTIGE_COLORS.get(prestige)
