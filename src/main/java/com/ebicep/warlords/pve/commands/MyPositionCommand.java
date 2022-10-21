@@ -103,7 +103,7 @@ public class MyPositionCommand extends BaseCommand {
             throw new InvalidCommandArgument("Invalid Class");
         }
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+            PvEDatabaseStatInformation databasePlayerPvE = databasePlayer.getPveStats().getClass(classes);
 
             StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + classes.name + ")");
             for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
@@ -122,7 +122,7 @@ public class MyPositionCommand extends BaseCommand {
             throw new InvalidCommandArgument("Invalid Specialization");
         }
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+            PvEDatabaseStatInformation databasePlayerPvE = databasePlayer.getPveStats().getSpec(specializations);
 
             StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats (" + specializations.name + ")");
             for (StatLeaderboardTarget statLeaderboardTarget : STAT_LEADERBOARD_TARGETS) {
