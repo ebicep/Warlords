@@ -76,7 +76,8 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
                         .apply(databasePlayer)
                         .getNormalStats()
-                        .getFastestGameFinished() / 20)
+                        .getFastestGameFinished() / 20),
+                databasePlayer -> databasePlayer.getPveStats().getNormalStats().getFastestGameFinished() == 0
         ));
         statsLeaderboards.add(new StatsLeaderboard("Highest Endless Wave Cleared", UPPER_CENTER_2,
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getEndlessStats().getHighestWaveCleared(),
@@ -90,7 +91,8 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
                         .apply(databasePlayer)
                         .getHardStats()
-                        .getFastestGameFinished() / 20)
+                        .getFastestGameFinished() / 20),
+                databasePlayer -> databasePlayer.getPveStats().getHardStats().getFastestGameFinished() == 0
         ));
 
         statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", SPAWN_POINT,

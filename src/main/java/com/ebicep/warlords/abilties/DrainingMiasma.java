@@ -107,6 +107,9 @@ public class DrainingMiasma extends AbstractAbility {
                             }
 
                             float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                            if (healthDamage > 1500) {
+                                healthDamage = 1500;
+                            }
                             // 4% current health damage.
                             miasmaTarget.addDamageInstance(
                                     wp,
