@@ -426,7 +426,7 @@ public class EndState implements State, TimerDebugAble {
                             .getTextComponent())
             );
 
-            ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarnedSpec);
+            ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
             ChatUtils.sendCenteredMessageWithEvents(player, Collections.singletonList(
                     new TextComponentBuilder(
                             ChatColor.GRAY + "+" +
@@ -436,7 +436,7 @@ public class EndState implements State, TimerDebugAble {
                             .getTextComponent())
             );
 
-            ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
+            ExperienceManager.giveLevelUpMessage(player, experienceUniversal - experienceEarnedUniversal, experienceUniversal);
             ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
 
 
