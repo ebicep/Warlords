@@ -15,6 +15,11 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
 //        this.targetSelector.a(2, new PathfinderGoalSpiderNearestAttackableTarget<>(this, EntityHuman.class));
     }
 
+    @Override
+    public boolean n() {
+        return false; //disables spider climbing
+    }
+
     public CustomSpider(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
     }
