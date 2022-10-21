@@ -575,8 +575,11 @@ public class ExperienceManager {
         long experience = getUniversalLevel(player.getUniqueId());
         int level = (int) calculateLevelFromExp(experience);
         player.setLevel(level);
-        player.setExp((float) (experience - LEVEL_TO_EXPERIENCE.get(level)) / (LEVEL_TO_EXPERIENCE.get(level + 1) - LEVEL_TO_EXPERIENCE.get(
-                level)));
+        Long exp = LEVEL_TO_EXPERIENCE.get(level);
+        Long nextExp = LEVEL_TO_EXPERIENCE.get(level + 1);
+        if (exp != null && nextExp != null) {
+            player.setExp((float) (experience - exp) / (nextExp - exp));
+        }
     }
 
     public static long getUniversalLevel(UUID uuid) {
