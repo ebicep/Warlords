@@ -21,7 +21,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
      * <p>ticksLeft = ticksLeft of cooldown
      * <p>counter = counter incrementing every tick, separate from ticksLeft
      */
-    protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers;
+    protected final List<TriConsumer<RegularCooldown<T>, Integer, Integer>> consumers = new ArrayList<>();
     protected int startingTicks;
     protected int ticksLeft;
     protected int ticksElapsed;
@@ -69,7 +69,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         super(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, removeOnDeath);
         this.startingTicks = ticksLeft;
         this.ticksLeft = ticksLeft;
-        this.consumers = triConsumers;
+        this.consumers.addAll(triConsumers);
     }
 
     @Override
