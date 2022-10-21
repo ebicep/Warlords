@@ -79,7 +79,7 @@ public enum GameMode {
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
             16,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

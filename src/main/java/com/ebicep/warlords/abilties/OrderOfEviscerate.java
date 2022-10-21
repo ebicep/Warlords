@@ -118,7 +118,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                 !Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * (pveUpgrade ? 1.4f : 1.3f);
+                    return currentDamageValue * (pveUpgrade ? 2 : 1.3f);
                 } else {
                     return currentDamageValue * 1.2f;
                 }

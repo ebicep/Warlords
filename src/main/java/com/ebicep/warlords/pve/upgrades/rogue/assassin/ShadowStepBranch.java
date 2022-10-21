@@ -87,10 +87,10 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
         masterUpgrade = new Upgrade(
                 "Shadow Stagger",
                 "Shadow Step - Master Upgrade",
-                "",
+                "Become immovable while using Shadow Step.\nAdditionally,gain 50% knockback resistance\nupon landing for 3 seconds.",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }
