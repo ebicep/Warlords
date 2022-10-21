@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class StatsLeaderboard {
@@ -32,6 +33,18 @@ public class StatsLeaderboard {
     private final Function<DatabasePlayer, String> stringFunction;
     private final Comparator<DatabasePlayer> comparator;
     private boolean hidden = false;
+    private Predicate<DatabasePlayer> filter = null;
+
+    public StatsLeaderboard(
+            String title,
+            Location location,
+            Function<DatabasePlayer, Number> valueFunction,
+            Function<DatabasePlayer, String> stringFunction,
+            boolean hidden
+    ) {
+        this(title, location, valueFunction, stringFunction);
+        this.hidden = hidden;
+    }
 
     public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
@@ -50,21 +63,12 @@ public class StatsLeaderboard {
 
     }
 
-    public StatsLeaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction, boolean hidden) {
+    public StatsLeaderboard(
+            String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction,
+            Predicate<DatabasePlayer> filter
+    ) {
         this(title, location, valueFunction, stringFunction);
-        this.hidden = hidden;
-    }
-
-    public static int compare(Number a, Number b) {
-        return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        StatsLeaderboard that = (StatsLeaderboard) o;
-        return Objects.equals(title, that.title) && Objects.equals(location, that.location);
+        this.filter = filter;
     }
 
     @Override
@@ -72,11 +76,25 @@ public class StatsLeaderboard {
         return Objects.hash(title, location);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        StatsLeaderboard that = (StatsLeaderboard) o;
+        return Objects.equals(title, that.title) && Objects.equals(location, that.location);
+    }
+
     public void resetHolograms(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String categoryName, String subTitle) {
         //resetting sort then adding new sorted values
         resetSortedPlayers(databasePlayers, collection);
         //skip hologram creation for hidden leaderboards
-        if (hidden) return;
+        if (hidden) {
+            return;
+        }
         //creating leaderboard
         List<Hologram> holograms = new ArrayList<>();
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
@@ -85,6 +103,15 @@ public class StatsLeaderboard {
         getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::delete);
         getSortedHolograms(collection).clear();
         getSortedHolograms(collection).add(holograms);
+    }
+
+    public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
+        List<DatabasePlayer> databasePlayers = new ArrayList<>(newSortedPlayers);
+        if (filter != null) {
+            databasePlayers.removeIf(filter);
+        }
+        databasePlayers.sort(comparator);
+        sortedTimedPlayers.put(collections, databasePlayers);
     }
 
     public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
@@ -96,25 +123,20 @@ public class StatsLeaderboard {
         hologramLines.appendText(ChatColor.GRAY + subTitle);
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
-            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer));
+            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(
+                    databasePlayer));
         }
         hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
 
         return hologram;
     }
 
-    public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
-        return sortedTimedPlayers.get(collections);
-    }
-
     public List<List<Hologram>> getSortedHolograms(PlayersCollections collections) {
         return sortedTimedHolograms.get(collections);
     }
 
-    public void resetSortedPlayers(Set<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
-        List<DatabasePlayer> databasePlayers = new ArrayList<>(newSortedPlayers);
-        databasePlayers.sort(comparator);
-        sortedTimedPlayers.put(collections, databasePlayers);
+    public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
+        return sortedTimedPlayers.get(collections);
     }
 
     public <T extends Number> T[] getTopThreeValues() {
@@ -142,7 +164,9 @@ public class StatsLeaderboard {
 
         for (DatabasePlayer databasePlayer : databasePlayers) {
             //must have more than 3 plays to get awarded
-            if (databasePlayer.getPlays() <= 3) continue;
+            if (databasePlayer.getPlays() <= 3) {
+                continue;
+            }
 
             Number currentTopValue = valueFunction.apply(databasePlayer);
             if (counter < 2) {
@@ -162,6 +186,10 @@ public class StatsLeaderboard {
         }
 
         return output;
+    }
+
+    public static int compare(Number a, Number b) {
+        return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
     }
 
     public String[] getTopThreePlayerNames(Number[] numbers, Function<DatabasePlayer, String> function) {
