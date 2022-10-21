@@ -13,6 +13,7 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
     float maxHealing = ability.getMaxDamageHeal();
     float minWaveHealing = ability.getMinWaveHealing();
     float maxWaveHealing = ability.getMaxWaveHealing();
+    int vitalityRange = ability.getVitalityRange();
 
     public VitalityLiquorBranch(AbilityTree abilityTree, VitalityLiquor ability) {
         super(abilityTree, ability);
@@ -101,10 +102,10 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
         masterUpgrade = new Upgrade(
                 "Liquor Of Life",
                 "Vitality Liquor - Master Upgrade",
-                "WIP",
+                "Double the impact range of Vitality Liquor",
                 50000,
                 () -> {
-
+                    ability.setVitalityRange(vitalityRange * 2);
                 }
         );
     }

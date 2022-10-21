@@ -71,7 +71,6 @@ public class VitalityLiquor extends AbstractAbility {
                 false
         );
 
-
         for (WarlordsEntity acuTarget : PlayerFilter
                 .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
