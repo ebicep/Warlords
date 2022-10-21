@@ -12,7 +12,8 @@ import org.bukkit.ChatColor;
 
 
 @CommandAlias("debugmode")
-@CommandPermission("warlords.game.debugmode")
+@CommandPermission("group.administrator")
+//@CommandPermission("warlords.game.debugmode")
 public class DebugModeCommand extends BaseCommand {
 
     @Default

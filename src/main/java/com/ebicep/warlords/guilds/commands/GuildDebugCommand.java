@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 
 @CommandAlias("gdebug")
-@CommandPermission("group.adminisrator")
+@CommandPermission("group.administrator")
 public class GuildDebugCommand extends BaseCommand {
     @Subcommand("experience")
     @Description("Sets the experience of the guild")

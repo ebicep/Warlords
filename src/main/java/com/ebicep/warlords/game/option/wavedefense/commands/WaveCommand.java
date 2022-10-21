@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Conditions;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -12,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.Bukkit;
 
 @CommandAlias("wave")
+@CommandPermission("group.administrator")
 public class WaveCommand extends BaseCommand {
 
     @Subcommand("set")

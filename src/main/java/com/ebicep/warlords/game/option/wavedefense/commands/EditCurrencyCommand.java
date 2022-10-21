@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import java.util.Comparator;
 
 @CommandAlias("currency")
+@CommandPermission("group.administrator")
 public class EditCurrencyCommand extends BaseCommand {
 
     @Subcommand("add")

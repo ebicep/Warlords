@@ -20,7 +20,8 @@ import java.util.Comparator;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 @CommandAlias("wl")
-@CommandPermission("warlords.game.debug")
+@CommandPermission("group.administrator")
+//@CommandPermission("warlords.game.debug")
 public class DebugCommand extends BaseCommand {
 
     @Default

@@ -22,6 +22,7 @@ import java.util.List;
 
 
 @CommandAlias("weapon")
+@CommandPermission("group.administrator")
 @Conditions("database:player")
 public class WeaponCommand extends BaseCommand {
 

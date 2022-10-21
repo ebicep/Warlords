@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @CommandAlias("streamchapters")
-@CommandPermission("group.adminisrator")
+@CommandPermission("group.administrator")
 public class StreamChaptersCommand extends BaseCommand {
 
     public static final HashMap<UUID, Instant> playerTimeStart = new HashMap<>();
