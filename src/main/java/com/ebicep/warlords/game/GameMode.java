@@ -248,7 +248,7 @@ public enum GameMode {
                     (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
             ));
             options.add(TextOption.Type.TITLE.create(
-                    5,
+                    10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Let the wave defense commence."
             ));

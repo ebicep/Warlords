@@ -7,82 +7,86 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
 
+    float flatHealing = ability.getFlatHealing();
+    float cooldown = ability.getCooldown();
+
     public UndyingArmyBranch(AbilityTree abilityTree, UndyingArmy ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "",
+                "Alleviate - Tier I",
+                "+25 Flat healing",
                 5000,
                 () -> {
-
+                    ability.setFlatHealing(flatHealing + 25);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "",
+                "Alleviate - Tier II",
+                "+50 Flat healing",
                 10000,
                 () -> {
-
+                    ability.setFlatHealing(flatHealing + 50);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "",
+                "Alleviate - Tier III",
+                "+75 Flat healing",
                 15000,
                 () -> {
-
+                    ability.setFlatHealing(flatHealing + 75);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "",
+                "Alleviate - Tier IV",
+                "+100 Flat healing",
                 20000,
                 () -> {
-
+                    ability.setFlatHealing(flatHealing + 100);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "",
+                "Zeal - Tier I",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "",
+                "Zeal - Tier II",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "",
+                "Zeal - Tier III",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "",
+                "Zeal - Tier IV",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         masterUpgrade = new Upgrade(
-                "",
-                "",
-                "",
+                "Relentless Army",
+                "Undying Army - Master Upgrade",
+                "Remove the cast range of Undying Army and double the duration.",
                 50000,
                 () -> {
-
+                    ability.setRadius(ability.getRadius() * 10);
+                    ability.setDuration(ability.getDuration() * 2);
                 }
         );
     }

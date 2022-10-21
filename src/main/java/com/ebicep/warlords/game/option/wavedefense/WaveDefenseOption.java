@@ -287,7 +287,7 @@ public class WaveDefenseOption implements Option {
                         getGame().forEachOnlineWarlordsPlayer(wp -> {
                             AtomicInteger currency = new AtomicInteger();
                             if (waveCounter % 5 == 1) {
-                                currency.set(5000);
+                                currency.set(4000);
                             } else {
                                 currency.set(1000);
                             }

@@ -20,7 +20,7 @@ public class Inferno extends AbstractAbility {
 
     public int hitsAmplified = 0;
 
-    private int maxHits = 10;
+    private int maxHits = 40;
     private int duration = 18;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;

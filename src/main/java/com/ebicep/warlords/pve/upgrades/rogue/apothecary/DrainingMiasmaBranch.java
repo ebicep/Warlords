@@ -13,7 +13,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
     public DrainingMiasmaBranch(AbilityTree abilityTree, DrainingMiasma ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
-                "Zeal - Tier I",
+                "Spark - Tier I",
                 "+1s Duration",
                 5000,
                 () -> {
@@ -21,7 +21,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier II",
+                "Spark - Tier II",
                 "+2s Duration",
                 10000,
                 () -> {
@@ -29,7 +29,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier III",
+                "Spark - Tier III",
                 "+3s Duration",
                 15000,
                 () -> {
@@ -37,7 +37,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier IV",
+                "Spark - Tier IV",
                 "+4s Duration\n+4s Leech duration",
                 20000,
                 () -> {
@@ -47,7 +47,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
+                "Scope - Tier I",
                 "+2 Blocks hit radius",
                 5000,
                 () -> {
@@ -55,7 +55,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
+                "Scope - Tier II",
                 "+4 Blocks hit radius",
                 10000,
                 () -> {
@@ -63,7 +63,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
+                "Scope - Tier III",
                 "+6 Blocks hit radius",
                 15000,
                 () -> {
@@ -71,7 +71,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
+                "Scope - Tier IV",
                 "+8 Blocks hit radius",
                 20000,
                 () -> {

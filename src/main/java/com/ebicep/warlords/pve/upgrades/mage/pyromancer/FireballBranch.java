@@ -16,38 +16,38 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+2.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.025f);
-                    ability.setMaxDamageHeal(maxDamage * 1.025f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
                 "+5% Damage",
-                10000,
+                5000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.05f);
                     ability.setMaxDamageHeal(maxDamage * 1.05f);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+10% Damage",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+7.5% Damage",
+                "+15% Damage",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+10% Damage\n+50% Projectile speed",
+                "+20% Damage\n+50% Projectile speed",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                     ability.setProjectileSpeed(projectileSpeed * 1.5f);
                 }
         ));

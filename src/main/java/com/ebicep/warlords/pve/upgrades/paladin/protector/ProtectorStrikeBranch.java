@@ -24,11 +24,11 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+8% Damage",
+                "+7.5% Damage",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.08f);
-                    ability.setMaxDamageHeal(maxDamage * 1.08f);
+                    ability.setMinDamageHeal(minDamage * 1.075f);
+                    ability.setMaxDamageHeal(maxDamage * 1.075f);
                 }
         ));
         treeA.add(new Upgrade(
