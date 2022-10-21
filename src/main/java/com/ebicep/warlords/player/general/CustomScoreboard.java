@@ -100,7 +100,7 @@ public class CustomScoreboard {
                 "",
                 "Kills: " + ChatColor.GREEN + addCommaAndRound(pveStats.getKills()),
                 "Assists: " + ChatColor.GREEN + addCommaAndRound(pveStats.getAssists()),
-                "Plays: " + ChatColor.GREEN + addCommaAndRound(pveStats.getPlays()),
+                "Wins: " + ChatColor.GREEN + addCommaAndRound(pveStats.getWins()),
                 " ",
                 "Coins: " + Currencies.COIN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COIN)),
                 "Synthetic Shards: " + Currencies.SYNTHETIC_SHARD.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SYNTHETIC_SHARD)),
