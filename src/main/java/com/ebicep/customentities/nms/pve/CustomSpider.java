@@ -8,7 +8,7 @@ public class CustomSpider extends EntitySpider implements CustomEntity<CustomSpi
     public CustomSpider(World world) {
         super(world);
         resetAI(world);
-        giveBaseAI(1.0, 0.8);
+        giveBaseAI(1.0, 0.8, 20);
 
         this.goalSelector.a(3, new PathfinderGoalLeapAtTarget(this, 0.4F));
 //        this.goalSelector.a(4, new PathfinderGoalSpiderMeleeAttack(this, EntityHuman.class));

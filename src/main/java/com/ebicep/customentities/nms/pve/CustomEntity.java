@@ -44,11 +44,12 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void giveBaseAI() {
-        giveBaseAI(1.0, 1.0);
+        giveBaseAI(1.0, 1.0, 20);
     }
 
-    default void giveBaseAI(double speedTowardsTarget, double wanderSpeed) {
+    default void giveBaseAI(double speedTowardsTarget, double wanderSpeed, int followRange) {
         T entity = get();
+        entity.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(followRange);
         //float in water
         aiFloat();
         if (entity instanceof EntityCreature) {
@@ -88,7 +89,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     }
 
     default void aiLookAtPlayer() {
-        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityHuman.class, 80.0F));
+        get().goalSelector.a(8, new PathfinderGoalLookAtPlayer(get(), EntityHuman.class, 20.0F));
     }
 
     default void aiLookIdle() {
@@ -106,7 +107,7 @@ public interface CustomEntity<T extends EntityInsentient> {
     default void aiTargetClosest() {
         T entity = get();
         if (entity instanceof EntityCreature) {
-            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 0, false, false, null));
+            entity.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>((EntityCreature) entity, EntityHuman.class, 3, false, false, null));
         }
     }
 

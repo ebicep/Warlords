@@ -10,7 +10,7 @@ public class CustomIronGolem extends EntityIronGolem implements CustomEntity<Cus
     public CustomIronGolem(World world) {
         super(world);
         resetAI(world);
-        giveBaseAI(1.0, 0.6);
+        giveBaseAI(1.0, 0.6, 20);
     }
 
     public CustomIronGolem(org.bukkit.World world) {
