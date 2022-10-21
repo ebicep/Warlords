@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -24,7 +25,10 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public class AchievementsMenu {
 
-    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm");
+    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter
+            .ofPattern("MM/dd/yyyy hh:mm")
+            .withZone(ZoneId.of("America/New_York"));
+    ;
 
     //GENERAL - CTF - TDM - GAMEMODE - GAMEMODE
     //TIERED ACHIEVEMENTS - CHALLENGES
@@ -283,9 +287,12 @@ public class AchievementsMenu {
             );
 
             x++;
-            if (x == 8) {
+            if (x == 9) {
                 x = 0;
                 y++;
+                if (y == 4) { //TODO page system
+                    break;
+                }
             }
         }
 

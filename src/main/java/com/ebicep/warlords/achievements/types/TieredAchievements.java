@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.dv8tion.jda.api.GatewayEncoding;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,61 +27,61 @@ public enum TieredAchievements implements Achievement {
             "Play 50 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getPlays() >= 50
+            databasePlayer -> databasePlayer.getPubStats().getPlays() == 50
     ),
     GAMES_PLAYED_100("Play 100 Games",
             "Play 100 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getPlays() >= 100
+            databasePlayer -> databasePlayer.getPubStats().getPlays() == 100
     ),
     GAMES_PLAYED_250("Play 250 Games",
             "Play 250 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getPlays() >= 250
+            databasePlayer -> databasePlayer.getPubStats().getPlays() == 250
     ),
     GAMES_PLAYED_500("Play 500 Games",
             "Play 500 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getPlays() >= 500
+            databasePlayer -> databasePlayer.getPubStats().getPlays() == 500
     ),
     GAMES_PLAYED_1000("Play 1000 Games",
             "Play 1000 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getPlays() >= 1000
+            databasePlayer -> databasePlayer.getPubStats().getPlays() == 1000
     ),
     GAMES_WON_25("Win 25 Games",
             "Win 25 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getWins() >= 25
+            databasePlayer -> databasePlayer.getPubStats().getWins() == 25
     ),
     GAMES_WON_50("Win 50 Games",
             "Win 50 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getWins() >= 50
+            databasePlayer -> databasePlayer.getPubStats().getWins() == 50
     ),
     GAMES_WON_125("Win 125 Games",
             "Win 125 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getWins() >= 125
+            databasePlayer -> databasePlayer.getPubStats().getWins() == 125
     ),
     GAMES_WON_250("Win 250 Games",
             "Win 250 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getWins() >= 250
+            databasePlayer -> databasePlayer.getPubStats().getWins() == 250
     ),
     GAMES_WON_500("Win 500 Games",
             "Win 500 Games",
             null,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getWins() >= 500
+            databasePlayer -> databasePlayer.getPubStats().getWins() == 500
     ),
 
     //CTF
@@ -90,31 +89,31 @@ public enum TieredAchievements implements Achievement {
             "Win 10 CTF Games",
             CAPTURE_THE_FLAG,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() >= 10
+            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() == 10
     ),
     GAMES_WON_CTF_25("Win 25 CTF Games",
             "Win 25 CTF Games",
             CAPTURE_THE_FLAG,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() >= 25
+            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() == 25
     ),
     GAMES_WON_CTF_50("Win 50 CTF Games",
             "Win 50 CTF Games",
             CAPTURE_THE_FLAG,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() >= 50
+            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() == 50
     ),
     GAMES_WON_CTF_75("Win 75 CTF Games",
             "Win 75 CTF Games",
             CAPTURE_THE_FLAG,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() >= 75
+            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() == 75
     ),
     GAMES_WON_CTF_100("Win 100 CTF Games",
             "Win 100 CTF Games",
             CAPTURE_THE_FLAG,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() >= 100
+            databasePlayer -> databasePlayer.getPubStats().getCtfStats().getWins() == 100
     ),
 
     //TDM
@@ -122,31 +121,31 @@ public enum TieredAchievements implements Achievement {
             "Win 10 TDM Games",
             TEAM_DEATHMATCH,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() >= 10
+            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() == 10
     ),
     GAMES_WON_TDM_25("Win 25 TDM Games",
             "Win 25 TDM Games",
             TEAM_DEATHMATCH,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() >= 25
+            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() == 25
     ),
     GAMES_WON_TDM_50("Win 50 TDM Games",
             "Win 50 TDM Games",
             TEAM_DEATHMATCH,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() >= 50
+            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() == 50
     ),
     GAMES_WON_TDM_75("Win 75 TDM Games",
             "Win 75 TDM Games",
             TEAM_DEATHMATCH,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() >= 75
+            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() == 75
     ),
     GAMES_WON_TDM_100("Win 100 TDM Games",
             "Win 100 TDM Games",
             TEAM_DEATHMATCH,
             false,
-            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() >= 100
+            databasePlayer -> databasePlayer.getPubStats().getTdmStats().getWins() == 100
     ),
 
     //PVE
@@ -154,67 +153,67 @@ public enum TieredAchievements implements Achievement {
             "Enter a PvE game for the first time.",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getPlays() >= 1
+            databasePlayer -> databasePlayer.getPveStats().getPlays() == 1
     ),
     ILLUSION_CONQUEROR_I("Illusion Conqueror I",
             "Clear Wave 25 in Normal Mode 20 Times",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 20
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() == 20
     ),
     ILLUSION_CONQUEROR_II("Illusion Conqueror II",
             "Clear Wave 25 in Normal Mode 50 Times",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 50
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() == 50
     ),
     ILLUSION_CONQUEROR_III("Illusion Conqueror III",
             "Clear Wave 25 in Normal Mode 100 Times",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 75
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() == 75
     ),
     ILLUSION_CONQUEROR_IV("Illusion Conqueror IV",
             "Clear Wave 25 in Normal Mode 200 Times",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 200
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() == 200
     ),
     ILLUSION_CONQUEROR_V("Illusion Conqueror V",
             "Clear Wave 25 in Normal Mode 500 Times",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() >= 500
+            databasePlayer -> databasePlayer.getPveStats().getNormalStats().getWins() == 500
     ),
     MIRAGE_SLAYER_I("Mirage Slayer I",
             "Kill 5000 Mobs",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getKills() >= 5000
+            databasePlayer -> databasePlayer.getPveStats().getKills() == 5000
     ),
     MIRAGE_SLAYER_II("Mirage Slayer II",
             "Kill 10000 Mobs",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getKills() >= 10000
+            databasePlayer -> databasePlayer.getPveStats().getKills() == 10000
     ),
     MIRAGE_SLAYER_III("Mirage Slayer III",
             "Kill 20000 Mobs",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getKills() >= 20000
+            databasePlayer -> databasePlayer.getPveStats().getKills() == 20000
     ),
     MIRAGE_SLAYER_IV("Mirage Slayer IV",
             "Kill 50000 Mobs",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getKills() >= 50000
+            databasePlayer -> databasePlayer.getPveStats().getKills() == 50000
     ),
     MIRAGE_SLAYER_V("Mirage Slayer V",
             "Kill 100000 Mobs",
             WAVE_DEFENSE,
             false,
-            databasePlayer -> databasePlayer.getPveStats().getKills() >= 100000
+            databasePlayer -> databasePlayer.getPveStats().getKills() == 100000
     ),
 
 
