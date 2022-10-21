@@ -122,44 +122,17 @@ public class DrainingMiasma extends AbstractAbility {
             );
             playersHit += hitCounter;
 
-            miasmaTarget.getCooldownManager().removeCooldown(ImpalingStrike.class);
-            miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
-                    "Leech Debuff",
-                    "LCH",
-                    ImpalingStrike.class,
-                    new ImpalingStrike(),
+            ImpalingStrike.giveLeechCooldown(
                     wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    leechDuration * 20
-            ) {
-                @Override
-                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    float healingMultiplier;
-                    if (event.getAttacker() == wp) {
-                        healingMultiplier = 0.25f;
-                    } else {
-                        healingMultiplier = 0.15f;
-                    }
-
-                    event.getAttacker().addHealingInstance(
-                            wp,
-                            "Leech",
-                            currentDamageValue * healingMultiplier,
-                            currentDamageValue * healingMultiplier,
-                            -1,
-                            100,
-                            false,
-                            false
-                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    miasmaTarget,
+                    leechDuration,
+                    0.25f,
+                    0.15f,
+                    warlordsDamageHealingFinalEvent -> {
                         tempDrainingMiasma.numberOfLeechProcd++;
-                        if (event.getPlayer().hasFlag()) {
-                            this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
-                        }
-                    });
-                }
-            });
+                    }
+            );
+
         }
 
         if (pveUpgrade) {

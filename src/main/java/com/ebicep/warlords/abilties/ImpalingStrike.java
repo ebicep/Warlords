@@ -15,11 +15,62 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ImpalingStrike extends AbstractStrikeBase {
 
-    protected float healingDoneFromEnemyCarrier = 0;
+    public static void giveLeechCooldown(
+            WarlordsEntity wp,
+            WarlordsEntity target,
+            int secondDuration,
+            float selfHealMultiplier,
+            float allyHealMultiplier,
+            Consumer<WarlordsDamageHealingFinalEvent> finalEvent
+    ) {
+        target.getCooldownManager().removeCooldown(ImpalingStrike.class);
+        target.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
+                "Leech Debuff",
+                "LCH",
+                ImpalingStrike.class,
+                new ImpalingStrike(),
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                secondDuration * 20
+        ) {
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                float healingMultiplier;
+                if (event.getAttacker() == wp) {
+                    healingMultiplier = selfHealMultiplier;
+                } else {
+                    healingMultiplier = allyHealMultiplier;
+                }
+                event.getAttacker().addHealingInstance(
+                        wp,
+                        "Leech",
+                        currentDamageValue * healingMultiplier,
+                        currentDamageValue * healingMultiplier,
+                        -1,
+                        100,
+                        false,
+                        false
+                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    finalEvent.accept(warlordsDamageHealingFinalEvent);
+                    if (event.getPlayer().hasFlag()) {
+                        this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                    }
+                });
+            }
+        });
+    }
 
+    public void addHealingDoneFromEnemyCarrier(float amount) {
+        this.healingDoneFromEnemyCarrier += amount;
+    }
+
+    protected float healingDoneFromEnemyCarrier = 0;
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
@@ -65,48 +116,17 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 false
         );
 
-        nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
-        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
-                "Leech Debuff",
-                "LCH",
-                ImpalingStrike.class,
-                new ImpalingStrike(),
+        giveLeechCooldown(
                 wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                leechDuration * 20
-        ) {
-            @Override
-            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                float healingMultiplier;
-                if (event.getAttacker() == wp) {
-                    healingMultiplier = (leechSelfAmount / 100f);
-                } else {
-                    healingMultiplier = (leechAllyAmount / 100f);
+                nearPlayer,
+                leechDuration,
+                leechSelfAmount / 100f,
+                leechAllyAmount / 100f,
+                warlordsDamageHealingFinalEvent -> {
                 }
-                event.getAttacker().addHealingInstance(
-                        wp,
-                        "Leech",
-                        currentDamageValue * healingMultiplier,
-                        currentDamageValue * healingMultiplier,
-                        -1,
-                        100,
-                        false,
-                        false
-                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                    if (event.getPlayer().hasFlag()) {
-                        this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
-                    }
-                });
-            }
-        });
+        );
 
         return true;
-    }
-
-    public void addHealingDoneFromEnemyCarrier(float amount) {
-        this.healingDoneFromEnemyCarrier += amount;
     }
 
     public int getLeechDuration() {
