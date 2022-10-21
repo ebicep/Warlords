@@ -21,29 +21,33 @@ public class WinByAllDeathOption implements Option {
 
     @Override
     public void start(Game game) {
-        game.registerEvents(new Listener() {
+        final EnumSet<Team> teams = TeamMarker.getTeams(game);
+        System.out.println(teams);
 
-            final EnumSet<Team> teams = TeamMarker.getTeams(game);
+        game.registerEvents(new Listener() {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
                 if (event.getPlayer() instanceof WarlordsPlayer) {
                     teams.removeIf(team -> {
-                                List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                        .matchingTeam(team)
-                                        .toList();
+                        List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                                .matchingTeam(team)
+                                .toList();
                                 if (warlordsPlayers.isEmpty()) {
                                     return false;
                                 }
                                 for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                                    System.out.println(warlordsPlayer.isAlive());
                                     if (warlordsPlayer.isAlive()) {
                                         return false;
                                     }
                                 }
+                        System.out.println("Team " + team + " is dead");
                                 return true;
                             }
                     );
                     if (teams.size() == 1) {
+                        System.out.println("WinByAllDeathOption: " + teams);
                         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
                     }
                 }

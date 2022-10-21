@@ -1456,6 +1456,8 @@ public enum GameMap {
         @Override
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.RED).asOption());
 
