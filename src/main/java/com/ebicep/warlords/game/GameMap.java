@@ -153,7 +153,7 @@ public enum GameMap {
             12,
             60 * SECOND,
             "Warsong",
-            3,
+            2,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -719,7 +719,7 @@ public enum GameMap {
             18,
             60 * SECOND,
             "Arathi",
-            3,
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -2151,7 +2151,7 @@ public enum GameMap {
             1,
             10 * SECOND,
             "Tutorial",
-            1,
+            5,
             GameMode.TUTORIAL
     ) {
         @Override

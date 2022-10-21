@@ -60,7 +60,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier II",
+                "Zeal - Tier II",
                 "-10% Cooldown reduction",
                 10000,
                 () -> {
@@ -68,7 +68,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-15% Cooldown reduction",
                 15000,
                 () -> {
@@ -76,7 +76,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-20% Cooldown reduction",
                 20000,
                 () -> {
@@ -87,10 +87,10 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
         masterUpgrade = new Upgrade(
                 "Shadow Stagger",
                 "Shadow Step - Master Upgrade",
-                "",
+                "Become immovable while using Shadow Step.\nAdditionally,gain 50% knockback resistance\nupon landing for 3 seconds.",
                 50000,
                 () -> {
-
+                    ability.setPveUpgrade(true);
                 }
         );
     }

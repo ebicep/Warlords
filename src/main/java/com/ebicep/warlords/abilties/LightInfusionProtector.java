@@ -72,6 +72,10 @@ public class LightInfusionProtector extends AbstractAbility {
                 })
         );
 
+        if (pveUpgrade) {
+            wp.getSpec().getBlue().setCurrentCooldown(0);
+        }
+
         for (int i = 0; i < 10; i++) {
             ParticleEffect.SPELL.display(
                     1,

@@ -22,7 +22,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
+                "Zeal - Tier II",
                 "-20% Cooldown reduction",
                 10000,
                 () -> {
@@ -30,7 +30,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Zeal - Tier III",
                 "-30% Cooldown reduction",
                 15000,
                 () -> {
@@ -38,7 +38,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Zeal - Tier IV",
                 "-40% Cooldown reduction",
                 20000,
                 () -> {
@@ -47,35 +47,35 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
         ));
 
         treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "",
+                "Scope - Tier I",
+                "+3 Blocks cast range",
                 5000,
                 () -> {
-
+                    ability.setRadius(radius + 3);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "",
+                "Scope - Tier II",
+                "+6 Blocks cast range",
                 10000,
                 () -> {
-
+                    ability.setRadius(radius + 6);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "",
+                "Scope - Tier III",
+                "+9 Blocks cast range",
                 15000,
                 () -> {
-
+                    ability.setRadius(radius + 9);
                 }
         ));
         treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "",
+                "Scope - Tier IV",
+                "+12 Blocks cast range",
                 20000,
                 () -> {
-
+                    ability.setRadius(radius + 12);
                 }
         ));
 
