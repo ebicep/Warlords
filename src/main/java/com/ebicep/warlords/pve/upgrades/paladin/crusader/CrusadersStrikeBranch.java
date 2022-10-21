@@ -7,13 +7,18 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
     int energyGiven = ability.getEnergyGiven();
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
         super(abilityTree, ability);
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
+
         treeA.add(new Upgrade(
                 "Impair - Tier I",
                 "+7.5% Damage",

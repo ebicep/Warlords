@@ -7,12 +7,16 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
 
     public RighteousStrikeBranch(AbilityTree abilityTree, RighteousStrike ability) {
         super(abilityTree, ability);
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",

@@ -7,14 +7,19 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 
     public ImpalingStrikeBranch(AbilityTree abilityTree, ImpalingStrike ability) {
         super(abilityTree, ability);
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
+
         treeA.add(new Upgrade(
                 "Impair - Tier I",
                 "+7.5% Damage",
