@@ -339,7 +339,6 @@ public class WarlordsShopMenu {
                 .orElse(Team.BLUE) == Team.BLUE;
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         List<Helmets> selectedHelmet = playerSettings.getHelmets();
-        System.out.println(selectedHelmet);
 
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
 

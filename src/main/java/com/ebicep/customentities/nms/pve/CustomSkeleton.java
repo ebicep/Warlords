@@ -13,15 +13,15 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
 
     private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 30);
 
+    public CustomSkeleton(org.bukkit.World world) {
+        this(((CraftWorld) world).getHandle());
+    }
+
     public CustomSkeleton(World world) {
         super(world);
         resetAI(world);
         giveBaseAI(1.2, 1.0, 20);
         this.goalSelector.a(2, pathfinderGoalFireAtPlayer);
-    }
-
-    public CustomSkeleton(org.bukkit.World world) {
-        this(((CraftWorld) world).getHandle());
     }
 
     @Override
@@ -47,47 +47,36 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
             this.fireTickDelay = fireTickDelay;
         }
 
-        //should just use arrow mechanic - https://gist.github.com/Minikloon/4f53ea780350c7b86761318ca313a9ed
-        public static Location predictFutureLocation(WarlordsEntity self, WarlordsEntity target) {
-            if (target == null || target.getCurrentVector() == null) return null;
-            Location location = target.getLocation().clone();
-            Vector oldVectorToSubtract = target.getCurrentVector().clone();
-            if (oldVectorToSubtract == null) return location;
-            Vector vector = target.getCurrentVector().clone();
-
-            List<Location> locations = target.getLocations();
-            if (!locations.isEmpty()) {
-                //check if player is standing still
-                Location previousLocation = locations.get(locations.size() - 1);
-                if (previousLocation.getX() == location.getX() && previousLocation.getY() == location.getY() && previousLocation.getZ() == location.getZ()) {
-                    return location;
-                } else {
-                    double distance = self.getLocation().distanceSquared(target.getLocation());
-                    if (distance >= 100) {
-                        //idk
-                        oldVectorToSubtract.setX(oldVectorToSubtract.getX() * .7);
-                        oldVectorToSubtract.setZ(oldVectorToSubtract.getZ() * .7);
-                        if (oldVectorToSubtract.getY() == 0 && !target.getEntity().isOnGround()) {
-                            oldVectorToSubtract.setY(.35);
-                        } else if (oldVectorToSubtract.getY() > .5) {
-                            oldVectorToSubtract.setY(oldVectorToSubtract.getY() * 1.1);
-                        } else {
-                            oldVectorToSubtract.setY(oldVectorToSubtract.getY() * .75);
-                        }
-                        vector.subtract(oldVectorToSubtract);
-                    } else {
-                        vector.setY(vector.getY() / Math.pow(distance, 1.1));
-                    }
-                    //multiply more the farther away the player is
-                    if (distance > 100) {
-                        return location.add(vector.multiply(2 + Math.log(distance) / 2.5));
-                    } else {
-                        return location.add(vector.multiply(1));
-                    }
-                }
+        @Override
+        public boolean a() {
+            if (delay != 0) {
+                delay--;
+                return false;
+            }
+            ticks++;
+            if (ticks % fireTickDelay == 0) {
+                delay = fireTickDelay;
+                return true;
             }
 
-            return location;
+            return false;
+        }
+
+        @Override
+        public void c() {
+            if (self.getGoalTarget() == null) {
+                return;
+            }
+            EntityLiving target = self.getGoalTarget();
+
+            //Location targetLocation = target.getBukkitEntity().getLocation();
+            WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
+            WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
+            if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
+                Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
+                self.getBukkitEntity().teleport(lookAtLocation);
+                warlordsEntitySelf.getSpec().getWeapon().onActivate(warlordsEntitySelf, null);
+            }
         }
 
         public static Location lookAtLocation(Location loc, Location toLookAt) {
@@ -125,36 +114,54 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
             return loc;
         }
 
-        @Override
-        public boolean a() {
-            if (delay != 0) {
-                delay--;
-                return false;
+        //should just use arrow mechanic - https://gist.github.com/Minikloon/4f53ea780350c7b86761318ca313a9ed
+        public static Location predictFutureLocation(WarlordsEntity self, WarlordsEntity target) {
+            if (target == null) {
+                return self.getLocation();
             }
-            ticks++;
-            if (ticks % fireTickDelay == 0) {
-                delay = fireTickDelay;
-                return true;
+            if (target.getCurrentVector() == null) {
+                return target.getLocation();
+            }
+            Location location = target.getLocation().clone();
+            Vector oldVectorToSubtract = target.getCurrentVector().clone();
+            if (oldVectorToSubtract == null) {
+                return location;
+            }
+            Vector vector = target.getCurrentVector().clone();
+
+            List<Location> locations = target.getLocations();
+            if (!locations.isEmpty()) {
+                //check if player is standing still
+                Location previousLocation = locations.get(locations.size() - 1);
+                if (previousLocation.getX() == location.getX() && previousLocation.getY() == location.getY() && previousLocation.getZ() == location.getZ()) {
+                    return location;
+                } else {
+                    double distance = self.getLocation().distanceSquared(target.getLocation());
+                    if (distance >= 100) {
+                        //idk
+                        oldVectorToSubtract.setX(oldVectorToSubtract.getX() * .7);
+                        oldVectorToSubtract.setZ(oldVectorToSubtract.getZ() * .7);
+                        if (oldVectorToSubtract.getY() == 0 && !target.getEntity().isOnGround()) {
+                            oldVectorToSubtract.setY(.35);
+                        } else if (oldVectorToSubtract.getY() > .5) {
+                            oldVectorToSubtract.setY(oldVectorToSubtract.getY() * 1.1);
+                        } else {
+                            oldVectorToSubtract.setY(oldVectorToSubtract.getY() * .75);
+                        }
+                        vector.subtract(oldVectorToSubtract);
+                    } else {
+                        vector.setY(vector.getY() / Math.pow(distance, 1.1));
+                    }
+                    //multiply more the farther away the player is
+                    if (distance > 100) {
+                        return location.add(vector.multiply(2 + Math.log(distance) / 2.5));
+                    } else {
+                        return location.add(vector.multiply(1));
+                    }
+                }
             }
 
-            return false;
-        }
-
-        @Override
-        public void c() {
-            if (self.getGoalTarget() == null) {
-                return;
-            }
-            EntityLiving target = self.getGoalTarget();
-
-            //Location targetLocation = target.getBukkitEntity().getLocation();
-            WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
-            WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
-            if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
-                Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
-                self.getBukkitEntity().teleport(lookAtLocation);
-                warlordsEntitySelf.getSpec().getWeapon().onActivate(warlordsEntitySelf, null);
-            }
+            return location;
         }
 
         public int getFireTickDelay() {
