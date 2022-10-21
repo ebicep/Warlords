@@ -54,20 +54,16 @@ public class ImpalingStrike extends AbstractStrikeBase {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        int multiplier = pveUpgrade && nearPlayer.getCooldownManager().hasCooldownFromName("Leech Debuff") ? 3 : 1;
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal,
-                maxDamageHeal,
+                minDamageHeal * multiplier,
+                maxDamageHeal * multiplier,
                 critChance,
                 critMultiplier,
                 false
         );
-
-        if (pveUpgrade) {
-            // TODO: add leech
-            tripleHit(wp, nearPlayer);
-        }
 
         nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
         nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
