@@ -96,7 +96,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         masterUpgrade = new Upgrade(
                 "Impaling Slash",
                 "Impaling Strike - Master Upgrade",
-                "Your Impaling Strikes deal triple the damage to enemies afflicted by LEECH",
+                "Your Impaling Strikes deal double the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
