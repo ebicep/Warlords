@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -73,6 +74,10 @@ public class Boltaro extends AbstractZombie implements BossMob {
                 }
             }
         });
+
+        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+            option.spawnNewMob(new BoltaroExiled(spawnLocation));
+        }
     }
 
     @Override

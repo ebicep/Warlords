@@ -40,7 +40,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         Weapons.SILVER_PHANTASM_SWORD_3.getItem()
                 ),
                 19000,
-                0.22f,
+                0.25f,
                 20,
                 1000,
                 1300
@@ -59,10 +59,15 @@ public class Mithra extends AbstractZombie implements BossMob {
                 );
             }
         }
+
+        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+            option.spawnNewMob(new Spider(spawnLocation));
+        }
     }
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        long playerCount = option.getGame().warlordsPlayers().count();
         if (ticksElapsed % 80 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
@@ -111,16 +116,24 @@ public class Mithra extends AbstractZombie implements BossMob {
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
                 knockTarget.setVelocity(new Vector(0, 1, 0), false);
-                knockTarget.addDamageInstance(warlordsNPC, "Virtue Strike", 400, 500, 0, 100, false);
+                knockTarget.addDamageInstance(
+                        warlordsNPC,
+                        "Virtue Strike",
+                        400 * playerCount,
+                        500 * playerCount,
+                        0,
+                        100,
+                        false
+                );
             }
         }
 
-        if (ticksElapsed % 170 == 0) {
+        if (ticksElapsed % 150 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
             warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }
 
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 280 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new Spider(spawnLocation));
             }
