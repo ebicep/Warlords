@@ -54,7 +54,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost\n+3.75% Leech heal",
+                "-2.5 Energy Cost\n+3.75% Leech Heal",
                 5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 2.5f);
@@ -64,7 +64,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy cost\n+8% Leech heal",
+                "-5 Energy Cost\n+7.5% Leech Heal",
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);
@@ -74,7 +74,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost\n+11.25% Leech heal",
+                "-7.5 Energy Cost\n+11.25% Leech Heal",
                 15000,
                 () -> {
                     ability.setEnergyCost(energyCost - 7.5f);
@@ -84,7 +84,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+15% Leech heal",
+                "-10 Energy Cost\n+15% Leech Heal",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
