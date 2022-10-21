@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -188,6 +189,11 @@ public class WeaponManagerMenu {
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.SLIME_BALL)
                         .name(ChatColor.GREEN + "Bind Weapon")
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                        "Only the weapon bound to your selected specialization will be used in game." +
+                                        "\n\nIf you want to use this weapon, bind it to its specialization.",
+                                180
+                        ))
                         .get(),
                 (m, e) -> openWeaponBindMenu(player, databasePlayer, weapon)
         ));
@@ -195,6 +201,10 @@ public class WeaponManagerMenu {
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.PAINTING)
                         .name(ChatColor.GREEN + "Skin Selector")
+                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                        "Change the skin of your weapon to better match your tastes.",
+                                180
+                        ))
                         .get(),
                 (m, e) -> WeaponSkinSelectorMenu.openWeaponSkinSelectorMenu(player, databasePlayer, weapon, 1)
         ));
@@ -301,7 +311,12 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
                             .name(ChatColor.GREEN + "Apply a " + selectedStarPiece.currency.name)
-                            .lore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                            "This star piece provides a " + selectedStarPiece.currency.chatColor + selectedStarPiece.starPieceBonusValue +
+                                            "% " + ChatColor.GRAY + "stat boost to a random stat.",
+                                    180
+                            ))
+                            .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
                             .addLore(
                                     "",
                                     ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GRAY + "to apply star piece.",
@@ -330,6 +345,10 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
                             .name(ChatColor.GREEN + "Apply Title to Weapon")
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                            "Title your weapon to modify its stat distribution.",
+                                    180
+                            ))
                             .get(),
                     (m, e) -> {
                         WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, legendaryWeapon, 1);
@@ -338,7 +357,11 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.BOOKSHELF)
                             .name(ChatColor.GREEN + "Change Skill Boost")
-                            .lore(WeaponSkillBoostMenu.costLore)
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
+                                            "Change the skill boost of this weapon.",
+                                    180
+                            ))
+                            .addLore(WeaponSkillBoostMenu.costLore)
                             .get(),
                     (m, e) -> {
                         for (Map.Entry<Currencies, Long> currenciesLongEntry : WeaponSkillBoostMenu.cost.entrySet()) {
