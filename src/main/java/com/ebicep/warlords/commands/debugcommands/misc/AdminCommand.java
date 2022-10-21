@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -50,6 +51,14 @@ public class AdminCommand extends BaseCommand {
     public void disableRestartCheck(CommandIssuer issuer) {
         DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Restart Check = " + DISABLE_RESTART_CHECK, true);
+    }
+
+    @Subcommand("removenearbyentities")
+    @Description("Removes all nearby entities in range")
+    public void removeEntitiesNearBy(Player player, @Conditions("limits:min=1,max=20") Integer range) {
+        player.getWorld()
+                .getNearbyEntities(player.getLocation(), range, range, range)
+                .forEach(Entity::remove);
     }
 
     @HelpCommand

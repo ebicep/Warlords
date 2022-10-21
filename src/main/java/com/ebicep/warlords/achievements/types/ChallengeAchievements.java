@@ -738,6 +738,52 @@ public enum ChallengeAchievements implements Achievement {
     };
 
     public static final ChallengeAchievements[] VALUES = values();
+
+    public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
+        if (achievement.gameMode != player.getGame().getGameMode()) {
+            return;
+        }
+        if (achievement.spec != null && achievement.spec == player.getSpecClass()) {
+            return;
+        }
+        if (!achievement.warlordsEntityPredicate.test(player)) {
+            return;
+        }
+
+        if (achievement.autoGiveToTeammates()) {
+            ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
+        } else if (achievement.checkTeammates()) {
+            ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
+        } else {
+            if (!player.hasAchievement(achievement)) {
+                player.unlockAchievement(achievement);
+            }
+        }
+    }
+
+    public boolean autoGiveToTeammates() {
+        return false;
+    }
+
+    public static void giveTeammatesSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
+        player.getGame().warlordsPlayers()
+                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
+                .filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(achievement))
+                .forEachOrdered(warlordsPlayer -> warlordsPlayer.unlockAchievement(achievement));
+    }
+
+    public boolean checkTeammates() {
+        return false;
+    }
+
+    public static void checkTeammatesForSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
+        player.getGame().warlordsPlayers()
+                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
+                .filter(warlordsPlayer -> !warlordsPlayer.hasAchievement(achievement))
+                .filter(achievement.warlordsEntityPredicate)
+                .forEachOrdered(warlordsPlayer -> warlordsPlayer.unlockAchievement(achievement));
+    }
+
     public final String name;
     public final String description;
     public final GameMode gameMode;
@@ -761,51 +807,6 @@ public enum ChallengeAchievements implements Achievement {
         this.isHidden = isHidden;
         this.difficulty = difficulty;
         this.warlordsEntityPredicate = warlordsEntityPredicate;
-    }
-
-    public static void checkForAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        if (achievement.gameMode != player.getGame().getGameMode()) {
-            return;
-        }
-        if (achievement.spec != null && achievement.spec == player.getSpecClass()) {
-            return;
-        }
-        if (!achievement.warlordsEntityPredicate.test(player)) {
-            return;
-        }
-
-        if (achievement.autoGiveToTeammates()) {
-            ChallengeAchievements.giveTeammatesSameAchievement(player, achievement);
-        } else if (achievement.checkTeammates()) {
-            ChallengeAchievements.checkTeammatesForSameAchievement(player, achievement);
-        } else {
-            //if(!player.hasAchievement(achievement)) {
-            player.unlockAchievement(achievement);
-            //}
-        }
-    }
-
-    public boolean autoGiveToTeammates() {
-        return false;
-    }
-
-    public static void giveTeammatesSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        player.getGame().warlordsPlayers()
-                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
-                //.filter(warlordsEntity -> !warlordsEntity.hasAchievement(achievement))
-                .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
-    }
-
-    public boolean checkTeammates() {
-        return false;
-    }
-
-    public static void checkTeammatesForSameAchievement(WarlordsEntity player, ChallengeAchievements achievement) {
-        player.getGame().warlordsPlayers()
-                .filter(warlordsPlayer -> warlordsPlayer.getTeam() == player.getTeam())
-                //.filter(warlordsEntity -> !warlordsEntity.hasAchievement(achievement))
-                .filter(achievement.warlordsEntityPredicate)
-                .forEachOrdered(warlordsEntity -> warlordsEntity.unlockAchievement(achievement));
     }
 
     @Override
