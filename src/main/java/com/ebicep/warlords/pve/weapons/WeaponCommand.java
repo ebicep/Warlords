@@ -12,9 +12,8 @@ import com.ebicep.warlords.pve.weapons.weapontypes.RareWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,10 +35,8 @@ public class WeaponCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
             ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new TextComponent(ChatColor.GRAY + "Spawned weapon: "),
-                    new TextComponentBuilder(abstractWeapon.getName())
-                            .setHoverItem(abstractWeapon.generateItemStack())
-                            .getTextComponent()
+                    new ComponentBuilder(ChatColor.GRAY + "Spawned weapon: ")
+                            .appendHoverItem(abstractWeapon.getName(), abstractWeapon.generateItemStack())
             );
         });
     }
@@ -78,7 +75,7 @@ public class WeaponCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getWeaponInventory().clear();
             ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new TextComponent(ChatColor.GRAY + "Cleared weapon inventory.")
+                    new ComponentBuilder(ChatColor.GRAY + "Cleared weapon inventory.")
             );
         });
     }
@@ -91,10 +88,9 @@ public class WeaponCommand extends BaseCommand {
             for (int i = 0; i < weaponInventory.size(); i++) {
                 AbstractWeapon weapon = weaponInventory.get(i);
                 player.spigot().sendMessage(
-                        new TextComponent(ChatColor.GOLD.toString() + (i + 1) + ". "),
-                        new TextComponentBuilder(weapon.getName())
-                                .setHoverItem(weapon.generateItemStack())
-                                .getTextComponent()
+                        new ComponentBuilder(ChatColor.GOLD.toString() + (i + 1) + ". ")
+                                .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                .create()
                 );
             }
         });

@@ -9,9 +9,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -164,10 +163,9 @@ public class WeaponSkinSelectorMenu {
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
-                    new TextComponent(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for "),
-                    new TextComponentBuilder(weapon.getName())
-                            .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent()
+                    new ComponentBuilder(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for ")
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .create()
             );
             PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
 

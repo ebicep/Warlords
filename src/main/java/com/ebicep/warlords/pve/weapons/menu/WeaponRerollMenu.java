@@ -6,9 +6,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -58,19 +57,16 @@ public class WeaponRerollMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            TextComponent oldWeapon = new TextComponentBuilder(weapon.getName())
-                    .setHoverItem(weapon.generateItemStack())
-                    .getTextComponent();
+            ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "Reroll Result: ")
+                    .appendHoverItem(weapon.getName(), weapon.generateItemStack());
+
             weapon.reroll();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
-                    new TextComponent(ChatColor.GRAY + "Reroll Result: "),
-                    oldWeapon,
-                    new TextComponent(ChatColor.GRAY + " to "),
-                    new TextComponentBuilder(weapon.getName())
-                            .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent()
+                    componentBuilder.append(ChatColor.GRAY + " to ")
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .create()
             );
         }
     }

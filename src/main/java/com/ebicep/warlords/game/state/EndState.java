@@ -318,19 +318,17 @@ public class EndState implements State, TimerDebugAble {
         List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity wp = players.get(i);
-            leaderboardPlayersHealing.add(
-                    new TextComponentBuilder(
-                            ChatColor.AQUA + wp.getName() +
-                                    ChatColor.GRAY + ": " +
-                                    ChatColor.GOLD + NumberFormat.getSimplifiedNumber(wp.getMinuteStats().total().getHealing()))
-                            .setHoverText(
-                                    ChatColor.DARK_GRAY + "Lv" +
-                                            ChatColor.GRAY + ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass()) + " " +
-                                            ChatColor.GOLD + wp.getSpec().getClassName() +
-                                            ChatColor.GREEN + " (" +
-                                            wp.getSpec().getClass().getSimpleName() +
-                                            ")"
-                            ).getTextComponent());
+            leaderboardPlayersHealing.add(new TextComponentBuilder(
+                    ChatColor.AQUA + wp.getName() +
+                            ChatColor.GRAY + ": " +
+                            ChatColor.GOLD + NumberFormat.getSimplifiedNumber(wp.getMinuteStats().total().getHealing()))
+                    .setHoverText(ChatColor.DARK_GRAY + "Lv" +
+                            ChatColor.GRAY + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass())) + " " +
+                            ChatColor.GOLD + wp.getSpec().getClassName() +
+                            ChatColor.GREEN + " (" +
+                            wp.getSpec().getClass().getSimpleName() +
+                            ")"
+                    ).getTextComponent());
 
             if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersHealing.add(ChatUtils.SPACER);

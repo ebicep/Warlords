@@ -14,13 +14,12 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Utils;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -150,10 +149,10 @@ public class MasterworksFairManager {
                 execute();
     }
 
-    public static void sendMasterworksFairMessage(Player player, BaseComponent... components) {
-        List<BaseComponent> baseComponents = new ArrayList<>(Arrays.asList(components));
-        baseComponents.add(0, new TextComponent(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > "));
-        player.spigot().sendMessage(baseComponents.toArray(new BaseComponent[0]));
+    public static void sendMasterworksFairMessage(Player player, ComponentBuilder components) {
+        BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > ")
+                .create();
+        player.spigot().sendMessage(components.prependAndCreate(baseComponents));
     }
 
     public static void createFair() {
@@ -343,11 +342,9 @@ public class MasterworksFairManager {
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                         sendMasterworksFairMessage(player,
-                                                new TextComponent(ChatColor.GRAY + "Submitted "),
-                                                new TextComponentBuilder(weapon.getName())
-                                                        .setHoverItem(weapon.generateItemStack())
-                                                        .getTextComponent(),
-                                                new TextComponent(ChatColor.GRAY + " to the Masterworks Fair.")
+                                                new ComponentBuilder(ChatColor.GRAY + "Submitted ")
+                                                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                                        .append(ChatColor.GRAY + " to the Masterworks Fair!")
                                         );
 
                                         openMasterworksFairMenu(player);

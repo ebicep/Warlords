@@ -4,10 +4,9 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,13 +19,12 @@ import java.util.stream.Collectors;
 
 public class RewardInventory {
 
-    public static void sendRewardMessage(UUID uuid, BaseComponent... components) {
+    public static void sendRewardMessage(UUID uuid, ComponentBuilder components) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         if (offlinePlayer != null && offlinePlayer.isOnline()) {
-            BaseComponent[] baseComponents = new BaseComponent[components.length + 1];
-            baseComponents[0] = new TextComponent(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ");
-            System.arraycopy(components, 0, baseComponents, 1, components.length);
-            offlinePlayer.getPlayer().spigot().sendMessage(baseComponents);
+            BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ")
+                    .create();
+            offlinePlayer.getPlayer().spigot().sendMessage(components.prependAndCreate(baseComponents));
         }
     }
 
@@ -56,10 +54,10 @@ public class RewardInventory {
 
                                     sendRewardMessage(
                                             player.getUniqueId(),
-                                            new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                            new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
-                                                    .setHoverItem(masterworksFairReward.getItemWithoutClaim())
-                                                    .getTextComponent()
+                                            new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
+                                                    .appendHoverItem(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward",
+                                                            masterworksFairReward.getItemWithoutClaim()
+                                                    )
                                     );
 
                                     openRewardInventory(player, page);
@@ -82,10 +80,10 @@ public class RewardInventory {
 
                                 sendRewardMessage(
                                         player.getUniqueId(),
-                                        new TextComponent(ChatColor.GREEN + "Claimed: "),
-                                        new TextComponentBuilder(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward")
-                                                .setHoverItem(masterworksFairReward.getItemWithoutClaim())
-                                                .getTextComponent()
+                                        new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
+                                                .appendHoverItem(ChatColor.GREEN + masterworksFairReward.getFrom() + " Reward",
+                                                        masterworksFairReward.getItemWithoutClaim()
+                                                )
                                 );
                             }
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

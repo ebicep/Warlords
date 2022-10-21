@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -24,7 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum ChatChannels {
@@ -264,16 +267,15 @@ public enum ChatChannels {
         }.runTaskAsynchronously(Warlords.getInstance());
     }
 
-    public static void playerSpigotSendMessage(Player player, ChatChannels chatChannel, BaseComponent... components) {
+    public static void playerSpigotSendMessage(Player player, ChatChannels chatChannel, ComponentBuilder components) {
         try {
             String formattedMessage = String.format(chatChannel.getFormat(player, Permissions.getPrefixWithColor(player)), player.getName(), "");
-            List<BaseComponent> baseComponents = new ArrayList<>(Arrays.asList(components));
-            baseComponents.add(0, new TextComponent(formattedMessage));
+            BaseComponent[] baseComponents = components.prependAndCreate(new ComponentBuilder(formattedMessage).create());
 
             Set<Player> players = new HashSet<>(Bukkit.getOnlinePlayers());
             chatChannel.setRecipients(player, players);
             for (Player recipient : players) {
-                recipient.spigot().sendMessage(baseComponents.toArray(new BaseComponent[0]));
+                recipient.spigot().sendMessage(baseComponents);
             }
 
             StringBuilder messageToConsole = new StringBuilder();

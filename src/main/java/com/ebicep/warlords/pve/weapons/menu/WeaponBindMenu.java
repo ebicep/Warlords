@@ -8,10 +8,9 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.bukkit.ChatColor;
@@ -83,14 +82,12 @@ public class WeaponBindMenu {
                                     selectedWeapon.setBound(true);
 
                                     player.spigot().sendMessage(
-                                            new TextComponent(ChatColor.AQUA + "You unbounded "),
-                                            new TextComponentBuilder(boundWeapon.getName())
-                                                    .setHoverItem(boundWeapon.generateItemStack())
-                                                    .getTextComponent(),
-                                            new TextComponent(ChatColor.AQUA + " and bound "),
-                                            new TextComponentBuilder(selectedWeapon.getName())
-                                                    .setHoverItem(selectedWeapon.generateItemStack())
-                                                    .getTextComponent());
+                                            new ComponentBuilder(ChatColor.AQUA + "You unbounded ")
+                                                    .appendHoverItem(boundWeapon.getName(), boundWeapon.generateItemStack())
+                                                    .append(ChatColor.AQUA + " and bound ")
+                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack())
+                                                    .create()
+                                    );
 
                                     //remove unbounded starter weapon as it is no longer needed
                                     if (boundWeapon instanceof StarterWeapon) {
@@ -130,10 +127,10 @@ public class WeaponBindMenu {
                                     openWeaponBindMenu(player, databasePlayer, selectedWeapon);
 
                                     player.spigot().sendMessage(
-                                            new TextComponent(ChatColor.AQUA + "You bound "),
-                                            new TextComponentBuilder(selectedWeapon.getName())
-                                                    .setHoverItem(selectedWeapon.generateItemStack())
-                                                    .getTextComponent());
+                                            new ComponentBuilder(ChatColor.AQUA + "You bound ")
+                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack())
+                                                    .create()
+                                    );
                                 }
                             }
                     );

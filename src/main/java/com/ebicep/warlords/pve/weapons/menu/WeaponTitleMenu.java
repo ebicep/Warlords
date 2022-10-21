@@ -8,9 +8,8 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -169,15 +168,12 @@ public class WeaponTitleMenu {
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         player.spigot().sendMessage(
-                new TextComponent(ChatColor.GRAY + "Titled Weapon: "),
-                new TextComponentBuilder(weapon.getName())
-                        .setHoverItem(weapon.generateItemStack())
-                        .getTextComponent(),
-                new TextComponent(ChatColor.GRAY + " and it became "),
-                new TextComponentBuilder(titledWeapon.getName())
-                        .setHoverItem(titledWeapon.generateItemStack())
-                        .getTextComponent(),
-                new TextComponent(ChatColor.GRAY + "!")
+                new ComponentBuilder(ChatColor.GRAY + "Titled Weapon: ")
+                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                        .append(ChatColor.GRAY + " and it became ")
+                        .appendHoverItem(titledWeapon.getName(), titledWeapon.generateItemStack())
+                        .append(ChatColor.GRAY + "!")
+                        .create()
         );
 
         return titledWeapon;

@@ -1,12 +1,16 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Use ComponentBuilder instead
+ */
+@Deprecated
 public class TextComponentBuilder {
 
     private final TextComponent textComponent;
@@ -44,5 +48,9 @@ public class TextComponentBuilder {
 
     public TextComponent getTextComponent() {
         return textComponent;
+    }
+
+    public BaseComponent[] getBaseComponents() {
+        return TextComponent.fromLegacyText(textComponent.toLegacyText());
     }
 }

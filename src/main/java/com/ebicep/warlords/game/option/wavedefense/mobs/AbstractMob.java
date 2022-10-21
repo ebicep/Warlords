@@ -15,9 +15,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Bukkit;
@@ -52,7 +51,18 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     protected WarlordsNPC warlordsNPC;
 
-    public AbstractMob(T entity, Location spawnLocation, String name, MobTier mobTier, EntityEquipment ee, int maxHealth, float walkSpeed, int damageResistance, float minMeleeDamage, float maxMeleeDamage) {
+    public AbstractMob(
+            T entity,
+            Location spawnLocation,
+            String name,
+            MobTier mobTier,
+            EntityEquipment ee,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
@@ -124,12 +134,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
+    public abstract void onSpawn(WaveDefenseOption option);
+
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
         mapper.apply(this.warlordsNPC);
         return this;
     }
-
-    public abstract void onSpawn(WaveDefenseOption option);
 
     public abstract void whileAlive(int ticksElapsed, WaveDefenseOption option);
 
@@ -152,12 +162,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveWeaponEvent(killer, weapon));
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot().sendMessage(
-                        new TextComponent(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found "),
-                        new TextComponentBuilder(weapon.getName())
-                                .setHoverItem(weapon.generateItemStack())
-                                .getTextComponent(),
-                        new TextComponent(ChatColor.GRAY + "!")
+                player.spigot().sendMessage(new ComponentBuilder(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found ")
+                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                        .append(ChatColor.GRAY + "!")
+                        .create()
                 );
             });
         }
@@ -167,16 +175,16 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return this.entity.getTarget();
     }
 
-    public void removeTarget() {
-        this.entity.removeTarget();
-    }
-
     public void setTarget(WarlordsEntity target) {
         this.entity.setTarget(((CraftPlayer) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {
         this.entity.setTarget((((EntityLiving) ((CraftEntity) target).getHandle())));
+    }
+
+    public void removeTarget() {
+        this.entity.removeTarget();
     }
 
     public T getEntity() {

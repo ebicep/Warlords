@@ -7,10 +7,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeapon;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -63,10 +65,9 @@ public class WeaponLegendaryCraftMenu {
                                 player.playSound(loc, "legendaryfind", 500, 1);
                                 EffectUtils.strikeLightning(loc, false, 2);
                                 player.getPlayer().spigot().sendMessage(
-                                        new TextComponent(ChatColor.GRAY + "Crafted Legendary Weapon: "),
-                                        new TextComponentBuilder(weapon.getName())
-                                                .setHoverItem(weapon.generateItemStack())
-                                                .getTextComponent()
+                                        new ComponentBuilder(ChatColor.GRAY + "Crafted Legendary Weapon: ")
+                                                .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                                .create()
                                 );
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 

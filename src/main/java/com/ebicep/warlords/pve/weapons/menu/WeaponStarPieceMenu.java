@@ -6,8 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -31,22 +30,19 @@ public class WeaponStarPieceMenu {
                 confirmLore,
                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                 (m2, e2) -> {
-                    TextComponent weaponBefore = new TextComponentBuilder(weapon.getName())
-                            .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent();
+                    ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a star piece onto ")
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .append(ChatColor.GRAY + " and it became ");
+
                     weapon.setStarPiece(starPieceCurrency, weapon.generateRandomStatBonus());
                     weapon.getStarPieceBonusCost(starPieceCurrency).forEach(databasePlayerPvE::subtractCurrency);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-                    TextComponent weaponAfter = new TextComponentBuilder(weapon.getName())
-                            .setHoverItem(weapon.generateItemStack())
-                            .getTextComponent();
                     player.spigot().sendMessage(
-                            new TextComponent(ChatColor.GRAY + "You applied a star piece onto "),
-                            weaponBefore,
-                            new TextComponent(ChatColor.GRAY + " and it became "),
-                            weaponAfter,
-                            new TextComponent(ChatColor.GRAY + "!")
+                            componentBuilder
+                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                    .append(ChatColor.GRAY + "!")
+                                    .create()
                     );
 
                     WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
