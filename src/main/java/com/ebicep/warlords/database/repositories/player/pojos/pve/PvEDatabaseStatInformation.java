@@ -66,8 +66,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             if (databaseGamePlayerPvE.getLongestTimeInCombat() > longestTimeInCombat) {
                 this.longestTimeInCombat = databaseGamePlayerPvE.getLongestTimeInCombat();
             }
-            if (databaseGamePlayerPvE.getMostDamageInRound() > mostDamageInRound) {
-                this.mostDamageInRound = databaseGamePlayerPvE.getMostDamageInRound();
+            if (databaseGamePlayerPvE.getTotalDamage() > mostDamageInRound) {
+                this.mostDamageInRound = databaseGamePlayerPvE.getTotalDamage();
             }
             if (databaseGamePlayerPvE.getMostDamageInWave() > mostDamageInWave) {
                 this.mostDamageInWave = databaseGamePlayerPvE.getMostDamageInWave();

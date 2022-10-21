@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,17 +12,12 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     @Field("longest_time_in_combat")
     private int longestTimeInCombat;
-    @Field("most_damage_in_round")
-    private long mostDamageInRound;
     @Field("most_damage_in_wave")
     private long mostDamageInWave;
     private int prestige;
@@ -51,10 +47,14 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public DatabaseGamePlayerPvE(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption) {
         super(warlordsPlayer);
-        DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
+        UUID uuid = warlordsPlayer.getUuid();
+        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
+                .getPlayerWaveDefenseStats(uuid);
+        this.mostDamageInWave = Collections.max(playerWaveDefenseStats.getWaveDamage().values());
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });
-        this.level = ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass());
+        this.level = ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass());
         this.weapon = warlordsPlayer.getAbstractWeapon();
         this.upgradeLog = warlordsPlayer.getAbilityTree().getUpgradeLog();
         this.mobKills = warlordsPlayer.getMinuteStats().total().getMobKills();
@@ -64,20 +64,12 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.coinsGained = coinGainFromGameStats.getTotalCoinsGained();
         this.guildCoinsGained = coinGainFromGameStats.getTotalGuildCoinsGained();
         this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, true).values().stream().mapToLong(aLong -> aLong).sum();
-        this.weaponsFound.addAll(waveDefenseOption.getWaveDefenseStats()
-                .getPlayerWeaponsFound()
-                .getOrDefault(warlordsPlayer.getUuid(), new ArrayList<>()));
-        this.legendFragmentsGained = waveDefenseOption.getWaveDefenseStats()
-                .getPlayerLegendFragmentGain()
-                .getOrDefault(warlordsPlayer.getUuid(), 0L);
+        this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
+        this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
     }
 
     public int getLongestTimeInCombat() {
         return longestTimeInCombat;
-    }
-
-    public long getMostDamageInRound() {
-        return mostDamageInRound;
     }
 
     public long getMostDamageInWave() {

@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveWeaponEvent;
@@ -116,6 +117,14 @@ public class WaveDefenseOption implements Option {
             }
 
             @EventHandler
+            public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                WarlordsEntity attacker = event.getAttacker();
+                waveDefenseStats.getPlayerWaveDefenseStats(attacker.getUuid())
+                        .getWaveDamage()
+                        .merge(waveCounter, (long) event.getValue(), Long::sum);
+            }
+
+            @EventHandler
             public void onEvent(WarlordsDeathEvent event) {
                 WarlordsEntity we = event.getPlayer();
                 WarlordsEntity killer = event.getKiller();
@@ -150,8 +159,8 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onWeaponDrop(WarlordsPlayerGiveWeaponEvent event) {
-                waveDefenseStats.getPlayerWeaponsFound()
-                        .computeIfAbsent(event.getPlayer().getUuid(), v -> new ArrayList<>())
+                waveDefenseStats.getPlayerWaveDefenseStats(event.getPlayer().getUuid())
+                        .getWeaponsFound()
                         .add(event.getWeapon());
             }
 

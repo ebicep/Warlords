@@ -17,8 +17,7 @@ public class WaveDefenseStats {
     public static final long[] COINS_PER_5_WAVES = new long[]{50, 100, 150, 200, 300};
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
-    private final HashMap<UUID, List<AbstractWeapon>> playerWeaponsFound = new HashMap<>();
-    private final HashMap<UUID, Long> playerLegendFragmentGain = new HashMap<>();
+    private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
 
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
         cachedBaseCoinSummary.clear();
@@ -46,9 +45,13 @@ public class WaveDefenseStats {
         boolean won = waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
         waveDefenseOption.getGame().warlordsPlayers().forEach(warlordsPlayer -> {
             if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
-                playerLegendFragmentGain.put(warlordsPlayer.getUuid(), won ? wavesCleared : (long) (wavesCleared * 0.5));
+                getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setLegendFragmentGain(won ? wavesCleared : (long) (wavesCleared * 0.5));
             }
         });
+    }
+
+    public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {
+        return playerWaveDefenseStats.computeIfAbsent(uuid, k -> new PlayerWaveDefenseStats());
     }
 
     public LinkedHashMap<String, Long> getCachedBaseCoinSummary() {
@@ -59,11 +62,25 @@ public class WaveDefenseStats {
         return bossesKilled;
     }
 
-    public HashMap<UUID, List<AbstractWeapon>> getPlayerWeaponsFound() {
-        return playerWeaponsFound;
-    }
+    public static class PlayerWaveDefenseStats {
+        private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
+        private final HashMap<Integer, Long> waveDamage = new HashMap<>();
+        private long legendFragmentGain = 0;
 
-    public HashMap<UUID, Long> getPlayerLegendFragmentGain() {
-        return playerLegendFragmentGain;
+        public List<AbstractWeapon> getWeaponsFound() {
+            return weaponsFound;
+        }
+
+        public long getLegendFragmentGain() {
+            return legendFragmentGain;
+        }
+
+        public void setLegendFragmentGain(long legendFragmentGain) {
+            this.legendFragmentGain = legendFragmentGain;
+        }
+
+        public HashMap<Integer, Long> getWaveDamage() {
+            return waveDamage;
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -518,17 +519,14 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, "", false);
         sendGlobalMessage(game, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "✚ WEAPONS SUMMARY ✚", true);
 
-        HashMap<UUID, Long> playerLegendFragmentGain = waveDefenseOption.getWaveDefenseStats().getPlayerLegendFragmentGain();
 
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
                 continue;
             }
-
-            List<AbstractWeapon> weaponsFound = waveDefenseOption.getWaveDefenseStats()
-                    .getPlayerWeaponsFound()
-                    .getOrDefault(wp.getUuid(), new ArrayList<>());
+            WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats().getPlayerWaveDefenseStats(wp.getUuid());
+            List<AbstractWeapon> weaponsFound = playerWaveDefenseStats.getWeaponsFound();
             if (weaponsFound.isEmpty()) {
                 ChatUtils.sendMessage(player, true, ChatColor.GOLD + "You did not find any weapons in this game!");
             } else {
@@ -555,7 +553,7 @@ public class EndState implements State, TimerDebugAble {
                 });
             }
 
-            Long fragmentGain = playerLegendFragmentGain.getOrDefault(wp.getUuid(), 0L);
+            long fragmentGain = playerWaveDefenseStats.getLegendFragmentGain();
             if (fragmentGain > 0) {
                 ChatUtils.sendMessage(player,
                         true,
