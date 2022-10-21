@@ -51,7 +51,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -395,15 +394,6 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent e) {
-        e.setCancelled(true);
-        WarlordsEntity entity = Warlords.getPlayer((Entity) e.getEntity().getShooter());
-        if (entity != null) {
-            //entity.getSpec().getWeapon().onActivate(entity, null);
-        }
-    }
-
-    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         Action action = e.getAction();
@@ -482,10 +472,6 @@ public class WarlordsEvents implements Listener {
             }
         }
 
-    }
-
-    @EventHandler
-    public void onMount(VehicleEnterEvent e) {
     }
 
     @EventHandler

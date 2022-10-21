@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AFKDetectionOption implements Option, Listener {
+public class AFKDetectionOption implements Option {
 
     public static boolean enabled = true;
 
@@ -31,11 +31,40 @@ public class AFKDetectionOption implements Option, Listener {
 
     @Override
     public void register(@Nonnull Game game) {
-        game.registerEvents(this);
+        game.registerEvents(new Listener() {
+
+            @EventHandler
+            public void onPlayerInteract(PlayerInteractEvent event) {
+                Player player = event.getPlayer();
+                WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+                if (warlordsPlayer instanceof WarlordsPlayer) {
+                    if (warlordsPlayer.getGame().equals(game)) {
+                        //clearing player location list for clicking while standing still
+                        playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
+                    }
+                }
+            }
+
+            @EventHandler
+            public void onPlayerSneak(PlayerToggleSneakEvent event) {
+                Player player = event.getPlayer();
+                WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
+                if (warlordsPlayer instanceof WarlordsPlayer) {
+                    if (warlordsPlayer.getGame().equals(game)) {
+                        //clearing player location list for sneaking while standing still
+                        playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
+                    }
+                }
+            }
+
+        });
     }
 
     @Override
     public void start(@Nonnull Game game) {
+        if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE) {
+            return;
+        }
         new GameRunnable(game) {
 
             boolean wasFrozen = false;
@@ -43,9 +72,6 @@ public class AFKDetectionOption implements Option, Listener {
             @Override
             public void run() {
                 if (!enabled) {
-                    return;
-                }
-                if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || game.getGameMode() == GameMode.WAVE_DEFENSE) {
                     return;
                 }
 
@@ -133,23 +159,4 @@ public class AFKDetectionOption implements Option, Listener {
         }.runTaskTimer(20 * 15 + 5, 50); //5 seconds after gates fall - every 2.5 seconds
     }
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-        if (warlordsPlayer != null) {
-            //clearing player location list for clicking while standing still
-            playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
-        }
-    }
-
-    @EventHandler
-    public void onPlayerSneak(PlayerToggleSneakEvent event) {
-        Player player = event.getPlayer();
-        WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);
-        if (warlordsPlayer != null) {
-            //clearing player location list for sneaking while standing still
-            playerLocations.computeIfAbsent((WarlordsPlayer) warlordsPlayer, k -> new ArrayList<>()).clear();
-        }
-    }
 }

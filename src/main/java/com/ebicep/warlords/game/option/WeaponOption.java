@@ -22,6 +22,22 @@ import java.util.function.BiConsumer;
 
 public class WeaponOption implements Option {
 
+    public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
+        AbstractWeapon weapon = wp.getAbstractWeapon();
+        if (weapon == null) {
+            return;
+        }
+        player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack())
+                .addLore(
+                        "",
+                        ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
+                                .getWeapon()
+                                .getName(),
+                        ChatColor.GREEN + "stats!"
+                )
+                .get());
+    }
+
     private final BiConsumer<WarlordsPlayer, Player> leftClick;
     private final BiConsumer<WarlordsPlayer, Player> rightClick;
 
@@ -94,22 +110,6 @@ public class WeaponOption implements Option {
         );
     }
 
-    public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
-        AbstractWeapon weapon = wp.getAbstractWeapon();
-        if (weapon == null) {
-            return;
-        }
-        player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack())
-                .addLore(
-                        "",
-                        ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()
-                                .getWeapon()
-                                .getName(),
-                        ChatColor.GREEN + "stats!"
-                )
-                .get());
-    }
-
     @Override
     public void register(@Nonnull Game game) {
         game.registerEvents(new Listener() {
@@ -119,6 +119,9 @@ public class WeaponOption implements Option {
                     Player player = (Player) e.getWhoClicked();
                     WarlordsEntity wp = Warlords.getPlayer(player);
                     if (wp instanceof WarlordsPlayer) {
+                        if (wp.getGame().equals(game)) {
+                            return;
+                        }
                         if (e.isLeftClick()) {
                             leftClick.accept((WarlordsPlayer) wp, player);
                         } else if (e.isRightClick()) {

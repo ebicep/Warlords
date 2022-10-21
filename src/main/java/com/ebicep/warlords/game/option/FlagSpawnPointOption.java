@@ -123,11 +123,6 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-//            @EventHandler(priority = EventPriority.LOW)
-//            public void onPotentialFlagInteract(PlayerInteractEntityEvent event) {
-//                onPotentialFlagInteract((PlayerEvent) event);
-//            }
-
             @EventHandler(priority = EventPriority.LOW)
             public void onPotentialFlagInteract(PlayerInteractEvent event) {
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {

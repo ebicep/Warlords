@@ -35,9 +35,9 @@ public enum GameAddon {
                             .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                             .lore(ChatColor.YELLOW + "Click to select your team!")
                             .get(), (g, p) -> openTeamMenu(p)));
+                    game.getOptions().add(new AFKDetectionOption());
                     break;
             }
-            game.getOptions().add(new AFKDetectionOption());
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
         }
