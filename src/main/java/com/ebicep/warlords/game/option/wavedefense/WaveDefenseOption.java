@@ -67,6 +67,8 @@ public class WaveDefenseOption implements Option {
     private final DifficultyIndex difficulty;
     private final int maxWave;
     private final WaveDefenseStats waveDefenseStats = new WaveDefenseStats();
+    private final AtomicInteger ticksElapsed = new AtomicInteger(0);
+    private final HashMap<AbstractMob<?>, Integer> mobSpawnTimes = new HashMap<>();
     private int waveCounter = 0;
     private int spawnCount = 0;
     private Wave currentWave;
@@ -133,6 +135,7 @@ public class WaveDefenseOption implements Option {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.contains(mobToRemove)) {
                         mobs.remove(mobToRemove);
+                        mobSpawnTimes.remove(mobToRemove);
                         new GameRunnable(game) {
                             @Override
                             public void run() {
@@ -276,7 +279,6 @@ public class WaveDefenseOption implements Option {
             });
         }
         new GameRunnable(game) {
-            int counter = 0;
 
             @Override
             public void run() {
@@ -305,10 +307,10 @@ public class WaveDefenseOption implements Option {
                 }
 
                 for (AbstractMob<?> mob : new ArrayList<>(mobs)) {
-                    mob.whileAlive(counter, WaveDefenseOption.this);
+                    mob.whileAlive(mobSpawnTimes.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
                 }
 
-                counter++;
+                ticksElapsed.getAndIncrement();
             }
         }.runTaskTimer(20, 0);
     }
@@ -536,6 +538,7 @@ public class WaveDefenseOption implements Option {
 
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
+                mobSpawnTimes.put(abstractMob, ticksElapsed.get());
                 mobs.add(abstractMob);
                 return abstractMob.toNPC(game, team, UUID.randomUUID());
             }
@@ -570,6 +573,7 @@ public class WaveDefenseOption implements Option {
     public void spawnNewMob(AbstractMob<?> abstractMob) {
         abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
+        mobSpawnTimes.put(abstractMob, ticksElapsed.get());
         mobs.add(abstractMob);
     }
 
