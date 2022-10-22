@@ -24,7 +24,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -202,11 +201,14 @@ public class DebugMenuGameOptions {
     static class GamesMenu {
 
         public static void openGameSelectorMenu(Player player) {
-            Menu menu = new Menu("Game Selector", 9 * 5);
             List<Game> games = Warlords.getGameManager().getGames().stream()
+                    .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().acceptsSpectators())
                     .map(GameManager.GameHolder::getGame)
-                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+
+            int rows = (games.size() - 1) / 7 + 4;
+            Menu menu = new Menu("Game Selector", 9 * rows);
+
             int x = 1;
             int y = 1;
             for (Game game : games) {
@@ -217,7 +219,7 @@ public class DebugMenuGameOptions {
                                 ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
                                 ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
                         );
-                if (Warlords.getPlayer(player) != null && Warlords.getPlayer(player).getGame() == game) {
+                if (game.hasPlayer(player.getUniqueId())) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 }
@@ -228,14 +230,14 @@ public class DebugMenuGameOptions {
                         (m, e) -> openGameEditorMenu(player, game)
                 );
                 x++;
-                if (x == 7) {
+                if (x == 8) {
                     x = 1;
                     y++;
                 }
             }
 
-            menu.setItem(3, 4, MENU_BACK, (m, e) -> openGameMenu(player));
-            menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.setItem(3, rows - 1, MENU_BACK, (m, e) -> openGameMenu(player));
+            menu.setItem(4, rows - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
