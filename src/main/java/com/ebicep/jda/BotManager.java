@@ -6,8 +6,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.ServerStatusCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.party.PartyManager;
@@ -100,69 +103,19 @@ public class BotManager {
         }
     }
 
-    public static void sendDebugMessage(String message) {
-        if (jda == null) return;
-        getWL2Server().getTextChannels().stream()
-                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
-                .findFirst()
-                .ifPresent(textChannel -> textChannel.sendMessage(message).queue());
-    }
-
-    public static void sendDebugMessage(MessageEmbed embed) {
-        if (jda == null) return;
-        getWL2Server().getTextChannels().stream()
-                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
-                .findFirst()
-                .ifPresent(textChannel -> textChannel.sendMessageEmbeds(embed).queue());
-    }
-
-    public static Guild getCompGamesServer() {
-        if (compGamesServer != null) {
-            return compGamesServer;
-        }
-        compGamesServer = jda.getGuildById(compGamesServerID);
-        return compGamesServer;
-    }
-
-    public static Guild getWL2Server() {
-        if (wl2Server != null) {
-            return wl2Server;
-        }
-        wl2Server = jda.getGuildById(wl2ServerID);
-        return wl2Server;
-    }
-
     public static Optional<TextChannel> getTextChannelCompsByName(String name) {
-        if (jda == null) return Optional.empty();
-        if (compGamesServerChannelCache.containsKey(name))
+        if (jda == null) {
+            return Optional.empty();
+        }
+        if (compGamesServerChannelCache.containsKey(name)) {
             return Optional.ofNullable(compGamesServerChannelCache.get(name));
-        Optional<TextChannel> optionalTextChannel = getCompGamesServer().getTextChannels().stream().filter(textChannel -> textChannel.getName().equalsIgnoreCase(name)).findFirst();
+        }
+        Optional<TextChannel> optionalTextChannel = getCompGamesServer().getTextChannels()
+                .stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase(name))
+                .findFirst();
         optionalTextChannel.ifPresent(textChannel -> compGamesServerChannelCache.put(name, textChannel));
         return optionalTextChannel;
-    }
-
-    public static Optional<TextChannel> getTextChannelWL2ByName(String name) {
-        if (jda == null) return Optional.empty();
-        if (wl2ServerChannelCache.containsKey(name)) return Optional.ofNullable(wl2ServerChannelCache.get(name));
-        Optional<TextChannel> optionalTextChannel = getWL2Server().getTextChannels().stream().filter(textChannel -> textChannel.getName().equalsIgnoreCase(name)).findFirst();
-        optionalTextChannel.ifPresent(textChannel -> wl2ServerChannelCache.put(name, textChannel));
-        return optionalTextChannel;
-    }
-
-    public static void sendMessageToNotificationChannel(String message, boolean sendToCompServer, boolean sendToWL2Server) {
-        if (jda == null) return;
-        if (numberOfMessagesSentLast30Sec > 15) {
-            return;
-        }
-        if (onCustomServer()) {
-            return;
-        }
-        if (sendToCompServer) {
-            getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
-        }
-        if (sendToWL2Server) {
-            getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
-        }
     }
 
     public static void sendStatusMessage(boolean onQuit) {
@@ -180,23 +133,35 @@ public class BotManager {
         eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby(null) + "\n");
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
-
-            if (game != null) {
-                if (game.getState() instanceof PreLobbyState) {
-                    PreLobbyState state = (PreLobbyState) game.getState();
-                    if (!state.hasEnoughPlayers()) {
-                        eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - Waiting for players" + "\n");
-                    } else {
-                        eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
+            if (game == null) {
+                continue;
+            }
+            if (game.getState() instanceof PreLobbyState) {
+                PreLobbyState state = (PreLobbyState) game.getState();
+                if (!state.hasEnoughPlayers()) {
+                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
+                            .getMapName() + " Lobby - Waiting for players\n");
+                } else {
+                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
+                            .getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
+                }
+            } else if (game.getState() instanceof PlayingState) {
+                OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
+                String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                String word = timeLeft.isPresent() ? " Left" : " Elapsed";
+                if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+                    for (Option option : game.getOptions()) {
+                        if (option instanceof WaveDefenseOption) {
+                            WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                            eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
+                                    .getMapName() + " - " + time + word + " - " + waveDefenseOption.getDifficulty()
+                                    .getName() + " - Wave " + waveDefenseOption.getCurrentWave() + "\n");
+                            break;
+                        }
                     }
-                } else if (game.getState() instanceof PlayingState) {
-                    OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
-                    String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
-                    String word = timeLeft.isPresent() ? " Left" : " Elapsed";
-                    if (game.getPoints().containsKey(Team.RED)) {
-                        eb.appendDescription("**Game**: " + game.getMap()
-                                .getMapName() + " - " + time + word + " - " + game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
-                    }
+                } else {
+                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
+                            .getMapName() + " - " + time + word + " - " + game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
                 }
             }
         }
@@ -241,6 +206,75 @@ public class BotManager {
             }
         });
 
+    }
+
+    public static Guild getCompGamesServer() {
+        if (compGamesServer != null) {
+            return compGamesServer;
+        }
+        compGamesServer = jda.getGuildById(compGamesServerID);
+        return compGamesServer;
+    }
+
+    public static Optional<TextChannel> getTextChannelWL2ByName(String name) {
+        if (jda == null) {
+            return Optional.empty();
+        }
+        if (wl2ServerChannelCache.containsKey(name)) {
+            return Optional.ofNullable(wl2ServerChannelCache.get(name));
+        }
+        Optional<TextChannel> optionalTextChannel = getWL2Server().getTextChannels()
+                .stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase(name))
+                .findFirst();
+        optionalTextChannel.ifPresent(textChannel -> wl2ServerChannelCache.put(name, textChannel));
+        return optionalTextChannel;
+    }
+
+    public static Guild getWL2Server() {
+        if (wl2Server != null) {
+            return wl2Server;
+        }
+        wl2Server = jda.getGuildById(wl2ServerID);
+        return wl2Server;
+    }
+
+    public static void sendDebugMessage(String message) {
+        if (jda == null) {
+            return;
+        }
+        getWL2Server().getTextChannels().stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
+                .findFirst()
+                .ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+    }
+
+    public static void sendDebugMessage(MessageEmbed embed) {
+        if (jda == null) {
+            return;
+        }
+        getWL2Server().getTextChannels().stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
+                .findFirst()
+                .ifPresent(textChannel -> textChannel.sendMessageEmbeds(embed).queue());
+    }
+
+    public static void sendMessageToNotificationChannel(String message, boolean sendToCompServer, boolean sendToWL2Server) {
+        if (jda == null) {
+            return;
+        }
+        if (numberOfMessagesSentLast30Sec > 15) {
+            return;
+        }
+        if (onCustomServer()) {
+            return;
+        }
+        if (sendToCompServer) {
+            getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+        }
+        if (sendToWL2Server) {
+            getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+        }
     }
 
     public static void deleteStatusMessage() {
