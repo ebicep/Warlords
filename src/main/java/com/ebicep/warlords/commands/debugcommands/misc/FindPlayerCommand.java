@@ -17,10 +17,13 @@ public class FindPlayerCommand extends BaseCommand {
     @Default
     @CommandCompletion("@gameplayers")
     @Description("Finds a player by name")
-    public void findPlayer(CommandIssuer issuer, @Conditions("requireGame") @Values("@gameplayers") Player player) {
+    public void findPlayer(CommandIssuer issuer, @Conditions("requireGame") @Values("@gameplayers") @Flags("other") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         boolean isSpectator = game.spectators().collect(Collectors.toList()).contains(player.getUniqueId());
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Found player " + ChatColor.RED + player.getName() + (isSpectator ? ChatColor.GREEN + " (Spectating)" : " (Playing)") + ChatColor.GREEN + " in game " + ChatColor.RED + game.getGameId(), true);
+        ChatChannels.sendDebugMessage(issuer,
+                ChatColor.GREEN + "Found player " + ChatColor.RED + player.getName() + (isSpectator ? ChatColor.GREEN + " (Spectating)" : " (Playing)") + ChatColor.GREEN + " in game " + ChatColor.RED + game.getGameId(),
+                true
+        );
 
     }
 

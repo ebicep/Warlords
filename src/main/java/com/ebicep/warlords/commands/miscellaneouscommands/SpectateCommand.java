@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -30,17 +31,25 @@ public class SpectateCommand extends BaseCommand {
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
             if (game != null && game.acceptsSpectators()) {
+                ItemBuilder itemBuilder = new ItemBuilder(Material.BOOK)
+                        .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
+                        .lore(
+                                ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
+                                ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
+                                ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons()
+                                        .stream()
+                                        .map(e -> toTitleHumanCase(e.name()))
+                                        .collect(Collectors.joining(", ")),
+                                ChatColor.GRAY + "Players: " + ChatColor.RED + game.warlordsPlayers().count()
+                        );
+                if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
+                    game.warlordsPlayers().forEach(warlordsPlayer -> {
+                        itemBuilder.addLore(" - " + warlordsPlayer.getName() + "\n");
+                    });
+                }
                 menu.setItem(column,
                         row,
-                        new ItemBuilder(Material.BOOK)
-                                .name(ChatColor.GREEN + "Game - ID: " + game.getGameId())
-                                .lore(
-                                        ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
-                                        ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
-                                        ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")),
-                                        ChatColor.GRAY + "Player count: " + ChatColor.RED + game.warlordsPlayers().count()
-                                )
-                                .get(),
+                        itemBuilder.get(),
                         (m, e) -> {
                             if (game.isClosed()) {
                                 player.sendMessage(ChatColor.RED + "This game is no longer running");
