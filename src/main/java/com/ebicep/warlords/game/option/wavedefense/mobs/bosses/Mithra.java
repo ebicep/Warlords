@@ -68,7 +68,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
-        if (ticksElapsed % 60 == 0) {
+        if (ticksElapsed % 80 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
                     warlordsNPC.getTeam(),

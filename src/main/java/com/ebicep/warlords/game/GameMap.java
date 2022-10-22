@@ -1202,6 +1202,7 @@ public enum GameMap {
                             .add(0.02, Mobs.IRON_GOLEM)
                             .add(0.01, Mobs.BLAZE)
                             .add(0.02, Mobs.WITCH)
+                            .add(0.02, Mobs.BASIC_BERSERK_ZOMBIE)
                             //envoy
                             .add(0.01, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
@@ -1228,6 +1229,7 @@ public enum GameMap {
                             .add(0.05, Mobs.IRON_GOLEM)
                             .add(0.04, Mobs.BLAZE)
                             .add(0.04, Mobs.WITCH)
+                            .add(0.01, Mobs.BASIC_BERSERK_ZOMBIE)
                             //envoy
                             .add(0.02, Mobs.ENVOY_ZOMBIE)
                             .add(0.02, Mobs.ENVOY_SKELETON)
@@ -1256,6 +1258,7 @@ public enum GameMap {
                             .add(0.15, Mobs.IRON_GOLEM)
                             .add(0.06, Mobs.BLAZE)
                             .add(0.06, Mobs.WITCH)
+                            .add(0.02, Mobs.ELITE_BERSERK_ZOMBIE)
                             //envoy
                             .add(0.05, Mobs.ENVOY_ZOMBIE)
                             .add(0.05, Mobs.ENVOY_SKELETON)
@@ -1345,9 +1348,9 @@ public enum GameMap {
                             .add(0.15, Mobs.ELITE_ZOMBIE)
                             .add(0.01, Mobs.ELITE_SKELETON)
                             .add(0.05, Mobs.ELITE_PIG_ZOMBIE)
-                            .add(0, Mobs.MAGMA_CUBE)
+                            .add(0.01, Mobs.MAGMA_CUBE)
                             .add(0.05, Mobs.IRON_GOLEM)
-                            .add(0, Mobs.BLAZE)
+                            .add(0.01, Mobs.BLAZE)
                             //envoy
                             .add(0, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
@@ -1506,22 +1509,22 @@ public enum GameMap {
                     )
                     .add(5, new SimpleWave(16, 10 * SECOND, null)
                             //basic
-                            .add(0.85, Mobs.BASIC_ZOMBIE)
+                            .add(0.8, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.05, Mobs.BASIC_SLIME)
                             .add(0.05, Mobs.SPIDER)
                             .add(0.05, Mobs.WOLF)
                             //elite
-                            .add(0.02, Mobs.ELITE_ZOMBIE)
-                            .add(0, Mobs.ELITE_SKELETON)
+                            .add(0.05, Mobs.ELITE_ZOMBIE)
+                            .add(0.01, Mobs.ELITE_SKELETON)
                             .add(0, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.01, Mobs.MAGMA_CUBE)
                             .add(0.01, Mobs.IRON_GOLEM)
-                            .add(0, Mobs.BLAZE)
+                            .add(0.01, Mobs.BLAZE)
                             .add(0, Mobs.WITCH)
                             //envoy
-                            .add(0, Mobs.ENVOY_ZOMBIE)
+                            .add(0.01, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             //elite

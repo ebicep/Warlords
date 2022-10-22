@@ -188,10 +188,11 @@ public class FallenSouls extends AbstractPiercingProjectileBase {
                     ) {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 
-                        teammate.getRedAbility().subtractCooldown(1);
-                        teammate.getPurpleAbility().subtractCooldown(1);
-                        teammate.getBlueAbility().subtractCooldown(1);
-                        teammate.getOrangeAbility().subtractCooldown(1);
+                        float pveCheck = teammate.isInPve() ? 0.5f : 1;
+                        teammate.getRedAbility().subtractCooldown(pveCheck);
+                        teammate.getPurpleAbility().subtractCooldown(pveCheck);
+                        teammate.getBlueAbility().subtractCooldown(pveCheck);
+                        teammate.getOrangeAbility().subtractCooldown(pveCheck);
 
                         teammate.updateItems();
                     }
