@@ -155,7 +155,7 @@ public class BotManager {
                             WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
                             eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
                                     .getMapName() + " - " + time + word + " - " + waveDefenseOption.getDifficulty()
-                                    .getName() + " - Wave " + waveDefenseOption.getCurrentWave() + "\n");
+                                    .getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
                             break;
                         }
                     }
