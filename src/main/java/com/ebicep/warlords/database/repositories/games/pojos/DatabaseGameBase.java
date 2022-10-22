@@ -315,6 +315,9 @@ public abstract class DatabaseGameBase {
                             Arrays.stream(TieredAchievements.values())
                                     .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
                                     .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
+                                    .filter(tieredAchievements -> databasePlayer.getAchievements()
+                                            .stream()
+                                            .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
                                     .map(TieredAchievements.TieredAchievementRecord::new)
                                     .collect(Collectors.toList())
                     );
