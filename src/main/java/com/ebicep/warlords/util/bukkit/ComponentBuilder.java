@@ -126,6 +126,12 @@ public class ComponentBuilder {
         return this;
     }
 
+//    public ComponentBuilder appendHoverText(String text, String hoverText) {
+//        append(text);
+//        this.current.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new net.md_5.bungee.api.chat.ComponentBuilder(hoverText).create()));
+//        return this;
+//    }
+
     public ComponentBuilder appendClickEvent(ClickEvent.Action action, String value) {
         this.current.setClickEvent(new ClickEvent(action, value));
         return this;

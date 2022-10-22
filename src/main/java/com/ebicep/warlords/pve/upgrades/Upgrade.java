@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.util.bukkit.WordWrap;
+
 public class Upgrade {
 
     private String name;
@@ -32,7 +34,7 @@ public class Upgrade {
     public Upgrade(String name, String subName, String description, int currencyCost, Runnable onUpgrade) {
         this.name = name;
         this.subName = subName;
-        this.description = description;
+        this.description = description.replace("\n", " "); //TODO remove new line in all descriptions
         this.currencyCost = currencyCost;
         this.onUpgrade = onUpgrade;
     }
@@ -46,6 +48,10 @@ public class Upgrade {
     }
 
     public String getDescription() {
+        return WordWrap.wrapWithNewline(description, 150);
+    }
+
+    public String getDescriptionRaw() {
         return description;
     }
 
