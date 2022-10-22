@@ -34,7 +34,7 @@ public class Guild {
     public static final Predicate<DatabasePlayer> CAN_CREATE = databasePlayer -> {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         return pveStats.getCurrencyValue(Currencies.COIN) >= CREATE_COIN_COST && (pveStats.getNormalStats().getWins() + pveStats.getHardStats()
-                .getWins()) >= 20;
+                .getWins()) >= 10;
     };
 
     //Local cache of uuids for faster lookup

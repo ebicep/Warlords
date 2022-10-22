@@ -33,7 +33,7 @@ public class GuildCommand extends BaseCommand {
     public void create(@Conditions("guild:false") Player player, String guildName) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             if (!Guild.CAN_CREATE.test(databasePlayer)) {
-                player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 20 Normal PvE wins to create a guild.");
+                player.sendMessage(ChatColor.RED + "You need at least 500,000 coins and 10 Normal/Hard PvE wins to create a guild.");
                 return;
             }
             if (guildName.length() > 15) {
