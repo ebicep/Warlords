@@ -121,10 +121,6 @@ public class SoulSwitch extends AbstractAbility {
                     }.runTaskLater(60);
                 }
 
-                if (wp.isInPve()) {
-                    setCooldown(cooldown * 0.5f);
-                }
-
                 return true;
             }
         }
