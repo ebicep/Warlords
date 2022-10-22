@@ -257,6 +257,8 @@ public enum GameMode {
             options.add(new WinByMaxWaveClearOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WinByAllDeathOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new DieOnLogoutOption());
             return options;
         }
     },
