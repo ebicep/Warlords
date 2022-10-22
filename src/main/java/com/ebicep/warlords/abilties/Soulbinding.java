@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Soulbinding extends AbstractAbility {
 
@@ -64,6 +65,14 @@ public class Soulbinding extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();
+        if (wp.isInPve()) {
+            List<PersistentCooldown> currentSoulBindings = new CooldownFilter<>(wp, PersistentCooldown.class)
+                    .filterCooldownClass(Soulbinding.class)
+                    .stream().collect(Collectors.toList());
+            if (currentSoulBindings.size() >= 2) {
+                wp.getCooldownManager().removeCooldown(currentSoulBindings.get(0));
+            }
+        }
         wp.getCooldownManager().addPersistentCooldown(
                 name,
                 "SOUL",
