@@ -210,6 +210,11 @@ public class WaveDefenseOption implements Option {
                 }
             }
 
+            @EventHandler
+            public void onNewWave(WarlordsGameWaveClearEvent event) {
+                game.warlordsPlayers().forEach(WarlordsEntity::respawn);
+            }
+
         });
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
