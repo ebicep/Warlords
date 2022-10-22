@@ -215,7 +215,11 @@ public class WaveDefenseOption implements Option {
 
             @EventHandler
             public void onNewWave(WarlordsGameWaveClearEvent event) {
-                game.warlordsPlayers().forEach(WarlordsEntity::respawn);
+                game.warlordsPlayers().forEach(warlordsPlayer -> {
+                    if (warlordsPlayer.isDead()) {
+                        warlordsPlayer.respawn();
+                    }
+                });
             }
 
         });
