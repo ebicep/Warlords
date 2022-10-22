@@ -82,9 +82,9 @@ public class WeaponBindMenu {
                                     selectedWeapon.setBound(true);
 
                                     player.spigot().sendMessage(
-                                            new ComponentBuilder(ChatColor.AQUA + "You unbounded ")
+                                            new ComponentBuilder(ChatColor.GRAY + "You unbounded ")
                                                     .appendHoverItem(boundWeapon.getName(), boundWeapon.generateItemStack())
-                                                    .append(ChatColor.AQUA + " and bound ")
+                                                    .append(ChatColor.GRAY + " and bound ")
                                                     .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack())
                                                     .create()
                                     );
