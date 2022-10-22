@@ -13,7 +13,7 @@ public enum Permissions {
     COORDINATOR("HGS", ChatColor.GOLD, "group.coordinator"),
     CONTENT_CREATOR("CT", ChatColor.LIGHT_PURPLE, "group.contentcreator"),
     GAME_STARTER("GS", ChatColor.YELLOW, "group.gamestarter"),
-    GAME_TESTER("T", ChatColor.YELLOW, "group.gametester"),
+    GAME_TESTER("P", ChatColor.GREEN, "group.patreon"),
     DEFAULT("", ChatColor.AQUA, "group.default"),
 
     ;
