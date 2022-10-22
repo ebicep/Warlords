@@ -811,7 +811,7 @@ public class Warlords extends JavaPlugin {
 
                             if (heal != 0) {
                                 wps.setHealth(wps.getHealth() + heal);
-                                wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + heal + " §7health.");
+                                wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + Math.round(heal) + " §7health.");
                             }
                         }
 
