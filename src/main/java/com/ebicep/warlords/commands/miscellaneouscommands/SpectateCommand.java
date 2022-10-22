@@ -54,7 +54,7 @@ public class SpectateCommand extends BaseCommand {
                     );
             if (game.getGameMode() == GameMode.WAVE_DEFENSE) {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
-                    itemBuilder.addLore(" - " + warlordsPlayer.getName() + "\n");
+                    itemBuilder.addLore(ChatColor.GRAY + " - " + ChatColor.AQUA + warlordsPlayer.getName() + "\n");
                 });
             }
             menu.setItem(column,
