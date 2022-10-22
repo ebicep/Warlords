@@ -140,6 +140,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     100,
                                     false
                             );
+                            enemy.sendMessage(ChatColor.RED + "HINT: Killing Acolytes too quickly might result in an unfavourable outcome.");
                         }
                         for (WarlordsEntity warlordsEntity : warlordsEntities) {
                             ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
@@ -148,7 +149,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         timesMegaEarthQuakeActivated++;
                     } else {
                         for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(warlordsNPC, 20, 20, 20)
+                                .entitiesAround(warlordsNPC, 15, 15, 15)
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             enemy.addDamageInstance(
