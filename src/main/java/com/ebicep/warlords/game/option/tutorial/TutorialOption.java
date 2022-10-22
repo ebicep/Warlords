@@ -186,7 +186,7 @@ public class TutorialOption implements Option {
                     "Hi! Welcome to the server.",
                     "It appears that you haven’t played Warlords before. On this server at least!",
                     "Here’s a quick tutorial to get you started.",
-                    "I promise you that this won’t take long",
+                    "I promise you that this won’t take long, if you wish to skip this, /tutorial skip",
             };
 
             private final String[] rangeAttackPrompts = new String[]{
