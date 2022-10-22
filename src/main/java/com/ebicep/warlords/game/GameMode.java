@@ -256,6 +256,8 @@ public enum GameMode {
             options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
             options.add(new WinByMaxWaveClearOption());
             options.add(new WinByAllDeathOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new DieOnLogoutOption());
             return options;
         }
     },
