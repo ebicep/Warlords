@@ -38,7 +38,7 @@ public class SpectateCommand extends BaseCommand {
                                         ChatColor.GRAY + "Map: " + ChatColor.RED + game.getMap().getMapName(),
                                         ChatColor.GRAY + "Gamemode: " + ChatColor.RED + game.getGameMode().getName(),
                                         ChatColor.GRAY + "Addons: " + ChatColor.RED + game.getAddons().stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")),
-                                        ChatColor.GRAY + "Player count: " + ChatColor.RED + game.playersCount()
+                                        ChatColor.GRAY + "Player count: " + ChatColor.RED + game.warlordsPlayers().count()
                                 )
                                 .get(),
                         (m, e) -> {
@@ -58,9 +58,7 @@ public class SpectateCommand extends BaseCommand {
                             } else if (currentGame.isPresent() && currentGame.get().equals(game)) {
                                 player.sendMessage(ChatColor.RED + "You are already spectating this game");
                             } else {
-                                if (currentGame.isPresent()) {
-                                    currentGame.get().removePlayer(player.getUniqueId());
-                                }
+                                currentGame.ifPresent(value -> value.removePlayer(player.getUniqueId()));
                                 game.addPlayer(player, true);
                             }
                         }
