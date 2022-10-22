@@ -157,7 +157,7 @@ public abstract class DatabaseGameBase {
                 return false;
             }
 
-            if (previousGames.size() > 0) {
+            if (previousGames.size() >= 10) {
                 previousGames.get(0).deleteHolograms();
                 previousGames.remove(0);
             }
