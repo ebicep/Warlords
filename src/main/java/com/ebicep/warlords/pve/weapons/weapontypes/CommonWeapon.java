@@ -85,12 +85,12 @@ public class CommonWeapon extends AbstractTierOneWeapon implements Salvageable, 
 
     @Override
     public int getMinSalvageAmount() {
-        return 1;
+        return 4;
     }
 
     @Override
     public int getMaxSalvageAmount() {
-        return 2;
+        return 6;
     }
 
 }
