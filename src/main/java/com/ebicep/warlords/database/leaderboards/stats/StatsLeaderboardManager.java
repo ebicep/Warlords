@@ -157,7 +157,9 @@ public class StatsLeaderboardManager {
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
         validatePlayerHolograms(player);
 
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
@@ -174,7 +176,9 @@ public class StatsLeaderboardManager {
                     .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
-        CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
+        if (player.getWorld().getName().equalsIgnoreCase("MainLobby")) {
+            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
+        }
         createLeaderboardSwitcherHologram(player);
         addPlayerPositionLeaderboards(player);
     }
@@ -183,7 +187,15 @@ public class StatsLeaderboardManager {
         Bukkit.getOnlinePlayers().forEach(StatsLeaderboardManager::setLeaderboardHologramVisibility);
     }
 
-    private static <T> void createLeaderboardSwitcherHologram(Player player, Location location, T selected, T before, T after, Function<T, String> getName, Consumer<T> set) {
+    private static <T> void createLeaderboardSwitcherHologram(
+            Player player,
+            Location location,
+            T selected,
+            T before,
+            T after,
+            Function<T, String> getName,
+            Consumer<T> set
+    ) {
         Hologram switchHologram = createSwitchHologram(location);
         if (selected != before) {
             switchHologram.getLines().appendText(ChatColor.GRAY + getName.apply(before)).setClickListener(p -> {
@@ -204,7 +216,9 @@ public class StatsLeaderboardManager {
     }
 
     private static void createLeaderboardSwitcherHologram(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
         removePlayerSpecificHolograms(player);
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
@@ -248,7 +262,8 @@ public class StatsLeaderboardManager {
                 playerLeaderboardInfo.getPageBefore(),
                 playerLeaderboardInfo.getPageAfter(),
                 playerLeaderboardInfo::getPageRange,
-                playerLeaderboardInfo::setPage);
+                playerLeaderboardInfo::setPage
+        );
     }
 
     private static Hologram createSwitchHologram(Location location) {
@@ -260,7 +275,9 @@ public class StatsLeaderboardManager {
     }
 
     public static void addPlayerPositionLeaderboards(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
         if (enabled) {
             //leaderboards
             removeLeaderboardPlayerSpecificHolograms(player);
@@ -268,10 +285,14 @@ public class StatsLeaderboardManager {
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
             PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
             StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
-            if (statsLeaderboardCategory == null) return;
+            if (statsLeaderboardCategory == null) {
+                return;
+            }
             List<Hologram> playerHolograms = new ArrayList<>();
             for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.getStatsLeaderboards()) {
-                if (statsLeaderboard.isHidden()) continue;
+                if (statsLeaderboard.isHidden()) {
+                    continue;
+                }
                 Location location = statsLeaderboard.getLocation().clone().add(0, -3.5, 0);
 
                 Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
@@ -280,7 +301,9 @@ public class StatsLeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines()
+                                .appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction()
+                                        .apply(databasePlayer));
                         break;
                     }
                 }
@@ -296,7 +319,9 @@ public class StatsLeaderboardManager {
     }
 
     public static void removePlayerSpecificHolograms(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) return;
+        if (!Warlords.holographicDisplaysEnabled) {
+            return;
+        }
         removeLeaderboardPlayerSpecificHolograms(player);
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
                 .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
@@ -324,16 +349,6 @@ public class StatsLeaderboardManager {
         CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
         PVE("Wave Defense", "PvE", StatsLeaderboardPvE::new);
 
-        public final String name;
-        public final String shortName;
-        public final Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType;
-
-        GameType(String name, String shortName, Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType) {
-            this.name = name;
-            this.shortName = shortName;
-            this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;
-        }
-
         public static GameType getAfter(GameType gameType) {
             switch (gameType) {
                 case ALL:
@@ -357,6 +372,16 @@ public class StatsLeaderboardManager {
             }
             return ALL;
         }
+
+        public final String name;
+        public final String shortName;
+        public final Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType;
+
+        GameType(String name, String shortName, Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType) {
+            this.name = name;
+            this.shortName = shortName;
+            this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;
+        }
     }
 
     public enum Category {
@@ -369,16 +394,6 @@ public class StatsLeaderboardManager {
         PUBS("Public Queue", "Pubs", AbstractStatsLeaderboardGameType::getPubs) {
 
         };
-
-        public final String name;
-        public final String shortName;
-        public final Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory;
-
-        Category(String name, String shortName, Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory) {
-            this.name = name;
-            this.shortName = shortName;
-            this.getCategory = getCategory;
-        }
 
         public static Category getAfter(Category category) {
             switch (category) {
@@ -402,6 +417,16 @@ public class StatsLeaderboardManager {
                     return COMPS;
             }
             return ALL;
+        }
+
+        public final String name;
+        public final String shortName;
+        public final Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory;
+
+        Category(String name, String shortName, Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory) {
+            this.name = name;
+            this.shortName = shortName;
+            this.getCategory = getCategory;
         }
     }
 
