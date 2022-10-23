@@ -104,7 +104,7 @@ public class CustomScoreboard {
                 " ",
                 "Coins: " + Currencies.COIN.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COIN)),
                 "Synthetic Shards: " + Currencies.SYNTHETIC_SHARD.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.SYNTHETIC_SHARD)),
-                "Legend Fragment: " + Currencies.LEGEND_FRAGMENTS.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.LEGEND_FRAGMENTS)),
+                "Legend Fragments: " + Currencies.LEGEND_FRAGMENTS.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.LEGEND_FRAGMENTS)),
                 "Star Pieces: " + ChatColor.GREEN + addCommaAndRound(pveStats.getCurrencyValue(Currencies.COMMON_STAR_PIECE) +
                         pveStats.getCurrencyValue(Currencies.RARE_STAR_PIECE) +
                         pveStats.getCurrencyValue(Currencies.EPIC_STAR_PIECE) +
