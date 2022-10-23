@@ -45,7 +45,7 @@ public class GuildLeaderboardManager {
         int index = 0;
         for (Guild guild : leaderboard) {
             //TODO show value
-            stringBuilder.append(ChatColor.GRAY).append(index).append(". ").append(ChatColor.GOLD).append(guild.getName()).append("\n");
+            stringBuilder.append(ChatColor.GRAY).append(index + 1).append(". ").append(ChatColor.GOLD).append(guild.getName()).append("\n");
             index++;
         }
 
