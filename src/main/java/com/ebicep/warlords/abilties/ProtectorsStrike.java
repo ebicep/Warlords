@@ -73,8 +73,8 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamage.get(),
-                maxDamage.get(),
+                minDamage.get() * (wp.isInPve() ? 1.25f : 1),
+                maxDamage.get() * (wp.isInPve() ? 1.25f : 1),
                 critChance,
                 critMultiplier,
                 false

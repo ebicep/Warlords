@@ -49,44 +49,45 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+1s Duration",
-                5000,
-                () -> {
-                    ability.setDuration(duration + 1);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
                 "+2s Duration",
-                10000,
+                5000,
                 () -> {
                     ability.setDuration(duration + 2);
                 }
         ));
         treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "+4s Duration",
+                10000,
+                () -> {
+                    ability.setDuration(duration + 4);
+                }
+        ));
+        treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+3s Duration",
+                "+6s Duration",
                 15000,
                 () -> {
-                    ability.setDuration(duration + 3);
+                    ability.setDuration(duration + 6);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+4s Duration",
+                "+8s Duration",
                 20000,
                 () -> {
-                    ability.setDuration(duration + 4);
+                    ability.setDuration(duration + 8);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Avenger’s Armageddon",
                 "Avenger's Wrath - Master Upgrade",
-                "-10% Cooldown reduction\n\nAvenger's Wrath hits 3 additional targets.",
+                "-10% Cooldown reduction\n\nAvenger's Wrath hits 3 additional targets and\ndouble the hit radius.",
                 50000,
                 () -> {
-                    ability.setMaxTargets(ability.getMaxTargets() + 3);
+                    ability.setHitRadius(ability.getHitRadius() * 2);
+                    ability.setMaxTargets(ability.getMaxTargets() + 5);
                     ability.setCooldown(ability.getCooldown() * 0.9f);
                 }
         );

@@ -107,9 +107,8 @@ public class RemedicChains extends AbstractAbility {
 
             for (WarlordsEntity chainTarget : teammatesNear) {
                 playersLinked++;
-
+                float maxHealth = chainTarget.getMaxHealth();
                 AtomicInteger timeLinked = new AtomicInteger();
-
                 chainTarget.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
                         name,
                         "REMEDIC",
@@ -145,7 +144,7 @@ public class RemedicChains extends AbstractAbility {
                             }
 
                             if (pveUpgrade) {
-                                chainTarget.setMaxHealth(chainTarget.getSpec().getMaxHealth());
+                                chainTarget.setMaxHealth(maxHealth);
                             }
                         },
                         duration * 20,
@@ -202,9 +201,10 @@ public class RemedicChains extends AbstractAbility {
                         ChatColor.GRAY + " seconds!"
                 );
 
+
                 if (pveUpgrade) {
                     wp.setMaxHealth(wp.getSpec().getMaxHealth() * 1.3f);
-                    chainTarget.setMaxHealth(chainTarget.getSpec().getMaxHealth() * 1.3f);
+                    chainTarget.setMaxHealth(maxHealth * 1.3f);
                 }
             }
 

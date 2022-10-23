@@ -60,7 +60,7 @@ public class Mithra extends AbstractZombie implements BossMob {
             }
         }
 
-        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+        for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new Spider(spawnLocation));
         }
     }
@@ -134,7 +134,7 @@ public class Mithra extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 280 == 0) {
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
                 option.spawnNewMob(new Spider(spawnLocation));
             }
         }

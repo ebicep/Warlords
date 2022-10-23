@@ -29,6 +29,7 @@ public class AvengersWrath extends AbstractAbility {
     private int duration = 12;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
+    private int hitRadius = 5;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0);
@@ -84,7 +85,7 @@ public class AvengersWrath extends AbstractAbility {
                 if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(WRATH_SKIP)) {
                     tempAvengersWrath.addPlayersStruckDuringWrath();
                     for (WarlordsEntity wrathTarget : PlayerFilter
-                            .entitiesAround(event.getPlayer(), 5, 4, 5)
+                            .entitiesAround(event.getPlayer(), hitRadius, hitRadius, hitRadius)
                             .aliveEnemiesOf(wp)
                             .closestFirst(event.getPlayer())
                             .excluding(event.getPlayer())
@@ -182,5 +183,13 @@ public class AvengersWrath extends AbstractAbility {
 
     public void setMaxTargets(int maxTargets) {
         this.maxTargets = maxTargets;
+    }
+
+    public int getHitRadius() {
+        return hitRadius;
+    }
+
+    public void setHitRadius(int hitRadius) {
+        this.hitRadius = hitRadius;
     }
 }
