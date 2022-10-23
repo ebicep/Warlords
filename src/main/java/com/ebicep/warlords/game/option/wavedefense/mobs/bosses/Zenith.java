@@ -20,7 +20,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
@@ -156,7 +155,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .entitiesAround(loc, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    if (!we.getEntity().hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
                         we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, -1, 100, false);
                         Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
                     }
