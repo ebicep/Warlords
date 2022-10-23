@@ -98,7 +98,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
         masterUpgrade = new Upgrade(
                 "Hammer of Illusion",
                 "Hammer of Light - Master Upgrade",
-                "Upon activating Crown of Light, release 4 additional\nlight rays that deals quintuple the damage to all nearby\nenemies and heal allies for the same amount.",
+                "Upon activating Crown of Light, release 4 additional\nlight rays that deal quintuple the damage to all nearby\nenemies and heal allies for the same amount.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
