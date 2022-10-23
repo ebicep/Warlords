@@ -711,7 +711,10 @@ public class Warlords extends JavaPlugin {
                             itr.remove();
 
                             float orbHeal = OrbsOfLife.ORB_HEALING;
-                            if (PlayerSettings.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
+                            WarlordsEntity owner = orb.getOwner();
+                            if (owner.getGame()
+                                    .getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE && PlayerSettings.getPlayerSettings(owner.getUuid())
+                                    .getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
                                 orbHeal *= 1.2;
                             }
 
@@ -723,7 +726,7 @@ public class Warlords extends JavaPlugin {
                                 orbHeal *= 1 + orb.getTicksLived() / 325f;
                             }
 
-                            wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
+                            wp.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                             if (player != null) {
                                 Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                             }
@@ -733,7 +736,7 @@ public class Warlords extends JavaPlugin {
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .limit(2)
                             ) {
-                                nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
+                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
                                     Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
