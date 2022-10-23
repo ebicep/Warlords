@@ -161,7 +161,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                                         ChatColor.YELLOW + " your ultimate cooldown has been reduced by " + reduction + " seconds" +
                                         ChatColor.GRAY + "!"
                                 );
-                                //wp.getPurpleAbility().subtractCooldown(reduction);
+                                wp.getPurpleAbility().subtractCooldown(reduction);
                                 wp.getOrangeAbility().subtractCooldown(reduction);
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +

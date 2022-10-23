@@ -43,11 +43,12 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+40% Healing",
+                "+40% Healing\n-30 Energy cost",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.4f);
                     ability.setMaxDamageHeal(maxDamage * 1.4f);
+                    ability.setEnergyCost(ability.getEnergyCost() - 30);
                 }
         ));
 
@@ -77,11 +78,11 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         ));
         treeB.add(new Upgrade(
                 "Zeal - Tier IV",
-                "+40% Additional mark healing\n-10% Cooldown reduction",
+                "+40% Additional mark healing\n-20% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setMarkHealing(markHealing + 40);
-                    ability.setCooldown(cooldown * 0.9f);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 

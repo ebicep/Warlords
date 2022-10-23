@@ -49,7 +49,7 @@ public class HealingTotem extends AbstractTotemBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that pulses constantly, healing nearby allies in a §e" + radius +
-                " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "every second. " +
+                " §7block radius for" + formatRangeHealing(minDamageHeal, maxDamageHeal) + "health every second. " +
                 "The healing will gradually increase by §a35% §7 (Up to " + (35 * duration) + "%) every second. Lasts §6" + duration + " §7seconds." +
                 "\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for §6" +
                 crippleDuration + " §7seconds. Crippled enemies deal §c25% §7less damage.";
