@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class VoidZombie extends AbstractZombie implements EliteMob {
 
-    private int voidRadius = 5;
+    private int voidRadius = 4;
 
     public VoidZombie(Location spawnLocation) {
         super(
@@ -34,9 +34,9 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
                         new ItemStack(Material.GOLDEN_CARROT)
                 ),
-                10000,
+                9000,
                 0.1f,
-                10,
+                0,
                 1500,
                 2000
         );

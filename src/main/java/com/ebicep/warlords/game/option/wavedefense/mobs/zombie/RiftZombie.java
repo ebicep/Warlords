@@ -27,7 +27,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 229, 69, 176),
                         Weapons.VORPAL_SWORD.getItem()
                 ),
-                10000,
+                9000,
                 0.33f,
                 10,
                 800,

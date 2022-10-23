@@ -90,7 +90,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         masterUpgrade = new Upgrade(
                 "Healing Chains",
                 "Chain Heal - Master Upgrade",
-                "+1 Chain bounce\n+25% Additional healing\n+5 Blocks cast and bounce range\n\nNo longer heals for less on the last bounce.",
+                "+1 Chain bounce\n+25% Additional healing\n+5 Blocks cast and bounce range.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

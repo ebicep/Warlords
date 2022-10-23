@@ -61,7 +61,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        if (ticksElapsed % 160 == 0) {
+        if (ticksElapsed % 240 == 0) {
             EffectUtils.strikeLightningInCylinder(loc, 8, false, 10, warlordsNPC.getGame());
             shockwave(loc, 8, 10, playerCount);
             EffectUtils.strikeLightningInCylinder(loc, 16, false, 15, warlordsNPC.getGame());

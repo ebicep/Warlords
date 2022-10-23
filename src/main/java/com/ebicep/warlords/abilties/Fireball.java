@@ -100,7 +100,10 @@ public class Fireball extends AbstractProjectileBase {
                         5 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksLeft % 20 == 0) {
-                                float healthDamage = hit.getMaxHealth() * 0.0025f;
+                                float healthDamage = hit.getMaxHealth() * 0.02f;
+                                if (healthDamage > 800) {
+                                    healthDamage = 800;
+                                }
                                 hit.addDamageInstance(
                                         shooter,
                                         "Burn",
