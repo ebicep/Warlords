@@ -1106,7 +1106,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRift",
-            10,
+            8,
             GameMode.WAVE_DEFENSE
     ) {
         @Override
@@ -1453,7 +1453,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionCrossfire",
-            10,
+            8,
             GameMode.WAVE_DEFENSE
     ) {
         @Override

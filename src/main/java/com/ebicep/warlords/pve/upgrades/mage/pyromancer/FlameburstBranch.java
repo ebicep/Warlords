@@ -86,9 +86,11 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         masterUpgrade = new Upgrade(
                 "Flame Awakening",
                 "Flame Burst - Master Upgrade",
-                "Flame Burst deals significantly more damage and ramps up\ncrit chance, crit damage and damage very quickly per blocks\ntraveled at the cost of heavily reduced projectile\nspeed and increased energy cost.",
+                "Flame Burst deals significantly more damage and ramps up\ncrit chance, crit damage and damage very quickly per blocks\ntraveled at the cost " +
+                        "of heavily reduced projectile\nspeed increased energy cost, and double the cooldown.",
                 50000,
                 () -> {
+                    ability.setCooldown(ability.getCooldown() * 2);
                     ability.setProjectileWidth(0.72D);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
                     ability.setEnergyCost(energyCost + 90);

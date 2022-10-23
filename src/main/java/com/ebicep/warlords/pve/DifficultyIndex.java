@@ -11,7 +11,7 @@ public enum DifficultyIndex {
                     "\n\nModifiers:\n§aNone",
             ChatColor.YELLOW,
             25,
-            16,
+            16 * 3,
             4
     ),
     HARD("Hard §c[COMING SOON]",
@@ -19,7 +19,7 @@ public enum DifficultyIndex {
                     "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n+Tougher Mobs",
             ChatColor.GOLD,
             25,
-            32,
+            32 * 3,
             8
     ),
     ENDLESS("Endless",
@@ -27,7 +27,7 @@ public enum DifficultyIndex {
                     "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Mob Spawns",
             ChatColor.RED,
             10000,
-            24,
+            24 * 3,
             4
     );
 

@@ -371,9 +371,9 @@ public class ExperienceManager {
                     expGain.put("Waves Cleared", (long) wavesCleared * difficulty.getWaveExperienceMultiplier());
                     if (wavesCleared == 25) {
                         if (difficulty == DifficultyIndex.NORMAL) {
-                            expGain.put("Wave 25 Clear Bonus", 500L);
+                            expGain.put("Wave 25 Clear Bonus", 1500L);
                         } else if (difficulty == DifficultyIndex.HARD) {
-                            expGain.put("Wave 25 Clear Bonus", 1000L);
+                            expGain.put("Wave 25 Clear Bonus", 3000L);
                         }
                     }
                     break;
