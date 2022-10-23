@@ -96,7 +96,7 @@ public class GuildUpgradeMenu {
                                     ChatColor.GRAY + "Cost: " + ChatColor.GREEN + NumberFormat.addCommas(upgradeCost) +
                                             " Guild Coins",
                                     "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgradesTemporary."
+                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This will override the current upgrade."
                             )
                             .get(),
                     (m, e) -> {
