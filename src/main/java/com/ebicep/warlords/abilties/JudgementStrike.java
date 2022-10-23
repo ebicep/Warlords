@@ -76,7 +76,7 @@ public class JudgementStrike extends AbstractStrikeBase {
                                 finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .25) &&
                                 ((WarlordsNPC) nearPlayer).getMobTier() != MobTier.BOSS
                 ) {
-                    nearPlayer.die(nearPlayer);
+                    nearPlayer.addDamageInstance(wp, "Execute", nearPlayer.getHealth(), nearPlayer.getHealth(), 0, 100, false);
                 }
             }
         });
