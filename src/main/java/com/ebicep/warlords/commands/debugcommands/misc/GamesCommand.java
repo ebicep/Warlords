@@ -266,11 +266,9 @@ public class GamesCommand extends BaseCommand {
     @Subcommand("reload")
     @Description("Reloads game holograms")
     public void reload(CommandIssuer issuer) {
-        sendDebugMessage(issuer, ChatColor.GREEN + "Deleting Holograms", true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Reloading Game Holograms", true);
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Creating Holograms", true);
         previousGames.forEach(DatabaseGameBase::createHolograms);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Setting Visibility", true);
         Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
     }
 
