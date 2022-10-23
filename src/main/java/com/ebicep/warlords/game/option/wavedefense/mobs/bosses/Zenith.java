@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
@@ -110,6 +111,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     counter++;
@@ -154,8 +156,10 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .entitiesAround(loc, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, -1, 100, false);
-                    Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
+                    if (!we.getEntity().hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                        we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, -1, 100, false);
+                        Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
+                    }
                 }
             }
         }.runTaskLater(tickDelay);
