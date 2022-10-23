@@ -14,7 +14,28 @@ public class WaveDefenseStats {
         put("Mithra", 400L);
         put("Zenith", 1500L);
     }};
-    public static final long[] COINS_PER_5_WAVES = new long[]{50, 100, 150, 200, 300};
+    public static final long[] COINS_PER_5_WAVES = new long[]{
+            50,
+            100,
+            150,
+            200,
+            300,
+            400,
+            500,
+            600,
+            700,
+            800,
+            900,
+            1000,
+            1100,
+            1200,
+            1300,
+            1400,
+            1500,
+            1600,
+            1700,
+            1800
+    };
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
     private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
