@@ -27,7 +27,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -107,24 +109,52 @@ public class ExperienceManager {
                 Pair<Integer, Integer> menuLocation = CLASSES_MENU_LOCATION.get(value);
 
                 List<String> specLore = new ArrayList<>();
+                boolean hasRewards = false;
                 for (Specializations spec : value.subclasses) {
-                    int prestige = databasePlayer.getSpec(spec).getPrestige();
-                    int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
-                    long experience = databasePlayer.getSpec(spec).getExperience();
+                    DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                    int prestige = databasePlayerSpec.getPrestige();
+                    int level = getLevelFromExp(databasePlayerSpec.getExperience());
+                    long experience = databasePlayerSpec.getExperience();
 
                     specLore.add(ChatColor.GOLD + spec.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(
                             level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige));
                     specLore.add(getProgressStringWithPrestige(experience, level + 1, prestige));
                     specLore.add("");
+
+                    for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                        if (prestigeCheck == prestige) {
+                            for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
+                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                                    hasRewards = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
+                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                    hasRewards = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasRewards) {
+                            break;
+                        }
+                    }
                 }
 
+                ItemBuilder itemBuilder = new ItemBuilder(value.item)
+                        .name(ChatColor.GREEN + value.name)
+                        .lore(specLore);
+                if (hasRewards) {
+                    itemBuilder.addLore(ChatColor.GREEN + "You have unclaimed rewards!");
+                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                }
                 menu.setItem(
                         menuLocation.getA(),
                         menuLocation.getB(),
-                        new ItemBuilder(value.item)
-                                .name(ChatColor.GREEN + value.name)
-                                .lore(specLore)
-                                .get(),
+                        itemBuilder.get(),
                         (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
                 );
             }
@@ -140,22 +170,53 @@ public class ExperienceManager {
         List<Specializations> values = classes.subclasses;
         for (int i = 0; i < values.size(); i++) {
             Specializations spec = values.get(i);
-            int prestige = databasePlayer.getSpec(spec).getPrestige();
-            int level = getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
-            long experience = databasePlayer.getSpec(spec).getExperience();
+            DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+            int prestige = databasePlayerSpec.getPrestige();
+            int level = getLevelFromExp(databasePlayerSpec.getExperience());
+            long experience = databasePlayerSpec.getExperience();
 
+            boolean hasRewards = false;
+            for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                if (prestigeCheck == prestige) {
+                    for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
+                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                            hasRewards = true;
+                            break;
+                        }
+                    }
+                } else {
+                    for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
+                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                            hasRewards = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasRewards) {
+                    break;
+                }
+            }
+
+            ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
+                    .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" +
+                            ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
+                            getPrestigeLevelString(prestige)
+                    )
+                    .lore(getProgressStringWithPrestige(experience, level + 1, prestige));
+            if (hasRewards) {
+                itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
+                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+            }
             menu.setItem(
                     9 / 2 - values.size() / 2 + i * 2 - 1,
                     1,
-                    new ItemBuilder(spec.specType.itemStack)
-                            .name(ChatColor.GREEN + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(
-                                    level) + ChatColor.DARK_GRAY + "] " + getPrestigeLevelString(prestige))
-                            .lore(getProgressStringWithPrestige(experience, level + 1, prestige))
+                    itemBuilder
                             .get(),
                     (m, e) -> openLevelingRewardsMenuForSpec(player,
                             databasePlayer, spec,
                             1,
-                            databasePlayer.getSpec(spec).getPrestige()
+                            databasePlayerSpec.getPrestige()
                     )
             );
         }
