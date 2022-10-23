@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,11 +12,8 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.PathfinderGoalSelector;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -122,27 +118,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
                                 if (otherPlayer instanceof WarlordsNPC) {
-                                    AbstractMob<?> mob = ((WarlordsNPC) otherPlayer).getMob();
-                                    EntityInsentient entityInsentient = mob.getEntityInsentient();
-                                    PathfinderGoalSelector oldGoalSelector = entityInsentient.goalSelector;
-                                    mob.getEntity().resetGoalAI(((CraftWorld) wp.getWorld()).getHandle());
-                                    new GameRunnable(wp.getGame()) {
-                                        @Override
-                                        public void run() {
-                                            entityInsentient.goalSelector = oldGoalSelector;
-                                        }
-                                    }.runTaskLater(getStunTimeInTicks());
-//                                new GameRunnable(wp.getGame()) {
-//                                    Location location = enemy.getLocation();
-//                                    int counter = 0;
-//                                    @Override
-//                                    public void run() {
-//                                        enemy.teleport(location);
-//                                        if(counter++ == 60) {
-//                                            this.cancel();
-//                                        }
-//                                    }
-//                                }.runTaskTimer(0, 0);
+                                    otherPlayer.getSpeed().addSpeedModifier("Charge Stun", -99, getStunTimeInTicks(), "BASE");
                                 } else {
                                     STUNNED_PLAYERS.add(otherPlayer.getUuid());
                                     new GameRunnable(wp.getGame()) {
