@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -445,12 +446,32 @@ public class WeaponManagerMenu {
         }
     }
 
+    public enum BindFilterOptions {
+
+        ALL("All", (weapon) -> true),
+        BOUND("Bound", (weapon) -> weapon.isBound()),
+        UNBOUND("Unbound", (weapon) -> !weapon.isBound()),
+
+        ;
+
+        public static final BindFilterOptions[] VALUES = values();
+        public final String name;
+        public final Predicate<AbstractWeapon> filter;
+
+        BindFilterOptions(String name, Predicate<AbstractWeapon> filter) {
+            this.name = name;
+            this.filter = filter;
+        }
+
+    }
+
     static class PlayerMenuSettings {
         private int page = 1;
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
         private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
         private SortOptions sortOption = SortOptions.DATE;
+        private BindFilterOptions bindFilterOption = BindFilterOptions.UNBOUND;
         private boolean ascending = true; //ascending = smallest -> largest/recent
         private StarPieces selectedStarPiece = StarPieces.COMMON;
 
