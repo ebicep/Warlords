@@ -145,38 +145,7 @@ public class MasterworksFairManager {
                                     .execute();
                         }
                     }
-                    playerFairResults.forEach((uuid, masterworksFairEntries) -> {
-                        Warlords.newChain()
-                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                .syncLast(databasePlayer -> {
-                                    List<String> message = new ArrayList<>();
-                                    message.add(ChatColor.GOLD + "------------------------------------------------");
-                                    message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
-                                    for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
-                                        if (rarity.getPlayerEntries == null) {
-                                            continue;
-                                        }
-                                        Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
-                                                .filter(entry -> entry.getRarity() == rarity)
-                                                .findAny();
-                                        if (masterworksFairEntry.isPresent()) {
-                                            MasterworksFairEntry fairEntry = masterworksFairEntry.get();
-                                            message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " +
-                                                    ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(fairEntry.getScore()) + "% " +
-                                                    ChatColor.GRAY + "(" + ChatColor.AQUA + "#" + fairEntry.getPlacement() + ChatColor.GRAY + ")"
-                                            );
-                                        } else {
-                                            message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Not Submitted");
-                                        }
-                                    }
-                                    message.add("");
-                                    message.add(ChatColor.GREEN + "Claim your rewards through your Reward Inventory in your 9th slot!");
-                                    message.add(ChatColor.GOLD + "------------------------------------------------");
-                                    databasePlayer.addFutureMessage(new FutureMessage(message, true));
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                })
-                                .execute();
-                    });
+                    masterworksFair.sendResults(playerFairResults);
                     if (throughRewardsInventory) {
                         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
                     } else {
