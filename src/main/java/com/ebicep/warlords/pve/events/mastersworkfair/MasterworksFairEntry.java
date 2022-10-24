@@ -12,13 +12,15 @@ public class MasterworksFairEntry {
     private WeaponsPvE rarity;
     private int placement;
     private float score;
+    @Field("fair_number")
+    private int fairNumber;
 
-
-    public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score) {
+    public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score, int fairNumber) {
         this.rarity = rarity;
         this.placement = placement;
         this.time = time;
         this.score = score;
+        this.fairNumber = fairNumber;
     }
 
     public Instant getTime() {
@@ -35,5 +37,9 @@ public class MasterworksFairEntry {
 
     public float getScore() {
         return score;
+    }
+
+    public int getFairNumber() {
+        return fairNumber;
     }
 }

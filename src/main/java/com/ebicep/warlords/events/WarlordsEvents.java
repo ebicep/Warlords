@@ -213,13 +213,7 @@ public class WarlordsEvents implements Listener {
                             .async(() -> {
                                 List<FutureMessage> futureMessages = databasePlayer.getFutureMessages();
                                 if (!futureMessages.isEmpty()) {
-                                    futureMessages.forEach(futureMessage -> {
-                                        if (futureMessage.isCentered()) {
-                                            futureMessage.getMessages().forEach(message -> ChatUtils.sendCenteredMessage(player, message));
-                                        } else {
-                                            futureMessage.getMessages().forEach(player::sendMessage);
-                                        }
-                                    });
+                                    futureMessages.forEach(futureMessage -> futureMessage.sendToPlayer(player));
                                     futureMessages.clear();
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 }

@@ -1,5 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.util.chat.ChatUtils;
+import org.bukkit.entity.Player;
+
 import java.util.List;
 
 public class FutureMessage {
@@ -11,11 +14,12 @@ public class FutureMessage {
         this.centered = centered;
     }
 
-    public List<String> getMessages() {
-        return messages;
+    public void sendToPlayer(Player player) {
+        if (centered) {
+            messages.forEach(message -> ChatUtils.sendCenteredMessage(player, message));
+        } else {
+            messages.forEach(player::sendMessage);
+        }
     }
 
-    public boolean isCentered() {
-        return centered;
-    }
 }

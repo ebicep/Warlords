@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
@@ -84,6 +85,8 @@ public class MasterworksFairManager {
                 .async(() -> DatabaseManager.masterworksFairService.update(masterworksFair))
                 .sync(() -> {
                     Instant now = Instant.now();
+                    HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
+                    int fairNumber = masterworksFair.getFairNumber();
                     for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
                         if (rarity.getPlayerEntries == null) {
                             continue;
@@ -98,8 +101,10 @@ public class MasterworksFairManager {
                             MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(now,
                                     rarity,
                                     i + 1,
-                                    Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore()))
+                                    Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())),
+                                    fairNumber
                             );
+                            playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
                             int finalI = i;
                             Warlords.newChain()
                                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(entry.getUuid()))
@@ -127,7 +132,7 @@ public class MasterworksFairManager {
                                                 rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
                                             }
                                         }
-                                        if (masterworksFair.getFairNumber() != 0 && masterworksFair.getFairNumber() % 10 == 0) {
+                                        if (fairNumber != 0 && fairNumber % 10 == 0) {
                                             rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
                                         }
                                         if (throughRewardsInventory) {
@@ -140,6 +145,38 @@ public class MasterworksFairManager {
                                     .execute();
                         }
                     }
+                    playerFairResults.forEach((uuid, masterworksFairEntries) -> {
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                .syncLast(databasePlayer -> {
+                                    List<String> message = new ArrayList<>();
+                                    message.add(ChatColor.GOLD + "------------------------------------------------");
+                                    message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
+                                    for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+                                        if (rarity.getPlayerEntries == null) {
+                                            continue;
+                                        }
+                                        Optional<MasterworksFairEntry> masterworksFairEntry = masterworksFairEntries.stream()
+                                                .filter(entry -> entry.getRarity() == rarity)
+                                                .findAny();
+                                        if (masterworksFairEntry.isPresent()) {
+                                            MasterworksFairEntry fairEntry = masterworksFairEntry.get();
+                                            message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " +
+                                                    ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(fairEntry.getScore()) + "% " +
+                                                    ChatColor.GRAY + "(" + ChatColor.AQUA + "#" + fairEntry.getPlacement() + ChatColor.GRAY + ")"
+                                            );
+                                        } else {
+                                            message.add(rarity.getChatColorName() + ChatColor.GRAY + ": " + ChatColor.YELLOW + "Not Submitted");
+                                        }
+                                    }
+                                    message.add("");
+                                    message.add(ChatColor.GREEN + "Claim your rewards through your Reward Inventory in your 9th slot!");
+                                    message.add(ChatColor.GOLD + "------------------------------------------------");
+                                    databasePlayer.addFutureMessage(new FutureMessage(message, true));
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                })
+                                .execute();
+                    });
                     if (throughRewardsInventory) {
                         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
                     } else {
