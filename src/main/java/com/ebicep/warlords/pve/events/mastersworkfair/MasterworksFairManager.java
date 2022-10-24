@@ -191,10 +191,12 @@ public class MasterworksFairManager {
 
     private static void createFair(MasterworksFair masterworksFair) {
         Warlords.newChain()
-                .async(() -> DatabaseManager.masterworksFairService.create(masterworksFair))
-                .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
-                .syncLast(masterworksFairs -> {
-                    int size = masterworksFairs.size() + 1;
+                .asyncFirst(() -> {
+                    DatabaseManager.masterworksFairService.create(masterworksFair);
+                    return DatabaseManager.masterworksFairService.count();
+                })
+                .syncLast(count -> {
+                    int size = Math.toIntExact(count + 1);
                     masterworksFair.setFairNumber(size);
                     DatabaseManager.masterworksFairService.update(masterworksFair);
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
