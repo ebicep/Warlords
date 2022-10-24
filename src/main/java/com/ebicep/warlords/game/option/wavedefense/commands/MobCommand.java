@@ -5,17 +5,20 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import net.minecraft.server.v1_8_R3.EntityInsentient;
 import org.bukkit.ChatColor;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CommandAlias("mob")
 @CommandPermission("group.administrator")
@@ -52,7 +55,10 @@ public class MobCommand extends BaseCommand {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.getWarlordsNPC().getSpeed().addSpeedModifier("Test", speed, 30 * 20, "BASE");
         }
-        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs", true);
+        ChatChannels.sendDebugMessage(warlordsPlayer,
+                ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
+                true
+        );
     }
 
     @Subcommand("target")
@@ -60,7 +66,30 @@ public class MobCommand extends BaseCommand {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
-        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs", true);
+        ChatChannels.sendDebugMessage(warlordsPlayer,
+                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
+                true
+        );
+    }
+
+    @Subcommand("getmoblocations")
+    public void getMobLocations(CommandIssuer issuer, @Conditions("filter:gamemode=WAVE_DEFENSE") Game game) {
+        //Ghoul Caller - @MainLobby | 10,-3,3
+        for (Option option : game.getOptions()) {
+            if (option instanceof WaveDefenseOption) {
+                String message = ((WaveDefenseOption) option).getMobs()
+                        .stream()
+                        .map(abstractMob -> {
+                            EntityInsentient entity = abstractMob.getEntityInsentient();
+                            return abstractMob.getWarlordsNPC().getColoredName() +
+                                    ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
+                                    ChatColor.GRAY + " | " + entity.locX + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
+                        })
+                        .collect(Collectors.joining("\n"));
+                ChatChannels.sendDebugMessage(issuer, message, true);
+                return;
+            }
+        }
     }
 
     @HelpCommand
