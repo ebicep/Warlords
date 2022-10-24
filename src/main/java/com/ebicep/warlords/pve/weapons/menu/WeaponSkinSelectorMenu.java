@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -167,6 +168,8 @@ public class WeaponSkinSelectorMenu {
                             .appendHoverItem(weapon.getName(), weapon.generateItemStack())
                             .create()
             );
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+
             PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
 
             openWeaponSkinSelectorMenu(player, databasePlayer, weapon, page);
