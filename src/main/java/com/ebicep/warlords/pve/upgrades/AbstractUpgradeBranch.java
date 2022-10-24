@@ -84,6 +84,13 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
                     ability.updateDescription((Player) player.getEntity());
                     openUpgradeBranchMenu();
+
+                    abilityTree.getUpgradeLog().add(new AbilityTree.UpgradeLog(
+                                    RecordTimeElapsedOption.getTicksElapsed(player.getGame()),
+                                    masterUpgrade.getName(),
+                                    masterUpgrade.getDescription()
+                            )
+                    );
                 }
         );
 
