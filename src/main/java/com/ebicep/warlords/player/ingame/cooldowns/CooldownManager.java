@@ -266,8 +266,16 @@ public class CooldownManager {
         abstractCooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
     }
 
-    public void removeCooldownByObject(Object cooldownObject) {
-        abstractCooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
+    public void removeCooldownByObject(Object cooldownObject, boolean callOnRemove) {
+        abstractCooldowns.removeIf(cd -> {
+            if (Objects.equals(cd.getCooldownObject(), cooldownObject)) {
+                if (callOnRemove) {
+                    cd.getOnRemove().accept(this);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     public void removeCooldownByName(String cooldownName) {
