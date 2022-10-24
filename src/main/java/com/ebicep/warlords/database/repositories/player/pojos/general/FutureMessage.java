@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class FutureMessage {
         } else {
             messages.forEach(player::sendMessage);
         }
+        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
     }
 
 }

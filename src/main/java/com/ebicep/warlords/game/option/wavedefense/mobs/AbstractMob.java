@@ -14,16 +14,13 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.minecraft.server.v1_8_R3.EntityInsentient;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
@@ -156,9 +153,16 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
+        dropWeapon(killer, 100);
+        PlayerFilter.playingGame(killer.getGame())
+                .teammatesOfExcludingSelf(killer)
+                .forEach(teammate -> dropWeapon(teammate, 200));
+    }
+
+    private void dropWeapon(WarlordsEntity killer, int bound) {
         AtomicDouble dropRate = new AtomicDouble(dropRate());
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerDropWeaponEvent(killer, dropRate));
-        if (ThreadLocalRandom.current().nextDouble(0, 100) < dropRate.get()) {
+        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get()) {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveWeaponEvent(killer, weapon));
 
@@ -169,6 +173,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                         .create()
                 );
             });
+            killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
         }
     }
 

@@ -20,7 +20,6 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -257,7 +256,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
             futureMessage.sendToPlayer(player);
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
         } else {
             this.futureMessages.add(futureMessage);
         }
