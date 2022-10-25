@@ -68,6 +68,9 @@ public class MasterworksFair {
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
                     .syncLast(databasePlayer -> {
+                        if (databasePlayer == null) {
+                            return;
+                        }
                         List<String> message = new ArrayList<>();
                         message.add(ChatColor.GOLD + "------------------------------------------------");
                         message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
@@ -89,7 +92,8 @@ public class MasterworksFair {
                             }
                         }
                         message.add("");
-                        message.add(ChatColor.GREEN + "Claim your rewards through your Reward Inventory in your 9th slot!");
+                        message.add(ChatColor.GREEN + "Claim your rewards through your");
+                        message.add(ChatColor.GREEN + "Reward Inventory in your 9th slot!");
                         message.add(ChatColor.GOLD + "------------------------------------------------");
                         databasePlayer.addFutureMessage(new FutureMessage(message, true));
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

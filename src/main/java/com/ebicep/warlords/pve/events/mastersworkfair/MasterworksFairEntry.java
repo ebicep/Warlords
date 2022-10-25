@@ -13,14 +13,27 @@ public class MasterworksFairEntry {
     private int placement;
     private float score;
     @Field("fair_number")
-    private int fairNumber;
+    private Integer fairNumber;
 
-    public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score, int fairNumber) {
+    public MasterworksFairEntry(Instant time, WeaponsPvE rarity, int placement, float score, Integer fairNumber) {
         this.rarity = rarity;
         this.placement = placement;
         this.time = time;
         this.score = score;
+        if (fairNumber == null) {
+            fairNumber = 1;
+        }
         this.fairNumber = fairNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "MasterworksFairEntry{" +
+                "rarity=" + rarity +
+                ", placement=" + placement +
+                ", score=" + score +
+                ", fairNumber=" + fairNumber +
+                '}';
     }
 
     public Instant getTime() {
