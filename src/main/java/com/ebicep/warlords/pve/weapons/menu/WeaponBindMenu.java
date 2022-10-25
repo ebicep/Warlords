@@ -45,7 +45,7 @@ public class WeaponBindMenu {
         menu.setItem(
                 4,
                 0,
-                selectedWeapon.generateItemStack(),
+                selectedWeapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -84,9 +84,9 @@ public class WeaponBindMenu {
 
                                     player.spigot().sendMessage(
                                             new ComponentBuilder(ChatColor.GRAY + "You unbounded ")
-                                                    .appendHoverItem(boundWeapon.getName(), boundWeapon.generateItemStack())
+                                                    .appendHoverItem(boundWeapon.getName(), boundWeapon.generateItemStack(false))
                                                     .append(ChatColor.GRAY + " and bound ")
-                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack())
+                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack(false))
                                                     .create()
                                     );
 
@@ -106,7 +106,7 @@ public class WeaponBindMenu {
                         menu.setItem(
                                 column + i,
                                 row + 1,
-                                boundWeapon.generateItemStack(),
+                                boundWeapon.generateItemStack(false),
                                 (m, e) -> {
                                 }
                         );
@@ -131,7 +131,7 @@ public class WeaponBindMenu {
 
                                     player.spigot().sendMessage(
                                             new ComponentBuilder(ChatColor.AQUA + "You bound ")
-                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack())
+                                                    .appendHoverItem(selectedWeapon.getName(), selectedWeapon.generateItemStack(false))
                                                     .create()
                                     );
                                 }

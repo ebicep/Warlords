@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFairPlayerEntry;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
@@ -239,7 +238,7 @@ public class MasterworksFairManager {
                     itemBuilder = new ItemBuilder(value.glassItem);
                     itemBuilder.name(ChatColor.GREEN + "Click to submit a " + value.name + " weapon");
                 } else {
-                    itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack());
+                    itemBuilder = new ItemBuilder(playerEntry.get().getWeapon().generateItemStack(false));
                     itemBuilder.addLore(
                             "",
                             ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to change your submission"
@@ -314,7 +313,7 @@ public class MasterworksFairManager {
                 menu.setItem(
                         column,
                         row,
-                        weapon.generateItemStack(),
+                        weapon.generateItemStack(false),
                         (m, e) -> {
                             //check bound
                             if (weapon.isBound()) {
@@ -351,7 +350,7 @@ public class MasterworksFairManager {
 
                                         sendMasterworksFairMessage(player,
                                                 new ComponentBuilder(ChatColor.GRAY + "Submitted ")
-                                                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                                         .append(ChatColor.GRAY + " to the Masterworks Fair!")
                                         );
 
@@ -360,7 +359,7 @@ public class MasterworksFairManager {
                                     (m2, e2) -> openSubmissionMenu(player, databasePlayer, weaponType, page),
                                     (m2) -> {
                                         m2.setItem(4, 1,
-                                                weapon.generateItemStack(),
+                                                weapon.generateItemStack(false),
                                                 (m3, e3) -> {
                                                 }
                                         );

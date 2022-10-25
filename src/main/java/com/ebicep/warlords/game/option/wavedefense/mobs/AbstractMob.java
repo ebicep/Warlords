@@ -168,7 +168,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
             killer.getGame().forEachOnlinePlayer((player, team) -> {
                 player.spigot().sendMessage(new ComponentBuilder(ChatColor.AQUA + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                         .append(ChatColor.GRAY + "!")
                         .create()
                 );

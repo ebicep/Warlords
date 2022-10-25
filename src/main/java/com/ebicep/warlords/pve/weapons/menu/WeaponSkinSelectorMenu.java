@@ -32,7 +32,7 @@ public class WeaponSkinSelectorMenu {
         menu.setItem(
                 4,
                 0,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -165,7 +165,7 @@ public class WeaponSkinSelectorMenu {
 
             player.spigot().sendMessage(
                     new ComponentBuilder(ChatColor.GRAY + "You unlocked " + ChatColor.LIGHT_PURPLE + weaponSkin.getName() + ChatColor.GRAY + " for ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .create()
             );
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);

@@ -240,7 +240,7 @@ public enum GameMode {
                                     .filter(AbstractWeapon::isBound)
                                     .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
                                     .findFirst();
-                            return optionalWeapon.map(AbstractWeapon::generateItemStack).orElse(null);
+                            return optionalWeapon.map(abstractWeapon -> abstractWeapon.generateItemStack(false)).orElse(null);
                         } else {
                             return null;
                         }

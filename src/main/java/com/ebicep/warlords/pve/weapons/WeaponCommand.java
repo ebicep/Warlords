@@ -37,27 +37,33 @@ public class WeaponCommand extends BaseCommand {
             databasePlayer.getPveStats().getWeaponInventory().add(abstractWeapon);
             ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
                     new ComponentBuilder(ChatColor.GRAY + "Spawned weapon: ")
-                            .appendHoverItem(abstractWeapon.getName(), abstractWeapon.generateItemStack())
+                            .appendHoverItem(abstractWeapon.getName(), abstractWeapon.generateItemStack(false))
             );
         });
     }
 
     @Subcommand("common")
     @Description("Give yourself a common weapon")
-    public void common(Player player) {
-        giveWeapon(player, new CommonWeapon(player.getUniqueId()));
+    public void common(Player player, @Default("1") Integer amount) {
+        for (int i = 0; i < amount; i++) {
+            giveWeapon(player, new CommonWeapon(player.getUniqueId()));
+        }
     }
 
     @Subcommand("rare")
     @Description("Give yourself a rare weapon")
-    public void rare(Player player) {
-        giveWeapon(player, new RareWeapon(player.getUniqueId()));
+    public void rare(Player player, @Default("1") Integer amount) {
+        for (int i = 0; i < amount; i++) {
+            giveWeapon(player, new RareWeapon(player.getUniqueId()));
+        }
     }
 
     @Subcommand("epic")
     @Description("Give yourself a epic weapon")
-    public void epic(Player player) {
-        giveWeapon(player, new EpicWeapon(player.getUniqueId()));
+    public void epic(Player player, @Default("1") Integer amount) {
+        for (int i = 0; i < amount; i++) {
+            giveWeapon(player, new EpicWeapon(player.getUniqueId()));
+        }
     }
 
     @Subcommand("legendary")
@@ -90,7 +96,7 @@ public class WeaponCommand extends BaseCommand {
                 AbstractWeapon weapon = weaponInventory.get(i);
                 player.spigot().sendMessage(
                         new ComponentBuilder(ChatColor.GOLD.toString() + (i + 1) + ". ")
-                                .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                 .create()
                 );
             }

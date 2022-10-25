@@ -152,7 +152,7 @@ public class PlayerHotBarItemListener implements Listener {
                 .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
                 .findFirst();
         if (optionalWeapon.isPresent()) {
-            setItem(player, 6, optionalWeapon.get().generateItemStack());
+            setItem(player, 6, optionalWeapon.get().generateItemStack(false));
             return;
         }
         setItem(player, 6, WEAPONS_MENU);

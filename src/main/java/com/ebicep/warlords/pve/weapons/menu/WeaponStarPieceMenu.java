@@ -32,7 +32,7 @@ public class WeaponStarPieceMenu {
                 Collections.singletonList(ChatColor.GRAY + "Go back"),
                 (m2, e2) -> {
                     ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "You applied a star piece onto ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .append(ChatColor.GRAY + " and it became ");
 
                     weapon.setStarPiece(starPieceCurrency, weapon.generateRandomStatBonus());
@@ -41,7 +41,7 @@ public class WeaponStarPieceMenu {
 
                     player.spigot().sendMessage(
                             componentBuilder
-                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                     .append(ChatColor.GRAY + "!")
                                     .create()
                     );
@@ -53,7 +53,7 @@ public class WeaponStarPieceMenu {
                 (m2, e2) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon),
                 (m2) -> {
                     m2.setItem(4, 1,
-                            weapon.generateItemStack(),
+                            weapon.generateItemStack(false),
                             (m, e) -> {
                             }
                     );

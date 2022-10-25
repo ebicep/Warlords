@@ -66,7 +66,7 @@ public class WeaponLegendaryCraftMenu {
                                 EffectUtils.strikeLightning(loc, false, 2);
                                 player.getPlayer().spigot().sendMessage(
                                         new ComponentBuilder(ChatColor.GRAY + "Crafted Legendary Weapon: ")
-                                                .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                                                .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                                                 .create()
                                 );
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

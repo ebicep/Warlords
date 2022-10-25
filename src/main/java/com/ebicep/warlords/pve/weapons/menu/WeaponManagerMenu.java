@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.permissions.PermissionHandler;
+import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.StarPieces;
@@ -23,7 +25,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -46,21 +47,24 @@ public class WeaponManagerMenu {
             PLAYER_MENU_SETTINGS.putIfAbsent(uuid, new PlayerMenuSettings());
             PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
             menuSettings.setWeaponInventory(weaponInventory);
-            menuSettings.sort();
+            menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
 
             openWeaponInventoryFromInternal(player, databasePlayer);
         });
     }
 
     public static void openWeaponInventoryFromInternal(Player player, DatabasePlayer databasePlayer) {
-        PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        PlayerMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(uuid);
         int page = menuSettings.getPage();
-        menuSettings.sort();
+        menuSettings.sort(PlayerSettings.getPlayerSettings(uuid).getSelectedSpec());
         List<AbstractWeapon> weaponInventory = new ArrayList<>(menuSettings.getSortedWeaponInventory());
         weaponInventory.removeIf(weapon -> weapon instanceof StarterWeapon);
 
         SortOptions sortedBy = menuSettings.getSortOption();
         WeaponsPvE filterBy = menuSettings.getRarityFilter();
+        BindFilterOptions bindFilterOption = menuSettings.getBindFilterOption();
+        boolean selectedSpecFilter = menuSettings.isSelectedSpecFilter();
 
         Menu menu = new Menu("Weapon Inventory", 9 * 6);
 
@@ -73,7 +77,7 @@ public class WeaponManagerMenu {
                 int row = i / 9;
 
                 menu.setItem(column, row,
-                        abstractWeapon.generateItemStack(),
+                        abstractWeapon.generateItemStack(true),
                         (m, e) -> openWeaponEditor(player, databasePlayer, abstractWeapon)
                 );
             } else {
@@ -105,25 +109,82 @@ public class WeaponManagerMenu {
                     }
             );
         }
-
         DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
+
         menu.setItem(1, 5,
-                new ItemBuilder(Material.NETHER_STAR)
-                        .name(ChatColor.GREEN + "Your Star Pieces")
-                        .lore(Currencies.STAR_PIECES.stream()
-                                .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
-                                        starPiece) != 1 ? "s" : ""))
-                                .collect(Collectors.joining("\n"))
+                new ItemBuilder(Material.FURNACE)
+                        .name(ChatColor.GREEN + "Salvage All Weapons")
+                        .lore(
+                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " +
+                                        ChatColor.GRAY + "to salvage all weapons below 70% weapon score, excluding bound weapons.", 160),
+                                "",
+                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " +
+                                        ChatColor.GRAY + "to salvage all " +
+                                        ChatColor.GREEN + "filtered " +
+                                        ChatColor.GRAY + "weapons below 70% weapon score, excluding bound weapons.", 160),
+                                "",
+                                ChatColor.LIGHT_PURPLE + "This feature is for Patreons only!"
                         )
                         .get(),
                 (m, e) -> {
+                    if (!player.hasPermission("group.patreon") || PermissionHandler.isAdmin(player)) {
+                        player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
+                        return;
+                    }
+                    List<AbstractWeapon> weaponsToSalvage;
+                    if (e.isLeftClick()) {
+                        weaponsToSalvage = new ArrayList<>(databasePlayerPvE.getWeaponInventory());
+                    } else {
+                        weaponsToSalvage = new ArrayList<>(menuSettings.getSortedWeaponInventory());
+                    }
+                    weaponsToSalvage.removeIf(weapon -> weapon instanceof StarterWeapon ||
+                            !(weapon instanceof WeaponScore) ||
+                            !(weapon instanceof Salvageable) ||
+                            weapon.isBound() ||
+                            ((WeaponScore) weapon).getWeaponScore() >= 70);
+                    if (weaponsToSalvage.isEmpty()) {
+                        player.sendMessage(ChatColor.RED + "No weapons to salvage!");
+                        return;
+                    }
+                    List<String> salvageLore = new ArrayList<>();
+                    salvageLore.add(ChatColor.GRAY + "Salvage Weapons:");
+                    for (int i = 0; i < weaponsToSalvage.size(); i++) {
+                        AbstractWeapon weapon = weaponsToSalvage.get(i);
+                        salvageLore.add(ChatColor.GRAY + " - " + weapon.getName() + ChatColor.YELLOW + " (" + ((WeaponScore) weapon).getWeaponScore() + ")");
+                        if (i > 50) {
+                            salvageLore.add(ChatColor.GRAY + " - . . .");
+                            break;
+                        }
+                    }
+                    Menu.openConfirmationMenu(player,
+                            "Confirm Salvaging Weapons",
+                            3,
+                            salvageLore,
+                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            (m2, e2) -> {
+                                for (AbstractWeapon weapon : weaponsToSalvage) {
+                                    WeaponSalvageMenu.salvageWeapon(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
+                                }
+                                openWeaponInventoryFromExternal(player);
+                            },
+                            (m2, e2) -> openWeaponInventoryFromInternal(player, databasePlayer),
+                            (m2) -> {
+                            }
+                    );
                 }
         );
+        Long skillBoostModifiers = databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER);
         menu.setItem(2, 5,
-                new ItemBuilder(Material.FIREWORK_CHARGE)
-                        .name(Currencies.SKILL_BOOST_MODIFIER.getColoredName() + "s" + ChatColor.GRAY + ": " +
-                                ChatColor.WHITE + databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER))
-                        .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                new ItemBuilder(Material.BOOK)
+                        .name(ChatColor.DARK_AQUA + "Your Drops")
+                        .lore(
+                                Currencies.STAR_PIECES.stream()
+                                        .map(starPiece -> ChatColor.WHITE.toString() + databasePlayerPvE.getCurrencyValue(starPiece) + " " + starPiece.getColoredName() + (databasePlayerPvE.getCurrencyValue(
+                                                starPiece) != 1 ? "s" : ""))
+                                        .collect(Collectors.joining("\n")),
+                                "",
+                                ChatColor.WHITE.toString() + skillBoostModifiers + " " + Currencies.SKILL_BOOST_MODIFIER.getColoredName() + (skillBoostModifiers != 1 ? "s" : "")
+                        )
                         .get(),
                 (m, e) -> {
                 }
@@ -134,22 +195,38 @@ public class WeaponManagerMenu {
                         .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
                         .get(),
                 (m, e) -> {
-                    menuSettings.setRarityFilter(WeaponsPvE.NONE);
-                    menuSettings.setSortOption(SortOptions.DATE);
-                    menuSettings.setAscending(true);
+                    menuSettings.reset();
                     openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
         menu.setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
                         .name(ChatColor.GREEN + "Filter By")
-                        .lore(Arrays.stream(WeaponsPvE.VALUES)
-                                .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                .collect(Collectors.joining("\n"))
+                        .lore(
+                                Arrays.stream(WeaponsPvE.VALUES)
+                                        .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                        .collect(Collectors.joining("\n")),
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to change rarity filter",
+                                "",
+                                Arrays.stream(BindFilterOptions.VALUES)
+                                        .map(value -> (bindFilterOption == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
+                                        .collect(Collectors.joining("\n")),
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change bind filter",
+                                "",
+                                selectedSpecFilter ? ChatColor.GRAY + "All Specs\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
+                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change spec filter"
                         )
                         .get(),
                 (m, e) -> {
-                    menuSettings.setRarityFilter(filterBy.next());
+                    if (e.isShiftClick()) {
+                        menuSettings.toggleSelectedSpecFilter();
+                    } else {
+                        if (e.isLeftClick()) {
+                            menuSettings.setRarityFilter(filterBy.next());
+                        } else if (e.isRightClick()) {
+                            menuSettings.setBindFilterOption(bindFilterOption.next());
+                        }
+                    }
                     openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
@@ -385,7 +462,7 @@ public class WeaponManagerMenu {
         menu.setItem(
                 4,
                 0,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -463,6 +540,10 @@ public class WeaponManagerMenu {
             this.filter = filter;
         }
 
+        public BindFilterOptions next() {
+            return VALUES[(this.ordinal() + 1) % VALUES.length];
+        }
+
     }
 
     static class PlayerMenuSettings {
@@ -470,15 +551,30 @@ public class WeaponManagerMenu {
         private List<AbstractWeapon> weaponInventory = new ArrayList<>();
         private List<AbstractWeapon> sortedWeaponInventory = new ArrayList<>();
         private WeaponsPvE rarityFilter = WeaponsPvE.NONE;
+        private BindFilterOptions bindFilterOption = BindFilterOptions.ALL;
+        private boolean selectedSpecFilter = false;
         private SortOptions sortOption = SortOptions.DATE;
-        private BindFilterOptions bindFilterOption = BindFilterOptions.UNBOUND;
         private boolean ascending = true; //ascending = smallest -> largest/recent
         private StarPieces selectedStarPiece = StarPieces.COMMON;
 
-        public void sort() {
+        public void reset() {
+            this.rarityFilter = WeaponsPvE.NONE;
+            this.bindFilterOption = BindFilterOptions.ALL;
+            this.selectedSpecFilter = false;
+            this.sortOption = SortOptions.DATE;
+            this.ascending = true;
+        }
+
+        public void sort(Specializations selectedSpec) {
             sortedWeaponInventory = new ArrayList<>(weaponInventory);
             if (rarityFilter != WeaponsPvE.NONE) {
                 sortedWeaponInventory.removeIf(weapon -> weapon.getRarity() != rarityFilter);
+            }
+            if (bindFilterOption != BindFilterOptions.ALL) {
+                sortedWeaponInventory.removeIf(weapon -> !bindFilterOption.filter.test(weapon));
+            }
+            if (selectedSpecFilter) {
+                sortedWeaponInventory.removeIf(weapon -> weapon.getSpecializations() != selectedSpec);
             }
             sortedWeaponInventory.sort(sortOption.comparator);
             if (!ascending) {
@@ -509,6 +605,22 @@ public class WeaponManagerMenu {
 
         public void setRarityFilter(WeaponsPvE rarityFilter) {
             this.rarityFilter = rarityFilter;
+        }
+
+        public BindFilterOptions getBindFilterOption() {
+            return bindFilterOption;
+        }
+
+        public void setBindFilterOption(BindFilterOptions bindFilterOption) {
+            this.bindFilterOption = bindFilterOption;
+        }
+
+        public boolean isSelectedSpecFilter() {
+            return selectedSpecFilter;
+        }
+
+        public void toggleSelectedSpecFilter() {
+            this.selectedSpecFilter = !this.selectedSpecFilter;
         }
 
         public SortOptions getSortOption() {

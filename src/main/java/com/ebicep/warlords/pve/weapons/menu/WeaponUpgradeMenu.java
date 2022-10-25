@@ -34,7 +34,7 @@ public class WeaponUpgradeMenu {
         );
 
         menu.setItem(4, 1,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -64,7 +64,7 @@ public class WeaponUpgradeMenu {
 
             player.spigot().sendMessage(
                     new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon: ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .create()
             );
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);

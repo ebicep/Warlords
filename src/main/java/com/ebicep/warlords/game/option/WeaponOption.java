@@ -27,7 +27,7 @@ public class WeaponOption implements Option {
         if (weapon == null) {
             return;
         }
-        player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack())
+        player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack(false))
                 .addLore(
                         "",
                         ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + wp.getSpec()

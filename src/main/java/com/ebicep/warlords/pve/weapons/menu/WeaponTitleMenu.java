@@ -40,7 +40,7 @@ public class WeaponTitleMenu {
         menu.setItem(
                 4,
                 0,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -68,7 +68,7 @@ public class WeaponTitleMenu {
                 Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
                 List<String> loreCost = title.getCostLore();
 
-                ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack())
+                ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false))
                         .addLore(loreCost);
                 boolean equals = weapon.getClass().equals(title.clazz);
                 if (equals) {
@@ -170,9 +170,9 @@ public class WeaponTitleMenu {
 
         player.spigot().sendMessage(
                 new ComponentBuilder(ChatColor.GRAY + "Titled Weapon: ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                         .append(ChatColor.GRAY + " and it became ")
-                        .appendHoverItem(titledWeapon.getName(), titledWeapon.generateItemStack())
+                        .appendHoverItem(titledWeapon.getName(), titledWeapon.generateItemStack(false))
                         .append(ChatColor.GRAY + "!")
                         .create()
         );

@@ -40,7 +40,7 @@ public class WeaponSkillBoostMenu {
         menu.setItem(
                 4,
                 1,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -104,7 +104,7 @@ public class WeaponSkillBoostMenu {
 
         player.spigot().sendMessage(
                 new ComponentBuilder(ChatColor.GRAY + "Changed ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                         .append(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")
                         .create()
         );

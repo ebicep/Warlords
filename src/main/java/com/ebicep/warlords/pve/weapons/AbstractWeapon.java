@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -85,7 +86,11 @@ public abstract class AbstractWeapon {
 
     public abstract float getCritMultiplier();
 
-    public ItemStack generateItemStack() {
+    public ItemStack generateItemStack(boolean enchantIfBound) {
+        ItemBuilder itemBuilder = new ItemBuilder(selectedWeaponSkin.getItem())
+                .name(getName())
+                .unbreakable()
+                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         List<String> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
@@ -96,12 +101,12 @@ public abstract class AbstractWeapon {
         lore.addAll(loreAddons);
         if (isBound) {
             lore.add(ChatColor.AQUA + "BOUND");
+            if (enchantIfBound) {
+                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+            }
         }
-        return new ItemBuilder(selectedWeaponSkin.getItem())
-                .name(getName())
+        return itemBuilder
                 .lore(lore)
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                 .get();
     }
 

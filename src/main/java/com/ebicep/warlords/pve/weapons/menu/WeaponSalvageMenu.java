@@ -34,7 +34,7 @@ public class WeaponSalvageMenu {
         );
 
         menu.setItem(4, 1,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -62,7 +62,7 @@ public class WeaponSalvageMenu {
 
             player.spigot().sendMessage(
                     new ComponentBuilder(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount + " Synthetic Shard" + (salvageAmount == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .create()
             );
 

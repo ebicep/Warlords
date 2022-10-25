@@ -36,7 +36,7 @@ public class WeaponRerollMenu {
         );
 
         menu.setItem(4, 1,
-                weapon.generateItemStack(),
+                weapon.generateItemStack(false),
                 (m, e) -> {
                 }
         );
@@ -58,14 +58,14 @@ public class WeaponRerollMenu {
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
             ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "Reroll Result: ")
-                    .appendHoverItem(weapon.getName(), weapon.generateItemStack());
+                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false));
 
             weapon.reroll();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.spigot().sendMessage(
                     componentBuilder.append(ChatColor.GRAY + " to ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack())
+                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
                             .create()
             );
         }
