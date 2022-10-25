@@ -18,5 +18,6 @@ public interface MasterworksFairService {
 
     List<MasterworksFair> findAll();
 
+    long count();
 
 }

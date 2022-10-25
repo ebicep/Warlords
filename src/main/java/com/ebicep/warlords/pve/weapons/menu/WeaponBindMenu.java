@@ -15,6 +15,7 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
@@ -93,6 +94,8 @@ public class WeaponBindMenu {
                                     if (boundWeapon instanceof StarterWeapon) {
                                         weaponInventory.remove(boundWeapon);
                                     }
+
+                                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
 
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openWeaponBindMenu(player, databasePlayer, selectedWeapon);

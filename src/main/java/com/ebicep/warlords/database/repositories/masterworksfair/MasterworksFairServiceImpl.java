@@ -43,4 +43,8 @@ public class MasterworksFairServiceImpl implements MasterworksFairService {
         return masterworksFairRepository.findAll();
     }
 
+    @Override
+    public long count() {
+        return masterworksFairRepository.count();
+    }
 }

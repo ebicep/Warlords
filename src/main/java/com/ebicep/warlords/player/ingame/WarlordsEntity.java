@@ -495,11 +495,7 @@ public abstract class WarlordsEntity {
                 arcaneShield.addShieldHealth(-damageValue);
                 //check if broken
                 if (arcaneShield.getShieldHealth() <= 0) {
-                    if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
-                    }
-
-                    cooldownManager.removeCooldownByObject(arcaneShield);
+                    cooldownManager.removeCooldownByObject(arcaneShield, true);
                     addDamageInstance(new WarlordsDamageHealingEvent(this,
                             attacker,
                             ability,

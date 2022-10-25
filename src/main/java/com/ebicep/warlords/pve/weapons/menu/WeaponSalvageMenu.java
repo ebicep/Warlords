@@ -30,8 +30,6 @@ public class WeaponSalvageMenu {
                 (m, e) -> {
                     salvageWeapon(player, databasePlayer, weapon);
                     WeaponManagerMenu.openWeaponInventoryFromInternal(player, databasePlayer);
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
-                    player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);
                 }
         );
 
@@ -67,6 +65,9 @@ public class WeaponSalvageMenu {
                             .appendHoverItem(weapon.getName(), weapon.generateItemStack())
                             .create()
             );
+
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+            player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);
         }
     }
 }

@@ -221,6 +221,21 @@ public class CommandManager {
             }
             return optionalPoll.get();
         });
+        manager.getCommandContexts().registerContext(Game.class, command -> {
+            String gameID = command.popFirstArg();
+            Optional<Game> game = Warlords.getGameManager()
+                    .getGames()
+                    .stream()
+                    .map(GameManager.GameHolder::getGame)
+                    .filter(Objects::nonNull)
+                    .filter(gameHolderGame -> gameHolderGame.getGameId().toString().equalsIgnoreCase(gameID))
+                    .findAny();
+            if (game.isPresent()) {
+                return game.get();
+            } else {
+                throw new InvalidCommandArgument(ChatColor.RED + "Could not find a game with that ID");
+            }
+        });
     }
 
     public static void registerCompletions() {
@@ -364,11 +379,14 @@ public class CommandManager {
             }
             requireGameConfig(command, game.get());
         });
-        manager.getCommandConditions().addCondition(WarlordsPlayer.class, "requireGame", (command, exec, player) -> {
-            Game game = player.getGame();
+        manager.getCommandConditions().addCondition(WarlordsPlayer.class, "requireGame", (command, exec, warlordsPlayer) -> {
+            Game game = warlordsPlayer.getGame();
             if (game == null) {
                 throw new ConditionFailedException(ChatColor.RED + "You must be in an active game to use this command!");
             }
+            requireGameConfig(command, game);
+        });
+        manager.getCommandConditions().addCondition(Game.class, "filter", (command, exec, game) -> {
             requireGameConfig(command, game);
         });
 

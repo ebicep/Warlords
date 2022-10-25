@@ -548,7 +548,7 @@ public class Warlords extends JavaPlugin {
                     boolean hasTooMuchHealth = wp.getHealth() > wp.getMaxHealth();
 
                     if (hasOverhealCooldown && !hasTooMuchHealth) {
-                        wp.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+                        wp.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER, false);
                     }
 
                     if (!hasOverhealCooldown && hasTooMuchHealth) {

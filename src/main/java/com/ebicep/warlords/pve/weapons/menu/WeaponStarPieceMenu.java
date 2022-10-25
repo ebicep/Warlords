@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class WeaponStarPieceMenu {
                                     .append(ChatColor.GRAY + "!")
                                     .create()
                     );
+
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
 
                     WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon);
                 },

@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -175,6 +176,8 @@ public class WeaponTitleMenu {
                         .append(ChatColor.GRAY + "!")
                         .create()
         );
+
+        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
 
         return titledWeapon;
     }
