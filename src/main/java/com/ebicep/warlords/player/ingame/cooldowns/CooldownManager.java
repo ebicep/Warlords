@@ -40,7 +40,7 @@ public class CooldownManager {
     }
 
     public void reduceCooldowns() {
-        Iterator<AbstractCooldown<?>> iterator = abstractCooldowns.iterator();
+        Iterator<AbstractCooldown<?>> iterator = new ArrayList<>(abstractCooldowns).iterator();
         while (iterator.hasNext()) {
             AbstractCooldown<?> abstractCooldown = iterator.next();
             abstractCooldown.onTick(warlordsEntity);
