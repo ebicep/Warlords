@@ -122,7 +122,7 @@ public class SpiritLink extends AbstractChainBase {
         player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
 
         // speed buff
-        warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
+        warlordsPlayer.addSpeedModifier("Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
         warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<SpiritLink>(
                 name,
                 "LINK",

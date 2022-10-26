@@ -103,7 +103,7 @@ public class IceBarrier extends AbstractAbility {
                                     .closestFirst(wp)
                             ) {
                                 we.getSpec().setDamageResistance(we.getSpec().getDamageResistance() - 1);
-                                we.getSpeed().addSpeedModifier("Ice Barrier Slowness", -80, 20);
+                                we.addSpeedModifier("Ice Barrier Slowness", -80, 20);
                             }
                         }
                     }

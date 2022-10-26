@@ -114,7 +114,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             getEntity().setCustomName(newName);
         }
     }
-    
+
     @Override
     public void updateEntity() {
         entity.setCustomName(
@@ -130,7 +130,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public boolean isOnline() {
         return true;
     }
-    
+
     public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
         jimmy.setBaby(false);
@@ -154,13 +154,13 @@ public final class WarlordsNPC extends WarlordsEntity {
         compound.setByte("NoAI", (byte) 1);
         nmsEn.f(compound);
         return jimmy;
-        
+
     }
 
     public static <T extends LivingEntity> T spawnEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
         T entity = loc.getWorld().spawn(loc, clazz);
         if (entity instanceof Zombie) {
-            ((Zombie)entity).setBaby(false);
+            ((Zombie) entity).setBaby(false);
         }
 
         entity.setCustomNameVisible(true);
@@ -178,7 +178,13 @@ public final class WarlordsNPC extends WarlordsEntity {
         return entity;
     }
 
-    public static <T extends CustomEntity<?>> LivingEntity spawnCustomEntity(@Nonnull Class<T> clazz, Supplier<T> create, Consumer<T> onCreate, @Nonnull Location loc, @Nullable EntityEquipment inv) {
+    public static <T extends CustomEntity<?>> LivingEntity spawnCustomEntity(
+            @Nonnull Class<T> clazz,
+            Supplier<T> create,
+            Consumer<T> onCreate,
+            @Nonnull Location loc,
+            @Nullable EntityEquipment inv
+    ) {
         T customEntity = create.get();
         onCreate.accept(customEntity);
         customEntity.spawn(loc);
@@ -209,6 +215,16 @@ public final class WarlordsNPC extends WarlordsEntity {
             }
         }
         return applied;
+    }
+
+    @Override
+    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
+        if (getMobTier() == MobTier.BOSS) {
+            if (modifier < 0) {
+                modifier = modifier / 2;
+            }
+        }
+        return super.addSpeedModifier(name, modifier, duration, toDisable);
     }
 
     public float getMinMeleeDamage() {

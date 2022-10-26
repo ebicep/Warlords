@@ -69,7 +69,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();

@@ -130,7 +130,7 @@ public class Mithra extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 140 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
-            warlordsNPC.getSpeed().addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
+            warlordsNPC.addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
         }
 
         if (ticksElapsed % 280 == 0) {

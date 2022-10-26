@@ -55,7 +55,7 @@ public class InspiringPresence extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
 
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
 
         InspiringPresence tempPresence = new InspiringPresence();
         wp.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
@@ -105,7 +105,7 @@ public class InspiringPresence extends AbstractAbility {
                     ChatColor.GRAY + "!"
             );
 
-            Runnable cancelAllySpeed = presenceTarget.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
+            Runnable cancelAllySpeed = presenceTarget.addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
             presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<InspiringPresence>(
                     name,
                     "PRES",

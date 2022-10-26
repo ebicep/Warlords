@@ -65,7 +65,7 @@ public class JudgementStrike extends AbstractStrikeBase {
                 false
         ).ifPresent(finalEvent -> {
             if (finalEvent.isCrit()) {
-                wp.getSpeed().addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
+                wp.addSpeedModifier("Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
             }
             if (strikeHeal != 0 && finalEvent.isDead()) {
                 wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, -1, 100, false, false);

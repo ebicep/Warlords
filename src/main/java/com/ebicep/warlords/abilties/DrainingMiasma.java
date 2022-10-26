@@ -75,7 +75,7 @@ public class DrainingMiasma extends AbstractAbility {
                 .aliveEnemiesOf(wp)
         ) {
             hitCounter++;
-            Runnable cancelSlowness = miasmaTarget.getSpeed().addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
+            Runnable cancelSlowness = miasmaTarget.addSpeedModifier("Draining Miasma Slow", -25, 3 * 20, "BASE");
             miasmaTarget.getCooldownManager().addRegularCooldown(
                     name,
                     "MIAS",

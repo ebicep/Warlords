@@ -182,7 +182,7 @@ public class Earthliving extends AbstractAbility {
                 },
                 2 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    target.getSpeed().addSpeedModifier("Earthliving Slow", -99, 1, "BASE");
+                    target.addSpeedModifier("Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);

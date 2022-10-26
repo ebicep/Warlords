@@ -1746,6 +1746,10 @@ public abstract class WarlordsEntity {
         return this.game;
     }
 
+    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
+        return this.speed.addSpeedModifier(name, modifier, duration, toDisable);
+    }
+
     public CalculateSpeed getSpeed() {
         return speed;
     }

@@ -152,7 +152,7 @@ public class HeartToHeart extends AbstractAbility {
                             .excluding(playersHit)
                     ) {
                         playersHit.add(we);
-                        we.getSpeed().addSpeedModifier("Heart Slowness", -99, GameRunnable.SECOND, "BASE");
+                        we.addSpeedModifier("Heart Slowness", -99, GameRunnable.SECOND, "BASE");
                         we.addDamageInstance(
                                 wp,
                                 name,

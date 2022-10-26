@@ -113,7 +113,7 @@ public class FreezingBreath extends AbstractAbility {
                         critMultiplier,
                         false
                 );
-                breathTarget.getSpeed().addSpeedModifier("Freezing Breath", -slowness, slowDuration * 20);
+                breathTarget.addSpeedModifier("Freezing Breath", -slowness, slowDuration * 20);
             }
         }
 

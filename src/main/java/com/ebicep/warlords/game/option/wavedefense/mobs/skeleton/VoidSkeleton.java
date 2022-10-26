@@ -57,7 +57,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 wp.addDamageInstance(warlordsNPC, "Void Shred", 150, 300, -1, 100, true);
-                wp.getSpeed().addSpeedModifier("Void Slowness", -30, 10, "BASE");
+                wp.addSpeedModifier("Void Slowness", -30, 10, "BASE");
             }
         }
     }

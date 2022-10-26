@@ -44,7 +44,7 @@ public class LightInfusionCrusader extends AbstractAbility {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
 
         LightInfusionCrusader tempLightInfusion = new LightInfusionCrusader(cooldown);
         wp.getCooldownManager().addRegularCooldown(
