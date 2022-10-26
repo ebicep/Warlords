@@ -83,7 +83,7 @@ public class GuildPlayer {
     }
 
     public void addExperience(long experience) {
-        this.experience.forEach((timing, amount) -> this.experience.put(timing, amount + experience));
+        this.experience.forEach((timing, amount) -> this.experience.put(timing, Math.max(amount + experience, 0)));
     }
 
     public void setExperience(Timing timing, long experience) {
@@ -95,7 +95,7 @@ public class GuildPlayer {
     }
 
     public void addCoins(long coins) {
-        this.coins.forEach((timing, amount) -> this.coins.put(timing, amount + coins));
+        this.coins.forEach((timing, amount) -> this.coins.put(timing, Math.max(amount + coins, 0)));
     }
 
     public void setCoins(Timing timing, long coins) {

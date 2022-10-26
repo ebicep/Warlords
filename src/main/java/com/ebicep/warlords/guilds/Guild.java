@@ -37,10 +37,33 @@ public class Guild {
                 .getWins()) >= 10;
     };
 
+    public static int getConversionRatio(Guild guild) {
+        int guildLevel = guild.getLevel();
+
+        int coinConversionRatio;
+        if (guildLevel <= 5) {
+            coinConversionRatio = 100;
+        } else if (guildLevel <= 10) {
+            coinConversionRatio = 40;
+        } else if (guildLevel <= 15) {
+            coinConversionRatio = 10;
+        } else {
+            coinConversionRatio = 5;
+        }
+        return coinConversionRatio;
+    }
+
+    public int getLevel() {
+        return GuildExperienceUtils.getLevelFromExp(getExperience(Timing.LIFETIME));
+    }
+
+    public long getExperience(Timing timing) {
+        return experience.getOrDefault(timing, 0L);
+    }
+
     //Local cache of uuids for faster lookup
     @Transient
     public HashMap<UUID, GuildPlayer> guildPlayerUUIDCache = new HashMap<>();
-
     @Id
     private String id;
     private String name;
@@ -92,28 +115,11 @@ public class Guild {
         addPlayer(player, masterRole);
     }
 
-    public static void sendGuildMessage(Player player, String message) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
-    }
-
-    public static int getConversionRatio(Guild guild) {
-        int guildLevel = guild.getLevel();
-
-        int coinConversionRatio;
-        if (guildLevel <= 5) {
-            coinConversionRatio = 100;
-        } else if (guildLevel <= 10) {
-            coinConversionRatio = 40;
-        } else if (guildLevel <= 15) {
-            coinConversionRatio = 10;
-        } else {
-            coinConversionRatio = 5;
-        }
-        return coinConversionRatio;
-    }
-
-    public void queueUpdate() {
-        queueUpdateGuild(this);
+    public void addPlayer(Player player, GuildRole role) {
+        GuildPlayer guildPlayer = new GuildPlayer(player);
+        role.addPlayer(player.getUniqueId());
+        this.players.add(guildPlayer);
+        this.guildPlayerUUIDCache.put(player.getUniqueId(), guildPlayer);
     }
 
     public void reloadPlayerCache() {
@@ -130,6 +136,43 @@ public class Guild {
         queueUpdate();
     }
 
+    public GuildRole getDefaultRole() {
+        for (GuildRole role : roles) {
+            if (role.getRoleName().equals(defaultRole)) {
+                return role;
+            }
+        }
+        return null;
+    }
+
+    public void sendGuildMessageToOnlinePlayers(String message, boolean centered) {
+        for (Player onlinePlayer : getOnlinePlayers()) {
+            ChatUtils.sendMessageToPlayer(onlinePlayer, message, ChatColor.GREEN, centered);
+        }
+    }
+
+    public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
+    }
+
+    public void log(AbstractGuildLog guildLog) {
+        auditLog.add(guildLog);
+    }
+
+    public void queueUpdate() {
+        queueUpdateGuild(this);
+    }
+
+    public List<Player> getOnlinePlayers() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> guildPlayerUUIDCache.containsKey(player.getUniqueId()))
+                .collect(Collectors.toList());
+    }
+
+    public void setDefaultRole(String defaultRole) {
+        this.defaultRole = defaultRole;
+    }
+
     public void leave(Player player) {
         this.players.removeIf(guildPlayer -> guildPlayer.getUUID().equals(player.getUniqueId()));
         this.guildPlayerUUIDCache.remove(player.getUniqueId());
@@ -137,6 +180,10 @@ public class Guild {
         sendGuildMessage(player, ChatColor.RED + "You left the guild!");
         log(new GuildLogLeave(player.getUniqueId()));
         queueUpdate();
+    }
+
+    public static void sendGuildMessage(Player player, String message) {
+        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
     }
 
     public void transfer(GuildPlayer guildPlayer) {
@@ -150,6 +197,15 @@ public class Guild {
         sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild was transferred to " + ChatColor.AQUA + guildPlayer.getName(), true);
         log(new GuildLogTransfer(oldMaster, currentMaster));
         queueUpdate();
+    }
+
+    public int getRoleLevel(GuildPlayer guildPlayer) {
+        for (int i = 0; i < roles.size(); i++) {
+            if (roles.get(i).getPlayers().contains(guildPlayer.getUUID())) {
+                return i;
+            }
+        }
+        return Integer.MAX_VALUE;
     }
 
     public void kick(GuildPlayer sender, GuildPlayer target) {
@@ -226,12 +282,6 @@ public class Guild {
         return sb.toString();
     }
 
-    public List<Player> getOnlinePlayers() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> guildPlayerUUIDCache.containsKey(player.getUniqueId()))
-                .collect(Collectors.toList());
-    }
-
     public List<Player> getOnlinePlayersWithPermission(GuildPermissions permission) {
         Set<UUID> uuidsWithPermission = players.stream()
                 .filter(guildPlayer -> playerHasPermission(guildPlayer, permission))
@@ -240,12 +290,6 @@ public class Guild {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> uuidsWithPermission.contains(player.getUniqueId()))
                 .collect(Collectors.toList());
-    }
-
-    public void sendGuildMessageToOnlinePlayers(String message, boolean centered) {
-        for (Player onlinePlayer : getOnlinePlayers()) {
-            ChatUtils.sendMessageToPlayer(onlinePlayer, message, ChatColor.GREEN, centered);
-        }
     }
 
     public boolean playerHasPermission(GuildPlayer guildPlayer, GuildPermissions permission) {
@@ -264,15 +308,6 @@ public class Guild {
             }
         }
         return false;
-    }
-
-    public int getRoleLevel(GuildPlayer guildPlayer) {
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getPlayers().contains(guildPlayer.getUUID())) {
-                return i;
-            }
-        }
-        return Integer.MAX_VALUE;
     }
 
     public GuildRole getRoleOfPlayer(UUID uuid) {
@@ -346,19 +381,6 @@ public class Guild {
         }
     }
 
-    public GuildRole getDefaultRole() {
-        for (GuildRole role : roles) {
-            if (role.getRoleName().equals(defaultRole)) {
-                return role;
-            }
-        }
-        return null;
-    }
-
-    public void setDefaultRole(String defaultRole) {
-        this.defaultRole = defaultRole;
-    }
-
     public String getDefaultRoleName() {
         return defaultRole;
     }
@@ -369,13 +391,6 @@ public class Guild {
 
     public List<GuildPlayer> getPlayers() {
         return players;
-    }
-
-    public void addPlayer(Player player, GuildRole role) {
-        GuildPlayer guildPlayer = new GuildPlayer(player);
-        role.addPlayer(player.getUniqueId());
-        this.players.add(guildPlayer);
-        this.guildPlayerUUIDCache.put(player.getUniqueId(), guildPlayer);
     }
 
     public Optional<GuildPlayer> getPlayerMatchingUUID(UUID uuid) {
@@ -421,15 +436,11 @@ public class Guild {
     }
 
     public void addCoins(long coins) {
-        this.coins.forEach((timing, amount) -> this.coins.put(timing, amount + coins));
+        this.coins.forEach((timing, amount) -> this.coins.put(timing, Math.max(amount + coins, 0)));
     }
 
     public void addCoins(Timing timing, long coins) {
         this.coins.put(timing, this.coins.getOrDefault(timing, 0L) + coins);
-    }
-
-    public long getExperience(Timing timing) {
-        return experience.getOrDefault(timing, 0L);
     }
 
     public void setExperience(Timing timing, long experience) {
@@ -437,11 +448,7 @@ public class Guild {
     }
 
     public void addExperience(long experience) {
-        this.experience.forEach((timing, aLong) -> this.experience.put(timing, aLong + experience));
-    }
-
-    public int getLevel() {
-        return GuildExperienceUtils.getLevelFromExp(getExperience(Timing.LIFETIME));
+        this.experience.forEach((timing, aLong) -> this.experience.put(timing, Math.max(aLong + experience, 0)));
     }
 
     public List<AbstractGuildUpgrade<?>> getUpgrades() {
@@ -455,10 +462,6 @@ public class Guild {
 
     public List<AbstractGuildLog> getAuditLog() {
         return auditLog;
-    }
-
-    public void log(AbstractGuildLog guildLog) {
-        auditLog.add(guildLog);
     }
 
     @Override

@@ -43,16 +43,19 @@ public class CooldownManager {
     }
 
     public void reduceCooldowns() {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            abstractCooldown.onTick(warlordsEntity);
+        synchronized (abstractCooldowns) {
+            for (int i = 0; i < abstractCooldowns.size(); i++) {
+                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
+                abstractCooldown.onTick(warlordsEntity);
 
-            if (abstractCooldown.removeCheck()) {
-                abstractCooldown.getOnRemove().accept(this);
-                abstractCooldowns.remove(i);
-                i--;
+                if (abstractCooldown.removeCheck()) {
+                    abstractCooldown.getOnRemove().accept(this);
+                    abstractCooldowns.remove(i);
+                    i--;
+                }
             }
         }
+
 //        Iterator<AbstractCooldown<?>> iterator = new ArrayList<>(abstractCooldowns).iterator();
 //        while (iterator.hasNext()) {
 //            AbstractCooldown<?> abstractCooldown = iterator.next();

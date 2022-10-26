@@ -2,13 +2,22 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.commands.DatabasePlayerFuture;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
+import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @CommandAlias("editstats")
@@ -65,6 +74,47 @@ public class EditStatsCommand extends BaseCommand {
             }
             ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Done: " + Arrays.toString(query), true);
         });
+    }
+
+    @Subcommand("wipetop")
+    public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
+        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            wipe(pveStats);
+            for (Classes value : Classes.VALUES) {
+                DatabaseBasePvE databaseBasePvE = pveStats.getClass(value);
+                wipe(databaseBasePvE);
+            }
+            for (Specializations value : Specializations.VALUES) {
+                DatabaseBasePvE databaseBasePvE = pveStats.getSpec(value);
+                wipe(databaseBasePvE);
+            }
+            wipe(pveStats.getNormalStats());
+            wipe(pveStats.getHardStats());
+            wipe(pveStats.getEndlessStats());
+            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
+            ChatChannels.sendDebugMessage(player, ChatColor.DARK_GREEN + "Wiped Top Stats of " + databasePlayer.getName(), true);
+        });
+    }
+
+    private void wipe(DatabasePlayerPvEDifficultyStats difficultyStats) {
+        wipe((PvEDatabaseStatInformation) difficultyStats);
+        for (Classes value : Classes.VALUES) {
+            PvEDatabaseStatInformation databaseBasePvE = difficultyStats.getClass(value);
+            wipe(databaseBasePvE);
+        }
+        for (Specializations value : Specializations.VALUES) {
+            PvEDatabaseStatInformation databaseBasePvE = difficultyStats.getSpec(value);
+            wipe(databaseBasePvE);
+        }
+    }
+
+    private void wipe(PvEDatabaseStatInformation statInformation) {
+        statInformation.setHighestWaveCleared(0);
+        statInformation.setLongestTimeInCombat(0);
+        statInformation.setMostDamageInRound(0);
+        statInformation.setMostDamageInWave(0);
+        statInformation.setFastestGameFinished(0);
     }
 
 }

@@ -1,15 +1,16 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvE;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE;
+import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
-import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -19,14 +20,19 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
 
@@ -87,7 +93,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
             Guild guild = guildGuildPlayerPair.getA();
             GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
 
-            guild.addCoins(Timing.LIFETIME, gamePlayerPvE.getGuildCoinsGained() * multiplier);
+            guild.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
             guildPlayer.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
             guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
@@ -97,12 +103,29 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         if (multiplier > 0) {
             weaponInventory.addAll(gamePlayerPvE.getWeaponsFound());
         } else {
-            //need to search by uuid incase weapon got upgraded or changed
-            List<UUID> weaponsFoundUUIDs = gamePlayerPvE.getWeaponsFound()
-                    .stream()
-                    .map(AbstractWeapon::getUUID)
-                    .collect(Collectors.toList());
-            weaponInventory.removeIf(weapon -> weaponsFoundUUIDs.contains(weapon.getUUID()));
+            if (playersCollection == PlayersCollections.LIFETIME) {
+                //need to search by uuid incase weapon got upgraded or changed
+                List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
+                for (AbstractWeapon weapon : weaponsFound) {
+                    boolean removed = weaponInventory.removeIf(abstractWeapon -> abstractWeapon.getUUID().equals(weapon.getUUID()));
+                    if (!removed && weapon instanceof Salvageable) {
+                        MasterworksFair fair = MasterworksFairManager.currentFair;
+                        if (!fair.getCommonPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
+                                !fair.getRarePlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
+                                !fair.getEpicPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID()))
+                        ) {
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency", true);
+                            subtractCurrency(Currencies.SYNTHETIC_SHARD,
+                                    (((Salvageable) weapon).getMaxSalvageAmount() + ((Salvageable) weapon).getMinSalvageAmount()) / 2
+                            );
+                        } else {
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair", true);
+                        }
+                    } else {
+                        ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory", true);
+                    }
+                }
+            }
         }
 
         //LEGEND FRAGMENTS
@@ -142,8 +165,12 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         CustomScoreboard.reloadPvEScoreboard(this);
     }
 
+    public void subtractCurrency(Currencies currency, int amount) {
+        this.subtractCurrency(currency, (long) amount);
+    }
+
     @Override
-    public PvEDatabaseStatInformation getSpec(Specializations specializations) {
+    public DatabaseBasePvE getSpec(Specializations specializations) {
         switch (specializations) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -180,7 +207,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     }
 
     @Override
-    public PvEDatabaseStatInformation getClass(Classes classes) {
+    public DatabaseBasePvE getClass(Classes classes) {
         switch (classes) {
             case MAGE:
                 return mage;
@@ -199,6 +226,10 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     @Override
     public DatabaseBasePvE[] getClasses() {
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
+    }
+
+    public void subtractCurrency(Currencies currency, Long amount) {
+        this.addCurrency(currency, -amount);
     }
 
     public DatabaseMagePvE getMage() {
@@ -274,14 +305,6 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public void addOneCurrency(Currencies currency) {
         this.addCurrency(currency, 1L);
-    }
-
-    public void subtractCurrency(Currencies currency, int amount) {
-        this.subtractCurrency(currency, (long) amount);
-    }
-
-    public void subtractCurrency(Currencies currency, Long amount) {
-        this.addCurrency(currency, -amount);
     }
 
     public void subtractOneCurrency(Currencies currency) {

@@ -53,7 +53,7 @@ public abstract class DatabaseGameBase {
     public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
     public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
-    protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm";
+    protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
     @Id
     protected String id;
     @Field("exact_date")

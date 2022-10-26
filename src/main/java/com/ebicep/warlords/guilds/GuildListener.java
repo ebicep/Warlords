@@ -1,9 +1,12 @@
 package com.ebicep.warlords.guilds;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogDailyCoinBonus;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,16 +33,19 @@ public class GuildListener implements Listener {
                     if (!guildPlayer.isDailyCoinBonusReceived()) {
                         guildPlayer.setDailyCoinBonusReceived(true);
                         long coins = (long) upgrade.getUpgrade().getValueFromTier(upgrade.getTier());
-                        guild.addCoins(coins);
+//                        guild.addCoins(coins);
                         guild.log(new GuildLogDailyCoinBonus(player.getUniqueId(), coins));
-                        guild.sendGuildMessageToOnlinePlayers(
-                                ChatColor.GRAY + "+" + ChatColor.GREEN + coins + " Guild Coins " + ChatColor.GRAY + "from " +
+                        guild.sendGuildMessageToPlayer(
+                                event.getPlayer(),
+                                ChatColor.GRAY + "+" + ChatColor.GREEN + coins + " Player Coins " + ChatColor.GRAY + "from " +
                                         ChatColor.YELLOW + upgrade.getUpgrade().getName() +
                                         ChatColor.GRAY + " upgrade.",
                                 true
                         );
                         guild.queueUpdate();
-                        //event.getDatabasePlayer().getPveStats().addCurrency(Currencies.COIN, (long) upgrade.getUpgrade().getValueFromTier(upgrade.getTier()));
+                        DatabasePlayer databasePlayer = event.getDatabasePlayer();
+                        databasePlayer.getPveStats().addCurrency(Currencies.COIN, coins);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }
                     return;
                 }

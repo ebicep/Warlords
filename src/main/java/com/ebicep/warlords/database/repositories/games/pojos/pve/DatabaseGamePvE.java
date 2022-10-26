@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -56,10 +57,13 @@ public class DatabaseGamePvE extends DatabaseGameBase {
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.forEach(databaseGamePlayerPvE -> DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
-                databaseGamePlayerPvE,
-                multiplier
-        ));
+        players.forEach(databaseGamePlayerPvE -> {
+            DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
+                    databaseGamePlayerPvE,
+                    multiplier
+            );
+            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvE.getName());
+        });
     }
 
     @Override

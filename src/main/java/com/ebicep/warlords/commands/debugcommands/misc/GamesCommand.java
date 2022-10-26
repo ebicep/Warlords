@@ -15,6 +15,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,10 +24,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase.previousGames;
@@ -36,6 +34,8 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 @CommandAlias("games")
 @CommandPermission("warlords.game.lookupgame")
 public class GamesCommand extends BaseCommand {
+
+    public static final Set<String> PLAYER_NAMES = new HashSet<>();
 
     public static void openGamesDebugMenu(Player player) {
         Menu menu = new Menu("Games Debug", 9 * 6);
@@ -317,6 +317,13 @@ public class GamesCommand extends BaseCommand {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
         sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
+    }
+
+    @Subcommand("getnames")
+    public void getNames(CommandIssuer issuer) {
+        for (String playerName : PLAYER_NAMES) {
+            ChatChannels.sendDebugMessage(issuer, ChatColor.AQUA + playerName, false);
+        }
     }
 
     @HelpCommand

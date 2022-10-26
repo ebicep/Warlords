@@ -78,7 +78,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             }
         }
 
-        this.totalWavesCleared += databaseGamePvE.getWavesCleared();
+        this.totalWavesCleared += databaseGamePvE.getWavesCleared() * multiplier;
         databaseGamePlayerPvE.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         databaseGamePlayerPvE.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
@@ -92,16 +92,32 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         return highestWaveCleared;
     }
 
+    public void setHighestWaveCleared(int highestWaveCleared) {
+        this.highestWaveCleared = highestWaveCleared;
+    }
+
     public int getLongestTimeInCombat() {
         return longestTimeInCombat;
+    }
+
+    public void setLongestTimeInCombat(int longestTimeInCombat) {
+        this.longestTimeInCombat = longestTimeInCombat;
     }
 
     public long getMostDamageInRound() {
         return mostDamageInRound;
     }
 
+    public void setMostDamageInRound(long mostDamageInRound) {
+        this.mostDamageInRound = mostDamageInRound;
+    }
+
     public long getMostDamageInWave() {
         return mostDamageInWave;
+    }
+
+    public void setMostDamageInWave(long mostDamageInWave) {
+        this.mostDamageInWave = mostDamageInWave;
     }
 
     public int getTotalWavesCleared() {
@@ -114,6 +130,10 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     public long getFastestGameFinished() {
         return fastestGameFinished;
+    }
+
+    public void setFastestGameFinished(long fastestGameFinished) {
+        this.fastestGameFinished = fastestGameFinished;
     }
 
     public Map<String, Long> getMobKills() {
