@@ -68,7 +68,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
         ));
         statsLeaderboards.add(new StatsLeaderboard("Clear Rate",
                 LEAD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate(),
+                databasePlayer -> {
+                    DatabasePlayerPvE databasePlayerPvE = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
+                    int plays = databasePlayerPvE.getNormalStats().getPlays() + databasePlayerPvE.getHardStats().getPlays();
+                    return plays == 0 ? 0 : (databasePlayerPvE.getNormalStats().getWins() + databasePlayerPvE.getHardStats().getWins()) / plays;
+                },
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate() * 100) + "%"
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Normal Win", UPPER_CENTER_1,
