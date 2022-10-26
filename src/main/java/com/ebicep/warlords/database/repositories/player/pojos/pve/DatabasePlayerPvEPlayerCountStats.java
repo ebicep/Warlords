@@ -11,29 +11,16 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.util.chat.ChatChannels;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation implements DatabasePlayer {
+public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformation implements DatabasePlayer {
 
     private DatabaseMagePvE mage = new DatabaseMagePvE();
     private DatabaseWarriorPvE warrior = new DatabaseWarriorPvE();
     private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
-    @Field("player_count_stats")
-    private Map<Integer, DatabasePlayerPvEPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
-        put(1, new DatabasePlayerPvEPlayerCountStats());
-        put(2, new DatabasePlayerPvEPlayerCountStats());
-        put(3, new DatabasePlayerPvEPlayerCountStats());
-        put(4, new DatabasePlayerPvEPlayerCountStats());
-    }};
 
-    public DatabasePlayerPvEDifficultyStats() {
+    public DatabasePlayerPvEPlayerCountStats() {
     }
 
     @Override
@@ -57,15 +44,6 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
         this.getSpec(gamePlayer.getSpec()).updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-
-        //UPDATE PLAYER COUNT STATS
-        int playerCount = ((DatabaseGamePvE) databaseGame).getPlayers().size();
-        DatabasePlayerPvEPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
-        if (countStats != null) {
-            countStats.updateStats(databaseGame, gamePlayer, multiplier, playersCollection);
-        } else {
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
-        }
     }
 
     @Override
@@ -127,10 +105,4 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
 
-    public DatabasePlayerPvEPlayerCountStats getPlayerCountStats(int playerCount) {
-        if (playerCount < 1) {
-            return null;
-        }
-        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEPlayerCountStats());
-    }
 }
