@@ -741,12 +741,13 @@ public class Warlords extends JavaPlugin {
                                     Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
                             }
-                        }
+                        } else {
 
-                        // Checks whether the Orb of Life has lived for 8 seconds.
-                        if (orb.getTicksLived() > orb.getTicksToLive() || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
-                            orb.remove();
-                            itr.remove();
+                            // Checks whether the Orb of Life has lived for 8 seconds.
+                            if (orb.getTicksLived() > orb.getTicksToLive() || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
+                                orb.remove();
+                                itr.remove();
+                            }
                         }
                     }
                 }
