@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,10 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility {
@@ -65,24 +62,71 @@ public class RemedicChains extends AbstractAbility {
                 .limit(alliesAffected)
                 .stream().collect(Collectors.toList());
 
-        if (teammatesNear.size() >= 1) {
-            wp.subtractEnergy(energyCost, false);
-            Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
+        if (teammatesNear.size() < 1) {
+            wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
+            return false;
+        }
 
-            RemedicChains tempRemedicChain = new RemedicChains();
-            wp.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
-                    name,
-                    "REMEDIC",
-                    RemedicChains.class,
-                    tempRemedicChain,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                        if (wp.isDead()) {
-                            return;
-                        }
+        wp.subtractEnergy(energyCost, false);
+        Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
-                        wp.addHealingInstance(
+        HashMap<WarlordsEntity, Float> maxHealths = new HashMap<>();
+        teammatesNear.forEach(warlordsEntity -> {
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
+                    ChatColor.GRAY + " Your Remedic Chains is now protecting " +
+                    ChatColor.YELLOW + warlordsEntity.getName() +
+                    ChatColor.GRAY + "!"
+            );
+            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
+                    ChatColor.GRAY + wp.getName() + "'s" +
+                    ChatColor.YELLOW + " Remedic Chains" +
+                    ChatColor.GRAY + " is now increasing your §cdamage §7for " +
+                    ChatColor.GOLD + duration +
+                    ChatColor.GRAY + " seconds!"
+            );
+            maxHealths.put(warlordsEntity, warlordsEntity.getMaxHealth());
+            if (pveUpgrade) {
+                warlordsEntity.setMaxHealth(warlordsEntity.getSpec().getMaxHealth() * 1.3f);
+            }
+
+        });
+
+        if (pveUpgrade) {
+            wp.setMaxHealth(wp.getSpec().getMaxHealth() * 1.3f);
+        }
+
+        RemedicChains tempRemedicChain = new RemedicChains();
+        LinkedCooldown<RemedicChains> remedicChainsCooldown = new LinkedCooldown<>(
+                name,
+                "REMEDIC",
+                RemedicChains.class,
+                tempRemedicChain,
+                wp,
+                CooldownTypes.ABILITY,
+                (cooldownManager, linkedCooldown) -> {
+                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
+                        return;
+                    }
+                    if (pveUpgrade) {
+                        wp.setMaxHealth(wp.getSpec().getMaxHealth());
+                        maxHealths.forEach(WarlordsEntity::setMaxHealth);
+                        System.out.println("Health reset");
+                    }
+                    if (wp.isDead()) {
+                        return;
+                    }
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            minDamageHeal,
+                            maxDamageHeal,
+                            critChance,
+                            critMultiplier,
+                            false,
+                            false
+                    );
+                    for (WarlordsEntity linkedEntity : linkedCooldown.getLinkedEntities()) {
+                        linkedEntity.addHealingInstance(
                                 wp,
                                 name,
                                 minDamageHeal,
@@ -92,127 +136,67 @@ public class RemedicChains extends AbstractAbility {
                                 false,
                                 false
                         );
-
-                        if (pveUpgrade) {
-                            wp.setMaxHealth(wp.getSpec().getMaxHealth());
-                        }
-                    },
-                    duration * 20
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (1 + allyDamageIncrease / 100f);
-                }
-            });
-
-            for (WarlordsEntity chainTarget : teammatesNear) {
-                playersLinked++;
-                float maxHealth = chainTarget.getMaxHealth();
-                AtomicInteger timeLinked = new AtomicInteger();
-                chainTarget.getCooldownManager().addCooldown(new RegularCooldown<RemedicChains>(
-                        name,
-                        "REMEDIC",
-                        RemedicChains.class,
-                        tempRemedicChain,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                            boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
-                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
+                    }
+                },
+                duration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 8 != 0) {
+                        return;
+                    }
+                    List<WarlordsEntity> linkedEntities = cooldown.getLinkedEntities();
+                    for (int i = 0; i < linkedEntities.size(); i++) {
+                        WarlordsEntity linked = linkedEntities.get(i);
+                        boolean outOfRange = wp.getLocation().distanceSquared(linked.getLocation()) > linkBreakRadius * linkBreakRadius;
+                        if (outOfRange) {
+                            linked.getCooldownManager().removeCooldown(cooldown);
+                            Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             ParticleEffect.VILLAGER_HAPPY.display(
                                     0.5f,
                                     0.5f,
                                     0.5f,
                                     1,
                                     10,
-                                    chainTarget.getLocation().add(0, 1, 0),
+                                    linked.getLocation().add(0, 1, 0),
                                     500
                             );
+                            // Ally is out of range, break link
+                            numberOfBrokenLinks++;
 
-                            // Ally was in range, full healing
-                            if (!outOfRange && chainTarget.isAlive()) {
-                                chainTarget.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
-                                );
-                            }
-
+                            float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
+                            linked.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal * totalHealingMultiplier,
+                                    maxDamageHeal * totalHealingMultiplier,
+                                    -1,
+                                    100,
+                                    false,
+                                    false
+                            );
+                        }
+                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
+                        if (outOfRange || linked.isDead()) {
+                            linkedEntities.remove(i);
+                            i--;
                             if (pveUpgrade) {
-                                chainTarget.setMaxHealth(maxHealth);
+                                linked.setMaxHealth(maxHealths.getOrDefault(linked, (float) linked.getSpec().getMaxHealth()));
                             }
-                        },
-                        duration * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
-
-                            if (ticksElapsed % 20 == 0 && !outOfRange) {
-                                timeLinked.getAndIncrement();
-                            }
-
-                            if (ticksElapsed % 8 == 0) {
-                                if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
-                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
-                                    // Ally is out of range, break link
-                                    if (outOfRange) {
-                                        numberOfBrokenLinks++;
-
-                                        float totalHealingMultiplier = ((healingMultiplier / 100f) * timeLinked.get());
-                                        chainTarget.addHealingInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal * totalHealingMultiplier,
-                                                maxDamageHeal * totalHealingMultiplier,
-                                                -1,
-                                                100,
-                                                false,
-                                                false
-                                        );
-                                        chainTarget.getCooldownManager().removeCooldown(cooldown);
-                                    }
-                                } else {
-                                    cooldown.setTicksLeft(0);
-                                }
-                            }
-                        })
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * (1 + allyDamageIncrease / 100f);
+                        }
                     }
-                });
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
-                        ChatColor.GRAY + " Your Remedic Chains is now protecting " +
-                        ChatColor.YELLOW + chainTarget.getName() +
-                        ChatColor.GRAY + "!"
-                );
-
-                chainTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN + " " +
-                        ChatColor.GRAY + wp.getName() + "'s" +
-                        ChatColor.YELLOW + " Remedic Chains" +
-                        ChatColor.GRAY + " is now increasing your §cdamage §7for " +
-                        ChatColor.GOLD + duration +
-                        ChatColor.GRAY + " seconds!"
-                );
-
-
-                if (pveUpgrade) {
-                    wp.setMaxHealth(wp.getSpec().getMaxHealth() * 1.3f);
-                    chainTarget.setMaxHealth(maxHealth * 1.3f);
-                }
+                }),
+                teammatesNear
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 + allyDamageIncrease / 100f);
             }
+        };
+        wp.getCooldownManager().addCooldown(remedicChainsCooldown);
+        teammatesNear.forEach(entity -> entity.getCooldownManager().addCooldown(remedicChainsCooldown));
 
-            return true;
-        } else {
-            wp.sendMessage(ChatColor.RED + "There are no allies nearby to link!");
-            return false;
-        }
+
+        return true;
     }
 
     public int getLinkBreakRadius() {

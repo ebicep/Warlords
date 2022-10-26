@@ -315,7 +315,7 @@ public class GamesCommand extends BaseCommand {
     @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Removing game " + databaseGame.getDate(), true);
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
@@ -324,6 +324,14 @@ public class GamesCommand extends BaseCommand {
         for (String playerName : PLAYER_NAMES) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.AQUA + playerName, false);
         }
+    }
+
+    @Subcommand("setcounted")
+    public void setCounted(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber, boolean counted) {
+        DatabaseGameBase databaseGame = previousGames.get(gameNumber);
+        sendDebugMessage(issuer, ChatColor.GREEN + "Setting game " + databaseGame.getDate() + " to counted: " + counted, true);
+        databaseGame.setCounted(counted);
+        DatabaseManager.updateGameAsync(databaseGame);
     }
 
     @HelpCommand

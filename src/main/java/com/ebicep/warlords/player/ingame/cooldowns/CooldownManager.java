@@ -30,6 +30,10 @@ public class CooldownManager {
         this.warlordsEntity = warlordsEntity;
     }
 
+    public WarlordsEntity getWarlordsEntity() {
+        return warlordsEntity;
+    }
+
     public boolean hasCooldown(AbstractCooldown<?> abstractCooldown) {
         return abstractCooldowns.contains(abstractCooldown);
     }
