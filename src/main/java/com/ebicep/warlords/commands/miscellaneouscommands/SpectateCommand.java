@@ -34,6 +34,7 @@ public class SpectateCommand extends BaseCommand {
         if (games.isEmpty()) {
             player.closeInventory();
             player.sendMessage(ChatColor.RED + "There are no active games right now!");
+            return;
         }
         int rows = (games.size() - 1) / 7 + 3;
         Menu menu = new Menu("Current Games", 9 * rows);
