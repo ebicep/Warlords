@@ -562,7 +562,12 @@ public abstract class WarlordsEntity {
                 secondStats.addDamageHealingEventAsSelf(finalEvent.get());
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
 
-//                checkForAchievementsDamage(attacker);
+                if (shouldCheckForAchievements()) {
+                    checkForAchievementsDamage();
+                }
+                if (attacker.shouldCheckForAchievements()) {
+                    checkForAchievementsDamageAttacker(attacker);
+                }
             } else {
 
                 boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");

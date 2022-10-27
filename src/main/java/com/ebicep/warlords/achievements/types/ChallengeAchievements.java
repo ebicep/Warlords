@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -743,7 +744,7 @@ public enum ChallengeAchievements implements Achievement {
         if (achievement.gameMode != player.getGame().getGameMode()) {
             return;
         }
-        if (achievement.spec != null && achievement.spec == player.getSpecClass()) {
+        if (achievement.spec != null && achievement.spec != player.getSpecClass()) {
             return;
         }
         if (!achievement.warlordsEntityPredicate.test(player)) {
@@ -841,11 +842,11 @@ public enum ChallengeAchievements implements Achievement {
 
     @Override
     public void sendAchievementUnlockMessage(Player player) {
-        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200)).create()
-        ));
-        ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true);
+        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  Achievement Unlocked: ")
+                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
+                .append(ChatColor.GREEN + "  <<")
+                .create();
+        ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true);
     }
 
     @Override

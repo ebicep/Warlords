@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.chat;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -16,36 +17,6 @@ public class ChatUtils {
     public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
 
     private static final int CENTER_PX = 164;
-
-    public enum MessageTypes {
-
-        WARLORDS("Warlords", ChatColor.GREEN),
-        PLAYER_SERVICE("PlayerService", ChatColor.AQUA),
-        GAME_SERVICE("GameService", ChatColor.YELLOW),
-        GUILD_SERVICE("GuildService", ChatColor.GOLD),
-        LEADERBOARDS("Leaderboards", ChatColor.BLUE),
-        TIMINGS("Timings", ChatColor.DARK_GRAY),
-        MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
-
-        ;
-
-        public final String name;
-        public final ChatColor chatColor;
-
-        MessageTypes(String name, ChatColor chatColor) {
-            this.name = name;
-            this.chatColor = chatColor;
-        }
-
-        public void sendMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(chatColor + "[" + name + "] " + message);
-        }
-
-        public void sendErrorMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[" + name + "] " + message);
-        }
-
-    }
 
     public static void sendMessage(Player player, boolean centered, String message) {
         if (centered) {
@@ -79,6 +50,26 @@ public class ChatUtils {
     }
 
     public static void sendMessageToPlayer(Player player, List<TextComponent> textComponents, ChatColor borderColor, boolean centered) {
+        if (centered) {
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            sendCenteredMessageWithEvents(player, textComponents);
+            if (borderColor != null) {
+                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        } else {
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+            sendCenteredMessageWithEvents(player, textComponents);
+            if (borderColor != null) {
+                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+            }
+        }
+    }
+
+    public static void sendMessageToPlayer(Player player, BaseComponent[] textComponents, ChatColor borderColor, boolean centered) {
         if (centered) {
             if (borderColor != null) {
                 sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
@@ -142,7 +133,9 @@ public class ChatUtils {
     }
 
     public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.isEmpty()) return;
+        if (textComponents == null || textComponents.isEmpty()) {
+            return;
+        }
         String message = "";
         for (TextComponent textComponent : textComponents) {
             message += textComponent.getText();
@@ -182,6 +175,50 @@ public class ChatUtils {
         player.spigot().sendMessage(componentBuilder.create());
     }
 
+    public static void sendCenteredMessageWithEvents(Player player, BaseComponent[] baseComponents) {
+        if (baseComponents == null || baseComponents.length == 0) {
+            return;
+        }
+        String message = "";
+        for (BaseComponent baseComponent : baseComponents) {
+            if (baseComponent instanceof TextComponent) {
+                message += ((TextComponent) baseComponent).getText();
+            }
+        }
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
+                previousCode = true;
+            } else if (previousCode) {
+                previousCode = false;
+                isBold = c == 'l' || c == 'L';
+            } else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+                messagePxSize++;
+            }
+        }
+        int halvedMessageSize = messagePxSize / 2;
+        int toCompensate = CENTER_PX - halvedMessageSize;
+        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+        int compensated = 0;
+        StringBuilder sb = new StringBuilder();
+        while (compensated < toCompensate) {
+            sb.append(" ");
+            compensated += spaceLength;
+        }
+        BaseComponent[] newComponents = new BaseComponent[baseComponents.length + 1];
+        newComponents[0] = new TextComponent(sb.toString());
+        for (int i = 0; i < baseComponents.length; i++) {
+            newComponents[i + 1] = baseComponents[i];
+        }
+        player.spigot().sendMessage(newComponents);
+    }
+
     /**
      * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
      * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
@@ -195,6 +232,36 @@ public class ChatUtils {
         net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
         nmsItemStack.save(compound);
         return compound.toString();
+    }
+
+    public enum MessageTypes {
+
+        WARLORDS("Warlords", ChatColor.GREEN),
+        PLAYER_SERVICE("PlayerService", ChatColor.AQUA),
+        GAME_SERVICE("GameService", ChatColor.YELLOW),
+        GUILD_SERVICE("GuildService", ChatColor.GOLD),
+        LEADERBOARDS("Leaderboards", ChatColor.BLUE),
+        TIMINGS("Timings", ChatColor.DARK_GRAY),
+        MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
+
+        ;
+
+        public final String name;
+        public final ChatColor chatColor;
+
+        MessageTypes(String name, ChatColor chatColor) {
+            this.name = name;
+            this.chatColor = chatColor;
+        }
+
+        public void sendMessage(String message) {
+            Bukkit.getServer().getConsoleSender().sendMessage(chatColor + "[" + name + "] " + message);
+        }
+
+        public void sendErrorMessage(String message) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[" + name + "] " + message);
+        }
+
     }
 
 }
