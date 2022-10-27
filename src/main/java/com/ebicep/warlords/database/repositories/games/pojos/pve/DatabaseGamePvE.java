@@ -78,7 +78,7 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         //readding game holograms
         Hologram lastGameStats = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.LAST_GAME_STATS_LOCATION);
         holograms.add(lastGameStats);
-        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate() ? "Comp" : "Pub") + " Game Stats");
+        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate() ? "Private" : "Public") + " Game Stats");
 
         Hologram topDamage = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_LOCATION);
         holograms.add(topDamage);
@@ -110,7 +110,8 @@ public class DatabaseGamePvE extends DatabaseGameBase {
         lastGameStats.getLines()
                 .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
         lastGameStats.getLines()
-                .appendText(ChatColor.YELLOW + "Waves Cleared: " + wavesCleared + ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves());
+                .appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
+                        (difficulty != DifficultyIndex.ENDLESS ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
 
 
         List<DatabaseGamePlayerPvE> allPlayers = players;
