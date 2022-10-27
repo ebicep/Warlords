@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 
@@ -37,11 +38,10 @@ public class WaveDefenseStats {
             1800
     };
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
-    private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
     private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
 
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
-        cachedBaseCoinSummary.clear();
+        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         cachedBaseCoinSummary.put("Waves Cleared", 0L);
         cachedBaseCoinSummary.put("Bosses Killed", 0L);
 
@@ -59,24 +59,32 @@ public class WaveDefenseStats {
                 );
             }
         }
+
+        waveDefenseOption.getGame()
+                .warlordsPlayers()
+                .forEach(warlordsPlayer -> {
+                    if (waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave() && waveDefenseOption.getDifficulty() != DifficultyIndex.ENDLESS) {
+                        long coinsConverted = warlordsPlayer.getCurrency() / 100;
+                        cachedBaseCoinSummary.put("Excess Insignia Converted", Math.min(coinsConverted, 1000L));
+                    }
+                    getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary);
+                });
     }
 
     public void storeWeaponFragmentGain(WaveDefenseOption waveDefenseOption) {
         int wavesCleared = waveDefenseOption.getWavesCleared();
         boolean won = waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
-        waveDefenseOption.getGame().warlordsPlayers().forEach(warlordsPlayer -> {
-            if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
-                getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setLegendFragmentGain(won ? wavesCleared : (long) (wavesCleared * 0.5));
-            }
-        });
+        waveDefenseOption.getGame()
+                .warlordsPlayers()
+                .forEach(warlordsPlayer -> {
+                    if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
+                        getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setLegendFragmentGain(won ? wavesCleared : (long) (wavesCleared * 0.5));
+                    }
+                });
     }
 
     public PlayerWaveDefenseStats getPlayerWaveDefenseStats(UUID uuid) {
         return playerWaveDefenseStats.computeIfAbsent(uuid, k -> new PlayerWaveDefenseStats());
-    }
-
-    public LinkedHashMap<String, Long> getCachedBaseCoinSummary() {
-        return cachedBaseCoinSummary;
     }
 
     public HashMap<String, Long> getBossesKilled() {
@@ -86,6 +94,7 @@ public class WaveDefenseStats {
     public static class PlayerWaveDefenseStats {
         private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
         private final HashMap<Integer, Long> waveDamage = new HashMap<>();
+        LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
         private long legendFragmentGain = 0;
 
         public List<AbstractWeapon> getWeaponsFound() {
@@ -98,6 +107,14 @@ public class WaveDefenseStats {
 
         public void setLegendFragmentGain(long legendFragmentGain) {
             this.legendFragmentGain = legendFragmentGain;
+        }
+
+        public LinkedHashMap<String, Long> getCachedBaseCoinSummary() {
+            return cachedBaseCoinSummary;
+        }
+
+        public void setCachedBaseCoinSummary(LinkedHashMap<String, Long> cachedBaseCoinSummary) {
+            this.cachedBaseCoinSummary = cachedBaseCoinSummary;
         }
 
         public HashMap<Integer, Long> getWaveDamage() {

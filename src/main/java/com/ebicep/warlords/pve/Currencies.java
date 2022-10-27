@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsPlayerGiveGuildCoinEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -103,7 +104,9 @@ public enum Currencies {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid());
         }
 
-        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(waveDefenseOption.getWaveDefenseStats().getCachedBaseCoinSummary());
+        WaveDefenseStats.PlayerWaveDefenseStats playerWaveDefenseStats = waveDefenseOption.getWaveDefenseStats()
+                .getPlayerWaveDefenseStats(warlordsPlayer.getUuid());
+        LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(playerWaveDefenseStats.getCachedBaseCoinSummary());
 
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerCoinSummaryEvent(warlordsPlayer, coinSummary));
 
