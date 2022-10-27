@@ -22,8 +22,10 @@ import org.bukkit.scoreboard.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.*;
 import static com.ebicep.warlords.util.java.NumberFormat.addCommaAndRound;
@@ -124,14 +126,17 @@ public class CustomScoreboard {
 
     public void giveNewSideBar(boolean forceClear, String... entries) {
         //clearing all teams if size doesnt match
-        int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
-        if (forceClear || entries.length != sideBarTeams) {
-            scoreboard.getTeams().forEach(Team::unregister);
+        Set<Team> teams = scoreboard.getTeams()
+                .stream()
+                .filter(team -> team.getName().startsWith("!team"))
+                .collect(Collectors.toSet());
+        if (forceClear || entries.length != teams.size()) {
+            teams.forEach(Team::unregister);
             clearSideBar();
 
             //making new sidebar
             for (int i = 0; i < entries.length; i++) {
-                Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
+                Team tempTeam = scoreboard.registerNewTeam("!team_" + (i + 1));
                 tempTeam.addEntry(TEAM_ENTRIES[i]);
                 sideBar.getScore(TEAM_ENTRIES[i]).setScore(i + 1);
             }
@@ -154,23 +159,23 @@ public class CustomScoreboard {
     public void setSideBarTeam(int team, String entry) {
         if (entry.length() > 16) {
             if (entry.charAt(15) == '§') {
-                scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 15));
+                scoreboard.getTeam("!team_" + team).setPrefix(entry.substring(0, 15));
                 if (entry.length() > 31) {
-                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15, 31));
+                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(15, 31));
                 } else {
-                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15));
+                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(15));
                 }
             } else {
-                scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 16));
+                scoreboard.getTeam("!team_" + team).setPrefix(entry.substring(0, 16));
                 if (entry.length() > 32) {
-                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16, 32));
+                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(16, 32));
                 } else {
-                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16));
+                    scoreboard.getTeam("!team_" + team).setSuffix(entry.substring(16));
                 }
             }
         } else {
-            scoreboard.getTeam("team_" + team).setPrefix(entry);
-            scoreboard.getTeam("team_" + team).setSuffix("");
+            scoreboard.getTeam("!team_" + team).setPrefix(entry);
+            scoreboard.getTeam("!team_" + team).setSuffix("");
         }
     }
 
@@ -193,8 +198,8 @@ public class CustomScoreboard {
         if (suffix.length() > 16) {
             suffix = "Error";
         }
-        scoreboard.getTeam("team_" + team).setPrefix(prefix);
-        scoreboard.getTeam("team_" + team).setSuffix(suffix);
+        scoreboard.getTeam("!team_" + team).setPrefix(prefix);
+        scoreboard.getTeam("!team_" + team).setSuffix(suffix);
     }
 
     public void giveNewSideBar(boolean forceClear, List<String> entries) {
@@ -202,9 +207,33 @@ public class CustomScoreboard {
         giveNewSideBar(forceClear, entries.toArray(new String[0]));
     }
 
-    public static void giveMainLobbyScoreboardToAll() {
+    public static void updateLobbyPlayerNames() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            CustomScoreboard.getPlayerScoreboard(onlinePlayer).giveMainLobbyScoreboard();
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).updateLobbyPlayerNamesInternal();
+        }
+    }
+
+    public void updateLobbyPlayerNamesInternal() {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null || !player.getWorld().getName().equals("MainLobby")) {
+            return;
+        }
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            String name = onlinePlayer.getName();
+            if (scoreboard.getTeam(name) == null) {
+                scoreboard.registerNewTeam(name);
+            }
+            Team team = scoreboard.getTeam(name);
+            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
+            if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
+                System.out.println(onlinePlayer.getName() + " has a guild tag");
+                GuildTag tag = guildPlayerPair.getA().getTag();
+                team.setSuffix(" " + tag.getTag());
+            } else {
+                team.setSuffix("");
+            }
+            team.setPrefix(ChatColor.AQUA.toString());
+            team.addEntry(name);
         }
     }
 
@@ -218,21 +247,7 @@ public class CustomScoreboard {
             health = null;
         }
 
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            for (Team team : scoreboard.getTeams()) {
-                if (team.getName().equals(onlinePlayer.getName())) {
-                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
-                    if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
-                        GuildTag tag = guildPlayerPair.getA().getTag();
-                        team.setPrefix(tag.getTag() + ChatColor.AQUA);
-                    } else {
-                        team.setPrefix(ChatColor.AQUA.toString());
-                    }
-                    team.setSuffix("");
-                    break;
-                }
-            }
-        }
+        updateLobbyPlayerNamesInternal();
 
         if (loaded) {
             StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);

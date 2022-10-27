@@ -63,7 +63,7 @@ public class GamesCommand extends BaseCommand {
                 new ItemBuilder(Material.WORKBENCH)
                         .name(ChatColor.GREEN + "Reload Holograms")
                         .get(),
-                (m, e) -> Bukkit.dispatchCommand(player, "games reload")
+                (m, e) -> player.performCommand("games reload")
         );
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);

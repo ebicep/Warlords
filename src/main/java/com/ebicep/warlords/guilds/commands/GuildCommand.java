@@ -352,7 +352,7 @@ public class GuildCommand extends BaseCommand {
             return;
         }
         //check if name has special characters
-        if (!newName.matches("[a-zA-Z0-9 ]+")) {
+        if (!newName.matches("[a-zA-Z\\d ]+")) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild name cannot contain special characters.");
             return;
         }
@@ -393,6 +393,36 @@ public class GuildCommand extends BaseCommand {
         GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
         guild.setOpen(false);
     }
+
+    @Subcommand("tag")
+    @Description("Sets the tag of your guild (Max 6 characters)")
+    public void tag(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MODIFY_TAG") GuildPlayerWrapper guildPlayerWrapper,
+            String tag
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        if (tag.isEmpty()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Tag cannot be empty.");
+            return;
+        }
+        if (tag.length() > 6) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Guild tag cannot be longer than 6 characters.");
+            return;
+        }
+        //check if name has special characters
+        if (!tag.matches("[a-zA-Z\\d ]+")) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Guild tag cannot contain special characters.");
+            return;
+        }
+//        if (GuildManager.existingGuildWithTag(tag)) {
+//            Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that tag already exists.");
+//            return;
+//        }
+        guild.setTag(tag);
+    }
+
 
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {

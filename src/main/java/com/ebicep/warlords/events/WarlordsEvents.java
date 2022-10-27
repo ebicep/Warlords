@@ -220,7 +220,7 @@ public class WarlordsEvents implements Listener {
                             }).execute();
                     Bukkit.getPluginManager().callEvent(new DatabasePlayerFirstLoadEvent(player, databasePlayer));
                 }
-                CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
+                CustomScoreboard.updateLobbyPlayerNames();
                 ExperienceManager.giveExperienceBar(player);
                 PlayerHotBarItemListener.giveLobbyHotBarDatabase(player);
                 if (StatsLeaderboardManager.loaded) {

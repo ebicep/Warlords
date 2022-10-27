@@ -32,7 +32,7 @@ public class PartyCommand extends BaseCommand {
     public void create(@Conditions("party:false") Player player) {
         Party party = new Party(player.getUniqueId(), false);
         PartyManager.PARTIES.add(party);
-        Bukkit.dispatchCommand(player, "p list");
+        player.performCommand("p list");
     }
 
     @Default
@@ -308,7 +308,7 @@ public class PartyCommand extends BaseCommand {
                         }
                     }
                 }
-                toInvite.forEach(uuid -> Bukkit.dispatchCommand(player, "p invite " + Bukkit.getPlayer(uuid).getName()));
+                toInvite.forEach(uuid -> player.performCommand("p invite " + Bukkit.getPlayer(uuid).getName()));
                 QueueManager.queue.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
                 QueueManager.sendQueue();
             }

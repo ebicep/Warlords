@@ -1,7 +1,6 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +28,7 @@ public class PartyListener implements Listener {
             partyPlayerPair.getB().setOfflineTimeLeft(-1);
         }
         //queue
-        Bukkit.dispatchCommand(player, "queue");
+        player.performCommand("queue");
     }
 
     @EventHandler

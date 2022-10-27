@@ -10,9 +10,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
-import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -66,8 +64,8 @@ public class GuildDebugCommand extends BaseCommand {
             ChatColor bracketColor
     ) {
         Guild guild = guildPlayerWrapper.getGuild();
-        GuildTag tag = guild.getTag();
-        tag.setInfo(tagName, nameColor.toString(), bracketColor.toString());
+        GuildTag tag = new GuildTag(tagName, nameColor.toString(), bracketColor.toString());
+        guild.setTag(tag);
         GuildManager.queueUpdateGuild(guild);
         ChatChannels.sendDebugMessage(player,
                 ChatColor.GREEN + "Set guild " + guild.getName() + " tag to " + guild.getTag().getTag(),

@@ -10,6 +10,7 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogMuteGuild;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogUnmuteGuild;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
@@ -337,13 +338,20 @@ public class Guild {
         return tag;
     }
 
+    public void setTag(GuildTag tag) {
+        this.tag = tag;
+        CustomScoreboard.updateLobbyPlayerNames();
+    }
+
     public void setTag(String tagName) {
+        tagName = tagName.toUpperCase();
         if (this.tag == null) {
             this.tag = new GuildTag(tagName);
         } else {
             this.tag.setName(tagName);
         }
         sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild tag was changed to " + ChatColor.GOLD + tagName, true);
+        CustomScoreboard.updateLobbyPlayerNames();
     }
 
     public Instant getCreationDate() {

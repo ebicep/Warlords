@@ -461,7 +461,7 @@ public class WarlordsShopMenu {
                 1,
                 playerSettings.getHotkeyMode().item,
                 (m, e) -> {
-                    Bukkit.dispatchCommand(player, "hotkeymode");
+                    player.performCommand("hotkeymode");
                     openSettingsMenu(player);
                 }
         );
@@ -470,7 +470,7 @@ public class WarlordsShopMenu {
                 1,
                 playerSettings.getFlagMessageMode().item,
                 (m, e) -> {
-                    Bukkit.dispatchCommand(player, "flagmessagemode");
+                    player.performCommand("flagmessagemode");
                     openSettingsMenu(player);
                 }
         );
