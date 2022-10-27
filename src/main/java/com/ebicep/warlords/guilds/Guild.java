@@ -67,6 +67,7 @@ public class Guild {
     @Id
     private String id;
     private String name;
+    private GuildTag tag;
     @Field("date_created")
     private Instant creationDate = Instant.now();
     @Field("date_disbanded")
@@ -330,6 +331,19 @@ public class Guild {
     public void setName(String name) {
         this.name = name;
         sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild name was changed to " + ChatColor.GOLD + name, true);
+    }
+
+    public GuildTag getTag() {
+        return tag;
+    }
+
+    public void setTag(String tagName) {
+        if (this.tag == null) {
+            this.tag = new GuildTag(tagName);
+        } else {
+            this.tag.setName(tagName);
+        }
+        sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild tag was changed to " + ChatColor.GOLD + tagName, true);
     }
 
     public Instant getCreationDate() {

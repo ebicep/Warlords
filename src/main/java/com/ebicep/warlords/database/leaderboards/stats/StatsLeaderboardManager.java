@@ -176,9 +176,7 @@ public class StatsLeaderboardManager {
                     .forEach(holograms -> holograms.get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
-        if (player.getWorld().getName().equalsIgnoreCase("MainLobby")) {
-            CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
-        }
+        CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         createLeaderboardSwitcherHologram(player);
         addPlayerPositionLeaderboards(player);
     }

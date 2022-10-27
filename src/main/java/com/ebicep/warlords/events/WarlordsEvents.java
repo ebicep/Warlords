@@ -226,7 +226,6 @@ public class WarlordsEvents implements Listener {
                 if (StatsLeaderboardManager.loaded) {
                     StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGameBase.setGameHologramVisibility(player);
-                    CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                 }
             }, () -> {
                 if (!fromGame) {

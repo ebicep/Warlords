@@ -9,7 +9,12 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,7 +31,7 @@ import static com.ebicep.warlords.util.java.NumberFormat.addCommaAndRound;
 public class CustomScoreboard {
 
     private static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
-    private static final String[] teamEntries = new String[]{
+    private static final String[] TEAM_ENTRIES = new String[]{
             "🎂",
             "🎉",
             "🎁",
@@ -127,8 +132,8 @@ public class CustomScoreboard {
             //making new sidebar
             for (int i = 0; i < entries.length; i++) {
                 Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
-                tempTeam.addEntry(teamEntries[i]);
-                sideBar.getScore(teamEntries[i]).setScore(i + 1);
+                tempTeam.addEntry(TEAM_ENTRIES[i]);
+                sideBar.getScore(TEAM_ENTRIES[i]).setScore(i + 1);
             }
         }
 
@@ -197,7 +202,17 @@ public class CustomScoreboard {
         giveNewSideBar(forceClear, entries.toArray(new String[0]));
     }
 
+    public static void giveMainLobbyScoreboardToAll() {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            CustomScoreboard.getPlayerScoreboard(onlinePlayer).giveMainLobbyScoreboard();
+        }
+    }
+
     public void giveMainLobbyScoreboard() {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null || !player.getWorld().getName().equals("MainLobby")) {
+            return;
+        }
         if (scoreboard.getObjective("health") != null) {
             scoreboard.getObjective("health").unregister();
             health = null;
@@ -206,7 +221,14 @@ public class CustomScoreboard {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             for (Team team : scoreboard.getTeams()) {
                 if (team.getName().equals(onlinePlayer.getName())) {
-                    team.unregister();
+                    Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
+                    if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
+                        GuildTag tag = guildPlayerPair.getA().getTag();
+                        team.setPrefix(tag.getTag() + ChatColor.AQUA);
+                    } else {
+                        team.setPrefix(ChatColor.AQUA.toString());
+                    }
+                    team.setSuffix("");
                     break;
                 }
             }
