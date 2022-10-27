@@ -127,7 +127,7 @@ public class WeaponManagerMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    if (!player.hasPermission("group.patreon") || PermissionHandler.isAdmin(player)) {
+                    if (!player.hasPermission("group.patreon") && !PermissionHandler.isAdmin(player)) {
                         player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
                         return;
                     }
