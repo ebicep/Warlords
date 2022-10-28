@@ -1,10 +1,12 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -45,9 +47,16 @@ public class UtilsTest {
 
     @Test
     public void testReset() {
-        LocalDateTime reset = LocalDateTime.now().minusDays(7).withHour(10).minusMinutes(11);
-        LocalDateTime current = LocalDateTime.now().withHour(10);
-        assertEquals(ChronoUnit.MINUTES.between(reset, current), Timing.WEEKLY.minuteDuration + 11);
+//        LocalDateTime reset = LocalDateTime.now().minusDays(7).withHour(10).minusMinutes(11);
+//        LocalDateTime current = LocalDateTime.now().withHour(10);
+//        assertEquals(ChronoUnit.MINUTES.between(reset, current), Timing.WEEKLY.minuteDuration + 11);
+        Instant now = Instant.now();
+        System.out.println(now);
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            System.out.println(activeCollection.name);
+            System.out.println(activeCollection.shouldUpdate(now));
+        }
+        System.out.println(DateUtil.getResetDateToday());
     }
 
     @Test

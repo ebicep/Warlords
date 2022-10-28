@@ -9,16 +9,15 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.DateUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.springframework.cache.caffeine.CaffeineCache;
 
+import java.time.Instant;
 import java.util.Comparator;
 
 @CommandAlias("test")
@@ -122,14 +121,21 @@ public class TestCommand extends BaseCommand {
 
     @CommandAlias("testplayer")
     public void testPlayer(Player player) {
-        CustomScoreboard playerScoreboard = CustomScoreboard.getPlayerScoreboard(player);
-        Scoreboard scoreboard = playerScoreboard.getScoreboard();
-        System.out.println(scoreboard.getTeams());
-        //scoreboard.getTeam("sumSmash").unregister();
-        Team team = scoreboard.registerNewTeam("sumSmash");
-        team.setPrefix("1");
-        team.addEntry("sumSmash");
-        team.setSuffix("2");
+//        CustomScoreboard playerScoreboard = CustomScoreboard.getPlayerScoreboard(player);
+//        Scoreboard scoreboard = playerScoreboard.getScoreboard();
+//        System.out.println(scoreboard.getTeams());
+//        //scoreboard.getTeam("sumSmash").unregister();
+//        Team team = scoreboard.registerNewTeam("sumSmash");
+//        team.setPrefix("1");
+//        team.addEntry("sumSmash");
+//        team.setSuffix("2");
+        Instant now = Instant.now();
+        System.out.println(now);
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            System.out.println(activeCollection.name);
+            System.out.println(activeCollection.shouldUpdate(now));
+        }
+        System.out.println(DateUtil.getResetDateToday());
     }
 
     @HelpCommand
