@@ -172,7 +172,7 @@ public class IncendiaryCurse extends AbstractAbility {
                                     CooldownTypes.DEBUFF,
                                     cooldownManager -> {
                                     },
-                                    2 * 20
+                                    5 * 20
                             ) {
                                 @Override
                                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
