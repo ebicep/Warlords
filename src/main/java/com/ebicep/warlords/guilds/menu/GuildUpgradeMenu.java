@@ -13,6 +13,7 @@ import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.ChatColor;
@@ -43,6 +44,7 @@ public class GuildUpgradeMenu {
         for (T value : values) {
             ItemBuilder itemBuilder = new ItemBuilder(value.getMaterial())
                     .name(ChatColor.GREEN + value.getName())
+                    .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + value.getDescription(), 160))
                     .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
             AbstractGuildUpgrade<?> upgrade = null;
             for (AbstractGuildUpgrade<?> abstractGuildUpgrade : upgrades) {
@@ -57,7 +59,7 @@ public class GuildUpgradeMenu {
                     upgrade.addItemClickLore(itemBuilder);
                 }
             } else {
-                itemBuilder.addLore(ChatColor.GRAY + "\nClick to Purchase");
+                itemBuilder.addLore(ChatColor.YELLOW + "\nClick to Purchase");
             }
 
             AbstractGuildUpgrade<?> finalUpgrade = upgrade;

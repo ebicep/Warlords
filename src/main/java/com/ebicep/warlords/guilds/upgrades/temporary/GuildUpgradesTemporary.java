@@ -22,6 +22,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
     COINS_BOOST(
             "Coins Boost",
+            "Increases the coins gained at the end of the game",
             Material.GOLD_INGOT,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -53,6 +54,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     },
     INSIGNIA_BOOST(
             "Insignia Boost",
+            "Increases the insignia gained throughout the game",
             Material.NETHER_STAR,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -83,6 +85,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     },
     WEAPON_DROP_RATE(
             "Weapon Drop Rate",
+            "Increases the chance of a mob dropping a weapon",
             Material.WOOD_AXE,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -113,6 +116,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     },
     RESPAWN_TIME_REDUCTION(
             "Respawn Time Reduction",
+            "Reduces the time it takes to respawn",
             Material.WATCH,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
@@ -146,11 +150,13 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
 
     public static final GuildUpgradesTemporary[] VALUES = values();
     public final String name;
+    public final String description;
     public final Material material;
     public final UnaryOperator<Instant> expirationDate;
 
-    GuildUpgradesTemporary(String name, Material material, UnaryOperator<Instant> expirationDate) {
+    GuildUpgradesTemporary(String name, String description, Material material, UnaryOperator<Instant> expirationDate) {
         this.name = name;
+        this.description = description;
         this.material = material;
         this.expirationDate = expirationDate;
     }
@@ -158,6 +164,11 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override

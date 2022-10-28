@@ -17,6 +17,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
     PLAYER_EXP_BONUS(
             "Player EXP Bonus",
+            "Increases the experience gained at the end of the game",
             Material.EXP_BOTTLE
     ) {
         @Override
@@ -46,6 +47,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     },
     GUILD_COIN_CONVERSION_RATE(
             "Guild Coin Conversion Rate",
+            "Increases the Player to Guild Coin conversion rate",
             Material.GOLD_NUGGET
     ) {
         @Override
@@ -76,6 +78,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     },
     DAILY_PLAYER_COIN_BONUS(
             "Daily Player Coin Bonus",
+            "Guild players gain coins from logging in once a day",
             Material.GOLD_INGOT
     ) {
         @Override
@@ -91,6 +94,7 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
     },
     GUILD_MEMBER_CAPACITY(
             "Guild Member Capacity",
+            "Increases the member capacity of the guild",
             Material.CHEST
     ) {
         final int[] values = new int[]{2, 2, 3, 3, 5, 5, 10, 10, 10, 0};
@@ -115,16 +119,23 @@ public enum GuildUpgradesPermanent implements GuildUpgrade {
 
     public static final GuildUpgradesPermanent[] VALUES = values();
     public final String name;
+    public final String description;
     public final Material material;
 
-    GuildUpgradesPermanent(String name, Material material) {
+    GuildUpgradesPermanent(String name, String description, Material material) {
         this.name = name;
+        this.description = description;
         this.material = material;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override

@@ -10,6 +10,8 @@ public interface GuildUpgrade {
 
     String getName();
 
+    String getDescription();
+
     Material getMaterial();
 
     double getValueFromTier(int tier);
