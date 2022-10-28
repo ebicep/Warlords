@@ -2,7 +2,10 @@ package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
-import com.ebicep.warlords.guilds.*;
+import com.ebicep.warlords.guilds.Guild;
+import com.ebicep.warlords.guilds.GuildExperienceUtils;
+import com.ebicep.warlords.guilds.GuildManager;
+import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogCoinsConverted;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
@@ -22,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ebicep.warlords.guilds.menu.GuildTagMenu.openGuildTagMenu;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 
@@ -92,6 +94,7 @@ public class GuildMenu {
                 }
         );
 
+        /*
         guild.getPlayerMatchingUUID(player.getUniqueId()).ifPresent(guildPlayer -> {
             if (!guild.playerHasPermission(guildPlayer, GuildPermissions.MODIFY_TAG)) {
                 return;
@@ -106,6 +109,8 @@ public class GuildMenu {
                     }
             );
         });
+
+         */
 
         if (player.getUniqueId().equals(guild.getCurrentMaster())) {
             menu.setItem(8, 0,
