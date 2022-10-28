@@ -344,18 +344,20 @@ public class WarlordsEvents implements Listener {
 
         if (wpAttacker instanceof WarlordsNPC) {
             WarlordsNPC warlordsNPC = (WarlordsNPC) wpAttacker;
-            if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
-                wpVictim.addDamageInstance(
-                        wpAttacker,
-                        "",
-                        warlordsNPC.getMinMeleeDamage(),
-                        warlordsNPC.getMaxMeleeDamage(),
-                        -1,
-                        100,
-                        false
-                );
+            if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
+                    wpVictim.addDamageInstance(
+                            wpAttacker,
+                            "",
+                            warlordsNPC.getMinMeleeDamage(),
+                            warlordsNPC.getMaxMeleeDamage(),
+                            -1,
+                            100,
+                            false
+                    );
+                }
+                wpAttacker.setHitCooldown(20);
             }
-            wpAttacker.setHitCooldown(20);
         } else {
             if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getAbstractWeapon() != null) {
                 AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getAbstractWeapon();
