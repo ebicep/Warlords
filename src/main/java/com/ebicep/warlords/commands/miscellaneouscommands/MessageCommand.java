@@ -24,7 +24,7 @@ public class MessageCommand extends BaseCommand {
     @CommandAlias("msg|tell")
     @Description("Privately message a player")
     public void message(Player player, @Flags("other") Player target, String message) {
-        if (MuteCommand.mutedPlayers.getOrDefault(player.getUniqueId(), false)) {
+        if (MuteCommand.MUTED_PLAYERS.getOrDefault(player.getUniqueId(), false)) {
             return;
         }
         if (player.getUniqueId().equals(target.getUniqueId())) {

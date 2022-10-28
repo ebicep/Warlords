@@ -633,7 +633,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (MuteCommand.mutedPlayers.getOrDefault(uuid, false)) {
+        if (MuteCommand.MUTED_PLAYERS.getOrDefault(uuid, false)) {
             e.setCancelled(true);
             return;
         }

@@ -20,40 +20,40 @@ import java.util.stream.Collectors;
 @CommandPermission("warlords.player.mute")
 public class MuteCommand extends BaseCommand {
 
-    public static HashMap<UUID, Boolean> mutedPlayers = new HashMap<>();
+    public static final HashMap<UUID, Boolean> MUTED_PLAYERS = new HashMap<>();
 
     @Default
     @CommandCompletion("@players")
     @Description("Mutes a player")
-    public void mute(CommandIssuer issuer, @Values("@players") Player player) {
+    public void mute(CommandIssuer issuer, @Values("@players") @Flags("@other") Player player) {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
-        if (mutedPlayers.getOrDefault(uuid, false)) {
+        if (MUTED_PLAYERS.getOrDefault(uuid, false)) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is already muted", true);
             return;
         }
-        mutedPlayers.put(uuid, true);
+        MUTED_PLAYERS.put(uuid, true);
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Muted " + name, true);
     }
 
     @CommandAlias("unmute")
     @CommandCompletion("@players")
     @Description("Unmutes a player")
-    public void unmute(CommandIssuer issuer, @Values("@players") Player player) {
+    public void unmute(CommandIssuer issuer, @Values("@players") @Flags("@other") Player player) {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
-        if (!mutedPlayers.getOrDefault(uuid, false)) {
+        if (!MUTED_PLAYERS.getOrDefault(uuid, false)) {
             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + name + " is not muted", true);
             return;
         }
-        mutedPlayers.put(uuid, false);
+        MUTED_PLAYERS.put(uuid, false);
         ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Unmuted " + name, true);
     }
 
     @CommandAlias("mutelist")
     @Description("Shows the list of muted players")
     public void muteList(CommandIssuer issuer) {
-        String mutedList = mutedPlayers.entrySet().stream()
+        String mutedList = MUTED_PLAYERS.entrySet().stream()
                 .filter(Map.Entry::getValue)
                 .map(uuidBooleanEntry -> Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName())
                 .collect(Collectors.joining(","));
