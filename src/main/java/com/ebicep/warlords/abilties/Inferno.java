@@ -97,7 +97,7 @@ public class Inferno extends AbstractAbility {
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (pveUpgrade) {
                     if (isCrit && !(finalMaxHits <= 0)) {
-                        subtractCooldown(0.25f);
+                        subtractCooldown(0.5f);
                         finalMaxHits--;
                     }
                     wp.updateOrangeItem();
