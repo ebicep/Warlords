@@ -156,8 +156,8 @@ public class HeartToHeart extends AbstractAbility {
                         we.addDamageInstance(
                                 wp,
                                 name,
-                                904,
-                                1377,
+                                1635,
+                                2096,
                                 -1,
                                 100,
                                 false
