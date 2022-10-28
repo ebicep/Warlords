@@ -148,6 +148,9 @@ public class GuildRoleMenu {
                             Guild.sendGuildMessage(player, ChatColor.RED + "Role names must be at least 3 characters long!");
                             return;
                         }
+                        if (guild.getDefaultRole().equals(role)) {
+                            guild.setDefaultRole(newRoleName);
+                        }
                         Guild.sendGuildMessage(player, ChatColor.GREEN + "Role " + role.getRoleName() + " was renamed to " + newRoleName);
                         guild.log(new GuildLogRoleRename(player.getUniqueId(), role.getRoleName(), newRoleName));
                         role.setRoleName(newRoleName);
