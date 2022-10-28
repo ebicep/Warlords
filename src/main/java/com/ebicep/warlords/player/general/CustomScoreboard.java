@@ -226,7 +226,6 @@ public class CustomScoreboard {
             Team team = scoreboard.getTeam(name);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(onlinePlayer.getUniqueId());
             if (guildPlayerPair != null && guildPlayerPair.getA().getTag() != null) {
-                System.out.println(onlinePlayer.getName() + " has a guild tag");
                 GuildTag tag = guildPlayerPair.getA().getTag();
                 team.setSuffix(" " + tag.getTag());
             } else {

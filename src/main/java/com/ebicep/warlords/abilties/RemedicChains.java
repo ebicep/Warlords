@@ -110,7 +110,6 @@ public class RemedicChains extends AbstractAbility {
                     if (pveUpgrade) {
                         wp.setMaxHealth(wp.getSpec().getMaxHealth());
                         maxHealths.forEach(WarlordsEntity::setMaxHealth);
-                        System.out.println("Health reset");
                     }
                     if (wp.isDead()) {
                         return;
