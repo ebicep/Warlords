@@ -54,31 +54,6 @@ public abstract class DatabaseGameBase {
     public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
-    @Id
-    protected String id;
-    @Field("exact_date")
-    protected Instant exactDate = Instant.now();
-    protected String date;
-    protected GameMap map;
-    @Field("game_mode")
-    protected GameMode gameMode = GameMode.CAPTURE_THE_FLAG;
-    @Field("game_addons")
-    protected List<GameAddon> gameAddons = new ArrayList<>();
-    protected boolean counted = false;
-    @Transient
-    protected List<Hologram> holograms = new ArrayList<>();
-
-    public DatabaseGameBase() {
-    }
-
-    public DatabaseGameBase(@Nonnull Game game, boolean counted) {
-        this.exactDate = Instant.now();
-        this.date = DateUtil.formatCurrentDateEST(DATE_FORMAT);
-        this.map = game.getMap();
-        this.gameMode = game.getGameMode();
-        this.gameAddons = new ArrayList<>(game.getAddons());
-        this.counted = counted;
-    }
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
@@ -435,6 +410,32 @@ public abstract class DatabaseGameBase {
 
     public static long convertToTimestampFrom(String objectId) {
         return Long.parseLong(objectId.substring(0, 8), 16) * 1000;
+    }
+
+    @Id
+    protected String id;
+    @Field("exact_date")
+    protected Instant exactDate = Instant.now();
+    protected String date;
+    protected GameMap map;
+    @Field("game_mode")
+    protected GameMode gameMode = GameMode.CAPTURE_THE_FLAG;
+    @Field("game_addons")
+    protected List<GameAddon> gameAddons = new ArrayList<>();
+    protected boolean counted = false;
+    @Transient
+    protected List<Hologram> holograms = new ArrayList<>();
+
+    public DatabaseGameBase() {
+    }
+
+    public DatabaseGameBase(@Nonnull Game game, boolean counted) {
+        this.exactDate = Instant.now();
+        this.date = DateUtil.formatCurrentDateEST(DATE_FORMAT);
+        this.map = game.getMap();
+        this.gameMode = game.getGameMode();
+        this.gameAddons = new ArrayList<>(game.getAddons());
+        this.counted = counted;
     }
 
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);

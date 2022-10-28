@@ -246,7 +246,6 @@ public class DatabaseManager {
         PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
     }
-
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, onNotFound);
     }
@@ -281,7 +280,7 @@ public class DatabaseManager {
         }
         getPlayer(uuid, playersCollections, databasePlayer -> {
             databasePlayerConsumer.accept(databasePlayer);
-            queueUpdatePlayerAsync(databasePlayer);
+            queueUpdatePlayerAsync(databasePlayer, playersCollections);
         });
     }
 

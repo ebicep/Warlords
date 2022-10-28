@@ -18,12 +18,18 @@ public enum PlayersCollections {
             return true;
         }
     },
-    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6") {
+    SEASON_7("Season 6", "Players_Information_Season_7", "playersSeason7") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);
         }
     },
+    //    SEASON_6("Season 6", "Players_Information_Season_6", "playersSeason6") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//    },
 //    SEASON_5("Season 5", "Players_Information_Season_5", "playersSeason5") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
@@ -36,16 +42,16 @@ public enum PlayersCollections {
 //            return ACTIVE_COLLECTIONS.contains(this);
 //        }
 //    },
-WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
-    @Override
-    public boolean shouldUpdate(Instant dateOfGame) {
-        return OffsetDateTime
-                .now(ZoneOffset.UTC)
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .withHour(0)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0)
+    WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return OffsetDateTime
+                    .now(ZoneOffset.UTC)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                    .withHour(0)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0)
                     .toInstant()
                     .isBefore(dateOfGame);
         }
@@ -57,40 +63,30 @@ WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
                     .isBefore(dateOfGame);
         }
     },
-//    TEMP("TEMP1", "TEMP1", "TEMP1") {
-//        @Override
-//        public boolean shouldUpdate(Instant dateOfGame) {
-//            return false;
-//        }
-//    },
-//    TEMP2("TEMP2", "TEMP2", "TEMP2") {
-//        @Override
-//        public boolean shouldUpdate(Instant dateOfGame) {
-//            return false;
-//        }
-//    },
+    TEMP("TEMP1", "TEMP1", "TEMP1") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return false;
+        }
+    },
+    TEMP2("TEMP2", "TEMP2", "TEMP2") {
+        @Override
+        public boolean shouldUpdate(Instant dateOfGame) {
+            return false;
+        }
+    },
 
     ;
 
     public static final PlayersCollections[] VALUES = values();
-    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, SEASON_6, WEEKLY, DAILY);
-    public final String name;
-    public final String collectionName;
-    public final String cacheName;
-
-    PlayersCollections(String name, String collectionName, String cacheName) {
-        this.name = name;
-        this.collectionName = collectionName;
-        this.cacheName = cacheName;
-    }
+    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, SEASON_7, WEEKLY, DAILY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
         switch (playersCollections) {
             case LIFETIME:
-                return SEASON_6;
-            case SEASON_6:
+                return SEASON_7;
+            case SEASON_7:
                 return WEEKLY;
-//                return SEASON_5;
 //            case SEASON_5:
 //                return SEASON_4;
 //            case SEASON_4:
@@ -107,18 +103,28 @@ WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly") {
         switch (playersCollections) {
             case LIFETIME:
                 return DAILY;
-            case SEASON_6:
+            case SEASON_7:
                 return LIFETIME;
 //            case SEASON_5:
 //                return SEASON_6;
 //            case SEASON_4:
 //                return SEASON_5;
             case WEEKLY:
-                return SEASON_6;
+                return SEASON_7;
             case DAILY:
                 return WEEKLY;
         }
         return LIFETIME;
+    }
+
+    public final String name;
+    public final String collectionName;
+    public final String cacheName;
+
+    PlayersCollections(String name, String collectionName, String cacheName) {
+        this.name = name;
+        this.collectionName = collectionName;
+        this.cacheName = cacheName;
     }
 
     public abstract boolean shouldUpdate(Instant dateOfGame);
