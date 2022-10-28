@@ -15,7 +15,7 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
     public static final int CRIT_MULTIPLIER = 160;
     public static final int HEALTH_BONUS = 1000;
     public static final int SPEED_BONUS = 5;
-    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.03f;
+    private static final float HEALTH_INCREASE_PER_UPGRADE = 0.002f;
 
     public LegendaryTitanic() {
     }
