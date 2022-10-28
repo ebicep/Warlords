@@ -122,32 +122,7 @@ public class MasterworksFairManager {
                                                 for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
                                                     WeaponsPvE rarity = masterworksFairEntry.getRarity();
                                                     pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                                    LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
-                                                    int finalI = masterworksFairEntry.getPlacement();
-                                                    if (finalI < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
-                                                        rewards.put(rarity.starPieceCurrency, 1L);
-                                                        switch (finalI) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
-                                                            case 0:
-                                                                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
-                                                                break;
-                                                            case 1:
-                                                            case 2:
-                                                                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
-                                                                break;
-                                                        }
-                                                    } else {
-                                                        if (finalI < 10) { //4-10 will get 5 Supply Drop roll opportunities
-                                                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-                                                        } else if (masterworksFairEntry.getScore() >= 85) { //Players who submit a 85%+ weapon
-                                                            // will be guaranteed at least 3 supply drop opportunities
-                                                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
-                                                        } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
-                                                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
-                                                        }
-                                                    }
-                                                    if (fairNumber != 0 && fairNumber % 10 == 0) {
-                                                        rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
-                                                    }
+                                                    LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFair, masterworksFairEntry);
                                                     if (throughRewardsInventory) {
                                                         pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
                                                     } else {
@@ -169,6 +144,37 @@ public class MasterworksFairManager {
                     }
                 }).
                 execute();
+    }
+
+    public static LinkedHashMap<Currencies, Long> getRewards(MasterworksFair masterworksFair, MasterworksFairEntry masterworksFairEntry) {
+        int fairNumber = masterworksFair.getFairNumber();
+        int placement = masterworksFairEntry.getPlacement();
+        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+        if (placement < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
+            rewards.put(masterworksFairEntry.getRarity().starPieceCurrency, 1L);
+            switch (placement) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
+                case 0:
+                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                    break;
+                case 1:
+                case 2:
+                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
+                    break;
+            }
+        } else {
+            if (placement < 10) { //4-10 will get 5 Supply Drop roll opportunities
+                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+            } else if (masterworksFairEntry.getScore() >= 85) { //Players who submit a 85%+ weapon
+                // will be guaranteed at least 3 supply drop opportunities
+                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
+            } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
+                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
+            }
+        }
+        if (fairNumber != 0 && fairNumber % 10 == 0) {
+            rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
+        }
+        return rewards;
     }
 
     public static void sendMasterworksFairMessage(Player player, ComponentBuilder components) {

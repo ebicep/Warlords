@@ -67,12 +67,12 @@ public class MasterworksFairTrait extends Trait {
         //check if week past
         long minutesBetween = ChronoUnit.MINUTES.between(masterworksFair.getStartDate(), Instant.now());
         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
-        if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
-            resetFair(masterworksFair);
-        } else if (masterworksFair.isEnded()) {
+        if (masterworksFair.isEnded()) {
             ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Ended");
             MasterworksFairManager.createFair();
+        } else if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
+            resetFair(masterworksFair);
         } else {
             initializeFair(masterworksFair);
         }

@@ -172,9 +172,11 @@ public class DatabaseManager {
     }
 
     public static void updateQueue() {
-        PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
-                playersCollections
-        )));
+        synchronized (PLAYERS_TO_UPDATE) {
+            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> databasePlayers.forEach(databasePlayer -> playerService.update(databasePlayer,
+                    playersCollections
+            )));
+        }
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {

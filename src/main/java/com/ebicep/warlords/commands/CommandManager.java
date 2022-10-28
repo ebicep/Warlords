@@ -56,6 +56,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -236,6 +237,7 @@ public class CommandManager {
                 throw new InvalidCommandArgument(ChatColor.RED + "Could not find a game with that ID");
             }
         });
+        manager.getCommandContexts().registerContext(Instant.class, command -> Instant.parse(command.popFirstArg()));
     }
 
     public static void registerCompletions() {
