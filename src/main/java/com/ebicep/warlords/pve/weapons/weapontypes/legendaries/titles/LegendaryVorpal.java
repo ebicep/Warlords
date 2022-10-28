@@ -34,11 +34,6 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
         player.getGame().registerEvents(new Listener() {
@@ -46,7 +41,9 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isHealingInstance() || event.getAttacker() != player || !event.getAbility().isEmpty()) return;
+                if (event.isHealingInstance() || event.getAttacker() != player || !event.getAbility().isEmpty()) {
+                    return;
+                }
                 meleeCounter++;
                 if (meleeCounter % 5 == 0) {
                     event.setMin(event.getMin() * 7);
@@ -55,6 +52,11 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon {
                 }
             }
         });
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Every 5th melee hit deals 7x damage, bypassing damage reduction.";
     }
 
     @Override

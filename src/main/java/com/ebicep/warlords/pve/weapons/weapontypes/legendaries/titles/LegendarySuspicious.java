@@ -58,11 +58,6 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Plays an Amogus sound whenever you land a melee crit.";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
         player.getGame().registerEvents(new Listener() {
@@ -102,6 +97,11 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
             }
         });
 
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Plays an Amogus sound whenever you land a melee crit.";
     }
 
     @Override

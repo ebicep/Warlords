@@ -37,11 +37,6 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Increase healing provided by " + HEALING_INCREASE + "%.";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
@@ -54,6 +49,11 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
                 }
             }
         });
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Increase healing provided by " + HEALING_INCREASE + "%.";
     }
 
     @Override

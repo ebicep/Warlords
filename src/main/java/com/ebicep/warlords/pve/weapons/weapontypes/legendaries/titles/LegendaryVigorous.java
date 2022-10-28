@@ -42,11 +42,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "+5 Energy per Second for 10 seconds after using 400 energy. Can be triggered once per 20 seconds.";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
         super.applyToWarlordsPlayer(player);
 
@@ -96,6 +91,11 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                 }
             }
         }.runTaskTimer(0, 20);
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "+5 Energy per Second for 10 seconds after using 400 energy. Can be triggered every " + (PASSIVE_EFFECT_COOLDOWN + PASSIVE_EFFECT_DURATION) + " seconds.";
     }
 
     @Override
