@@ -37,7 +37,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     @Override
     public String getPassiveEffect() {
         return "Increase movement speed by 10% and decrease energy consumption of all abilities by 10 after moving " + BLOCKS_TO_MOVE + " blocks. " +
-                "Can be triggered once per " + COOLDOWN + " seconds.";
+                "Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override
