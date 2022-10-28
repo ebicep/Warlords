@@ -88,7 +88,8 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
         masterUpgrade = new Upgrade(
                 "Shredding Fury",
                 "Windfury - Master Upgrade",
-                "+100% Additional weapon damage\n\nHits on an enemy will permanently reduce their\ndamage reduction by 2% for each Windfury additional\nproc.",
+                "+100% Additional weapon damage\n\nHits on an enemy will permanently reduce their damage reduction by 2% for each " +
+                        "Windfury additional proc.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

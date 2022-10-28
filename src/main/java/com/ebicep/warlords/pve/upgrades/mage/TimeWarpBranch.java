@@ -81,7 +81,7 @@ public class TimeWarpBranch extends AbstractUpgradeBranch<TimeWarp> {
         masterUpgrade = new Upgrade(
                 "Dimensional Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to\nteleport you back early. Additionally, double the\nduration of Time Warp.",
+                "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp.",
                 50000,
                 () -> {
                     ability.setDuration(ability.getDuration() * 2);

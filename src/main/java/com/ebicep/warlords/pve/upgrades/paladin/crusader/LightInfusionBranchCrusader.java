@@ -86,7 +86,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",
                 "Light Infusion - Master Upgrade",
-                "+3s Duration\n\nCasting Light Infusion near other allies will give\nthem Light Infusion. (Half the energy given.)",
+                "+3s Duration\n\nCasting Light Infusion near other allies will give them Light Infusion. (Half the energy given.)",
                 50000,
                 () -> {
                     ability.setDuration(ability.getDuration() + 3);

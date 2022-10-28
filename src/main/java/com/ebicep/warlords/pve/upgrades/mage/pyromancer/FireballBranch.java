@@ -92,7 +92,8 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         masterUpgrade = new Upgrade(
                 "Fiery Fusillade",
                 "Fireball - Master Upgrade",
-                "Direct-hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources\nand burn for 0.2% of their max health every second.",
+                "Direct-hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources and burn for 0" +
+                        ".2% of their max health every second.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

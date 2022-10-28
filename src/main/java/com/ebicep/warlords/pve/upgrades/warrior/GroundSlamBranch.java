@@ -81,7 +81,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
         masterUpgrade = new Upgrade(
                 "Earthen Tremor",
                 "Ground Slam - Master Upgrade",
-                "Casting Ground Slam will leap you in the air\nfor a short duration. Upon landing, activate a\nsecond Ground Slam for 200% of the original\ndamage.",
+                "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 200% of the original damage.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

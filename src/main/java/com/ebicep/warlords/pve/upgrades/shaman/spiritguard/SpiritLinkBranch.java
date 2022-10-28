@@ -87,7 +87,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
         masterUpgrade = new Upgrade(
                 "Phantasmic Bond",
                 "Spirit Link - Master Upgrade",
-                "Damage reduction and speed duration per link\nis increased by 50%",
+                "Damage reduction and speed duration per link is increased by 50%",
                 50000,
                 () -> {
                     ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 1.5);

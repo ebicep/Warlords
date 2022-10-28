@@ -91,7 +91,9 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 50% more damage\nfrom Wounding Strike while Blood Lust is active.\nBleeding enemies have healing reduced by 70%\nand lose 0.25% of their max health per second.",
+                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 50% more damage from Wounding " +
+                        "Strike while Blood Lust is active. Bleeding enemies have healing reduced by 70% and lose 0.25% of their max " +
+                        "health per second.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

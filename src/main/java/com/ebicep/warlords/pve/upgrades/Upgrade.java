@@ -34,7 +34,7 @@ public class Upgrade {
     public Upgrade(String name, String subName, String description, int currencyCost, Runnable onUpgrade) {
         this.name = name;
         this.subName = subName;
-        this.description = description.replace("\n", " "); //TODO remove new line in all descriptions
+        this.description = description;//.replace("\n", " "); //TODO remove new line in all descriptions
         this.currencyCost = currencyCost;
         this.onUpgrade = onUpgrade;
     }

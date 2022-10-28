@@ -86,7 +86,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         masterUpgrade = new Upgrade(
                 "Healing Obelisk",
                 "Healing Totem - Master Upgrade",
-                "-25% Cooldown reduction\n\nAll enemies within the radius of Healing Totem are\nperpetually crippled, reducing their damage dealt\nby 50%",
+                "-25% Cooldown reduction\n\nAll enemies within the radius of Healing Totem are perpetually crippled, reducing their damage dealt by 50%",
                 50000,
                 () -> {
                     ability.setCooldown(cooldown * 0.75f);

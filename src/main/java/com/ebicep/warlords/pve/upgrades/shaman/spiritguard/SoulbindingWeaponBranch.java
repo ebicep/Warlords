@@ -82,7 +82,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
         masterUpgrade = new Upgrade(
                 "Curse Binding",
                 "Soulbinding Weapon - Master Upgrade",
-                "Gain 1 energy for each soulbound\ntarget hit by Fallen Souls and Spirit\nLink, increase the allied ability\ncooldown reduction by 1s",
+                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 1s",
                 50000,
                 () -> {
 

@@ -83,7 +83,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
         masterUpgrade = new Upgrade(
                 "Avenger’s Armageddon",
                 "Avenger's Wrath - Master Upgrade",
-                "-10% Cooldown reduction\n\nAvenger's Wrath hits 3 additional targets and\ndouble the hit radius.",
+                "-10% Cooldown reduction\n\nAvenger's Wrath hits 3 additional targets and double the hit radius.",
                 50000,
                 () -> {
                     ability.setHitRadius(ability.getHitRadius() * 2);

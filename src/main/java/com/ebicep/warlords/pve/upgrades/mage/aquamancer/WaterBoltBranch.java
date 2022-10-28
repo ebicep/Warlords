@@ -97,7 +97,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         masterUpgrade = new Upgrade(
                 "Aquatic Assault",
                 "Water Bolt - Master Upgrade",
-                "+100% Projectile speed\n\nWater Bolt increases the damage dealt\nof all allies it hits by 15% for 10 seconds.",
+                "+100% Projectile speed\n\nWater Bolt increases the damage dealt of all allies it hits by 15% for 10 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

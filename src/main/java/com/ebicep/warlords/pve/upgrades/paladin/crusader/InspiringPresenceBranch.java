@@ -86,7 +86,8 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
         masterUpgrade = new Upgrade(
                 "Transcendent Presence",
                 "Inspiring Presence - Master Upgrade",
-                "-20% Cooldown reduction\n\nReset the cooldown on all caster's and nearby allies'\nabilities (other than Inspiring Presence.)",
+                "-20% Cooldown reduction\n\nReset the cooldown on all caster's and nearby allies' abilities (other than Inspiring " +
+                        "Presence.)",
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);

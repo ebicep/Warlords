@@ -101,7 +101,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         masterUpgrade = new Upgrade(
                 "Avenger's Slash",
                 "Avenger's Strike - Master Upgrade",
-                "-5 Additional energy cost.\n\nDeal 40% more damage against BASIC enemies\nand 20% more damage against ELITE enemies.",
+                "-5 Additional energy cost.\n\nDeal 40% more damage against BASIC enemies and 20% more damage against ELITE enemies.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

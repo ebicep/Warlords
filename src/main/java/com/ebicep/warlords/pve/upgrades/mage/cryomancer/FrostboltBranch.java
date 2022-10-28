@@ -93,7 +93,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
         masterUpgrade = new Upgrade(
                 "Shatter Bolt",
                 "Frostbolt - Master Upgrade",
-                "Directly-hit enemies shatter after 1.5 seconds,\ndealing 409 - 554 damage to all nearby enemies\nand slow them by 50% for 2 seconds.",
+                "Directly-hit enemies shatter after 1.5 seconds, dealing 409 - 554 damage to all nearby enemies and slow them by 50% for 2 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

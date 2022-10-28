@@ -10,6 +10,7 @@ public class WordWrap {
             for (String s : line.split("\n")) {
                 sb.append(wrapWithNewline(s, width)).append("\n");
             }
+            sb.setLength(sb.length() - 1);
             return sb.toString();
         }
         StringBuilder output = new StringBuilder(line.length() + 16);
