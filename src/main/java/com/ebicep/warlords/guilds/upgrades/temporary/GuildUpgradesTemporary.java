@@ -184,23 +184,23 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     public long getCost(int tier) {
         switch (tier) {
             case 1:
-                return 10000;
+                return 1000;
             case 2:
-                return 20000;
+                return 2000;
             case 3:
-                return 40000;
+                return 4000;
             case 4:
-                return 80000;
+                return 8000;
             case 5:
-                return 120000;
+                return 12000;
             case 6:
-                return 180000;
+                return 18000;
             case 7:
-                return 270000;
+                return 27000;
             case 8:
-                return 405000;
+                return 40500;
             case 9:
-                return 607500;
+                return 60750;
             default:
                 return Long.MAX_VALUE;
         }
