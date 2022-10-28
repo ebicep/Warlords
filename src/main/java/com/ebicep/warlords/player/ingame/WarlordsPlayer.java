@@ -191,7 +191,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         updateInventory(true);
     }
 
-    private void resetPlayerAddons() {
+    public void resetPlayerAddons() {
         if (getEntity() instanceof Player) {
             Player player = (Player) getEntity();
             PlayerInventory playerInventory = player.getInventory();

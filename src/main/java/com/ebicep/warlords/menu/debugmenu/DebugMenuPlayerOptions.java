@@ -96,7 +96,7 @@ public class DebugMenuPlayerOptions {
                         .flags(ItemFlag.HIDE_POTION_EFFECTS)
                         .get(),
                 (m, e) -> {
-                    target.addDamageInstance(target, "DEBUG", 100000, 100000, -1, 100, false);
+                    target.addDamageInstance(target, "DEBUG", 100000, 100000, 0, 100, false);
                     sendDebugMessage(player, ChatColor.GREEN + "Killed " + targetName, true);
                 }
         );
@@ -147,7 +147,7 @@ public class DebugMenuPlayerOptions {
                             if (amountNumber < 0) {
                                 throw new NumberFormatException();
                             }
-                            target.addHealingInstance(target, "DEBUG", amountNumber, amountNumber, -1, 100, false, false);
+                            target.addHealingInstance(target, "DEBUG", amountNumber, amountNumber, 0, 100, false, false);
                             sendDebugMessage(player, ChatColor.GREEN + "Healed " + coloredName + ChatColor.GREEN + " for " + amountNumber, true);
                         } catch (NumberFormatException exception) {
                             p.sendMessage(ChatColor.RED + "Invalid number");
@@ -168,7 +168,7 @@ public class DebugMenuPlayerOptions {
                             if (amountNumber < 0) {
                                 throw new NumberFormatException();
                             }
-                            target.addDamageInstance(target, "DEBUG", amountNumber, amountNumber, -1, 100, false);
+                            target.addDamageInstance(target, "DEBUG", amountNumber, amountNumber, 0, 100, false);
                             sendDebugMessage(player, ChatColor.GREEN + "Damaged " + coloredName + ChatColor.GREEN + " for " + amountNumber, true);
                         } catch (NumberFormatException exception) {
                             p.sendMessage(ChatColor.RED + "Invalid number");

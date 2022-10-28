@@ -82,11 +82,12 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
         masterUpgrade = new Upgrade(
                 "Relentless Army",
                 "Undying Army - Master Upgrade",
-                "Remove the cast range of Undying Army and double the duration.",
+                "While dead, gain 40% speed and deal 68-102 + 0.5% of the " +
+                        "enemy’s maximum health to all enemies within a 6 block radius. " +
+                        "Each enemy hit this way can also proc Orbs of Life.",
                 50000,
                 () -> {
-                    ability.setRadius(ability.getRadius() * 10);
-                    ability.setDuration(ability.getDuration() * 2);
+                    ability.setPveUpgrade(true);
                 }
         );
     }

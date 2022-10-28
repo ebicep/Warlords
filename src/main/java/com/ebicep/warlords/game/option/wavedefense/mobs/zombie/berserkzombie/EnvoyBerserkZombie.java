@@ -102,7 +102,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                         name,
                         currentDamageValue * .65f,
                         currentDamageValue * .65f,
-                        -1,
+                        0,
                         100,
                         false,
                         false

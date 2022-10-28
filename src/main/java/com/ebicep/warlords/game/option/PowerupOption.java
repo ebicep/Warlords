@@ -389,7 +389,7 @@ public class PowerupOption implements Option {
         SELF_DAMAGE(0, Material.WOOL, (short) 15) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, -1, 100, true);
+                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100, true);
             }
 
             @Override
@@ -402,7 +402,7 @@ public class PowerupOption implements Option {
         SELF_HEAL(0, Material.WOOL, (short) 15) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, -1, 100, true, false);
+                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100, true, false);
             }
 
             @Override

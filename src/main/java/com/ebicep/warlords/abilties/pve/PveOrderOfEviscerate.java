@@ -36,7 +36,7 @@ public class PveOrderOfEviscerate extends AbstractAbility {
     private WarlordsEntity markedPlayer;
 
     public PveOrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 50, 60, -1, 100);
+        super("Order of Eviscerate", 0, 0, 50, 60, 0, 100);
     }
 
     @Override

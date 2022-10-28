@@ -168,7 +168,7 @@ public class RemedicChains extends AbstractAbility {
                                     name,
                                     minDamageHeal * totalHealingMultiplier,
                                     maxDamageHeal * totalHealingMultiplier,
-                                    -1,
+                                    0,
                                     100,
                                     false,
                                     false

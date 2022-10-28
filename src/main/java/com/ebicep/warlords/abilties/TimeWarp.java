@@ -24,7 +24,7 @@ public class TimeWarp extends AbstractAbility {
     private int warpHealPercentage = 30;
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
+        super("Time Warp", 0, 0, 28.19f, 30);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class TimeWarp extends AbstractAbility {
                             name,
                             wp.getMaxHealth() * (warpHealPercentage / 100f),
                             wp.getMaxHealth() * (warpHealPercentage / 100f),
-                            -1,
+                            0,
                             100,
                             false,
                             false

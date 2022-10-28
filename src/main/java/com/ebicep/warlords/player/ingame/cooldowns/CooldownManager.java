@@ -381,10 +381,17 @@ public class CooldownManager {
     }
 
     public boolean checkUndyingArmy(boolean popped) {
+        return checkUndyingArmy(popped, null);
+    }
+
+    public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
         for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
                 .collect(Collectors.toList())
         ) {
+            if (Objects.equals(undyingArmy, exclude)) {
+                continue;
+            }
             if (popped) {
                 //returns true if any undying is popped
                 if (undyingArmy.isArmyDead(warlordsEntity)) {

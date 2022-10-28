@@ -41,7 +41,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 50, 60, -1, 100);
+        super("Order of Eviscerate", 0, 0, 50, 60);
     }
 
     @Override

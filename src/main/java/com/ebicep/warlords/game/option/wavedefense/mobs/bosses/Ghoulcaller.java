@@ -126,7 +126,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                                     "Fury",
                                     minDamage,
                                     maxDamage,
-                                    -1,
+                                    0,
                                     100,
                                     false
                             );

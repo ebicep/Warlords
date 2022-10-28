@@ -43,11 +43,11 @@ public class DeathsDebt extends AbstractTotemBase {
     private boolean playerInRadius = true;
 
     public DeathsDebt() {
-        super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
+        super("Death's Debt", 0, 0, 60f + 10.49f, 20, 0, 100);
     }
 
     public DeathsDebt(ArmorStand totem, WarlordsEntity owner) {
-        super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100, totem, owner);
+        super("Death's Debt", 0, 0, 60f + 10.49f, 20, 0, 100, totem, owner);
     }
 
     @Override

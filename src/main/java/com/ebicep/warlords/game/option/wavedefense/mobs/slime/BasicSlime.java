@@ -63,7 +63,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                enemy.addDamageInstance(warlordsNPC, "Shimmer", 400, 400, -1, 100, false);
+                enemy.addDamageInstance(warlordsNPC, "Shimmer", 400, 400, 0, 100, false);
             }
         }
     }
@@ -109,7 +109,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                                     "Shimmer",
                                     healthDamage,
                                     healthDamage,
-                                    -1,
+                                    0,
                                     100,
                                     false
                             );

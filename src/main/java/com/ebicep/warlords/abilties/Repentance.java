@@ -66,7 +66,7 @@ public class Repentance extends AbstractAbility {
                 WarlordsEntity attacker = event.getAttacker();
 
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
+                attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, 0, 100, false, false);
                 attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
                 pool *= .5;
             }

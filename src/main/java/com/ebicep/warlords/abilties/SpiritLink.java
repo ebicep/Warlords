@@ -158,14 +158,14 @@ public class SpiritLink extends AbstractChainBase {
                 .ifPresent(regularCooldown -> {
                     regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
                 });
-        warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
+        warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, 0, 100, false, false);
         for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
-            nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false, false);
+            nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, 0, 100, false, false);
         }
     }
 

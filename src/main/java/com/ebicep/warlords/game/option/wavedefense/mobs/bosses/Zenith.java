@@ -77,7 +77,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     .entitiesAround(loc, 4, 4, 4)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.addDamageInstance(warlordsNPC, "Cleanse", 300 * playerCount, 400 * playerCount, -1, 100, false);
+                we.addDamageInstance(warlordsNPC, "Cleanse", 300 * playerCount, 400 * playerCount, 0, 100, false);
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
         }
@@ -118,7 +118,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                             .withColor(Color.WHITE)
                             .with(FireworkEffect.Type.BURST)
                             .build());
-                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, -1, 100, false);
+                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();
@@ -156,7 +156,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, -1, 100, false);
+                        we.addDamageInstance(warlordsNPC, "Armageddon", 300 * playerCount, 400 * playerCount, 0, 100, false);
                         Utils.addKnockback(warlordsNPC.getLocation(), we, -3, 0.2);
                     }
                 }

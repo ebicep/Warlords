@@ -311,7 +311,7 @@ public abstract class WarlordsEntity {
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
         boolean isCrit = false;
-        if (crit <= critChance && attacker.canCrit) {
+        if (critChance > 0 && crit <= critChance && attacker.canCrit) {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
         }

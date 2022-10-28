@@ -55,7 +55,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 200, 300, -1, 100, true);
+                wp.addDamageInstance(warlordsNPC, "Void Shred", 200, 300, 0, 100, true);
                 wp.addSpeedModifier("Void Slowness", -70, 10);
             }
         }

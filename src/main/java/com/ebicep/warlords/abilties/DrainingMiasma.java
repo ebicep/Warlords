@@ -34,7 +34,7 @@ public class DrainingMiasma extends AbstractAbility {
     private int enemyHitRadius = 8;
 
     public DrainingMiasma() {
-        super("Draining Miasma", 0, 0, 50, 40, -1, 100);
+        super("Draining Miasma", 0, 0, 50, 40);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class DrainingMiasma extends AbstractAbility {
                                     name,
                                     50 + healthDamage,
                                     50 + healthDamage,
-                                    -1,
+                                    0,
                                     100,
                                     false
                             );

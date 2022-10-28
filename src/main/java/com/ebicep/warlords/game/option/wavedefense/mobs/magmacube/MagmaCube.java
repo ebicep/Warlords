@@ -93,7 +93,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                     .entitiesAround(we, 6, 6, 6)
                     .aliveEnemiesOf(we)
             ) {
-                enemy.addDamageInstance(we, "Blight", 900, 1200, -1, 100, false);
+                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100, false);
             }
         }
 

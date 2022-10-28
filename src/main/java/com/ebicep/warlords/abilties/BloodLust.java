@@ -93,7 +93,7 @@ public class BloodLust extends AbstractAbility {
                         name,
                         currentDamageValue * (getDamageConvertPercent() / 100f),
                         currentDamageValue * (getDamageConvertPercent() / 100f),
-                        -1,
+                        0,
                         100,
                         false,
                         false

@@ -64,7 +64,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
                     "Healing",
                     300,
                     300,
-                    -1,
+                    0,
                     100,
                     false,
                     false

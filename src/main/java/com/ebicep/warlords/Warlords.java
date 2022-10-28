@@ -51,7 +51,6 @@ import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -104,8 +103,6 @@ public class Warlords extends JavaPlugin {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
     }
-
-    private GameManager gameManager;
 
     public static GameManager getGameManager() {
         return getInstance().gameManager;
@@ -189,6 +186,8 @@ public class Warlords extends JavaPlugin {
             player.teleport(value);
         }
     }
+
+    private GameManager gameManager;
 
     @Override
     public void onDisable() {
@@ -618,24 +617,49 @@ public class Warlords extends JavaPlugin {
                                     wp.setEnergy(wp.getMaxEnergy() / 2);
                                 }
 
-                                new GameRunnable(wp.getGame()) {
-                                    @Override
-                                    public void run() {
-                                        if (wp.getRespawnTimer() >= 0 || wp.isDead()) {
-                                            this.cancel();
-                                        } else {
-                                            wp.addDamageInstance(
-                                                    wp,
-                                                    "",
-                                                    wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                                    wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                                                    -1,
-                                                    100,
-                                                    false
-                                            );
+                                if (undyingArmy.isPveUpgrade()) {
+                                    wp.addSpeedModifier("ARMY", 40, 16 * 20, "BASE");
+                                }
+
+                                undyingArmyCooldown.setNameAbbreviation("POPPED");
+                                undyingArmyCooldown.setTicksLeft(16 * 20);
+                                undyingArmyCooldown.setOnRemove(cooldownManager -> {
+                                    if (wp.getEntity() instanceof Player) {
+                                        if (cooldownManager.checkUndyingArmy(true)) {
+                                            ((Player) wp.getEntity()).getInventory().remove(UndyingArmy.BONE);
                                         }
                                     }
-                                }.runTaskTimer(0, 20);
+                                });
+                                undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed % 20 == 0) {
+                                        wp.addDamageInstance(
+                                                wp,
+                                                "",
+                                                wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                                wp.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                                                0,
+                                                100,
+                                                false
+                                        );
+
+                                        if (undyingArmy.isPveUpgrade() && ticksElapsed % 40 == 0) {
+                                            PlayerFilter.entitiesAround(wp, 6, 6, 6)
+                                                    .aliveEnemiesOf(wp)
+                                                    .forEach(enemy -> {
+                                                        enemy.addDamageInstance(
+                                                                wp,
+                                                                "Undying Army",
+                                                                68 + (enemy.getMaxHealth() * .005f),
+                                                                102 + (enemy.getMaxHealth() * .005f),
+                                                                0,
+                                                                100,
+                                                                false
+                                                        );
+                                                    });
+
+                                        }
+                                    }
+                                });
 
                                 break;
                             }
@@ -726,7 +750,7 @@ public class Warlords extends JavaPlugin {
                                 orbHeal *= 1 + orb.getTicksLived() / 325f;
                             }
 
-                            wp.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
+                            wp.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                             if (player != null) {
                                 Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                             }
@@ -736,7 +760,7 @@ public class Warlords extends JavaPlugin {
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .limit(2)
                             ) {
-                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
+                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                                 if (player != null) {
                                     Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }

@@ -109,6 +109,7 @@ public class UndyingArmy extends AbstractAbility {
         ).playEffects();
 
         UndyingArmy tempUndyingArmy = new UndyingArmy(maxHealthDamage);
+        tempUndyingArmy.setPveUpgrade(pveUpgrade);
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
@@ -149,7 +150,7 @@ public class UndyingArmy extends AbstractAbility {
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
                                 float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getHealth()) * (missingHealing / 100f);
-                                teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
+                                teammate.addHealingInstance(wp, name, healAmount, healAmount, 0, 100, false, false);
                                 teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                                 // Particles
                                 Location playerLoc = teammate.getLocation();

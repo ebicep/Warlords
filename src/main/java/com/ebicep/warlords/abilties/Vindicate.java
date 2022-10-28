@@ -31,7 +31,7 @@ public class Vindicate extends AbstractAbility {
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
-        super("Vindicate", 0, 0, 55, 25, -1, 100);
+        super("Vindicate", 0, 0, 55, 25);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class Vindicate extends AbstractAbility {
                 if (pveUpgrade) {
                     if (Utils.isLineOfSightVindicator(event.getPlayer().getEntity(), we.getEntity())) {
                         Utils.addKnockback(wp.getLocation(), event.getAttacker(), -1.25, 0.3);
-                        we.addDamageInstance(event.getPlayer(), name, currentDamageValue, currentDamageValue, -1, 100, false);
+                        we.addDamageInstance(event.getPlayer(), name, currentDamageValue, currentDamageValue, 0, 100, false);
                         return currentDamageValue * 0;
                     } else {
                         return currentDamageValue * getVindicateDamageReduction();

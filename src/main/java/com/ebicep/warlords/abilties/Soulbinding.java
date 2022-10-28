@@ -34,7 +34,7 @@ public class Soulbinding extends AbstractAbility {
     private float bindDuration = 2;
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
+        super("Soulbinding Weapon", 0, 0, 21.92f, 30, 0, 100);
     }
 
     @Override

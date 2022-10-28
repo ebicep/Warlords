@@ -38,7 +38,7 @@ public class PrismGuard extends AbstractAbility {
     private int projectileDamageReduction = 75;
 
     public PrismGuard() {
-        super("Prism Guard", 0, 0, 26, 40, -1, 100);
+        super("Prism Guard", 0, 0, 26, 40, 0, 100);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class PrismGuard extends AbstractAbility {
                                 name,
                                 healingValue,
                                 healingValue,
-                                -1,
+                                0,
                                 100,
                                 false,
                                 false

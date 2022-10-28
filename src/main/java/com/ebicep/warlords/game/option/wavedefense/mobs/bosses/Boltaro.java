@@ -11,7 +11,6 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.game.option.wavedefense.mobs.spider.Spider;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -116,7 +115,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
                     Utils.addKnockback(attacker.getLocation(), receiver, -0.7, 0.2);
-                    receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, -1, 100, false);
+                    receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, 0, 100, false);
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();

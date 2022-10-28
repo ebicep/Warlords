@@ -351,7 +351,7 @@ public class WarlordsEvents implements Listener {
                             "",
                             warlordsNPC.getMinMeleeDamage(),
                             warlordsNPC.getMaxMeleeDamage(),
-                            -1,
+                            0,
                             100,
                             false
                     );
@@ -427,7 +427,7 @@ public class WarlordsEvents implements Listener {
                                 "",
                                 100000,
                                 100000,
-                                -1,
+                                0,
                                 100,
                                 false
                         );
@@ -580,7 +580,7 @@ public class WarlordsEvents implements Listener {
                     if (wp.isDead()) {
                         wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
                     } else {
-                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, -1, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100, false);
                     }
                 }
             } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
@@ -599,7 +599,7 @@ public class WarlordsEvents implements Listener {
                     if (wp != null) {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
-                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), -1, 100, false);
+                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100, false);
                             wp.setRegenTimer(10);
                         }
                     }
@@ -609,7 +609,7 @@ public class WarlordsEvents implements Listener {
                 if (e.getEntity() instanceof Player) {
                     WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null && !wp.getGame().isFrozen()) {
-                        wp.addDamageInstance(wp, "Fall", 100, 100, -1, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100, false);
                         wp.setRegenTimer(10);
                     }
                 }

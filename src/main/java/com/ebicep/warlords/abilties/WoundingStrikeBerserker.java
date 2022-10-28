@@ -117,7 +117,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
                                 "Bleed",
                                 healthDamage,
                                 healthDamage,
-                                -1,
+                                0,
                                 100,
                                 false
                         );

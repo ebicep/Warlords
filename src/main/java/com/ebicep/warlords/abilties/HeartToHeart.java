@@ -28,7 +28,7 @@ public class HeartToHeart extends AbstractAbility {
     private float healthRestore = 600;
 
     public HeartToHeart() {
-        super("Heart To Heart", 0, 0, 12, 20, -1, 100);
+        super("Heart To Heart", 0, 0, 12, 20);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class HeartToHeart extends AbstractAbility {
                                 name,
                                 1635,
                                 2096,
-                                -1,
+                                0,
                                 100,
                                 false
                         );
@@ -172,7 +172,7 @@ public class HeartToHeart extends AbstractAbility {
                             name,
                             healthRestore,
                             healthRestore,
-                            -1,
+                            0,
                             100,
                             false,
                             false

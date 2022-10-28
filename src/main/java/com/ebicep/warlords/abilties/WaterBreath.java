@@ -169,7 +169,7 @@ public class WaterBreath extends AbstractAbility {
                                 name,
                                 healing,
                                 healing,
-                                -1,
+                                0,
                                 100,
                                 false,
                                 false

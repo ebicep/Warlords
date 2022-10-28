@@ -136,7 +136,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     "Death Wish",
                                     965 * 8,
                                     1138 * 8,
-                                    -1,
+                                    0,
                                     100,
                                     false
                             );
@@ -157,7 +157,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     "Acolyte Revenge",
                                     965,
                                     1138,
-                                    -1,
+                                    0,
                                     100,
                                     false
                             );
@@ -218,7 +218,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         "Ground Shred",
                         750,
                         900,
-                        -1,
+                        0,
                         100,
                         false
                 );

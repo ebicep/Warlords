@@ -109,7 +109,7 @@ public class Fireball extends AbstractProjectileBase {
                                         "Burn",
                                         healthDamage,
                                         healthDamage,
-                                        -1,
+                                        0,
                                         100,
                                         false
                                 );
