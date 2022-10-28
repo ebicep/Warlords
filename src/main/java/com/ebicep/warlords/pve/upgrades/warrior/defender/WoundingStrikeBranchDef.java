@@ -53,44 +53,44 @@ public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrik
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost",
-                5000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
                 "-5 Energy cost",
-                10000,
+                5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);
                 }
         ));
         treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-10 Energy cost",
+                10000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 10);
+                }
+        ));
+        treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost",
+                "-15 Energy cost",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
+                    ability.setEnergyCost(energyCost - 15);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost",
+                "-20 Energy cost",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 10);
+                    ability.setEnergyCost(energyCost - 20);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "+20% Critical Chance. Critical Strikes increase\ndamage reduction by 30% for 5 seconds.",
+                "100% Critical Chance. Critical Strikes increase\ndamage reduction by 30% for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setCritChance(ability.getCritChance() + 20);
+                    ability.setCritChance(100);
                     ability.setPveUpgrade(true);
                 }
         );
