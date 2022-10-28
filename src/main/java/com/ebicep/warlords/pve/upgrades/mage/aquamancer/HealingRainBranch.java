@@ -87,7 +87,10 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         masterUpgrade = new Upgrade(
                 "Electrifying Storm",
                 "Healing Rain - Master Upgrade",
-                "+4s Additional duration\n\nUp to 5 enemies in Healing Rain will be struck with\nlightning for 124 - 277 (+1% of their max health)\ndamage every 2 seconds.",
+                "+4s Additional duration" +
+                        "\n\nUp to 8 enemies in Healing Rain will be struck with" +
+                        "\nlightning for 224 - 377 (+1% of their max health)" +
+                        "\ndamage every 2 seconds.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

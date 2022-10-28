@@ -121,7 +121,7 @@ public class HealingRain extends AbstractAbility {
                             for (WarlordsEntity enemyInRain : PlayerFilter
                                     .entitiesAround(location, radius, radius, radius)
                                     .aliveEnemiesOf(wp)
-                                    .limit(5)
+                                    .limit(8)
                             ) {
                                 Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
                                 FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
@@ -162,7 +162,7 @@ public class HealingRain extends AbstractAbility {
             if (healthDamage > 200) {
                 healthDamage = 200;
             }
-            strikeTarget.addDamageInstance(giver, name, 124 + healthDamage, 277 + healthDamage, critChance, critMultiplier, false);
+            strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, critChance, critMultiplier, false);
         }
 
     }

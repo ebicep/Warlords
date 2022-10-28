@@ -18,78 +18,78 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+7.5% Healing",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.075f);
-                    ability.setMaxDamageHeal(maxHealing * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
                 "+15% Healing",
-                10000,
+                5000,
                 () -> {
                     ability.setMinDamageHeal(minHealing * 1.15f);
                     ability.setMaxDamageHeal(maxHealing * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+30% Healing",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minHealing * 1.3f);
+                    ability.setMaxDamageHeal(maxHealing * 1.3f);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+22.5% Healing\n+7.5% Damage",
+                "+45% Healing\n+15% Damage",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.225f);
-                    ability.setMaxDamageHeal(maxHealing * 1.225f);
-                    ability.setMinDamage(minDamage * 1.075f);
-                    ability.setMaxDamage(maxDamage * 1.075f);
+                    ability.setMinDamageHeal(minHealing * 1.45f);
+                    ability.setMaxDamageHeal(maxHealing * 1.45f);
+                    ability.setMinDamage(minDamage * 1.15f);
+                    ability.setMaxDamage(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+30% Healing\n+15% Damage",
+                "+60% Healing\n+30% Damage",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(maxHealing * 1.3f);
-                    ability.setMinDamage(minDamage * 1.15f);
-                    ability.setMaxDamage(maxDamage * 1.15f);
+                    ability.setMinDamageHeal(minHealing * 1.6f);
+                    ability.setMaxDamageHeal(maxHealing * 1.6f);
+                    ability.setMinDamage(minDamage * 1.3f);
+                    ability.setMaxDamage(maxDamage * 1.3f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost\n+0.5 Blocks hit radius",
+                "-5 Energy cost\n+0.5 Blocks hit radius",
                 5000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
+                    ability.setEnergyCost(energyCost - 5f);
                     ability.setHitbox(hitbox + 0.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy cost\n+1 Blocks hit radius",
+                "-10 Energy cost\n+1 Blocks hit radius",
                 10000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 5);
+                    ability.setEnergyCost(energyCost - 10);
                     ability.setHitbox(hitbox + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost\n+1.5 Blocks hit radius",
+                "-15 Energy cost\n+1.5 Blocks hit radius",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
+                    ability.setEnergyCost(energyCost - 15f);
                     ability.setHitbox(hitbox + 1.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+2 Blocks hit radius",
+                "-20 Energy cost\n+2 Blocks hit radius",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 10);
+                    ability.setEnergyCost(energyCost - 20);
                     ability.setHitbox(hitbox + 2);
                 }
         ));
