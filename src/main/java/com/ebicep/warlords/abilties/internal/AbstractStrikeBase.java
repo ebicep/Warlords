@@ -83,6 +83,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 .entitiesAround(initialTarget, 4, 4, 4)
                 .aliveEnemiesOf(giver)
                 .closestFirst(initialTarget)
+                .excluding(initialTarget)
                 .limit(2)
         ) {
             we.addDamageInstance(

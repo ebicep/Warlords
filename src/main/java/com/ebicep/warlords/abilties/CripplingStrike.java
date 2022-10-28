@@ -68,10 +68,7 @@ public class CripplingStrike extends AbstractStrikeBase {
                 false
         );
 
-        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(
-                nearPlayer,
-                RegularCooldown.class
-        )
+        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
                 .findAny();
 
