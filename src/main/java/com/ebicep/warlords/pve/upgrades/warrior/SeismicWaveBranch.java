@@ -89,6 +89,7 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
                 "Increase the size of Seismic Wave by 200%",
                 50000,
                 () -> {
+                    ability.setPveUpgrade(true);
                     ability.setWaveSize(ability.getWaveSize() * 3);
                     ability.setWaveWidth(ability.getWaveWidth() * 3);
                 }

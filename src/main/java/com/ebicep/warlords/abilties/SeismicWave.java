@@ -26,8 +26,8 @@ public class SeismicWave extends AbstractAbility {
     public int warpsKnockbacked = 0;
 
     private float velocity = 1.25f;
-    private int waveSize = 8;
-    private int waveWidth = 1;
+    private int waveSize = 8; // foward amount
+    private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
     public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -65,7 +65,8 @@ public class SeismicWave extends AbstractAbility {
 
 
         List<WarlordsEntity> playersHit = new ArrayList<>();
-        for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+        for (int i = 0, fallingBlockLocationsSize = fallingBlockLocations.size(); i < fallingBlockLocationsSize; i++) {
+            List<Location> fallingBlockLocation = fallingBlockLocations.get(i);
             for (Location loc : fallingBlockLocation) {
                 for (WarlordsEntity waveTarget : PlayerFilter
                         .entitiesAroundRectangle(loc, .6, 4, .6)
@@ -84,7 +85,14 @@ public class SeismicWave extends AbstractAbility {
                     playersHit.add(waveTarget);
                     final Vector v = player.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     waveTarget.setVelocity(v, false, false);
-                    waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    if (pveUpgrade) {
+                        float multiplier = (2 / 15f) * Math.min(i + 1, 15) + 1;
+                        System.out.println(i);
+                        System.out.println(multiplier);
+                        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, false);
+                    } else {
+                        waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    }
                 }
             }
         }
@@ -130,10 +138,10 @@ public class SeismicWave extends AbstractAbility {
         location.setDirection(center.getDirection());
         location.setPitch(0);
         locations.add(location.add(location.getDirection().multiply(distance)));
-        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(waveWidth)));
-        locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(waveWidth + 1)));
-        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(waveWidth)));
-        locations.add(location.clone().add(Utils.getRightDirection(location).multiply(waveWidth + 1)));
+        for (int i = 1; i <= waveWidth; i++) {
+            locations.add(location.clone().add(Utils.getLeftDirection(location).multiply(i)));
+            locations.add(location.clone().add(Utils.getRightDirection(location).multiply(i)));
+        }
         return locations;
     }
 
