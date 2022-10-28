@@ -2,6 +2,8 @@ package com.ebicep.warlords.guilds.menu;
 
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildTag;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagBracketColor;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagNameColor;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -35,6 +37,7 @@ public class GuildTagMenu {
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
+                        guild.log(new GuildLogTagBracketColor(player.getUniqueId(), guildTag.getBracketColor(), color.chatColor.toString()));
                         guildTag.setBracketColor(color.chatColor.toString());
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);
@@ -72,6 +75,7 @@ public class GuildTagMenu {
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
+                        guild.log(new GuildLogTagNameColor(player.getUniqueId(), guildTag.getNameColor(), color.chatColor.toString()));
                         guildTag.setNameColor(color.chatColor.toString());
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);

@@ -420,7 +420,7 @@ public class GuildCommand extends BaseCommand {
 //            Guild.sendGuildMessage(player, ChatColor.RED + "A guild with that tag already exists.");
 //            return;
 //        }
-        guild.setTag(tag);
+        guild.setTag(guildPlayer, tag);
     }
 
 

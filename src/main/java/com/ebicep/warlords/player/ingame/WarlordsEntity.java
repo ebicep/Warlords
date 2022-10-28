@@ -2043,10 +2043,10 @@ public abstract class WarlordsEntity {
                 if (!databasePlayer.hasAchievement(achievement)) {
                     achievement.sendAchievementUnlockMessage((Player) entity);
                     achievement.sendAchievementUnlockMessageToOthers(this);
+                    System.out.println(name + " unlocked achievement: " + achievement.name);
                 }
             });
         }
-        System.out.println(name + " unlocked achievement: " + achievement.name);
     }
 
     public abstract boolean isOnline();

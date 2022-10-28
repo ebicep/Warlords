@@ -8,6 +8,8 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogJoin;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogLeave;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogMuteGuild;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.GuildLogUnmuteGuild;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagChangeName;
+import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagCreateName;
 import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.general.CustomScoreboard;
@@ -343,14 +345,18 @@ public class Guild {
         CustomScoreboard.updateLobbyPlayerNames();
     }
 
-    public void setTag(String tagName) {
+    public void setTag(GuildPlayer sender, String tagName) {
         tagName = tagName.toUpperCase();
         if (this.tag == null) {
             this.tag = new GuildTag(tagName);
+            log(new GuildLogTagCreateName(sender.getUUID(), tagName));
         } else {
+            String oldName = this.tag.getName();
             this.tag.setName(tagName);
+            log(new GuildLogTagChangeName(sender.getUUID(), oldName, tagName));
         }
         sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild tag was changed to " + ChatColor.GOLD + tagName, true);
+        queueUpdate();
         CustomScoreboard.updateLobbyPlayerNames();
     }
 
