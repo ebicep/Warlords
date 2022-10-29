@@ -132,8 +132,14 @@ public class GuildMenu {
                                 .lore(
                                         ChatColor.GRAY + "Join Date: " + ChatColor.YELLOW + AbstractGuildLog.FORMATTER.format(guildPlayer.getJoinDate()),
                                         ChatColor.GRAY + "Role: " + ChatColor.AQUA + guild.getRoleOfPlayer(guildPlayer.getUUID()).getRoleName(),
-                                        ChatColor.GRAY + "Lifetime Coins: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
-                                        ChatColor.GRAY + "Lifetime Experience: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME))
+                                        ChatColor.GRAY + "Coins: ",
+                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.LIFETIME)),
+                                        ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.WEEKLY)),
+                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getCoins(Timing.DAILY)),
+                                        ChatColor.GRAY + "Experience: ",
+                                        ChatColor.GRAY + " - Lifetime: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.LIFETIME)),
+                                        ChatColor.GRAY + " - Weekly: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.WEEKLY)),
+                                        ChatColor.GRAY + " - Daily: " + ChatColor.YELLOW + NumberFormat.addCommas(guildPlayer.getExperience(Timing.DAILY))
                                 )
                                 .get(),
                         (m, e) -> {

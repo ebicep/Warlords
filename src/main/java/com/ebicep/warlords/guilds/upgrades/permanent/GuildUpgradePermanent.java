@@ -22,7 +22,7 @@ public class GuildUpgradePermanent extends AbstractGuildUpgrade<GuildUpgradesPer
         if (tier == 9) {
             itemBuilder.addLore(ChatColor.GRAY + "\nMax Tier");
         } else {
-            itemBuilder.addLore(ChatColor.GRAY + "\nClick to Upgrade");
+            itemBuilder.addLore(ChatColor.YELLOW + "\nClick to Upgrade");
         }
     }
 
