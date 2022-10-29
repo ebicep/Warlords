@@ -472,6 +472,31 @@ public class WarlordsEvents implements Listener {
         }
     }
 
+//    @EventHandler
+//    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
+//        if(e.getRightClicked().getType() == EntityType.WOLF) {
+//            e.setCancelled(true);
+//        }
+//    }
+//
+//    @EventHandler
+//    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+//        System.out.println("JHERE");
+//        if(e.getRightClicked().getType() == EntityType.WOLF) {
+//            e.setCancelled(true);
+//        }
+//    }
+//
+//    @EventHandler
+//    public void onPlayerConsumeEvent(PlayerItemConsumeEvent e) {
+//        System.out.println("Player " + e.getPlayer().getName() + " consumed " + e.getItem().getType().name());
+//    }
+//
+//    @EventHandler
+//    public void onEntityTame(EntityTameEvent e) {
+//        System.out.println("Entity " + e.getEntity().getType().name() + " was tamed by " + e.getOwner().getName());
+//    }
+
     @EventHandler
     public void onDismount(VehicleExitEvent e) {
         e.getVehicle().remove();
