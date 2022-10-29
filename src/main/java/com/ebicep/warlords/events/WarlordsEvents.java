@@ -421,6 +421,9 @@ public class WarlordsEvents implements Listener {
                         }
                         break;
                     case BONE:
+                        if (!itemHeld.equals(UndyingArmy.BONE)) {
+                            break;
+                        }
                         player.getInventory().remove(UndyingArmy.BONE);
                         wp.addDamageInstance(
                                 Warlords.getPlayer(player),
@@ -467,7 +470,6 @@ public class WarlordsEvents implements Listener {
 
             }
         }
-
     }
 
     @EventHandler

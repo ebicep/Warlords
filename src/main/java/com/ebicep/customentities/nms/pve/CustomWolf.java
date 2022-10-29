@@ -16,6 +16,24 @@ public class CustomWolf extends EntityWolf implements CustomEntity<CustomWolf> {
         this(((CraftWorld) world).getHandle());
     }
 
+//    @Override
+//    public boolean a(EntityHuman entityhuman) {
+//        System.out.println("aaaaaaaaaaaaaaaaaa");
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean d(ItemStack itemstack) {
+//        System.out.println("dddddddddddddddddd");
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean a(ItemStack itemstack) {
+//        System.out.println("31212312312");
+//        return false;
+//    }
+
     @Override
     public CustomWolf get() {
         return this;

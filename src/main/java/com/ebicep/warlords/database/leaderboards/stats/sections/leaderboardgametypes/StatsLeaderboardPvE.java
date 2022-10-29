@@ -75,8 +75,8 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 },
                 databasePlayer -> {
                     DatabasePlayerPvE databasePlayerPvE = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
-                    int plays = databasePlayerPvE.getNormalStats().getPlays() + databasePlayerPvE.getHardStats().getPlays();
-                    int clearRate = plays == 0 ? 0 : (databasePlayerPvE.getNormalStats().getWins() + databasePlayerPvE.getHardStats().getWins()) / plays;
+                    double plays = databasePlayerPvE.getNormalStats().getPlays() + databasePlayerPvE.getHardStats().getPlays();
+                    double clearRate = plays == 0 ? 0 : (databasePlayerPvE.getNormalStats().getWins() + databasePlayerPvE.getHardStats().getWins()) / plays;
                     return NumberFormat.addCommaAndRound(clearRate * 100) + "%";
                 }
         ));
