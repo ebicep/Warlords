@@ -58,7 +58,7 @@ public class GuildUpgradeMenu {
                 if (canPurchaseUpgrades) {
                     upgrade.addItemClickLore(itemBuilder);
                 }
-            } else {
+            } else if (canPurchaseUpgrades) {
                 itemBuilder.addLore(ChatColor.YELLOW + "\nClick to Purchase");
             }
 
