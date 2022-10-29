@@ -144,6 +144,10 @@ public class GuildManager {
                 .map(GuildInvite::getGuild);
     }
 
+    public static void removeGuildInvite(Player player, Guild guild) {
+        INVITES.remove(new GuildInvite(player.getUniqueId(), guild));
+    }
+
     public static Optional<Guild> getGuildFromName(String guildName) {
         return GUILDS.stream()
                 .filter(guild -> guild.getDisbandDate() == null && guild.getName().equalsIgnoreCase(guildName))

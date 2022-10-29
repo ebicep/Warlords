@@ -64,17 +64,19 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " does not exist.");
             return;
         }
-        if (!optionalGuild.get().isOpen() && GuildManager.getGuildFromInvite(player, guildName).isEmpty()) {
+        Guild guild = optionalGuild.get();
+        if (!guild.isOpen() && GuildManager.getGuildFromInvite(player, guildName).isEmpty()) {
             Guild.sendGuildMessage(player,
                     ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
             );
             return;
         }
-        if (optionalGuild.get().getPlayers().size() >= optionalGuild.get().getPlayerLimit()) {
+        if (guild.getPlayers().size() >= guild.getPlayerLimit()) {
             Guild.sendGuildMessage(player, ChatColor.RED + "Guild " + guildName + " is full.");
             return;
         }
-        optionalGuild.get().join(player);
+        GuildManager.removeGuildInvite(player, guild);
+        guild.join(player);
     }
 
     @Subcommand("menu")
