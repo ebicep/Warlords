@@ -136,7 +136,7 @@ public class MasterworksFairManager {
                                 });
                             })
                             .execute();
-                    masterworksFair.sendResults(playerFairResults);
+                    masterworksFair.sendResults(playerFairResults, false);
                     if (throughRewardsInventory) {
                         ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
                     } else {

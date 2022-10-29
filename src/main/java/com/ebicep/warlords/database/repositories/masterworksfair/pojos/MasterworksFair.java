@@ -37,7 +37,7 @@ public class MasterworksFair {
     public MasterworksFair() {
     }
 
-    public void sendResults() {
+    public void sendResults(boolean inCaseYouMissedIt) {
         HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
         for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
             if (rarity.getPlayerEntries == null) {
@@ -60,10 +60,10 @@ public class MasterworksFair {
 
             }
         }
-        sendResults(playerFairResults);
+        sendResults(playerFairResults, inCaseYouMissedIt);
     }
 
-    public void sendResults(HashMap<UUID, List<MasterworksFairEntry>> playerFairResults) {
+    public void sendResults(HashMap<UUID, List<MasterworksFairEntry>> playerFairResults, boolean inCaseYouMissedIt) {
         playerFairResults.forEach((uuid, masterworksFairEntries) -> {
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
@@ -73,6 +73,9 @@ public class MasterworksFair {
                         }
                         List<String> message = new ArrayList<>();
                         message.add(ChatColor.GOLD + "------------------------------------------------");
+                        if (inCaseYouMissedIt) {
+                            message.add(ChatColor.AQUA + "In case you missed it!");
+                        }
                         message.add(ChatColor.GREEN + "Masterworks Fair #" + fairNumber + " Results");
                         for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
                             if (rarity.getPlayerEntries == null) {

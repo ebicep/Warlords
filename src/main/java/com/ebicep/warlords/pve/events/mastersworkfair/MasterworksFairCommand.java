@@ -51,14 +51,14 @@ public class MasterworksFairCommand extends BaseCommand {
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(fairs -> {
                     if (fairNumber == null) {
-                        fairs.get(fairs.size() - 1).sendResults();
-                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent latest Masterworks Fair results", true);
+                        fairs.get(fairs.size() - 2).sendResults(true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current results", true);
                     } else {
                         java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
                                 .filter(fair -> fair.getFairNumber() == fairNumber)
                                 .findFirst();
                         if (fairOptional.isPresent()) {
-                            fairOptional.get().sendResults();
+                            fairOptional.get().sendResults(true);
                             ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " results", true);
                         } else {
                             ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber, true);
@@ -70,27 +70,22 @@ public class MasterworksFairCommand extends BaseCommand {
 
     @Subcommand("validate")
     @Description("Validates the masterworks fair event, making sure players got their rewards")
-    public void validate(CommandIssuer issuer, Instant instant, @Optional Integer fairNum) {
+    public void validate(CommandIssuer issuer, Instant instant) {
+        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Locating fair with start date " + instant, true);
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(fairs -> {
-                    MasterworksFair masterworksFair;
-                    AtomicInteger fairNumber = new AtomicInteger();
-                    if (fairNum == null) {
-                        masterworksFair = fairs.get(fairs.size() - 1);
-                        fairNumber.set(masterworksFair.getFairNumber());
+                    MasterworksFair masterworksFair = fairs.stream()
+                            .filter(fair -> fair.getStartDate().equals(instant))
+                            .findFirst()
+                            .orElse(null);
+                    if (masterworksFair == null) {
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair with start date " + instant, true);
+                        return;
                     } else {
-                        java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
-                                .filter(f -> f.getFairNumber() == fairNum)
-                                .findFirst();
-                        if (fairOptional.isPresent()) {
-                            masterworksFair = fairOptional.get();
-                            fairNumber.set(masterworksFair.getFairNumber());
-                        } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNum, true);
-                            return;
-                        }
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Found fair with start date " + instant, true);
                     }
+                    int fairNumber = masterworksFair.getFairNumber();
                     HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
                     for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
                         if (rarity.getPlayerEntries == null) {
@@ -107,7 +102,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                     rarity,
                                     i + 1,
                                     Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())),
-                                    fairNumber.get()
+                                    fairNumber
                             );
                             playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
                         }
@@ -125,14 +120,16 @@ public class MasterworksFairCommand extends BaseCommand {
                                                 if (pveStats == null) {
                                                     return;
                                                 }
+                                                boolean resent = false;
                                                 for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
                                                     WeaponsPvE rarity = masterworksFairEntry.getRarity();
                                                     if (pveStats.getMasterworksFairEntries()
                                                             .stream()
                                                             .anyMatch(entry -> entry.getFairNumber() == masterworksFairEntry.getFairNumber() && entry.getRarity() == rarity)
                                                     ) {
-                                                        return;
+                                                        continue;
                                                     }
+                                                    resent = true;
                                                     pveStats.addMasterworksFairEntry(masterworksFairEntry);
                                                     LinkedHashMap<Currencies, Long> rewards = MasterworksFairManager.getRewards(masterworksFair,
                                                             masterworksFairEntry
@@ -145,13 +142,15 @@ public class MasterworksFairCommand extends BaseCommand {
                                                             false
                                                     );
                                                 }
-                                                databasePlayer.addFutureMessage(new FutureMessage(Arrays.asList(
-                                                        ChatColor.GOLD + "------------------------------------------------",
-                                                        ChatColor.GREEN + "Hey! We noticed you didn't get all your previous Masterworks Fair rewards, " +
-                                                                "so we've given them to you!",
-                                                        ChatColor.GOLD + "------------------------------------------------"
-                                                ), true));
-                                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                                if (resent) {
+                                                    databasePlayer.addFutureMessage(new FutureMessage(Arrays.asList(
+                                                            ChatColor.GOLD + "------------------------------------------------",
+                                                            ChatColor.GREEN + "Hey! We noticed you didn't get all your previous Masterworks",
+                                                            ChatColor.GREEN + "Fair rewards, so we've given them to you!",
+                                                            ChatColor.GOLD + "------------------------------------------------"
+                                                    ), true));
+                                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                                }
                                             })
                                             .execute();
                                 });
