@@ -114,7 +114,8 @@ public class WaveDefenseStats {
         }
 
         public void setCachedBaseCoinSummary(LinkedHashMap<String, Long> cachedBaseCoinSummary) {
-            this.cachedBaseCoinSummary = cachedBaseCoinSummary;
+            this.cachedBaseCoinSummary.clear();
+            this.cachedBaseCoinSummary.putAll(cachedBaseCoinSummary);
         }
 
         public HashMap<Integer, Long> getWaveDamage() {
