@@ -227,6 +227,7 @@ public class WeaponManagerMenu {
                             menuSettings.setBindFilterOption(bindFilterOption.next());
                         }
                     }
+                    menuSettings.setPage(1);
                     openWeaponInventoryFromInternal(player, databasePlayer);
                 }
         );
