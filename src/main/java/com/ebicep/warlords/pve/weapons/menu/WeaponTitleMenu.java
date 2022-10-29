@@ -164,6 +164,8 @@ public class WeaponTitleMenu {
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
         AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        title.getCost().forEach(pveStats::subtractCurrency);
         weaponInventory.remove(weapon);
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
