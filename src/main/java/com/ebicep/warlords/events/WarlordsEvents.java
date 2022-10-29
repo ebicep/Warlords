@@ -391,6 +391,8 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
+//        System.out.println("PlayerInteractEvent");
+//        e.setCancelled(true);
         Player player = e.getPlayer();
         Action action = e.getAction();
         Location location = player.getLocation();
@@ -472,29 +474,36 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-//    @EventHandler
+//    @EventHandler(priority = EventPriority.HIGHEST)
 //    public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
-//        if(e.getRightClicked().getType() == EntityType.WOLF) {
-//            e.setCancelled(true);
-//        }
+//        System.out.println("PlayerInteractAtEntityEvent");
+//        System.out.println(e.isCancelled());
+//        e.setCancelled(true);
+////        if(e.getRightClicked().getType() == EntityType.WOLF) {
+////            e.setCancelled(true);
+////        }
+//        System.out.println(e.isCancelled());
 //    }
 //
-//    @EventHandler
+//    @EventHandler(priority = EventPriority.HIGHEST)
 //    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-//        System.out.println("JHERE");
-//        if(e.getRightClicked().getType() == EntityType.WOLF) {
-//            e.setCancelled(true);
-//        }
+//        System.out.println("PlayerInteractEntityEvent");
+//        System.out.println(e.isCancelled());
+//        e.setCancelled(true);
+////        if(e.getRightClicked().getType() == EntityType.WOLF) {
+////            e.setCancelled(true);
+////        }
+//        System.out.println(e.isCancelled());
 //    }
 //
 //    @EventHandler
 //    public void onPlayerConsumeEvent(PlayerItemConsumeEvent e) {
-//        System.out.println("Player " + e.getPlayer().getName() + " consumed " + e.getItem().getType().name());
+//        System.out.println("PlayerItemConsumeEvent");
 //    }
 //
 //    @EventHandler
-//    public void onEntityTame(EntityTameEvent e) {
-//        System.out.println("Entity " + e.getEntity().getType().name() + " was tamed by " + e.getOwner().getName());
+//    public void onEntityInteractEvent(EntityInteractEvent e) {
+//        System.out.println("EntityInteractEvent");
 //    }
 
     @EventHandler
