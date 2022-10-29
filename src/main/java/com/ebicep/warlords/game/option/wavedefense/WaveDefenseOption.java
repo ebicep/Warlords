@@ -264,13 +264,12 @@ public class WaveDefenseOption implements Option {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.players().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> playerMatchingUUID = guild.getPlayerMatchingUUID(uuid);
                     if (playerMatchingUUID.isPresent()) {
                         guilds.computeIfAbsent(guild, k -> new HashSet<>()).add(uuid);
-                        break;
                     }
                 }
             }
