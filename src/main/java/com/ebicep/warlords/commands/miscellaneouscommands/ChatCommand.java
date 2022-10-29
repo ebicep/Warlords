@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.guilds.commands.GuildPlayerWrapper;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import org.bukkit.entity.Player;
 
@@ -35,7 +36,10 @@ public class ChatCommand extends BaseCommand {
 
     @Subcommand("guildofficer|go")
     @Description("Switch to GUILD OFFICER chat channel")
-    public void guildOfficerChat(@Conditions("guild:true|otherChatChannel:target=GUILD_OFFICER") Player player) {
+    public void guildOfficerChat(
+            @Conditions("guild:true|otherChatChannel:target=GUILD_OFFICER") Player player,
+            @Conditions("requirePerm:perm=OFFICER_CHAT") GuildPlayerWrapper guildPlayerWrapper
+    ) {
         switchChannels(player, ChatChannels.GUILD_OFFICER);
     }
 
@@ -59,7 +63,10 @@ public class ChatCommand extends BaseCommand {
 
     @CommandAlias("gochat|goc")
     @Description("Send a message to the GUILD OFFICER chat channel")
-    public void guildOfficerChat(@Conditions("guild:true") Player player, String message) {
+    public void guildOfficerChat(
+            @Conditions("guild:true") Player player, @Conditions("requirePerm:perm=OFFICER_CHAT") GuildPlayerWrapper guildPlayerWrapper,
+            String message
+    ) {
         ChatChannels.playerSendMessage(player, message, ChatChannels.GUILD_OFFICER, true);
     }
 
