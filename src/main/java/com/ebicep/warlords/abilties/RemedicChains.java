@@ -86,7 +86,7 @@ public class RemedicChains extends AbstractAbility {
             );
             maxHealths.put(warlordsEntity, warlordsEntity.getMaxHealth());
             if (pveUpgrade) {
-                warlordsEntity.setMaxHealth(warlordsEntity.getSpec().getMaxHealth() * 1.3f);
+                warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() * 1.3f);
             }
 
         });
