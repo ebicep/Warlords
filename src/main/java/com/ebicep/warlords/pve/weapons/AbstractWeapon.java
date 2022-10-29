@@ -90,7 +90,7 @@ public abstract class AbstractWeapon {
         ItemBuilder itemBuilder = new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(getName())
                 .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
         List<String> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
