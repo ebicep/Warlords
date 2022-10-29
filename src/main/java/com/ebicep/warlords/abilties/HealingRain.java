@@ -85,6 +85,20 @@ public class HealingRain extends AbstractAbility {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     particleTask.cancel();
+                    if (pveUpgrade) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter
+                                .entitiesAround(location, radius, radius, radius)
+                                .aliveEnemiesOf(wp)
+                                .limit(8)
+                        ) {
+                            Utils.playGlobalSound(enemyInRain.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.8f);
+                            FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                                    .withColor(Color.AQUA)
+                                    .with(FireworkEffect.Type.BURST)
+                                    .build());
+                            strikeInRain(wp, enemyInRain);
+                        }
+                    }
                 },
                 false,
                 duration * 20,
