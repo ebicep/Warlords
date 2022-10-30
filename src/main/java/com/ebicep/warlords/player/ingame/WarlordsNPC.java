@@ -221,11 +221,11 @@ public final class WarlordsNPC extends WarlordsEntity {
     public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
         if (getMobTier() == MobTier.BOSS) {
             if (modifier < 0) {
-                modifier = (int) (modifier * .4);
+                modifier *= .4;
             }
         } else {
             if (modifier < 0) {
-                modifier = (int) (modifier * .7);
+                modifier *= .7;
             }
         }
         return super.addSpeedModifier(name, modifier, duration, toDisable);
