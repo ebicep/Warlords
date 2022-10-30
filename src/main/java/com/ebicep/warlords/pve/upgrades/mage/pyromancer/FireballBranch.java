@@ -11,6 +11,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float hitbox = ability.getHitbox();
+    float energyCost = ability.getEnergyCost();
 
     public FireballBranch(AbilityTree abilityTree, Fireball ability) {
         super(abilityTree, ability);
@@ -58,7 +59,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 5000,
                 () -> {
                     ability.setHitbox(hitbox + 0.5f);
-                    ability.setEnergyCost(ability.getEnergyCost() - 2.5f);
+                    ability.setEnergyCost(energyCost - 2.5f);
                 }
         ));
         treeB.add(new Upgrade(
@@ -67,7 +68,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 10000,
                 () -> {
                     ability.setHitbox(hitbox + 1f);
-                    ability.setEnergyCost(ability.getEnergyCost() - 5f);
+                    ability.setEnergyCost(energyCost - 5f);
                 }
         ));
         treeB.add(new Upgrade(
@@ -76,7 +77,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 15000,
                 () -> {
                     ability.setHitbox(hitbox + 1.5f);
-                    ability.setEnergyCost(ability.getEnergyCost() - 7.5f);
+                    ability.setEnergyCost(energyCost - 7.5f);
                 }
         ));
         treeB.add(new Upgrade(
@@ -85,7 +86,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 20000,
                 () -> {
                     ability.setHitbox(hitbox + 2);
-                    ability.setEnergyCost(ability.getEnergyCost() - 10);
+                    ability.setEnergyCost(energyCost - 10);
                 }
         ));
 
@@ -93,7 +94,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 "Fiery Fusillade",
                 "Fireball - Master Upgrade",
                 "Direct-hits apply the BURN status for 5 seconds.\n\nBURN: Enemies take 20% more damage from all sources and burn for 0" +
-                        ".05% of their max health every second.",
+                        "0.5% of their max health every second.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
