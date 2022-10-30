@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
@@ -27,7 +28,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
-                6500,
+                6000,
                 0.3f,
                 10,
                 300,
@@ -42,7 +43,14 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
+        WarlordsEntity zenith = PlayerFilter.playingGame(warlordsNPC.getGame())
+                .filter(we -> we.getName()
+                .equals("Zenith"))
+                .findFirstOrNull();
 
+        if (ticksElapsed % 500 == 0) {
+            // TODO
+        }
     }
 
     @Override
