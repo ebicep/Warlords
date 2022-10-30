@@ -86,7 +86,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         masterUpgrade = new Upgrade(
                 "Deflective Tesseract",
                 "Prism Guard - Master Upgrade",
-                "Increase max health by 20%. Additionally,\nenemies in a 15 block radius will target you while\nPrism Guard is active.",
+                "Increase max health by 20%. Additionally, enemies in a 15 block radius will target you while Prism Guard is active.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

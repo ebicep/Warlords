@@ -83,7 +83,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
         masterUpgrade = new Upgrade(
                 "Killing Order",
                 "Order of Eviscerate - Master Upgrade",
-                "Triple backstab damage, kills while Order\nof Eviscerate is active reduce the cooldown\nby an additional 3 seconds.",
+                "Triple backstab damage, kills while Order of Eviscerate is active reduce the cooldown by an additional 3 seconds.",
                 50000,
                 () -> {
                     ability.setMasterUpgrade(true);

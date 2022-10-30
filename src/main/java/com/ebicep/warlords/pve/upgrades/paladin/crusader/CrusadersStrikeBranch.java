@@ -96,7 +96,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         masterUpgrade = new Upgrade(
                 "Crusader’s Slash",
                 "Crusader's Strike - Master Upgrade",
-                "Double the energy given to allies radius. Additionally,\nCrusader's Strike hits 2 additional enemies. (excluding\nenergy given)",
+                "Double the energy given to allies radius. Additionally, Crusader's Strike hits 2 additional enemies. (excluding energy given)",
                 50000,
                 () -> {
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);

@@ -88,7 +88,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
         masterUpgrade = new Upgrade(
                 "Edifying Radiance",
                 "Holy Radiance - Master Upgrade",
-                "Avenger's Mark is now AoE. Additionally,\nmarked targets take 40% more damage from Avenger's\nStrike and receive strike priority.",
+                "Avenger's Mark is now AoE. Additionally, marked targets take 40% more damage from Avenger's Strike and receive strike priority.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

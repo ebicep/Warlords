@@ -88,7 +88,7 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
         masterUpgrade = new Upgrade(
                 "Crippling Slash",
                 "Crippling Strike - Master Upgrade",
-                "Crippling Strike deals damage to 2 additional\ntargets, the cripple status now reduces\nenemy damage dealt by 50%",
+                "Crippling Strike deals damage to 2 additional targets, the cripple status now reduces enemy damage dealt by 50%",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

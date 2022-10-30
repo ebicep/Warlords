@@ -87,7 +87,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         masterUpgrade = new Upgrade(
                 "Reflective Barrier",
                 "Vindicate - Master Upgrade",
-                "Enemies who try to attack you from the\nfront are pushed back and reflect the damage\nyou would have taken back.",
+                "Enemies who try to attack you from the front are pushed back and reflect the damage you would have taken back.",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

@@ -1,6 +1,10 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
@@ -14,6 +18,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     public static final int ENERGY_PER_SECOND_BONUS = 7;
     public static final int ENERGY_PER_HIT_BONUS = -10;
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
+
+    public static final float DAMAGE_INCREASE_PER_HIT = .02f;
+    public static final int SECONDS_TO_CHECK = 1;
 
     public LegendaryDivine() {
     }
@@ -29,6 +36,27 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
     @Override
     public String getTitle() {
         return "Divine";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+        player.getGame().registerEvents(new Listener() {
+
+            @EventHandler
+            public void onDamageHealing(WarlordsDamageHealingEvent event) {
+                if (!event.getAttacker().equals(player)) {
+                    return;
+                }
+                if (event.isHealingInstance()) {
+                    return;
+                }
+                int attacks = player.getSecondStats().getEventsAsAttackerFromLastSecond(SECONDS_TO_CHECK).size();
+                event.setMin(event.getMin() * (1 + attacks * DAMAGE_INCREASE_PER_HIT));
+                event.setMax(event.getMax() * (1 + attacks * DAMAGE_INCREASE_PER_HIT));
+            }
+
+        });
     }
 
     @Override

@@ -86,7 +86,7 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
         masterUpgrade = new Upgrade(
                 "Edifying Radiance",
                 "Holy Radiance - Master Upgrade",
-                "Crusader's Holy Mark provides triple the\nenergy per second and speed at the cost of\nincreased energy cost.",
+                "Crusader's Holy Mark provides triple the energy per second and speed at the cost of increased energy cost.",
                 50000,
                 () -> {
                     ability.setEnergyPerSecond(ability.getEnergyPerSecond() * 3);

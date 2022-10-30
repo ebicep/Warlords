@@ -82,7 +82,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",
                 "Draining Miasma - Master Upgrade",
-                "For each enemy within Draining Miasma,\ngain a 4% damage boost for Impaling Strike for\nthe duration of Draining Miasma",
+                "For each enemy within Draining Miasma, gain a 4% damage boost for Impaling Strike for the duration of Draining Miasma",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

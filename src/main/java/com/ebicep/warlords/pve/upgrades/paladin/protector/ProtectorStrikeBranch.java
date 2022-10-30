@@ -93,7 +93,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         masterUpgrade = new Upgrade(
                 "Alleviating Strike",
                 "Protector's Strike - Master Upgrade",
-                "Increase the healing of Protector's Strike\non the lowest health ally and you by 70%",
+                "Increase the healing of Protector's Strike on the lowest health ally and you by 70%",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
