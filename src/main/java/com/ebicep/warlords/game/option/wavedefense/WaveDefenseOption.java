@@ -50,6 +50,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -267,8 +269,8 @@ public class WaveDefenseOption implements Option {
             List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
-                    Optional<GuildPlayer> playerMatchingUUID = guild.getPlayerMatchingUUID(uuid);
-                    if (playerMatchingUUID.isPresent()) {
+                    Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
+                    if (guildPlayer.isPresent() && guildPlayer.get().getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
                         guilds.computeIfAbsent(guild, k -> new HashSet<>()).add(uuid);
                     }
                 }

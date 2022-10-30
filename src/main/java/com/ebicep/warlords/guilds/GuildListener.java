@@ -27,7 +27,7 @@ public class GuildListener implements Listener {
             for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
                 if (upgrade.getUpgrade() == GuildUpgradesPermanent.DAILY_PLAYER_COIN_BONUS) {
                     GuildPlayer guildPlayer = guildPlayerPair.getB();
-                    if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(1, ChronoUnit.DAYS))) {
+                    if (!guildPlayer.getJoinDate().isBefore(Instant.now().minus(2, ChronoUnit.DAYS))) {
                         return;
                     }
                     if (!guildPlayer.isDailyCoinBonusReceived()) {
