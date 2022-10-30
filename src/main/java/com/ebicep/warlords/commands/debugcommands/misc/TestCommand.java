@@ -6,6 +6,7 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
@@ -130,6 +131,7 @@ public class TestCommand extends BaseCommand {
 
     @CommandAlias("testplayer")
     public void testPlayer(Player player) {
+        ChallengeAchievements.LAWNMOWER.sendAchievementUnlockMessage(player);
 //        CustomScoreboard playerScoreboard = CustomScoreboard.getPlayerScoreboard(player);
 //        Scoreboard scoreboard = playerScoreboard.getScoreboard();
 //        System.out.println(scoreboard.getTeams());
