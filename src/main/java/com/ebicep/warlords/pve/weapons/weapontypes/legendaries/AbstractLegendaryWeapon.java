@@ -29,6 +29,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
     protected SkillBoosts selectedSkillBoost;
     @Field("unlocked_skill_boosts")
     protected List<SkillBoosts> unlockedSkillBoosts = new ArrayList<>();
+    @Field("unlocked_titles")
+    protected List<LegendaryTitles> unlockedTitles = new ArrayList<>();
     @Field("energy_per_second_bonus")
     protected float energyPerSecondBonus;
     @Field("energy_per_hit_bonus")
@@ -61,6 +63,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
 
         this.selectedSkillBoost = legendaryWeapon.getSelectedSkillBoost();
         this.unlockedSkillBoosts.add(selectedSkillBoost);
+        this.unlockedTitles = legendaryWeapon.getUnlockedTitles();
         generateStats();
         for (int i = 0; i < legendaryWeapon.getUpgradeLevel(); i++) {
             upgrade();
@@ -335,5 +338,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
 
     public List<SkillBoosts> getUnlockedSkillBoosts() {
         return unlockedSkillBoosts;
+    }
+
+    public List<LegendaryTitles> getUnlockedTitles() {
+        return unlockedTitles;
     }
 }
