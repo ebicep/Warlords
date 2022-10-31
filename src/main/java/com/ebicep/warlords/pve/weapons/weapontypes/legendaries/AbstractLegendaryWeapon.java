@@ -333,4 +333,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractTierTwoWeapon impl
         this.starPieceBonus = starPieceBonus;
     }
 
+    public List<SkillBoosts> getUnlockedSkillBoosts() {
+        return unlockedSkillBoosts;
+    }
 }

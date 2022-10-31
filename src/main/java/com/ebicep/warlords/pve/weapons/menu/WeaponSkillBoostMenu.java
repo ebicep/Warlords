@@ -72,7 +72,9 @@ public class WeaponSkillBoostMenu {
                         }
                         List<String> confirmLore = new ArrayList<>();
                         confirmLore.add(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name);
-                        confirmLore.addAll(costLore);
+                        if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
+                            confirmLore.addAll(costLore);
+                        }
                         Menu.openConfirmationMenu(
                                 player,
                                 "Change Skill Boost",
@@ -99,7 +101,10 @@ public class WeaponSkillBoostMenu {
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
         SkillBoosts oldSkillBoost = weapon.getSelectedSkillBoost();
         weapon.setSelectedSkillBoost(skillBoost);
-        cost.forEach(pveStats::subtractCurrency);
+        if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
+            cost.forEach(pveStats::subtractCurrency);
+            weapon.getUnlockedSkillBoosts().add(skillBoost);
+        }
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
         player.spigot().sendMessage(
