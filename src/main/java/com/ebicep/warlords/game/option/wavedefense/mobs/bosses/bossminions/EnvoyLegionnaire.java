@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.wavedefense.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
@@ -29,10 +30,10 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
                 6000,
-                0.3f,
+                0.26f,
                 10,
-                300,
-                500
+                1000,
+                1500
         );
     }
 
@@ -43,13 +44,28 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
-        WarlordsEntity zenith = PlayerFilter.playingGame(warlordsNPC.getGame())
+        WarlordsEntity zenith = PlayerFilter
+                .playingGame(warlordsNPC.getGame())
                 .filter(we -> we.getName()
                 .equals("Zenith"))
                 .findFirstOrNull();
 
-        if (ticksElapsed % 500 == 0) {
-            // TODO
+        if (ticksElapsed % 100 == 0) {
+            if (zenith != null) {
+                zenith.addHealingInstance(
+                        warlordsNPC,
+                        "Remedy",
+                        500,
+                        500,
+                        -1,
+                        100,
+                        false,
+                        false
+                );
+
+                Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
+                EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+            }
         }
     }
 

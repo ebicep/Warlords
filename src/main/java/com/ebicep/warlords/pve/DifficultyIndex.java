@@ -6,6 +6,14 @@ import javax.annotation.Nonnull;
 
 public enum DifficultyIndex {
 
+    EASY("Easy",
+            "For those seeking a smaller challenge,\nrecommended for solo players." +
+                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage",
+            ChatColor.GREEN,
+            25,
+            16 * 3,
+            4
+    ),
     NORMAL("Normal",
             "Fight off 25 waves of monsters to\nearn rewards." +
                     "\n\nModifiers:\n§aNone",
@@ -16,7 +24,7 @@ public enum DifficultyIndex {
     ),
     HARD("Hard §c[COMING SOON]",
             "Fight off 25 waves of monsters to\nearn greater rewards." +
-                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n+Tougher Mobs",
+                    "\n\nModifiers:\n§c+20% Mob Health\n+20% Mob Damage\n\n- Tougher Mobs\n- No Respawns",
             ChatColor.GOLD,
             25,
             32 * 3,

@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 
 public class Zenith extends AbstractZombie implements BossMob {
 
-    private int stormRadius = 10;
+    private final int stormRadius = 10;
 
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
@@ -36,11 +36,11 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
                         Weapons.VORPAL_SWORD.getItem()
                 ),
-                26500,
+                26000,
                 0.4f,
                 25,
-                1200,
-                1800
+                1500,
+                2000
         );
     }
 
@@ -64,8 +64,8 @@ public class Zenith extends AbstractZombie implements BossMob {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
         if (ticksElapsed % 240 == 0) {
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.9f);
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.9f);
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
             warlordsNPC.getSpeed().addSpeedModifier("Armageddon Slowness", -99, 90);
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
@@ -92,18 +92,9 @@ public class Zenith extends AbstractZombie implements BossMob {
             }
         }
 
-        if (ticksElapsed % 400 == 0) {
+        if (ticksElapsed % 300 == 0) {
             for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new EnvoyLegionnaire(warlordsNPC.getLocation()));
-            }
-        }
-
-        if (ticksElapsed % 10 == 0) {
-            for (WarlordsEntity legionair : PlayerFilter
-                    .entitiesAround(warlordsNPC, 15, 15, 15)
-                    .aliveTeammatesOf(warlordsNPC)
-            ) {
-                EffectUtils.playParticleLinkAnimation(loc, legionair.getLocation(), ParticleEffect.SPELL_WITCH);
+                option.spawnNewMob(new EnvoyLegionnaire(loc));
             }
         }
     }
