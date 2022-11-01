@@ -119,14 +119,33 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             double scale = 600.0;
             long playerCount = game.warlordsPlayers().count();
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
+
             float health = (float) Math.pow(warlordsNPC.getMaxHealth(), waveDefenseOption.getWaveCounter() / modifiedScale + 1);
-            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-                warlordsNPC.setMaxHealth(health * (1 + (0.25f * playerCount)));
-                warlordsNPC.setHealth(health * (1 + (0.25f * playerCount)));
-            } else {
-                warlordsNPC.setMaxHealth(health);
-                warlordsNPC.setHealth(health);
+            float bossMultiplier = 1 + (0.25f * playerCount);
+            float difficultyMultiplier;
+
+            switch (waveDefenseOption.getDifficulty()) {
+                case EASY:
+                    difficultyMultiplier = 0.75f;
+                    break;
+                case HARD:
+                    difficultyMultiplier = 1.25f;
+                    break;
+                default:
+                    difficultyMultiplier = 1;
+                    break;
             }
+
+            if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
+                warlordsNPC.setMaxHealth((health * difficultyMultiplier)  * bossMultiplier);
+                warlordsNPC.setHealth((health * difficultyMultiplier) * bossMultiplier);
+            } else {
+                warlordsNPC.setMaxHealth((health * difficultyMultiplier));
+                warlordsNPC.setHealth((health * difficultyMultiplier));
+            }
+
+            warlordsNPC.setMinMeleeDamage((int) (warlordsNPC.getMinMeleeDamage() * difficultyMultiplier));
+            warlordsNPC.setMaxMeleeDamage((int) (warlordsNPC.getMaxMeleeDamage() * difficultyMultiplier));
         }
 
         return warlordsNPC;
