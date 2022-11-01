@@ -209,6 +209,7 @@ public class DatabaseManager {
                     for (LegendaryTitles value : LegendaryTitles.VALUES) {
                         if (value.clazz.equals(abstractWeapon.getClass())) {
                             ((AbstractLegendaryWeapon) abstractWeapon).getUnlockedTitles().add(value);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                             break;
                         }
                     }
