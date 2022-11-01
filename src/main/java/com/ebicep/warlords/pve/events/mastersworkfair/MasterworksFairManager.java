@@ -150,19 +150,19 @@ public class MasterworksFairManager {
         int fairNumber = masterworksFair.getFairNumber();
         int placement = masterworksFairEntry.getPlacement();
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
-        if (placement < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
+        if (placement <= 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
             rewards.put(masterworksFairEntry.getRarity().starPieceCurrency, 1L);
             switch (placement) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
-                case 0:
+                case 1:
                     rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
                     break;
-                case 1:
                 case 2:
+                case 3:
                     rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
                     break;
             }
         } else {
-            if (placement < 10) { //4-10 will get 5 Supply Drop roll opportunities
+            if (placement <= 10) { //4-10 will get 5 Supply Drop roll opportunities
                 rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
             } else if (masterworksFairEntry.getScore() >= 85) { //Players who submit a 85%+ weapon
                 // will be guaranteed at least 3 supply drop opportunities

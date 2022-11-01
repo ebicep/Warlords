@@ -8,6 +8,7 @@ import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -41,6 +42,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
     private List<AbstractWeapon> weaponsFound = new ArrayList<>();
     @Field("legend_fragments_gain")
     private long legendFragmentsGained;
+    @Field("quests_completed")
+    private List<Quests> questsCompleted = new ArrayList<>();
 
     public DatabaseGamePlayerPvE() {
     }
@@ -69,6 +72,8 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
         this.guildExpGained = GuildExperienceUtils.getExpFromWaveDefense(warlordsPlayer, true).values().stream().mapToLong(aLong -> aLong).sum();
         this.weaponsFound.addAll(playerWaveDefenseStats.getWeaponsFound());
         this.legendFragmentsGained = playerWaveDefenseStats.getLegendFragmentGain();
+        List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, waveDefenseOption, true);
+        this.questsCompleted.addAll(questsFromGameStats);
     }
 
     public int getLongestTimeInCombat() {
@@ -125,5 +130,9 @@ public class DatabaseGamePlayerPvE extends DatabaseGamePlayerBase {
 
     public long getLegendFragmentsGained() {
         return legendFragmentsGained;
+    }
+
+    public List<Quests> getQuestsCompleted() {
+        return questsCompleted;
     }
 }

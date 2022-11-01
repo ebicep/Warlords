@@ -503,6 +503,7 @@ public class CommandManager {
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
+        manager.registerCommand(new CompensateCommand());
         manager.registerCommand(new FlyCommand());
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());

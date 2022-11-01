@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.entity.Player;
@@ -86,7 +87,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                                     return;
                                 }
                                 Pair<Note, Integer> note = noteDelay.get(tick);
-                                p.playNote(p.getLocation(), Instrument.PIANO, note.getA());
+                                Utils.playGlobalSound(p.getLocation(), Instrument.PIANO, note.getA());
                                 delay = note.getB();
                                 tick++;
                             }

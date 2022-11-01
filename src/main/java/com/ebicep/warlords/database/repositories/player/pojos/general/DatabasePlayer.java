@@ -19,6 +19,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.quests.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -26,10 +27,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
@@ -69,6 +67,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     @Field("tournament_stats")
     private TournamentStats tournamentStats = new TournamentStats();
+
     @Field("last_spec")
     private Specializations lastSpec = Specializations.PYROMANCER;
     @Field("hotkeymode")

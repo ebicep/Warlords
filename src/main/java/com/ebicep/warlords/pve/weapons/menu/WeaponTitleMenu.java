@@ -65,15 +65,23 @@ public class WeaponTitleMenu {
             if (titleIndex < LegendaryTitles.VALUES.length) {
                 LegendaryTitles title = LegendaryTitles.VALUES[titleIndex];
                 AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
+                ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
+
                 Set<Map.Entry<Currencies, Long>> cost = title.getCost().entrySet();
                 List<String> loreCost = title.getCostLore();
 
-                ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false))
-                        .addLore(loreCost);
                 boolean equals = weapon.getClass().equals(title.clazz);
+                boolean titleIsLocked = !weapon.getUnlockedTitles().contains(title);
                 if (equals) {
+                    itemBuilder.addLore("", ChatColor.GREEN + "Selected");
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
                     itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                } else {
+                    if (titleIsLocked) {
+                        itemBuilder.addLore(loreCost);
+                    } else {
+                        itemBuilder.addLore("", ChatColor.GREEN + "Click to Select");
+                    }
                 }
                 for (int k = 0; k < 3; k++) {
                     for (int j = 0; j < 3; j++) {
@@ -105,18 +113,22 @@ public class WeaponTitleMenu {
                                 player.sendMessage(ChatColor.RED + "You already have this title on your weapon!");
                                 return;
                             }
-                            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                            for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-                                Currencies currency = currenciesLongEntry.getKey();
-                                Long currencyCost = currenciesLongEntry.getValue();
-                                if (pveStats.getCurrencyValue(currency) < currencyCost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(currencyCost) + ChatColor.RED + " to apply this title!");
-                                    return;
+                            if (titleIsLocked) {
+                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
+                                    Currencies currency = currenciesLongEntry.getKey();
+                                    Long currencyCost = currenciesLongEntry.getValue();
+                                    if (pveStats.getCurrencyValue(currency) < currencyCost) {
+                                        player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(currencyCost) + ChatColor.RED + " to apply this title!");
+                                        return;
+                                    }
                                 }
                             }
                             List<String> confirmLore = new ArrayList<>();
                             confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + title.title + ChatColor.GRAY + " title");
-                            confirmLore.addAll(loreCost);
+                            if (titleIsLocked) {
+                                confirmLore.addAll(loreCost);
+                            }
                             confirmLore.add("");
                             confirmLore.add(ChatColor.YELLOW + "NOTE: " + ChatColor.GRAY + "This will remove your current star piece.");
                             Menu.openConfirmationMenu(
@@ -162,10 +174,13 @@ public class WeaponTitleMenu {
     }
 
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
-        AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-        title.getCost().forEach(pveStats::subtractCurrency);
+        if (!weapon.getUnlockedTitles().contains(title)) {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            title.getCost().forEach(pveStats::subtractCurrency);
+            weapon.getUnlockedTitles().add(title);
+        }
+        AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         weaponInventory.remove(weapon);
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

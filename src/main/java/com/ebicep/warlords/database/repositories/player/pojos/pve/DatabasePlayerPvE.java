@@ -22,6 +22,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
+import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
@@ -29,10 +30,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
 
@@ -69,6 +67,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     }};
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
+    @Field("quests_completed")
+    private Map<Quests, Long> questsCompleted = new HashMap<>();
+
 
     @Override
     public void updateCustomStats(
@@ -102,6 +103,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         //WEAPONS
         if (multiplier > 0) {
             weaponInventory.addAll(gamePlayerPvE.getWeaponsFound());
+
+            //QUESTS
+            for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
+                if (quests.time == playersCollection) {
+                    questsCompleted.merge(quests, 1L, Long::sum);
+                    quests.rewards.forEach(this::addCurrency);
+                }
+            }
         } else {
             if (playersCollection == PlayersCollections.LIFETIME) {
                 //need to search by uuid incase weapon got upgraded or changed
@@ -124,6 +133,14 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
                     } else {
                         ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory", true);
                     }
+                }
+            }
+
+            //QUESTS
+            for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
+                if (quests.time == playersCollection) {
+                    questsCompleted.merge(quests, -1L, Long::sum);
+                    quests.rewards.forEach(this::subtractCurrency);
                 }
             }
         }
@@ -317,5 +334,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public void setCompletedTutorial(boolean completedTutorial) {
         this.completedTutorial = completedTutorial;
+    }
+
+    public Map<Quests, Long> getQuestsCompleted() {
+        return questsCompleted;
     }
 }

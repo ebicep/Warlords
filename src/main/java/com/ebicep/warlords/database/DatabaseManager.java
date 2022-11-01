@@ -22,6 +22,8 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -201,6 +203,19 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
+        for (AbstractWeapon abstractWeapon : weaponInventory) {
+            if (abstractWeapon instanceof AbstractLegendaryWeapon) {
+                if (((AbstractLegendaryWeapon) abstractWeapon).getUnlockedTitles().isEmpty()) {
+                    for (LegendaryTitles value : LegendaryTitles.VALUES) {
+                        if (value.clazz.equals(abstractWeapon.getClass())) {
+                            ((AbstractLegendaryWeapon) abstractWeapon).getUnlockedTitles().add(value);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
@@ -248,6 +263,7 @@ public class DatabaseManager {
         PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         //Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
     }
+
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, onNotFound);
     }
