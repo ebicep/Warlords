@@ -8,7 +8,12 @@ import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -130,6 +135,26 @@ public enum Quests {
             WarlordsPlayer warlordsPlayer,
             DatabasePlayer databasePlayer
     );
+
+    public ItemStack getItemStack(boolean completed) {
+        ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
+                //.name(ChatColor.GREEN + time.name + ": " + name)
+                .name(ChatColor.GREEN + name)
+                .lore(
+                        ChatColor.GRAY + description,
+                        "",
+                        ChatColor.GRAY + "Rewards:"
+                );
+        rewards.forEach((currencies, aLong) -> itemBuilder.addLore(ChatColor.DARK_GRAY + " +" + currencies.getCostColoredName(aLong)));
+        if (completed) {
+            itemBuilder.addLore("", ChatColor.GREEN + "Completed!");
+        } else {
+            itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+            itemBuilder.enchant(Enchantment.OXYGEN, 1);
+        }
+        return itemBuilder.get();
+
+    }
 
     public String getHoverText() {
         StringBuilder hoverText = new StringBuilder(ChatColor.GREEN + description + "\n");
