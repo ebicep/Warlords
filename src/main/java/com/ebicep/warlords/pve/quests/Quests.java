@@ -4,16 +4,18 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import org.bukkit.ChatColor;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public enum Quests {
 
-    DAILY_300_KA("Get 300 Kills/Assists in 1 game",
+    DAILY_300_KA("DAILY_300_KA",
+            "Get 300 Kills/Assists in 1 game",
             PlayersCollections.DAILY,
             new LinkedHashMap<>() {{
                 put(Currencies.SYNTHETIC_SHARD, 30L);
@@ -22,10 +24,12 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getKills() + databasePlayer.getPveStats().getAssists() >= 300;
+            PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+            return total.getKills() + total.getAssists() >= 300;
         }
     },
-    DAILY_2_PLAYS("Play 2 games",
+    DAILY_2_PLAYS("DAILY_2_PLAYS",
+            "Play 2 games",
             PlayersCollections.DAILY,
             new LinkedHashMap<>() {{
                 put(Currencies.SYNTHETIC_SHARD, 30L);
@@ -34,10 +38,12 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getPlays() >= 2;
+            System.out.println("PLAYS: " + databasePlayer.getPlays());
+            return databasePlayer.getPveStats().getPlays() + 1 >= 2;
         }
     },
-    DAILY_WIN("Win a game",
+    DAILY_WIN("DAILY_WIN",
+            "Win a game",
             PlayersCollections.DAILY,
             new LinkedHashMap<>() {{
                 put(Currencies.SYNTHETIC_SHARD, 50L);
@@ -46,11 +52,13 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getWins() >= 1;
+            System.out.println("WINS: " + databasePlayer.getWins());
+            return databasePlayer.getPveStats().getWins() + 1 >= 1;
         }
     },
 
-    WEEKLY_20_PLAYS("Play 20 games",
+    WEEKLY_20_PLAYS("WEEKLY_20_PLAYS",
+            "Play 20 games",
             PlayersCollections.WEEKLY,
             new LinkedHashMap<>() {{
                 put(Currencies.SYNTHETIC_SHARD, 300L);
@@ -59,10 +67,12 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getPlays() >= 20;
+            System.out.println("PLAYS: " + databasePlayer.getPlays());
+            return databasePlayer.getPveStats().getPlays() + 1 >= 20;
         }
     },
-    WEEKLY_30_ENDLESS("Reach Wave 30 in a game of Endless",
+    WEEKLY_30_ENDLESS("WEEKLY_30_ENDLESS",
+            "Reach Wave 30 in a game of Endless",
             PlayersCollections.WEEKLY,
             new LinkedHashMap<>() {{
                 put(Currencies.SYNTHETIC_SHARD, 150L);
@@ -81,12 +91,14 @@ public enum Quests {
     public static final HashMap<UUID, List<Quests>> CACHED_PLAYER_QUESTS = new HashMap<>();
 
     public final String name;
+    public final String description;
     public final PlayersCollections time;
     public final LinkedHashMap<Currencies, Long> rewards;
 
 
-    Quests(String name, PlayersCollections time, LinkedHashMap<Currencies, Long> rewards) {
+    Quests(String name, String description, PlayersCollections time, LinkedHashMap<Currencies, Long> rewards) {
         this.name = name;
+        this.description = description;
         this.time = time;
         this.rewards = rewards;
     }
@@ -109,6 +121,7 @@ public enum Quests {
             });
         }
 
+        CACHED_PLAYER_QUESTS.put(warlordsPlayer.getUuid(), questsCompleted);
         return questsCompleted;
     }
 
@@ -117,4 +130,11 @@ public enum Quests {
             WarlordsPlayer warlordsPlayer,
             DatabasePlayer databasePlayer
     );
+
+    public String getHoverText() {
+        StringBuilder hoverText = new StringBuilder(ChatColor.GREEN + description + "\n");
+        rewards.forEach((currencies, aLong) -> hoverText.append(ChatColor.GRAY).append(" - ").append(currencies.getCostColoredName(aLong)).append("\n"));
+        return hoverText.toString();
+    }
+
 }

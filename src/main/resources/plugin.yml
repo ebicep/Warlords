@@ -8,6 +8,10 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
+  oldtest:
+    description: Old test command
+    usage: /oldtest
+    permission: group.administrator
 
 permissions:
   group.default:

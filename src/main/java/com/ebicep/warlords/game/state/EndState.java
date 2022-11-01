@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -212,8 +213,10 @@ public class EndState implements State, TimerDebugAble {
             showExperienceSummary(players);
             for (Option option : game.getOptions()) {
                 if (option instanceof WaveDefenseOption) {
-                    showCoinSummary((WaveDefenseOption) option, players);
-                    showWeaponSummary((WaveDefenseOption) option, players);
+                    WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    showCoinSummary(waveDefenseOption, players);
+                    showWeaponSummary(waveDefenseOption, players);
+                    showQuestSummary(waveDefenseOption, players);
                     break;
                 }
             }
@@ -565,15 +568,22 @@ public class EndState implements State, TimerDebugAble {
     }
 
     private void showQuestSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
-        sendGlobalMessage(game, "", false);
-        sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚", true);
-
         for (WarlordsPlayer wp : players) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) {
                 continue;
             }
             List<Quests> quests = Quests.getQuestsFromGameStats(wp, waveDefenseOption, false);
+            if (!quests.isEmpty()) {
+                player.sendMessage("");
+                ChatUtils.sendCenteredMessage(player, ChatColor.AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚");
+            }
+            for (Quests quest : quests) {
+                ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+                        .appendHoverText(ChatColor.GREEN + quest.name, ChatColor.GREEN + quest.description)
+                        .create()
+                );
+            }
         }
     }
 

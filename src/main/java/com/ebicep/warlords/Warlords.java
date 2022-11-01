@@ -21,6 +21,7 @@ import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.HealingPowerup;
 import com.ebicep.warlords.abilties.internal.Overheal;
 import com.ebicep.warlords.commands.CommandManager;
+import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -296,6 +297,8 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
+
+        getCommand("oldtest").setExecutor(new OldTestCommand());
 
 //        ConcurrentHashMap<UUID, Integer> playerClicks = new ConcurrentHashMap<>();
 //        getServer().getPluginManager().registerEvents(new Listener() {
