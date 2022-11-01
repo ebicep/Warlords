@@ -150,7 +150,7 @@ public class MasterworksFairManager {
         int fairNumber = masterworksFair.getFairNumber();
         int placement = masterworksFairEntry.getPlacement();
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
-        if (placement < 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
+        if (placement <= 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
             rewards.put(masterworksFairEntry.getRarity().starPieceCurrency, 1L);
             switch (placement) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
                 case 1:
