@@ -70,7 +70,7 @@ public class RemedicChains extends AbstractAbility {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
-        HashMap<WarlordsEntity, Float> maxHealths = new HashMap<>();
+        HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN +
                     ChatColor.GRAY + " Your Remedic Chains is now protecting " +
@@ -84,15 +84,18 @@ public class RemedicChains extends AbstractAbility {
                     ChatColor.GOLD + duration +
                     ChatColor.GRAY + " seconds!"
             );
-            maxHealths.put(warlordsEntity, warlordsEntity.getMaxHealth());
+            float healthIncrease = warlordsEntity.getMaxHealth() * .3f;
+            healthBoosts.put(warlordsEntity, healthIncrease);
             if (pveUpgrade) {
-                warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() * 1.3f);
+                warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() + healthIncrease);
             }
 
         });
 
         if (pveUpgrade) {
-            wp.setMaxHealth(wp.getSpec().getMaxHealth() * 1.3f);
+            float healthIncrease = wp.getMaxHealth() * .3f;
+            healthBoosts.put(wp, healthIncrease);
+            wp.setMaxHealth(wp.getMaxHealth() + healthIncrease);
         }
 
         RemedicChains tempRemedicChain = new RemedicChains();
@@ -108,8 +111,7 @@ public class RemedicChains extends AbstractAbility {
                         return;
                     }
                     if (pveUpgrade) {
-                        wp.setMaxHealth(wp.getSpec().getMaxHealth());
-                        maxHealths.forEach(WarlordsEntity::setMaxHealth);
+                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
                     }
                     if (wp.isDead()) {
                         return;
@@ -178,7 +180,7 @@ public class RemedicChains extends AbstractAbility {
                             linkedEntities.remove(i);
                             i--;
                             if (pveUpgrade) {
-                                linked.setMaxHealth(maxHealths.getOrDefault(linked, (float) linked.getSpec().getMaxHealth()));
+                                linked.setMaxHealth(healthBoosts.getOrDefault(linked, (float) linked.getSpec().getMaxHealth()));
                             }
                         }
                     }
