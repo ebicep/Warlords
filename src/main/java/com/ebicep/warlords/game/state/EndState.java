@@ -20,6 +20,7 @@ import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -560,6 +561,19 @@ public class EndState implements State, TimerDebugAble {
                         ChatColor.GRAY + "+" + ChatColor.GREEN + fragmentGain + " " + Currencies.LEGEND_FRAGMENTS.getColoredName() + "s"
                 );
             }
+        }
+    }
+
+    private void showQuestSummary(WaveDefenseOption waveDefenseOption, List<WarlordsPlayer> players) {
+        sendGlobalMessage(game, "", false);
+        sendGlobalMessage(game, ChatColor.DARK_AQUA.toString() + ChatColor.BOLD + "✚ QUESTS SUMMARY ✚", true);
+
+        for (WarlordsPlayer wp : players) {
+            Player player = Bukkit.getPlayer(wp.getUuid());
+            if (player == null) {
+                continue;
+            }
+            List<Quests> quests = Quests.getQuestsFromGameStats(wp, waveDefenseOption, false);
         }
     }
 
