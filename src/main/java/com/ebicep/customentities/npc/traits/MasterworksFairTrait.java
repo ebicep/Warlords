@@ -1,5 +1,6 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
@@ -8,10 +9,8 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -19,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager.*;
 
-public class MasterworksFairTrait extends Trait {
+public class MasterworksFairTrait extends WarlordsTrait {
 
     public static final AtomicBoolean PAUSED = new AtomicBoolean(false);
     public static Instant startTime;
@@ -105,16 +104,9 @@ public class MasterworksFairTrait extends Trait {
         }
     }
 
-    @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
-        if (this.getNPC() == event.getNPC()) {
-            if (!Warlords.getInstance().isEnabled()) {
-                // Fix old NPC standing around on Windows + plugin reload after new deployment
-                this.getNPC().destroy();
-                return;
-            }
-            MasterworksFairManager.openMasterworksFairMenu(event.getClicker());
-        }
+    @Override
+    public void rightClick(NPCRightClickEvent event) {
+        MasterworksFairManager.openMasterworksFairMenu(event.getClicker());
     }
 
 

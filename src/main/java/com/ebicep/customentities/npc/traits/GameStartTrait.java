@@ -1,16 +1,15 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.customentities.npc.WarlordsTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameMode;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
-import org.bukkit.event.EventHandler;
 
-public class GameStartTrait extends Trait {
+public class GameStartTrait extends WarlordsTrait {
     public GameStartTrait() {
         super("GameStartTrait");
     }
@@ -26,28 +25,14 @@ public class GameStartTrait extends Trait {
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 
-    @EventHandler
-    public void onRightClick(NPCRightClickEvent event) {
-        if (this.getNPC() == event.getNPC()) {
-            if (!Warlords.getInstance().isEnabled()) {
-                // Fix old NPC standing around on Windows + plugin reload after new deployment
-                this.getNPC().destroy();
-                return;
-            }
-            GameStartCommand.startGamePublic(event.getClicker());
-        }
+    @Override
+    public void rightClick(NPCRightClickEvent event) {
+        GameStartCommand.startGamePublic(event.getClicker());
     }
 
-    @EventHandler
-    public void onLeftClick(NPCLeftClickEvent event) {
-        if (this.getNPC() == event.getNPC()) {
-            if (!Warlords.getInstance().isEnabled()) {
-                // Fix old NPC standing around on Windows + plugin reload after new deployment
-                this.getNPC().destroy();
-                return;
-            }
-            GameStartCommand.startGamePublic(event.getClicker());
-        }
+    @Override
+    public void leftClick(NPCLeftClickEvent event) {
+        GameStartCommand.startGamePublic(event.getClicker());
     }
 
 }

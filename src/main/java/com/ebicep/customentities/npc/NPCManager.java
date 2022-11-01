@@ -14,9 +14,11 @@ import net.citizensnpcs.api.trait.TraitInfo;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.SkinTrait;
+import net.citizensnpcs.trait.VillagerProfession;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Villager;
 
 public class NPCManager {
 
@@ -27,6 +29,7 @@ public class NPCManager {
     public static NPC supplyDropNPC;
     public static NPC weaponManagerNPC;
     public static NPC legendaryWeaponNPC;
+    public static NPC questLordNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
     public static void createGameJoinNPCs() {
@@ -51,6 +54,7 @@ public class NPCManager {
                     createMasterworksFairNPC();
                     createWeaponsManagerNPC();
                     createLegendaryWeaponNPC();
+                    createQuestMenuNPC();
                 })
                 .execute();
     }
@@ -147,6 +151,21 @@ public class NPCManager {
 
         legendaryWeaponNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
         legendaryWeaponNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2515.5, 54, 766.5, 180, 0));
+
+    }
+
+    public static void createQuestMenuNPC() {
+        registerTrait(QuestMenuTrait.class, "QuestMenuTrait");
+
+        questLordNPC = npcRegistry.createNPC(EntityType.VILLAGER, "quest-menu");
+        questLordNPC.getOrAddTrait(VillagerProfession.class).setProfession(Villager.Profession.LIBRARIAN);
+        questLordNPC.addTrait(QuestMenuTrait.class);
+        HologramTrait hologramTrait = questLordNPC.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.AQUA + "Quest Lord");
+
+        questLordNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        questLordNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2574.5, 50, 758.5, -90, 0));
 
     }
 
