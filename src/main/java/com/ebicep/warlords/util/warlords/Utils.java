@@ -454,6 +454,12 @@ public class Utils {
         }
     }
 
+    public static void playGlobalSound(@Nonnull Location location, Instrument instrument, Note note) {
+        for (Player p : location.getWorld().getPlayers()) {
+            p.playNote(location, instrument, note);
+        }
+    }
+
     public static double map(double value, double min, double max) {
         return value * (max - min) + min;
     }
