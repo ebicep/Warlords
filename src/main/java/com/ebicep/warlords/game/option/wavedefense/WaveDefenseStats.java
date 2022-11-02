@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -78,7 +80,14 @@ public class WaveDefenseStats {
                 .warlordsPlayers()
                 .forEach(warlordsPlayer -> {
                     if (warlordsPlayer.getAbstractWeapon() instanceof AbstractLegendaryWeapon) {
-                        getPlayerWaveDefenseStats(warlordsPlayer.getUuid()).setLegendFragmentGain(won ? wavesCleared : (long) (wavesCleared * 0.5));
+                        UUID uuid = warlordsPlayer.getUuid();
+                        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+                            long legendFragmentGain = won || waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS ?
+                                    wavesCleared :
+                                    (long) (wavesCleared * 0.5);
+                            legendFragmentGain += databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige() * 5L * wavesCleared / 25;
+                            getPlayerWaveDefenseStats(uuid).setLegendFragmentGain(legendFragmentGain);
+                        });
                     }
                 });
     }
