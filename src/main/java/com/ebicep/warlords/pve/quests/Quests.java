@@ -95,25 +95,17 @@ public enum Quests {
     public static final Quests[] VALUES = values();
     public static final HashMap<UUID, List<Quests>> CACHED_PLAYER_QUESTS = new HashMap<>();
 
-    public final String name;
-    public final String description;
-    public final PlayersCollections time;
-    public final LinkedHashMap<Currencies, Long> rewards;
-
-
-    Quests(String name, String description, PlayersCollections time, LinkedHashMap<Currencies, Long> rewards) {
-        this.name = name;
-        this.description = description;
-        this.time = time;
-        this.rewards = rewards;
-    }
-
     public static List<Quests> getQuestsFromGameStats(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption, boolean recalculate) {
         if (!recalculate && CACHED_PLAYER_QUESTS.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_QUESTS.get(
                 warlordsPlayer.getUuid()) != null) {
             return CACHED_PLAYER_QUESTS.get(warlordsPlayer.getUuid());
         }
         List<Quests> questsCompleted = new ArrayList<>();
+
+        PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+        if (total.getDamage() + total.getHealing() + total.getAbsorbed() < 100_000) {
+            return questsCompleted;
+        }
 
         for (Quests quest : VALUES) {
             DatabaseManager.getPlayer(warlordsPlayer.getUuid(), quest.time, databasePlayer -> {
@@ -135,6 +127,18 @@ public enum Quests {
             WarlordsPlayer warlordsPlayer,
             DatabasePlayer databasePlayer
     );
+
+    public final String name;
+    public final String description;
+    public final PlayersCollections time;
+    public final LinkedHashMap<Currencies, Long> rewards;
+
+    Quests(String name, String description, PlayersCollections time, LinkedHashMap<Currencies, Long> rewards) {
+        this.name = name;
+        this.description = description;
+        this.time = time;
+        this.rewards = rewards;
+    }
 
     public ItemStack getItemStack(boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
