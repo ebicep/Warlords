@@ -106,7 +106,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
             //QUESTS
             for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-                if (quests.time == playersCollection) {
+                if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
                     questsCompleted.merge(quests, 1L, Long::sum);
                     quests.rewards.forEach(this::addCurrency);
                 }
@@ -138,7 +138,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
             //QUESTS
             for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-                if (quests.time == playersCollection) {
+                if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
                     questsCompleted.merge(quests, -1L, Long::sum);
                     quests.rewards.forEach(this::subtractCurrency);
                 }

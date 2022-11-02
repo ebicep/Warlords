@@ -17,6 +17,11 @@ public class ComponentBuilder {
     private TextComponent current;
     private boolean init = false;
 
+    public ComponentBuilder() {
+        this.current = new TextComponent("");
+        this.init = true;
+    }
+
     public ComponentBuilder(ComponentBuilder original) {
         this.current = new TextComponent(original.current);
         this.init = original.init;
