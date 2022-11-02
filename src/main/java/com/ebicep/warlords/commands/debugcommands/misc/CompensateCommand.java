@@ -19,7 +19,10 @@ public class CompensateCommand extends BaseCommand {
         databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
             player.spigot().sendMessage(
                     new ComponentBuilder(ChatColor.GREEN + "Give ")
-                            .appendHoverText(ChatColor.GOLD + "compensation", "Coins: " + coins + "\nShards: " + shards)
+                            .appendHoverText(ChatColor.GOLD + "compensation",
+                                    Currencies.COIN.getCostColoredName(coins) + "\n" +
+                                            Currencies.SYNTHETIC_SHARD.getCostColoredName(shards)
+                            )
                             .append(ChatColor.GREEN + " to " + ChatColor.AQUA + databasePlayer.getName())
                             .append(ChatColor.GREEN + " [CONFIRM]")
                             .appendClickEvent(ClickEvent.Action.RUN_COMMAND, "/compensate confirm " + databasePlayer.getName() + " " + coins + " " + shards)
