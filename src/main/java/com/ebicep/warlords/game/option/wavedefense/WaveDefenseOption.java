@@ -421,16 +421,16 @@ public class WaveDefenseOption implements Option {
                         ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
                 );
             } else {
-                int playerCount = (int) game.warlordsPlayers().count();
+                int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
                 switch (playerCount) {
                     case 2:
-                        spawnCount *= 1.06f;
+                        spawnCount *= 1.05f;
                         break;
                     case 3:
                         spawnCount *= 1.1f;
                         break;
                     case 4:
-                        spawnCount *= 1.16f;
+                        spawnCount *= 1.15f;
                         break;
                 }
 
@@ -494,18 +494,17 @@ public class WaveDefenseOption implements Option {
             return;
         }
 
-        // temp
         if (currentWave.getMessage() == null) {
-            int playerCount = (int) game.warlordsPlayers().count();
+            int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.06f;
+                    spawnCount *= 1.05f;
                     break;
                 case 3:
                     spawnCount *= 1.1f;
                     break;
                 case 4:
-                    spawnCount *= 1.16f;
+                    spawnCount *= 1.15f;
                     break;
             }
         }

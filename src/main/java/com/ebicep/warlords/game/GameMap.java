@@ -1292,8 +1292,8 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 8, 54.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 18, 227.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 18, 240.5), Team.RED));
@@ -1400,6 +1400,9 @@ public enum GameMap {
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
                             //void
                             .add(0.02, Mobs.VOID_ZOMBIE)
+                            .add(0.02, Mobs.VOID_SKELETON)
+                            .add(0.02, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.02, Mobs.EXILED_ZOMBIE_LAVA)
                     )
                     .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
@@ -1425,6 +1428,8 @@ public enum GameMap {
                             .add(0.05, Mobs.ENVOY_PIG_ZOMBIE)
                             //elite
                             .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
                     )
                     .add(25, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.ZENITH)

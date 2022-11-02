@@ -7,35 +7,35 @@ import javax.annotation.Nonnull;
 public enum DifficultyIndex {
 
     EASY("Easy",
-            "For those seeking a smaller challenge,\nrecommended for solo players." +
+            "For those seeking a lighter challenge,\nrecommended for solo players." +
                     "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage",
             ChatColor.GREEN,
             25,
-            16 * 3,
-            4
+            24,
+            2
     ),
     NORMAL("Normal",
             "Fight off 25 waves of monsters to\nearn rewards." +
                     "\n\nModifiers:\n§aNone",
             ChatColor.YELLOW,
             25,
-            16 * 3,
+            48,
             4
     ),
-    HARD("Hard §c[COMING SOON]",
+    HARD("Hard",
             "Fight off 25 waves of monsters to\nearn greater rewards." +
-                    "\n\nModifiers:\n§c+20% Mob Health\n+20% Mob Damage\n\n- Tougher Mobs\n- No Respawns",
+                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n\n- Tougher Mobs\n- No Respawns",
             ChatColor.GOLD,
             25,
-            32 * 3,
+            96,
             8
     ),
     ENDLESS("Endless",
-            "Fight to the death against endless\nwaves of monsters to prove your worth\nagainst the Vanguard." +
-                    "\n\nModifiers:\n§c+25% Mob Health\n+25% Mob Damage\n+50% Mob Spawns",
+            "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
+                    "\n\nModifiers:\n§c+25% Mob Spawns",
             ChatColor.RED,
             10000,
-            24 * 3,
+            72,
             4
     );
 

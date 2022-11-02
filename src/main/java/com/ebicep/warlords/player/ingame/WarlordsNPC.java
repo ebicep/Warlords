@@ -110,7 +110,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateHealth() {
         if (!isDead()) {
             String oldName = getEntity().getCustomName();
-            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤";
+            String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤";
             getEntity().setCustomName(newName);
         }
     }
@@ -119,7 +119,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateEntity() {
         entity.setCustomName(
                 (mob != null && mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " : "")
-                        + ChatColor.RED + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"
+                        + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
