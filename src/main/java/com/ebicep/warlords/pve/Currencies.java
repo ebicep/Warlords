@@ -117,7 +117,7 @@ public enum Currencies {
 
         AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
-        long guildCoinsEarned = Math.min(300, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+        long guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
 
         if (CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid())) {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid())
