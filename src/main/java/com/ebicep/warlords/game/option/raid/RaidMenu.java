@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,11 +22,12 @@ public class RaidMenu {
             Raid raid = index[i];
             int finalI = i;
             menu.setItem(
-                    9 / 2 - index.length + 1 + i * 2,
+                    9 / 2 - index.length + i,
                     1,
                     new ItemBuilder(Material.REDSTONE)
                             .name(ChatColor.RED + raid.getName())
-                            .lore(ChatColor.GRAY + raid.getDescription())
+                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + raid.getDescription(), 130) +
+                                    "\n\nMinimum level: §c" + raid.getMinimumClassLevel())
                             .get(),
                     (m, e) -> {
                         GameMap map = null;

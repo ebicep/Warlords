@@ -261,6 +261,61 @@ public enum GameMode {
             return options;
         }
     },
+    RAID(
+            "Raid",
+            "RAID",
+            new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
+            null,
+            null,
+            4,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "Face the ultimate challenge in",
+                    color + "the raid trials!",
+                    ""
+            ));
+            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
+                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\nweapon, and edit your settings.")
+                    .get(), (g, p) -> openMainMenu(p)));
+            options.add(new PreGameItemOption(
+                    6,
+                    (game, player) -> {
+                        if (DatabaseManager.playerService != null) {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            List<AbstractWeapon> weapons = databasePlayer.getPveStats().getWeaponInventory();
+                            Optional<AbstractWeapon> optionalWeapon = weapons.stream()
+                                    .filter(AbstractWeapon::isBound)
+                                    .filter(abstractWeapon -> abstractWeapon.getSpecializations() == databasePlayer.getLastSpec())
+                                    .findFirst();
+                            return optionalWeapon.map(abstractWeapon -> abstractWeapon.generateItemStack(false)).orElse(null);
+                        } else {
+                            return null;
+                        }
+                    },
+                    (g, p) -> WeaponManagerMenu.openWeaponInventoryFromExternal(p)
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the raid trials begin."
+            ));
+            options.add(new RecordTimeElapsedOption());
+            options.add(new WeaponOption(WeaponOption::showPvEWeapon, WeaponOption::showWeaponStats));
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WinByAllDeathOption());
+            options.add(new DieOnLogoutOption());
+
+            return options;
+        }
+    },
     DEBUG(
             "Sandbox",
             "SandBox",

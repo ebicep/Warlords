@@ -120,7 +120,7 @@ public class CustomScoreboard {
                 "Fairy Essence: " + Currencies.FAIRY_ESSENCE.chatColor + addCommaAndRound(pveStats.getCurrencyValue(Currencies.FAIRY_ESSENCE)),
                 "  ",
                 "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
         );
     }
 
@@ -296,7 +296,7 @@ public class CustomScoreboard {
                         "Absorbed: " + ChatColor.GOLD + addCommaAndRound(playerInformation.getAbsorbed()),
                         "    ",
                         "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                        "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                        "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
                 );
             } else {
                 giveNASidebar(scoreboardSelection);
@@ -321,7 +321,7 @@ public class CustomScoreboard {
                             "Absorbed: " + ChatColor.GOLD + addCommaAndRound(databasePlayer.getAbsorbed()),
                             "    ",
                             "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                            "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                            "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
                     );
                 },
                 () -> {
@@ -346,7 +346,7 @@ public class CustomScoreboard {
                 "Absorbed: " + ChatColor.GOLD + "N/A",
                 "    ",
                 "            " + ChatColor.WHITE + ChatColor.BOLD + "Update",
-                "  " + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + Warlords.VERSION
+                "  " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
         );
     }
 
