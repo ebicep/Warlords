@@ -22,12 +22,12 @@ public class RaidMenu {
             Raid raid = index[i];
             int finalI = i;
             menu.setItem(
-                    9 / 2 - index.length + i,
+                    i % 7 + 1,
                     1,
                     new ItemBuilder(Material.REDSTONE)
-                            .name(ChatColor.RED + raid.getName())
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + raid.getDescription(), 130) +
-                                    "\n\nMinimum level: §c" + raid.getMinimumClassLevel())
+                            .name(ChatColor.RED + ChatColor.BOLD.toString() + raid.getName())
+                            .lore(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 145) +
+                                    "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel())
                             .get(),
                     (m, e) -> {
                         GameMap map = null;

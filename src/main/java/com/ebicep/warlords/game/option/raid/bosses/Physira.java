@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wavedefense.mobs.bosses;
+package com.ebicep.warlords.game.option.raid.bosses;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
@@ -22,7 +22,7 @@ public class Physira extends AbstractZombie implements BossMob {
     public Physira(Location spawnLocation) {
         super(spawnLocation,
                 "Physira",
-                MobTier.BOSS,
+                MobTier.RAID_BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON_KING),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
@@ -30,16 +30,17 @@ public class Physira extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
                         Weapons.SILVER_PHANTASM_STAFF_2.getItem()
                 ),
-                32000,
-                0.18f,
-                20,
-                2000,
-                2600
+                80000,
+                0.15f,
+                30,
+                3000,
+                4000
         );
     }
 
     @Override
     public void onSpawn(WaveDefenseOption option) {
+
     }
 
     @Override
