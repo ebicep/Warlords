@@ -74,6 +74,7 @@ public class LightInfusionProtector extends AbstractAbility {
 
         if (pveUpgrade) {
             wp.getSpec().getBlue().setCurrentCooldown(0);
+            wp.updateBlueItem();
         }
 
         for (int i = 0; i < 10; i++) {
