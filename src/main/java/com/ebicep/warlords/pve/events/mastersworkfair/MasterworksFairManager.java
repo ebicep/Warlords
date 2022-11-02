@@ -149,26 +149,93 @@ public class MasterworksFairManager {
     public static LinkedHashMap<Currencies, Long> getRewards(MasterworksFair masterworksFair, MasterworksFairEntry masterworksFairEntry) {
         int fairNumber = masterworksFair.getFairNumber();
         int placement = masterworksFairEntry.getPlacement();
+        float score = masterworksFairEntry.getScore();
+        WeaponsPvE rarity = masterworksFairEntry.getRarity();
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
-        if (placement <= 3) { //top three guaranteed Star Piece of the weapon rarity they submitted
-            rewards.put(masterworksFairEntry.getRarity().starPieceCurrency, 1L);
-            switch (placement) { //The top submission will get 10 Supply Drop roll opportunities, 2nd and 3rd place will get 7 Supply Drop roll opportunities
+        if (placement <= 3) {
+            rewards.put(rarity.starPieceCurrency, 1L);
+            switch (placement) {
                 case 1:
-                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                            break;
+                    }
                     break;
                 case 2:
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 75L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            break;
+                    }
+                    break;
                 case 3:
-                    rewards.put(Currencies.SUPPLY_DROP_TOKEN, 7L);
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 70L);
+                            break;
+                    }
                     break;
             }
         } else {
-            if (placement <= 10) { //4-10 will get 5 Supply Drop roll opportunities
-                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
-            } else if (masterworksFairEntry.getScore() >= 85) { //Players who submit a 85%+ weapon
-                // will be guaranteed at least 3 supply drop opportunities
-                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 3L);
-            } else { //Players who submit any weapon will get a guaranteed supply drop roll as pity
-                rewards.put(Currencies.SUPPLY_DROP_TOKEN, 1L);
+            if (placement <= 10 ||
+                    (rarity == WeaponsPvE.COMMON && score > 90) ||
+                    (rarity == WeaponsPvE.RARE && score > 85) ||
+                    (rarity == WeaponsPvE.EPIC && score > 75)
+            ) {
+                switch (rarity) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                        break;
+                }
+            } else if (placement <= 20) {
+                switch (rarity) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                        break;
+                }
+            } else {
+                switch (masterworksFairEntry.getRarity()) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                }
             }
         }
         if (fairNumber != 0 && fairNumber % 10 == 0) {
