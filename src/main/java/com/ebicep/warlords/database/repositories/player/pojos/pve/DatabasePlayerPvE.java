@@ -31,7 +31,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
 import java.util.*;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
@@ -307,7 +306,7 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
         this.supplyDropEntries.add(entry);
     }
 
-    public List<MasterworksFairReward> getRewards() {
+    public List<MasterworksFairReward> getMasterworksFairRewards() {
         return masterworksFairRewards;
     }
 

@@ -1,15 +1,20 @@
 package com.ebicep.warlords.pve.rewards;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AbstractReward {
 
@@ -26,14 +31,41 @@ public abstract class AbstractReward {
         this.from = from;
     }
 
-    public abstract void giveToPlayer(DatabasePlayer databasePlayer);
+    public void giveToPlayer(DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        rewards.forEach(pveStats::addCurrency);
+        setTimeClaimed();
+    }
 
     public List<String> getLore() {
-        return new ArrayList<>();
+        return rewards.entrySet()
+                .stream()
+                .map(currencyValue -> currencyValue.getKey().getCostColoredName(currencyValue.getValue()))
+                .collect(Collectors.toList());
     }
 
     public ItemStack getItem() {
-        return null;
+        List<String> lore = getLore();
+        lore.add(0, "");
+        lore.add("");
+        lore.add(ChatColor.YELLOW + "Click to claim!");
+        return new ItemBuilder(Material.CHEST)
+                .name(getNameColor() + from + " Reward")
+                .lore(lore)
+                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                .get();
+    }
+
+    public ItemStack getItemWithoutClaim() {
+        return new ItemBuilder(Material.CHEST)
+                .name(getNameColor() + from + " Reward")
+                .lore(getLore())
+                .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                .get();
+    }
+
+    public ChatColor getNameColor() {
+        return ChatColor.GREEN;
     }
 
     public Map<Currencies, Long> getRewards() {

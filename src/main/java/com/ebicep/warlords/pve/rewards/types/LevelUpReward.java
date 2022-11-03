@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.rewards.types;
 
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 
@@ -8,25 +7,6 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 
 public class LevelUpReward extends AbstractReward {
-
-    private int level;
-    private int prestige;
-
-    public LevelUpReward() {
-        super();
-    }
-
-    @Override
-    public void giveToPlayer(DatabasePlayer databasePlayer) {
-        //da
-    }
-
-    public LevelUpReward(LinkedHashMap<Currencies, Long> rewards, int level, int prestige) {
-        super(rewards, null);
-        this.level = level;
-        this.prestige = prestige;
-        this.timeClaimed = Instant.now();
-    }
 
     public static LinkedHashMap<Currencies, Long> getRewardForLevel(int level) {
         LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
@@ -68,6 +48,20 @@ public class LevelUpReward extends AbstractReward {
             }
         }
         return rewards;
+    }
+
+    private int level;
+    private int prestige;
+
+    public LevelUpReward() {
+        super();
+    }
+
+    public LevelUpReward(LinkedHashMap<Currencies, Long> rewards, int level, int prestige) {
+        super(rewards, null);
+        this.level = level;
+        this.prestige = prestige;
+        this.timeClaimed = Instant.now();
     }
 
     public int getLevel() {
