@@ -7,20 +7,26 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
+import org.bukkit.Bukkit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
+import java.time.Month;
+import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -178,8 +184,12 @@ public class DatabaseTiming {
     }
 
     public static org.bson.Document getTopPlayersOnLeaderboard() {
-        List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.CTF).getComps().getLeaderboards();
-        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players", statsLeaderboards.get(0).getSortedPlayers(PlayersCollections.WEEKLY).size());
+        List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.CTF)
+                .getComps()
+                .getLeaderboards();
+        org.bson.Document document = new org.bson.Document("date", Instant.now()).append("total_players",
+                statsLeaderboards.get(0).getSortedPlayers(PlayersCollections.WEEKLY).size()
+        );
         for (String title : WEEKLY_EXPERIENCE_LEADERBOARDS) {
             statsLeaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
                 Number[] numbers = leaderboard.getTopThreeValues();

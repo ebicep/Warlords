@@ -45,6 +45,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -297,6 +298,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new PlayerHotBarItemListener(), this);
         getServer().getPluginManager().registerEvents(new GuildListener(), this);
+        getServer().getPluginManager().registerEvents(new PatreonReward(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
