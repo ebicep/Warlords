@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.rewards.types;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -23,12 +25,19 @@ public class MasterworksFairReward extends AbstractReward {
     public MasterworksFairReward() {
     }
 
+    @Override
+    public void giveToPlayer(DatabasePlayer databasePlayer) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        rewards.forEach(pveStats::addCurrency);
+    }
+
     public MasterworksFairReward(LinkedHashMap<Currencies, Long> rewards, Instant timeGiven, WeaponsPvE rarity) {
         super(rewards, "Masterworks Fair " + rarity.name);
         this.timeGiven = timeGiven;
     }
 
-    private List<String> getLore() {
+    @Override
+    public List<String> getLore() {
         return rewards.entrySet()
                 .stream()
                 .map(currenciesLongEntry -> {
@@ -38,6 +47,7 @@ public class MasterworksFairReward extends AbstractReward {
                 }).collect(Collectors.toList());
     }
 
+    @Override
     public ItemStack getItem() {
         List<String> lore = getLore();
         lore.add(0, "");
@@ -57,6 +67,7 @@ public class MasterworksFairReward extends AbstractReward {
                 .flags(ItemFlag.HIDE_POTION_EFFECTS)
                 .get();
     }
+
     public Instant getTimeGiven() {
         return timeGiven;
     }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.rewards.types;
 
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 
@@ -13,6 +14,11 @@ public class LevelUpReward extends AbstractReward {
 
     public LevelUpReward() {
         super();
+    }
+
+    @Override
+    public void giveToPlayer(DatabasePlayer databasePlayer) {
+        //da
     }
 
     public LevelUpReward(LinkedHashMap<Currencies, Long> rewards, int level, int prestige) {

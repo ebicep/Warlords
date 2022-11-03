@@ -24,12 +24,14 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
+import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.util.*;
 
 public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements DatabasePlayer {
@@ -46,19 +48,23 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     private DatabasePlayerPvEDifficultyStats hardStats = new DatabasePlayerPvEDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEDifficultyStats endlessStats = new DatabasePlayerPvEDifficultyStats();
-
     //GENERAL
-    @Field("masterworks_fair_rewards")
-    private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
-    //WEAPONS
-    @Field("weapon_inventory")
-    private List<AbstractWeapon> weaponInventory = new ArrayList<>();
-    //MASTERWORKS FAIR
-    @Field("masterworks_fair_submissions")
-    private List<MasterworksFairEntry> masterworksFairEntries = new ArrayList<>();
+
     //SUPPLY DROP
     @Field("supply_drop_rewards")
     private List<SupplyDropEntry> supplyDropEntries = new ArrayList<>();
+    //MASTERWORKS FAIR
+    @Field("masterworks_fair_submissions")
+    private List<MasterworksFairEntry> masterworksFairEntries = new ArrayList<>();
+    @Field("masterworks_fair_rewards")
+    private List<MasterworksFairReward> masterworksFairRewards = new ArrayList<>();
+    //PATERON
+    @Field("patreon_rewards")
+    private List<PatreonReward> patreonRewards = new ArrayList<>();
+    //WEAPONS
+    @Field("weapon_inventory")
+    private List<AbstractWeapon> weaponInventory = new ArrayList<>();
+
     //CURRENCIES
     private Map<Currencies, Long> currencies = new LinkedHashMap<>() {{
         for (Currencies value : Currencies.VALUES) {
@@ -338,5 +344,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public Map<Quests, Long> getQuestsCompleted() {
         return questsCompleted;
+    }
+
+    public List<PatreonReward> getPatreonRewards() {
+        return patreonRewards;
     }
 }
