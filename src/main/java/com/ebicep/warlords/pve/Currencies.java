@@ -108,8 +108,6 @@ public enum Currencies {
                 .getPlayerWaveDefenseStats(warlordsPlayer.getUuid());
         LinkedHashMap<String, Long> coinSummary = new LinkedHashMap<>(playerWaveDefenseStats.getCachedBaseCoinSummary());
 
-        Bukkit.getPluginManager().callEvent(new WarlordsPlayerCoinSummaryEvent(warlordsPlayer, coinSummary));
-
         long totalCoinsEarned = 0;
         for (Long value : coinSummary.values()) {
             totalCoinsEarned += value;
@@ -118,6 +116,13 @@ public enum Currencies {
         AtomicDouble guildCoinConversionRate = new AtomicDouble(.05);
         Bukkit.getPluginManager().callEvent(new WarlordsPlayerGiveGuildCoinEvent(warlordsPlayer, guildCoinConversionRate));
         long guildCoinsEarned = Math.min(1000, Math.round(totalCoinsEarned * guildCoinConversionRate.get()));
+
+        Bukkit.getPluginManager().callEvent(new WarlordsPlayerCoinSummaryEvent(warlordsPlayer, coinSummary));
+
+        totalCoinsEarned = 0;
+        for (Long value : coinSummary.values()) {
+            totalCoinsEarned += value;
+        }
 
         if (CACHED_PLAYER_COIN_STATS.containsKey(warlordsPlayer.getUuid())) {
             return CACHED_PLAYER_COIN_STATS.get(warlordsPlayer.getUuid())

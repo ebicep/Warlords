@@ -16,71 +16,71 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+2.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.025f);
-                    ability.setMaxDamageHeal(maxDamage * 1.025f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
                 "+5% Damage",
-                10000,
+                5000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.05f);
                     ability.setMaxDamageHeal(maxDamage * 1.05f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+7.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
+                "Impair - Tier II",
                 "+10% Damage",
-                20000,
+                10000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.1f);
                     ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+15% Damage",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier IV",
+                "+20% Damage",
+                20000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                }
+        ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2 Energy cost",
+                "-2.5 Energy cost",
                 5000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 2);
+                    ability.setEnergyCost(energyCost - 2.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-3 Energy cost",
+                "-5 Energy cost",
                 10000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 3);
+                    ability.setEnergyCost(energyCost - 5);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-4 Energy cost",
+                "-7.5 Energy cost",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 4);
+                    ability.setEnergyCost(energyCost - 7.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-5 Energy cost",
+                "-10 Energy cost",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 5);
+                    ability.setEnergyCost(energyCost - 10);
                 }
         ));
 

@@ -57,6 +57,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.time.Year;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -238,6 +239,7 @@ public class CommandManager {
             }
         });
         manager.getCommandContexts().registerContext(Instant.class, command -> Instant.parse(command.popFirstArg()));
+        manager.getCommandContexts().registerContext(Year.class, command -> Year.parse(command.popFirstArg()));
     }
 
     public static void registerCompletions() {
@@ -295,7 +297,7 @@ public class CommandManager {
                 command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList())
         );
         commandCompletions.registerAsyncCompletion("playerabilitystats",
-                command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet()
+                command -> GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.keySet()
                         .stream()
                         .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
                         .collect(Collectors.toList())
@@ -510,6 +512,7 @@ public class CommandManager {
         manager.registerCommand(new GetPlayersCommand());
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new MyLocationCommand());
+        manager.registerCommand(new PatreonCommand());
         manager.registerCommand(new PvECurrencyCommand());
         manager.registerCommand(new RecordGamesCommand());
         manager.registerCommand(new SeeAllChatsCommand());
