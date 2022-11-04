@@ -78,7 +78,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         this.game.forEachOfflinePlayer((player, team) -> {
-            if (team != null) {
+            if (team != null && (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE || player.isOnline())) {
                 Warlords.addPlayer(new WarlordsPlayer(
                         player,
                         this.getGame(),
