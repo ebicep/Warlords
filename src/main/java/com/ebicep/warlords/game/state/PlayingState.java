@@ -77,6 +77,7 @@ public class PlayingState implements State, TimerDebugAble {
             option.start(game);
         }
 
+        List<UUID> toRemove = new ArrayList<>();
         this.game.forEachOfflinePlayer((player, team) -> {
             if (team != null && (game.getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE || player.isOnline())) {
                 Warlords.addPlayer(new WarlordsPlayer(
@@ -84,12 +85,17 @@ public class PlayingState implements State, TimerDebugAble {
                         this.getGame(),
                         team
                 ));
+            } else {
+                toRemove.add(player.getUniqueId());
+                return;
             }
             Player p = player.getPlayer();
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
             }
         });
+        toRemove.forEach(this.game::removePlayer);
+
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(wp.getUuid());
             updateBasedOnGameState(customScoreboard, wp);

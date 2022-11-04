@@ -58,6 +58,12 @@ public final class WarlordsPlayer extends WarlordsEntity {
         } else {
             jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }
+        //prevents jimmy from moving
+        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
+        NBTTagCompound compound = new NBTTagCompound();
+        nmsEn.c(compound);
+        compound.setByte("NoAI", (byte) 1);
+        nmsEn.f(compound);
         return jimmy;
     }
 
@@ -106,7 +112,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         this.spec.setUpgradeBranches(this);
 
         updatePlayerReference(player.getPlayer());
-        updateInventory(true);
+        updateEntity();
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
@@ -140,7 +146,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         if (player == null) {
             if (this.entity instanceof Player) {
                 ((Player) this.entity).getInventory().setHeldItemSlot(0);
-                this.entity = spawnJimmy(loc, ((Player) this.entity).getEquipment());
+                this.entity = spawnJimmy(loc, this.entity.getEquipment());
             }
         } else {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
@@ -271,6 +277,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
         return this.entity instanceof Player;
     }
 
+    @Override
     public void updateEntity() {
         if (entity instanceof Player) {
             Player player = (Player) entity;
@@ -290,6 +297,7 @@ public final class WarlordsPlayer extends WarlordsEntity {
                 player.setGameMode(GameMode.ADVENTURE);
             }
         } else {
+            this.entity.remove();
             this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
         }
     }
