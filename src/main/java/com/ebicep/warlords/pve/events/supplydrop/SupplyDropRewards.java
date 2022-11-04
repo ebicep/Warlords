@@ -15,32 +15,32 @@ public enum SupplyDropRewards {
 
     SYNTHETIC_SHARDS_3("3 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
-            150,
+            15000,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_5("5 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
-            200,
+            20000,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_10("10 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
-            100,
+            10000,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_20("20 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 20),
-            50,
+            500,
             WeaponsPvE.RARE
     ),
     SYNTHETIC_SHARDS_50("50 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 50),
-            20,
+            200,
             WeaponsPvE.EPIC
     ),
     COMMON_STAR_PIECE("Common Star Piece",
             databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.COMMON_STAR_PIECE),
-            10,
+            100,
             WeaponsPvE.COMMON
     ) {
         @Override
@@ -50,7 +50,7 @@ public enum SupplyDropRewards {
     },
     RARE_STAR_PIECE("Rare Star Piece",
             databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.RARE_STAR_PIECE),
-            3,
+            10,
             WeaponsPvE.RARE
     ) {
         @Override
@@ -70,47 +70,47 @@ public enum SupplyDropRewards {
     },
     SKILL_BOOST_MODIFIER("Skill Boost Modifier",
             databasePlayerPvE -> databasePlayerPvE.addOneCurrency(Currencies.SKILL_BOOST_MODIFIER),
-            1,
+            10,
             WeaponsPvE.EPIC
     ),
     COINS_1000("1,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 1000),
-            100,
+            1000,
             WeaponsPvE.COMMON
     ),
     COINS_2000("2,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 2000),
-            150,
+            1500,
             WeaponsPvE.COMMON
     ),
     COINS_5000("5,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 5000),
-            100,
+            1000,
             WeaponsPvE.COMMON
     ),
     COINS_10000("10,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 10000),
-            50,
+            500,
             WeaponsPvE.COMMON
     ),
     COINS_50000("50,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 50000),
-            20,
+            200,
             WeaponsPvE.RARE
     ),
     COINS_100000("100,000 Coins",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.COIN, 100000),
-            10,
+            100,
             WeaponsPvE.EPIC
     ),
     FAIRY_ESSENCE_20("20 Fairy Essence",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 20),
-            50,
+            500,
             WeaponsPvE.RARE
     ),
     FAIRY_ESSENCE_40("40 Fairy Essence",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.FAIRY_ESSENCE, 40),
-            20,
+            200,
             WeaponsPvE.RARE
     ),
 
