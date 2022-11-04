@@ -41,6 +41,14 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
     public abstract void addExtraLeaderboards(StatsLeaderboardCategory<T> statsLeaderboardCategory);
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers) {
+        switch (collection) {
+            case LIFETIME:
+                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 50);
+                break;
+            case WEEKLY:
+                databasePlayers.removeIf(databasePlayer -> databasePlayer.getPlays() < 10);
+                break;
+        }
         String subTitle = getSubTitle();
         general.resetLeaderboards(collection, databasePlayers, subTitle);
         comps.resetLeaderboards(collection, databasePlayers, subTitle);
