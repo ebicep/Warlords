@@ -27,14 +27,15 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
@@ -78,6 +79,14 @@ public abstract class WarlordsEntity {
     public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
+    protected boolean spawnGrave = true;
+    protected CalculateSpeed speed;
+    protected String name;
+    protected UUID uuid;
+    protected AbstractPlayerClass spec;
+    protected float walkSpeed = 1;
+    protected LivingEntity entity;
+    protected Specializations specClass;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -88,14 +97,6 @@ public abstract class WarlordsEntity {
     private final List<Location> locations = new ArrayList<>();
     private final Location deathLocation;
     private final CooldownManager cooldownManager = new CooldownManager(this);
-    protected boolean spawnGrave = true;
-    protected CalculateSpeed speed;
-    protected String name;
-    protected UUID uuid;
-    protected AbstractPlayerClass spec;
-    protected float walkSpeed = 1;
-    protected LivingEntity entity;
-    protected Specializations specClass;
     private Vector currentVector;
     private Team team;
     private float health;
@@ -1420,16 +1421,16 @@ public abstract class WarlordsEntity {
         updateInventory(true);
     }
 
+    public void updateInventory(boolean closeInventory) {
+
+    }
+
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         this.spec = spec.create.get();
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
-    }
-
-    public void updateInventory(boolean closeInventory) {
-
     }
 
     public float getHealth() {
@@ -1658,8 +1659,8 @@ public abstract class WarlordsEntity {
      * @param minuteStatsType The type of minute stats to get the hoverable text for
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
-    public List<TextComponent> getAllMinuteHoverableStats(MinuteStats minuteStatsType) {
-        List<TextComponentBuilder> components = new ArrayList<>();
+    public BaseComponent[] getAllMinuteHoverableStats(MinuteStats minuteStatsType) {
+        ComponentBuilder componentBuilder = new ComponentBuilder();
         StringBuilder stringBuilder = new StringBuilder();
         String minuteStatsTypeName = minuteStatsType.name;
 
@@ -1687,15 +1688,17 @@ public abstract class WarlordsEntity {
                 }
                 stringBuilder.setLength(stringBuilder.length() - 1);
                 stringLength += stringBuilder.length();
-                components.add(new TextComponentBuilder((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i])
-                        .setHoverText(stringBuilder.toString())
+                componentBuilder.appendHoverText((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i],
+                        stringBuilder.toString()
                 );
                 stringBuilder.setLength(0);
             }
             //this will never happen in reality
             if (stringLength >= 8000) {
-                for (TextComponentBuilder component : components) {
-                    component.setHoverText(component.getHoverText().replace("Minute", "Min."));
+                for (BaseComponent baseComponent : componentBuilder.create()) {
+                    if (baseComponent instanceof TextComponent) {
+                        ((TextComponent) baseComponent).setText(((TextComponent) baseComponent).getText().replace("Minute", "Min."));
+                    }
                 }
             }
         } else {
@@ -1710,15 +1713,11 @@ public abstract class WarlordsEntity {
                         .append(ChatColor.GOLD);
                 stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
             }
-            components.add(new TextComponentBuilder(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
-                    minuteStatsType.getValue.apply(minuteStats.total())))
-                    .setHoverText(stringBuilder.toString())
-            );
+            componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
+                    minuteStatsType.getValue.apply(minuteStats.total())), stringBuilder.toString());
         }
 
-        return components.stream()
-                .map(TextComponentBuilder::getTextComponent)
-                .collect(Collectors.toList());
+        return componentBuilder.create();
     }
 
     public void toggleTeamFlagCompass() {

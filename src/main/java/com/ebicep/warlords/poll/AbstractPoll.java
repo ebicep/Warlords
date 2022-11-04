@@ -1,7 +1,6 @@
 package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -27,7 +26,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
         String toString = poll.toString();
         return toString.substring(toString.indexOf("@") + 1);
     }
-
+    protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
     protected String id;
     protected String question;
     protected List<String> options;
@@ -35,7 +34,6 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     protected boolean infiniteVotingTime = false;
     protected List<UUID> excludedPlayers = new ArrayList<>();
     protected Consumer<T> onPollEnd;
-    protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
 
     public AbstractPoll() {
 
@@ -99,16 +97,18 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
                 TextComponent message = new TextComponent(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()));
+                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()
+                ));
                 message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/poll answer " + id + " " + (i + 1)));
                 player.spigot().sendMessage(message);
             }
             if (!infiniteVotingTime) {
                 player.spigot().sendMessage(
-                        new TextComponent(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - "),
-                        new TextComponentBuilder(ChatColor.YELLOW + id)
-                                .setClickEvent(ClickEvent.Action.SUGGEST_COMMAND, id)
-                                .getTextComponent()
+                        new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - ")
+                                .append(ChatColor.YELLOW + id)
+                                .appendClickEvent(ClickEvent.Action.SUGGEST_COMMAND, id)
+                                .create()
                 );
             } else {
                 player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
@@ -240,14 +240,14 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
             builder = thisBuilder();
         }
 
+        public abstract T createPoll();
+
+        public abstract B thisBuilder();
+
         public T get() {
             poll.init();
             return poll;
         }
-
-        public abstract T createPoll();
-
-        public abstract B thisBuilder();
 
         public B setQuestion(String question) {
             poll.setQuestion(question);

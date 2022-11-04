@@ -104,6 +104,9 @@ public class Fireball extends AbstractProjectileBase {
                                 if (healthDamage > 800) {
                                     healthDamage = 800;
                                 }
+                                if (healthDamage < 100) {
+                                    healthDamage = 100;
+                                }
                                 hit.addDamageInstance(
                                         shooter,
                                         "Burn",

@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class QuestsMenu {
@@ -16,14 +17,17 @@ public class QuestsMenu {
 
         AtomicInteger row = new AtomicInteger(0);
         AtomicInteger col = new AtomicInteger(1);
-        Quests previousQuest = null;
+        Quests previousQuest = Quests.VALUES[0];
         for (Quests quest : Quests.VALUES) {
-            if (previousQuest == null || previousQuest.time != quest.time) {
+            if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
+                continue;
+            }
+            if (previousQuest.time != quest.time || quest == Quests.VALUES[0]) {
                 row.getAndIncrement();
                 col.set(1);
                 menu.setItem(col.get(), row.get(),
                         new ItemBuilder(Material.BOOK_AND_QUILL)
-                                .name(ChatColor.GREEN + quest.time.name + " Quests")
+                                .name(ChatColor.GREEN + (quest.expireOn != null ? "Limited" : quest.time.name) + " Quests")
                                 .get(),
                         (m, e) -> {
                         }
