@@ -29,8 +29,8 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
                         Weapons.LUNAR_JUSTICE.getItem()
                 ),
-                6000,
-                0.26f,
+                5500,
+                0.25f,
                 10,
                 1000,
                 1500

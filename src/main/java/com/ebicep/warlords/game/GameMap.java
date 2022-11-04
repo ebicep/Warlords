@@ -1101,6 +1101,45 @@ public enum GameMap {
         }
 
     },
+    ILLUSION_VALLEY(
+            "Illusion Valley",
+            4,
+            1,
+            60 * SECOND,
+            "IllusionValley",
+            1,
+            GameMode.WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(601.5, 17, 220.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(614.5, 18, 227.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(617.5, 18, 240.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(608, 17, 250.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(595.5, 17, 255.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(584.5, 18, 235.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(593.5, 19, 242.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(606.5, 19, 232.5), Team.RED));
+
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            options.add(new CurrencyOnEventOption(500));
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(12, 10 * SECOND, null)),
+                    DifficultyIndex.EASY
+            ));
+
+            return options;
+        }
+
+    },
     ILLUSION_RIFT(
             "Illusion Rift",
             4,
@@ -1404,7 +1443,7 @@ public enum GameMap {
                             .add(0.02, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //void
                             .add(0.03, Mobs.VOID_ZOMBIE)
-                            .add(0.03, Mobs.VOID_SKELETON)
+                            .add(0.05, Mobs.VOID_SKELETON)
                             .add(0.03, Mobs.EXILED_ZOMBIE_RIFT)
                             .add(0.03, Mobs.EXILED_ZOMBIE_LAVA)
                     )
@@ -1413,7 +1452,7 @@ public enum GameMap {
                     )
                     .add(21, new SimpleWave(25, 10 * SECOND, null)
                             //basic
-                            .add(0, Mobs.GHOST_ZOMBIE)
+                            .add(0.2, Mobs.GHOST_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.2, Mobs.BASIC_SLIME)
