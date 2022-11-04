@@ -20,7 +20,7 @@ import java.util.*;
 
 public enum Quests {
 
-    DAILY_300_KA("DAILY_300_KA",
+    DAILY_300_KA("Tribute",
             "Get 300 Kills/Assists in 1 game",
             PlayersCollections.DAILY,
             null,
@@ -35,7 +35,7 @@ public enum Quests {
             return total.getKills() + total.getAssists() >= 300;
         }
     },
-    DAILY_2_PLAYS("DAILY_2_PLAYS",
+    DAILY_2_PLAYS("Motivate",
             "Play 2 games",
             PlayersCollections.DAILY,
             null,
@@ -46,11 +46,10 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            System.out.println("PLAYS: " + databasePlayer.getPlays());
             return databasePlayer.getPveStats().getPlays() + 1 >= 2;
         }
     },
-    DAILY_WIN("DAILY_WIN",
+    DAILY_WIN("Triumphant",
             "Win a game",
             PlayersCollections.DAILY,
             null,
@@ -61,12 +60,11 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            System.out.println("WINS: " + databasePlayer.getWins());
             return databasePlayer.getPveStats().getWins() + 1 >= 1;
         }
     },
 
-    WEEKLY_20_PLAYS("WEEKLY_20_PLAYS",
+    WEEKLY_20_PLAYS("Devotion",
             "Play 20 games",
             PlayersCollections.WEEKLY,
             null,
@@ -77,11 +75,10 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            System.out.println("PLAYS: " + databasePlayer.getPlays());
             return databasePlayer.getPveStats().getPlays() + 1 >= 20;
         }
     },
-    WEEKLY_30_ENDLESS("WEEKLY_30_ENDLESS",
+    WEEKLY_30_ENDLESS("Conquest",
             "Reach Wave 30 in a game of Endless",
             PlayersCollections.WEEKLY,
             null,
