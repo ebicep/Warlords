@@ -150,7 +150,7 @@ public class ComponentBuilder {
 
     public ComponentBuilder appendHoverText(String hoverText) {
         String[] split = hoverText.split("\n");
-        if (split.length > 0) {
+        if (split.length > 1) {
             ComponentBuilder componentBuilder = new ComponentBuilder(split[0] + "\n");
             for (int i = 1; i < split.length; i++) {
                 componentBuilder.append(split[i] + (i == split.length - 1 ? "" : "\n"));

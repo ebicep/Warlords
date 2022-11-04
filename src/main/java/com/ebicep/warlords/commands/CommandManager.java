@@ -297,7 +297,7 @@ public class CommandManager {
                 command -> TeamMarker.getTeams(Warlords.getPlayer(command.getPlayer()).getGame()).stream().map(Team::getName).collect(Collectors.toList())
         );
         commandCompletions.registerAsyncCompletion("playerabilitystats",
-                command -> GetPlayerLastAbilityStatsCommand.playerLastAbilityStats.keySet()
+                command -> GetPlayerLastAbilityStatsCommand.PLAYER_LAST_ABILITY_STATS.keySet()
                         .stream()
                         .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
                         .collect(Collectors.toList())

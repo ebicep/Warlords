@@ -8,9 +8,9 @@ import com.ebicep.warlords.abilties.internal.AbstractStrikeBase;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.TextComponentBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,20 +72,12 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public static void sendRightClickPacket(Player player) {
-        if (player == null) {
-            return;
-        }
-        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-    }
-
     public void setUpgradeBranches(WarlordsPlayer wp) {
 
     }
 
-    public List<TextComponent> getFormattedData() {
-        List<TextComponent> textComponentList = new ArrayList<>();
+    public List<BaseComponent[]> getFormattedData() {
+        List<BaseComponent[]> baseComponents = new ArrayList<>();
         ChatColor[] chatColors = {
                 ChatColor.GREEN,
                 ChatColor.RED,
@@ -99,15 +91,20 @@ public abstract class AbstractPlayerClass {
         };
         for (int i = 0; i < getAbilities().length; i++) {
             AbstractAbility ability = getAbilities()[i];
-            textComponentList.add(new TextComponentBuilder(chatColors[i] + ability.getName())
-                                          .setHoverText(ability.getAbilityInfo().stream()
-                                                               .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
-                                                               .collect(Collectors.joining("\n"))
-                                          )
-                                          .getTextComponent());
+            baseComponents.add(new ComponentBuilder()
+                    .appendHoverText(chatColors[i] + ability.getName(), ability.getAbilityInfo()
+                            .stream()
+                            .map(stringStringPair -> ChatColor.WHITE + stringStringPair.getA() + ": " + ChatColor.GOLD + stringStringPair.getB())
+                            .collect(Collectors.joining("\n")))
+                    .create()
+            );
         }
 
-        return textComponentList;
+        return baseComponents;
+    }
+
+    public AbstractAbility[] getAbilities() {
+        return new AbstractAbility[]{weapon, red, purple, blue, orange};
     }
 
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
@@ -183,6 +180,25 @@ public abstract class AbstractPlayerClass {
 
     }
 
+    public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
+        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+    }
+
+    private void resetAbilityCD(WarlordsEntity we) {
+        abilityCD = false;
+        new GameRunnable(we.getGame()) {
+
+            @Override
+            public void run() {
+                abilityCD = true;
+            }
+        }.runTaskLater(1);
+    }
+
     private void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
@@ -208,17 +224,6 @@ public abstract class AbstractPlayerClass {
             resetAbilityCD(wp);
         }
 
-    }
-
-    private void resetAbilityCD(WarlordsEntity we) {
-        abilityCD = false;
-        new GameRunnable(we.getGame()) {
-
-            @Override
-            public void run() {
-                abilityCD = true;
-            }
-        }.runTaskLater(1);
     }
 
     private void resetSecondaryAbilityCD(WarlordsEntity we) {
@@ -273,10 +278,6 @@ public abstract class AbstractPlayerClass {
             damageResistance = 0;
         }
         this.damageResistance = damageResistance;
-    }
-
-    public AbstractAbility[] getAbilities() {
-        return new AbstractAbility[]{weapon, red, purple, blue, orange};
     }
 
     public AbstractAbility getWeapon() {
