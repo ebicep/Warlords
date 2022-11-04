@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.wavedefense.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.wavedefense.mobs.Mob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.MobTier;
 import com.ebicep.warlords.game.option.wavedefense.mobs.Mobs;
 import com.ebicep.warlords.game.option.wavedefense.waves.SimpleWave;
@@ -1312,13 +1313,13 @@ public enum GameMap {
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(12, 10 * SECOND, null)
                             //basic
-                            .add(0.6, Mobs.BASIC_ZOMBIE)
+                            .add(0.6, Mobs.GHOST_ZOMBIE)
                             .add(0.08, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.05, Mobs.SPIDER)
                             //elite
-                            .add(0.15, Mobs.ELITE_ZOMBIE)
+                            .add(0.3, Mobs.ELITE_ZOMBIE)
                             .add(0.05, Mobs.ELITE_SKELETON)
                             .add(0, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0, Mobs.MAGMA_CUBE)
@@ -1335,7 +1336,7 @@ public enum GameMap {
                     )
                     .add(6, new SimpleWave(15, 10 * SECOND, null)
                             //basic
-                            .add(0.5, Mobs.BASIC_ZOMBIE)
+                            .add(0.5, Mobs.GHOST_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
@@ -1358,7 +1359,7 @@ public enum GameMap {
                     )
                     .add(11, new SimpleWave(18, 10 * SECOND, null)
                             //basic
-                            .add(0.45, Mobs.BASIC_ZOMBIE)
+                            .add(0.45, Mobs.GHOST_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SKELETON)
                             .add(0.0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.25, Mobs.BASIC_SLIME)
@@ -1374,21 +1375,23 @@ public enum GameMap {
                             .add(0.01, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.01, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //void
                             .add(0.02, Mobs.VOID_ZOMBIE)
+                            .add(0.02, Mobs.VOID_SKELETON)
                     )
                     .add(15, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.NARMER)
                     )
                     .add(16, new SimpleWave(20, 10 * SECOND, null)
                             //basic
-                            .add(0.35, Mobs.BASIC_ZOMBIE)
-                            .add(0.1, Mobs.BASIC_SKELETON)
+                            .add(0.2, Mobs.GHOST_ZOMBIE)
+                            .add(0, Mobs.BASIC_SKELETON)
                             .add(0.0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.25, Mobs.BASIC_SLIME)
                             .add(0.1, Mobs.SPIDER)
                             //elite
-                            .add(0.45, Mobs.ELITE_ZOMBIE)
+                            .add(0.7, Mobs.ELITE_ZOMBIE)
                             .add(0.05, Mobs.ELITE_SKELETON)
                             .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
@@ -1398,18 +1401,19 @@ public enum GameMap {
                             .add(0.02, Mobs.ENVOY_ZOMBIE)
                             .add(0, Mobs.ENVOY_SKELETON)
                             .add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.02, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //void
-                            .add(0.02, Mobs.VOID_ZOMBIE)
-                            .add(0.02, Mobs.VOID_SKELETON)
-                            .add(0.02, Mobs.EXILED_ZOMBIE_RIFT)
-                            .add(0.02, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.03, Mobs.VOID_ZOMBIE)
+                            .add(0.03, Mobs.VOID_SKELETON)
+                            .add(0.03, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.03, Mobs.EXILED_ZOMBIE_LAVA)
                     )
                     .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
                     )
                     .add(21, new SimpleWave(25, 10 * SECOND, null)
                             //basic
-                            .add(0.2, Mobs.BASIC_ZOMBIE)
+                            .add(0, Mobs.GHOST_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.2, Mobs.BASIC_SLIME)
@@ -1420,14 +1424,15 @@ public enum GameMap {
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
                             .add(0.25, Mobs.IRON_GOLEM)
-                            .add(0.05, Mobs.BLAZE)
                             .add(0.02, Mobs.WITCH)
                             //envoy
                             .add(0.05, Mobs.ENVOY_ZOMBIE)
                             .add(0.05, Mobs.ENVOY_SKELETON)
                             .add(0.05, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.04, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //elite
                             .add(0.08, Mobs.VOID_ZOMBIE)
+                            .add(0.02, Mobs.VOID_SKELETON)
                             .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
                             .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
                     )

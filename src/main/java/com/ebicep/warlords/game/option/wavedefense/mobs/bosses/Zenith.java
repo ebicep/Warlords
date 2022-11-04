@@ -63,7 +63,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        if (ticksElapsed % 200 == 0) {
+        if (ticksElapsed % 240 == 0) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
             warlordsNPC.getSpeed().addSpeedModifier("Armageddon Slowness", -99, 90);
