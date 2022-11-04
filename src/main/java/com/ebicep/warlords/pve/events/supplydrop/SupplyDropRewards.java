@@ -15,17 +15,17 @@ public enum SupplyDropRewards {
 
     SYNTHETIC_SHARDS_3("3 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 3),
-            15000,
+            1500,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_5("5 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 5),
-            20000,
+            2000,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_10("10 Synthetic Shards",
             databasePlayerPvE -> databasePlayerPvE.addCurrency(Currencies.SYNTHETIC_SHARD, 10),
-            10000,
+            1000,
             WeaponsPvE.COMMON
     ),
     SYNTHETIC_SHARDS_20("20 Synthetic Shards",
