@@ -64,7 +64,7 @@ public class DummySpawnOption implements Option {
 
                 testDummy.teleport(loc);
                 testDummy.setTakeDamage(true);
-                testDummy.setMaxHealth(1000000);
+                testDummy.setMaxBaseHealth(1000000);
                 testDummy.setHealth(1000000);
                 testDummy.updateHealth();
             }

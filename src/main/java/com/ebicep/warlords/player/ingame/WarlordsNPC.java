@@ -73,7 +73,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
-        setMaxHealth(maxHealth);
+        setMaxBaseHealth(maxHealth);
         spec.setDamageResistance(damageResistance);
     }
 
@@ -102,7 +102,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
-        setMaxHealth(maxHealth);
+        setMaxBaseHealth(maxHealth);
         spec.setDamageResistance(damageResistance);
     }
 

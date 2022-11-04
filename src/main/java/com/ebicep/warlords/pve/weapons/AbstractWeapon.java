@@ -68,7 +68,7 @@ public abstract class AbstractWeapon {
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        player.setMaxHealth(player.getMaxHealth() + getHealthBonus());
+        player.setMaxBaseHealth(player.getMaxBaseHealth() + getHealthBonus());
         player.setHealth(player.getMaxHealth() + getHealthBonus());
     }
 

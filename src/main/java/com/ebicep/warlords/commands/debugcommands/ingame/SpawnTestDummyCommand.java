@@ -44,7 +44,7 @@ public class SpawnTestDummyCommand extends BaseCommand {
         HeadUtils.PLAYER_HEADS.put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));
 
         testDummy.setTakeDamage(true);
-        testDummy.setMaxHealth(1000000);
+        testDummy.setMaxBaseHealth(1000000);
         testDummy.setHealth(500000);
         testDummy.updateHealth();
         testDummy.setRegenTimer(1000000);

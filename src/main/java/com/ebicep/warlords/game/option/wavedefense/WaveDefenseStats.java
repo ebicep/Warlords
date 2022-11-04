@@ -1,12 +1,12 @@
 package com.ebicep.warlords.game.option.wavedefense;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class WaveDefenseStats {
     public static final LinkedHashMap<String, Long> BOSS_COIN_VALUES = new LinkedHashMap<>() {{
@@ -41,6 +41,11 @@ public class WaveDefenseStats {
     };
     private final HashMap<String, Long> bossesKilled = new HashMap<>();
     private final HashMap<UUID, PlayerWaveDefenseStats> playerWaveDefenseStats = new HashMap<>();
+    private boolean boostedGame = false;
+
+    public WaveDefenseStats() {
+        boostedGame = ThreadLocalRandom.current().nextInt(0, 100) < 5;
+    }
 
     public void cacheBaseCoinSummary(WaveDefenseOption waveDefenseOption) {
         LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();

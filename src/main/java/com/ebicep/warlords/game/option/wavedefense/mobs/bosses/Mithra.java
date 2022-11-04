@@ -26,8 +26,6 @@ import org.bukkit.util.Vector;
 
 public class Mithra extends AbstractZombie implements BossMob {
 
-    private final int hitRadius = 15;
-
     public Mithra(Location spawnLocation) {
         super(spawnLocation,
                 "Mithra",
@@ -68,6 +66,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         long playerCount = option.getGame().warlordsPlayers().count();
+        int hitRadius = 15;
         if (ticksElapsed % 80 == 0) {
             new CircleEffect(
                     warlordsNPC.getGame(),
@@ -131,12 +130,6 @@ public class Mithra extends AbstractZombie implements BossMob {
         if (ticksElapsed % 140 == 0) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENDERMAN_SCREAM, 3, 0.5f);
             warlordsNPC.addSpeedModifier("Mithra Speed Boost", 100, 3 * 20);
-        }
-
-        if (ticksElapsed % 280 == 0) {
-            for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-                option.spawnNewMob(new Spider(spawnLocation));
-            }
         }
     }
 
