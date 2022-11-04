@@ -1485,7 +1485,7 @@ public abstract class WarlordsEntity {
     }
 
     public void heal() {
-        this.health = this.maxHealth;
+        this.health = this.maxBaseHealth;
     }
 
     public int getRegenTimer() {
