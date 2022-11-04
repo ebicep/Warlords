@@ -86,7 +86,7 @@ public class PatreonReward extends AbstractReward implements Listener {
     @EventHandler
     public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
         if (!event.getPlayer().hasPermission("group.patreon")) {
-            //return;
+            return;
         }
         DatabasePlayer databasePlayer = event.getDatabasePlayer();
         Month month = Month.from(ZonedDateTime.now());
