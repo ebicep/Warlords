@@ -22,7 +22,7 @@ public class QuestsMenu {
             if (quest.expireOn != null && quest.expireOn.isBefore(Instant.now())) {
                 continue;
             }
-            if (previousQuest.time != quest.time) {
+            if (previousQuest.time != quest.time || quest == Quests.VALUES[0]) {
                 row.getAndIncrement();
                 col.set(1);
                 menu.setItem(col.get(), row.get(),
