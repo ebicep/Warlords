@@ -116,12 +116,15 @@ public class WeaponManagerMenu {
                         .name(ChatColor.GREEN + "Salvage All Weapons")
                         .lore(
                                 WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " +
-                                        ChatColor.GRAY + "to salvage all weapons below 70% weapon score, excluding bound weapons.", 160),
+                                        ChatColor.GRAY + "to salvage all weapons below " + ChatColor.GREEN + menuSettings.getWeaponScoreSalvage() +
+                                        "% " + ChatColor.GRAY + "weapon score, excluding bound weapons.", 160),
                                 "",
-                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " +
-                                        ChatColor.GRAY + "to salvage all " +
-                                        ChatColor.GREEN + "filtered " +
-                                        ChatColor.GRAY + "weapons below 70% weapon score, excluding bound weapons.", 160),
+                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GRAY + "to salvage all " +
+                                        ChatColor.GREEN + "filtered " + ChatColor.GRAY + "weapons below " + ChatColor.GREEN + menuSettings.getWeaponScoreSalvage() +
+                                        "% " + ChatColor.GRAY + "weapon score, excluding bound weapons.", 160),
+                                "",
+                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " +
+                                        ChatColor.GRAY + "to change the weapon score filter amount.", 160),
                                 "",
                                 ChatColor.LIGHT_PURPLE + "This feature is for Patreons only!"
                         )
@@ -129,6 +132,11 @@ public class WeaponManagerMenu {
                 (m, e) -> {
                     if (!player.hasPermission("group.patreon") && !PermissionHandler.isAdmin(player)) {
                         player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
+                        return;
+                    }
+                    if (e.isShiftClick()) {
+                        menuSettings.nextWeaponScoreSalvage();
+                        openWeaponInventoryFromInternal(player, databasePlayer);
                         return;
                     }
                     List<AbstractWeapon> weaponsToSalvage;
@@ -141,7 +149,7 @@ public class WeaponManagerMenu {
                             !(weapon instanceof WeaponScore) ||
                             !(weapon instanceof Salvageable) ||
                             weapon.isBound() ||
-                            ((WeaponScore) weapon).getWeaponScore() >= 70);
+                            ((WeaponScore) weapon).getWeaponScore() >= menuSettings.getWeaponScoreSalvage());
                     if (weaponsToSalvage.isEmpty()) {
                         player.sendMessage(ChatColor.RED + "No weapons to salvage!");
                         return;
@@ -557,6 +565,7 @@ public class WeaponManagerMenu {
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
         private StarPieces selectedStarPiece = StarPieces.COMMON;
+        private int weaponScoreSalvage = 70;
 
         public void reset() {
             this.rarityFilter = WeaponsPvE.NONE;
@@ -647,6 +656,18 @@ public class WeaponManagerMenu {
         public void setSelectedStarPiece(StarPieces selectedStarPiece) {
             this.selectedStarPiece = selectedStarPiece;
         }
+
+        public int getWeaponScoreSalvage() {
+            return weaponScoreSalvage;
+        }
+
+        public void nextWeaponScoreSalvage() {
+            weaponScoreSalvage += 10;
+            if (weaponScoreSalvage > 100) {
+                weaponScoreSalvage = 70;
+            }
+        }
+
     }
 
 

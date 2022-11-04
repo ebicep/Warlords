@@ -60,7 +60,7 @@ public enum Quests {
     ) {
         @Override
         public boolean checkReward(WaveDefenseOption waveDefenseOption, WarlordsPlayer warlordsPlayer, DatabasePlayer databasePlayer) {
-            return databasePlayer.getPveStats().getWins() + 1 >= 1;
+            return databasePlayer.getPveStats().getWins() >= 1 || waveDefenseOption.getWavesCleared() >= waveDefenseOption.getMaxWave();
         }
     },
 

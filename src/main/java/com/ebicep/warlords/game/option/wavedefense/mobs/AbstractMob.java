@@ -120,7 +120,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             long playerCount = game.warlordsPlayers().count();
             double modifiedScale = scale - (playerCount > 1 ? 75 * playerCount : 0);
 
-            float health = (float) Math.pow(warlordsNPC.getMaxHealth(), option.getWaveCounter() / modifiedScale + 1);
+            float health = (float) Math.pow(warlordsNPC.getMaxBaseHealth(), option.getWaveCounter() / modifiedScale + 1);
             float bossMultiplier = 1 + (0.25f * playerCount);
             float difficultyMultiplier;
 
@@ -135,12 +135,11 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     difficultyMultiplier = 1;
                     break;
             }
-
             if (playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS) {
-                warlordsNPC.setMaxHealth((health * difficultyMultiplier)  * bossMultiplier);
+                warlordsNPC.setMaxBaseHealth((health * difficultyMultiplier)  * bossMultiplier);
                 warlordsNPC.setHealth((health * difficultyMultiplier) * bossMultiplier);
             } else {
-                warlordsNPC.setMaxHealth(health * difficultyMultiplier);
+                warlordsNPC.setMaxBaseHealth(health * difficultyMultiplier);
                 warlordsNPC.setHealth(health * difficultyMultiplier);
             }
 

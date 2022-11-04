@@ -441,7 +441,7 @@ public class TutorialOption implements Option {
                     Specializations.PYROMANCER
             ));
             testDummy.setTakeDamage(true);
-            testDummy.setMaxHealth(100);
+            testDummy.setMaxBaseHealth(100);
             testDummy.setHealth(100);
             testDummy.setRegenTimer(Integer.MAX_VALUE);
             testDummy.updateHealth();
