@@ -26,8 +26,18 @@ public class RaidMenu {
                     1,
                     new ItemBuilder(Material.REDSTONE)
                             .name(ChatColor.RED + ChatColor.BOLD.toString() + raid.getName())
-                            .lore(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 145) +
-                                    "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel())
+                            .lore(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 150) +
+                                    "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel() +
+                                    "\n\n§7Completion Rewards:" +
+                                    "\n§8+§3300.000 Class Experience" +
+                                    "\n§8+§e300.000 Coins" +
+                                    "\n§8+§f1.000 Synthetic Shards" +
+                                    "\n§8+§61 Raid Insignia" +
+                                    "\n§8+§c1 Ascendant Fragment" +
+                                    "\n\n§7Possible Bonus Rewards:" +
+                                    "\n§6+§c50 Legend Fragments" +
+                                    "\n§6+§c1 Legendary Weapon"
+                            )
                             .get(),
                     (m, e) -> {
                         GameMap map = null;
