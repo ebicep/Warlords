@@ -741,9 +741,9 @@ public class Warlords extends JavaPlugin {
 
                             float orbHeal = OrbsOfLife.ORB_HEALING;
                             WarlordsEntity owner = orb.getOwner();
-                            if (owner.getGame()
-                                    .getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE && PlayerSettings.getPlayerSettings(owner.getUuid())
-                                    .getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE) {
+                            if (owner.getGame().getGameMode() != com.ebicep.warlords.game.GameMode.WAVE_DEFENSE &&
+                                    PlayerSettings.getPlayerSettings(owner.getUuid()).getSkillBoostForClass() == SkillBoosts.ORBS_OF_LIFE
+                            ) {
                                 orbHeal *= 1.2;
                             }
 

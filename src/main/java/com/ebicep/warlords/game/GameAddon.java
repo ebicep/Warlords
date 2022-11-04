@@ -105,7 +105,7 @@ public enum GameAddon {
     ) {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
-            player.setMaxHealth(player.getMaxHealth() * 3);
+            player.setMaxBaseHealth(player.getMaxBaseHealth() * 3);
             player.setHealth(player.getHealth() * 3);
         }
     },

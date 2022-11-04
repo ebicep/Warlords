@@ -101,6 +101,7 @@ public abstract class WarlordsEntity {
     private Team team;
     private float health;
     private float maxHealth;
+    private float maxBaseHealth;
     private int regenTimer;
     private int respawnTimer = -1;
     private boolean dead = false;
@@ -154,6 +155,7 @@ public abstract class WarlordsEntity {
         this.spec = specClass.create.get();
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
+        this.maxBaseHealth = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.speed = isInPve() ? new CalculateSpeed(this::setWalkSpeed,
                 13,
@@ -1191,21 +1193,24 @@ public abstract class WarlordsEntity {
     public void displayActionBar() {
         StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
         float healthRatio = health / maxHealth;
-        if (healthRatio >= .75) {
+        if (healthRatio > 1) {
+            actionBarMessage.append(ChatColor.GREEN);
+        } else if (healthRatio >= .75) {
             actionBarMessage.append(ChatColor.DARK_GREEN);
-
         } else if (healthRatio >= .25) {
             actionBarMessage.append(ChatColor.YELLOW);
-
         } else {
             actionBarMessage.append(ChatColor.RED);
-
         }
+        int maxHealthRounded = Math.round(maxHealth);
+        int maxBaseHealthRounded = Math.round(maxBaseHealth);
         actionBarMessage.append("§l")
                 .append(Math.round(health))
                 .append(ChatColor.GOLD)
-                .append("§l/§l")
-                .append(Math.round(maxHealth))
+                .append("§l/")
+                .append(maxHealthRounded > maxBaseHealthRounded ? ChatColor.YELLOW : ChatColor.GOLD)
+                .append(ChatColor.BOLD)
+                .append(maxHealthRounded)
                 .append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
@@ -1428,6 +1433,7 @@ public abstract class WarlordsEntity {
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         this.spec = spec.create.get();
         this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
+        this.maxBaseHealth = this.maxHealth;
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
@@ -1446,7 +1452,21 @@ public abstract class WarlordsEntity {
     }
 
     public void setMaxHealth(float maxHealth) {
+        if (maxHealth < maxBaseHealth) {
+            maxHealth = maxBaseHealth;
+        }
         this.maxHealth = maxHealth;
+    }
+
+    public float getMaxBaseHealth() {
+        return maxBaseHealth;
+    }
+
+    public void setMaxBaseHealth(float maxBaseHealth) {
+        this.maxBaseHealth = maxBaseHealth;
+        if (maxHealth < maxBaseHealth) {
+            maxHealth = maxBaseHealth;
+        }
     }
 
     public void showDeathAnimation() {
@@ -2118,7 +2138,7 @@ public abstract class WarlordsEntity {
         dead = false;
         teleport(respawnPoint);
 
-        this.health = this.maxHealth;
+        this.health = this.maxBaseHealth;
         updateEntity();
     }
 

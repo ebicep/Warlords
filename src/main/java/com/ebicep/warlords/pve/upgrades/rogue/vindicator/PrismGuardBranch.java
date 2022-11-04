@@ -90,7 +90,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);
-                    abilityTree.getPlayer().setMaxHealth(abilityTree.getPlayer().getMaxHealth() * 1.2f);
+                    abilityTree.getPlayer().setMaxBaseHealth(abilityTree.getPlayer().getMaxBaseHealth() * 1.2f);
                 }
         );
     }
