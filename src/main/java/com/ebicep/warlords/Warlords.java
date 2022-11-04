@@ -842,7 +842,7 @@ public class Warlords extends JavaPlugin {
                                 heal = wps.getMaxHealth() - wps.getHealth();
                             }
 
-                            if (heal != 0) {
+                            if (heal > 0) {
                                 wps.setHealth(wps.getHealth() + heal);
                                 wps.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7Healed §a" + Math.round(heal) + " §7health.");
                             }
