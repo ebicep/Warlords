@@ -15,7 +15,7 @@ public class QuestsMenu {
     public static void openQuestMenu(Player player) {
         Menu menu = new Menu("Quests", 9 * 6);
 
-        AtomicInteger row = new AtomicInteger(1);
+        AtomicInteger row = new AtomicInteger(0);
         AtomicInteger col = new AtomicInteger(1);
         Quests previousQuest = Quests.VALUES[0];
         for (Quests quest : Quests.VALUES) {

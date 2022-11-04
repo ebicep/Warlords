@@ -153,8 +153,8 @@ public enum Quests {
 
     public ItemStack getItemStack(boolean completed) {
         ItemBuilder itemBuilder = new ItemBuilder(completed ? Material.EMPTY_MAP : Material.PAPER)
-                //.name(ChatColor.GREEN + time.name + ": " + name)
-                .name(ChatColor.GREEN + name)
+                .name(ChatColor.GREEN + time.name + ": " + name)
+                //.name(ChatColor.GREEN + name)
                 .lore(
                         ChatColor.GRAY + description,
                         "",
