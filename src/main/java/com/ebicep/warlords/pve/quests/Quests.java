@@ -102,6 +102,9 @@ public enum Quests {
     public static final HashMap<UUID, List<Quests>> CACHED_PLAYER_QUESTS = new HashMap<>();
 
     public static List<Quests> getQuestsFromGameStats(WarlordsPlayer warlordsPlayer, WaveDefenseOption waveDefenseOption, boolean recalculate) {
+        if (!QuestCommand.isQuestsEnabled) {
+            return new ArrayList<>();
+        }
         if (!recalculate && CACHED_PLAYER_QUESTS.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_QUESTS.get(
                 warlordsPlayer.getUuid()) != null) {
             return CACHED_PLAYER_QUESTS.get(warlordsPlayer.getUuid());
