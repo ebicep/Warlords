@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -94,6 +95,18 @@ public class DeathsDebt extends AbstractTotemBase {
                 new DoubleLineEffect(ParticleEffect.REDSTONE)
         );
         BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
+
+        if (wp.isInPve()) {
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(totemStand.getLocation(), respiteRadius, respiteRadius, respiteRadius)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(wp)
+            ) {
+                if (we instanceof WarlordsNPC) {
+                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                }
+            }
+        }
 
         DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand, wp);
         wp.getCooldownManager().addCooldown(new RegularCooldown<DeathsDebt>(

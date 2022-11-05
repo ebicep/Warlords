@@ -87,11 +87,11 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
         masterUpgrade = new Upgrade(
                 "Ghoul’s Gamble",
                 "Death's Debt - Master Upgrade",
-                "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, reduce damage taken by 25%",
+                "Double the damage dealt based on damage taken after Death's Debt ends. Additionally, reduce damage taken by 50%",
                 50000,
                 () -> {
                     ability.setDamagePercent(ability.getDamagePercent() * 2);
-                    ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.75f);
+                    ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
                 }
         );
     }

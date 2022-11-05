@@ -87,10 +87,10 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
         masterUpgrade = new Upgrade(
                 "Soul Swarm",
                 "Fallen Souls - Master Upgrade",
-                "Fallen Souls shoots 3 additional projectiles.",
+                "Fallen Souls shoots 2 additional projectiles.",
                 50000,
                 () -> {
-                    ability.setShotsFiredAtATime(6);
+                    ability.setShotsFiredAtATime(5);
                 }
         );
     }

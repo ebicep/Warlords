@@ -1381,7 +1381,7 @@ public enum GameMap {
                             .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.05, Mobs.SPIDER)
                             //elite
-                            .add(0.25, Mobs.ELITE_ZOMBIE)
+                            .add(0.3, Mobs.ELITE_ZOMBIE)
                             .add(0.05, Mobs.ELITE_SKELETON)
                             .add(0, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)

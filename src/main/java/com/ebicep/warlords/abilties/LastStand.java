@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
@@ -157,10 +158,13 @@ public class LastStand extends AbstractAbility {
 
         if (pveUpgrade) {
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(wp, radius, radius, radius)
+                    .entitiesAround(wp, radius + 3, radius + 3, radius + 3)
                     .aliveEnemiesOf(wp)
                     .closestFirst(wp)
             ) {
+                if (we instanceof WarlordsNPC) {
+                    ((WarlordsNPC) we).getMob().setTarget(wp);
+                }
                 EffectUtils.playSphereAnimation(wp.getLocation(), radius + 2, ParticleEffect.FLAME, 1);
                 Utils.addKnockback(wp.getLocation(), we, -2.5, 0.2f);
             }

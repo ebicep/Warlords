@@ -70,18 +70,17 @@ public class Zenith extends AbstractZombie implements BossMob {
             new GameRunnable(warlordsNPC.getGame()) {
                 @Override
                 public void run() {
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 15, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius, 15, playerCount);
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 30, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 5, 30, playerCount);
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 45, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 10, 45, playerCount);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius, 12, playerCount);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 24, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius + 5, 24, playerCount);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
+                    shockwave(loc, stormRadius + 10, 36, playerCount);
                 }
             }.runTaskLater(30);
         }
 
         if (ticksElapsed % 60 == 0) {
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 1.5f, 2);
             EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(loc, 4, 4, 4)

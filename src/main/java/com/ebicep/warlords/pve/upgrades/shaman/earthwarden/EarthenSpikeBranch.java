@@ -89,7 +89,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
         masterUpgrade = new Upgrade(
                 "Earthen Rupture",
                 "Earthen Spike - Master Upgrade",
-                "+1.5 Blocks hit radius\n\nEarthen Spike will emit an additional Earth Rupture on impact that deals 838-1063 damage to all nearby enemies and slow them by 50% for 1 second.",
+                "+1.5 Blocks hit radius\n\nEarthen Spike will emit an additional Earth Rupture on impact that deals 738-963 damage to all nearby enemies and slow them by 50% for 1 second.",
                 50000,
                 () -> {
                     ability.setSpikeHitbox(ability.getSpikeHitbox() + 1.5);
