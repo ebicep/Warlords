@@ -404,7 +404,7 @@ public abstract class WarlordsEntity {
         ) {
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
-            damageValue *= .5;
+            damageValue *= ((100 - intervene.getDamageReduction()) / 100f);
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
             intervene.addDamagePrevented(damageValue);

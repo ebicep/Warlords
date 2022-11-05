@@ -102,10 +102,11 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
         masterUpgrade = new Upgrade(
                 "Liquor Of Life",
                 "Vitality Liquor - Master Upgrade",
-                "Double the impact range of Vitality Liquor",
+                "Double the impact range and the duration of the bonus energy per second of Vitality Liquor",
                 50000,
                 () -> {
                     ability.setVitalityRange(vitalityRange * 2);
+                    ability.setDuration(ability.getDuration() * 2);
                 }
         );
     }

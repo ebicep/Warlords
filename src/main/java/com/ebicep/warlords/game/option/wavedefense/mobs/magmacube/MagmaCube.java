@@ -54,7 +54,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                 .entitiesAround(we, 9, 9, 9)
                 .aliveTeammatesOfExcludingSelf(we)
         ) {
-            if (!ally.getEntity().equals(this)) {
+            if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
                 ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
                         name,
                         "",
@@ -90,15 +90,11 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         WarlordsEntity we = Warlords.getPlayer(getWarlordsNPC().getEntity());
         if (we != null) {
             for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(we, 6, 6, 6)
+                    .entitiesAround(we, 5, 5, 5)
                     .aliveEnemiesOf(we)
             ) {
                 enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100, false);
             }
-        }
-
-        for (int i = 0; i < 2; i++) {
-            option.spawnNewMob(new BabyMagmaCube(warlordsNPC.getLocation()));
         }
 
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
