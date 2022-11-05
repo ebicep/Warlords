@@ -101,7 +101,6 @@ public class CapacitorTotem extends AbstractTotemBase {
                     });
 
             if (pveUpgrade) {
-                System.out.println("PVE UPGRADE");
                 tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
             }
 
