@@ -173,9 +173,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                                 wp.setOrangeCurrentCooldown(0);
                                 wp.addEnergy(wp, name, energyCost);
                             }
-                            wp.updatePurpleItem();
-                            wp.updateOrangeItem();
-
                         }
                     }.runTaskLater(2);
                 } else {
@@ -203,8 +200,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                                 wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
                                 wp.addEnergy(wp, name, energyCost / 2f);
                             }
-                            wp.updatePurpleItem();
-                            wp.updateOrangeItem();
                         }
                     }.runTaskLater(2);
                 }

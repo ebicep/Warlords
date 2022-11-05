@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
@@ -462,6 +463,8 @@ public class WeaponManagerMenu {
                         WeaponSkillBoostMenu.openWeaponSkillBoostMenu(player, databasePlayer, legendaryWeapon);
                     }
             ));
+
+            PlayerHotBarItemListener.updateWeaponManagerItem(player, databasePlayer);
         }
 
         boolean bigMenu = weaponOptions.size() > 3;

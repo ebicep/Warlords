@@ -1327,33 +1327,10 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void updateRedItem() {
-        if (entity instanceof Player) {
-            updateRedItem((Player) entity);
-        }
-    }
-
-    public void updatePurpleItem() {
-        if (entity instanceof Player) {
-            updatePurpleItem((Player) entity);
-        }
-    }
-
-    public void updateBlueItem() {
-        if (entity instanceof Player) {
-            updateBlueItem((Player) entity);
-        }
-    }
-
-    public void updateOrangeItem() {
-        if (entity instanceof Player) {
-            updateOrangeItem((Player) entity);
-        }
-    }
-
     public void setRedCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getRedAbility().setCurrentCooldown(currentCooldown);
+            updateRedItem();
         }
     }
 
@@ -1365,6 +1342,12 @@ public abstract class WarlordsEntity {
         return spec.getRed();
     }
 
+    public void updateRedItem() {
+        if (entity instanceof Player) {
+            updateRedItem((Player) entity);
+        }
+    }
+
     public void setDisableCooldowns(boolean disableCooldowns) {
         this.disableCooldowns = disableCooldowns;
     }
@@ -1372,6 +1355,7 @@ public abstract class WarlordsEntity {
     public void setPurpleCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getPurpleAbility().setCurrentCooldown(currentCooldown);
+            updatePurpleItem();
         }
     }
 
@@ -1379,9 +1363,16 @@ public abstract class WarlordsEntity {
         return spec.getPurple();
     }
 
+    public void updatePurpleItem() {
+        if (entity instanceof Player) {
+            updatePurpleItem((Player) entity);
+        }
+    }
+
     public void setBlueCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getBlueAbility().setCurrentCooldown(currentCooldown);
+            updateBlueItem();
         }
     }
 
@@ -1389,14 +1380,27 @@ public abstract class WarlordsEntity {
         return spec.getBlue();
     }
 
+    public void updateBlueItem() {
+        if (entity instanceof Player) {
+            updateBlueItem((Player) entity);
+        }
+    }
+
     public void setOrangeCurrentCooldown(float currentCooldown) {
         if (!isDisableCooldowns()) {
             this.getOrangeAbility().setCurrentCooldown(currentCooldown);
+            updateOrangeItem();
         }
     }
 
     public AbstractAbility getOrangeAbility() {
         return spec.getOrange();
+    }
+
+    public void updateOrangeItem() {
+        if (entity instanceof Player) {
+            updateOrangeItem((Player) entity);
+        }
     }
 
     public UUID getUuid() {

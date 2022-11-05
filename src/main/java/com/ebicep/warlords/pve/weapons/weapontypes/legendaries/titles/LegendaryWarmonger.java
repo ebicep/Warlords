@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,99 +15,29 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class LegendaryDivine extends AbstractLegendaryWeapon {
+public class LegendaryWarmonger extends AbstractLegendaryWeapon {
 
-    public static final int MELEE_DAMAGE_MIN = 100;
-    public static final int MELEE_DAMAGE_MAX = 120;
-    public static final int CRIT_CHANCE = 25;
-    public static final int CRIT_MULTIPLIER = 175;
-    public static final int HEALTH_BONUS = 500;
-    public static final int SPEED_BONUS = 5;
-    public static final int ENERGY_PER_SECOND_BONUS = 7;
-    public static final int ENERGY_PER_HIT_BONUS = -10;
-    public static final int SKILL_CRIT_CHANCE_BONUS = 5;
+    public static final int MELEE_DAMAGE_MIN = 170;
+    public static final int MELEE_DAMAGE_MAX = 190;
+    public static final int CRIT_CHANCE = 15;
+    public static final int CRIT_MULTIPLIER = 200;
+    public static final int HEALTH_BONUS = 800;
+    public static final int SPEED_BONUS = 10;
+    public static final float SKILL_CRIT_CHANCE_BONUS = 2.5f;
+    public static final float SKILL_CRIT_MULTIPLIER_BONUS = 5f;
 
-    public static final int TARGETS_TO_HIT = 40;
+    public static final int DAMAGE_TO_TAKE = 10000;
     public static final int COOLDOWN = 30;
 
-    public LegendaryDivine() {
+    public LegendaryWarmonger() {
     }
 
-    public LegendaryDivine(UUID uuid) {
+    public LegendaryWarmonger(UUID uuid) {
         super(uuid);
     }
 
-    public LegendaryDivine(AbstractLegendaryWeapon legendaryWeapon) {
+    public LegendaryWarmonger(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Divine";
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer player) {
-        super.applyToWarlordsPlayer(player);
-
-
-        player.getGame().registerEvents(new Listener() {
-
-            final AtomicInteger targetsHit = new AtomicInteger(0);
-            final AtomicInteger cooldown = new AtomicInteger(0);
-
-            @EventHandler
-            public void onDamageHealing(WarlordsDamageHealingFinalEvent event) {
-                if (!event.getAttacker().equals(player)) {
-                    return;
-                }
-                if (event.isHealingInstance()) {
-                    return;
-                }
-                if (cooldown.get() != 0) {
-                    return;
-                }
-                if (targetsHit.incrementAndGet() >= TARGETS_TO_HIT) {
-                    player.sendMessage(ChatColor.GREEN + "Divine Passive Activated!");
-
-                    player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Divine",
-                            "DIV",
-                            LegendaryDivine.class,
-                            null,
-                            player,
-                            CooldownTypes.BUFF,
-                            cooldownManager -> {
-                                player.sendMessage(ChatColor.RED + "Divine Passive Deactivated!");
-                            },
-                            10 * 20
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.1f;
-                        }
-                    });
-
-                    cooldown.set(COOLDOWN);
-
-                    new GameRunnable(player.getGame()) {
-
-                        @Override
-                        public void run() {
-                            targetsHit.set(0);
-                            cooldown.set(0);
-                        }
-                    }.runTaskLater(COOLDOWN * 20);
-
-                }
-            }
-
-        });
-    }
-
-    @Override
-    public String getPassiveEffect() {
-        return "Gain a 10% damage boost after hitting " + TARGETS_TO_HIT + " targets. Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override
@@ -116,13 +47,81 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
         this.critMultiplier = CRIT_MULTIPLIER;
         this.healthBonus = HEALTH_BONUS;
         this.speedBonus = SPEED_BONUS;
-        this.energyPerSecondBonus = ENERGY_PER_SECOND_BONUS;
-        this.energyPerHitBonus = ENERGY_PER_HIT_BONUS;
         this.skillCritChanceBonus = SKILL_CRIT_CHANCE_BONUS;
+        this.skillCritMultiplierBonus = SKILL_CRIT_MULTIPLIER_BONUS;
     }
 
     @Override
     public int getMeleeDamageRange() {
         return MELEE_DAMAGE_MAX - MELEE_DAMAGE_MIN;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Warmonger";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer player) {
+        super.applyToWarlordsPlayer(player);
+
+        player.getGame().registerEvents(new Listener() {
+
+            final AtomicDouble damageTaken = new AtomicDouble(0);
+            final AtomicInteger cooldown = new AtomicInteger(0);
+
+            @EventHandler
+            public void onDamageHealing(WarlordsDamageHealingFinalEvent event) {
+                if (!event.getPlayer().equals(player)) {
+                    return;
+                }
+                if (event.isHealingInstance()) {
+                    return;
+                }
+                if (cooldown.get() != 0) {
+                    return;
+                }
+                if (damageTaken.addAndGet(event.getValue()) >= DAMAGE_TO_TAKE) {
+                    player.sendMessage(ChatColor.GREEN + "Warmonger Passive Activated");
+
+                    player.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            "Warmonger",
+                            "WAR",
+                            LegendaryWarmonger.class,
+                            null,
+                            player,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                                player.sendMessage(ChatColor.RED + "Warmonger Passive Deactivated");
+                            },
+                            10 * 20
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * 1.1f;
+                        }
+                    });
+                    player.setPurpleCurrentCooldown(0);
+
+                    cooldown.set(COOLDOWN);
+
+                    new GameRunnable(player.getGame()) {
+
+                        @Override
+                        public void run() {
+                            damageTaken.set(0);
+                            cooldown.set(0);
+                        }
+                    }.runTaskLater(COOLDOWN * 20);
+                }
+            }
+
+        });
+    }
+
+    @Override
+    public String getPassiveEffect() {
+        return "Gain a 10% damage boost for 10 seconds and reset your Purple Rune's cooldown after taking " + DAMAGE_TO_TAKE +
+                " damage. Can be triggered every " + COOLDOWN + " seconds.";
     }
 }
