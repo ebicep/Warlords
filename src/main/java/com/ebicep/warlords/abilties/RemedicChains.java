@@ -180,7 +180,7 @@ public class RemedicChains extends AbstractAbility {
                             linkedEntities.remove(i);
                             i--;
                             if (pveUpgrade) {
-                                linked.setMaxHealth(healthBoosts.getOrDefault(linked, (float) linked.getSpec().getMaxHealth()));
+                                linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
                             }
                         }
                     }
