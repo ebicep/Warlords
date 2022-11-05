@@ -5,10 +5,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.raid.bosses.Physira;
 import com.ebicep.warlords.game.option.wavedefense.mobs.AbstractMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.warlords.GameRunnable;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -59,7 +62,12 @@ public class RaidOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                //spawnNewMob(new Physira(new Location(game.getLocations().getWorld(), 711.5, 7, 179.5)));
+            }
+        }.runTaskLater(60);
     }
 
     public void spawnNewMob(AbstractMob<?> abstractMob) {
