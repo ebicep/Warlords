@@ -8,7 +8,7 @@ public enum DifficultyIndex {
 
     EASY("Easy",
             "For those seeking a lighter challenge,\nrecommended for solo players." +
-                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage",
+                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage\n-25% Mob Spawns",
             ChatColor.GREEN,
             25,
             24,

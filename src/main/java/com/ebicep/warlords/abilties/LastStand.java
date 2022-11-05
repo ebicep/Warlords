@@ -80,17 +80,24 @@ public class LastStand extends AbstractAbility {
                 },
                 selfDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (pveUpgrade && ticksLeft % 10 == 0) {
+                    if (pveUpgrade && ticksLeft % 15 == 0) {
                         for (WarlordsEntity we : PlayerFilter
                                 .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
+                            Utils.addKnockback(wp.getLocation(), we, -2, 0.2f);
+                        }
+
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, 15, 15, 15)
                                 .aliveEnemiesOf(wp)
                                 .closestFirst(wp)
                         ) {
                             if (we instanceof WarlordsNPC) {
                                 ((WarlordsNPC) we).getMob().setTarget(wp);
                             }
-                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
-                            Utils.addKnockback(wp.getLocation(), we, -2, 0.2f);
                         }
                     }
                 })

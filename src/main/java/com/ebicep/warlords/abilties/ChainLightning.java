@@ -149,14 +149,14 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             switch (playersSize) {
                 case 0:
                     // We hit the first player
-                    damageMultiplier = pveUpgrade ? 1.06f : 1f;
+                    damageMultiplier = pveUpgrade ? 1.1f : 1f;
                     break;
                 case 1:
                     // We hit the second player
-                    damageMultiplier = pveUpgrade ? 1.12f : .85f;
+                    damageMultiplier = pveUpgrade ? 1.2f : .85f;
                     break;
                 default:
-                    damageMultiplier = pveUpgrade ? 1.18f : .7f;
+                    damageMultiplier = pveUpgrade ? 1.3f : .7f;
                     break;
             }
 
@@ -185,7 +185,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         ArmorStand totem = capacitorTotem.getTotem();
         capacitorTotem.pulseDamage();
         if (capacitorTotem.isPveUpgrade()) {
-            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.25);
+            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
         }
 
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);

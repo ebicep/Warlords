@@ -36,11 +36,12 @@ public class Intervene extends AbstractAbility {
         super("Intervene", 0, 0, 14.09f, 20);
     }
 
-    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target) {
+    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target, int damageReduction) {
         super("Intervene", 0, 0, 14.09f, 20);
         this.maxDamagePrevented = maxDamagePrevented;
         this.caster = caster;
         this.target = target;
+        this.damageReduction = damageReduction;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class Intervene extends AbstractAbility {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), ParticleEffect.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
-            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget);
+            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);
 
             // Removing all other intervenes
             wp.getCooldownManager().getCooldowns().removeIf(cd ->
