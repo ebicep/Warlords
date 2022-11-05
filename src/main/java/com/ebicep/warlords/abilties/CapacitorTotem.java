@@ -70,7 +70,11 @@ public class CapacitorTotem extends AbstractTotemBase {
 
         CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp);
         tempCapacitorTotem.setPulseDamage(() -> {
-            PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
+            PlayerFilter.entitiesAround(totemStand.getLocation(),
+                            tempCapacitorTotem.getRadius(),
+                            tempCapacitorTotem.getRadius(),
+                            tempCapacitorTotem.getRadius()
+                    )
                     .aliveEnemiesOf(wp)
                     .forEach(warlordsPlayer -> {
                         warlordsPlayer.addDamageInstance(
@@ -96,7 +100,12 @@ public class CapacitorTotem extends AbstractTotemBase {
                         }
                     });
 
-            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 0).play();
+            if (pveUpgrade) {
+                System.out.println("PVE UPGRADE");
+                tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
+            }
+
+            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), tempCapacitorTotem.getRadius(), 1.2, Material.SAPLING, (byte) 0).play();
         });
         wp.getCooldownManager().addRegularCooldown(
                 name,
@@ -125,6 +134,10 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     }
 
+    public double getRadius() {
+        return radius;
+    }
+
     public void addPLayersKilledWithFinalHit() {
         playersKilledWithFinalHit++;
     }
@@ -135,6 +148,10 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
         this.teamCarrierPassedThrough = teamCarrierPassedThrough;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 
     public void pulseDamage() {
@@ -155,14 +172,6 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     public void setDuration(int duration) {
         this.duration = duration;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
     }
 
     public void addProc() {
