@@ -28,6 +28,7 @@ public class RaidMenu {
                             .name(ChatColor.RED + ChatColor.BOLD.toString() + raid.getName())
                             .lore(WordWrap.wrapWithNewline(ChatColor.DARK_GRAY + raid.getDescription(), 150) +
                                     "\n\n§7Minimum level: §c" + raid.getMinimumClassLevel() +
+                                    "\n§7Minimum player requirement: §64" +
                                     "\n\n§7Completion Rewards:" +
                                     "\n§8+§3300.000 Class Experience" +
                                     "\n§8+§e300.000 Coins" +
@@ -35,14 +36,16 @@ public class RaidMenu {
                                     "\n§8+§61 Raid Insignia" +
                                     "\n§8+§c1 Ascendant Fragment" +
                                     "\n\n§7Possible Bonus Rewards:" +
-                                    "\n§6+§c50 Legend Fragments" +
-                                    "\n§6+§c1 Legendary Weapon"
+                                    "\n§8+§650 Legend Fragments" +
+                                    "\n§8+§61 Legendary Weapon"
                             )
                             .get(),
                     (m, e) -> {
                         GameMap map = null;
                         switch (finalI) {
                             case 0:
+                                map = GameMap.THE_OBSIDIAN_TRAIL_RAID;
+                                break;
                             case 1:
                             case 2:
                             case 3:
@@ -53,21 +56,14 @@ public class RaidMenu {
                                 break;
                         }
 
-                        /*GameMap finalMap = map;
+                        GameMap finalMap = map;
                         if (finalMap != null) {
-                            if (privateGame) {
-                                GameStartCommand.startGamePvE(player, queueEntryBuilder ->
-                                        queueEntryBuilder.setMap(finalMap)
-                                                .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                            GameStartCommand.startGamePvERaid(player, queueEntryBuilder ->
+                                    queueEntryBuilder.setMap(finalMap)
+                                            .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
-                                );
-                            } else {
-                                GameStartCommand.startGamePvE(player, queueEntryBuilder ->
-                                        queueEntryBuilder.setMap(finalMap)
-
-                                );
-                            }
-                        }*/
+                            );
+                        }
                     }
             );
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openRaidMenu(player));
