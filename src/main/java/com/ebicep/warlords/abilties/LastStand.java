@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -77,7 +78,22 @@ public class LastStand extends AbstractAbility {
                 cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
                 },
-                selfDuration * 20
+                selfDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (pveUpgrade && ticksLeft % 10 == 0) {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, radius + 1, radius + 1, radius + 1)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            if (we instanceof WarlordsNPC) {
+                                ((WarlordsNPC) we).getMob().setTarget(wp);
+                            }
+                            EffectUtils.playSphereAnimation(wp.getLocation(), radius + 1, ParticleEffect.FLAME, 1);
+                            Utils.addKnockback(wp.getLocation(), we, -2, 0.2f);
+                        }
+                    }
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -154,20 +170,6 @@ public class LastStand extends AbstractAbility {
                     ChatColor.YELLOW + "Last Stand" +
                     ChatColor.GRAY + " is now protecting you for §6" + allyDuration + " §7seconds!"
             );
-        }
-
-        if (pveUpgrade) {
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(wp, radius + 3, radius + 3, radius + 3)
-                    .aliveEnemiesOf(wp)
-                    .closestFirst(wp)
-            ) {
-                if (we instanceof WarlordsNPC) {
-                    ((WarlordsNPC) we).getMob().setTarget(wp);
-                }
-                EffectUtils.playSphereAnimation(wp.getLocation(), radius + 2, ParticleEffect.FLAME, 1);
-                Utils.addKnockback(wp.getLocation(), we, -2.5, 0.2f);
-            }
         }
 
         Location loc = player.getEyeLocation();
