@@ -7,26 +7,20 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.mongodb.client.MongoCollection;
-import org.bukkit.Bukkit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.time.Month;
-import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -49,27 +43,6 @@ public class DatabaseTiming {
     };
     public static AtomicBoolean resetWeekly = new AtomicBoolean(false);
     public static AtomicBoolean resetDaily = new AtomicBoolean(false);
-    @Id
-    protected String id;
-    private String title;
-    @Field("last_reset")
-    private Instant lastReset = DateUtil.getResetDateToday();
-    @Field("timing")
-    private Timing timing;
-
-    public DatabaseTiming() {
-    }
-
-    public DatabaseTiming(String title, Timing timing) {
-        this.title = title;
-        this.timing = timing;
-    }
-
-    public DatabaseTiming(String title, Instant lastReset, Timing timing) {
-        this.title = title;
-        this.lastReset = lastReset;
-        this.timing = timing;
-    }
 
     public static void checkStatsTimings() {
         Instant currentDate = Instant.now();
@@ -153,7 +126,22 @@ public class DatabaseTiming {
                 .execute();
     }
 
+    public Instant getLastReset() {
+        return lastReset;
+    }
+
+    public void setLastReset(Instant lastReset) {
+        this.lastReset = lastReset;
+    }
+
+    public Timing getTiming() {
+        return timing;
+    }
+
     public static void checkLeaderboardResets() {
+        System.out.println("Checking Leaderboard Resets");
+        System.out.println(resetWeekly.get());
+        System.out.println(resetDaily.get());
         if (resetWeekly.get()) {
             resetWeekly.set(false);
             try {
@@ -163,10 +151,24 @@ public class DatabaseTiming {
                 weeklyLeaderboards.insertOne(topPlayers);
 
                 ExperienceManager.awardWeeklyExperience(topPlayers);
-                //clearing weekly
-                DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
             } catch (Exception e) {
-                ChatUtils.MessageTypes.TIMINGS.sendMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+            }
+            try {
+                //clearing weekly
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.playerService.renameCollection(
+                                    PlayersCollections.WEEKLY.collectionName,
+                                    PlayersCollections.WEEKLY.collectionName + "_Previous",
+                                    true
+                            );
+                            DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous weekly stats and reset current weekly stats");
+                        })
+                        .execute();
+            } catch (Exception e) {
+                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing weekly collection");
             }
             //reloading boards
             StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
@@ -175,8 +177,22 @@ public class DatabaseTiming {
         if (resetDaily.get()) {
             resetDaily.set(false);
 
-            //clearing daily
-            DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
+            try {
+                //clearing daily
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.playerService.renameCollection(
+                                    PlayersCollections.DAILY.collectionName,
+                                    PlayersCollections.DAILY.collectionName + "_Previous",
+                                    true
+                            );
+                            DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
+                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous daily stats and reset current daily stats");
+                        })
+                        .execute();
+            } catch (Exception e) {
+                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing daily collection");
+            }
             //reloading boards
             StatsLeaderboardManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();
             StatsLeaderboardManager.reloadLeaderboardsFromCache(PlayersCollections.DAILY, false);
@@ -211,20 +227,30 @@ public class DatabaseTiming {
         return document;
     }
 
+    @Id
+    protected String id;
+    private String title;
+    @Field("last_reset")
+    private Instant lastReset = DateUtil.getResetDateToday();
+    @Field("timing")
+    private Timing timing;
+
+    public DatabaseTiming() {
+    }
+
+    public DatabaseTiming(String title, Timing timing) {
+        this.title = title;
+        this.timing = timing;
+    }
+
+    public DatabaseTiming(String title, Instant lastReset, Timing timing) {
+        this.title = title;
+        this.lastReset = lastReset;
+        this.timing = timing;
+    }
+
     public String getTitle() {
         return title;
-    }
-
-    public Instant getLastReset() {
-        return lastReset;
-    }
-
-    public void setLastReset(Instant lastReset) {
-        this.lastReset = lastReset;
-    }
-
-    public Timing getTiming() {
-        return timing;
     }
 
     @Override

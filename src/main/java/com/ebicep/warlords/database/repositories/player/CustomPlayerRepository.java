@@ -34,4 +34,6 @@ public interface CustomPlayerRepository {
 
     <T> T convertDocumentToClass(Document document, Class<T> clazz);
 
+    void renameCollection(String collectionName, String newCollectionName, boolean dropTarget);
+
 }
