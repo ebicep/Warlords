@@ -126,5 +126,10 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.convertDocumentToClass(document, clazz);
     }
 
+    @Override
+    public void renameCollection(String collectionName, String newCollectionName, boolean dropTarget) {
+        playerRepository.renameCollection(collectionName, newCollectionName, dropTarget);
+    }
+
 
 }

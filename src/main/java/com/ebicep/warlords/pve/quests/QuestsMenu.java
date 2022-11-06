@@ -45,6 +45,17 @@ public class QuestsMenu {
                     row.incrementAndGet();
                     col.set(2);
                 }
+            }, () -> {
+                menu.setItem(col.get(), row.get(),
+                        quest.getItemStack(false),
+                        (m, e) -> {
+                        }
+                );
+                col.getAndIncrement();
+                if (row.get() > 7) {
+                    row.incrementAndGet();
+                    col.set(2);
+                }
             });
             previousQuest = quest;
         }
