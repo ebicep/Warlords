@@ -19,12 +19,12 @@ public enum Currencies {
     SYNTHETIC_SHARD(
             "Synthetic Shard",
             ChatColor.WHITE,
-            new ItemStack(Material.BLAZE_POWDER)
+            new ItemStack(Material.STAINED_GLASS, 1, (short) 7)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
             ChatColor.GOLD,
-            new ItemStack(Material.GOLD_NUGGET)
+            new ItemStack(Material.BLAZE_POWDER)
     ),
     FAIRY_ESSENCE(
             "Fairy Essence",
@@ -69,7 +69,7 @@ public enum Currencies {
     SKILL_BOOST_MODIFIER(
             "Skill Boost Modifier",
             ChatColor.DARK_GRAY,
-            new ItemStack(Material.GOLD_NUGGET)
+            new ItemStack(Material.BOOKSHELF)
     ),
 
 
