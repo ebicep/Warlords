@@ -66,6 +66,9 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingFinalEvent event) {
+                if (!event.getAttacker().equals(player)) {
+                    return;
+                }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
                     if (player.getEntity() instanceof Player) {
                         Player p = (Player) player.getEntity();
