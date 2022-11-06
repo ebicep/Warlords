@@ -30,6 +30,7 @@ public class NPCManager {
     public static NPC weaponManagerNPC;
     public static NPC legendaryWeaponNPC;
     public static NPC questLordNPC;
+    public static NPC starPieceSynthesizerNPC;
     //https://jd.citizensnpcs.co/net/citizensnpcs/api/npc/NPC.html
 
     public static void createGameJoinNPCs() {
@@ -44,33 +45,6 @@ public class NPCManager {
                     createPvENPC();
                 })
                 .execute();
-    }
-
-    public static void createDatabaseRequiredNPCs() {
-        if (!Warlords.citizensEnabled) return;
-
-        Warlords.newChain()
-                .sync(() -> {
-                    createMasterworksFairNPC();
-                    createWeaponsManagerNPC();
-                    createLegendaryWeaponNPC();
-                    createQuestMenuNPC();
-                })
-                .execute();
-    }
-
-    public static void destroyNPCs() {
-        if (!Warlords.citizensEnabled) return;
-
-        npcRegistry.despawnNPCs(DespawnReason.RELOAD);
-        npcRegistry.deregisterAll();
-    }
-
-    private static void registerTrait(Class<? extends Trait> trait, String traitName) {
-        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
-            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
-        }
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
     }
 
     private static void createGameNPC() {
@@ -95,6 +69,29 @@ public class NPCManager {
         pveStartNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 51, 747.5, 90, 0));
     }
 
+    private static void registerTrait(Class<? extends Trait> trait, String traitName) {
+        if (CitizensAPI.getTraitFactory().getTrait(traitName) != null) {
+            CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(trait).withName(traitName));
+        }
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(trait).withName(traitName));
+    }
+
+    public static void createDatabaseRequiredNPCs() {
+        if (!Warlords.citizensEnabled) {
+            return;
+        }
+
+        Warlords.newChain()
+                .sync(() -> {
+                    createMasterworksFairNPC();
+                    createWeaponsManagerNPC();
+                    createLegendaryWeaponNPC();
+                    createQuestMenuNPC();
+                    createStarPieceSynthesizerNPC();
+                })
+                .execute();
+    }
+
     public static void createMasterworksFairNPC() {
         if (!MasterworksFairManager.enabled) {
             return;
@@ -110,23 +107,6 @@ public class NPCManager {
         lookClose.toggle();
 
         masterworksFairNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2523.5, 50, 725.5, 90, 0));
-    }
-
-    public static void createSupplyDropFairNPC() {
-        registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
-
-        supplyDropNPC = npcRegistry.createNPC(EntityType.RABBIT, "supply-drop");
-        supplyDropNPC.addTrait(SupplyDropTrait.class);
-        HologramTrait hologramTrait = supplyDropNPC.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
-        hologramTrait.setLine(1, ChatColor.GREEN + "Supply Drop Susan");
-        //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
-
-        supplyDropNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
-        LookClose lookClose = supplyDropNPC.getOrAddTrait(LookClose.class);
-        lookClose.toggle();
-
-        supplyDropNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
     }
 
     public static void createWeaponsManagerNPC() {
@@ -167,6 +147,42 @@ public class NPCManager {
         questLordNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
         questLordNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2574.5, 50, 758.5, -90, 0));
 
+    }
+
+    public static void destroyNPCs() {
+        if (!Warlords.citizensEnabled) {
+            return;
+        }
+
+        npcRegistry.despawnNPCs(DespawnReason.RELOAD);
+        npcRegistry.deregisterAll();
+    }
+
+    public static void createSupplyDropFairNPC() {
+        registerTrait(SupplyDropTrait.class, "SupplyDropTrait");
+
+        supplyDropNPC = npcRegistry.createNPC(EntityType.RABBIT, "supply-drop");
+        supplyDropNPC.addTrait(SupplyDropTrait.class);
+        HologramTrait hologramTrait = supplyDropNPC.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+        hologramTrait.setLine(1, ChatColor.GREEN + "Supply Drop Susan");
+        //hologramTrait.setLine(2, ChatColor.GOLD.toString() + ChatColor.MAGIC + "   " + ChatColor.GOLD + " ROLL FOR GREAT REWARDS " + ChatColor.MAGIC + "   ");
+
+        supplyDropNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        LookClose lookClose = supplyDropNPC.getOrAddTrait(LookClose.class);
+        lookClose.toggle();
+
+        supplyDropNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2528.5, 50, 757.5, 90, 0));
+    }
+
+    public static void createStarPieceSynthesizerNPC() {
+        registerTrait(StarPieceSynthesizerTrait.class, "StarPieceSynthesizerTrait");
+
+        starPieceSynthesizerNPC = npcRegistry.createNPC(EntityType.ENDER_CRYSTAL, "star-piece-synthesizer");
+        starPieceSynthesizerNPC.addTrait(StarPieceSynthesizerTrait.class);
+
+        starPieceSynthesizerNPC.data().set(NPC.NAMEPLATE_VISIBLE_METADATA, false);
+        starPieceSynthesizerNPC.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2515.5, 53.49, 722.5, 0, 0));
     }
 
 

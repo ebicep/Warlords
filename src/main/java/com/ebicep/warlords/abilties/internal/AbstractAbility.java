@@ -116,7 +116,11 @@ public abstract class AbstractAbility {
     }
 
     public void setCurrentCooldown(float currentCooldown) {
-        this.currentCooldown = currentCooldown;
+        if (currentCooldown < 0) {
+            this.currentCooldown = 0;
+        } else {
+            this.currentCooldown = currentCooldown;
+        }
     }
 
     public void subtractCooldown(float cooldown) {
