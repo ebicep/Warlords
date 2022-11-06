@@ -53,7 +53,6 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon {
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        System.out.println(player.getHealth() + " - " + player.getMaxHealth());
                         if (player.getHealth() >= player.getMaxHealth() * .7) {
                             return currentDamageValue;
                         }
