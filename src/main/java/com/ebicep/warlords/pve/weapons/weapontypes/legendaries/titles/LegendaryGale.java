@@ -67,10 +67,10 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
             }
 
             public void passive(int multiplier) {
-                player.getSpeed().addBaseModifier(50 * multiplier);
+                player.getSpeed().addBaseModifier(40 * multiplier);
                 for (AbstractAbility ability : player.getSpec().getAbilities()) {
                     if (ability.getEnergyCost() > 0) {
-                        ability.setEnergyCost(ability.getEnergyCost() - 15 * multiplier);
+                        ability.setEnergyCost(ability.getEnergyCost() - 10 * multiplier);
                     }
                 }
                 player.updateItems();
@@ -80,7 +80,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Increase movement speed by 50% and decrease energy consumption of all abilities by 15 after moving " + BLOCKS_TO_MOVE + " blocks. " +
+        return "Increase movement speed by 40% and decrease energy consumption of all abilities by 10 after moving " + BLOCKS_TO_MOVE + " blocks. " +
                 "Can be triggered every " + COOLDOWN + " seconds.";
     }
 

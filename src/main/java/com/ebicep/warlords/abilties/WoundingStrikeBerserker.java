@@ -54,8 +54,8 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * (lustDamageBoost ? 2 : 1),
-                maxDamageHeal * (lustDamageBoost ? 2 : 1),
+                minDamageHeal * (lustDamageBoost ? 1.6f : 1),
+                maxDamageHeal * (lustDamageBoost ? 1.6f : 1),
                 critChance,
                 critMultiplier,
                 false
@@ -128,7 +128,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         ) {
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .3f;
+                return currentHealValue * .2f;
             }
         });
     }
