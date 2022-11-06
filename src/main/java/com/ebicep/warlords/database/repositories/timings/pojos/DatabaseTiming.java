@@ -139,9 +139,6 @@ public class DatabaseTiming {
     }
 
     public static void checkLeaderboardResets() {
-        System.out.println("Checking Leaderboard Resets");
-        System.out.println(resetWeekly.get());
-        System.out.println(resetDaily.get());
         if (resetWeekly.get()) {
             resetWeekly.set(false);
             try {
