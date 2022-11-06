@@ -48,11 +48,13 @@ public class DifficultyMenu {
                         GameMap map = null;
                         switch (finalI) {
                             case 0:
+                                map = GameMap.ILLUSION_APERTURE;
+                                break;
                             case 1:
                                 map = GameMap.ILLUSION_RIFT;
                                 break;
                             case 2:
-                                map = GameMap.ILLUSION_APERTURE;
+                                map = GameMap.ILLUSION_VALLEY;
                                 break;
                             case 3:
                                 map = GameMap.ILLUSION_CROSSFIRE;

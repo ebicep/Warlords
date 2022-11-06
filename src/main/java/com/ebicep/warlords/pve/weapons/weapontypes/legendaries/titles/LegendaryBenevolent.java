@@ -18,7 +18,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
     public static final int SKILL_CRIT_CHANCE_BONUS = 5;
     public static final int SKILL_CRIT_MULTIPLIER_BONUS = 5;
 
-    private static final int HEALING_INCREASE = 40;
+    private static final int HEALING_INCREASE = 25;
 
     public LegendaryBenevolent() {
     }
