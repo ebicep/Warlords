@@ -7,14 +7,11 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
@@ -284,23 +281,25 @@ public enum TieredAchievements implements Achievement {
 
     @Override
     public void sendAchievementUnlockMessage(Player player) {
-        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  Achievement Unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + description).create()));
-        ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true);
+        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  Achievement Unlocked: ")
+                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
+                .append(ChatColor.GREEN + "  <<")
+                .create();
+        ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true);
     }
 
     @Override
-    public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer) {
-        TextComponent message = new TextComponent(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GREEN + " unlocked: " + ChatColor.GOLD + name + ChatColor.GREEN + "  <<");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200)).create()
-        ));
-        warlordsPlayer.getGame().warlordsPlayers()
+    public void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
+        BaseComponent[] baseComponents = new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.GREEN + ">>  " + ChatColor.AQUA + warlordsEntity.getName() + ChatColor.GREEN + " unlocked: ")
+                .appendHoverText(ChatColor.GOLD + name, WordWrap.wrapWithNewline(ChatColor.GREEN + description, 200))
+                .append(ChatColor.GREEN + "  <<")
+                .create();
+        warlordsEntity.getGame().warlordsPlayers()
                 //.filter(wp -> wp.getTeam() == warlordsPlayer.getTeam())
-                .filter(wp -> wp != warlordsPlayer)
+                .filter(wp -> wp != warlordsEntity)
                 .filter(wp -> wp.getEntity() instanceof Player)
                 .map(wp -> (Player) wp.getEntity())
-                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, Collections.singletonList(message), ChatColor.GREEN, true));
+                .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, baseComponents, ChatColor.GREEN, true));
     }
 
     public static class TieredAchievementRecord extends AbstractAchievementRecord<TieredAchievements> {
