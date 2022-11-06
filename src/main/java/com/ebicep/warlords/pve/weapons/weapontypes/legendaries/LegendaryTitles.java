@@ -16,9 +16,9 @@ public enum LegendaryTitles {
     VORPAL(LegendaryVorpal.class, LegendaryVorpal::new, LegendaryVorpal::new, 4),
     DIVINE(LegendaryDivine.class, LegendaryDivine::new, LegendaryDivine::new, 5),
     GALE(LegendaryGale.class, LegendaryGale::new, LegendaryGale::new, 6),
-    WARMONGER(LegendaryWarmonger.class, LegendaryWarmonger::new, LegendaryWarmonger::new, 8),
-    REQUIEM(LegendaryRequiem.class, LegendaryRequiem::new, LegendaryRequiem::new, 9),
-    STALWART(LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 10),
+    WARMONGER(LegendaryWarmonger.class, LegendaryWarmonger::new, LegendaryWarmonger::new, 9),
+    REQUIEM(LegendaryRequiem.class, LegendaryRequiem::new, LegendaryRequiem::new, 10),
+    STALWART(LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 11),
 
     ;
 
