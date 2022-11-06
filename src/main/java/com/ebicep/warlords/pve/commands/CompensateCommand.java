@@ -12,6 +12,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -111,52 +112,77 @@ public class CompensateCommand extends BaseCommand {
                                     .stream()
                                     .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey().getCostColoredName(currenciesValues.getValue()))
                                     .toArray(String[]::new))
+                            .addLore(
+                                    "",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK " + ChatColor.GREEN + "to directly give through the Rewards Inventory",
+                                    ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to directly give rewards"
+                            )
                             .get(),
                     (m, e) -> {
-                        System.out.println(compensation);
-                        System.out.println(compensatedPlayers);
-                        if (compensatedPlayers.size() == 1) {
-                            Warlords.newChain()
-                                    .sync(() -> {
-                                        DatabasePlayer databasePlayer = compensatedPlayers.get(0);
-                                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                        compensation.forEach(pveStats::addCurrency);
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                                                new ComponentBuilder()
-                                                        .appendHoverText(
-                                                                ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName(),
-                                                                compensation.entrySet()
-                                                                        .stream()
-                                                                        .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
-                                                                                .getCostColoredName(currenciesValues.getValue()))
-                                                                        .collect(Collectors.joining("\n"))
-                                                        )
-                                        );
-                                        player.closeInventory();
-                                    }).execute();
-
+                        if (!e.isShiftClick()) {
+                            SignGUI.open(player, new String[]{"", "Enter Reward", "Title", ""}, (p, lines) -> {
+                                String title = lines[0];
+                                compensate(player, compensation, compensatedPlayers, title);
+                            });
                         } else {
-                            Warlords.newChain()
-                                    .sync(() -> {
-                                        for (DatabasePlayer databasePlayer : compensatedPlayers) {
-                                            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                            compensation.forEach(pveStats::addCurrency);
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        }
-                                        ChatChannels.sendDebugMessage(player,
-                                                ChatColor.GREEN + "All " + ChatColor.AQUA + compensatedPlayers.size() + " players " +
-                                                        ChatColor.GREEN + "were given compensation",
-                                                true
-                                        );
-                                        player.closeInventory();
-                                    })
-                                    .execute();
+                            compensate(player, compensation, compensatedPlayers, null);
                         }
                     }
             );
         }
         menu.openForPlayer(player);
+    }
+
+    public static void compensate(Player player, LinkedHashMap<Currencies, Long> compensation, List<DatabasePlayer> compensatedPlayers, String title) {
+        System.out.println(compensation);
+        System.out.println(compensatedPlayers);
+        if (compensatedPlayers.size() == 1) {
+            Warlords.newChain()
+                    .sync(() -> {
+                        DatabasePlayer databasePlayer = compensatedPlayers.get(0);
+                        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                        if (title == null) {
+                            compensation.forEach(pveStats::addCurrency);
+                        } else {
+                            pveStats.getCompensationRewards().add(new CompensationReward(compensation, title));
+                        }
+                        ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
+                                new ComponentBuilder()
+                                        .appendHoverText(
+                                                ChatColor.GREEN + "Compensated " + ChatColor.AQUA + databasePlayer.getName() +
+                                                        ChatColor.GREEN + (title == null ? " directly" : " through the Rewards Inventory"),
+                                                compensation.entrySet()
+                                                        .stream()
+                                                        .map(currenciesValues -> ChatColor.GRAY + " - " + currenciesValues.getKey()
+                                                                .getCostColoredName(currenciesValues.getValue()))
+                                                        .collect(Collectors.joining("\n"))
+                                        )
+                        );
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        player.closeInventory();
+                    }).execute();
+
+        } else {
+            Warlords.newChain()
+                    .sync(() -> {
+                        for (DatabasePlayer databasePlayer : compensatedPlayers) {
+                            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                            if (title == null) {
+                                compensation.forEach(pveStats::addCurrency);
+                            } else {
+                                pveStats.getCompensationRewards().add(new CompensationReward(compensation, title));
+                            }
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                        }
+                        ChatChannels.sendDebugMessage(player,
+                                ChatColor.GREEN + "All " + ChatColor.AQUA + compensatedPlayers.size() + " players " +
+                                        ChatColor.GREEN + "were given compensation" + (title == null ? " directly" : " through the Rewards Inventory"),
+                                true
+                        );
+                        player.closeInventory();
+                    })
+                    .execute();
+        }
     }
 
     @Default
