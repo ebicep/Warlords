@@ -104,6 +104,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                 tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
             }
 
+            System.out.println("CAP TOTEM WAVE EFFECT");
             new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), tempCapacitorTotem.getRadius(), 1.2, Material.SAPLING, (byte) 0).play();
         });
         wp.getCooldownManager().addRegularCooldown(
@@ -154,7 +155,9 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
     public void pulseDamage() {
+        System.out.println("CAP TOTEM PULSE");
         pulseDamage.run();
+        System.out.println("CAP TOTEM PULSE END");
     }
 
     public Runnable getPulseDamage() {
