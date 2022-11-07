@@ -1,14 +1,11 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-public class LegendaryEnchanced extends AbstractLegendaryWeapon {
+public class LegendaryEnhanced extends AbstractLegendaryWeapon {
     public static final int MELEE_DAMAGE_MIN = 155;
     public static final int MELEE_DAMAGE_MAX = 180;
     public static final int CRIT_CHANCE = 20;
@@ -16,14 +13,14 @@ public class LegendaryEnchanced extends AbstractLegendaryWeapon {
     public static final int HEALTH_BONUS = 400;
     public static final int SPEED_BONUS = 8;
 
-    public LegendaryEnchanced() {
+    public LegendaryEnhanced() {
     }
 
-    public LegendaryEnchanced(UUID uuid) {
+    public LegendaryEnhanced(UUID uuid) {
         super(uuid);
     }
 
-    public LegendaryEnchanced(AbstractLegendaryWeapon legendaryWeapon) {
+    public LegendaryEnhanced(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
     }
 
