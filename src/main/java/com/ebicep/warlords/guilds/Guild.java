@@ -100,6 +100,7 @@ public class Guild {
     private List<AbstractGuildUpgrade<?>> upgrades = new ArrayList<>();
     @Field("audit_log")
     private List<AbstractGuildLog> auditLog = new ArrayList<>();
+    private List<String> motd = new ArrayList<>();
 
     public Guild() {
     }
@@ -491,6 +492,10 @@ public class Guild {
 
     public List<AbstractGuildLog> getAuditLog() {
         return auditLog;
+    }
+
+    public List<String> getMotd() {
+        return motd;
     }
 
     @Override

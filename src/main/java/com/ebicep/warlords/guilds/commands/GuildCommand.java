@@ -20,6 +20,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -427,6 +428,37 @@ public class GuildCommand extends BaseCommand {
 //            return;
 //        }
         guild.setTag(guildPlayer, tag);
+    }
+
+    @Subcommand("motd")
+    @Description("Changes the MOTD of your guild")
+    public void motd(
+            @Conditions("guild:true") Player player,
+            @Conditions("requirePerm:perm=MODIFY_TAG") GuildPlayerWrapper guildPlayerWrapper,
+            Integer line,
+            String message
+    ) {
+        Guild guild = guildPlayerWrapper.getGuild();
+        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+        List<String> motd = guild.getMotd();
+        if (line > motd.size() + 1) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Line number is too high.");
+            return;
+        }
+        if (line < 1) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Line number must be greater than 0.");
+            return;
+        }
+        if (line > 10) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
+            return;
+        }
+        if (line == motd.size() + 1) {
+            motd.add(message);
+        } else {
+            motd.set(line - 1, message);
+        }
+        guild.queueUpdate();
     }
 
 
