@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.quests.Quests;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -60,6 +61,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
     //PATERON
     @Field("patreon_rewards")
     private List<PatreonReward> patreonRewards = new ArrayList<>();
+    //COMPENSATION
+    @Field("compensation_rewards")
+    private List<CompensationReward> compensationRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -347,5 +351,9 @@ public class DatabasePlayerPvE extends PvEDatabaseStatInformation implements Dat
 
     public List<PatreonReward> getPatreonRewards() {
         return patreonRewards;
+    }
+
+    public List<CompensationReward> getCompensationRewards() {
+        return compensationRewards;
     }
 }

@@ -44,6 +44,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
+import com.ebicep.warlords.pve.commands.CompensateCommand;
 import com.ebicep.warlords.pve.commands.MyPositionCommand;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
@@ -505,7 +506,6 @@ public class CommandManager {
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());
-        manager.registerCommand(new CompensateCommand());
         manager.registerCommand(new FlyCommand());
         manager.registerCommand(new GamesCommand());
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
@@ -552,6 +552,8 @@ public class CommandManager {
         manager.registerCommand(new GuildDebugCommand());
 
         manager.registerCommand(new MyPositionCommand());
+        manager.registerCommand(new CompensateCommand());
+
         manager.registerCommand(new WeaponCommand());
         manager.registerCommand(new MasterworksFairCommand());
 

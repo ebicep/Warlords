@@ -86,7 +86,7 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         masterUpgrade = new Upgrade(
                 "Seismic Smash",
                 "Seismic Wave - Master Upgrade",
-                "Increase the size of Seismic Wave by 200%",
+                "Increase the size of Seismic Wave by 200% and deal increased damage the future away the mob is. (Max 2x at 15 blocks).",
                 50000,
                 () -> {
                     ability.setPveUpgrade(true);

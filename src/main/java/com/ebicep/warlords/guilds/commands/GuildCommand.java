@@ -114,6 +114,10 @@ public class GuildCommand extends BaseCommand {
             Guild.sendGuildMessage(player, ChatColor.RED + "That player has already been invited to your guild.");
             return;
         }
+        if (guild.getPlayers().size() >= guild.getPlayerLimit()) {
+            Guild.sendGuildMessage(player, ChatColor.RED + "Your guild is full.");
+            return;
+        }
         GuildManager.addInvite(player, target, guild);
         Guild.sendGuildMessage(player,
                 ChatColor.YELLOW + "You invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the guild!\n" +
