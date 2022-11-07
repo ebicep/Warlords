@@ -26,7 +26,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     @Override
     public String getTitle() {
-        return "Benevolent";
+        return "Enhanced";
     }
 
     @Override
