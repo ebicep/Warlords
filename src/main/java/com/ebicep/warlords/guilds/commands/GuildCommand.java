@@ -66,7 +66,7 @@ public class GuildCommand extends BaseCommand {
             return;
         }
         Guild guild = optionalGuild.get();
-        if (!guild.isOpen() && GuildManager.getGuildFromInvite(player, guildName).isEmpty()) {
+        if (!guild.isOpen() && !GuildManager.hasInviteFromGuild(player, guild)) {
             Guild.sendGuildMessage(player,
                     ChatColor.RED + "Guild " + guildName + " is not open or you are not invited to it."
             );
