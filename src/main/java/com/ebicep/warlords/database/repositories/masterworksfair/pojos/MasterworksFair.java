@@ -2,8 +2,6 @@ package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
@@ -67,30 +65,32 @@ public class MasterworksFair {
             }
         }
         Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
-                .asyncLast(databasePlayers -> {
+                .async(() -> {
                     playerFairResults.forEach((uuid, masterworksFairEntries) -> {
-                        for (DatabasePlayer databasePlayer : databasePlayers) {
-                            if (databasePlayer.getUuid().equals(uuid)) {
-                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                if (pveStats == null) {
-                                    return;
-                                }
-                                for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
-                                    WeaponsPvE rarity = masterworksFairEntry.getRarity();
-                                    pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                    LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
-                                    if (throughRewardsInventory) {
-                                        pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
-                                    } else {
-                                        rewards.forEach(pveStats::addCurrency);
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                .syncLast(databasePlayer -> {
+                                    if (databasePlayer == null) {
+                                        return;
                                     }
-                                }
+                                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    if (pveStats == null) {
+                                        return;
+                                    }
+                                    for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
+                                        WeaponsPvE rarity = masterworksFairEntry.getRarity();
+                                        pveStats.addMasterworksFairEntry(masterworksFairEntry);
+                                        LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
+                                        if (throughRewardsInventory) {
+                                            pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                        } else {
+                                            rewards.forEach(pveStats::addCurrency);
+                                        }
+                                    }
 
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                return;
-                            }
-                        }
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                })
+                                .execute();
                     });
                 })
                 .execute();
