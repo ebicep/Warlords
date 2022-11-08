@@ -275,6 +275,10 @@ public class MasterworksFair {
         return startDate;
     }
 
+    public void setStartDate(Instant startDate) {
+        this.startDate = startDate;
+    }
+
     public List<MasterworksFairPlayerEntry> getCommonPlayerEntries() {
         return commonPlayerEntries;
     }
