@@ -22,7 +22,7 @@ import java.util.*;
 public class GuildManager {
 
     public static final List<Guild> GUILDS = new ArrayList<>();
-    private static final Set<GuildInvite> INVITES = new HashSet<>();
+    private static final HashMap<GuildInvite, Instant> INVITES = new HashMap<>();
 
     private static final Set<Guild> GUILDS_TO_UPDATE = new HashSet<>();
 
@@ -115,7 +115,7 @@ public class GuildManager {
 
 
     public static void addInvite(Player from, Player to, Guild guild) {
-        INVITES.add(new GuildInvite(to.getUniqueId(), guild));
+        INVITES.put(new GuildInvite(to.getUniqueId(), guild), Instant.now().plus(5, ChronoUnit.MINUTES));
         guild.log(new GuildLogInvite(from.getUniqueId(), to.getUniqueId()));
         guild.queueUpdate();
 
@@ -131,17 +131,8 @@ public class GuildManager {
     }
 
     public static boolean hasInviteFromGuild(Player invited, Guild guild) {
-        return INVITES.contains(new GuildInvite(invited.getUniqueId(), guild));
-    }
-
-    public static Optional<Guild> getGuildFromInvite(Player player, String guildName) {
-        return INVITES.stream()
-                .filter(invite ->
-                        invite.getUuid().equals(player.getUniqueId()) &&
-                                invite.getGuild().getName().equalsIgnoreCase(guildName) &&
-                                Instant.now().isBefore(invite.getExpiration()))
-                .findFirst()
-                .map(GuildInvite::getGuild);
+        Instant instant = INVITES.get(new GuildInvite(invited.getUniqueId(), guild));
+        return instant != null && Instant.now().isAfter(instant);
     }
 
     public static void removeGuildInvite(Player player, Guild guild) {
@@ -157,7 +148,6 @@ public class GuildManager {
     static class GuildInvite {
         private final UUID uuid;
         private final Guild guild;
-        private final Instant expiration = Instant.now().plus(5, ChronoUnit.MINUTES);
 
         public GuildInvite(UUID uuid, Guild guild) {
             this.uuid = uuid;
@@ -170,10 +160,6 @@ public class GuildManager {
 
         public Guild getGuild() {
             return guild;
-        }
-
-        public Instant getExpiration() {
-            return expiration;
         }
 
         @Override

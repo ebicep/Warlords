@@ -19,6 +19,8 @@ public enum LegendaryTitles {
     WARMONGER(LegendaryWarmonger.class, LegendaryWarmonger::new, LegendaryWarmonger::new, 9),
     REQUIEM(LegendaryRequiem.class, LegendaryRequiem::new, LegendaryRequiem::new, 10),
     STALWART(LegendaryStalwart.class, LegendaryStalwart::new, LegendaryStalwart::new, 11),
+    ENHANCED(LegendaryEnhanced.class, LegendaryEnhanced::new, LegendaryEnhanced::new, 12),
+    GRADIENT(LegendaryGradient.class, LegendaryGradient::new, LegendaryGradient::new, 13),
 
     ;
 

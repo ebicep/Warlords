@@ -1,6 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.pve.quests.QuestsMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,8 +16,12 @@ public class OldTestCommand implements CommandExecutor {
 //                .appendHoverText(ChatColor.GREEN + quest.name, quest.getHoverText())
 //                .create()
 //        );
+//
+//        QuestsMenu.openQuestMenu(player);
 
-        QuestsMenu.openQuestMenu(player);
+        //      MasterworksFairManager.currentFair.setStartDate(Instant.now().minus(7, ChronoUnit.DAYS).plus(1, ChronoUnit.MINUTES));
+        //System.out.println(Instant.now().minus(7, ChronoUnit.DAYS).minus(2, ChronoUnit.MINUTES));
+
 
         return true;
     }

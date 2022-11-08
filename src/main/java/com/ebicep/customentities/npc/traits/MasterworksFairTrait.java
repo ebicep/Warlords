@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairMenu;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -57,6 +58,13 @@ public class MasterworksFairTrait extends WarlordsTrait {
                             .execute();
                     return;
                 }
+            } else {
+                //checking for reset
+                long secondsBetween = ChronoUnit.SECONDS.between(currentFair.getStartDate(), Instant.now());
+                if (secondsBetween > 0 && secondsBetween > Timing.WEEKLY.secondDuration) {
+                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
+                    resetFair(currentFair);
+                }
             }
             updateHologram();
         }
@@ -106,7 +114,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        MasterworksFairManager.openMasterworksFairMenu(event.getClicker());
+        MasterworksFairMenu.openMasterworksFairMenu(event.getClicker());
     }
 
 

@@ -12,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -52,6 +53,16 @@ public class GuildListener implements Listener {
             }
 
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
+        if (guildPlayerPair == null) {
+            return;
+        }
+        guildPlayerPair.getA().sendMOTD(player);
     }
 
 }
