@@ -83,7 +83,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
                     ) {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.1f;
+                            return currentDamageValue * 1.15f;
                         }
                     });
 
@@ -106,7 +106,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon {
 
     @Override
     public String getPassiveEffect() {
-        return "Gain a 10% damage boost after hitting " + TARGETS_TO_HIT + " targets. Can be triggered every " + COOLDOWN + " seconds.";
+        return "Gain a 15% damage boost after hitting " + TARGETS_TO_HIT + " targets. Can be triggered every " + COOLDOWN + " seconds.";
     }
 
     @Override

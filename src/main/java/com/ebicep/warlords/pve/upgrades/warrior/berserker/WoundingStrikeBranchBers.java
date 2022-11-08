@@ -91,7 +91,7 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 60% more damage from Wounding " +
+                "Wounding Strike now applies BLEED instead of wounding.\n\nBLEED: Enemies afflicted take 80% more damage from Wounding " +
                         "Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max " +
                         "health per second.",
                 50000,

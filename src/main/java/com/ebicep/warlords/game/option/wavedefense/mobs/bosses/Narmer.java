@@ -170,7 +170,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                         acolyteDeathTickWindow = option.getDifficulty() == DifficultyIndex.HARD ? 60 : 20;
                     }
 
-                    ticksUntilNewAcolyte = option.getDifficulty() == DifficultyIndex.HARD ? 200 : 300;
+                    ticksUntilNewAcolyte = 300;
                 }
             }
         };
@@ -187,7 +187,7 @@ public class Narmer extends AbstractZombie implements BossMob {
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
             option.spawnNewMob(acolyte);
             acolytes.add(acolyte.getWarlordsNPC());
-            ticksUntilNewAcolyte = option.getDifficulty() == DifficultyIndex.HARD ? 200 : 300;
+            ticksUntilNewAcolyte = 300;
         }
 
         //Bukkit.broadcastMessage("ticks until new acolyte: " + timeUntilNewAcolyte);
