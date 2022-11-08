@@ -16,10 +16,13 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
+import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.util.*;
@@ -184,7 +187,7 @@ public class MasterworksFairCommand extends BaseCommand {
 
     @Subcommand("participants")
     @Description("Lists the participants of the masterworks fair event")
-    public void participants(CommandIssuer issuer, @Optional Integer fairNum) {
+    public void participants(Player player, @Optional Integer fairNum) {
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
                 .syncLast(fairs -> {
@@ -201,27 +204,32 @@ public class MasterworksFairCommand extends BaseCommand {
                             masterworksFair = fairOptional.get();
                             fairNumber.set(masterworksFair.getFairNumber());
                         } else {
-                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNum, true);
+                            ChatChannels.sendDebugMessage(player, ChatColor.RED + "Could not find fair #" + fairNum, true);
                             return;
                         }
                     }
-                    ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Masterworks Fair #" + fairNumber.get() + " Participants:", false);
-                    ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + " - Common", false);
-                    sendFairEntry(issuer, masterworksFair.getCommonPlayerEntries());
-                    ChatChannels.sendDebugMessage(issuer, ChatColor.BLUE + " - Rare", false);
-                    sendFairEntry(issuer, masterworksFair.getRarePlayerEntries());
-                    ChatChannels.sendDebugMessage(issuer, ChatColor.DARK_PURPLE + " - Epic", false);
-                    sendFairEntry(issuer, masterworksFair.getEpicPlayerEntries());
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Masterworks Fair #" + fairNumber.get() + " Participants:", false);
+                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + " - Common", false);
+                    sendFairEntry(player, masterworksFair.getCommonPlayerEntries());
+                    ChatChannels.sendDebugMessage(player, ChatColor.BLUE + " - Rare", false);
+                    sendFairEntry(player, masterworksFair.getRarePlayerEntries());
+                    ChatChannels.sendDebugMessage(player, ChatColor.DARK_PURPLE + " - Epic", false);
+                    sendFairEntry(player, masterworksFair.getEpicPlayerEntries());
                 })
                 .execute();
     }
 
-    private void sendFairEntry(CommandIssuer issuer, List<MasterworksFairPlayerEntry> entries) {
-        for (MasterworksFairPlayerEntry entry : entries) {
-            ChatChannels.sendDebugMessage(issuer,
-                    ChatColor.GRAY + "   - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(entry.getUuid())
-                            .getName() + ChatColor.GRAY + " (" + entry.getUuid() + ")",
-                    false
+    private void sendFairEntry(Player player, List<MasterworksFairPlayerEntry> entries) {
+        entries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
+        Collections.reverse(entries);
+        for (int i = 0; i < entries.size(); i++) {
+            MasterworksFairPlayerEntry entry = entries.get(i);
+            ChatChannels.playerSpigotSendMessage(player,
+                    ChatChannels.DEBUG,
+                    new ComponentBuilder(ChatColor.GRAY + "   " + (i + 1) + ". " +
+                            ChatColor.AQUA + Bukkit.getOfflinePlayer(entry.getUuid()).getName())
+                            .append(ChatColor.GRAY + " (" + entry.getUuid() + ")")
+                            .appendClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "" + entry.getUuid())
             );
         }
     }

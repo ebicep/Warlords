@@ -2,6 +2,8 @@ package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
@@ -65,32 +67,30 @@ public class MasterworksFair {
             }
         }
         Warlords.newChain()
-                .async(() -> {
+                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME))
+                .asyncLast(databasePlayers -> {
                     playerFairResults.forEach((uuid, masterworksFairEntries) -> {
-                        Warlords.newChain()
-                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
-                                .syncLast(databasePlayer -> {
-                                    if (databasePlayer == null) {
-                                        return;
+                        for (DatabasePlayer databasePlayer : databasePlayers) {
+                            if (databasePlayer.getUuid().equals(uuid)) {
+                                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                if (pveStats == null) {
+                                    return;
+                                }
+                                for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
+                                    WeaponsPvE rarity = masterworksFairEntry.getRarity();
+                                    pveStats.addMasterworksFairEntry(masterworksFairEntry);
+                                    LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
+                                    if (throughRewardsInventory) {
+                                        pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                    } else {
+                                        rewards.forEach(pveStats::addCurrency);
                                     }
-                                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                                    if (pveStats == null) {
-                                        return;
-                                    }
-                                    for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
-                                        WeaponsPvE rarity = masterworksFairEntry.getRarity();
-                                        pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                        LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
-                                        if (throughRewardsInventory) {
-                                            pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
-                                        } else {
-                                            rewards.forEach(pveStats::addCurrency);
-                                        }
-                                    }
+                                }
 
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                })
-                                .execute();
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                return;
+                            }
+                        }
                     });
                 })
                 .execute();
@@ -116,33 +116,33 @@ public class MasterworksFair {
                             rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
                             break;
                         case RARE:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
                             break;
                         case EPIC:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
                             break;
                     }
                     break;
                 case 2:
                     switch (rarity) {
                         case COMMON:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
                             break;
                         case RARE:
                             rewards.put(Currencies.SUPPLY_DROP_TOKEN, 75L);
                             break;
                         case EPIC:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
                             break;
                     }
                     break;
                 case 3:
                     switch (rarity) {
                         case COMMON:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
                             break;
                         case RARE:
-                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
                             break;
                         case EPIC:
                             rewards.put(Currencies.SUPPLY_DROP_TOKEN, 70L);
