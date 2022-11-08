@@ -59,6 +59,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
                     return;
                 }
             } else {
+                //checking for reset
                 long secondsBetween = ChronoUnit.SECONDS.between(currentFair.getStartDate(), Instant.now());
                 if (secondsBetween > 0 && secondsBetween > Timing.WEEKLY.secondDuration) {
                     ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
