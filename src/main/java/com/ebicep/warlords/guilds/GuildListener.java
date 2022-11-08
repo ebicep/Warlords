@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 public class GuildListener implements Listener {
 
@@ -63,12 +62,7 @@ public class GuildListener implements Listener {
         if (guildPlayerPair == null) {
             return;
         }
-        List<String> motd = guildPlayerPair.getA().getMotd();
-        if (motd != null) {
-            for (String line : motd) {
-                player.sendMessage(line);
-            }
-        }
+        guildPlayerPair.getA().sendMOTD(player);
     }
 
 }

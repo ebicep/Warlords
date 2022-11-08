@@ -430,42 +430,105 @@ public class GuildCommand extends BaseCommand {
         guild.setTag(guildPlayer, tag);
     }
 
-    @Subcommand("motd")
-    @Description("Changes the MOTD of your guild")
-    public void motd(
-            @Conditions("guild:true") Player player,
-            @Conditions("requirePerm:perm=MODIFY_TAG") GuildPlayerWrapper guildPlayerWrapper,
-            Integer line,
-            String message
-    ) {
-        Guild guild = guildPlayerWrapper.getGuild();
-        GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
-        List<String> motd = guild.getMotd();
-        if (line > motd.size() + 1) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Line number is too high.");
-            return;
-        }
-        if (line < 1) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "Line number must be greater than 0.");
-            return;
-        }
-        if (line > 10) {
-            Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
-            return;
-        }
-        if (line == motd.size() + 1) {
-            motd.add(message);
-        } else {
-            motd.set(line - 1, message);
-        }
-        guild.queueUpdate();
-    }
-
-
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
         help.showHelp();
+    }
+
+    @Subcommand("motd")
+    public class GuildMOTDCommand extends BaseCommand {
+
+        @Subcommand("add")
+        @Description("Adds a line in the MOTD of your guild")
+        public void add(
+                @Conditions("guild:true") Player player,
+                @Conditions("requirePerm:perm=MODIFY_MOTD") GuildPlayerWrapper guildPlayerWrapper,
+                String message
+        ) {
+            Guild guild = guildPlayerWrapper.getGuild();
+            GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+            List<String> motd = guild.getMotd();
+            if (motd.size() >= 10) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
+                return;
+            }
+            motd.add(message);
+            guild.queueUpdate();
+            Guild.sendGuildMessage(player, ChatColor.GRAY + "Appended " + ChatColor.RESET + message + ChatColor.GRAY + " to the MOTD.");
+        }
+
+
+        @Subcommand("set")
+        @Description("Sets a line in the MOTD of your guild")
+        public void set(
+                @Conditions("guild:true") Player player,
+                @Conditions("requirePerm:perm=MODIFY_MOTD") GuildPlayerWrapper guildPlayerWrapper,
+                Integer line,
+                String message
+        ) {
+            Guild guild = guildPlayerWrapper.getGuild();
+            GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+            List<String> motd = guild.getMotd();
+            if (line > motd.size() + 1) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "You can only edit lines that already exist.");
+                return;
+            }
+            if (line < 1) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Line number must be greater than 0.");
+                return;
+            }
+            if (line > 10) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "You can only have up to 10 lines in your MOTD.");
+                return;
+            }
+            if (line == motd.size() + 1) {
+                motd.add(message);
+            } else {
+                motd.set(line - 1, message);
+            }
+            guild.queueUpdate();
+            Guild.sendGuildMessage(player,
+                    ChatColor.GRAY + "Set line " + ChatColor.GREEN + line + ChatColor.GRAY + " to " +
+                            ChatColor.RESET + message +
+                            ChatColor.GRAY + "."
+            );
+        }
+
+        @Subcommand("preview")
+        @Description("Shows the MOTD of your guild")
+        public void preview(
+                @Conditions("guild:true") Player player,
+                @Conditions("requirePerm:perm=MODIFY_MOTD") GuildPlayerWrapper guildPlayerWrapper
+        ) {
+            Guild guild = guildPlayerWrapper.getGuild();
+            GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+            List<String> motd = guild.getMotd();
+            if (motd == null || motd.isEmpty()) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Your guild does not have a MOTD.");
+                return;
+            }
+            guild.sendMOTD(player);
+        }
+
+        @Subcommand("clear")
+        @Description("Clears the MOTD of your guild")
+        public void clear(
+                @Conditions("guild:true") Player player,
+                @Conditions("requirePerm:perm=MODIFY_MOTD") GuildPlayerWrapper guildPlayerWrapper
+        ) {
+            Guild guild = guildPlayerWrapper.getGuild();
+            GuildPlayer guildPlayer = guildPlayerWrapper.getGuildPlayer();
+            List<String> motd = guild.getMotd();
+            if (motd == null || motd.isEmpty()) {
+                Guild.sendGuildMessage(player, ChatColor.RED + "Your guild does not have a MOTD.");
+                return;
+            }
+            guild.getMotd().clear();
+            guild.queueUpdate();
+            Guild.sendGuildMessage(player, ChatColor.GREEN + "Cleared the MOTD.");
+        }
+
     }
 
     @Subcommand("leaderboard")

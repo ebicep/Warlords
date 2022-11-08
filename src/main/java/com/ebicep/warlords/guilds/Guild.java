@@ -498,6 +498,15 @@ public class Guild {
         return motd;
     }
 
+    public void sendMOTD(Player player) {
+        if (motd == null || motd.isEmpty()) {
+            return;
+        }
+        player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "---------- Guild Message of the Day ----------");
+        motd.forEach(player::sendMessage);
+        player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "-------------------------------------------");
+    }
+
     @Override
     public String toString() {
         return "Guild{" +
