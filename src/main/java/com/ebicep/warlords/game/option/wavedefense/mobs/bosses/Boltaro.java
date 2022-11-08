@@ -15,6 +15,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -93,7 +94,8 @@ public class Boltaro extends AbstractZombie implements BossMob {
             HandlerList.unregisterAll(listener);
 
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
-            for (int i = 0; i < 2; i++) {
+            float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 4 : 2;
+            for (int i = 0; i < multiplier; i++) {
                 option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
             }
 

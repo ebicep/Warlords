@@ -37,7 +37,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Weapons.VORPAL_SWORD.getItem()
                 ),
                 26000,
-                0.4f,
+                0.38f,
                 25,
                 1500,
                 2000
@@ -80,7 +80,7 @@ public class Zenith extends AbstractZombie implements BossMob {
             }.runTaskLater(30);
         }
 
-        if (ticksElapsed % 60 == 0) {
+        if (ticksElapsed % 80 == 0) {
             EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(loc, 4, 4, 4)
@@ -103,7 +103,7 @@ public class Zenith extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
         Utils.addKnockback(attacker.getLocation(), receiver, -2, 0.3);
 
-        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon"))) {
+        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon") || event.getAbility().equals("Intervene"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
 

@@ -47,6 +47,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -308,6 +309,13 @@ public class WaveDefenseOption implements Option {
                             wp.sendMessage(ChatColor.GOLD + "+" + currency + " ❂ Insignia");
                         });
                         Bukkit.getPluginManager().callEvent(new WarlordsGameWaveClearEvent(game, waveCounter - 1));
+                    }
+
+                    if (difficulty == DifficultyIndex.ENDLESS && (waveCounter == 50 || waveCounter == 100)) {
+                        getGame().forEachOnlineWarlordsPlayer(wp -> {
+                            wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                            wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
+                        });
                     }
                 }
 

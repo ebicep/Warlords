@@ -1123,7 +1123,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(4.5, 14, -12.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(14.5, 14, -4.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(11.5, 14, 5.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 19, 14.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 14, 14.5), Team.RED));
 
             options.add(new GraveOption());
 
@@ -1152,7 +1152,7 @@ public enum GameMap {
                             //void
                             .add(0, Mobs.VOID_ZOMBIE)
                     )
-                    .add(5, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
+                    .add(5, new SimpleWave(2, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
                     .add(6, new SimpleWave(15, 10 * SECOND, null)
@@ -1237,10 +1237,10 @@ public enum GameMap {
                             .add(0.2, Mobs.GHOST_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)
                             .add(0, Mobs.BASIC_PIG_ZOMBIE)
-                            .add(0.2, Mobs.BASIC_SLIME)
+                            .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.2, Mobs.SPIDER)
                             //elite
-                            .add(0.8, Mobs.ELITE_ZOMBIE)
+                            .add(0.5, Mobs.ELITE_ZOMBIE)
                             .add(0.1, Mobs.ELITE_SKELETON)
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.02, Mobs.MAGMA_CUBE)
@@ -1253,7 +1253,7 @@ public enum GameMap {
                             .add(0.04, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             //elite
                             .add(0.08, Mobs.VOID_ZOMBIE)
-                            .add(0.02, Mobs.VOID_SKELETON)
+                            .add(0.04, Mobs.VOID_SKELETON)
                             .add(0.04, Mobs.EXILED_ZOMBIE_RIFT)
                             .add(0.04, Mobs.EXILED_ZOMBIE_LAVA)
                     )
@@ -1559,7 +1559,7 @@ public enum GameMap {
                     .add(20, new SimpleWave(1, 10 * SECOND, "Boss", MobTier.BOSS)
                             .add(Mobs.MITHRA)
                     )
-                    .add(21, new SimpleWave(15, 10 * SECOND, null)
+                    .add(21, new SimpleWave(18, 10 * SECOND, null)
                             //basic
                             .add(0.5, Mobs.BASIC_ZOMBIE)
                             .add(0, Mobs.BASIC_SKELETON)

@@ -763,6 +763,7 @@ public class Warlords extends JavaPlugin {
                             for (WarlordsEntity nearPlayer : PlayerFilter
                                     .entitiesAround(wp, 6, 6, 6)
                                     .aliveTeammatesOfExcludingSelf(wp)
+                                    .leastAliveFirst()
                                     .limit(2)
                             ) {
                                 nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);

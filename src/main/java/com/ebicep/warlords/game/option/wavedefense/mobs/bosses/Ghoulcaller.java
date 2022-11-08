@@ -14,6 +14,7 @@ import com.ebicep.warlords.game.option.wavedefense.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.game.option.wavedefense.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -115,6 +116,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         PLAYER_COUNT_DAMAGE_VALUES.get(1)).getB() * Math.pow(0.95, attacksInLast5Seconds)
                 );
 
+                float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
                 Location loc = warlordsNPC.getLocation();
                 Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
                 EffectUtils.playHelixAnimation(loc, 10, ParticleEffect.VILLAGER_ANGRY, 1, 20);
@@ -124,8 +126,8 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                             enemyPlayer.addDamageInstance(
                                     getWarlordsNPC(),
                                     "Fury",
-                                    minDamage,
-                                    maxDamage,
+                                    minDamage * multiplier,
+                                    maxDamage * multiplier,
                                     0,
                                     100,
                                     false
