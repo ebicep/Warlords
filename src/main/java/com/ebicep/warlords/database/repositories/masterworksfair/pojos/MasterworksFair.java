@@ -3,9 +3,13 @@ package com.ebicep.warlords.database.repositories.masterworksfair.pojos;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
+import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.ChatColor;
 import org.springframework.data.annotation.Id;
@@ -37,7 +41,8 @@ public class MasterworksFair {
     public MasterworksFair() {
     }
 
-    public void sendResults(boolean inCaseYouMissedIt) {
+    public void sendRewards(boolean throughRewardsInventory) {
+        Instant now = Instant.now();
         HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
         for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
             if (rarity.getPlayerEntries == null) {
@@ -50,17 +55,148 @@ public class MasterworksFair {
 
             for (int i = 0; i < playerEntries.size(); i++) {
                 MasterworksFairPlayerEntry entry = playerEntries.get(i);
-                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(null,
+                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(now,
                         rarity,
                         i + 1,
                         Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())),
                         fairNumber
                 );
                 playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
-
             }
         }
-        sendResults(playerFairResults, inCaseYouMissedIt);
+        Warlords.newChain()
+                .async(() -> {
+                    playerFairResults.forEach((uuid, masterworksFairEntries) -> {
+                        Warlords.newChain()
+                                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
+                                .syncLast(databasePlayer -> {
+                                    if (databasePlayer == null) {
+                                        return;
+                                    }
+                                    DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                                    if (pveStats == null) {
+                                        return;
+                                    }
+                                    for (MasterworksFairEntry masterworksFairEntry : masterworksFairEntries) {
+                                        WeaponsPvE rarity = masterworksFairEntry.getRarity();
+                                        pveStats.addMasterworksFairEntry(masterworksFairEntry);
+                                        LinkedHashMap<Currencies, Long> rewards = getRewards(masterworksFairEntry);
+                                        if (throughRewardsInventory) {
+                                            pveStats.addReward(new MasterworksFairReward(rewards, now, rarity));
+                                        } else {
+                                            rewards.forEach(pveStats::addCurrency);
+                                        }
+                                    }
+
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                })
+                                .execute();
+                    });
+                })
+                .execute();
+        sendResults(playerFairResults, false);
+        if (throughRewardsInventory) {
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries through reward inventory");
+        } else {
+            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Awarded entries directly");
+        }
+    }
+
+    public LinkedHashMap<Currencies, Long> getRewards(MasterworksFairEntry masterworksFairEntry) {
+        int placement = masterworksFairEntry.getPlacement();
+        float score = masterworksFairEntry.getScore();
+        WeaponsPvE rarity = masterworksFairEntry.getRarity();
+        LinkedHashMap<Currencies, Long> rewards = new LinkedHashMap<>();
+        if (placement <= 3) {
+            rewards.put(rarity.starPieceCurrency, 1L);
+            switch (placement) {
+                case 1:
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 150L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 75L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (rarity) {
+                        case COMMON:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                            break;
+                        case RARE:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                            break;
+                        case EPIC:
+                            rewards.put(Currencies.SUPPLY_DROP_TOKEN, 70L);
+                            break;
+                    }
+                    break;
+            }
+        } else {
+            if (placement <= 10 ||
+                    (rarity == WeaponsPvE.COMMON && score > 90) ||
+                    (rarity == WeaponsPvE.RARE && score > 85) ||
+                    (rarity == WeaponsPvE.EPIC && score > 75)
+            ) {
+                switch (rarity) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 35L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                        break;
+                }
+            } else if (placement <= 20) {
+                switch (rarity) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 30L);
+                        break;
+                }
+            } else {
+                switch (masterworksFairEntry.getRarity()) {
+                    case COMMON:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 5L);
+                        break;
+                    case RARE:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                        break;
+                    case EPIC:
+                        rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                        break;
+                }
+            }
+        }
+        if (fairNumber != 0 && fairNumber % 10 == 0) {
+            rewards.forEach((currency, amount) -> rewards.put(currency, amount * 10));
+        }
+        return rewards;
     }
 
     public void sendResults(HashMap<UUID, List<MasterworksFairEntry>> playerFairResults, boolean inCaseYouMissedIt) {
@@ -103,6 +239,32 @@ public class MasterworksFair {
                     })
                     .execute();
         });
+    }
+
+    public void sendResults(boolean inCaseYouMissedIt) {
+        HashMap<UUID, List<MasterworksFairEntry>> playerFairResults = new HashMap<>();
+        for (WeaponsPvE rarity : WeaponsPvE.VALUES) {
+            if (rarity.getPlayerEntries == null) {
+                continue;
+            }
+
+            List<MasterworksFairPlayerEntry> playerEntries = rarity.getPlayerEntries.apply(this);
+            playerEntries.sort(Comparator.comparingDouble(o -> ((WeaponScore) o.getWeapon()).getWeaponScore()));
+            Collections.reverse(playerEntries);
+
+            for (int i = 0; i < playerEntries.size(); i++) {
+                MasterworksFairPlayerEntry entry = playerEntries.get(i);
+                MasterworksFairEntry playerRecordEntry = new MasterworksFairEntry(null,
+                        rarity,
+                        i + 1,
+                        Float.parseFloat(NumberFormat.formatOptionalHundredths(((WeaponScore) entry.getWeapon()).getWeaponScore())),
+                        fairNumber
+                );
+                playerFairResults.computeIfAbsent(entry.getUuid(), k -> new ArrayList<>()).add(playerRecordEntry);
+
+            }
+        }
+        sendResults(playerFairResults, inCaseYouMissedIt);
     }
 
     public String getId() {

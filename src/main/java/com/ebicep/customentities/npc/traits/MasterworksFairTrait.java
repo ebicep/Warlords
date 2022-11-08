@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairMenu;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -106,7 +107,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        MasterworksFairManager.openMasterworksFairMenu(event.getClicker());
+        MasterworksFairMenu.openMasterworksFairMenu(event.getClicker());
     }
 
 

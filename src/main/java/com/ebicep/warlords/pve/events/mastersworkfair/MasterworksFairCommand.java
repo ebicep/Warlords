@@ -68,6 +68,30 @@ public class MasterworksFairCommand extends BaseCommand {
                 .execute();
     }
 
+    @Subcommand("resendrewards")
+    @Description("Resends the rewards of the selected masterworks fair, or the latest one if none is selected")
+    public void resendRewards(CommandIssuer issuer, @Optional Integer fairNumber) {
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.masterworksFairService.findAll())
+                .syncLast(fairs -> {
+                    if (fairNumber == null) {
+                        fairs.get(fairs.size() - 2).sendRewards(true);
+                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair before current rewards", true);
+                    } else {
+                        java.util.Optional<MasterworksFair> fairOptional = fairs.stream()
+                                .filter(fair -> fair.getFairNumber() == fairNumber)
+                                .findFirst();
+                        if (fairOptional.isPresent()) {
+                            fairOptional.get().sendRewards(true);
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Resent Masterworks Fair #" + fairNumber + " rewards", true);
+                        } else {
+                            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Could not find fair #" + fairNumber, true);
+                        }
+                    }
+                })
+                .execute();
+    }
+
     @Subcommand("validate")
     @Description("Validates the masterworks fair event, making sure players got their rewards")
     public void validate(CommandIssuer issuer, Instant instant) {
@@ -131,9 +155,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                                     }
                                                     resent = true;
                                                     pveStats.addMasterworksFairEntry(masterworksFairEntry);
-                                                    LinkedHashMap<Currencies, Long> rewards = MasterworksFairManager.getRewards(masterworksFair,
-                                                            masterworksFairEntry
-                                                    );
+                                                    LinkedHashMap<Currencies, Long> rewards = masterworksFair.getRewards(masterworksFairEntry);
                                                     pveStats.addReward(new MasterworksFairReward(rewards, instant, rarity));
                                                     ChatChannels.sendDebugMessage(
                                                             (CommandIssuer) null,
