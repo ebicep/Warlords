@@ -82,7 +82,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
         masterUpgrade = new Upgrade(
                 "Soul Burst",
                 "Soul Switch - Master Upgrade",
-                "Be able to swap with an enemy, leave a decoy on your original position that explodes after 3 seconds for 1004-1248 damage, near enemies are " +
+                "Be able to swap with an enemy, leave a decoy on your original position that explodes after 3 seconds for 1004-1248 damage, nearby enemies are " +
                         "drawn to the decoy.",
                 50000,
                 () -> {

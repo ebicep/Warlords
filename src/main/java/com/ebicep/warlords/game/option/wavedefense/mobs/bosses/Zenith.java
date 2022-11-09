@@ -37,7 +37,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         Weapons.VORPAL_SWORD.getItem()
                 ),
                 26000,
-                0.38f,
+                0.36f,
                 25,
                 1500,
                 2000

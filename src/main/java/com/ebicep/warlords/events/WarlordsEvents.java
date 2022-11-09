@@ -109,7 +109,7 @@ public class WarlordsEvents implements Listener {
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             player.setAllowFlight(true);
-            e.setJoinMessage(ChatColor.AQUA + player.getName() + ChatColor.GOLD + " joined the lobby!");
+            e.setJoinMessage(Permissions.getPrefixWithColor(player) + player.getName() + ChatColor.GOLD + " joined the lobby!");
         }
 
         CustomScoreboard customScoreboard = CustomScoreboard.getPlayerScoreboard(player);

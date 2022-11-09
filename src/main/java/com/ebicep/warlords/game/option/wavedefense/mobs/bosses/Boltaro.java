@@ -94,8 +94,7 @@ public class Boltaro extends AbstractZombie implements BossMob {
             HandlerList.unregisterAll(listener);
 
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.SMOKE_NORMAL, 3, 20);
-            float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 4 : 2;
-            for (int i = 0; i < multiplier; i++) {
+            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
                 option.spawnNewMob(new BoltaroShadow(warlordsNPC.getLocation()));
             }
 

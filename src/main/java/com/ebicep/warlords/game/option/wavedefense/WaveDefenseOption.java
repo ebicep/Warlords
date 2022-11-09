@@ -432,11 +432,9 @@ public class WaveDefenseOption implements Option {
                 int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
                 switch (playerCount) {
                     case 2:
-                        spawnCount *= 1.05f;
-                        break;
-                    case 3:
                         spawnCount *= 1.1f;
                         break;
+                    case 3:
                     case 4:
                         spawnCount *= 1.15f;
                         break;
@@ -470,19 +468,19 @@ public class WaveDefenseOption implements Option {
                 soundPitch = 0.4f;
                 wavePrefix = "§d§lWave ";
             }
-            if (waveCounter >= 150) {
+            if (waveCounter >= 110) {
                 soundPitch = 0.3f;
                 wavePrefix = "§5§lWave ";
             }
-            if (waveCounter >= 200) {
+            if (waveCounter >= 120) {
                 soundPitch = 0.2f;
                 wavePrefix = "§5W§5§k§la§5§lve ";
             }
-            if (waveCounter >= 250) {
+            if (waveCounter >= 130) {
                 soundPitch = 0.1f;
                 wavePrefix = "§4W§4§k§la§4§lve ";
             }
-            if (waveCounter >= 300) {
+            if (waveCounter >= 150) {
                 wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
             }
 
@@ -506,11 +504,9 @@ public class WaveDefenseOption implements Option {
             int playerCount = (int) game.warlordsPlayersWithoutSpectators().count();
             switch (playerCount) {
                 case 2:
-                    spawnCount *= 1.05f;
-                    break;
-                case 3:
                     spawnCount *= 1.1f;
                     break;
+                case 3:
                 case 4:
                     spawnCount *= 1.15f;
                     break;
