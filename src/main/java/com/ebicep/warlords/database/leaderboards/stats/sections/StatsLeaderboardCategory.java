@@ -22,11 +22,13 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
 
     private final Function<DatabasePlayer, T> statFunction;
     private final String categoryName;
+    private final String shortName;
     private final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
 
-    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName) {
+    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName, String shortName) {
         this.statFunction = statFunction;
         this.categoryName = categoryName;
+        this.shortName = shortName;
     }
 
     public void resetLeaderboards(PlayersCollections collection, Set<DatabasePlayer> databasePlayers, String subTitle) {
@@ -66,6 +68,10 @@ public class StatsLeaderboardCategory<T extends AbstractDatabaseStatInformation>
 
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     public List<StatsLeaderboard> getStatsLeaderboards() {

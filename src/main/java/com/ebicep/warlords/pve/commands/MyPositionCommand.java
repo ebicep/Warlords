@@ -31,11 +31,23 @@ public class MyPositionCommand extends BaseCommand {
             new StatLeaderboardTarget("Deaths", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getDeaths())),
             new StatLeaderboardTarget("Waves Cleared", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getTotalWavesCleared())),
             new StatLeaderboardTarget("Games Cleared", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getWins())),
-            new StatLeaderboardTarget("Clear Rate", pvEDatabaseStatInformation -> NumberFormat.addCommaAndRound(pvEDatabaseStatInformation.getWinRate() * 100) + "%"),
+            new StatLeaderboardTarget("Clear Rate",
+                    pvEDatabaseStatInformation -> NumberFormat.addCommaAndRound(pvEDatabaseStatInformation.getWinRate() * 100) + "%"
+            ),
     };
 
-    private static void appendStats(StatLeaderboardTarget statLeaderboardTarget, DatabasePlayer databasePlayer, PvEDatabaseStatInformation statInformation, String prefix, StringBuilder stats) {
-        for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE).getComps().getStatsLeaderboards()) {
+    private static void appendStats(
+            StatLeaderboardTarget statLeaderboardTarget,
+            DatabasePlayer databasePlayer,
+            PvEDatabaseStatInformation statInformation,
+            String prefix,
+            StringBuilder stats
+    ) {
+        for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE)
+                .getCategories()
+                .get(0)
+                .getStatsLeaderboards()
+        ) {
             if ((prefix + statLeaderboardTarget.getLeaderboardName()).equals(statsLeaderboard.getTitle())) {
                 stats.append("\n").append(ChatColor.GREEN).append(statLeaderboardTarget.getDisplayName())
                         .append(": ").append(statLeaderboardTarget.getStatFunction().apply(statInformation));
@@ -49,7 +61,11 @@ public class MyPositionCommand extends BaseCommand {
     }
 
     private static void appendStat(String title, DatabasePlayer databasePlayer, StringBuilder stats) {
-        for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE).getComps().getStatsLeaderboards()) {
+        for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.PVE)
+                .getCategories()
+                .get(0)
+                .getStatsLeaderboards()
+        ) {
             if (statsLeaderboard.getTitle().equals(title)) {
                 stats.append("\n").append(ChatColor.GREEN).append(title)
                         .append(": ").append(statsLeaderboard.getStringFunction().apply(databasePlayer));
@@ -70,8 +86,10 @@ public class MyPositionCommand extends BaseCommand {
 
             StringBuilder stats = new StringBuilder(ChatColor.GOLD + "Your Stats");
             for (StatsLeaderboard statsLeaderboard : StatsLeaderboardManager.STATS_LEADERBOARDS.get(StatsLeaderboardManager.GameType.ALL)
-                    .getGeneral()
-                    .getStatsLeaderboards()) {
+                    .getCategories()
+                    .get(0)
+                    .getStatsLeaderboards()
+            ) {
                 if (statsLeaderboard.getTitle().equals("Experience")) {
                     stats.append("\n").append(ChatColor.GREEN).append("Level")
                             .append(": ").append(NumberFormat.addCommaAndRound(databasePlayer.getLevel()));

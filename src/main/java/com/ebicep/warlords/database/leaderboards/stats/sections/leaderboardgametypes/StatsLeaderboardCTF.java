@@ -7,18 +7,21 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
 public class StatsLeaderboardCTF extends AbstractStatsLeaderboardGameType<DatabasePlayerCTF> {
 
+    private static final List<StatsLeaderboardCategory<DatabasePlayerCTF>> CATEGORIES = new ArrayList<>() {{
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getCtfStats, "All Queues", "All"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getCompStats().getCtfStats(), "Competitive Queue", "Comps"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPubStats().getCtfStats(), "Public Queue", "Pubs"));
+    }};
+
     public StatsLeaderboardCTF() {
-        super(
-                new StatsLeaderboardCategory<>(DatabasePlayer::getCtfStats, "All Queues"),
-                new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getCompStats().getCtfStats(), "Comps"),
-                new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPubStats().getCtfStats(), "Pubs")
-        );
+        super(CATEGORIES);
     }
 
     @Override

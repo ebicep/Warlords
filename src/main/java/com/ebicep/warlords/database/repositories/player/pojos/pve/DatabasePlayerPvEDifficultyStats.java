@@ -127,10 +127,38 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         return new DatabaseBasePvE[]{mage, warrior, paladin, shaman, rogue};
     }
 
+    public DatabaseMagePvE getMage() {
+        return mage;
+    }
+
+    public DatabaseWarriorPvE getWarrior() {
+        return warrior;
+    }
+
+    public DatabasePaladinPvE getPaladin() {
+        return paladin;
+    }
+
+    public DatabaseShamanPvE getShaman() {
+        return shaman;
+    }
+
+    public DatabaseRoguePvE getRogue() {
+        return rogue;
+    }
+
+    public Map<Integer, DatabasePlayerPvEPlayerCountStats> getPlayerCountStats() {
+        return playerCountStats;
+    }
+
     public DatabasePlayerPvEPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;
         }
         return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEPlayerCountStats());
+    }
+
+    public float getClearRate() {
+        return plays == 0 ? 0 : (float) wins / plays;
     }
 }

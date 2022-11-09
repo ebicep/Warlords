@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLea
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
@@ -12,19 +13,24 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
 
-public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvE> {
+public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> {
+
+    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues", "All"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getEasyStats(), "Easy Mode", "Easy"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getNormalStats(), "Normal Mode", "Normal"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getHardStats(), "Hard Mode", "Hard"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getEndlessStats(), "Endless Mode", "Endless"));
+    }};
 
     public StatsLeaderboardPvE() {
-        super(
-                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues"),
-                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues"),
-                new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Queues")
-        );
+        super(CATEGORIES);
     }
 
     @Override
@@ -33,7 +39,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvE> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
         statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
                 CENTER_BOARD_1,
@@ -68,58 +74,35 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
         ));
         statsLeaderboards.add(new StatsLeaderboard("Clear Rate",
                 LEAD_5,
-                databasePlayer -> {
-                    DatabasePlayerPvE databasePlayerPvE = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
-                    double plays = databasePlayerPvE.getNormalStats().getPlays() + databasePlayerPvE.getHardStats().getPlays();
-                    return plays == 0 ? 0 : (databasePlayerPvE.getNormalStats().getWins() + databasePlayerPvE.getHardStats().getWins()) / plays;
-                },
-                databasePlayer -> {
-                    DatabasePlayerPvE databasePlayerPvE = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
-                    double plays = databasePlayerPvE.getNormalStats().getPlays() + databasePlayerPvE.getHardStats().getPlays();
-                    double clearRate = plays == 0 ? 0 : (databasePlayerPvE.getNormalStats().getWins() + databasePlayerPvE.getHardStats().getWins()) / plays;
-                    return NumberFormat.addCommaAndRound(clearRate * 100) + "%";
-                }
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate() * 100) + "%"
         ));
-        statsLeaderboards.add(new StatsLeaderboard("Fastest Normal Win", UPPER_CENTER_1,
-                databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getNormalStats().getFastestGameFinished(),
-                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
-                        .apply(databasePlayer)
-                        .getNormalStats()
-                        .getFastestGameFinished() / 20),
+        statsLeaderboards.add(new StatsLeaderboard("Fastest Win", UPPER_CENTER_1,
+                databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),
+                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() / 20),
                 databasePlayer -> databasePlayer.getPveStats().getNormalStats().getFastestGameFinished() == 0
         ));
-        statsLeaderboards.add(new StatsLeaderboard("Highest Endless Wave Cleared", UPPER_CENTER_2,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getEndlessStats().getHighestWaveCleared(),
+        statsLeaderboards.add(new StatsLeaderboard("Highest Wave Cleared", UPPER_CENTER_2,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHighestWaveCleared(),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
                         .apply(databasePlayer)
-                        .getEndlessStats()
                         .getHighestWaveCleared())
         ));
-        statsLeaderboards.add(new StatsLeaderboard("Fastest Hard Win", UPPER_CENTER_3,
-                databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHardStats().getFastestGameFinished(),
-                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction()
-                        .apply(databasePlayer)
-                        .getHardStats()
-                        .getFastestGameFinished() / 20),
-                databasePlayer -> databasePlayer.getPveStats().getHardStats().getFastestGameFinished() == 0
-        ));
-
         statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", SPAWN_POINT,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMasterworksFairEntries().stream()
+                databasePlayer -> ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries().stream()
                         .filter(masterworksFairEntry -> masterworksFairEntry.getPlacement() == 1)
                         .count(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
-                        .apply(databasePlayer)
+                databasePlayer -> NumberFormat.addCommaAndRound(((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                         .getMasterworksFairEntries()
                         .stream()
                         .filter(masterworksFairEntry -> masterworksFairEntry.getPlacement() == 1)
                         .count()),
+                databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                 true
         ));
         statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair Placement", SPAWN_POINT,
                 databasePlayer -> {
-                    List<MasterworksFairEntry> masterworksFairEntries = statsLeaderboardCategory.getStatFunction()
-                            .apply(databasePlayer)
+                    List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                             .getMasterworksFairEntries();
                     if (masterworksFairEntries.isEmpty()) {
                         return 0;
@@ -129,8 +112,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                             .sum() / masterworksFairEntries.size();
                 },
                 databasePlayer -> {
-                    List<MasterworksFairEntry> masterworksFairEntries = statsLeaderboardCategory.getStatFunction()
-                            .apply(databasePlayer)
+                    List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                             .getMasterworksFairEntries();
                     if (masterworksFairEntries.isEmpty()) {
                         return "0";
@@ -140,6 +122,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                                     .mapToInt(MasterworksFairEntry::getPlacement)
                                     .sum() / masterworksFairEntries.size());
                 },
+                databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                 true
         ));
         for (WeaponsPvE value : WeaponsPvE.VALUES) {
@@ -147,21 +130,22 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 continue;
             }
             statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair " + value.name + " Wins", SPAWN_POINT,
-                    databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMasterworksFairEntries().stream()
+                    databasePlayer -> ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries()
+                            .stream()
                             .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value && masterworksFairEntry.getPlacement() == 1)
                             .count(),
-                    databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction()
-                            .apply(databasePlayer)
+                    databasePlayer -> NumberFormat.addCommaAndRound(((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                             .getMasterworksFairEntries()
                             .stream()
                             .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value && masterworksFairEntry.getPlacement() == 1)
                             .count()),
+                    databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                     true
             ));
             statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair " + value.name + " Placement", SPAWN_POINT,
                     databasePlayer -> {
-                        List<MasterworksFairEntry> masterworksFairEntries = statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer)
+                        List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
+                                .apply(databasePlayer))
                                 .getMasterworksFairEntries();
                         if (masterworksFairEntries.isEmpty()) {
                             return 0;
@@ -172,8 +156,8 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                                 .sum() / masterworksFairEntries.size();
                     },
                     databasePlayer -> {
-                        List<MasterworksFairEntry> masterworksFairEntries = statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer)
+                        List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
+                                .apply(databasePlayer))
                                 .getMasterworksFairEntries();
                         if (masterworksFairEntries.isEmpty()) {
                             return "0";
@@ -184,6 +168,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                                         .mapToInt(MasterworksFairEntry::getPlacement)
                                         .sum() / masterworksFairEntries.size());
                     },
+                    databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                     true
             ));
         }

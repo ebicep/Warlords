@@ -151,9 +151,9 @@ public class StatsLeaderboardManager {
 
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
-        Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
+        int selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
-        return selectedCategory.getCategory.apply(STATS_LEADERBOARDS.get(selectedGameType));
+        return STATS_LEADERBOARDS.get(selectedGameType).getCategories().get(selectedCategory);
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
@@ -230,18 +230,16 @@ public class StatsLeaderboardManager {
                 gameType -> gameType.name,
                 playerLeaderboardInfo::setStatsGameType
         );
-        if (selectedType == GameType.PVE) {
-            playerLeaderboardInfo.setStatsCategory(Category.ALL);
-        }
         //CATEGORY
-        Category selectedCategory = playerLeaderboardInfo.getStatsCategory();
+        List<? extends StatsLeaderboardCategory<?>> categories = STATS_LEADERBOARDS.get(selectedType).getCategories();
+        int selectedCategory = playerLeaderboardInfo.getStatsCategory();
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
-                selectedCategory,
-                selectedType == GameType.PVE ? selectedCategory : Category.getBefore(selectedCategory),
-                selectedType == GameType.PVE ? selectedCategory : Category.getAfter(selectedCategory),
-                category -> category.name,
-                playerLeaderboardInfo::setStatsCategory
+                categories.get(selectedCategory),
+                categories.get(selectedCategory == 0 ? categories.size() - 1 : selectedCategory - 1),
+                categories.get(selectedCategory == categories.size() - 1 ? 0 : selectedCategory + 1),
+                StatsLeaderboardCategory::getShortName,
+                category -> playerLeaderboardInfo.setStatsCategory(categories.indexOf(category))
         );
         //TIME
         PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
@@ -381,52 +379,5 @@ public class StatsLeaderboardManager {
             this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;
         }
     }
-
-    public enum Category {
-        ALL("All Queues", "", AbstractStatsLeaderboardGameType::getGeneral) {
-
-        },
-        COMPS("Competitive Queue", "Comps", AbstractStatsLeaderboardGameType::getComps) {
-
-        },
-        PUBS("Public Queue", "Pubs", AbstractStatsLeaderboardGameType::getPubs) {
-
-        };
-
-        public static Category getAfter(Category category) {
-            switch (category) {
-                case ALL:
-                    return COMPS;
-                case COMPS:
-                    return PUBS;
-                case PUBS:
-                    return ALL;
-            }
-            return ALL;
-        }
-
-        public static Category getBefore(Category category) {
-            switch (category) {
-                case ALL:
-                    return PUBS;
-                case COMPS:
-                    return ALL;
-                case PUBS:
-                    return COMPS;
-            }
-            return ALL;
-        }
-
-        public final String name;
-        public final String shortName;
-        public final Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory;
-
-        Category(String name, String shortName, Function<AbstractStatsLeaderboardGameType<?>, StatsLeaderboardCategory<?>> getCategory) {
-            this.name = name;
-            this.shortName = shortName;
-            this.getCategory = getCategory;
-        }
-    }
-
 
 }
