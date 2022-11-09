@@ -79,7 +79,7 @@ public class GroundSlam extends AbstractAbility {
 
                         Utils.playGlobalSound(wp.getLocation(), Sound.IRONGOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
-                        activateAbility(wp, player, 2);
+                        activateAbility(wp, player, 1.5f);
                         this.cancel();
                     }
                 }

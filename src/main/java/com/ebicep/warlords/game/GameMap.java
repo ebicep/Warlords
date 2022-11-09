@@ -1105,7 +1105,7 @@ public enum GameMap {
             "Illusion Valley",
             4,
             1,
-            60 * SECOND,
+            120 * SECOND,
             "IllusionValley",
             1,
             GameMode.WAVE_DEFENSE

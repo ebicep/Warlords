@@ -152,7 +152,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC, "Armageddon", 600 * playerCount, 800 * playerCount, 0, 100, false);
+                        we.addDamageInstance(warlordsNPC, "Armageddon", 550 * playerCount, 700 * playerCount, 0, 100, false);
                         Utils.addKnockback(warlordsNPC.getLocation(), we, -2, 0.2);
                     }
                 }

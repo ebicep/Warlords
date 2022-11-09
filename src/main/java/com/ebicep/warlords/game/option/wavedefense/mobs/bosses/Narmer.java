@@ -180,9 +180,9 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, WaveDefenseOption option) {
         Location loc = warlordsNPC.getLocation();
-
         float multiplier = option.getDifficulty() == DifficultyIndex.HARD ? 2 : 1;
-        if (acolytes.size() < (multiplier * option.getGame().warlordsPlayers().count()) && ticksUntilNewAcolyte <= 0) {
+
+        if (acolytes.size() < multiplier * option.getGame().warlordsPlayers().count() && ticksUntilNewAcolyte <= 0) {
             //Bukkit.broadcastMessage("spawned new acolyte");
             NarmerAcolyte acolyte = new NarmerAcolyte(loc);
             option.spawnNewMob(acolyte);
@@ -190,14 +190,23 @@ public class Narmer extends AbstractZombie implements BossMob {
             ticksUntilNewAcolyte = 300;
         }
 
-        //Bukkit.broadcastMessage("ticks until new acolyte: " + timeUntilNewAcolyte);
         if (ticksUntilNewAcolyte > 0) {
             ticksUntilNewAcolyte--;
         }
 
-        //Bukkit.broadcastMessage("ticks: " + acolyteDeathWindow);
         if (acolyteDeathTickWindow > 0) {
             acolyteDeathTickWindow--;
+
+            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
+                if (we.getEntity() instanceof Player) {
+                    PacketUtils.sendTitle(
+                            (Player) we.getEntity(),
+                            ChatColor.RED + "Death Wish",
+                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
+                            0, acolyteDeathTickWindow, 0
+                    );
+                }
+            }
         }
 
         if (ticksElapsed % 15 == 0) {
