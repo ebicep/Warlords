@@ -274,10 +274,7 @@ public abstract class AbstractPlayerClass {
     }
 
     public void setDamageResistance(int damageResistance) {
-        if (this.damageResistance - damageResistance < 0) {
-            damageResistance = 0;
-        }
-        this.damageResistance = damageResistance;
+        this.damageResistance = Math.max(0, damageResistance);
     }
 
     public AbstractAbility getWeapon() {
