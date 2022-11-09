@@ -44,7 +44,8 @@ public class CooldownManager {
     }
 
     public void reduceCooldowns() {
-        synchronized (abstractCooldowns) {
+        List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
+        synchronized (cooldowns) {
 //            for (int i = 0; i < abstractCooldowns.size(); i++) {
 //                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
 //                abstractCooldown.onTick(warlordsEntity);
@@ -55,7 +56,7 @@ public class CooldownManager {
 //                    i--;
 //                }
 //            }
-            Iterator<AbstractCooldown<?>> iterator = abstractCooldowns.iterator();
+            Iterator<AbstractCooldown<?>> iterator = cooldowns.iterator();
             while (iterator.hasNext()) {
                 AbstractCooldown<?> abstractCooldown = iterator.next();
                 abstractCooldown.onTick(warlordsEntity);
